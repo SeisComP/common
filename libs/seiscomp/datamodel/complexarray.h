@@ -49,25 +49,25 @@ class SC_SYSTEM_CORE_API ComplexArray : public Core::BaseObject {
 		ComplexArray();
 
 		//! Copy constructor
-		ComplexArray(const ComplexArray& other);
+		ComplexArray(const ComplexArray &other);
 
 		//! Destructor
 		~ComplexArray() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		ComplexArray& operator=(const ComplexArray& other);
+		ComplexArray &operator=(const ComplexArray &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ComplexArray& other) const;
-		bool operator!=(const ComplexArray& other) const;
+		bool operator==(const ComplexArray &other) const;
+		bool operator!=(const ComplexArray &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ComplexArray& other) const;
+		bool equal(const ComplexArray &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -75,8 +75,8 @@ class SC_SYSTEM_CORE_API ComplexArray : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	public:
 		void setContent(const std::vector< std::complex<double> >&);
-		const std::vector< std::complex<double> >& content() const;
-		std::vector< std::complex<double> >& content();
+		const std::vector< std::complex<double> > &content() const;
+		std::vector< std::complex<double> > &content();
 
 
 	// ------------------------------------------------------------------

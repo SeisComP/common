@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(WaveformQuality, Object, "WaveformQuality");
 
 
-WaveformQuality::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+WaveformQuality::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &WaveformQuality::setWaveformID, &WaveformQuality::waveformID));
 	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &WaveformQuality::setCreatorID, &WaveformQuality::creatorID));
 	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &WaveformQuality::setCreated, &WaveformQuality::created));
@@ -74,7 +74,7 @@ WaveformQualityIndex::WaveformQualityIndex(Seiscomp::Core::Time start_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformQualityIndex::WaveformQualityIndex(const WaveformQualityIndex& idx) {
+WaveformQualityIndex::WaveformQualityIndex(const WaveformQualityIndex &idx) {
 	start = idx.start;
 	waveformID = idx.waveformID;
 	type = idx.type;
@@ -86,7 +86,7 @@ WaveformQualityIndex::WaveformQualityIndex(const WaveformQualityIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQualityIndex::operator==(const WaveformQualityIndex& idx) const {
+bool WaveformQualityIndex::operator==(const WaveformQualityIndex &idx) const {
 	return start == idx.start &&
 	       waveformID == idx.waveformID &&
 	       type == idx.type &&
@@ -98,7 +98,7 @@ bool WaveformQualityIndex::operator==(const WaveformQualityIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQualityIndex::operator!=(const WaveformQualityIndex& idx) const {
+bool WaveformQualityIndex::operator!=(const WaveformQualityIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -116,7 +116,7 @@ WaveformQuality::WaveformQuality() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformQuality::WaveformQuality(const WaveformQuality& other)
+WaveformQuality::WaveformQuality(const WaveformQuality &other)
 : Object() {
 	*this = other;
 }
@@ -134,7 +134,7 @@ WaveformQuality::~WaveformQuality() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::operator==(const WaveformQuality& rhs) const {
+bool WaveformQuality::operator==(const WaveformQuality &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _creatorID != rhs._creatorID ) return false;
 	if ( _created != rhs._created ) return false;
@@ -151,7 +151,7 @@ bool WaveformQuality::operator==(const WaveformQuality& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::operator!=(const WaveformQuality& rhs) const {
+bool WaveformQuality::operator!=(const WaveformQuality &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -160,7 +160,7 @@ bool WaveformQuality::operator!=(const WaveformQuality& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::equal(const WaveformQuality& other) const {
+bool WaveformQuality::equal(const WaveformQuality &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -384,7 +384,7 @@ double WaveformQuality::windowLength() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const WaveformQualityIndex& WaveformQuality::index() const {
+const WaveformQualityIndex &WaveformQuality::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -393,8 +393,11 @@ const WaveformQualityIndex& WaveformQuality::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::equalIndex(const WaveformQuality* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool WaveformQuality::equalIndex(const WaveformQuality *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -403,7 +406,7 @@ bool WaveformQuality::equalIndex(const WaveformQuality* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QualityControl* WaveformQuality::qualityControl() const {
+QualityControl *WaveformQuality::qualityControl() const {
 	return static_cast<QualityControl*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -412,7 +415,7 @@ QualityControl* WaveformQuality::qualityControl() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformQuality& WaveformQuality::operator=(const WaveformQuality& other) {
+WaveformQuality &WaveformQuality::operator=(const WaveformQuality &other) {
 	_index = other._index;
 	_creatorID = other._creatorID;
 	_created = other._created;
@@ -429,10 +432,11 @@ WaveformQuality& WaveformQuality::operator=(const WaveformQuality& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::assign(Object* other) {
-	WaveformQuality* otherWaveformQuality = WaveformQuality::Cast(other);
-	if ( other == nullptr )
+bool WaveformQuality::assign(Object *other) {
+	WaveformQuality *otherWaveformQuality = WaveformQuality::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherWaveformQuality;
 
@@ -444,11 +448,13 @@ bool WaveformQuality::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool WaveformQuality::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(parent);
+	QualityControl *qualityControl = QualityControl::Cast(parent);
 	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
@@ -461,11 +467,13 @@ bool WaveformQuality::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformQuality::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool WaveformQuality::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(object);
+	QualityControl *qualityControl = QualityControl::Cast(object);
 	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -473,7 +481,7 @@ bool WaveformQuality::detachFrom(PublicObject* object) {
 			return qualityControl->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			WaveformQuality* child = qualityControl->waveformQuality(index());
+			WaveformQuality *child = qualityControl->waveformQuality(index());
 			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
@@ -493,8 +501,9 @@ bool WaveformQuality::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WaveformQuality::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -504,8 +513,8 @@ bool WaveformQuality::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* WaveformQuality::clone() const {
-	WaveformQuality* clonee = new WaveformQuality();
+Object *WaveformQuality::clone() const {
+	WaveformQuality *clonee = new WaveformQuality();
 	*clonee = *this;
 	return clonee;
 }
@@ -515,7 +524,7 @@ Object* WaveformQuality::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WaveformQuality::accept(Visitor* visitor) {
+void WaveformQuality::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -524,7 +533,7 @@ void WaveformQuality::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WaveformQuality::serialize(Archive& ar) {
+void WaveformQuality::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

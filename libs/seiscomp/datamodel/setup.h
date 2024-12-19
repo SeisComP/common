@@ -78,25 +78,25 @@ class SC_SYSTEM_CORE_API Setup : public Object {
 		Setup();
 
 		//! Copy constructor
-		Setup(const Setup& other);
+		Setup(const Setup &other);
 
 		//! Destructor
 		~Setup() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Setup& operator=(const Setup& other);
+		Setup &operator=(const Setup &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Setup& other) const;
-		bool operator!=(const Setup& other) const;
+		bool operator==(const Setup &other) const;
+		bool operator!=(const Setup &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Setup& other) const;
+		bool equal(const Setup &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -118,17 +118,17 @@ class SC_SYSTEM_CORE_API Setup : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const SetupIndex& index() const;
+		const SetupIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Setup* lhs) const;
+		bool equalIndex(const Setup *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		ConfigStation* configStation() const;
+		ConfigStation *configStation() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

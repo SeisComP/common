@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(QCLog, PublicObject, "QCLog");
 
 
-QCLog::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+QCLog::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &QCLog::setWaveformID, &QCLog::waveformID));
 	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &QCLog::setCreatorID, &QCLog::creatorID));
 	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setCreated, &QCLog::created));
@@ -65,7 +65,7 @@ QCLogIndex::QCLogIndex(Seiscomp::Core::Time start_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLogIndex::QCLogIndex(const QCLogIndex& idx) {
+QCLogIndex::QCLogIndex(const QCLogIndex &idx) {
 	start = idx.start;
 	waveformID = idx.waveformID;
 }
@@ -75,7 +75,7 @@ QCLogIndex::QCLogIndex(const QCLogIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLogIndex::operator==(const QCLogIndex& idx) const {
+bool QCLogIndex::operator==(const QCLogIndex &idx) const {
 	return start == idx.start &&
 	       waveformID == idx.waveformID;
 }
@@ -85,7 +85,7 @@ bool QCLogIndex::operator==(const QCLogIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLogIndex::operator!=(const QCLogIndex& idx) const {
+bool QCLogIndex::operator!=(const QCLogIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -102,7 +102,7 @@ QCLog::QCLog() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog::QCLog(const QCLog& other)
+QCLog::QCLog(const QCLog &other)
 : PublicObject() {
 	*this = other;
 }
@@ -129,8 +129,8 @@ QCLog::~QCLog() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QCLog::Create() {
-	QCLog* object = new QCLog();
+QCLog *QCLog::Create() {
+	QCLog *object = new QCLog();
 	return static_cast<QCLog*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -139,7 +139,7 @@ QCLog* QCLog::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QCLog::Create(const std::string& publicID) {
+QCLog *QCLog::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -156,7 +156,7 @@ QCLog* QCLog::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QCLog::Find(const std::string& publicID) {
+QCLog *QCLog::Find(const std::string& publicID) {
 	return QCLog::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -165,7 +165,7 @@ QCLog* QCLog::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::operator==(const QCLog& rhs) const {
+bool QCLog::operator==(const QCLog &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _creatorID != rhs._creatorID ) return false;
 	if ( _created != rhs._created ) return false;
@@ -179,7 +179,7 @@ bool QCLog::operator==(const QCLog& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::operator!=(const QCLog& rhs) const {
+bool QCLog::operator!=(const QCLog &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -188,7 +188,7 @@ bool QCLog::operator!=(const QCLog& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::equal(const QCLog& other) const {
+bool QCLog::equal(const QCLog &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -314,7 +314,7 @@ const std::string& QCLog::message() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const QCLogIndex& QCLog::index() const {
+const QCLogIndex &QCLog::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -323,8 +323,11 @@ const QCLogIndex& QCLog::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::equalIndex(const QCLog* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool QCLog::equalIndex(const QCLog *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -333,7 +336,7 @@ bool QCLog::equalIndex(const QCLog* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QualityControl* QCLog::qualityControl() const {
+QualityControl *QCLog::qualityControl() const {
 	return static_cast<QualityControl*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -342,7 +345,7 @@ QualityControl* QCLog::qualityControl() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog& QCLog::operator=(const QCLog& other) {
+QCLog &QCLog::operator=(const QCLog &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_creatorID = other._creatorID;
@@ -357,10 +360,11 @@ QCLog& QCLog::operator=(const QCLog& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::assign(Object* other) {
-	QCLog* otherQCLog = QCLog::Cast(other);
-	if ( other == nullptr )
+bool QCLog::assign(Object *other) {
+	QCLog *otherQCLog = QCLog::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherQCLog;
 
@@ -372,11 +376,13 @@ bool QCLog::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool QCLog::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(parent);
+	QualityControl *qualityControl = QualityControl::Cast(parent);
 	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
@@ -389,11 +395,13 @@ bool QCLog::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool QCLog::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(object);
+	QualityControl *qualityControl = QualityControl::Cast(object);
 	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -401,7 +409,7 @@ bool QCLog::detachFrom(PublicObject* object) {
 			return qualityControl->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			QCLog* child = qualityControl->findQCLog(publicID());
+			QCLog *child = qualityControl->findQCLog(publicID());
 			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
@@ -421,8 +429,9 @@ bool QCLog::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -432,8 +441,8 @@ bool QCLog::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* QCLog::clone() const {
-	QCLog* clonee = new QCLog();
+Object *QCLog::clone() const {
+	QCLog *clonee = new QCLog();
 	*clonee = *this;
 	return clonee;
 }
@@ -443,7 +452,7 @@ Object* QCLog::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::updateChild(Object* child) {
+bool QCLog::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -452,7 +461,7 @@ bool QCLog::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void QCLog::accept(Visitor* visitor) {
+void QCLog::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -469,7 +478,7 @@ void QCLog::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void QCLog::serialize(Archive& ar) {
+void QCLog::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

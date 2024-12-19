@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(RealPDF1D, "RealPDF1D");
 
 
-RealPDF1D::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+RealPDF1D::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<RealArray>("variable", "RealArray", false, false, false, &RealPDF1D::setVariable, &RealPDF1D::variable));
 	addProperty(objectProperty<RealArray>("probability", "RealArray", false, false, false, &RealPDF1D::setProbability, &RealPDF1D::probability));
 }
@@ -49,7 +49,7 @@ RealPDF1D::RealPDF1D() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealPDF1D::RealPDF1D(const RealPDF1D& other)
+RealPDF1D::RealPDF1D(const RealPDF1D &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -67,7 +67,7 @@ RealPDF1D::~RealPDF1D() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealPDF1D::operator==(const RealPDF1D& rhs) const {
+bool RealPDF1D::operator==(const RealPDF1D &rhs) const {
 	if ( !(_variable == rhs._variable) )
 		return false;
 	if ( !(_probability == rhs._probability) )
@@ -80,7 +80,7 @@ bool RealPDF1D::operator==(const RealPDF1D& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealPDF1D::operator!=(const RealPDF1D& rhs) const {
+bool RealPDF1D::operator!=(const RealPDF1D &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,7 +89,7 @@ bool RealPDF1D::operator!=(const RealPDF1D& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealPDF1D::equal(const RealPDF1D& other) const {
+bool RealPDF1D::equal(const RealPDF1D &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -152,7 +152,7 @@ const RealArray& RealPDF1D::probability() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealPDF1D& RealPDF1D::operator=(const RealPDF1D& other) {
+RealPDF1D &RealPDF1D::operator=(const RealPDF1D &other) {
 	_variable = other._variable;
 	_probability = other._probability;
 	return *this;
@@ -163,7 +163,7 @@ RealPDF1D& RealPDF1D::operator=(const RealPDF1D& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RealPDF1D::serialize(Archive& ar) {
+void RealPDF1D::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

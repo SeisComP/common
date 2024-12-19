@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(StationReference, Object, "StationReference");
 
 
-StationReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+StationReference::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("stationID", "string", false, false, true, true, false, false, nullptr, &StationReference::setStationID, &StationReference::stationID));
 }
 
@@ -58,7 +58,7 @@ StationReferenceIndex::StationReferenceIndex(const std::string& stationID_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationReferenceIndex::StationReferenceIndex(const StationReferenceIndex& idx) {
+StationReferenceIndex::StationReferenceIndex(const StationReferenceIndex &idx) {
 	stationID = idx.stationID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -67,7 +67,7 @@ StationReferenceIndex::StationReferenceIndex(const StationReferenceIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReferenceIndex::operator==(const StationReferenceIndex& idx) const {
+bool StationReferenceIndex::operator==(const StationReferenceIndex &idx) const {
 	return stationID == idx.stationID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ bool StationReferenceIndex::operator==(const StationReferenceIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReferenceIndex::operator!=(const StationReferenceIndex& idx) const {
+bool StationReferenceIndex::operator!=(const StationReferenceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +93,7 @@ StationReference::StationReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationReference::StationReference(const StationReference& other)
+StationReference::StationReference(const StationReference &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ StationReference::~StationReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::operator==(const StationReference& rhs) const {
+bool StationReference::operator==(const StationReference &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -131,7 +131,7 @@ bool StationReference::operator==(const StationReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::operator!=(const StationReference& rhs) const {
+bool StationReference::operator!=(const StationReference &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ bool StationReference::operator!=(const StationReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::equal(const StationReference& other) const {
+bool StationReference::equal(const StationReference &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ const std::string& StationReference::stationID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const StationReferenceIndex& StationReference::index() const {
+const StationReferenceIndex &StationReference::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,8 +176,11 @@ const StationReferenceIndex& StationReference::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::equalIndex(const StationReference* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool StationReference::equalIndex(const StationReference *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +189,7 @@ bool StationReference::equalIndex(const StationReference* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* StationReference::stationGroup() const {
+StationGroup *StationReference::stationGroup() const {
 	return static_cast<StationGroup*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +198,7 @@ StationGroup* StationReference::stationGroup() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationReference& StationReference::operator=(const StationReference& other) {
+StationReference &StationReference::operator=(const StationReference &other) {
 	_index = other._index;
 	return *this;
 }
@@ -205,10 +208,11 @@ StationReference& StationReference::operator=(const StationReference& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::assign(Object* other) {
-	StationReference* otherStationReference = StationReference::Cast(other);
-	if ( other == nullptr )
+bool StationReference::assign(Object *other) {
+	StationReference *otherStationReference = StationReference::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStationReference;
 
@@ -220,11 +224,13 @@ bool StationReference::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool StationReference::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	StationGroup* stationGroup = StationGroup::Cast(parent);
+	StationGroup *stationGroup = StationGroup::Cast(parent);
 	if ( stationGroup != nullptr )
 		return stationGroup->add(this);
 
@@ -237,11 +243,13 @@ bool StationReference::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationReference::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool StationReference::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	StationGroup* stationGroup = StationGroup::Cast(object);
+	StationGroup *stationGroup = StationGroup::Cast(object);
 	if ( stationGroup != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -249,7 +257,7 @@ bool StationReference::detachFrom(PublicObject* object) {
 			return stationGroup->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			StationReference* child = stationGroup->stationReference(index());
+			StationReference *child = stationGroup->stationReference(index());
 			if ( child != nullptr )
 				return stationGroup->remove(child);
 			else {
@@ -269,8 +277,9 @@ bool StationReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationReference::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -280,8 +289,8 @@ bool StationReference::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* StationReference::clone() const {
-	StationReference* clonee = new StationReference();
+Object *StationReference::clone() const {
+	StationReference *clonee = new StationReference();
 	*clonee = *this;
 	return clonee;
 }
@@ -291,7 +300,7 @@ Object* StationReference::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationReference::accept(Visitor* visitor) {
+void StationReference::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,7 +309,7 @@ void StationReference::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationReference::serialize(Archive& ar) {
+void StationReference::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

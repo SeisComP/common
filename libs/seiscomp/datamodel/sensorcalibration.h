@@ -87,25 +87,25 @@ class SC_SYSTEM_CORE_API SensorCalibration : public Object {
 		SensorCalibration();
 
 		//! Copy constructor
-		SensorCalibration(const SensorCalibration& other);
+		SensorCalibration(const SensorCalibration &other);
 
 		//! Destructor
 		~SensorCalibration() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		SensorCalibration& operator=(const SensorCalibration& other);
+		SensorCalibration &operator=(const SensorCalibration &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const SensorCalibration& other) const;
-		bool operator!=(const SensorCalibration& other) const;
+		bool operator==(const SensorCalibration &other) const;
+		bool operator!=(const SensorCalibration &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const SensorCalibration& other) const;
+		bool equal(const SensorCalibration &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -146,17 +146,17 @@ class SC_SYSTEM_CORE_API SensorCalibration : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const SensorCalibrationIndex& index() const;
+		const SensorCalibrationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const SensorCalibration* lhs) const;
+		bool equalIndex(const SensorCalibration *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Sensor* sensor() const;
+		Sensor *sensor() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

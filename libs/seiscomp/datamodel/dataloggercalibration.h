@@ -87,25 +87,25 @@ class SC_SYSTEM_CORE_API DataloggerCalibration : public Object {
 		DataloggerCalibration();
 
 		//! Copy constructor
-		DataloggerCalibration(const DataloggerCalibration& other);
+		DataloggerCalibration(const DataloggerCalibration &other);
 
 		//! Destructor
 		~DataloggerCalibration() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		DataloggerCalibration& operator=(const DataloggerCalibration& other);
+		DataloggerCalibration &operator=(const DataloggerCalibration &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataloggerCalibration& other) const;
-		bool operator!=(const DataloggerCalibration& other) const;
+		bool operator==(const DataloggerCalibration &other) const;
+		bool operator!=(const DataloggerCalibration &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataloggerCalibration& other) const;
+		bool equal(const DataloggerCalibration &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -147,17 +147,17 @@ class SC_SYSTEM_CORE_API DataloggerCalibration : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DataloggerCalibrationIndex& index() const;
+		const DataloggerCalibrationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const DataloggerCalibration* lhs) const;
+		bool equalIndex(const DataloggerCalibration *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Datalogger* datalogger() const;
+		Datalogger *datalogger() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -84,28 +84,28 @@ class SC_SYSTEM_CORE_API ResponsePolynomial : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ResponsePolynomial(const ResponsePolynomial& other);
+		ResponsePolynomial(const ResponsePolynomial &other);
 
 		//! Constructor with publicID
 		ResponsePolynomial(const std::string& publicID);
 
 		//! Destructor
 		~ResponsePolynomial() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ResponsePolynomial* Create();
-		static ResponsePolynomial* Create(const std::string& publicID);
+		static ResponsePolynomial *Create();
+		static ResponsePolynomial *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ResponsePolynomial* Find(const std::string& publicID);
+		static ResponsePolynomial *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -114,14 +114,14 @@ class SC_SYSTEM_CORE_API ResponsePolynomial : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ResponsePolynomial& operator=(const ResponsePolynomial& other);
+		ResponsePolynomial &operator=(const ResponsePolynomial &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ResponsePolynomial& other) const;
-		bool operator!=(const ResponsePolynomial& other) const;
+		bool operator==(const ResponsePolynomial &other) const;
+		bool operator!=(const ResponsePolynomial &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ResponsePolynomial& other) const;
+		bool equal(const ResponsePolynomial &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -185,17 +185,17 @@ class SC_SYSTEM_CORE_API ResponsePolynomial : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ResponsePolynomialIndex& index() const;
+		const ResponsePolynomialIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ResponsePolynomial* lhs) const;
+		bool equalIndex(const ResponsePolynomial *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

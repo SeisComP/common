@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(AmplitudeReference, Object, "AmplitudeReference");
 
 
-AmplitudeReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+AmplitudeReference::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("amplitudeID", "string", false, false, true, true, false, false, nullptr, &AmplitudeReference::setAmplitudeID, &AmplitudeReference::amplitudeID));
 }
 
@@ -58,7 +58,7 @@ AmplitudeReferenceIndex::AmplitudeReferenceIndex(const std::string& amplitudeID_
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeReferenceIndex::AmplitudeReferenceIndex(const AmplitudeReferenceIndex& idx) {
+AmplitudeReferenceIndex::AmplitudeReferenceIndex(const AmplitudeReferenceIndex &idx) {
 	amplitudeID = idx.amplitudeID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -67,7 +67,7 @@ AmplitudeReferenceIndex::AmplitudeReferenceIndex(const AmplitudeReferenceIndex& 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReferenceIndex::operator==(const AmplitudeReferenceIndex& idx) const {
+bool AmplitudeReferenceIndex::operator==(const AmplitudeReferenceIndex &idx) const {
 	return amplitudeID == idx.amplitudeID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ bool AmplitudeReferenceIndex::operator==(const AmplitudeReferenceIndex& idx) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReferenceIndex::operator!=(const AmplitudeReferenceIndex& idx) const {
+bool AmplitudeReferenceIndex::operator!=(const AmplitudeReferenceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +93,7 @@ AmplitudeReference::AmplitudeReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeReference::AmplitudeReference(const AmplitudeReference& other)
+AmplitudeReference::AmplitudeReference(const AmplitudeReference &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ AmplitudeReference::~AmplitudeReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::operator==(const AmplitudeReference& rhs) const {
+bool AmplitudeReference::operator==(const AmplitudeReference &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -131,7 +131,7 @@ bool AmplitudeReference::operator==(const AmplitudeReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::operator!=(const AmplitudeReference& rhs) const {
+bool AmplitudeReference::operator!=(const AmplitudeReference &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ bool AmplitudeReference::operator!=(const AmplitudeReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::equal(const AmplitudeReference& other) const {
+bool AmplitudeReference::equal(const AmplitudeReference &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ const std::string& AmplitudeReference::amplitudeID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const AmplitudeReferenceIndex& AmplitudeReference::index() const {
+const AmplitudeReferenceIndex &AmplitudeReference::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,8 +176,11 @@ const AmplitudeReferenceIndex& AmplitudeReference::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::equalIndex(const AmplitudeReference* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool AmplitudeReference::equalIndex(const AmplitudeReference *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +189,7 @@ bool AmplitudeReference::equalIndex(const AmplitudeReference* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* AmplitudeReference::reading() const {
+Reading *AmplitudeReference::reading() const {
 	return static_cast<Reading*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +198,7 @@ Reading* AmplitudeReference::reading() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeReference& AmplitudeReference::operator=(const AmplitudeReference& other) {
+AmplitudeReference &AmplitudeReference::operator=(const AmplitudeReference &other) {
 	_index = other._index;
 	return *this;
 }
@@ -205,10 +208,11 @@ AmplitudeReference& AmplitudeReference::operator=(const AmplitudeReference& othe
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::assign(Object* other) {
-	AmplitudeReference* otherAmplitudeReference = AmplitudeReference::Cast(other);
-	if ( other == nullptr )
+bool AmplitudeReference::assign(Object *other) {
+	AmplitudeReference *otherAmplitudeReference = AmplitudeReference::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherAmplitudeReference;
 
@@ -220,11 +224,13 @@ bool AmplitudeReference::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool AmplitudeReference::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Reading* reading = Reading::Cast(parent);
+	Reading *reading = Reading::Cast(parent);
 	if ( reading != nullptr )
 		return reading->add(this);
 
@@ -237,11 +243,13 @@ bool AmplitudeReference::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AmplitudeReference::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool AmplitudeReference::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Reading* reading = Reading::Cast(object);
+	Reading *reading = Reading::Cast(object);
 	if ( reading != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -249,7 +257,7 @@ bool AmplitudeReference::detachFrom(PublicObject* object) {
 			return reading->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			AmplitudeReference* child = reading->amplitudeReference(index());
+			AmplitudeReference *child = reading->amplitudeReference(index());
 			if ( child != nullptr )
 				return reading->remove(child);
 			else {
@@ -269,8 +277,9 @@ bool AmplitudeReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeReference::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -280,8 +289,8 @@ bool AmplitudeReference::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* AmplitudeReference::clone() const {
-	AmplitudeReference* clonee = new AmplitudeReference();
+Object *AmplitudeReference::clone() const {
+	AmplitudeReference *clonee = new AmplitudeReference();
 	*clonee = *this;
 	return clonee;
 }
@@ -291,7 +300,7 @@ Object* AmplitudeReference::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeReference::accept(Visitor* visitor) {
+void AmplitudeReference::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,7 +309,7 @@ void AmplitudeReference::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeReference::serialize(Archive& ar) {
+void AmplitudeReference::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

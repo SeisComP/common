@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(SensorCalibration, Object, "SensorCalibration");
 
 
-SensorCalibration::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+SensorCalibration::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, nullptr, &SensorCalibration::setSerialNumber, &SensorCalibration::serialNumber));
 	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, nullptr, &SensorCalibration::setChannel, &SensorCalibration::channel));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &SensorCalibration::setStart, &SensorCalibration::start));
@@ -69,7 +69,7 @@ SensorCalibrationIndex::SensorCalibrationIndex(const std::string& serialNumber_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorCalibrationIndex::SensorCalibrationIndex(const SensorCalibrationIndex& idx) {
+SensorCalibrationIndex::SensorCalibrationIndex(const SensorCalibrationIndex &idx) {
 	serialNumber = idx.serialNumber;
 	channel = idx.channel;
 	start = idx.start;
@@ -80,7 +80,7 @@ SensorCalibrationIndex::SensorCalibrationIndex(const SensorCalibrationIndex& idx
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibrationIndex::operator==(const SensorCalibrationIndex& idx) const {
+bool SensorCalibrationIndex::operator==(const SensorCalibrationIndex &idx) const {
 	return serialNumber == idx.serialNumber &&
 	       channel == idx.channel &&
 	       start == idx.start;
@@ -91,7 +91,7 @@ bool SensorCalibrationIndex::operator==(const SensorCalibrationIndex& idx) const
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibrationIndex::operator!=(const SensorCalibrationIndex& idx) const {
+bool SensorCalibrationIndex::operator!=(const SensorCalibrationIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -108,7 +108,7 @@ SensorCalibration::SensorCalibration() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorCalibration::SensorCalibration(const SensorCalibration& other)
+SensorCalibration::SensorCalibration(const SensorCalibration &other)
 : Object() {
 	*this = other;
 }
@@ -126,7 +126,7 @@ SensorCalibration::~SensorCalibration() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::operator==(const SensorCalibration& rhs) const {
+bool SensorCalibration::operator==(const SensorCalibration &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _gain != rhs._gain ) return false;
@@ -140,7 +140,7 @@ bool SensorCalibration::operator==(const SensorCalibration& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::operator!=(const SensorCalibration& rhs) const {
+bool SensorCalibration::operator!=(const SensorCalibration &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -149,7 +149,7 @@ bool SensorCalibration::operator!=(const SensorCalibration& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::equal(const SensorCalibration& other) const {
+bool SensorCalibration::equal(const SensorCalibration &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -303,7 +303,7 @@ const Blob& SensorCalibration::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const SensorCalibrationIndex& SensorCalibration::index() const {
+const SensorCalibrationIndex &SensorCalibration::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -312,8 +312,11 @@ const SensorCalibrationIndex& SensorCalibration::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::equalIndex(const SensorCalibration* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool SensorCalibration::equalIndex(const SensorCalibration *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,7 +325,7 @@ bool SensorCalibration::equalIndex(const SensorCalibration* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* SensorCalibration::sensor() const {
+Sensor *SensorCalibration::sensor() const {
 	return static_cast<Sensor*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -331,7 +334,7 @@ Sensor* SensorCalibration::sensor() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorCalibration& SensorCalibration::operator=(const SensorCalibration& other) {
+SensorCalibration &SensorCalibration::operator=(const SensorCalibration &other) {
 	_index = other._index;
 	_end = other._end;
 	_gain = other._gain;
@@ -345,10 +348,11 @@ SensorCalibration& SensorCalibration::operator=(const SensorCalibration& other) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::assign(Object* other) {
-	SensorCalibration* otherSensorCalibration = SensorCalibration::Cast(other);
-	if ( other == nullptr )
+bool SensorCalibration::assign(Object *other) {
+	SensorCalibration *otherSensorCalibration = SensorCalibration::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherSensorCalibration;
 
@@ -360,11 +364,13 @@ bool SensorCalibration::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool SensorCalibration::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Sensor* sensor = Sensor::Cast(parent);
+	Sensor *sensor = Sensor::Cast(parent);
 	if ( sensor != nullptr )
 		return sensor->add(this);
 
@@ -377,11 +383,13 @@ bool SensorCalibration::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorCalibration::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool SensorCalibration::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Sensor* sensor = Sensor::Cast(object);
+	Sensor *sensor = Sensor::Cast(object);
 	if ( sensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -389,7 +397,7 @@ bool SensorCalibration::detachFrom(PublicObject* object) {
 			return sensor->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			SensorCalibration* child = sensor->sensorCalibration(index());
+			SensorCalibration *child = sensor->sensorCalibration(index());
 			if ( child != nullptr )
 				return sensor->remove(child);
 			else {
@@ -409,8 +417,9 @@ bool SensorCalibration::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorCalibration::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -420,8 +429,8 @@ bool SensorCalibration::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* SensorCalibration::clone() const {
-	SensorCalibration* clonee = new SensorCalibration();
+Object *SensorCalibration::clone() const {
+	SensorCalibration *clonee = new SensorCalibration();
 	*clonee = *this;
 	return clonee;
 }
@@ -431,7 +440,7 @@ Object* SensorCalibration::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SensorCalibration::accept(Visitor* visitor) {
+void SensorCalibration::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -440,7 +449,7 @@ void SensorCalibration::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SensorCalibration::serialize(Archive& ar) {
+void SensorCalibration::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

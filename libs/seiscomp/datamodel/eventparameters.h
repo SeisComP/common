@@ -59,11 +59,11 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		EventParameters();
 
 		//! Copy constructor
-		EventParameters(const EventParameters& other);
+		EventParameters(const EventParameters &other);
 
 		//! Destructor
 		~EventParameters() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -71,16 +71,16 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		EventParameters& operator=(const EventParameters& other);
+		EventParameters &operator=(const EventParameters &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const EventParameters& other) const;
-		bool operator!=(const EventParameters& other) const;
+		bool operator==(const EventParameters &other) const;
+		bool operator!=(const EventParameters &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const EventParameters& other) const;
+		bool equal(const EventParameters &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -93,12 +93,12 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Pick* obj);
-		bool add(Amplitude* obj);
-		bool add(Reading* obj);
-		bool add(Origin* obj);
-		bool add(FocalMechanism* obj);
-		bool add(Event* obj);
+		bool add(Pick *obj);
+		bool add(Amplitude *obj);
+		bool add(Reading *obj);
+		bool add(Origin *obj);
+		bool add(FocalMechanism *obj);
+		bool add(Event *obj);
 
 		/**
 		 * Removes an object.
@@ -107,12 +107,12 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Pick* obj);
-		bool remove(Amplitude* obj);
-		bool remove(Reading* obj);
-		bool remove(Origin* obj);
-		bool remove(FocalMechanism* obj);
-		bool remove(Event* obj);
+		bool remove(Pick *obj);
+		bool remove(Amplitude *obj);
+		bool remove(Reading *obj);
+		bool remove(Origin *obj);
+		bool remove(FocalMechanism *obj);
+		bool remove(Event *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -137,20 +137,20 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Pick* pick(size_t i) const;
-		Amplitude* amplitude(size_t i) const;
-		Reading* reading(size_t i) const;
-		Origin* origin(size_t i) const;
-		FocalMechanism* focalMechanism(size_t i) const;
-		Event* event(size_t i) const;
+		Pick *pick(size_t i) const;
+		Amplitude *amplitude(size_t i) const;
+		Reading *reading(size_t i) const;
+		Origin *origin(size_t i) const;
+		FocalMechanism *focalMechanism(size_t i) const;
+		Event *event(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		Pick* findPick(const std::string& publicID) const;
-		Amplitude* findAmplitude(const std::string& publicID) const;
-		Reading* findReading(const std::string& publicID) const;
-		Origin* findOrigin(const std::string& publicID) const;
-		FocalMechanism* findFocalMechanism(const std::string& publicID) const;
-		Event* findEvent(const std::string& publicID) const;
+		Pick *findPick(const std::string& publicID) const;
+		Amplitude *findAmplitude(const std::string& publicID) const;
+		Reading *findReading(const std::string& publicID) const;
+		Origin *findOrigin(const std::string& publicID) const;
+		FocalMechanism *findFocalMechanism(const std::string& publicID) const;
+		Event *findEvent(const std::string& publicID) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -93,28 +93,28 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 
 	public:
 		//! Copy constructor
-		SensorLocation(const SensorLocation& other);
+		SensorLocation(const SensorLocation &other);
 
 		//! Constructor with publicID
 		SensorLocation(const std::string& publicID);
 
 		//! Destructor
 		~SensorLocation() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static SensorLocation* Create();
-		static SensorLocation* Create(const std::string& publicID);
+		static SensorLocation *Create();
+		static SensorLocation *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static SensorLocation* Find(const std::string& publicID);
+		static SensorLocation *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -123,14 +123,14 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		SensorLocation& operator=(const SensorLocation& other);
+		SensorLocation &operator=(const SensorLocation &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const SensorLocation& other) const;
-		bool operator!=(const SensorLocation& other) const;
+		bool operator==(const SensorLocation &other) const;
+		bool operator!=(const SensorLocation &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const SensorLocation& other) const;
+		bool equal(const SensorLocation &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -179,12 +179,12 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const SensorLocationIndex& index() const;
+		const SensorLocationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const SensorLocation* lhs) const;
+		bool equalIndex(const SensorLocation *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -197,9 +197,9 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
-		bool add(AuxStream* obj);
-		bool add(Stream* obj);
+		bool add(Comment *obj);
+		bool add(AuxStream *obj);
+		bool add(Stream *obj);
 
 		/**
 		 * Removes an object.
@@ -208,9 +208,9 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
-		bool remove(AuxStream* obj);
-		bool remove(Stream* obj);
+		bool remove(Comment *obj);
+		bool remove(AuxStream *obj);
+		bool remove(Stream *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -219,11 +219,11 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeAuxStream(size_t i);
-		bool removeAuxStream(const AuxStreamIndex& i);
+		bool removeAuxStream(const AuxStreamIndex &i);
 		bool removeStream(size_t i);
-		bool removeStream(const StreamIndex& i);
+		bool removeStream(const StreamIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
@@ -232,19 +232,19 @@ class SC_SYSTEM_CORE_API SensorLocation : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
-		AuxStream* auxStream(size_t i) const;
-		AuxStream* auxStream(const AuxStreamIndex& i) const;
+		AuxStream *auxStream(size_t i) const;
+		AuxStream *auxStream(const AuxStreamIndex &i) const;
 
-		Stream* stream(size_t i) const;
-		Stream* stream(const StreamIndex& i) const;
+		Stream *stream(size_t i) const;
+		Stream *stream(const StreamIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		Stream* findStream(const std::string& publicID) const;
+		Stream *findStream(const std::string& publicID) const;
 
-		Station* station() const;
+		Station *station() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

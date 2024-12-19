@@ -33,7 +33,6 @@
 #include <seiscomp/datamodel/dataavailability_package.h>
 #include <seiscomp/datamodel/comment.h>
 
-
 using namespace std;
 
 namespace Seiscomp {

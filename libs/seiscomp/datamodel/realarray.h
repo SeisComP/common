@@ -48,25 +48,25 @@ class SC_SYSTEM_CORE_API RealArray : public Core::BaseObject {
 		RealArray();
 
 		//! Copy constructor
-		RealArray(const RealArray& other);
+		RealArray(const RealArray &other);
 
 		//! Destructor
 		~RealArray() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		RealArray& operator=(const RealArray& other);
+		RealArray &operator=(const RealArray &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const RealArray& other) const;
-		bool operator!=(const RealArray& other) const;
+		bool operator==(const RealArray &other) const;
+		bool operator!=(const RealArray &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const RealArray& other) const;
+		bool equal(const RealArray &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -74,8 +74,8 @@ class SC_SYSTEM_CORE_API RealArray : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	public:
 		void setContent(const std::vector< double >&);
-		const std::vector< double >& content() const;
-		std::vector< double >& content();
+		const std::vector< double > &content() const;
+		std::vector< double > &content();
 
 
 	// ------------------------------------------------------------------

@@ -87,28 +87,28 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 
 	public:
 		//! Copy constructor
-		AuxDevice(const AuxDevice& other);
+		AuxDevice(const AuxDevice &other);
 
 		//! Constructor with publicID
 		AuxDevice(const std::string& publicID);
 
 		//! Destructor
 		~AuxDevice() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static AuxDevice* Create();
-		static AuxDevice* Create(const std::string& publicID);
+		static AuxDevice *Create();
+		static AuxDevice *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static AuxDevice* Find(const std::string& publicID);
+		static AuxDevice *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -117,14 +117,14 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		AuxDevice& operator=(const AuxDevice& other);
+		AuxDevice &operator=(const AuxDevice &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const AuxDevice& other) const;
-		bool operator!=(const AuxDevice& other) const;
+		bool operator==(const AuxDevice &other) const;
+		bool operator!=(const AuxDevice &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const AuxDevice& other) const;
+		bool equal(const AuxDevice &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -157,12 +157,12 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const AuxDeviceIndex& index() const;
+		const AuxDeviceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const AuxDevice* lhs) const;
+		bool equalIndex(const AuxDevice *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -175,7 +175,7 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(AuxSource* obj);
+		bool add(AuxSource *obj);
 
 		/**
 		 * Removes an object.
@@ -184,7 +184,7 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(AuxSource* obj);
+		bool remove(AuxSource *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -193,19 +193,19 @@ class SC_SYSTEM_CORE_API AuxDevice : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeAuxSource(size_t i);
-		bool removeAuxSource(const AuxSourceIndex& i);
+		bool removeAuxSource(const AuxSourceIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t auxSourceCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		AuxSource* auxSource(size_t i) const;
-		AuxSource* auxSource(const AuxSourceIndex& i) const;
+		AuxSource *auxSource(size_t i) const;
+		AuxSource *auxSource(const AuxSourceIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

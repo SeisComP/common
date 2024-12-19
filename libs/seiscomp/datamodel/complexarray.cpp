@@ -32,8 +32,8 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(ComplexArray, "ComplexArray");
 
 
-ComplexArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "complex", true, false, false, false, true, false, nullptr, &ComplexArray::setContent, (const std::vector< std::complex<double> >& (ComplexArray::*)() const)&ComplexArray::content));
+ComplexArray::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
+	addProperty(Core::simpleProperty("content", "complex", true, false, false, false, true, false, nullptr, &ComplexArray::setContent, (const std::vector< std::complex<double> > &(ComplexArray::*)() const)&ComplexArray::content));
 }
 
 
@@ -48,7 +48,7 @@ ComplexArray::ComplexArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ComplexArray::ComplexArray(const ComplexArray& other)
+ComplexArray::ComplexArray(const ComplexArray &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -66,7 +66,7 @@ ComplexArray::~ComplexArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ComplexArray::operator==(const ComplexArray& rhs) const {
+bool ComplexArray::operator==(const ComplexArray &rhs) const {
 	if ( !(_content == rhs._content) )
 		return false;
 	return true;
@@ -77,7 +77,7 @@ bool ComplexArray::operator==(const ComplexArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ComplexArray::operator!=(const ComplexArray& rhs) const {
+bool ComplexArray::operator!=(const ComplexArray &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -86,7 +86,7 @@ bool ComplexArray::operator!=(const ComplexArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ComplexArray::equal(const ComplexArray& other) const {
+bool ComplexArray::equal(const ComplexArray &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ void ComplexArray::setContent(const std::vector< std::complex<double> > &content
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::vector< std::complex<double> >& ComplexArray::content() const {
+const std::vector< std::complex<double> > &ComplexArray::content() const {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ const std::vector< std::complex<double> >& ComplexArray::content() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector< std::complex<double> >& ComplexArray::content() {
+std::vector< std::complex<double> > &ComplexArray::content() {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -122,7 +122,7 @@ std::vector< std::complex<double> >& ComplexArray::content() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ComplexArray& ComplexArray::operator=(const ComplexArray& other) {
+ComplexArray &ComplexArray::operator=(const ComplexArray &other) {
 	_content = other._content;
 	return *this;
 }
@@ -132,7 +132,7 @@ ComplexArray& ComplexArray::operator=(const ComplexArray& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ComplexArray::serialize(Archive& ar) {
+void ComplexArray::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(ConfidenceEllipsoid, "ConfidenceEllipsoid");
 
 
-ConfidenceEllipsoid::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ConfidenceEllipsoid::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("semiMajorAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiMajorAxisLength, &ConfidenceEllipsoid::semiMajorAxisLength));
 	addProperty(Core::simpleProperty("semiMinorAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiMinorAxisLength, &ConfidenceEllipsoid::semiMinorAxisLength));
 	addProperty(Core::simpleProperty("semiIntermediateAxisLength", "float", false, false, false, false, false, false, nullptr, &ConfidenceEllipsoid::setSemiIntermediateAxisLength, &ConfidenceEllipsoid::semiIntermediateAxisLength));
@@ -59,7 +59,7 @@ ConfidenceEllipsoid::ConfidenceEllipsoid() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfidenceEllipsoid::ConfidenceEllipsoid(const ConfidenceEllipsoid& other)
+ConfidenceEllipsoid::ConfidenceEllipsoid(const ConfidenceEllipsoid &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -77,7 +77,7 @@ ConfidenceEllipsoid::~ConfidenceEllipsoid() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfidenceEllipsoid::operator==(const ConfidenceEllipsoid& rhs) const {
+bool ConfidenceEllipsoid::operator==(const ConfidenceEllipsoid &rhs) const {
 	if ( !(_semiMajorAxisLength == rhs._semiMajorAxisLength) )
 		return false;
 	if ( !(_semiMinorAxisLength == rhs._semiMinorAxisLength) )
@@ -98,7 +98,7 @@ bool ConfidenceEllipsoid::operator==(const ConfidenceEllipsoid& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfidenceEllipsoid::operator!=(const ConfidenceEllipsoid& rhs) const {
+bool ConfidenceEllipsoid::operator!=(const ConfidenceEllipsoid &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -107,7 +107,7 @@ bool ConfidenceEllipsoid::operator!=(const ConfidenceEllipsoid& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfidenceEllipsoid::equal(const ConfidenceEllipsoid& other) const {
+bool ConfidenceEllipsoid::equal(const ConfidenceEllipsoid &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -224,7 +224,7 @@ double ConfidenceEllipsoid::majorAxisRotation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfidenceEllipsoid& ConfidenceEllipsoid::operator=(const ConfidenceEllipsoid& other) {
+ConfidenceEllipsoid &ConfidenceEllipsoid::operator=(const ConfidenceEllipsoid &other) {
 	_semiMajorAxisLength = other._semiMajorAxisLength;
 	_semiMinorAxisLength = other._semiMinorAxisLength;
 	_semiIntermediateAxisLength = other._semiIntermediateAxisLength;
@@ -239,7 +239,7 @@ ConfidenceEllipsoid& ConfidenceEllipsoid::operator=(const ConfidenceEllipsoid& o
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ConfidenceEllipsoid::serialize(Archive& ar) {
+void ConfidenceEllipsoid::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ArclinkRequestLine, Object, "ArclinkRequestLine");
 
 
-ArclinkRequestLine::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ArclinkRequestLine::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &ArclinkRequestLine::setStart, &ArclinkRequestLine::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, true, false, false, false, nullptr, &ArclinkRequestLine::setEnd, &ArclinkRequestLine::end));
 	addProperty(objectProperty<WaveformStreamID>("streamID", "WaveformStreamID", true, false, false, &ArclinkRequestLine::setStreamID, &ArclinkRequestLine::streamID));
@@ -69,7 +69,7 @@ ArclinkRequestLineIndex::ArclinkRequestLineIndex(Seiscomp::Core::Time start_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestLineIndex::ArclinkRequestLineIndex(const ArclinkRequestLineIndex& idx) {
+ArclinkRequestLineIndex::ArclinkRequestLineIndex(const ArclinkRequestLineIndex &idx) {
 	start = idx.start;
 	end = idx.end;
 	streamID = idx.streamID;
@@ -80,7 +80,7 @@ ArclinkRequestLineIndex::ArclinkRequestLineIndex(const ArclinkRequestLineIndex& 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLineIndex::operator==(const ArclinkRequestLineIndex& idx) const {
+bool ArclinkRequestLineIndex::operator==(const ArclinkRequestLineIndex &idx) const {
 	return start == idx.start &&
 	       end == idx.end &&
 	       streamID == idx.streamID;
@@ -91,7 +91,7 @@ bool ArclinkRequestLineIndex::operator==(const ArclinkRequestLineIndex& idx) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLineIndex::operator!=(const ArclinkRequestLineIndex& idx) const {
+bool ArclinkRequestLineIndex::operator!=(const ArclinkRequestLineIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -108,7 +108,7 @@ ArclinkRequestLine::ArclinkRequestLine() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestLine::ArclinkRequestLine(const ArclinkRequestLine& other)
+ArclinkRequestLine::ArclinkRequestLine(const ArclinkRequestLine &other)
 : Object() {
 	*this = other;
 }
@@ -126,7 +126,7 @@ ArclinkRequestLine::~ArclinkRequestLine() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::operator==(const ArclinkRequestLine& rhs) const {
+bool ArclinkRequestLine::operator==(const ArclinkRequestLine &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _restricted != rhs._restricted ) return false;
 	if ( _shared != rhs._shared ) return false;
@@ -141,7 +141,7 @@ bool ArclinkRequestLine::operator==(const ArclinkRequestLine& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::operator!=(const ArclinkRequestLine& rhs) const {
+bool ArclinkRequestLine::operator!=(const ArclinkRequestLine &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +150,7 @@ bool ArclinkRequestLine::operator!=(const ArclinkRequestLine& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::equal(const ArclinkRequestLine& other) const {
+bool ArclinkRequestLine::equal(const ArclinkRequestLine &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -325,7 +325,7 @@ ArclinkStatusLine ArclinkRequestLine::status() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ArclinkRequestLineIndex& ArclinkRequestLine::index() const {
+const ArclinkRequestLineIndex &ArclinkRequestLine::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -334,8 +334,11 @@ const ArclinkRequestLineIndex& ArclinkRequestLine::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::equalIndex(const ArclinkRequestLine* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ArclinkRequestLine::equalIndex(const ArclinkRequestLine *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -344,7 +347,7 @@ bool ArclinkRequestLine::equalIndex(const ArclinkRequestLine* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest* ArclinkRequestLine::arclinkRequest() const {
+ArclinkRequest *ArclinkRequestLine::arclinkRequest() const {
 	return static_cast<ArclinkRequest*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -353,7 +356,7 @@ ArclinkRequest* ArclinkRequestLine::arclinkRequest() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestLine& ArclinkRequestLine::operator=(const ArclinkRequestLine& other) {
+ArclinkRequestLine &ArclinkRequestLine::operator=(const ArclinkRequestLine &other) {
 	_index = other._index;
 	_restricted = other._restricted;
 	_shared = other._shared;
@@ -368,10 +371,11 @@ ArclinkRequestLine& ArclinkRequestLine::operator=(const ArclinkRequestLine& othe
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::assign(Object* other) {
-	ArclinkRequestLine* otherArclinkRequestLine = ArclinkRequestLine::Cast(other);
-	if ( other == nullptr )
+bool ArclinkRequestLine::assign(Object *other) {
+	ArclinkRequestLine *otherArclinkRequestLine = ArclinkRequestLine::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherArclinkRequestLine;
 
@@ -383,11 +387,13 @@ bool ArclinkRequestLine::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ArclinkRequestLine::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(parent);
+	ArclinkRequest *arclinkRequest = ArclinkRequest::Cast(parent);
 	if ( arclinkRequest != nullptr )
 		return arclinkRequest->add(this);
 
@@ -400,11 +406,13 @@ bool ArclinkRequestLine::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestLine::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ArclinkRequestLine::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(object);
+	ArclinkRequest *arclinkRequest = ArclinkRequest::Cast(object);
 	if ( arclinkRequest != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -412,7 +420,7 @@ bool ArclinkRequestLine::detachFrom(PublicObject* object) {
 			return arclinkRequest->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ArclinkRequestLine* child = arclinkRequest->arclinkRequestLine(index());
+			ArclinkRequestLine *child = arclinkRequest->arclinkRequestLine(index());
 			if ( child != nullptr )
 				return arclinkRequest->remove(child);
 			else {
@@ -432,8 +440,9 @@ bool ArclinkRequestLine::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequestLine::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -443,8 +452,8 @@ bool ArclinkRequestLine::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ArclinkRequestLine::clone() const {
-	ArclinkRequestLine* clonee = new ArclinkRequestLine();
+Object *ArclinkRequestLine::clone() const {
+	ArclinkRequestLine *clonee = new ArclinkRequestLine();
 	*clonee = *this;
 	return clonee;
 }
@@ -454,7 +463,7 @@ Object* ArclinkRequestLine::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkRequestLine::accept(Visitor* visitor) {
+void ArclinkRequestLine::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -463,7 +472,7 @@ void ArclinkRequestLine::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkRequestLine::serialize(Archive& ar) {
+void ArclinkRequestLine::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

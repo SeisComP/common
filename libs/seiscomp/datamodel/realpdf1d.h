@@ -73,25 +73,25 @@ class SC_SYSTEM_CORE_API RealPDF1D : public Core::BaseObject {
 		RealPDF1D();
 
 		//! Copy constructor
-		RealPDF1D(const RealPDF1D& other);
+		RealPDF1D(const RealPDF1D &other);
 
 		//! Destructor
 		~RealPDF1D() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		RealPDF1D& operator=(const RealPDF1D& other);
+		RealPDF1D &operator=(const RealPDF1D &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const RealPDF1D& other) const;
-		bool operator!=(const RealPDF1D& other) const;
+		bool operator==(const RealPDF1D &other) const;
+		bool operator!=(const RealPDF1D &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const RealPDF1D& other) const;
+		bool equal(const RealPDF1D &other) const;
 
 
 	// ------------------------------------------------------------------

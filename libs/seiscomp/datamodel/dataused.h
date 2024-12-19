@@ -54,25 +54,25 @@ class SC_SYSTEM_CORE_API DataUsed : public Object {
 		DataUsed();
 
 		//! Copy constructor
-		DataUsed(const DataUsed& other);
+		DataUsed(const DataUsed &other);
 
 		//! Destructor
 		~DataUsed() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		DataUsed& operator=(const DataUsed& other);
+		DataUsed &operator=(const DataUsed &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataUsed& other) const;
-		bool operator!=(const DataUsed& other) const;
+		bool operator==(const DataUsed &other) const;
+		bool operator!=(const DataUsed &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataUsed& other) const;
+		bool equal(const DataUsed &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -96,12 +96,12 @@ class SC_SYSTEM_CORE_API DataUsed : public Object {
 		void setShortestPeriod(const OPT(double)& shortestPeriod);
 		double shortestPeriod() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		MomentTensor* momentTensor() const;
+		MomentTensor *momentTensor() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

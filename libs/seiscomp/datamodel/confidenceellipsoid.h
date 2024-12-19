@@ -101,25 +101,25 @@ class SC_SYSTEM_CORE_API ConfidenceEllipsoid : public Core::BaseObject {
 		ConfidenceEllipsoid();
 
 		//! Copy constructor
-		ConfidenceEllipsoid(const ConfidenceEllipsoid& other);
+		ConfidenceEllipsoid(const ConfidenceEllipsoid &other);
 
 		//! Destructor
 		~ConfidenceEllipsoid() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		ConfidenceEllipsoid& operator=(const ConfidenceEllipsoid& other);
+		ConfidenceEllipsoid &operator=(const ConfidenceEllipsoid &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ConfidenceEllipsoid& other) const;
-		bool operator!=(const ConfidenceEllipsoid& other) const;
+		bool operator==(const ConfidenceEllipsoid &other) const;
+		bool operator!=(const ConfidenceEllipsoid &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ConfidenceEllipsoid& other) const;
+		bool equal(const ConfidenceEllipsoid &other) const;
 
 
 	// ------------------------------------------------------------------

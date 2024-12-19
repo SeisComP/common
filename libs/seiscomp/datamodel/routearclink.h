@@ -84,25 +84,25 @@ class SC_SYSTEM_CORE_API RouteArclink : public Object {
 		RouteArclink();
 
 		//! Copy constructor
-		RouteArclink(const RouteArclink& other);
+		RouteArclink(const RouteArclink &other);
 
 		//! Destructor
 		~RouteArclink() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		RouteArclink& operator=(const RouteArclink& other);
+		RouteArclink &operator=(const RouteArclink &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const RouteArclink& other) const;
-		bool operator!=(const RouteArclink& other) const;
+		bool operator==(const RouteArclink &other) const;
+		bool operator!=(const RouteArclink &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const RouteArclink& other) const;
+		bool equal(const RouteArclink &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -131,17 +131,17 @@ class SC_SYSTEM_CORE_API RouteArclink : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const RouteArclinkIndex& index() const;
+		const RouteArclinkIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const RouteArclink* lhs) const;
+		bool equalIndex(const RouteArclink *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Route* route() const;
+		Route *route() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

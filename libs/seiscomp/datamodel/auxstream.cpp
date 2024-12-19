@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(AuxStream, Object, "AuxStream");
 
 
-AuxStream::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+AuxStream::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &AuxStream::setCode, &AuxStream::code));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &AuxStream::setStart, &AuxStream::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &AuxStream::setEnd, &AuxStream::end));
@@ -69,7 +69,7 @@ AuxStreamIndex::AuxStreamIndex(const std::string& code_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxStreamIndex::AuxStreamIndex(const AuxStreamIndex& idx) {
+AuxStreamIndex::AuxStreamIndex(const AuxStreamIndex &idx) {
 	code = idx.code;
 	start = idx.start;
 }
@@ -79,7 +79,7 @@ AuxStreamIndex::AuxStreamIndex(const AuxStreamIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStreamIndex::operator==(const AuxStreamIndex& idx) const {
+bool AuxStreamIndex::operator==(const AuxStreamIndex &idx) const {
 	return code == idx.code &&
 	       start == idx.start;
 }
@@ -89,7 +89,7 @@ bool AuxStreamIndex::operator==(const AuxStreamIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStreamIndex::operator!=(const AuxStreamIndex& idx) const {
+bool AuxStreamIndex::operator!=(const AuxStreamIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -106,7 +106,7 @@ AuxStream::AuxStream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxStream::AuxStream(const AuxStream& other)
+AuxStream::AuxStream(const AuxStream &other)
 : Object() {
 	*this = other;
 }
@@ -124,7 +124,7 @@ AuxStream::~AuxStream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::operator==(const AuxStream& rhs) const {
+bool AuxStream::operator==(const AuxStream &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _device != rhs._device ) return false;
@@ -142,7 +142,7 @@ bool AuxStream::operator==(const AuxStream& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::operator!=(const AuxStream& rhs) const {
+bool AuxStream::operator!=(const AuxStream &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -151,7 +151,7 @@ bool AuxStream::operator!=(const AuxStream& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::equal(const AuxStream& other) const {
+bool AuxStream::equal(const AuxStream &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -346,7 +346,7 @@ bool AuxStream::shared() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const AuxStreamIndex& AuxStream::index() const {
+const AuxStreamIndex &AuxStream::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -355,8 +355,11 @@ const AuxStreamIndex& AuxStream::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::equalIndex(const AuxStream* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool AuxStream::equalIndex(const AuxStream *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -365,7 +368,7 @@ bool AuxStream::equalIndex(const AuxStream* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* AuxStream::sensorLocation() const {
+SensorLocation *AuxStream::sensorLocation() const {
 	return static_cast<SensorLocation*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -374,7 +377,7 @@ SensorLocation* AuxStream::sensorLocation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxStream& AuxStream::operator=(const AuxStream& other) {
+AuxStream &AuxStream::operator=(const AuxStream &other) {
 	_index = other._index;
 	_end = other._end;
 	_device = other._device;
@@ -392,10 +395,11 @@ AuxStream& AuxStream::operator=(const AuxStream& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::assign(Object* other) {
-	AuxStream* otherAuxStream = AuxStream::Cast(other);
-	if ( other == nullptr )
+bool AuxStream::assign(Object *other) {
+	AuxStream *otherAuxStream = AuxStream::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherAuxStream;
 
@@ -407,11 +411,13 @@ bool AuxStream::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool AuxStream::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	SensorLocation* sensorLocation = SensorLocation::Cast(parent);
+	SensorLocation *sensorLocation = SensorLocation::Cast(parent);
 	if ( sensorLocation != nullptr )
 		return sensorLocation->add(this);
 
@@ -424,11 +430,13 @@ bool AuxStream::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxStream::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool AuxStream::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	SensorLocation* sensorLocation = SensorLocation::Cast(object);
+	SensorLocation *sensorLocation = SensorLocation::Cast(object);
 	if ( sensorLocation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -436,7 +444,7 @@ bool AuxStream::detachFrom(PublicObject* object) {
 			return sensorLocation->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			AuxStream* child = sensorLocation->auxStream(index());
+			AuxStream *child = sensorLocation->auxStream(index());
 			if ( child != nullptr )
 				return sensorLocation->remove(child);
 			else {
@@ -456,8 +464,9 @@ bool AuxStream::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxStream::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -467,8 +476,8 @@ bool AuxStream::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* AuxStream::clone() const {
-	AuxStream* clonee = new AuxStream();
+Object *AuxStream::clone() const {
+	AuxStream *clonee = new AuxStream();
 	*clonee = *this;
 	return clonee;
 }
@@ -478,7 +487,7 @@ Object* AuxStream::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AuxStream::accept(Visitor* visitor) {
+void AuxStream::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -487,7 +496,7 @@ void AuxStream::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AuxStream::serialize(Archive& ar) {
+void AuxStream::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

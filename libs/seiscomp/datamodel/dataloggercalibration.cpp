@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(DataloggerCalibration, Object, "DataloggerCalibration");
 
 
-DataloggerCalibration::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+DataloggerCalibration::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("serialNumber", "string", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setSerialNumber, &DataloggerCalibration::serialNumber));
 	addProperty(Core::simpleProperty("channel", "int", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setChannel, &DataloggerCalibration::channel));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &DataloggerCalibration::setStart, &DataloggerCalibration::start));
@@ -69,7 +69,7 @@ DataloggerCalibrationIndex::DataloggerCalibrationIndex(const std::string& serial
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerCalibrationIndex::DataloggerCalibrationIndex(const DataloggerCalibrationIndex& idx) {
+DataloggerCalibrationIndex::DataloggerCalibrationIndex(const DataloggerCalibrationIndex &idx) {
 	serialNumber = idx.serialNumber;
 	channel = idx.channel;
 	start = idx.start;
@@ -80,7 +80,7 @@ DataloggerCalibrationIndex::DataloggerCalibrationIndex(const DataloggerCalibrati
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibrationIndex::operator==(const DataloggerCalibrationIndex& idx) const {
+bool DataloggerCalibrationIndex::operator==(const DataloggerCalibrationIndex &idx) const {
 	return serialNumber == idx.serialNumber &&
 	       channel == idx.channel &&
 	       start == idx.start;
@@ -91,7 +91,7 @@ bool DataloggerCalibrationIndex::operator==(const DataloggerCalibrationIndex& id
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibrationIndex::operator!=(const DataloggerCalibrationIndex& idx) const {
+bool DataloggerCalibrationIndex::operator!=(const DataloggerCalibrationIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -108,7 +108,7 @@ DataloggerCalibration::DataloggerCalibration() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerCalibration::DataloggerCalibration(const DataloggerCalibration& other)
+DataloggerCalibration::DataloggerCalibration(const DataloggerCalibration &other)
 : Object() {
 	*this = other;
 }
@@ -126,7 +126,7 @@ DataloggerCalibration::~DataloggerCalibration() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::operator==(const DataloggerCalibration& rhs) const {
+bool DataloggerCalibration::operator==(const DataloggerCalibration &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _gain != rhs._gain ) return false;
@@ -140,7 +140,7 @@ bool DataloggerCalibration::operator==(const DataloggerCalibration& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::operator!=(const DataloggerCalibration& rhs) const {
+bool DataloggerCalibration::operator!=(const DataloggerCalibration &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -149,7 +149,7 @@ bool DataloggerCalibration::operator!=(const DataloggerCalibration& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::equal(const DataloggerCalibration& other) const {
+bool DataloggerCalibration::equal(const DataloggerCalibration &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -303,7 +303,7 @@ const Blob& DataloggerCalibration::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const DataloggerCalibrationIndex& DataloggerCalibration::index() const {
+const DataloggerCalibrationIndex &DataloggerCalibration::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -312,8 +312,11 @@ const DataloggerCalibrationIndex& DataloggerCalibration::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::equalIndex(const DataloggerCalibration* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool DataloggerCalibration::equalIndex(const DataloggerCalibration *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,7 +325,7 @@ bool DataloggerCalibration::equalIndex(const DataloggerCalibration* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* DataloggerCalibration::datalogger() const {
+Datalogger *DataloggerCalibration::datalogger() const {
 	return static_cast<Datalogger*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -331,7 +334,7 @@ Datalogger* DataloggerCalibration::datalogger() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerCalibration& DataloggerCalibration::operator=(const DataloggerCalibration& other) {
+DataloggerCalibration &DataloggerCalibration::operator=(const DataloggerCalibration &other) {
 	_index = other._index;
 	_end = other._end;
 	_gain = other._gain;
@@ -345,10 +348,11 @@ DataloggerCalibration& DataloggerCalibration::operator=(const DataloggerCalibrat
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::assign(Object* other) {
-	DataloggerCalibration* otherDataloggerCalibration = DataloggerCalibration::Cast(other);
-	if ( other == nullptr )
+bool DataloggerCalibration::assign(Object *other) {
+	DataloggerCalibration *otherDataloggerCalibration = DataloggerCalibration::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDataloggerCalibration;
 
@@ -360,11 +364,13 @@ bool DataloggerCalibration::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool DataloggerCalibration::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Datalogger* datalogger = Datalogger::Cast(parent);
+	Datalogger *datalogger = Datalogger::Cast(parent);
 	if ( datalogger != nullptr )
 		return datalogger->add(this);
 
@@ -377,11 +383,13 @@ bool DataloggerCalibration::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerCalibration::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool DataloggerCalibration::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Datalogger* datalogger = Datalogger::Cast(object);
+	Datalogger *datalogger = Datalogger::Cast(object);
 	if ( datalogger != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -389,7 +397,7 @@ bool DataloggerCalibration::detachFrom(PublicObject* object) {
 			return datalogger->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			DataloggerCalibration* child = datalogger->dataloggerCalibration(index());
+			DataloggerCalibration *child = datalogger->dataloggerCalibration(index());
 			if ( child != nullptr )
 				return datalogger->remove(child);
 			else {
@@ -409,8 +417,9 @@ bool DataloggerCalibration::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataloggerCalibration::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -420,8 +429,8 @@ bool DataloggerCalibration::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* DataloggerCalibration::clone() const {
-	DataloggerCalibration* clonee = new DataloggerCalibration();
+Object *DataloggerCalibration::clone() const {
+	DataloggerCalibration *clonee = new DataloggerCalibration();
 	*clonee = *this;
 	return clonee;
 }
@@ -431,7 +440,7 @@ Object* DataloggerCalibration::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataloggerCalibration::accept(Visitor* visitor) {
+void DataloggerCalibration::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -440,7 +449,7 @@ void DataloggerCalibration::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataloggerCalibration::serialize(Archive& ar) {
+void DataloggerCalibration::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

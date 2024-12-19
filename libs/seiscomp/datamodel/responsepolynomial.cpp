@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ResponsePolynomial, PublicObject, "ResponsePolynomial");
 
 
-ResponsePolynomial::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ResponsePolynomial::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponsePolynomial::setName, &ResponsePolynomial::name));
 	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setGain, &ResponsePolynomial::gain));
 	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponsePolynomial::setGainFrequency, &ResponsePolynomial::gainFrequency));
@@ -68,7 +68,7 @@ ResponsePolynomialIndex::ResponsePolynomialIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomialIndex::ResponsePolynomialIndex(const ResponsePolynomialIndex& idx) {
+ResponsePolynomialIndex::ResponsePolynomialIndex(const ResponsePolynomialIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -77,7 +77,7 @@ ResponsePolynomialIndex::ResponsePolynomialIndex(const ResponsePolynomialIndex& 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomialIndex::operator==(const ResponsePolynomialIndex& idx) const {
+bool ResponsePolynomialIndex::operator==(const ResponsePolynomialIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -86,7 +86,7 @@ bool ResponsePolynomialIndex::operator==(const ResponsePolynomialIndex& idx) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomialIndex::operator!=(const ResponsePolynomialIndex& idx) const {
+bool ResponsePolynomialIndex::operator!=(const ResponsePolynomialIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ ResponsePolynomial::ResponsePolynomial() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial::ResponsePolynomial(const ResponsePolynomial& other)
+ResponsePolynomial::ResponsePolynomial(const ResponsePolynomial &other)
 : PublicObject() {
 	*this = other;
 }
@@ -130,8 +130,8 @@ ResponsePolynomial::~ResponsePolynomial() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* ResponsePolynomial::Create() {
-	ResponsePolynomial* object = new ResponsePolynomial();
+ResponsePolynomial *ResponsePolynomial::Create() {
+	ResponsePolynomial *object = new ResponsePolynomial();
 	return static_cast<ResponsePolynomial*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ ResponsePolynomial* ResponsePolynomial::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* ResponsePolynomial::Create(const std::string& publicID) {
+ResponsePolynomial *ResponsePolynomial::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -157,7 +157,7 @@ ResponsePolynomial* ResponsePolynomial::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* ResponsePolynomial::Find(const std::string& publicID) {
+ResponsePolynomial *ResponsePolynomial::Find(const std::string& publicID) {
 	return ResponsePolynomial::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -166,7 +166,7 @@ ResponsePolynomial* ResponsePolynomial::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::operator==(const ResponsePolynomial& rhs) const {
+bool ResponsePolynomial::operator==(const ResponsePolynomial &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _gain != rhs._gain ) return false;
 	if ( _gainFrequency != rhs._gainFrequency ) return false;
@@ -186,7 +186,7 @@ bool ResponsePolynomial::operator==(const ResponsePolynomial& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::operator!=(const ResponsePolynomial& rhs) const {
+bool ResponsePolynomial::operator!=(const ResponsePolynomial &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +195,7 @@ bool ResponsePolynomial::operator!=(const ResponsePolynomial& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::equal(const ResponsePolynomial& other) const {
+bool ResponsePolynomial::equal(const ResponsePolynomial &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -440,7 +440,7 @@ const Blob& ResponsePolynomial::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ResponsePolynomialIndex& ResponsePolynomial::index() const {
+const ResponsePolynomialIndex &ResponsePolynomial::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -449,8 +449,11 @@ const ResponsePolynomialIndex& ResponsePolynomial::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::equalIndex(const ResponsePolynomial* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ResponsePolynomial::equalIndex(const ResponsePolynomial *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -459,7 +462,7 @@ bool ResponsePolynomial::equalIndex(const ResponsePolynomial* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* ResponsePolynomial::inventory() const {
+Inventory *ResponsePolynomial::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -468,7 +471,7 @@ Inventory* ResponsePolynomial::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial& ResponsePolynomial::operator=(const ResponsePolynomial& other) {
+ResponsePolynomial &ResponsePolynomial::operator=(const ResponsePolynomial &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_gain = other._gain;
@@ -489,10 +492,11 @@ ResponsePolynomial& ResponsePolynomial::operator=(const ResponsePolynomial& othe
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::assign(Object* other) {
-	ResponsePolynomial* otherResponsePolynomial = ResponsePolynomial::Cast(other);
-	if ( other == nullptr )
+bool ResponsePolynomial::assign(Object *other) {
+	ResponsePolynomial *otherResponsePolynomial = ResponsePolynomial::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherResponsePolynomial;
 
@@ -504,11 +508,13 @@ bool ResponsePolynomial::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ResponsePolynomial::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -521,11 +527,13 @@ bool ResponsePolynomial::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ResponsePolynomial::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -533,7 +541,7 @@ bool ResponsePolynomial::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ResponsePolynomial* child = inventory->findResponsePolynomial(publicID());
+			ResponsePolynomial *child = inventory->findResponsePolynomial(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -553,8 +561,9 @@ bool ResponsePolynomial::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePolynomial::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -564,8 +573,8 @@ bool ResponsePolynomial::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ResponsePolynomial::clone() const {
-	ResponsePolynomial* clonee = new ResponsePolynomial();
+Object *ResponsePolynomial::clone() const {
+	ResponsePolynomial *clonee = new ResponsePolynomial();
 	*clonee = *this;
 	return clonee;
 }
@@ -575,7 +584,7 @@ Object* ResponsePolynomial::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePolynomial::updateChild(Object* child) {
+bool ResponsePolynomial::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -584,7 +593,7 @@ bool ResponsePolynomial::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponsePolynomial::accept(Visitor* visitor) {
+void ResponsePolynomial::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -601,7 +610,7 @@ void ResponsePolynomial::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponsePolynomial::serialize(Archive& ar) {
+void ResponsePolynomial::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

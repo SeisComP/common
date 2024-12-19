@@ -50,11 +50,11 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 		Config();
 
 		//! Copy constructor
-		Config(const Config& other);
+		Config(const Config &other);
 
 		//! Destructor
 		~Config() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -62,16 +62,16 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Config& operator=(const Config& other);
+		Config &operator=(const Config &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Config& other) const;
-		bool operator!=(const Config& other) const;
+		bool operator==(const Config &other) const;
+		bool operator!=(const Config &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Config& other) const;
+		bool equal(const Config &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -84,8 +84,8 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(ParameterSet* obj);
-		bool add(ConfigModule* obj);
+		bool add(ParameterSet *obj);
+		bool add(ConfigModule *obj);
 
 		/**
 		 * Removes an object.
@@ -94,8 +94,8 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(ParameterSet* obj);
-		bool remove(ConfigModule* obj);
+		bool remove(ParameterSet *obj);
+		bool remove(ConfigModule *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -112,12 +112,12 @@ class SC_SYSTEM_CORE_API Config : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		ParameterSet* parameterSet(size_t i) const;
-		ConfigModule* configModule(size_t i) const;
+		ParameterSet *parameterSet(size_t i) const;
+		ConfigModule *configModule(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		ParameterSet* findParameterSet(const std::string& publicID) const;
-		ConfigModule* findConfigModule(const std::string& publicID) const;
+		ParameterSet *findParameterSet(const std::string& publicID) const;
+		ConfigModule *findConfigModule(const std::string& publicID) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

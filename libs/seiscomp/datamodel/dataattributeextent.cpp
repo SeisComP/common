@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(DataAttributeExtent, Object, "DataAttributeExtent");
 
 
-DataAttributeExtent::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+DataAttributeExtent::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setStart, &DataAttributeExtent::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &DataAttributeExtent::setEnd, &DataAttributeExtent::end));
 	addProperty(Core::simpleProperty("sampleRate", "double", false, false, true, false, false, false, nullptr, &DataAttributeExtent::setSampleRate, &DataAttributeExtent::sampleRate));
@@ -65,7 +65,7 @@ DataAttributeExtentIndex::DataAttributeExtentIndex(double sampleRate_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataAttributeExtentIndex::DataAttributeExtentIndex(const DataAttributeExtentIndex& idx) {
+DataAttributeExtentIndex::DataAttributeExtentIndex(const DataAttributeExtentIndex &idx) {
 	sampleRate = idx.sampleRate;
 	quality = idx.quality;
 }
@@ -75,7 +75,7 @@ DataAttributeExtentIndex::DataAttributeExtentIndex(const DataAttributeExtentInde
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtentIndex::operator==(const DataAttributeExtentIndex& idx) const {
+bool DataAttributeExtentIndex::operator==(const DataAttributeExtentIndex &idx) const {
 	return sampleRate == idx.sampleRate &&
 	       quality == idx.quality;
 }
@@ -85,7 +85,7 @@ bool DataAttributeExtentIndex::operator==(const DataAttributeExtentIndex& idx) c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtentIndex::operator!=(const DataAttributeExtentIndex& idx) const {
+bool DataAttributeExtentIndex::operator!=(const DataAttributeExtentIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ DataAttributeExtent::DataAttributeExtent() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataAttributeExtent::DataAttributeExtent(const DataAttributeExtent& other)
+DataAttributeExtent::DataAttributeExtent(const DataAttributeExtent &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ DataAttributeExtent::~DataAttributeExtent() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::operator==(const DataAttributeExtent& rhs) const {
+bool DataAttributeExtent::operator==(const DataAttributeExtent &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _start != rhs._start ) return false;
 	if ( _end != rhs._end ) return false;
@@ -135,7 +135,7 @@ bool DataAttributeExtent::operator==(const DataAttributeExtent& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::operator!=(const DataAttributeExtent& rhs) const {
+bool DataAttributeExtent::operator!=(const DataAttributeExtent &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ bool DataAttributeExtent::operator!=(const DataAttributeExtent& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::equal(const DataAttributeExtent& other) const {
+bool DataAttributeExtent::equal(const DataAttributeExtent &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -261,7 +261,7 @@ int DataAttributeExtent::segmentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const DataAttributeExtentIndex& DataAttributeExtent::index() const {
+const DataAttributeExtentIndex &DataAttributeExtent::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -270,8 +270,11 @@ const DataAttributeExtentIndex& DataAttributeExtent::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::equalIndex(const DataAttributeExtent* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool DataAttributeExtent::equalIndex(const DataAttributeExtent *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -280,7 +283,7 @@ bool DataAttributeExtent::equalIndex(const DataAttributeExtent* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataExtent* DataAttributeExtent::dataExtent() const {
+DataExtent *DataAttributeExtent::dataExtent() const {
 	return static_cast<DataExtent*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -289,7 +292,7 @@ DataExtent* DataAttributeExtent::dataExtent() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataAttributeExtent& DataAttributeExtent::operator=(const DataAttributeExtent& other) {
+DataAttributeExtent &DataAttributeExtent::operator=(const DataAttributeExtent &other) {
 	_index = other._index;
 	_start = other._start;
 	_end = other._end;
@@ -303,10 +306,11 @@ DataAttributeExtent& DataAttributeExtent::operator=(const DataAttributeExtent& o
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::assign(Object* other) {
-	DataAttributeExtent* otherDataAttributeExtent = DataAttributeExtent::Cast(other);
-	if ( other == nullptr )
+bool DataAttributeExtent::assign(Object *other) {
+	DataAttributeExtent *otherDataAttributeExtent = DataAttributeExtent::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDataAttributeExtent;
 
@@ -318,11 +322,13 @@ bool DataAttributeExtent::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool DataAttributeExtent::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	DataExtent* dataExtent = DataExtent::Cast(parent);
+	DataExtent *dataExtent = DataExtent::Cast(parent);
 	if ( dataExtent != nullptr )
 		return dataExtent->add(this);
 
@@ -335,11 +341,13 @@ bool DataAttributeExtent::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAttributeExtent::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool DataAttributeExtent::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	DataExtent* dataExtent = DataExtent::Cast(object);
+	DataExtent *dataExtent = DataExtent::Cast(object);
 	if ( dataExtent != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -347,7 +355,7 @@ bool DataAttributeExtent::detachFrom(PublicObject* object) {
 			return dataExtent->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			DataAttributeExtent* child = dataExtent->dataAttributeExtent(index());
+			DataAttributeExtent *child = dataExtent->dataAttributeExtent(index());
 			if ( child != nullptr )
 				return dataExtent->remove(child);
 			else {
@@ -367,8 +375,9 @@ bool DataAttributeExtent::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAttributeExtent::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -378,8 +387,8 @@ bool DataAttributeExtent::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* DataAttributeExtent::clone() const {
-	DataAttributeExtent* clonee = new DataAttributeExtent();
+Object *DataAttributeExtent::clone() const {
+	DataAttributeExtent *clonee = new DataAttributeExtent();
 	*clonee = *this;
 	return clonee;
 }
@@ -389,7 +398,7 @@ Object* DataAttributeExtent::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataAttributeExtent::accept(Visitor* visitor) {
+void DataAttributeExtent::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -398,7 +407,7 @@ void DataAttributeExtent::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataAttributeExtent::serialize(Archive& ar) {
+void DataAttributeExtent::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

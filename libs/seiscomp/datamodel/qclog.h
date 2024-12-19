@@ -83,28 +83,28 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 
 	public:
 		//! Copy constructor
-		QCLog(const QCLog& other);
+		QCLog(const QCLog &other);
 
 		//! Constructor with publicID
 		QCLog(const std::string& publicID);
 
 		//! Destructor
 		~QCLog() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static QCLog* Create();
-		static QCLog* Create(const std::string& publicID);
+		static QCLog *Create();
+		static QCLog *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static QCLog* Find(const std::string& publicID);
+		static QCLog *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -113,14 +113,14 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		QCLog& operator=(const QCLog& other);
+		QCLog &operator=(const QCLog &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const QCLog& other) const;
-		bool operator!=(const QCLog& other) const;
+		bool operator==(const QCLog &other) const;
+		bool operator!=(const QCLog &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const QCLog& other) const;
+		bool equal(const QCLog &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -152,17 +152,17 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const QCLogIndex& index() const;
+		const QCLogIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const QCLog* lhs) const;
+		bool equalIndex(const QCLog *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		QualityControl* qualityControl() const;
+		QualityControl *qualityControl() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

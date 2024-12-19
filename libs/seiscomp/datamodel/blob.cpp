@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(Blob, "Blob");
 
 
-Blob::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Blob::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("content", "string", false, false, false, false, false, false, nullptr, &Blob::setContent, &Blob::content));
 }
 
@@ -48,7 +48,7 @@ Blob::Blob() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Blob::Blob(const Blob& other)
+Blob::Blob(const Blob &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -66,7 +66,7 @@ Blob::~Blob() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Blob::operator==(const Blob& rhs) const {
+bool Blob::operator==(const Blob &rhs) const {
 	if ( !(_content == rhs._content) )
 		return false;
 	return true;
@@ -77,7 +77,7 @@ bool Blob::operator==(const Blob& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Blob::operator!=(const Blob& rhs) const {
+bool Blob::operator!=(const Blob &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -86,7 +86,7 @@ bool Blob::operator!=(const Blob& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Blob::equal(const Blob& other) const {
+bool Blob::equal(const Blob &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ const std::string& Blob::content() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Blob& Blob::operator=(const Blob& other) {
+Blob &Blob::operator=(const Blob &other) {
 	_content = other._content;
 	return *this;
 }
@@ -123,7 +123,7 @@ Blob& Blob::operator=(const Blob& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Blob::serialize(Archive& ar) {
+void Blob::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

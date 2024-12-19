@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(NodalPlane, "NodalPlane");
 
 
-NodalPlane::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+NodalPlane::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<RealQuantity>("strike", "RealQuantity", false, false, false, &NodalPlane::setStrike, &NodalPlane::strike));
 	addProperty(objectProperty<RealQuantity>("dip", "RealQuantity", false, false, false, &NodalPlane::setDip, &NodalPlane::dip));
 	addProperty(objectProperty<RealQuantity>("rake", "RealQuantity", false, false, false, &NodalPlane::setRake, &NodalPlane::rake));
@@ -50,7 +50,7 @@ NodalPlane::NodalPlane() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-NodalPlane::NodalPlane(const NodalPlane& other)
+NodalPlane::NodalPlane(const NodalPlane &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -68,7 +68,7 @@ NodalPlane::~NodalPlane() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlane::operator==(const NodalPlane& rhs) const {
+bool NodalPlane::operator==(const NodalPlane &rhs) const {
 	if ( !(_strike == rhs._strike) )
 		return false;
 	if ( !(_dip == rhs._dip) )
@@ -83,7 +83,7 @@ bool NodalPlane::operator==(const NodalPlane& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlane::operator!=(const NodalPlane& rhs) const {
+bool NodalPlane::operator!=(const NodalPlane &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ bool NodalPlane::operator!=(const NodalPlane& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlane::equal(const NodalPlane& other) const {
+bool NodalPlane::equal(const NodalPlane &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -182,7 +182,7 @@ const RealQuantity& NodalPlane::rake() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-NodalPlane& NodalPlane::operator=(const NodalPlane& other) {
+NodalPlane &NodalPlane::operator=(const NodalPlane &other) {
 	_strike = other._strike;
 	_dip = other._dip;
 	_rake = other._rake;
@@ -194,7 +194,7 @@ NodalPlane& NodalPlane::operator=(const NodalPlane& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void NodalPlane::serialize(Archive& ar) {
+void NodalPlane::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

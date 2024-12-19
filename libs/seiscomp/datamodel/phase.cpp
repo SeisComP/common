@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(Phase, "Phase");
 
 
-Phase::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Phase::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, false, false, false, false, nullptr, &Phase::setCode, &Phase::code));
 }
 
@@ -48,7 +48,7 @@ Phase::Phase() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Phase::Phase(const Phase& other)
+Phase::Phase(const Phase &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -93,7 +93,7 @@ Phase::operator const std::string&() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Phase::operator==(const Phase& rhs) const {
+bool Phase::operator==(const Phase &rhs) const {
 	if ( !(_code == rhs._code) )
 		return false;
 	return true;
@@ -104,7 +104,7 @@ bool Phase::operator==(const Phase& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Phase::operator!=(const Phase& rhs) const {
+bool Phase::operator!=(const Phase &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ bool Phase::operator!=(const Phase& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Phase::equal(const Phase& other) const {
+bool Phase::equal(const Phase &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ const std::string& Phase::code() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Phase& Phase::operator=(const Phase& other) {
+Phase &Phase::operator=(const Phase &other) {
 	_code = other._code;
 	return *this;
 }
@@ -150,7 +150,7 @@ Phase& Phase::operator=(const Phase& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Phase::serialize(Archive& ar) {
+void Phase::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

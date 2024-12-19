@@ -49,11 +49,11 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 		Journaling();
 
 		//! Copy constructor
-		Journaling(const Journaling& other);
+		Journaling(const Journaling &other);
 
 		//! Destructor
 		~Journaling() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -61,16 +61,16 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Journaling& operator=(const Journaling& other);
+		Journaling &operator=(const Journaling &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Journaling& other) const;
-		bool operator!=(const Journaling& other) const;
+		bool operator==(const Journaling &other) const;
+		bool operator!=(const Journaling &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Journaling& other) const;
+		bool equal(const Journaling &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -83,7 +83,7 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(JournalEntry* obj);
+		bool add(JournalEntry *obj);
 
 		/**
 		 * Removes an object.
@@ -92,7 +92,7 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(JournalEntry* obj);
+		bool remove(JournalEntry *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -107,10 +107,10 @@ class SC_SYSTEM_CORE_API Journaling : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		JournalEntry* journalEntry(size_t i) const;
+		JournalEntry *journalEntry(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		JournalEntry* findJournalEntry(JournalEntry* journalEntry) const;
+		JournalEntry *findJournalEntry(JournalEntry *journalEntry) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -78,28 +78,28 @@ class SC_SYSTEM_CORE_API FocalMechanismReference : public Object {
 		FocalMechanismReference();
 
 		//! Copy constructor
-		FocalMechanismReference(const FocalMechanismReference& other);
+		FocalMechanismReference(const FocalMechanismReference &other);
 
 		//! Custom constructor
 		FocalMechanismReference(const std::string& focalMechanismID);
 
 		//! Destructor
 		~FocalMechanismReference() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		FocalMechanismReference& operator=(const FocalMechanismReference& other);
+		FocalMechanismReference &operator=(const FocalMechanismReference &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const FocalMechanismReference& other) const;
-		bool operator!=(const FocalMechanismReference& other) const;
+		bool operator==(const FocalMechanismReference &other) const;
+		bool operator!=(const FocalMechanismReference &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const FocalMechanismReference& other) const;
+		bool equal(const FocalMechanismReference &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -115,17 +115,17 @@ class SC_SYSTEM_CORE_API FocalMechanismReference : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const FocalMechanismReferenceIndex& index() const;
+		const FocalMechanismReferenceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const FocalMechanismReference* lhs) const;
+		bool equalIndex(const FocalMechanismReference *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Event* event() const;
+		Event *event() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

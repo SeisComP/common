@@ -100,25 +100,25 @@ class SC_SYSTEM_CORE_API Arrival : public Object {
 		Arrival();
 
 		//! Copy constructor
-		Arrival(const Arrival& other);
+		Arrival(const Arrival &other);
 
 		//! Destructor
 		~Arrival() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Arrival& operator=(const Arrival& other);
+		Arrival &operator=(const Arrival &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Arrival& other) const;
-		bool operator!=(const Arrival& other) const;
+		bool operator==(const Arrival &other) const;
+		bool operator!=(const Arrival &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Arrival& other) const;
+		bool equal(const Arrival &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -221,17 +221,17 @@ class SC_SYSTEM_CORE_API Arrival : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ArrivalIndex& index() const;
+		const ArrivalIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Arrival* lhs) const;
+		bool equalIndex(const Arrival *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Origin* origin() const;
+		Origin *origin() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

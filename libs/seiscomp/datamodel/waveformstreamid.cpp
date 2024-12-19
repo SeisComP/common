@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(WaveformStreamID, "WaveformStreamID");
 
 
-WaveformStreamID::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+WaveformStreamID::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("networkCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setNetworkCode, &WaveformStreamID::networkCode));
 	addProperty(Core::simpleProperty("stationCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setStationCode, &WaveformStreamID::stationCode));
 	addProperty(Core::simpleProperty("locationCode", "string", false, false, false, false, false, false, nullptr, &WaveformStreamID::setLocationCode, &WaveformStreamID::locationCode));
@@ -52,7 +52,7 @@ WaveformStreamID::WaveformStreamID() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformStreamID::WaveformStreamID(const WaveformStreamID& other)
+WaveformStreamID::WaveformStreamID(const WaveformStreamID &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -114,7 +114,7 @@ WaveformStreamID::operator const std::string&() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformStreamID::operator==(const WaveformStreamID& rhs) const {
+bool WaveformStreamID::operator==(const WaveformStreamID &rhs) const {
 	if ( !(_networkCode == rhs._networkCode) )
 		return false;
 	if ( !(_stationCode == rhs._stationCode) )
@@ -133,7 +133,7 @@ bool WaveformStreamID::operator==(const WaveformStreamID& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformStreamID::operator!=(const WaveformStreamID& rhs) const {
+bool WaveformStreamID::operator!=(const WaveformStreamID &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -142,7 +142,7 @@ bool WaveformStreamID::operator!=(const WaveformStreamID& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool WaveformStreamID::equal(const WaveformStreamID& other) const {
+bool WaveformStreamID::equal(const WaveformStreamID &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -241,7 +241,7 @@ const std::string& WaveformStreamID::resourceURI() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformStreamID& WaveformStreamID::operator=(const WaveformStreamID& other) {
+WaveformStreamID &WaveformStreamID::operator=(const WaveformStreamID &other) {
 	_networkCode = other._networkCode;
 	_stationCode = other._stationCode;
 	_locationCode = other._locationCode;
@@ -255,7 +255,7 @@ WaveformStreamID& WaveformStreamID::operator=(const WaveformStreamID& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WaveformStreamID::serialize(Archive& ar) {
+void WaveformStreamID::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

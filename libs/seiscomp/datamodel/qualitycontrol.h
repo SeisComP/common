@@ -54,11 +54,11 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		QualityControl();
 
 		//! Copy constructor
-		QualityControl(const QualityControl& other);
+		QualityControl(const QualityControl &other);
 
 		//! Destructor
 		~QualityControl() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -66,16 +66,16 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		QualityControl& operator=(const QualityControl& other);
+		QualityControl &operator=(const QualityControl &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const QualityControl& other) const;
-		bool operator!=(const QualityControl& other) const;
+		bool operator==(const QualityControl &other) const;
+		bool operator!=(const QualityControl &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const QualityControl& other) const;
+		bool equal(const QualityControl &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -88,9 +88,9 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(QCLog* obj);
-		bool add(WaveformQuality* obj);
-		bool add(Outage* obj);
+		bool add(QCLog *obj);
+		bool add(WaveformQuality *obj);
+		bool add(Outage *obj);
 
 		/**
 		 * Removes an object.
@@ -99,9 +99,9 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(QCLog* obj);
-		bool remove(WaveformQuality* obj);
-		bool remove(Outage* obj);
+		bool remove(QCLog *obj);
+		bool remove(WaveformQuality *obj);
+		bool remove(Outage *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -110,11 +110,11 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeQCLog(size_t i);
-		bool removeQCLog(const QCLogIndex& i);
+		bool removeQCLog(const QCLogIndex &i);
 		bool removeWaveformQuality(size_t i);
-		bool removeWaveformQuality(const WaveformQualityIndex& i);
+		bool removeWaveformQuality(const WaveformQualityIndex &i);
 		bool removeOutage(size_t i);
-		bool removeOutage(const OutageIndex& i);
+		bool removeOutage(const OutageIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t qCLogCount() const;
@@ -123,17 +123,17 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		QCLog* qCLog(size_t i) const;
-		QCLog* qCLog(const QCLogIndex& i) const;
+		QCLog *qCLog(size_t i) const;
+		QCLog *qCLog(const QCLogIndex &i) const;
 
-		WaveformQuality* waveformQuality(size_t i) const;
-		WaveformQuality* waveformQuality(const WaveformQualityIndex& i) const;
+		WaveformQuality *waveformQuality(size_t i) const;
+		WaveformQuality *waveformQuality(const WaveformQualityIndex &i) const;
 
-		Outage* outage(size_t i) const;
-		Outage* outage(const OutageIndex& i) const;
+		Outage *outage(size_t i) const;
+		Outage *outage(const OutageIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		QCLog* findQCLog(const std::string& publicID) const;
+		QCLog *findQCLog(const std::string& publicID) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

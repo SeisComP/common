@@ -91,28 +91,28 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ArclinkRequest(const ArclinkRequest& other);
+		ArclinkRequest(const ArclinkRequest &other);
 
 		//! Constructor with publicID
 		ArclinkRequest(const std::string& publicID);
 
 		//! Destructor
 		~ArclinkRequest() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ArclinkRequest* Create();
-		static ArclinkRequest* Create(const std::string& publicID);
+		static ArclinkRequest *Create();
+		static ArclinkRequest *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ArclinkRequest* Find(const std::string& publicID);
+		static ArclinkRequest *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -121,14 +121,14 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ArclinkRequest& operator=(const ArclinkRequest& other);
+		ArclinkRequest &operator=(const ArclinkRequest &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ArclinkRequest& other) const;
-		bool operator!=(const ArclinkRequest& other) const;
+		bool operator==(const ArclinkRequest &other) const;
+		bool operator!=(const ArclinkRequest &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ArclinkRequest& other) const;
+		bool equal(const ArclinkRequest &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -178,12 +178,12 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ArclinkRequestIndex& index() const;
+		const ArclinkRequestIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ArclinkRequest* lhs) const;
+		bool equalIndex(const ArclinkRequest *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -196,8 +196,8 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(ArclinkStatusLine* obj);
-		bool add(ArclinkRequestLine* obj);
+		bool add(ArclinkStatusLine *obj);
+		bool add(ArclinkRequestLine *obj);
 
 		/**
 		 * Removes an object.
@@ -206,8 +206,8 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(ArclinkStatusLine* obj);
-		bool remove(ArclinkRequestLine* obj);
+		bool remove(ArclinkStatusLine *obj);
+		bool remove(ArclinkRequestLine *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -216,9 +216,9 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeArclinkStatusLine(size_t i);
-		bool removeArclinkStatusLine(const ArclinkStatusLineIndex& i);
+		bool removeArclinkStatusLine(const ArclinkStatusLineIndex &i);
 		bool removeArclinkRequestLine(size_t i);
-		bool removeArclinkRequestLine(const ArclinkRequestLineIndex& i);
+		bool removeArclinkRequestLine(const ArclinkRequestLineIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t arclinkStatusLineCount() const;
@@ -226,15 +226,15 @@ class SC_SYSTEM_CORE_API ArclinkRequest : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		ArclinkStatusLine* arclinkStatusLine(size_t i) const;
-		ArclinkStatusLine* arclinkStatusLine(const ArclinkStatusLineIndex& i) const;
+		ArclinkStatusLine *arclinkStatusLine(size_t i) const;
+		ArclinkStatusLine *arclinkStatusLine(const ArclinkStatusLineIndex &i) const;
 
-		ArclinkRequestLine* arclinkRequestLine(size_t i) const;
-		ArclinkRequestLine* arclinkRequestLine(const ArclinkRequestLineIndex& i) const;
+		ArclinkRequestLine *arclinkRequestLine(size_t i) const;
+		ArclinkRequestLine *arclinkRequestLine(const ArclinkRequestLineIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		ArclinkLog* arclinkLog() const;
+		ArclinkLog *arclinkLog() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

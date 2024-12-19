@@ -45,7 +45,7 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationStatus> metaEvaluationStatus;
 }
 
 
-Origin::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Origin::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<TimeQuantity>("time", "TimeQuantity", false, false, false, &Origin::setTime, &Origin::time));
 	addProperty(objectProperty<RealQuantity>("latitude", "RealQuantity", false, false, false, &Origin::setLatitude, &Origin::latitude));
 	addProperty(objectProperty<RealQuantity>("longitude", "RealQuantity", false, false, false, &Origin::setLongitude, &Origin::longitude));
@@ -81,7 +81,7 @@ Origin::Origin() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin::Origin(const Origin& other)
+Origin::Origin(const Origin &other)
 : PublicObject() {
 	*this = other;
 }
@@ -123,8 +123,8 @@ Origin::~Origin() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* Origin::Create() {
-	Origin* object = new Origin();
+Origin *Origin::Create() {
+	Origin *object = new Origin();
 	return static_cast<Origin*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -133,7 +133,7 @@ Origin* Origin::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* Origin::Create(const std::string& publicID) {
+Origin *Origin::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -150,7 +150,7 @@ Origin* Origin::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* Origin::Find(const std::string& publicID) {
+Origin *Origin::Find(const std::string& publicID) {
 	return Origin::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -159,7 +159,7 @@ Origin* Origin::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::operator==(const Origin& rhs) const {
+bool Origin::operator==(const Origin &rhs) const {
 	if ( _time != rhs._time ) return false;
 	if ( _latitude != rhs._latitude ) return false;
 	if ( _longitude != rhs._longitude ) return false;
@@ -184,7 +184,7 @@ bool Origin::operator==(const Origin& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::operator!=(const Origin& rhs) const {
+bool Origin::operator!=(const Origin &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -193,7 +193,7 @@ bool Origin::operator!=(const Origin& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::equal(const Origin& other) const {
+bool Origin::equal(const Origin &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -581,7 +581,7 @@ const CreationInfo& Origin::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters* Origin::eventParameters() const {
+EventParameters *Origin::eventParameters() const {
 	return static_cast<EventParameters*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -590,7 +590,7 @@ EventParameters* Origin::eventParameters() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin& Origin::operator=(const Origin& other) {
+Origin &Origin::operator=(const Origin &other) {
 	PublicObject::operator=(other);
 	_time = other._time;
 	_latitude = other._latitude;
@@ -616,10 +616,11 @@ Origin& Origin::operator=(const Origin& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::assign(Object* other) {
-	Origin* otherOrigin = Origin::Cast(other);
-	if ( other == nullptr )
+bool Origin::assign(Object *other) {
+	Origin *otherOrigin = Origin::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherOrigin;
 
@@ -631,11 +632,13 @@ bool Origin::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Origin::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(parent);
+	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
@@ -648,11 +651,13 @@ bool Origin::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Origin::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(object);
+	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -660,7 +665,7 @@ bool Origin::detachFrom(PublicObject* object) {
 			return eventParameters->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Origin* child = eventParameters->findOrigin(publicID());
+			Origin *child = eventParameters->findOrigin(publicID());
 			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
@@ -680,8 +685,9 @@ bool Origin::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -691,8 +697,8 @@ bool Origin::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Origin::clone() const {
-	Origin* clonee = new Origin();
+Object *Origin::clone() const {
+	Origin *clonee = new Origin();
 	*clonee = *this;
 	return clonee;
 }
@@ -702,10 +708,10 @@ Object* Origin::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Origin::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -716,9 +722,9 @@ bool Origin::updateChild(Object* child) {
 
 	// Do not know how to fetch child of type CompositeTime without an index
 
-	Arrival* arrivalChild = Arrival::Cast(child);
+	Arrival *arrivalChild = Arrival::Cast(child);
 	if ( arrivalChild != nullptr ) {
-		Arrival* arrivalElement = arrival(arrivalChild->index());
+		Arrival *arrivalElement = arrival(arrivalChild->index());
 		if ( arrivalElement != nullptr ) {
 			*arrivalElement = *arrivalChild;
 			arrivalElement->update();
@@ -727,9 +733,9 @@ bool Origin::updateChild(Object* child) {
 		return false;
 	}
 
-	StationMagnitude* stationMagnitudeChild = StationMagnitude::Cast(child);
+	StationMagnitude *stationMagnitudeChild = StationMagnitude::Cast(child);
 	if ( stationMagnitudeChild != nullptr ) {
-		StationMagnitude* stationMagnitudeElement
+		StationMagnitude *stationMagnitudeElement
 			= StationMagnitude::Cast(PublicObject::Find(stationMagnitudeChild->publicID()));
 		if ( stationMagnitudeElement && stationMagnitudeElement->parent() == this ) {
 			*stationMagnitudeElement = *stationMagnitudeChild;
@@ -739,9 +745,9 @@ bool Origin::updateChild(Object* child) {
 		return false;
 	}
 
-	Magnitude* magnitudeChild = Magnitude::Cast(child);
+	Magnitude *magnitudeChild = Magnitude::Cast(child);
 	if ( magnitudeChild != nullptr ) {
-		Magnitude* magnitudeElement
+		Magnitude *magnitudeElement
 			= Magnitude::Cast(PublicObject::Find(magnitudeChild->publicID()));
 		if ( magnitudeElement && magnitudeElement->parent() == this ) {
 			*magnitudeElement = *magnitudeChild;
@@ -759,7 +765,7 @@ bool Origin::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Origin::accept(Visitor* visitor) {
+void Origin::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -795,7 +801,7 @@ size_t Origin::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Origin::comment(size_t i) const {
+Comment *Origin::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -804,10 +810,12 @@ Comment* Origin::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Origin::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Origin::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -817,9 +825,10 @@ Comment* Origin::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Origin::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -856,8 +865,8 @@ bool Origin::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Origin::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -915,9 +924,12 @@ bool Origin::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Origin::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -935,7 +947,7 @@ size_t Origin::compositeTimeCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CompositeTime* Origin::compositeTime(size_t i) const {
+CompositeTime *Origin::compositeTime(size_t i) const {
 	return _compositeTimes[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -944,11 +956,11 @@ CompositeTime* Origin::compositeTime(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CompositeTime* Origin::findCompositeTime(CompositeTime* compositeTime) const {
-	std::vector<CompositeTimePtr>::const_iterator it;
-	for ( it = _compositeTimes.begin(); it != _compositeTimes.end(); ++it ) {
-		if ( *compositeTime == **it )
-			return (*it).get();
+CompositeTime *Origin::findCompositeTime(CompositeTime *compositeTime) const {
+	for ( const auto &elem : _compositeTimes ) {
+		if ( *compositeTime == *elem ) {
+			return elem.get();
+		}
 	}
 
 	return nullptr;
@@ -959,9 +971,10 @@ CompositeTime* Origin::findCompositeTime(CompositeTime* compositeTime) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::add(CompositeTime* compositeTime) {
-	if ( compositeTime == nullptr )
+bool Origin::add(CompositeTime *compositeTime) {
+	if ( !compositeTime ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( compositeTime->parent() != nullptr ) {
@@ -990,8 +1003,8 @@ bool Origin::add(CompositeTime* compositeTime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::remove(CompositeTime* compositeTime) {
-	if ( compositeTime == nullptr )
+bool Origin::remove(CompositeTime *compositeTime) {
+	if ( !compositeTime )
 		return false;
 
 	if ( compositeTime->parent() != this ) {
@@ -1058,7 +1071,7 @@ size_t Origin::arrivalCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Arrival* Origin::arrival(size_t i) const {
+Arrival *Origin::arrival(size_t i) const {
 	return _arrivals[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1067,10 +1080,12 @@ Arrival* Origin::arrival(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Arrival* Origin::arrival(const ArrivalIndex& i) const {
-	for ( std::vector<ArrivalPtr>::const_iterator it = _arrivals.begin(); it != _arrivals.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Arrival *Origin::arrival(const ArrivalIndex &i) const {
+	for ( const auto &elem : _arrivals ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1080,9 +1095,10 @@ Arrival* Origin::arrival(const ArrivalIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::add(Arrival* arrival) {
-	if ( arrival == nullptr )
+bool Origin::add(Arrival *arrival) {
+	if ( !arrival ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( arrival->parent() != nullptr ) {
@@ -1119,8 +1135,8 @@ bool Origin::add(Arrival* arrival) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::remove(Arrival* arrival) {
-	if ( arrival == nullptr )
+bool Origin::remove(Arrival *arrival) {
+	if ( !arrival )
 		return false;
 
 	if ( arrival->parent() != this ) {
@@ -1178,9 +1194,12 @@ bool Origin::removeArrival(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::removeArrival(const ArrivalIndex& i) {
-	Arrival* object = arrival(i);
-	if ( object == nullptr ) return false;
+bool Origin::removeArrival(const ArrivalIndex &i) {
+	Arrival *object = arrival(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1198,7 +1217,7 @@ size_t Origin::stationMagnitudeCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* Origin::stationMagnitude(size_t i) const {
+StationMagnitude *Origin::stationMagnitude(size_t i) const {
 	return _stationMagnitudes[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1207,10 +1226,12 @@ StationMagnitude* Origin::stationMagnitude(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* Origin::findStationMagnitude(const std::string& publicID) const {
-	for ( std::vector<StationMagnitudePtr>::const_iterator it = _stationMagnitudes.begin(); it != _stationMagnitudes.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+StationMagnitude *Origin::findStationMagnitude(const std::string& publicID) const {
+	for ( const auto &elem : _stationMagnitudes ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1220,9 +1241,10 @@ StationMagnitude* Origin::findStationMagnitude(const std::string& publicID) cons
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::add(StationMagnitude* stationMagnitude) {
-	if ( stationMagnitude == nullptr )
+bool Origin::add(StationMagnitude *stationMagnitude) {
+	if ( !stationMagnitude ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( stationMagnitude->parent() != nullptr ) {
@@ -1231,17 +1253,20 @@ bool Origin::add(StationMagnitude* stationMagnitude) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		StationMagnitude* stationMagnitudeCached = StationMagnitude::Find(stationMagnitude->publicID());
+		StationMagnitude *stationMagnitudeCached = StationMagnitude::Find(stationMagnitude->publicID());
 		if ( stationMagnitudeCached ) {
 			if ( stationMagnitudeCached->parent() ) {
-				if ( stationMagnitudeCached->parent() == this )
+				if ( stationMagnitudeCached->parent() == this ) {
 					SEISCOMP_ERROR("Origin::add(StationMagnitude*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Origin::add(StationMagnitude*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				stationMagnitude = stationMagnitudeCached;
+			}
 		}
 	}
 
@@ -1266,8 +1291,8 @@ bool Origin::add(StationMagnitude* stationMagnitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::remove(StationMagnitude* stationMagnitude) {
-	if ( stationMagnitude == nullptr )
+bool Origin::remove(StationMagnitude *stationMagnitude) {
+	if ( !stationMagnitude )
 		return false;
 
 	if ( stationMagnitude->parent() != this ) {
@@ -1334,7 +1359,7 @@ size_t Origin::magnitudeCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Magnitude* Origin::magnitude(size_t i) const {
+Magnitude *Origin::magnitude(size_t i) const {
 	return _magnitudes[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1343,10 +1368,12 @@ Magnitude* Origin::magnitude(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Magnitude* Origin::findMagnitude(const std::string& publicID) const {
-	for ( std::vector<MagnitudePtr>::const_iterator it = _magnitudes.begin(); it != _magnitudes.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Magnitude *Origin::findMagnitude(const std::string& publicID) const {
+	for ( const auto &elem : _magnitudes ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1356,9 +1383,10 @@ Magnitude* Origin::findMagnitude(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::add(Magnitude* magnitude) {
-	if ( magnitude == nullptr )
+bool Origin::add(Magnitude *magnitude) {
+	if ( !magnitude ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( magnitude->parent() != nullptr ) {
@@ -1367,17 +1395,20 @@ bool Origin::add(Magnitude* magnitude) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Magnitude* magnitudeCached = Magnitude::Find(magnitude->publicID());
+		Magnitude *magnitudeCached = Magnitude::Find(magnitude->publicID());
 		if ( magnitudeCached ) {
 			if ( magnitudeCached->parent() ) {
-				if ( magnitudeCached->parent() == this )
+				if ( magnitudeCached->parent() == this ) {
 					SEISCOMP_ERROR("Origin::add(Magnitude*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Origin::add(Magnitude*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				magnitude = magnitudeCached;
+			}
 		}
 	}
 
@@ -1402,8 +1433,8 @@ bool Origin::add(Magnitude* magnitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Origin::remove(Magnitude* magnitude) {
-	if ( magnitude == nullptr )
+bool Origin::remove(Magnitude *magnitude) {
+	if ( !magnitude )
 		return false;
 
 	if ( magnitude->parent() != this ) {
@@ -1461,7 +1492,7 @@ bool Origin::removeMagnitude(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Origin::serialize(Archive& ar) {
+void Origin::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

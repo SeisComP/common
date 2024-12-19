@@ -81,7 +81,7 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 		MomentTensorComponentContribution();
 
 		//! Copy constructor
-		MomentTensorComponentContribution(const MomentTensorComponentContribution& other);
+		MomentTensorComponentContribution(const MomentTensorComponentContribution &other);
 
 		//! Custom constructor
 		MomentTensorComponentContribution(const std::string& phaseCode);
@@ -96,21 +96,21 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 
 		//! Destructor
 		~MomentTensorComponentContribution() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		MomentTensorComponentContribution& operator=(const MomentTensorComponentContribution& other);
+		MomentTensorComponentContribution &operator=(const MomentTensorComponentContribution &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const MomentTensorComponentContribution& other) const;
-		bool operator!=(const MomentTensorComponentContribution& other) const;
+		bool operator==(const MomentTensorComponentContribution &other) const;
+		bool operator!=(const MomentTensorComponentContribution &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const MomentTensorComponentContribution& other) const;
+		bool equal(const MomentTensorComponentContribution &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -133,8 +133,8 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 		double timeShift() const;
 
 		void setDataTimeWindow(const std::vector< double >&);
-		const std::vector< double >& dataTimeWindow() const;
-		std::vector< double >& dataTimeWindow();
+		const std::vector< double > &dataTimeWindow() const;
+		std::vector< double > &dataTimeWindow();
 
 		void setMisfit(const OPT(double)& misfit);
 		double misfit() const;
@@ -148,17 +148,17 @@ class SC_SYSTEM_CORE_API MomentTensorComponentContribution : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const MomentTensorComponentContributionIndex& index() const;
+		const MomentTensorComponentContributionIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const MomentTensorComponentContribution* lhs) const;
+		bool equalIndex(const MomentTensorComponentContribution *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		MomentTensorStationContribution* momentTensorStationContribution() const;
+		MomentTensorStationContribution *momentTensorStationContribution() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

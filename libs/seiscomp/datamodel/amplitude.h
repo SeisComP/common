@@ -67,28 +67,28 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Amplitude(const Amplitude& other);
+		Amplitude(const Amplitude &other);
 
 		//! Constructor with publicID
 		Amplitude(const std::string& publicID);
 
 		//! Destructor
 		~Amplitude() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Amplitude* Create();
-		static Amplitude* Create(const std::string& publicID);
+		static Amplitude *Create();
+		static Amplitude *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Amplitude* Find(const std::string& publicID);
+		static Amplitude *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -97,14 +97,14 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Amplitude& operator=(const Amplitude& other);
+		Amplitude &operator=(const Amplitude &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Amplitude& other) const;
-		bool operator!=(const Amplitude& other) const;
+		bool operator==(const Amplitude &other) const;
+		bool operator!=(const Amplitude &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Amplitude& other) const;
+		bool equal(const Amplitude &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -219,7 +219,7 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -232,7 +232,7 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
+		bool add(Comment *obj);
 
 		/**
 		 * Removes an object.
@@ -241,7 +241,7 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
+		bool remove(Comment *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -250,19 +250,19 @@ class SC_SYSTEM_CORE_API Amplitude : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		EventParameters* eventParameters() const;
+		EventParameters *eventParameters() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

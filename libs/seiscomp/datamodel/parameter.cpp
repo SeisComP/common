@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Parameter, PublicObject, "Parameter");
 
 
-Parameter::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Parameter::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, false, false, false, false, nullptr, &Parameter::setName, &Parameter::name));
 	addProperty(Core::simpleProperty("value", "string", false, false, false, false, false, false, nullptr, &Parameter::setValue, &Parameter::value));
 	addProperty(arrayClassProperty<Comment>("comment", "Comment", &Parameter::commentCount, &Parameter::comment, static_cast<bool (Parameter::*)(Comment*)>(&Parameter::add), &Parameter::removeComment, static_cast<bool (Parameter::*)(Comment*)>(&Parameter::remove)));
@@ -52,7 +52,7 @@ Parameter::Parameter() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter::Parameter(const Parameter& other)
+Parameter::Parameter(const Parameter &other)
 : PublicObject() {
 	*this = other;
 }
@@ -82,8 +82,8 @@ Parameter::~Parameter() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter* Parameter::Create() {
-	Parameter* object = new Parameter();
+Parameter *Parameter::Create() {
+	Parameter *object = new Parameter();
 	return static_cast<Parameter*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ Parameter* Parameter::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter* Parameter::Create(const std::string& publicID) {
+Parameter *Parameter::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -109,7 +109,7 @@ Parameter* Parameter::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter* Parameter::Find(const std::string& publicID) {
+Parameter *Parameter::Find(const std::string& publicID) {
 	return Parameter::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -118,7 +118,7 @@ Parameter* Parameter::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::operator==(const Parameter& rhs) const {
+bool Parameter::operator==(const Parameter &rhs) const {
 	if ( _name != rhs._name ) return false;
 	if ( _value != rhs._value ) return false;
 	return true;
@@ -129,7 +129,7 @@ bool Parameter::operator==(const Parameter& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::operator!=(const Parameter& rhs) const {
+bool Parameter::operator!=(const Parameter &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,7 +138,7 @@ bool Parameter::operator!=(const Parameter& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::equal(const Parameter& other) const {
+bool Parameter::equal(const Parameter &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -183,7 +183,7 @@ const std::string& Parameter::value() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ParameterSet* Parameter::parameterSet() const {
+ParameterSet *Parameter::parameterSet() const {
 	return static_cast<ParameterSet*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -192,7 +192,7 @@ ParameterSet* Parameter::parameterSet() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter& Parameter::operator=(const Parameter& other) {
+Parameter &Parameter::operator=(const Parameter &other) {
 	PublicObject::operator=(other);
 	_name = other._name;
 	_value = other._value;
@@ -204,10 +204,11 @@ Parameter& Parameter::operator=(const Parameter& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::assign(Object* other) {
-	Parameter* otherParameter = Parameter::Cast(other);
-	if ( other == nullptr )
+bool Parameter::assign(Object *other) {
+	Parameter *otherParameter = Parameter::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherParameter;
 
@@ -219,11 +220,13 @@ bool Parameter::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Parameter::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ParameterSet* parameterSet = ParameterSet::Cast(parent);
+	ParameterSet *parameterSet = ParameterSet::Cast(parent);
 	if ( parameterSet != nullptr )
 		return parameterSet->add(this);
 
@@ -236,11 +239,13 @@ bool Parameter::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Parameter::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ParameterSet* parameterSet = ParameterSet::Cast(object);
+	ParameterSet *parameterSet = ParameterSet::Cast(object);
 	if ( parameterSet != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -248,7 +253,7 @@ bool Parameter::detachFrom(PublicObject* object) {
 			return parameterSet->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Parameter* child = parameterSet->findParameter(publicID());
+			Parameter *child = parameterSet->findParameter(publicID());
 			if ( child != nullptr )
 				return parameterSet->remove(child);
 			else {
@@ -268,8 +273,9 @@ bool Parameter::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Parameter::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -279,8 +285,8 @@ bool Parameter::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Parameter::clone() const {
-	Parameter* clonee = new Parameter();
+Object *Parameter::clone() const {
+	Parameter *clonee = new Parameter();
 	*clonee = *this;
 	return clonee;
 }
@@ -290,10 +296,10 @@ Object* Parameter::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Parameter::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -310,7 +316,7 @@ bool Parameter::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Parameter::accept(Visitor* visitor) {
+void Parameter::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -338,7 +344,7 @@ size_t Parameter::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Parameter::comment(size_t i) const {
+Comment *Parameter::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -347,10 +353,12 @@ Comment* Parameter::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Parameter::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Parameter::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -360,9 +368,10 @@ Comment* Parameter::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Parameter::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -399,8 +408,8 @@ bool Parameter::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Parameter::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -458,9 +467,12 @@ bool Parameter::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Parameter::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Parameter::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -469,7 +481,7 @@ bool Parameter::removeComment(const CommentIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Parameter::serialize(Archive& ar) {
+void Parameter::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

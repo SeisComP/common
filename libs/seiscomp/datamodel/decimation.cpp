@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Decimation, Object, "Decimation");
 
 
-Decimation::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Decimation::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("sampleRateNumerator", "int", false, false, true, false, false, false, nullptr, &Decimation::setSampleRateNumerator, &Decimation::sampleRateNumerator));
 	addProperty(Core::simpleProperty("sampleRateDenominator", "int", false, false, true, false, false, false, nullptr, &Decimation::setSampleRateDenominator, &Decimation::sampleRateDenominator));
 	addProperty(objectProperty<Blob>("analogueFilterChain", "Blob", false, true, true, &Decimation::setAnalogueFilterChain, &Decimation::analogueFilterChain));
@@ -65,7 +65,7 @@ DecimationIndex::DecimationIndex(int sampleRateNumerator_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DecimationIndex::DecimationIndex(const DecimationIndex& idx) {
+DecimationIndex::DecimationIndex(const DecimationIndex &idx) {
 	sampleRateNumerator = idx.sampleRateNumerator;
 	sampleRateDenominator = idx.sampleRateDenominator;
 }
@@ -75,7 +75,7 @@ DecimationIndex::DecimationIndex(const DecimationIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DecimationIndex::operator==(const DecimationIndex& idx) const {
+bool DecimationIndex::operator==(const DecimationIndex &idx) const {
 	return sampleRateNumerator == idx.sampleRateNumerator &&
 	       sampleRateDenominator == idx.sampleRateDenominator;
 }
@@ -85,7 +85,7 @@ bool DecimationIndex::operator==(const DecimationIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DecimationIndex::operator!=(const DecimationIndex& idx) const {
+bool DecimationIndex::operator!=(const DecimationIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -102,7 +102,7 @@ Decimation::Decimation() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Decimation::Decimation(const Decimation& other)
+Decimation::Decimation(const Decimation &other)
 : Object() {
 	*this = other;
 }
@@ -120,7 +120,7 @@ Decimation::~Decimation() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::operator==(const Decimation& rhs) const {
+bool Decimation::operator==(const Decimation &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _analogueFilterChain != rhs._analogueFilterChain ) return false;
 	if ( _digitalFilterChain != rhs._digitalFilterChain ) return false;
@@ -132,7 +132,7 @@ bool Decimation::operator==(const Decimation& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::operator!=(const Decimation& rhs) const {
+bool Decimation::operator!=(const Decimation &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -141,7 +141,7 @@ bool Decimation::operator!=(const Decimation& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::equal(const Decimation& other) const {
+bool Decimation::equal(const Decimation &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -248,7 +248,7 @@ const Blob& Decimation::digitalFilterChain() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const DecimationIndex& Decimation::index() const {
+const DecimationIndex &Decimation::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -257,8 +257,11 @@ const DecimationIndex& Decimation::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::equalIndex(const Decimation* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Decimation::equalIndex(const Decimation *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -267,7 +270,7 @@ bool Decimation::equalIndex(const Decimation* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Decimation::datalogger() const {
+Datalogger *Decimation::datalogger() const {
 	return static_cast<Datalogger*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -276,7 +279,7 @@ Datalogger* Decimation::datalogger() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Decimation& Decimation::operator=(const Decimation& other) {
+Decimation &Decimation::operator=(const Decimation &other) {
 	_index = other._index;
 	_analogueFilterChain = other._analogueFilterChain;
 	_digitalFilterChain = other._digitalFilterChain;
@@ -288,10 +291,11 @@ Decimation& Decimation::operator=(const Decimation& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::assign(Object* other) {
-	Decimation* otherDecimation = Decimation::Cast(other);
-	if ( other == nullptr )
+bool Decimation::assign(Object *other) {
+	Decimation *otherDecimation = Decimation::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDecimation;
 
@@ -303,11 +307,13 @@ bool Decimation::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Decimation::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Datalogger* datalogger = Datalogger::Cast(parent);
+	Datalogger *datalogger = Datalogger::Cast(parent);
 	if ( datalogger != nullptr )
 		return datalogger->add(this);
 
@@ -320,11 +326,13 @@ bool Decimation::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Decimation::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Datalogger* datalogger = Datalogger::Cast(object);
+	Datalogger *datalogger = Datalogger::Cast(object);
 	if ( datalogger != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -332,7 +340,7 @@ bool Decimation::detachFrom(PublicObject* object) {
 			return datalogger->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Decimation* child = datalogger->decimation(index());
+			Decimation *child = datalogger->decimation(index());
 			if ( child != nullptr )
 				return datalogger->remove(child);
 			else {
@@ -352,8 +360,9 @@ bool Decimation::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Decimation::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -363,8 +372,8 @@ bool Decimation::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Decimation::clone() const {
-	Decimation* clonee = new Decimation();
+Object *Decimation::clone() const {
+	Decimation *clonee = new Decimation();
 	*clonee = *this;
 	return clonee;
 }
@@ -374,7 +383,7 @@ Object* Decimation::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Decimation::accept(Visitor* visitor) {
+void Decimation::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -383,7 +392,7 @@ void Decimation::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Decimation::serialize(Archive& ar) {
+void Decimation::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Access, Object, "Access");
 
 
-Access::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Access::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &Access::setNetworkCode, &Access::networkCode));
 	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &Access::setStationCode, &Access::stationCode));
 	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, nullptr, &Access::setLocationCode, &Access::locationCode));
@@ -74,7 +74,7 @@ AccessIndex::AccessIndex(const std::string& networkCode_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AccessIndex::AccessIndex(const AccessIndex& idx) {
+AccessIndex::AccessIndex(const AccessIndex &idx) {
 	networkCode = idx.networkCode;
 	stationCode = idx.stationCode;
 	locationCode = idx.locationCode;
@@ -88,7 +88,7 @@ AccessIndex::AccessIndex(const AccessIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AccessIndex::operator==(const AccessIndex& idx) const {
+bool AccessIndex::operator==(const AccessIndex &idx) const {
 	return networkCode == idx.networkCode &&
 	       stationCode == idx.stationCode &&
 	       locationCode == idx.locationCode &&
@@ -102,7 +102,7 @@ bool AccessIndex::operator==(const AccessIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AccessIndex::operator!=(const AccessIndex& idx) const {
+bool AccessIndex::operator!=(const AccessIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -119,7 +119,7 @@ Access::Access() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Access::Access(const Access& other)
+Access::Access(const Access &other)
 : Object() {
 	*this = other;
 }
@@ -137,7 +137,7 @@ Access::~Access() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::operator==(const Access& rhs) const {
+bool Access::operator==(const Access &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	return true;
@@ -148,7 +148,7 @@ bool Access::operator==(const Access& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::operator!=(const Access& rhs) const {
+bool Access::operator!=(const Access &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -157,7 +157,7 @@ bool Access::operator!=(const Access& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::equal(const Access& other) const {
+bool Access::equal(const Access &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -294,7 +294,7 @@ Seiscomp::Core::Time Access::end() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const AccessIndex& Access::index() const {
+const AccessIndex &Access::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -303,8 +303,11 @@ const AccessIndex& Access::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::equalIndex(const Access* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Access::equalIndex(const Access *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -313,7 +316,7 @@ bool Access::equalIndex(const Access* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Routing* Access::routing() const {
+Routing *Access::routing() const {
 	return static_cast<Routing*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,7 +325,7 @@ Routing* Access::routing() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Access& Access::operator=(const Access& other) {
+Access &Access::operator=(const Access &other) {
 	_index = other._index;
 	_end = other._end;
 	return *this;
@@ -333,10 +336,11 @@ Access& Access::operator=(const Access& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::assign(Object* other) {
-	Access* otherAccess = Access::Cast(other);
-	if ( other == nullptr )
+bool Access::assign(Object *other) {
+	Access *otherAccess = Access::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherAccess;
 
@@ -348,11 +352,13 @@ bool Access::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Access::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Routing* routing = Routing::Cast(parent);
+	Routing *routing = Routing::Cast(parent);
 	if ( routing != nullptr )
 		return routing->add(this);
 
@@ -365,11 +371,13 @@ bool Access::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Access::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Access::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Routing* routing = Routing::Cast(object);
+	Routing *routing = Routing::Cast(object);
 	if ( routing != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -377,7 +385,7 @@ bool Access::detachFrom(PublicObject* object) {
 			return routing->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Access* child = routing->access(index());
+			Access *child = routing->access(index());
 			if ( child != nullptr )
 				return routing->remove(child);
 			else {
@@ -397,8 +405,9 @@ bool Access::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Access::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -408,8 +417,8 @@ bool Access::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Access::clone() const {
-	Access* clonee = new Access();
+Object *Access::clone() const {
+	Access *clonee = new Access();
 	*clonee = *this;
 	return clonee;
 }
@@ -419,7 +428,7 @@ Object* Access::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Access::accept(Visitor* visitor) {
+void Access::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -428,7 +437,7 @@ void Access::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Access::serialize(Archive& ar) {
+void Access::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

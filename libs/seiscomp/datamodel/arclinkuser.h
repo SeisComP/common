@@ -81,28 +81,28 @@ class SC_SYSTEM_CORE_API ArclinkUser : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ArclinkUser(const ArclinkUser& other);
+		ArclinkUser(const ArclinkUser &other);
 
 		//! Constructor with publicID
 		ArclinkUser(const std::string& publicID);
 
 		//! Destructor
 		~ArclinkUser() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ArclinkUser* Create();
-		static ArclinkUser* Create(const std::string& publicID);
+		static ArclinkUser *Create();
+		static ArclinkUser *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ArclinkUser* Find(const std::string& publicID);
+		static ArclinkUser *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -111,14 +111,14 @@ class SC_SYSTEM_CORE_API ArclinkUser : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ArclinkUser& operator=(const ArclinkUser& other);
+		ArclinkUser &operator=(const ArclinkUser &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ArclinkUser& other) const;
-		bool operator!=(const ArclinkUser& other) const;
+		bool operator==(const ArclinkUser &other) const;
+		bool operator!=(const ArclinkUser &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ArclinkUser& other) const;
+		bool equal(const ArclinkUser &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -140,17 +140,17 @@ class SC_SYSTEM_CORE_API ArclinkUser : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ArclinkUserIndex& index() const;
+		const ArclinkUserIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ArclinkUser* lhs) const;
+		bool equalIndex(const ArclinkUser *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		ArclinkLog* arclinkLog() const;
+		ArclinkLog *arclinkLog() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

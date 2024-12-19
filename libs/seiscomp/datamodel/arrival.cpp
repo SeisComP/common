@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Arrival, Object, "Arrival");
 
 
-Arrival::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Arrival::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, nullptr, &Arrival::setPickID, &Arrival::pickID));
 	addProperty(objectProperty<Phase>("phase", "Phase", false, false, false, &Arrival::setPhase, &Arrival::phase));
 	addProperty(Core::simpleProperty("timeCorrection", "float", false, false, false, false, true, false, nullptr, &Arrival::setTimeCorrection, &Arrival::timeCorrection));
@@ -73,7 +73,7 @@ ArrivalIndex::ArrivalIndex(const std::string& pickID_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArrivalIndex::ArrivalIndex(const ArrivalIndex& idx) {
+ArrivalIndex::ArrivalIndex(const ArrivalIndex &idx) {
 	pickID = idx.pickID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -82,7 +82,7 @@ ArrivalIndex::ArrivalIndex(const ArrivalIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArrivalIndex::operator==(const ArrivalIndex& idx) const {
+bool ArrivalIndex::operator==(const ArrivalIndex &idx) const {
 	return pickID == idx.pickID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -91,7 +91,7 @@ bool ArrivalIndex::operator==(const ArrivalIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArrivalIndex::operator!=(const ArrivalIndex& idx) const {
+bool ArrivalIndex::operator!=(const ArrivalIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -108,7 +108,7 @@ Arrival::Arrival() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Arrival::Arrival(const Arrival& other)
+Arrival::Arrival(const Arrival &other)
 : Object() {
 	*this = other;
 }
@@ -126,7 +126,7 @@ Arrival::~Arrival() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::operator==(const Arrival& rhs) const {
+bool Arrival::operator==(const Arrival &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _phase != rhs._phase ) return false;
 	if ( _timeCorrection != rhs._timeCorrection ) return false;
@@ -151,7 +151,7 @@ bool Arrival::operator==(const Arrival& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::operator!=(const Arrival& rhs) const {
+bool Arrival::operator!=(const Arrival &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -160,7 +160,7 @@ bool Arrival::operator!=(const Arrival& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::equal(const Arrival& other) const {
+bool Arrival::equal(const Arrival &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -503,7 +503,7 @@ const CreationInfo& Arrival::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ArrivalIndex& Arrival::index() const {
+const ArrivalIndex &Arrival::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -512,8 +512,11 @@ const ArrivalIndex& Arrival::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::equalIndex(const Arrival* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Arrival::equalIndex(const Arrival *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -522,7 +525,7 @@ bool Arrival::equalIndex(const Arrival* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* Arrival::origin() const {
+Origin *Arrival::origin() const {
 	return static_cast<Origin*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -531,7 +534,7 @@ Origin* Arrival::origin() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Arrival& Arrival::operator=(const Arrival& other) {
+Arrival &Arrival::operator=(const Arrival &other) {
 	_index = other._index;
 	_phase = other._phase;
 	_timeCorrection = other._timeCorrection;
@@ -556,10 +559,11 @@ Arrival& Arrival::operator=(const Arrival& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::assign(Object* other) {
-	Arrival* otherArrival = Arrival::Cast(other);
-	if ( other == nullptr )
+bool Arrival::assign(Object *other) {
+	Arrival *otherArrival = Arrival::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherArrival;
 
@@ -571,11 +575,13 @@ bool Arrival::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Arrival::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(parent);
+	Origin *origin = Origin::Cast(parent);
 	if ( origin != nullptr )
 		return origin->add(this);
 
@@ -588,11 +594,13 @@ bool Arrival::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Arrival::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Arrival::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(object);
+	Origin *origin = Origin::Cast(object);
 	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -600,7 +608,7 @@ bool Arrival::detachFrom(PublicObject* object) {
 			return origin->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Arrival* child = origin->arrival(index());
+			Arrival *child = origin->arrival(index());
 			if ( child != nullptr )
 				return origin->remove(child);
 			else {
@@ -620,8 +628,9 @@ bool Arrival::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Arrival::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -631,8 +640,8 @@ bool Arrival::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Arrival::clone() const {
-	Arrival* clonee = new Arrival();
+Object *Arrival::clone() const {
+	Arrival *clonee = new Arrival();
 	*clonee = *this;
 	return clonee;
 }
@@ -642,7 +651,7 @@ Object* Arrival::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Arrival::accept(Visitor* visitor) {
+void Arrival::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -651,7 +660,7 @@ void Arrival::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Arrival::serialize(Archive& ar) {
+void Arrival::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

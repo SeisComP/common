@@ -56,7 +56,7 @@ class SC_SYSTEM_CORE_API TimeQuantity : public Core::BaseObject {
 		TimeQuantity();
 
 		//! Copy constructor
-		TimeQuantity(const TimeQuantity& other);
+		TimeQuantity(const TimeQuantity &other);
 
 		//! Custom constructor
 		TimeQuantity(Seiscomp::Core::Time value,
@@ -68,7 +68,7 @@ class SC_SYSTEM_CORE_API TimeQuantity : public Core::BaseObject {
 
 		//! Destructor
 		~TimeQuantity() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -78,14 +78,14 @@ class SC_SYSTEM_CORE_API TimeQuantity : public Core::BaseObject {
 		operator Seiscomp::Core::Time() const;
 
 		//! Copies the metadata of other to this
-		TimeQuantity& operator=(const TimeQuantity& other);
+		TimeQuantity &operator=(const TimeQuantity &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const TimeQuantity& other) const;
-		bool operator!=(const TimeQuantity& other) const;
+		bool operator==(const TimeQuantity &other) const;
+		bool operator!=(const TimeQuantity &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const TimeQuantity& other) const;
+		bool equal(const TimeQuantity &other) const;
 
 
 	// ------------------------------------------------------------------

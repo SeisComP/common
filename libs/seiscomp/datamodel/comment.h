@@ -97,25 +97,25 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 		Comment();
 
 		//! Copy constructor
-		Comment(const Comment& other);
+		Comment(const Comment &other);
 
 		//! Destructor
 		~Comment() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Comment& operator=(const Comment& other);
+		Comment &operator=(const Comment &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Comment& other) const;
-		bool operator!=(const Comment& other) const;
+		bool operator==(const Comment &other) const;
+		bool operator!=(const Comment &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Comment& other) const;
+		bool equal(const Comment &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -149,12 +149,12 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const CommentIndex& index() const;
+		const CommentIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Comment* lhs) const;
+		bool equalIndex(const Comment *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -164,20 +164,20 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 		 * Because different parent types are possible, just one
 		 * of these methods will return a valid pointer at a time.
 		 */
-		MomentTensor* momentTensor() const;
-		FocalMechanism* focalMechanism() const;
-		Amplitude* amplitude() const;
-		Magnitude* magnitude() const;
-		StationMagnitude* stationMagnitude() const;
-		Pick* pick() const;
-		Event* event() const;
-		Origin* origin() const;
-		Parameter* parameter() const;
-		ParameterSet* parameterSet() const;
-		Stream* stream() const;
-		SensorLocation* sensorLocation() const;
-		Station* station() const;
-		Network* network() const;
+		MomentTensor *momentTensor() const;
+		FocalMechanism *focalMechanism() const;
+		Amplitude *amplitude() const;
+		Magnitude *magnitude() const;
+		StationMagnitude *stationMagnitude() const;
+		Pick *pick() const;
+		Event *event() const;
+		Origin *origin() const;
+		Parameter *parameter() const;
+		ParameterSet *parameterSet() const;
+		Stream *stream() const;
+		SensorLocation *sensorLocation() const;
+		Station *station() const;
+		Network *network() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

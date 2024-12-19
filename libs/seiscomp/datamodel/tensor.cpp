@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(Tensor, "Tensor");
 
 
-Tensor::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Tensor::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<RealQuantity>("Mrr", "RealQuantity", false, false, false, &Tensor::setMrr, &Tensor::Mrr));
 	addProperty(objectProperty<RealQuantity>("Mtt", "RealQuantity", false, false, false, &Tensor::setMtt, &Tensor::Mtt));
 	addProperty(objectProperty<RealQuantity>("Mpp", "RealQuantity", false, false, false, &Tensor::setMpp, &Tensor::Mpp));
@@ -53,7 +53,7 @@ Tensor::Tensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Tensor::Tensor(const Tensor& other)
+Tensor::Tensor(const Tensor &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -71,7 +71,7 @@ Tensor::~Tensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Tensor::operator==(const Tensor& rhs) const {
+bool Tensor::operator==(const Tensor &rhs) const {
 	if ( !(_mrr == rhs._mrr) )
 		return false;
 	if ( !(_mtt == rhs._mtt) )
@@ -92,7 +92,7 @@ bool Tensor::operator==(const Tensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Tensor::operator!=(const Tensor& rhs) const {
+bool Tensor::operator!=(const Tensor &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,7 +101,7 @@ bool Tensor::operator!=(const Tensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Tensor::equal(const Tensor& other) const {
+bool Tensor::equal(const Tensor &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -272,7 +272,7 @@ const RealQuantity& Tensor::Mtp() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Tensor& Tensor::operator=(const Tensor& other) {
+Tensor &Tensor::operator=(const Tensor &other) {
 	_mrr = other._mrr;
 	_mtt = other._mtt;
 	_mpp = other._mpp;
@@ -287,7 +287,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Tensor::serialize(Archive& ar) {
+void Tensor::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

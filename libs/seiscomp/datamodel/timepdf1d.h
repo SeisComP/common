@@ -74,25 +74,25 @@ class SC_SYSTEM_CORE_API TimePDF1D : public Core::BaseObject {
 		TimePDF1D();
 
 		//! Copy constructor
-		TimePDF1D(const TimePDF1D& other);
+		TimePDF1D(const TimePDF1D &other);
 
 		//! Destructor
 		~TimePDF1D() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		TimePDF1D& operator=(const TimePDF1D& other);
+		TimePDF1D &operator=(const TimePDF1D &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const TimePDF1D& other) const;
-		bool operator!=(const TimePDF1D& other) const;
+		bool operator==(const TimePDF1D &other) const;
+		bool operator!=(const TimePDF1D &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const TimePDF1D& other) const;
+		bool equal(const TimePDF1D &other) const;
 
 
 	// ------------------------------------------------------------------

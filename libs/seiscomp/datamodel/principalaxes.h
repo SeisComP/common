@@ -53,25 +53,25 @@ class SC_SYSTEM_CORE_API PrincipalAxes : public Core::BaseObject {
 		PrincipalAxes();
 
 		//! Copy constructor
-		PrincipalAxes(const PrincipalAxes& other);
+		PrincipalAxes(const PrincipalAxes &other);
 
 		//! Destructor
 		~PrincipalAxes() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		PrincipalAxes& operator=(const PrincipalAxes& other);
+		PrincipalAxes &operator=(const PrincipalAxes &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const PrincipalAxes& other) const;
-		bool operator!=(const PrincipalAxes& other) const;
+		bool operator==(const PrincipalAxes &other) const;
+		bool operator!=(const PrincipalAxes &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const PrincipalAxes& other) const;
+		bool equal(const PrincipalAxes &other) const;
 
 
 	// ------------------------------------------------------------------

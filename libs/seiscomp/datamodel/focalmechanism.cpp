@@ -41,7 +41,7 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationStatus> metaEvaluationStatus;
 }
 
 
-FocalMechanism::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+FocalMechanism::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("triggeringOriginID", "string", false, false, false, true, false, false, nullptr, &FocalMechanism::setTriggeringOriginID, &FocalMechanism::triggeringOriginID));
 	addProperty(objectProperty<NodalPlanes>("nodalPlanes", "NodalPlanes", false, false, true, &FocalMechanism::setNodalPlanes, &FocalMechanism::nodalPlanes));
 	addProperty(objectProperty<PrincipalAxes>("principalAxes", "PrincipalAxes", false, false, true, &FocalMechanism::setPrincipalAxes, &FocalMechanism::principalAxes));
@@ -69,7 +69,7 @@ FocalMechanism::FocalMechanism() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism::FocalMechanism(const FocalMechanism& other)
+FocalMechanism::FocalMechanism(const FocalMechanism &other)
 : PublicObject() {
 	*this = other;
 }
@@ -102,8 +102,8 @@ FocalMechanism::~FocalMechanism() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* FocalMechanism::Create() {
-	FocalMechanism* object = new FocalMechanism();
+FocalMechanism *FocalMechanism::Create() {
+	FocalMechanism *object = new FocalMechanism();
 	return static_cast<FocalMechanism*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -112,7 +112,7 @@ FocalMechanism* FocalMechanism::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* FocalMechanism::Create(const std::string& publicID) {
+FocalMechanism *FocalMechanism::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -129,7 +129,7 @@ FocalMechanism* FocalMechanism::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* FocalMechanism::Find(const std::string& publicID) {
+FocalMechanism *FocalMechanism::Find(const std::string& publicID) {
 	return FocalMechanism::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,7 +138,7 @@ FocalMechanism* FocalMechanism::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::operator==(const FocalMechanism& rhs) const {
+bool FocalMechanism::operator==(const FocalMechanism &rhs) const {
 	if ( _triggeringOriginID != rhs._triggeringOriginID ) return false;
 	if ( _nodalPlanes != rhs._nodalPlanes ) return false;
 	if ( _principalAxes != rhs._principalAxes ) return false;
@@ -158,7 +158,7 @@ bool FocalMechanism::operator==(const FocalMechanism& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::operator!=(const FocalMechanism& rhs) const {
+bool FocalMechanism::operator!=(const FocalMechanism &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ bool FocalMechanism::operator!=(const FocalMechanism& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::equal(const FocalMechanism& other) const {
+bool FocalMechanism::equal(const FocalMechanism &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -425,7 +425,7 @@ const CreationInfo& FocalMechanism::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters* FocalMechanism::eventParameters() const {
+EventParameters *FocalMechanism::eventParameters() const {
 	return static_cast<EventParameters*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -434,7 +434,7 @@ EventParameters* FocalMechanism::eventParameters() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism& FocalMechanism::operator=(const FocalMechanism& other) {
+FocalMechanism &FocalMechanism::operator=(const FocalMechanism &other) {
 	PublicObject::operator=(other);
 	_triggeringOriginID = other._triggeringOriginID;
 	_nodalPlanes = other._nodalPlanes;
@@ -455,10 +455,11 @@ FocalMechanism& FocalMechanism::operator=(const FocalMechanism& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::assign(Object* other) {
-	FocalMechanism* otherFocalMechanism = FocalMechanism::Cast(other);
-	if ( other == nullptr )
+bool FocalMechanism::assign(Object *other) {
+	FocalMechanism *otherFocalMechanism = FocalMechanism::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherFocalMechanism;
 
@@ -470,11 +471,13 @@ bool FocalMechanism::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool FocalMechanism::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(parent);
+	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
@@ -487,11 +490,13 @@ bool FocalMechanism::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool FocalMechanism::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(object);
+	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -499,7 +504,7 @@ bool FocalMechanism::detachFrom(PublicObject* object) {
 			return eventParameters->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			FocalMechanism* child = eventParameters->findFocalMechanism(publicID());
+			FocalMechanism *child = eventParameters->findFocalMechanism(publicID());
 			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
@@ -519,8 +524,9 @@ bool FocalMechanism::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanism::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -530,8 +536,8 @@ bool FocalMechanism::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* FocalMechanism::clone() const {
-	FocalMechanism* clonee = new FocalMechanism();
+Object *FocalMechanism::clone() const {
+	FocalMechanism *clonee = new FocalMechanism();
 	*clonee = *this;
 	return clonee;
 }
@@ -541,10 +547,10 @@ Object* FocalMechanism::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool FocalMechanism::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -553,9 +559,9 @@ bool FocalMechanism::updateChild(Object* child) {
 		return false;
 	}
 
-	MomentTensor* momentTensorChild = MomentTensor::Cast(child);
+	MomentTensor *momentTensorChild = MomentTensor::Cast(child);
 	if ( momentTensorChild != nullptr ) {
-		MomentTensor* momentTensorElement
+		MomentTensor *momentTensorElement
 			= MomentTensor::Cast(PublicObject::Find(momentTensorChild->publicID()));
 		if ( momentTensorElement && momentTensorElement->parent() == this ) {
 			*momentTensorElement = *momentTensorChild;
@@ -573,7 +579,7 @@ bool FocalMechanism::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FocalMechanism::accept(Visitor* visitor) {
+void FocalMechanism::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -603,7 +609,7 @@ size_t FocalMechanism::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* FocalMechanism::comment(size_t i) const {
+Comment *FocalMechanism::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -612,10 +618,12 @@ Comment* FocalMechanism::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* FocalMechanism::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *FocalMechanism::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -625,9 +633,10 @@ Comment* FocalMechanism::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::add(Comment* comment) {
-	if ( comment == nullptr )
+bool FocalMechanism::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -664,8 +673,8 @@ bool FocalMechanism::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool FocalMechanism::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -723,9 +732,12 @@ bool FocalMechanism::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool FocalMechanism::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -743,7 +755,7 @@ size_t FocalMechanism::momentTensorCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* FocalMechanism::momentTensor(size_t i) const {
+MomentTensor *FocalMechanism::momentTensor(size_t i) const {
 	return _momentTensors[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -752,10 +764,12 @@ MomentTensor* FocalMechanism::momentTensor(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* FocalMechanism::findMomentTensor(const std::string& publicID) const {
-	for ( std::vector<MomentTensorPtr>::const_iterator it = _momentTensors.begin(); it != _momentTensors.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+MomentTensor *FocalMechanism::findMomentTensor(const std::string& publicID) const {
+	for ( const auto &elem : _momentTensors ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -765,9 +779,10 @@ MomentTensor* FocalMechanism::findMomentTensor(const std::string& publicID) cons
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::add(MomentTensor* momentTensor) {
-	if ( momentTensor == nullptr )
+bool FocalMechanism::add(MomentTensor *momentTensor) {
+	if ( !momentTensor ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( momentTensor->parent() != nullptr ) {
@@ -776,17 +791,20 @@ bool FocalMechanism::add(MomentTensor* momentTensor) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		MomentTensor* momentTensorCached = MomentTensor::Find(momentTensor->publicID());
+		MomentTensor *momentTensorCached = MomentTensor::Find(momentTensor->publicID());
 		if ( momentTensorCached ) {
 			if ( momentTensorCached->parent() ) {
-				if ( momentTensorCached->parent() == this )
+				if ( momentTensorCached->parent() == this ) {
 					SEISCOMP_ERROR("FocalMechanism::add(MomentTensor*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("FocalMechanism::add(MomentTensor*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				momentTensor = momentTensorCached;
+			}
 		}
 	}
 
@@ -811,8 +829,8 @@ bool FocalMechanism::add(MomentTensor* momentTensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanism::remove(MomentTensor* momentTensor) {
-	if ( momentTensor == nullptr )
+bool FocalMechanism::remove(MomentTensor *momentTensor) {
+	if ( !momentTensor )
 		return false;
 
 	if ( momentTensor->parent() != this ) {
@@ -870,7 +888,7 @@ bool FocalMechanism::removeMomentTensor(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FocalMechanism::serialize(Archive& ar) {
+void FocalMechanism::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

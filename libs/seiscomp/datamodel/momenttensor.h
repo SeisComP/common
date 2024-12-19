@@ -68,28 +68,28 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 
 	public:
 		//! Copy constructor
-		MomentTensor(const MomentTensor& other);
+		MomentTensor(const MomentTensor &other);
 
 		//! Constructor with publicID
 		MomentTensor(const std::string& publicID);
 
 		//! Destructor
 		~MomentTensor() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static MomentTensor* Create();
-		static MomentTensor* Create(const std::string& publicID);
+		static MomentTensor *Create();
+		static MomentTensor *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static MomentTensor* Find(const std::string& publicID);
+		static MomentTensor *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -98,14 +98,14 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		MomentTensor& operator=(const MomentTensor& other);
+		MomentTensor &operator=(const MomentTensor &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const MomentTensor& other) const;
-		bool operator!=(const MomentTensor& other) const;
+		bool operator==(const MomentTensor &other) const;
+		bool operator!=(const MomentTensor &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const MomentTensor& other) const;
+		bool equal(const MomentTensor &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -199,7 +199,7 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -212,10 +212,10 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
-		bool add(DataUsed* obj);
-		bool add(MomentTensorPhaseSetting* obj);
-		bool add(MomentTensorStationContribution* obj);
+		bool add(Comment *obj);
+		bool add(DataUsed *obj);
+		bool add(MomentTensorPhaseSetting *obj);
+		bool add(MomentTensorStationContribution *obj);
 
 		/**
 		 * Removes an object.
@@ -224,10 +224,10 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
-		bool remove(DataUsed* obj);
-		bool remove(MomentTensorPhaseSetting* obj);
-		bool remove(MomentTensorStationContribution* obj);
+		bool remove(Comment *obj);
+		bool remove(DataUsed *obj);
+		bool remove(MomentTensorPhaseSetting *obj);
+		bool remove(MomentTensorStationContribution *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -236,10 +236,10 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeDataUsed(size_t i);
 		bool removeMomentTensorPhaseSetting(size_t i);
-		bool removeMomentTensorPhaseSetting(const MomentTensorPhaseSettingIndex& i);
+		bool removeMomentTensorPhaseSetting(const MomentTensorPhaseSettingIndex &i);
 		bool removeMomentTensorStationContribution(size_t i);
 
 		//! Retrieve the number of objects of a particular class
@@ -250,19 +250,19 @@ class SC_SYSTEM_CORE_API MomentTensor : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
-		DataUsed* dataUsed(size_t i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
+		DataUsed *dataUsed(size_t i) const;
 
-		MomentTensorPhaseSetting* momentTensorPhaseSetting(size_t i) const;
-		MomentTensorPhaseSetting* momentTensorPhaseSetting(const MomentTensorPhaseSettingIndex& i) const;
-		MomentTensorStationContribution* momentTensorStationContribution(size_t i) const;
+		MomentTensorPhaseSetting *momentTensorPhaseSetting(size_t i) const;
+		MomentTensorPhaseSetting *momentTensorPhaseSetting(const MomentTensorPhaseSettingIndex &i) const;
+		MomentTensorStationContribution *momentTensorStationContribution(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		DataUsed* findDataUsed(DataUsed* dataUsed) const;
-		MomentTensorStationContribution* findMomentTensorStationContribution(const std::string& publicID) const;
+		DataUsed *findDataUsed(DataUsed *dataUsed) const;
+		MomentTensorStationContribution *findMomentTensorStationContribution(const std::string& publicID) const;
 
-		FocalMechanism* focalMechanism() const;
+		FocalMechanism *focalMechanism() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

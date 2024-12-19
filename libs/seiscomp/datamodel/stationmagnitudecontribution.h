@@ -83,7 +83,7 @@ class SC_SYSTEM_CORE_API StationMagnitudeContribution : public Object {
 		StationMagnitudeContribution();
 
 		//! Copy constructor
-		StationMagnitudeContribution(const StationMagnitudeContribution& other);
+		StationMagnitudeContribution(const StationMagnitudeContribution &other);
 
 		//! Custom constructor
 		StationMagnitudeContribution(const std::string& stationMagnitudeID,
@@ -92,21 +92,21 @@ class SC_SYSTEM_CORE_API StationMagnitudeContribution : public Object {
 
 		//! Destructor
 		~StationMagnitudeContribution() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		StationMagnitudeContribution& operator=(const StationMagnitudeContribution& other);
+		StationMagnitudeContribution &operator=(const StationMagnitudeContribution &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const StationMagnitudeContribution& other) const;
-		bool operator!=(const StationMagnitudeContribution& other) const;
+		bool operator==(const StationMagnitudeContribution &other) const;
+		bool operator!=(const StationMagnitudeContribution &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const StationMagnitudeContribution& other) const;
+		bool equal(const StationMagnitudeContribution &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -139,17 +139,17 @@ class SC_SYSTEM_CORE_API StationMagnitudeContribution : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const StationMagnitudeContributionIndex& index() const;
+		const StationMagnitudeContributionIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const StationMagnitudeContribution* lhs) const;
+		bool equalIndex(const StationMagnitudeContribution *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Magnitude* magnitude() const;
+		Magnitude *magnitude() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

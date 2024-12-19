@@ -40,7 +40,7 @@ static Seiscomp::Core::MetaEnumImpl<EventTypeCertainty> metaEventTypeCertainty;
 }
 
 
-Event::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Event::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("preferredOriginID", "string", false, false, false, true, false, false, nullptr, &Event::setPreferredOriginID, &Event::preferredOriginID));
 	addProperty(Core::simpleProperty("preferredMagnitudeID", "string", false, false, false, true, false, false, nullptr, &Event::setPreferredMagnitudeID, &Event::preferredMagnitudeID));
 	addProperty(Core::simpleProperty("preferredFocalMechanismID", "string", false, false, false, true, false, false, nullptr, &Event::setPreferredFocalMechanismID, &Event::preferredFocalMechanismID));
@@ -65,7 +65,7 @@ Event::Event() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event::Event(const Event& other)
+Event::Event(const Event &other)
 : PublicObject() {
 	*this = other;
 }
@@ -104,8 +104,8 @@ Event::~Event() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* Event::Create() {
-	Event* object = new Event();
+Event *Event::Create() {
+	Event *object = new Event();
 	return static_cast<Event*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -114,7 +114,7 @@ Event* Event::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* Event::Create(const std::string& publicID) {
+Event *Event::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -131,7 +131,7 @@ Event* Event::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* Event::Find(const std::string& publicID) {
+Event *Event::Find(const std::string& publicID) {
 	return Event::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ Event* Event::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::operator==(const Event& rhs) const {
+bool Event::operator==(const Event &rhs) const {
 	if ( _preferredOriginID != rhs._preferredOriginID ) return false;
 	if ( _preferredMagnitudeID != rhs._preferredMagnitudeID ) return false;
 	if ( _preferredFocalMechanismID != rhs._preferredFocalMechanismID ) return false;
@@ -155,7 +155,7 @@ bool Event::operator==(const Event& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::operator!=(const Event& rhs) const {
+bool Event::operator!=(const Event &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -164,7 +164,7 @@ bool Event::operator!=(const Event& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::equal(const Event& other) const {
+bool Event::equal(const Event &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -298,7 +298,7 @@ const CreationInfo& Event::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters* Event::eventParameters() const {
+EventParameters *Event::eventParameters() const {
 	return static_cast<EventParameters*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -307,7 +307,7 @@ EventParameters* Event::eventParameters() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event& Event::operator=(const Event& other) {
+Event &Event::operator=(const Event &other) {
 	PublicObject::operator=(other);
 	_preferredOriginID = other._preferredOriginID;
 	_preferredMagnitudeID = other._preferredMagnitudeID;
@@ -323,10 +323,11 @@ Event& Event::operator=(const Event& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::assign(Object* other) {
-	Event* otherEvent = Event::Cast(other);
-	if ( other == nullptr )
+bool Event::assign(Object *other) {
+	Event *otherEvent = Event::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherEvent;
 
@@ -338,11 +339,13 @@ bool Event::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Event::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(parent);
+	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
@@ -355,11 +358,13 @@ bool Event::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Event::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(object);
+	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -367,7 +372,7 @@ bool Event::detachFrom(PublicObject* object) {
 			return eventParameters->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Event* child = eventParameters->findEvent(publicID());
+			Event *child = eventParameters->findEvent(publicID());
 			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
@@ -387,8 +392,9 @@ bool Event::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Event::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -398,8 +404,8 @@ bool Event::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Event::clone() const {
-	Event* clonee = new Event();
+Object *Event::clone() const {
+	Event *clonee = new Event();
 	*clonee = *this;
 	return clonee;
 }
@@ -409,10 +415,10 @@ Object* Event::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::updateChild(Object* child) {
-	EventDescription* eventDescriptionChild = EventDescription::Cast(child);
+bool Event::updateChild(Object *child) {
+	EventDescription *eventDescriptionChild = EventDescription::Cast(child);
 	if ( eventDescriptionChild != nullptr ) {
-		EventDescription* eventDescriptionElement = eventDescription(eventDescriptionChild->index());
+		EventDescription *eventDescriptionElement = eventDescription(eventDescriptionChild->index());
 		if ( eventDescriptionElement != nullptr ) {
 			*eventDescriptionElement = *eventDescriptionChild;
 			eventDescriptionElement->update();
@@ -421,9 +427,9 @@ bool Event::updateChild(Object* child) {
 		return false;
 	}
 
-	Comment* commentChild = Comment::Cast(child);
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -432,9 +438,9 @@ bool Event::updateChild(Object* child) {
 		return false;
 	}
 
-	OriginReference* originReferenceChild = OriginReference::Cast(child);
+	OriginReference *originReferenceChild = OriginReference::Cast(child);
 	if ( originReferenceChild != nullptr ) {
-		OriginReference* originReferenceElement = originReference(originReferenceChild->index());
+		OriginReference *originReferenceElement = originReference(originReferenceChild->index());
 		if ( originReferenceElement != nullptr ) {
 			*originReferenceElement = *originReferenceChild;
 			originReferenceElement->update();
@@ -443,9 +449,9 @@ bool Event::updateChild(Object* child) {
 		return false;
 	}
 
-	FocalMechanismReference* focalMechanismReferenceChild = FocalMechanismReference::Cast(child);
+	FocalMechanismReference *focalMechanismReferenceChild = FocalMechanismReference::Cast(child);
 	if ( focalMechanismReferenceChild != nullptr ) {
-		FocalMechanismReference* focalMechanismReferenceElement = focalMechanismReference(focalMechanismReferenceChild->index());
+		FocalMechanismReference *focalMechanismReferenceElement = focalMechanismReference(focalMechanismReferenceChild->index());
 		if ( focalMechanismReferenceElement != nullptr ) {
 			*focalMechanismReferenceElement = *focalMechanismReferenceChild;
 			focalMechanismReferenceElement->update();
@@ -462,7 +468,7 @@ bool Event::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Event::accept(Visitor* visitor) {
+void Event::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -496,7 +502,7 @@ size_t Event::eventDescriptionCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventDescription* Event::eventDescription(size_t i) const {
+EventDescription *Event::eventDescription(size_t i) const {
 	return _eventDescriptions[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -505,10 +511,12 @@ EventDescription* Event::eventDescription(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventDescription* Event::eventDescription(const EventDescriptionIndex& i) const {
-	for ( std::vector<EventDescriptionPtr>::const_iterator it = _eventDescriptions.begin(); it != _eventDescriptions.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+EventDescription *Event::eventDescription(const EventDescriptionIndex &i) const {
+	for ( const auto &elem : _eventDescriptions ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -518,9 +526,10 @@ EventDescription* Event::eventDescription(const EventDescriptionIndex& i) const 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::add(EventDescription* eventDescription) {
-	if ( eventDescription == nullptr )
+bool Event::add(EventDescription *eventDescription) {
+	if ( !eventDescription ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( eventDescription->parent() != nullptr ) {
@@ -557,8 +566,8 @@ bool Event::add(EventDescription* eventDescription) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::remove(EventDescription* eventDescription) {
-	if ( eventDescription == nullptr )
+bool Event::remove(EventDescription *eventDescription) {
+	if ( !eventDescription )
 		return false;
 
 	if ( eventDescription->parent() != this ) {
@@ -616,9 +625,12 @@ bool Event::removeEventDescription(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::removeEventDescription(const EventDescriptionIndex& i) {
-	EventDescription* object = eventDescription(i);
-	if ( object == nullptr ) return false;
+bool Event::removeEventDescription(const EventDescriptionIndex &i) {
+	EventDescription *object = eventDescription(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -636,7 +648,7 @@ size_t Event::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Event::comment(size_t i) const {
+Comment *Event::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -645,10 +657,12 @@ Comment* Event::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Event::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Event::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -658,9 +672,10 @@ Comment* Event::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Event::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -697,8 +712,8 @@ bool Event::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Event::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -756,9 +771,12 @@ bool Event::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Event::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -776,7 +794,7 @@ size_t Event::originReferenceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginReference* Event::originReference(size_t i) const {
+OriginReference *Event::originReference(size_t i) const {
 	return _originReferences[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -785,10 +803,12 @@ OriginReference* Event::originReference(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginReference* Event::originReference(const OriginReferenceIndex& i) const {
-	for ( std::vector<OriginReferencePtr>::const_iterator it = _originReferences.begin(); it != _originReferences.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+OriginReference *Event::originReference(const OriginReferenceIndex &i) const {
+	for ( const auto &elem : _originReferences ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -798,9 +818,10 @@ OriginReference* Event::originReference(const OriginReferenceIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::add(OriginReference* originReference) {
-	if ( originReference == nullptr )
+bool Event::add(OriginReference *originReference) {
+	if ( !originReference ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( originReference->parent() != nullptr ) {
@@ -837,8 +858,8 @@ bool Event::add(OriginReference* originReference) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::remove(OriginReference* originReference) {
-	if ( originReference == nullptr )
+bool Event::remove(OriginReference *originReference) {
+	if ( !originReference )
 		return false;
 
 	if ( originReference->parent() != this ) {
@@ -896,9 +917,12 @@ bool Event::removeOriginReference(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::removeOriginReference(const OriginReferenceIndex& i) {
-	OriginReference* object = originReference(i);
-	if ( object == nullptr ) return false;
+bool Event::removeOriginReference(const OriginReferenceIndex &i) {
+	OriginReference *object = originReference(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -916,7 +940,7 @@ size_t Event::focalMechanismReferenceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismReference* Event::focalMechanismReference(size_t i) const {
+FocalMechanismReference *Event::focalMechanismReference(size_t i) const {
 	return _focalMechanismReferences[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -925,10 +949,12 @@ FocalMechanismReference* Event::focalMechanismReference(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismReference* Event::focalMechanismReference(const FocalMechanismReferenceIndex& i) const {
-	for ( std::vector<FocalMechanismReferencePtr>::const_iterator it = _focalMechanismReferences.begin(); it != _focalMechanismReferences.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+FocalMechanismReference *Event::focalMechanismReference(const FocalMechanismReferenceIndex &i) const {
+	for ( const auto &elem : _focalMechanismReferences ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -938,9 +964,10 @@ FocalMechanismReference* Event::focalMechanismReference(const FocalMechanismRefe
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::add(FocalMechanismReference* focalMechanismReference) {
-	if ( focalMechanismReference == nullptr )
+bool Event::add(FocalMechanismReference *focalMechanismReference) {
+	if ( !focalMechanismReference ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( focalMechanismReference->parent() != nullptr ) {
@@ -977,8 +1004,8 @@ bool Event::add(FocalMechanismReference* focalMechanismReference) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::remove(FocalMechanismReference* focalMechanismReference) {
-	if ( focalMechanismReference == nullptr )
+bool Event::remove(FocalMechanismReference *focalMechanismReference) {
+	if ( !focalMechanismReference )
 		return false;
 
 	if ( focalMechanismReference->parent() != this ) {
@@ -1036,9 +1063,12 @@ bool Event::removeFocalMechanismReference(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Event::removeFocalMechanismReference(const FocalMechanismReferenceIndex& i) {
-	FocalMechanismReference* object = focalMechanismReference(i);
-	if ( object == nullptr ) return false;
+bool Event::removeFocalMechanismReference(const FocalMechanismReferenceIndex &i) {
+	FocalMechanismReference *object = focalMechanismReference(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1047,7 +1077,7 @@ bool Event::removeFocalMechanismReference(const FocalMechanismReferenceIndex& i)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Event::serialize(Archive& ar) {
+void Event::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

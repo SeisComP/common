@@ -81,25 +81,25 @@ class SC_SYSTEM_CORE_API DataAttributeExtent : public Object {
 		DataAttributeExtent();
 
 		//! Copy constructor
-		DataAttributeExtent(const DataAttributeExtent& other);
+		DataAttributeExtent(const DataAttributeExtent &other);
 
 		//! Destructor
 		~DataAttributeExtent() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		DataAttributeExtent& operator=(const DataAttributeExtent& other);
+		DataAttributeExtent &operator=(const DataAttributeExtent &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataAttributeExtent& other) const;
-		bool operator!=(const DataAttributeExtent& other) const;
+		bool operator==(const DataAttributeExtent &other) const;
+		bool operator!=(const DataAttributeExtent &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataAttributeExtent& other) const;
+		bool equal(const DataAttributeExtent &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -138,17 +138,17 @@ class SC_SYSTEM_CORE_API DataAttributeExtent : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DataAttributeExtentIndex& index() const;
+		const DataAttributeExtentIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const DataAttributeExtent* lhs) const;
+		bool equalIndex(const DataAttributeExtent *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		DataExtent* dataExtent() const;
+		DataExtent *dataExtent() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

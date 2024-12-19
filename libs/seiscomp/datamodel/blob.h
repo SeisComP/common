@@ -48,25 +48,25 @@ class SC_SYSTEM_CORE_API Blob : public Core::BaseObject {
 		Blob();
 
 		//! Copy constructor
-		Blob(const Blob& other);
+		Blob(const Blob &other);
 
 		//! Destructor
 		~Blob() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Blob& operator=(const Blob& other);
+		Blob &operator=(const Blob &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Blob& other) const;
-		bool operator!=(const Blob& other) const;
+		bool operator==(const Blob &other) const;
+		bool operator!=(const Blob &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Blob& other) const;
+		bool equal(const Blob &other) const;
 
 
 	// ------------------------------------------------------------------

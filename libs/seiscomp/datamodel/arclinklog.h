@@ -52,11 +52,11 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 		ArclinkLog();
 
 		//! Copy constructor
-		ArclinkLog(const ArclinkLog& other);
+		ArclinkLog(const ArclinkLog &other);
 
 		//! Destructor
 		~ArclinkLog() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -64,16 +64,16 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ArclinkLog& operator=(const ArclinkLog& other);
+		ArclinkLog &operator=(const ArclinkLog &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ArclinkLog& other) const;
-		bool operator!=(const ArclinkLog& other) const;
+		bool operator==(const ArclinkLog &other) const;
+		bool operator!=(const ArclinkLog &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ArclinkLog& other) const;
+		bool equal(const ArclinkLog &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -86,8 +86,8 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(ArclinkRequest* obj);
-		bool add(ArclinkUser* obj);
+		bool add(ArclinkRequest *obj);
+		bool add(ArclinkUser *obj);
 
 		/**
 		 * Removes an object.
@@ -96,8 +96,8 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(ArclinkRequest* obj);
-		bool remove(ArclinkUser* obj);
+		bool remove(ArclinkRequest *obj);
+		bool remove(ArclinkUser *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -106,9 +106,9 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeArclinkRequest(size_t i);
-		bool removeArclinkRequest(const ArclinkRequestIndex& i);
+		bool removeArclinkRequest(const ArclinkRequestIndex &i);
 		bool removeArclinkUser(size_t i);
-		bool removeArclinkUser(const ArclinkUserIndex& i);
+		bool removeArclinkUser(const ArclinkUserIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t arclinkRequestCount() const;
@@ -116,15 +116,15 @@ class SC_SYSTEM_CORE_API ArclinkLog : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		ArclinkRequest* arclinkRequest(size_t i) const;
-		ArclinkRequest* arclinkRequest(const ArclinkRequestIndex& i) const;
+		ArclinkRequest *arclinkRequest(size_t i) const;
+		ArclinkRequest *arclinkRequest(const ArclinkRequestIndex &i) const;
 
-		ArclinkUser* arclinkUser(size_t i) const;
-		ArclinkUser* arclinkUser(const ArclinkUserIndex& i) const;
+		ArclinkUser *arclinkUser(size_t i) const;
+		ArclinkUser *arclinkUser(const ArclinkUserIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		ArclinkRequest* findArclinkRequest(const std::string& publicID) const;
-		ArclinkUser* findArclinkUser(const std::string& publicID) const;
+		ArclinkRequest *findArclinkRequest(const std::string& publicID) const;
+		ArclinkUser *findArclinkUser(const std::string& publicID) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

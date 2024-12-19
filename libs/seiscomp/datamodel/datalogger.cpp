@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Datalogger, PublicObject, "Datalogger");
 
 
-Datalogger::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Datalogger::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &Datalogger::setName, &Datalogger::name));
 	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &Datalogger::setDescription, &Datalogger::description));
 	addProperty(Core::simpleProperty("digitizerModel", "string", false, false, false, false, false, false, nullptr, &Datalogger::setDigitizerModel, &Datalogger::digitizerModel));
@@ -72,7 +72,7 @@ DataloggerIndex::DataloggerIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerIndex::DataloggerIndex(const DataloggerIndex& idx) {
+DataloggerIndex::DataloggerIndex(const DataloggerIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +81,7 @@ DataloggerIndex::DataloggerIndex(const DataloggerIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerIndex::operator==(const DataloggerIndex& idx) const {
+bool DataloggerIndex::operator==(const DataloggerIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -90,7 +90,7 @@ bool DataloggerIndex::operator==(const DataloggerIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataloggerIndex::operator!=(const DataloggerIndex& idx) const {
+bool DataloggerIndex::operator!=(const DataloggerIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -107,7 +107,7 @@ Datalogger::Datalogger() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger::Datalogger(const Datalogger& other)
+Datalogger::Datalogger(const Datalogger &other)
 : PublicObject() {
 	*this = other;
 }
@@ -140,8 +140,8 @@ Datalogger::~Datalogger() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Datalogger::Create() {
-	Datalogger* object = new Datalogger();
+Datalogger *Datalogger::Create() {
+	Datalogger *object = new Datalogger();
 	return static_cast<Datalogger*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +150,7 @@ Datalogger* Datalogger::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Datalogger::Create(const std::string& publicID) {
+Datalogger *Datalogger::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -167,7 +167,7 @@ Datalogger* Datalogger::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Datalogger::Find(const std::string& publicID) {
+Datalogger *Datalogger::Find(const std::string& publicID) {
 	return Datalogger::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,7 +176,7 @@ Datalogger* Datalogger::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::operator==(const Datalogger& rhs) const {
+bool Datalogger::operator==(const Datalogger &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _description != rhs._description ) return false;
 	if ( _digitizerModel != rhs._digitizerModel ) return false;
@@ -197,7 +197,7 @@ bool Datalogger::operator==(const Datalogger& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::operator!=(const Datalogger& rhs) const {
+bool Datalogger::operator!=(const Datalogger &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -206,7 +206,7 @@ bool Datalogger::operator!=(const Datalogger& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::equal(const Datalogger& other) const {
+bool Datalogger::equal(const Datalogger &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -448,7 +448,7 @@ const Blob& Datalogger::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const DataloggerIndex& Datalogger::index() const {
+const DataloggerIndex &Datalogger::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -457,8 +457,11 @@ const DataloggerIndex& Datalogger::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::equalIndex(const Datalogger* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Datalogger::equalIndex(const Datalogger *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -467,7 +470,7 @@ bool Datalogger::equalIndex(const Datalogger* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* Datalogger::inventory() const {
+Inventory *Datalogger::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -476,7 +479,7 @@ Inventory* Datalogger::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger& Datalogger::operator=(const Datalogger& other) {
+Datalogger &Datalogger::operator=(const Datalogger &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_description = other._description;
@@ -498,10 +501,11 @@ Datalogger& Datalogger::operator=(const Datalogger& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::assign(Object* other) {
-	Datalogger* otherDatalogger = Datalogger::Cast(other);
-	if ( other == nullptr )
+bool Datalogger::assign(Object *other) {
+	Datalogger *otherDatalogger = Datalogger::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDatalogger;
 
@@ -513,11 +517,13 @@ bool Datalogger::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Datalogger::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -530,11 +536,13 @@ bool Datalogger::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Datalogger::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -542,7 +550,7 @@ bool Datalogger::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Datalogger* child = inventory->findDatalogger(publicID());
+			Datalogger *child = inventory->findDatalogger(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -562,8 +570,9 @@ bool Datalogger::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -573,8 +582,8 @@ bool Datalogger::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Datalogger::clone() const {
-	Datalogger* clonee = new Datalogger();
+Object *Datalogger::clone() const {
+	Datalogger *clonee = new Datalogger();
 	*clonee = *this;
 	return clonee;
 }
@@ -584,10 +593,10 @@ Object* Datalogger::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::updateChild(Object* child) {
-	DataloggerCalibration* dataloggerCalibrationChild = DataloggerCalibration::Cast(child);
+bool Datalogger::updateChild(Object *child) {
+	DataloggerCalibration *dataloggerCalibrationChild = DataloggerCalibration::Cast(child);
 	if ( dataloggerCalibrationChild != nullptr ) {
-		DataloggerCalibration* dataloggerCalibrationElement = dataloggerCalibration(dataloggerCalibrationChild->index());
+		DataloggerCalibration *dataloggerCalibrationElement = dataloggerCalibration(dataloggerCalibrationChild->index());
 		if ( dataloggerCalibrationElement != nullptr ) {
 			*dataloggerCalibrationElement = *dataloggerCalibrationChild;
 			dataloggerCalibrationElement->update();
@@ -596,9 +605,9 @@ bool Datalogger::updateChild(Object* child) {
 		return false;
 	}
 
-	Decimation* decimationChild = Decimation::Cast(child);
+	Decimation *decimationChild = Decimation::Cast(child);
 	if ( decimationChild != nullptr ) {
-		Decimation* decimationElement = decimation(decimationChild->index());
+		Decimation *decimationElement = decimation(decimationChild->index());
 		if ( decimationElement != nullptr ) {
 			*decimationElement = *decimationChild;
 			decimationElement->update();
@@ -615,7 +624,7 @@ bool Datalogger::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Datalogger::accept(Visitor* visitor) {
+void Datalogger::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -645,7 +654,7 @@ size_t Datalogger::dataloggerCalibrationCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerCalibration* Datalogger::dataloggerCalibration(size_t i) const {
+DataloggerCalibration *Datalogger::dataloggerCalibration(size_t i) const {
 	return _dataloggerCalibrations[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -654,10 +663,12 @@ DataloggerCalibration* Datalogger::dataloggerCalibration(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataloggerCalibration* Datalogger::dataloggerCalibration(const DataloggerCalibrationIndex& i) const {
-	for ( std::vector<DataloggerCalibrationPtr>::const_iterator it = _dataloggerCalibrations.begin(); it != _dataloggerCalibrations.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+DataloggerCalibration *Datalogger::dataloggerCalibration(const DataloggerCalibrationIndex &i) const {
+	for ( const auto &elem : _dataloggerCalibrations ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -667,9 +678,10 @@ DataloggerCalibration* Datalogger::dataloggerCalibration(const DataloggerCalibra
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::add(DataloggerCalibration* dataloggerCalibration) {
-	if ( dataloggerCalibration == nullptr )
+bool Datalogger::add(DataloggerCalibration *dataloggerCalibration) {
+	if ( !dataloggerCalibration ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( dataloggerCalibration->parent() != nullptr ) {
@@ -706,8 +718,8 @@ bool Datalogger::add(DataloggerCalibration* dataloggerCalibration) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::remove(DataloggerCalibration* dataloggerCalibration) {
-	if ( dataloggerCalibration == nullptr )
+bool Datalogger::remove(DataloggerCalibration *dataloggerCalibration) {
+	if ( !dataloggerCalibration )
 		return false;
 
 	if ( dataloggerCalibration->parent() != this ) {
@@ -765,9 +777,12 @@ bool Datalogger::removeDataloggerCalibration(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::removeDataloggerCalibration(const DataloggerCalibrationIndex& i) {
-	DataloggerCalibration* object = dataloggerCalibration(i);
-	if ( object == nullptr ) return false;
+bool Datalogger::removeDataloggerCalibration(const DataloggerCalibrationIndex &i) {
+	DataloggerCalibration *object = dataloggerCalibration(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -785,7 +800,7 @@ size_t Datalogger::decimationCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Decimation* Datalogger::decimation(size_t i) const {
+Decimation *Datalogger::decimation(size_t i) const {
 	return _decimations[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -794,10 +809,12 @@ Decimation* Datalogger::decimation(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Decimation* Datalogger::decimation(const DecimationIndex& i) const {
-	for ( std::vector<DecimationPtr>::const_iterator it = _decimations.begin(); it != _decimations.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Decimation *Datalogger::decimation(const DecimationIndex &i) const {
+	for ( const auto &elem : _decimations ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -807,9 +824,10 @@ Decimation* Datalogger::decimation(const DecimationIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::add(Decimation* decimation) {
-	if ( decimation == nullptr )
+bool Datalogger::add(Decimation *decimation) {
+	if ( !decimation ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( decimation->parent() != nullptr ) {
@@ -846,8 +864,8 @@ bool Datalogger::add(Decimation* decimation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::remove(Decimation* decimation) {
-	if ( decimation == nullptr )
+bool Datalogger::remove(Decimation *decimation) {
+	if ( !decimation )
 		return false;
 
 	if ( decimation->parent() != this ) {
@@ -905,9 +923,12 @@ bool Datalogger::removeDecimation(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Datalogger::removeDecimation(const DecimationIndex& i) {
-	Decimation* object = decimation(i);
-	if ( object == nullptr ) return false;
+bool Datalogger::removeDecimation(const DecimationIndex &i) {
+	Decimation *object = decimation(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -916,7 +937,7 @@ bool Datalogger::removeDecimation(const DecimationIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Datalogger::serialize(Archive& ar) {
+void Datalogger::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

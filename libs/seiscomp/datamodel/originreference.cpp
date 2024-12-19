@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(OriginReference, Object, "OriginReference");
 
 
-OriginReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+OriginReference::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("originID", "string", false, false, true, true, false, false, nullptr, &OriginReference::setOriginID, &OriginReference::originID));
 }
 
@@ -58,7 +58,7 @@ OriginReferenceIndex::OriginReferenceIndex(const std::string& originID_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginReferenceIndex::OriginReferenceIndex(const OriginReferenceIndex& idx) {
+OriginReferenceIndex::OriginReferenceIndex(const OriginReferenceIndex &idx) {
 	originID = idx.originID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -67,7 +67,7 @@ OriginReferenceIndex::OriginReferenceIndex(const OriginReferenceIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReferenceIndex::operator==(const OriginReferenceIndex& idx) const {
+bool OriginReferenceIndex::operator==(const OriginReferenceIndex &idx) const {
 	return originID == idx.originID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ bool OriginReferenceIndex::operator==(const OriginReferenceIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReferenceIndex::operator!=(const OriginReferenceIndex& idx) const {
+bool OriginReferenceIndex::operator!=(const OriginReferenceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +93,7 @@ OriginReference::OriginReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginReference::OriginReference(const OriginReference& other)
+OriginReference::OriginReference(const OriginReference &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ OriginReference::~OriginReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::operator==(const OriginReference& rhs) const {
+bool OriginReference::operator==(const OriginReference &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -131,7 +131,7 @@ bool OriginReference::operator==(const OriginReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::operator!=(const OriginReference& rhs) const {
+bool OriginReference::operator!=(const OriginReference &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ bool OriginReference::operator!=(const OriginReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::equal(const OriginReference& other) const {
+bool OriginReference::equal(const OriginReference &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ const std::string& OriginReference::originID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const OriginReferenceIndex& OriginReference::index() const {
+const OriginReferenceIndex &OriginReference::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,8 +176,11 @@ const OriginReferenceIndex& OriginReference::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::equalIndex(const OriginReference* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool OriginReference::equalIndex(const OriginReference *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +189,7 @@ bool OriginReference::equalIndex(const OriginReference* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* OriginReference::event() const {
+Event *OriginReference::event() const {
 	return static_cast<Event*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +198,7 @@ Event* OriginReference::event() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginReference& OriginReference::operator=(const OriginReference& other) {
+OriginReference &OriginReference::operator=(const OriginReference &other) {
 	_index = other._index;
 	return *this;
 }
@@ -205,10 +208,11 @@ OriginReference& OriginReference::operator=(const OriginReference& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::assign(Object* other) {
-	OriginReference* otherOriginReference = OriginReference::Cast(other);
-	if ( other == nullptr )
+bool OriginReference::assign(Object *other) {
+	OriginReference *otherOriginReference = OriginReference::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherOriginReference;
 
@@ -220,11 +224,13 @@ bool OriginReference::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool OriginReference::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(parent);
+	Event *event = Event::Cast(parent);
 	if ( event != nullptr )
 		return event->add(this);
 
@@ -237,11 +243,13 @@ bool OriginReference::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginReference::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool OriginReference::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(object);
+	Event *event = Event::Cast(object);
 	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -249,7 +257,7 @@ bool OriginReference::detachFrom(PublicObject* object) {
 			return event->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			OriginReference* child = event->originReference(index());
+			OriginReference *child = event->originReference(index());
 			if ( child != nullptr )
 				return event->remove(child);
 			else {
@@ -269,8 +277,9 @@ bool OriginReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginReference::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -280,8 +289,8 @@ bool OriginReference::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* OriginReference::clone() const {
-	OriginReference* clonee = new OriginReference();
+Object *OriginReference::clone() const {
+	OriginReference *clonee = new OriginReference();
 	*clonee = *this;
 	return clonee;
 }
@@ -291,7 +300,7 @@ Object* OriginReference::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginReference::accept(Visitor* visitor) {
+void OriginReference::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,7 +309,7 @@ void OriginReference::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginReference::serialize(Archive& ar) {
+void OriginReference::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

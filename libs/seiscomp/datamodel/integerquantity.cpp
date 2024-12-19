@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(IntegerQuantity, "IntegerQuantity");
 
 
-IntegerQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+IntegerQuantity::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("value", "int", false, false, false, false, false, false, nullptr, &IntegerQuantity::setValue, &IntegerQuantity::value));
 	addProperty(Core::simpleProperty("uncertainty", "int", false, false, false, false, true, false, nullptr, &IntegerQuantity::setUncertainty, &IntegerQuantity::uncertainty));
 	addProperty(Core::simpleProperty("lowerUncertainty", "int", false, false, false, false, true, false, nullptr, &IntegerQuantity::setLowerUncertainty, &IntegerQuantity::lowerUncertainty));
@@ -53,7 +53,7 @@ IntegerQuantity::IntegerQuantity() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-IntegerQuantity::IntegerQuantity(const IntegerQuantity& other)
+IntegerQuantity::IntegerQuantity(const IntegerQuantity &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -106,7 +106,7 @@ IntegerQuantity::operator int() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool IntegerQuantity::operator==(const IntegerQuantity& rhs) const {
+bool IntegerQuantity::operator==(const IntegerQuantity &rhs) const {
 	if ( !(_value == rhs._value) )
 		return false;
 	if ( !(_uncertainty == rhs._uncertainty) )
@@ -125,7 +125,7 @@ bool IntegerQuantity::operator==(const IntegerQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool IntegerQuantity::operator!=(const IntegerQuantity& rhs) const {
+bool IntegerQuantity::operator!=(const IntegerQuantity &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -134,7 +134,7 @@ bool IntegerQuantity::operator!=(const IntegerQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool IntegerQuantity::equal(const IntegerQuantity& other) const {
+bool IntegerQuantity::equal(const IntegerQuantity &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -241,7 +241,7 @@ double IntegerQuantity::confidenceLevel() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-IntegerQuantity& IntegerQuantity::operator=(const IntegerQuantity& other) {
+IntegerQuantity &IntegerQuantity::operator=(const IntegerQuantity &other) {
 	_value = other._value;
 	_uncertainty = other._uncertainty;
 	_lowerUncertainty = other._lowerUncertainty;
@@ -255,7 +255,7 @@ IntegerQuantity& IntegerQuantity::operator=(const IntegerQuantity& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void IntegerQuantity::serialize(Archive& ar) {
+void IntegerQuantity::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

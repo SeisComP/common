@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ResponseFAP, PublicObject, "ResponseFAP");
 
 
-ResponseFAP::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ResponseFAP::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseFAP::setName, &ResponseFAP::name));
 	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseFAP::setGain, &ResponseFAP::gain));
 	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponseFAP::setGainFrequency, &ResponseFAP::gainFrequency));
@@ -63,7 +63,7 @@ ResponseFAPIndex::ResponseFAPIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAPIndex::ResponseFAPIndex(const ResponseFAPIndex& idx) {
+ResponseFAPIndex::ResponseFAPIndex(const ResponseFAPIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -72,7 +72,7 @@ ResponseFAPIndex::ResponseFAPIndex(const ResponseFAPIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAPIndex::operator==(const ResponseFAPIndex& idx) const {
+bool ResponseFAPIndex::operator==(const ResponseFAPIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +81,7 @@ bool ResponseFAPIndex::operator==(const ResponseFAPIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAPIndex::operator!=(const ResponseFAPIndex& idx) const {
+bool ResponseFAPIndex::operator!=(const ResponseFAPIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -98,7 +98,7 @@ ResponseFAP::ResponseFAP() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP::ResponseFAP(const ResponseFAP& other)
+ResponseFAP::ResponseFAP(const ResponseFAP &other)
 : PublicObject() {
 	*this = other;
 }
@@ -125,8 +125,8 @@ ResponseFAP::~ResponseFAP() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* ResponseFAP::Create() {
-	ResponseFAP* object = new ResponseFAP();
+ResponseFAP *ResponseFAP::Create() {
+	ResponseFAP *object = new ResponseFAP();
 	return static_cast<ResponseFAP*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -135,7 +135,7 @@ ResponseFAP* ResponseFAP::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* ResponseFAP::Create(const std::string& publicID) {
+ResponseFAP *ResponseFAP::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -152,7 +152,7 @@ ResponseFAP* ResponseFAP::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* ResponseFAP::Find(const std::string& publicID) {
+ResponseFAP *ResponseFAP::Find(const std::string& publicID) {
 	return ResponseFAP::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -161,7 +161,7 @@ ResponseFAP* ResponseFAP::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::operator==(const ResponseFAP& rhs) const {
+bool ResponseFAP::operator==(const ResponseFAP &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _gain != rhs._gain ) return false;
 	if ( _gainFrequency != rhs._gainFrequency ) return false;
@@ -176,7 +176,7 @@ bool ResponseFAP::operator==(const ResponseFAP& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::operator!=(const ResponseFAP& rhs) const {
+bool ResponseFAP::operator!=(const ResponseFAP &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -185,7 +185,7 @@ bool ResponseFAP::operator!=(const ResponseFAP& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::equal(const ResponseFAP& other) const {
+bool ResponseFAP::equal(const ResponseFAP &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -334,7 +334,7 @@ const Blob& ResponseFAP::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ResponseFAPIndex& ResponseFAP::index() const {
+const ResponseFAPIndex &ResponseFAP::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -343,8 +343,11 @@ const ResponseFAPIndex& ResponseFAP::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::equalIndex(const ResponseFAP* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ResponseFAP::equalIndex(const ResponseFAP *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -353,7 +356,7 @@ bool ResponseFAP::equalIndex(const ResponseFAP* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* ResponseFAP::inventory() const {
+Inventory *ResponseFAP::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -362,7 +365,7 @@ Inventory* ResponseFAP::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP& ResponseFAP::operator=(const ResponseFAP& other) {
+ResponseFAP &ResponseFAP::operator=(const ResponseFAP &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_gain = other._gain;
@@ -378,10 +381,11 @@ ResponseFAP& ResponseFAP::operator=(const ResponseFAP& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::assign(Object* other) {
-	ResponseFAP* otherResponseFAP = ResponseFAP::Cast(other);
-	if ( other == nullptr )
+bool ResponseFAP::assign(Object *other) {
+	ResponseFAP *otherResponseFAP = ResponseFAP::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherResponseFAP;
 
@@ -393,11 +397,13 @@ bool ResponseFAP::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ResponseFAP::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -410,11 +416,13 @@ bool ResponseFAP::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ResponseFAP::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -422,7 +430,7 @@ bool ResponseFAP::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ResponseFAP* child = inventory->findResponseFAP(publicID());
+			ResponseFAP *child = inventory->findResponseFAP(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -442,8 +450,9 @@ bool ResponseFAP::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFAP::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -453,8 +462,8 @@ bool ResponseFAP::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ResponseFAP::clone() const {
-	ResponseFAP* clonee = new ResponseFAP();
+Object *ResponseFAP::clone() const {
+	ResponseFAP *clonee = new ResponseFAP();
 	*clonee = *this;
 	return clonee;
 }
@@ -464,7 +473,7 @@ Object* ResponseFAP::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFAP::updateChild(Object* child) {
+bool ResponseFAP::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -473,7 +482,7 @@ bool ResponseFAP::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseFAP::accept(Visitor* visitor) {
+void ResponseFAP::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -490,7 +499,7 @@ void ResponseFAP::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseFAP::serialize(Archive& ar) {
+void ResponseFAP::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

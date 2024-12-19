@@ -66,7 +66,7 @@ class SC_SYSTEM_CORE_API IntegerQuantity : public Core::BaseObject {
 		IntegerQuantity();
 
 		//! Copy constructor
-		IntegerQuantity(const IntegerQuantity& other);
+		IntegerQuantity(const IntegerQuantity &other);
 
 		//! Custom constructor
 		IntegerQuantity(int value,
@@ -77,7 +77,7 @@ class SC_SYSTEM_CORE_API IntegerQuantity : public Core::BaseObject {
 
 		//! Destructor
 		~IntegerQuantity() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -87,14 +87,14 @@ class SC_SYSTEM_CORE_API IntegerQuantity : public Core::BaseObject {
 		operator int() const;
 
 		//! Copies the metadata of other to this
-		IntegerQuantity& operator=(const IntegerQuantity& other);
+		IntegerQuantity &operator=(const IntegerQuantity &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const IntegerQuantity& other) const;
-		bool operator!=(const IntegerQuantity& other) const;
+		bool operator==(const IntegerQuantity &other) const;
+		bool operator!=(const IntegerQuantity &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const IntegerQuantity& other) const;
+		bool equal(const IntegerQuantity &other) const;
 
 
 	// ------------------------------------------------------------------

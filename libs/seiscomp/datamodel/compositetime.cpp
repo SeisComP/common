@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(CompositeTime, Object, "CompositeTime");
 
 
-CompositeTime::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+CompositeTime::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<IntegerQuantity>("year", "IntegerQuantity", false, false, true, &CompositeTime::setYear, &CompositeTime::year));
 	addProperty(objectProperty<IntegerQuantity>("month", "IntegerQuantity", false, false, true, &CompositeTime::setMonth, &CompositeTime::month));
 	addProperty(objectProperty<IntegerQuantity>("day", "IntegerQuantity", false, false, true, &CompositeTime::setDay, &CompositeTime::day));
@@ -54,7 +54,7 @@ CompositeTime::CompositeTime() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CompositeTime::CompositeTime(const CompositeTime& other)
+CompositeTime::CompositeTime(const CompositeTime &other)
 : Object() {
 	*this = other;
 }
@@ -72,7 +72,7 @@ CompositeTime::~CompositeTime() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::operator==(const CompositeTime& rhs) const {
+bool CompositeTime::operator==(const CompositeTime &rhs) const {
 	if ( !(_year == rhs._year) )
 		return false;
 	if ( !(_month == rhs._month) )
@@ -93,7 +93,7 @@ bool CompositeTime::operator==(const CompositeTime& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::operator!=(const CompositeTime& rhs) const {
+bool CompositeTime::operator!=(const CompositeTime &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -102,7 +102,7 @@ bool CompositeTime::operator!=(const CompositeTime& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::equal(const CompositeTime& other) const {
+bool CompositeTime::equal(const CompositeTime &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -297,7 +297,7 @@ const RealQuantity& CompositeTime::second() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* CompositeTime::origin() const {
+Origin *CompositeTime::origin() const {
 	return static_cast<Origin*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -306,7 +306,7 @@ Origin* CompositeTime::origin() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CompositeTime& CompositeTime::operator=(const CompositeTime& other) {
+CompositeTime &CompositeTime::operator=(const CompositeTime &other) {
 	_year = other._year;
 	_month = other._month;
 	_day = other._day;
@@ -321,10 +321,11 @@ CompositeTime& CompositeTime::operator=(const CompositeTime& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::assign(Object* other) {
-	CompositeTime* otherCompositeTime = CompositeTime::Cast(other);
-	if ( other == nullptr )
+bool CompositeTime::assign(Object *other) {
+	CompositeTime *otherCompositeTime = CompositeTime::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherCompositeTime;
 
@@ -336,11 +337,13 @@ bool CompositeTime::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool CompositeTime::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(parent);
+	Origin *origin = Origin::Cast(parent);
 	if ( origin != nullptr )
 		return origin->add(this);
 
@@ -353,11 +356,13 @@ bool CompositeTime::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CompositeTime::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool CompositeTime::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(object);
+	Origin *origin = Origin::Cast(object);
 	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -365,7 +370,7 @@ bool CompositeTime::detachFrom(PublicObject* object) {
 			return origin->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			CompositeTime* child = origin->findCompositeTime(this);
+			CompositeTime *child = origin->findCompositeTime(this);
 			if ( child != nullptr )
 				return origin->remove(child);
 			else {
@@ -385,8 +390,9 @@ bool CompositeTime::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CompositeTime::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -396,8 +402,8 @@ bool CompositeTime::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* CompositeTime::clone() const {
-	CompositeTime* clonee = new CompositeTime();
+Object *CompositeTime::clone() const {
+	CompositeTime *clonee = new CompositeTime();
 	*clonee = *this;
 	return clonee;
 }
@@ -407,7 +413,7 @@ Object* CompositeTime::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void CompositeTime::accept(Visitor* visitor) {
+void CompositeTime::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -416,7 +422,7 @@ void CompositeTime::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void CompositeTime::serialize(Archive& ar) {
+void CompositeTime::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

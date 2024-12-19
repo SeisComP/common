@@ -86,25 +86,25 @@ class SC_SYSTEM_CORE_API WaveformQuality : public Object {
 		WaveformQuality();
 
 		//! Copy constructor
-		WaveformQuality(const WaveformQuality& other);
+		WaveformQuality(const WaveformQuality &other);
 
 		//! Destructor
 		~WaveformQuality() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		WaveformQuality& operator=(const WaveformQuality& other);
+		WaveformQuality &operator=(const WaveformQuality &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const WaveformQuality& other) const;
-		bool operator!=(const WaveformQuality& other) const;
+		bool operator==(const WaveformQuality &other) const;
+		bool operator!=(const WaveformQuality &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const WaveformQuality& other) const;
+		bool equal(const WaveformQuality &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -151,17 +151,17 @@ class SC_SYSTEM_CORE_API WaveformQuality : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const WaveformQualityIndex& index() const;
+		const WaveformQualityIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const WaveformQuality* lhs) const;
+		bool equalIndex(const WaveformQuality *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		QualityControl* qualityControl() const;
+		QualityControl *qualityControl() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

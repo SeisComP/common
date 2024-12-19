@@ -79,25 +79,25 @@ class SC_SYSTEM_CORE_API DataSegment : public Object {
 		DataSegment();
 
 		//! Copy constructor
-		DataSegment(const DataSegment& other);
+		DataSegment(const DataSegment &other);
 
 		//! Destructor
 		~DataSegment() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		DataSegment& operator=(const DataSegment& other);
+		DataSegment &operator=(const DataSegment &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataSegment& other) const;
-		bool operator!=(const DataSegment& other) const;
+		bool operator==(const DataSegment &other) const;
+		bool operator!=(const DataSegment &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataSegment& other) const;
+		bool equal(const DataSegment &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -135,17 +135,17 @@ class SC_SYSTEM_CORE_API DataSegment : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DataSegmentIndex& index() const;
+		const DataSegmentIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const DataSegment* lhs) const;
+		bool equalIndex(const DataSegment *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		DataExtent* dataExtent() const;
+		DataExtent *dataExtent() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

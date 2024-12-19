@@ -54,28 +54,28 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Parameter(const Parameter& other);
+		Parameter(const Parameter &other);
 
 		//! Constructor with publicID
 		Parameter(const std::string& publicID);
 
 		//! Destructor
 		~Parameter() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Parameter* Create();
-		static Parameter* Create(const std::string& publicID);
+		static Parameter *Create();
+		static Parameter *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Parameter* Find(const std::string& publicID);
+		static Parameter *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -84,14 +84,14 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Parameter& operator=(const Parameter& other);
+		Parameter &operator=(const Parameter &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Parameter& other) const;
-		bool operator!=(const Parameter& other) const;
+		bool operator==(const Parameter &other) const;
+		bool operator!=(const Parameter &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Parameter& other) const;
+		bool equal(const Parameter &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -104,7 +104,7 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 		void setValue(const std::string& value);
 		const std::string& value() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -117,7 +117,7 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
+		bool add(Comment *obj);
 
 		/**
 		 * Removes an object.
@@ -126,7 +126,7 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
+		bool remove(Comment *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -135,19 +135,19 @@ class SC_SYSTEM_CORE_API Parameter : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		ParameterSet* parameterSet() const;
+		ParameterSet *parameterSet() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

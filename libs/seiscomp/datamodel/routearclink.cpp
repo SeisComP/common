@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(RouteArclink, Object, "RouteArclink");
 
 
-RouteArclink::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+RouteArclink::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, nullptr, &RouteArclink::setAddress, &RouteArclink::address));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &RouteArclink::setStart, &RouteArclink::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &RouteArclink::setEnd, &RouteArclink::end));
@@ -63,7 +63,7 @@ RouteArclinkIndex::RouteArclinkIndex(const std::string& address_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteArclinkIndex::RouteArclinkIndex(const RouteArclinkIndex& idx) {
+RouteArclinkIndex::RouteArclinkIndex(const RouteArclinkIndex &idx) {
 	address = idx.address;
 	start = idx.start;
 }
@@ -73,7 +73,7 @@ RouteArclinkIndex::RouteArclinkIndex(const RouteArclinkIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclinkIndex::operator==(const RouteArclinkIndex& idx) const {
+bool RouteArclinkIndex::operator==(const RouteArclinkIndex &idx) const {
 	return address == idx.address &&
 	       start == idx.start;
 }
@@ -83,7 +83,7 @@ bool RouteArclinkIndex::operator==(const RouteArclinkIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclinkIndex::operator!=(const RouteArclinkIndex& idx) const {
+bool RouteArclinkIndex::operator!=(const RouteArclinkIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -100,7 +100,7 @@ RouteArclink::RouteArclink() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteArclink::RouteArclink(const RouteArclink& other)
+RouteArclink::RouteArclink(const RouteArclink &other)
 : Object() {
 	*this = other;
 }
@@ -118,7 +118,7 @@ RouteArclink::~RouteArclink() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::operator==(const RouteArclink& rhs) const {
+bool RouteArclink::operator==(const RouteArclink &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _priority != rhs._priority ) return false;
@@ -130,7 +130,7 @@ bool RouteArclink::operator==(const RouteArclink& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::operator!=(const RouteArclink& rhs) const {
+bool RouteArclink::operator!=(const RouteArclink &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -139,7 +139,7 @@ bool RouteArclink::operator!=(const RouteArclink& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::equal(const RouteArclink& other) const {
+bool RouteArclink::equal(const RouteArclink &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -224,7 +224,7 @@ int RouteArclink::priority() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const RouteArclinkIndex& RouteArclink::index() const {
+const RouteArclinkIndex &RouteArclink::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -233,8 +233,11 @@ const RouteArclinkIndex& RouteArclink::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::equalIndex(const RouteArclink* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool RouteArclink::equalIndex(const RouteArclink *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -243,7 +246,7 @@ bool RouteArclink::equalIndex(const RouteArclink* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route* RouteArclink::route() const {
+Route *RouteArclink::route() const {
 	return static_cast<Route*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -252,7 +255,7 @@ Route* RouteArclink::route() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteArclink& RouteArclink::operator=(const RouteArclink& other) {
+RouteArclink &RouteArclink::operator=(const RouteArclink &other) {
 	_index = other._index;
 	_end = other._end;
 	_priority = other._priority;
@@ -264,10 +267,11 @@ RouteArclink& RouteArclink::operator=(const RouteArclink& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::assign(Object* other) {
-	RouteArclink* otherRouteArclink = RouteArclink::Cast(other);
-	if ( other == nullptr )
+bool RouteArclink::assign(Object *other) {
+	RouteArclink *otherRouteArclink = RouteArclink::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherRouteArclink;
 
@@ -279,11 +283,13 @@ bool RouteArclink::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool RouteArclink::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Route* route = Route::Cast(parent);
+	Route *route = Route::Cast(parent);
 	if ( route != nullptr )
 		return route->add(this);
 
@@ -296,11 +302,13 @@ bool RouteArclink::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteArclink::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool RouteArclink::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Route* route = Route::Cast(object);
+	Route *route = Route::Cast(object);
 	if ( route != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -308,7 +316,7 @@ bool RouteArclink::detachFrom(PublicObject* object) {
 			return route->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			RouteArclink* child = route->routeArclink(index());
+			RouteArclink *child = route->routeArclink(index());
 			if ( child != nullptr )
 				return route->remove(child);
 			else {
@@ -328,8 +336,9 @@ bool RouteArclink::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteArclink::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -339,8 +348,8 @@ bool RouteArclink::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* RouteArclink::clone() const {
-	RouteArclink* clonee = new RouteArclink();
+Object *RouteArclink::clone() const {
+	RouteArclink *clonee = new RouteArclink();
 	*clonee = *this;
 	return clonee;
 }
@@ -350,7 +359,7 @@ Object* RouteArclink::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RouteArclink::accept(Visitor* visitor) {
+void RouteArclink::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -359,7 +368,7 @@ void RouteArclink::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RouteArclink::serialize(Archive& ar) {
+void RouteArclink::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

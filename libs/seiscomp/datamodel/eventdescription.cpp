@@ -38,7 +38,7 @@ static Seiscomp::Core::MetaEnumImpl<EventDescriptionType> metaEventDescriptionTy
 }
 
 
-EventDescription::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+EventDescription::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("text", "string", false, false, false, false, false, false, nullptr, &EventDescription::setText, &EventDescription::text));
 	addProperty(enumProperty("type", "EventDescriptionType", true, false, &metaEventDescriptionType, &EventDescription::setType, &EventDescription::type));
 }
@@ -64,7 +64,7 @@ EventDescriptionIndex::EventDescriptionIndex(EventDescriptionType type_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventDescriptionIndex::EventDescriptionIndex(const EventDescriptionIndex& idx) {
+EventDescriptionIndex::EventDescriptionIndex(const EventDescriptionIndex &idx) {
 	type = idx.type;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -73,7 +73,7 @@ EventDescriptionIndex::EventDescriptionIndex(const EventDescriptionIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescriptionIndex::operator==(const EventDescriptionIndex& idx) const {
+bool EventDescriptionIndex::operator==(const EventDescriptionIndex &idx) const {
 	return type == idx.type;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -82,7 +82,7 @@ bool EventDescriptionIndex::operator==(const EventDescriptionIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescriptionIndex::operator!=(const EventDescriptionIndex& idx) const {
+bool EventDescriptionIndex::operator!=(const EventDescriptionIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,7 +99,7 @@ EventDescription::EventDescription() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventDescription::EventDescription(const EventDescription& other)
+EventDescription::EventDescription(const EventDescription &other)
 : Object() {
 	*this = other;
 }
@@ -137,7 +137,7 @@ EventDescription::~EventDescription() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::operator==(const EventDescription& rhs) const {
+bool EventDescription::operator==(const EventDescription &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _text != rhs._text ) return false;
 	return true;
@@ -148,7 +148,7 @@ bool EventDescription::operator==(const EventDescription& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::operator!=(const EventDescription& rhs) const {
+bool EventDescription::operator!=(const EventDescription &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -157,7 +157,7 @@ bool EventDescription::operator!=(const EventDescription& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::equal(const EventDescription& other) const {
+bool EventDescription::equal(const EventDescription &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -202,7 +202,7 @@ EventDescriptionType EventDescription::type() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const EventDescriptionIndex& EventDescription::index() const {
+const EventDescriptionIndex &EventDescription::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -211,8 +211,11 @@ const EventDescriptionIndex& EventDescription::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::equalIndex(const EventDescription* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool EventDescription::equalIndex(const EventDescription *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -221,7 +224,7 @@ bool EventDescription::equalIndex(const EventDescription* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* EventDescription::event() const {
+Event *EventDescription::event() const {
 	return static_cast<Event*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -230,7 +233,7 @@ Event* EventDescription::event() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventDescription& EventDescription::operator=(const EventDescription& other) {
+EventDescription &EventDescription::operator=(const EventDescription &other) {
 	_index = other._index;
 	_text = other._text;
 	return *this;
@@ -241,10 +244,11 @@ EventDescription& EventDescription::operator=(const EventDescription& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::assign(Object* other) {
-	EventDescription* otherEventDescription = EventDescription::Cast(other);
-	if ( other == nullptr )
+bool EventDescription::assign(Object *other) {
+	EventDescription *otherEventDescription = EventDescription::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherEventDescription;
 
@@ -256,11 +260,13 @@ bool EventDescription::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool EventDescription::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(parent);
+	Event *event = Event::Cast(parent);
 	if ( event != nullptr )
 		return event->add(this);
 
@@ -273,11 +279,13 @@ bool EventDescription::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventDescription::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool EventDescription::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(object);
+	Event *event = Event::Cast(object);
 	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -285,7 +293,7 @@ bool EventDescription::detachFrom(PublicObject* object) {
 			return event->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			EventDescription* child = event->eventDescription(index());
+			EventDescription *child = event->eventDescription(index());
 			if ( child != nullptr )
 				return event->remove(child);
 			else {
@@ -305,8 +313,9 @@ bool EventDescription::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventDescription::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -316,8 +325,8 @@ bool EventDescription::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* EventDescription::clone() const {
-	EventDescription* clonee = new EventDescription();
+Object *EventDescription::clone() const {
+	EventDescription *clonee = new EventDescription();
 	*clonee = *this;
 	return clonee;
 }
@@ -327,7 +336,7 @@ Object* EventDescription::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventDescription::accept(Visitor* visitor) {
+void EventDescription::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -336,7 +345,7 @@ void EventDescription::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventDescription::serialize(Archive& ar) {
+void EventDescription::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

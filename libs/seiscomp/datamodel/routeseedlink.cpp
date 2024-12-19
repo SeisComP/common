@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(RouteSeedlink, Object, "RouteSeedlink");
 
 
-RouteSeedlink::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+RouteSeedlink::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("address", "string", false, false, true, false, false, false, nullptr, &RouteSeedlink::setAddress, &RouteSeedlink::address));
 	addProperty(Core::simpleProperty("priority", "int", false, false, false, false, true, false, nullptr, &RouteSeedlink::setPriority, &RouteSeedlink::priority));
 }
@@ -59,7 +59,7 @@ RouteSeedlinkIndex::RouteSeedlinkIndex(const std::string& address_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteSeedlinkIndex::RouteSeedlinkIndex(const RouteSeedlinkIndex& idx) {
+RouteSeedlinkIndex::RouteSeedlinkIndex(const RouteSeedlinkIndex &idx) {
 	address = idx.address;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -68,7 +68,7 @@ RouteSeedlinkIndex::RouteSeedlinkIndex(const RouteSeedlinkIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlinkIndex::operator==(const RouteSeedlinkIndex& idx) const {
+bool RouteSeedlinkIndex::operator==(const RouteSeedlinkIndex &idx) const {
 	return address == idx.address;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -77,7 +77,7 @@ bool RouteSeedlinkIndex::operator==(const RouteSeedlinkIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlinkIndex::operator!=(const RouteSeedlinkIndex& idx) const {
+bool RouteSeedlinkIndex::operator!=(const RouteSeedlinkIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -94,7 +94,7 @@ RouteSeedlink::RouteSeedlink() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteSeedlink::RouteSeedlink(const RouteSeedlink& other)
+RouteSeedlink::RouteSeedlink(const RouteSeedlink &other)
 : Object() {
 	*this = other;
 }
@@ -112,7 +112,7 @@ RouteSeedlink::~RouteSeedlink() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::operator==(const RouteSeedlink& rhs) const {
+bool RouteSeedlink::operator==(const RouteSeedlink &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _priority != rhs._priority ) return false;
 	return true;
@@ -123,7 +123,7 @@ bool RouteSeedlink::operator==(const RouteSeedlink& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::operator!=(const RouteSeedlink& rhs) const {
+bool RouteSeedlink::operator!=(const RouteSeedlink &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -132,7 +132,7 @@ bool RouteSeedlink::operator!=(const RouteSeedlink& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::equal(const RouteSeedlink& other) const {
+bool RouteSeedlink::equal(const RouteSeedlink &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -179,7 +179,7 @@ int RouteSeedlink::priority() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const RouteSeedlinkIndex& RouteSeedlink::index() const {
+const RouteSeedlinkIndex &RouteSeedlink::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -188,8 +188,11 @@ const RouteSeedlinkIndex& RouteSeedlink::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::equalIndex(const RouteSeedlink* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool RouteSeedlink::equalIndex(const RouteSeedlink *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -198,7 +201,7 @@ bool RouteSeedlink::equalIndex(const RouteSeedlink* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route* RouteSeedlink::route() const {
+Route *RouteSeedlink::route() const {
 	return static_cast<Route*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -207,7 +210,7 @@ Route* RouteSeedlink::route() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteSeedlink& RouteSeedlink::operator=(const RouteSeedlink& other) {
+RouteSeedlink &RouteSeedlink::operator=(const RouteSeedlink &other) {
 	_index = other._index;
 	_priority = other._priority;
 	return *this;
@@ -218,10 +221,11 @@ RouteSeedlink& RouteSeedlink::operator=(const RouteSeedlink& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::assign(Object* other) {
-	RouteSeedlink* otherRouteSeedlink = RouteSeedlink::Cast(other);
-	if ( other == nullptr )
+bool RouteSeedlink::assign(Object *other) {
+	RouteSeedlink *otherRouteSeedlink = RouteSeedlink::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherRouteSeedlink;
 
@@ -233,11 +237,13 @@ bool RouteSeedlink::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool RouteSeedlink::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Route* route = Route::Cast(parent);
+	Route *route = Route::Cast(parent);
 	if ( route != nullptr )
 		return route->add(this);
 
@@ -250,11 +256,13 @@ bool RouteSeedlink::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteSeedlink::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool RouteSeedlink::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Route* route = Route::Cast(object);
+	Route *route = Route::Cast(object);
 	if ( route != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -262,7 +270,7 @@ bool RouteSeedlink::detachFrom(PublicObject* object) {
 			return route->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			RouteSeedlink* child = route->routeSeedlink(index());
+			RouteSeedlink *child = route->routeSeedlink(index());
 			if ( child != nullptr )
 				return route->remove(child);
 			else {
@@ -282,8 +290,9 @@ bool RouteSeedlink::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RouteSeedlink::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -293,8 +302,8 @@ bool RouteSeedlink::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* RouteSeedlink::clone() const {
-	RouteSeedlink* clonee = new RouteSeedlink();
+Object *RouteSeedlink::clone() const {
+	RouteSeedlink *clonee = new RouteSeedlink();
 	*clonee = *this;
 	return clonee;
 }
@@ -304,7 +313,7 @@ Object* RouteSeedlink::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RouteSeedlink::accept(Visitor* visitor) {
+void RouteSeedlink::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -313,7 +322,7 @@ void RouteSeedlink::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RouteSeedlink::serialize(Archive& ar) {
+void RouteSeedlink::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

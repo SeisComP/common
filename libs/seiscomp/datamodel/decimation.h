@@ -83,25 +83,25 @@ class SC_SYSTEM_CORE_API Decimation : public Object {
 		Decimation();
 
 		//! Copy constructor
-		Decimation(const Decimation& other);
+		Decimation(const Decimation &other);
 
 		//! Destructor
 		~Decimation() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Decimation& operator=(const Decimation& other);
+		Decimation &operator=(const Decimation &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Decimation& other) const;
-		bool operator!=(const Decimation& other) const;
+		bool operator==(const Decimation &other) const;
+		bool operator!=(const Decimation &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Decimation& other) const;
+		bool equal(const Decimation &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -138,17 +138,17 @@ class SC_SYSTEM_CORE_API Decimation : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DecimationIndex& index() const;
+		const DecimationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Decimation* lhs) const;
+		bool equalIndex(const Decimation *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Datalogger* datalogger() const;
+		Datalogger *datalogger() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

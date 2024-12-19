@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(MomentTensorStationContribution, PublicObject, "MomentTensorStationContribution");
 
 
-MomentTensorStationContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+MomentTensorStationContribution::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, nullptr, &MomentTensorStationContribution::setActive, &MomentTensorStationContribution::active));
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, true, &MomentTensorStationContribution::setWaveformID, &MomentTensorStationContribution::waveformID));
 	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, nullptr, &MomentTensorStationContribution::setWeight, &MomentTensorStationContribution::weight));
@@ -55,7 +55,7 @@ MomentTensorStationContribution::MomentTensorStationContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution::MomentTensorStationContribution(const MomentTensorStationContribution& other)
+MomentTensorStationContribution::MomentTensorStationContribution(const MomentTensorStationContribution &other)
 : PublicObject() {
 	*this = other;
 }
@@ -86,8 +86,8 @@ MomentTensorStationContribution::~MomentTensorStationContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensorStationContribution::Create() {
-	MomentTensorStationContribution* object = new MomentTensorStationContribution();
+MomentTensorStationContribution *MomentTensorStationContribution::Create() {
+	MomentTensorStationContribution *object = new MomentTensorStationContribution();
 	return static_cast<MomentTensorStationContribution*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,7 +96,7 @@ MomentTensorStationContribution* MomentTensorStationContribution::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensorStationContribution::Create(const std::string& publicID) {
+MomentTensorStationContribution *MomentTensorStationContribution::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -113,7 +113,7 @@ MomentTensorStationContribution* MomentTensorStationContribution::Create(const s
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensorStationContribution::Find(const std::string& publicID) {
+MomentTensorStationContribution *MomentTensorStationContribution::Find(const std::string& publicID) {
 	return MomentTensorStationContribution::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -122,7 +122,7 @@ MomentTensorStationContribution* MomentTensorStationContribution::Find(const std
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::operator==(const MomentTensorStationContribution& rhs) const {
+bool MomentTensorStationContribution::operator==(const MomentTensorStationContribution &rhs) const {
 	if ( _active != rhs._active ) return false;
 	if ( _waveformID != rhs._waveformID ) return false;
 	if ( _weight != rhs._weight ) return false;
@@ -135,7 +135,7 @@ bool MomentTensorStationContribution::operator==(const MomentTensorStationContri
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::operator!=(const MomentTensorStationContribution& rhs) const {
+bool MomentTensorStationContribution::operator!=(const MomentTensorStationContribution &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ bool MomentTensorStationContribution::operator!=(const MomentTensorStationContri
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::equal(const MomentTensorStationContribution& other) const {
+bool MomentTensorStationContribution::equal(const MomentTensorStationContribution &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -242,7 +242,7 @@ double MomentTensorStationContribution::timeShift() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* MomentTensorStationContribution::momentTensor() const {
+MomentTensor *MomentTensorStationContribution::momentTensor() const {
 	return static_cast<MomentTensor*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -251,7 +251,7 @@ MomentTensor* MomentTensorStationContribution::momentTensor() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution& MomentTensorStationContribution::operator=(const MomentTensorStationContribution& other) {
+MomentTensorStationContribution &MomentTensorStationContribution::operator=(const MomentTensorStationContribution &other) {
 	PublicObject::operator=(other);
 	_active = other._active;
 	_waveformID = other._waveformID;
@@ -265,10 +265,11 @@ MomentTensorStationContribution& MomentTensorStationContribution::operator=(cons
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::assign(Object* other) {
-	MomentTensorStationContribution* otherMomentTensorStationContribution = MomentTensorStationContribution::Cast(other);
-	if ( other == nullptr )
+bool MomentTensorStationContribution::assign(Object *other) {
+	MomentTensorStationContribution *otherMomentTensorStationContribution = MomentTensorStationContribution::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherMomentTensorStationContribution;
 
@@ -280,11 +281,13 @@ bool MomentTensorStationContribution::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool MomentTensorStationContribution::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(parent);
+	MomentTensor *momentTensor = MomentTensor::Cast(parent);
 	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
@@ -297,11 +300,13 @@ bool MomentTensorStationContribution::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool MomentTensorStationContribution::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(object);
+	MomentTensor *momentTensor = MomentTensor::Cast(object);
 	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -309,7 +314,7 @@ bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
 			return momentTensor->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			MomentTensorStationContribution* child = momentTensor->findMomentTensorStationContribution(publicID());
+			MomentTensorStationContribution *child = momentTensor->findMomentTensorStationContribution(publicID());
 			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
@@ -329,8 +334,9 @@ bool MomentTensorStationContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorStationContribution::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -340,8 +346,8 @@ bool MomentTensorStationContribution::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* MomentTensorStationContribution::clone() const {
-	MomentTensorStationContribution* clonee = new MomentTensorStationContribution();
+Object *MomentTensorStationContribution::clone() const {
+	MomentTensorStationContribution *clonee = new MomentTensorStationContribution();
 	*clonee = *this;
 	return clonee;
 }
@@ -351,10 +357,10 @@ Object* MomentTensorStationContribution::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::updateChild(Object* child) {
-	MomentTensorComponentContribution* momentTensorComponentContributionChild = MomentTensorComponentContribution::Cast(child);
+bool MomentTensorStationContribution::updateChild(Object *child) {
+	MomentTensorComponentContribution *momentTensorComponentContributionChild = MomentTensorComponentContribution::Cast(child);
 	if ( momentTensorComponentContributionChild != nullptr ) {
-		MomentTensorComponentContribution* momentTensorComponentContributionElement = momentTensorComponentContribution(momentTensorComponentContributionChild->index());
+		MomentTensorComponentContribution *momentTensorComponentContributionElement = momentTensorComponentContribution(momentTensorComponentContributionChild->index());
 		if ( momentTensorComponentContributionElement != nullptr ) {
 			*momentTensorComponentContributionElement = *momentTensorComponentContributionChild;
 			momentTensorComponentContributionElement->update();
@@ -371,7 +377,7 @@ bool MomentTensorStationContribution::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorStationContribution::accept(Visitor* visitor) {
+void MomentTensorStationContribution::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -399,7 +405,7 @@ size_t MomentTensorStationContribution::momentTensorComponentContributionCount()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorComponentContribution* MomentTensorStationContribution::momentTensorComponentContribution(size_t i) const {
+MomentTensorComponentContribution *MomentTensorStationContribution::momentTensorComponentContribution(size_t i) const {
 	return _momentTensorComponentContributions[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -408,10 +414,12 @@ MomentTensorComponentContribution* MomentTensorStationContribution::momentTensor
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorComponentContribution* MomentTensorStationContribution::momentTensorComponentContribution(const MomentTensorComponentContributionIndex& i) const {
-	for ( std::vector<MomentTensorComponentContributionPtr>::const_iterator it = _momentTensorComponentContributions.begin(); it != _momentTensorComponentContributions.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+MomentTensorComponentContribution *MomentTensorStationContribution::momentTensorComponentContribution(const MomentTensorComponentContributionIndex &i) const {
+	for ( const auto &elem : _momentTensorComponentContributions ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -421,9 +429,10 @@ MomentTensorComponentContribution* MomentTensorStationContribution::momentTensor
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::add(MomentTensorComponentContribution* momentTensorComponentContribution) {
-	if ( momentTensorComponentContribution == nullptr )
+bool MomentTensorStationContribution::add(MomentTensorComponentContribution *momentTensorComponentContribution) {
+	if ( !momentTensorComponentContribution ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( momentTensorComponentContribution->parent() != nullptr ) {
@@ -460,8 +469,8 @@ bool MomentTensorStationContribution::add(MomentTensorComponentContribution* mom
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::remove(MomentTensorComponentContribution* momentTensorComponentContribution) {
-	if ( momentTensorComponentContribution == nullptr )
+bool MomentTensorStationContribution::remove(MomentTensorComponentContribution *momentTensorComponentContribution) {
+	if ( !momentTensorComponentContribution )
 		return false;
 
 	if ( momentTensorComponentContribution->parent() != this ) {
@@ -519,9 +528,12 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(si
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorStationContribution::removeMomentTensorComponentContribution(const MomentTensorComponentContributionIndex& i) {
-	MomentTensorComponentContribution* object = momentTensorComponentContribution(i);
-	if ( object == nullptr ) return false;
+bool MomentTensorStationContribution::removeMomentTensorComponentContribution(const MomentTensorComponentContributionIndex &i) {
+	MomentTensorComponentContribution *object = momentTensorComponentContribution(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -530,7 +542,7 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(co
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorStationContribution::serialize(Archive& ar) {
+void MomentTensorStationContribution::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

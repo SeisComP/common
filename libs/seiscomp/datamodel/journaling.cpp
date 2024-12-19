@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Journaling, PublicObject, "Journaling");
 
 
-Journaling::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Journaling::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayClassProperty<JournalEntry>("entry", "JournalEntry", &Journaling::journalEntryCount, &Journaling::journalEntry, static_cast<bool (Journaling::*)(JournalEntry*)>(&Journaling::add), &Journaling::removeJournalEntry, static_cast<bool (Journaling::*)(JournalEntry*)>(&Journaling::remove)));
 }
 
@@ -50,7 +50,7 @@ Journaling::Journaling(): PublicObject("Journaling") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Journaling::Journaling(const Journaling& other)
+Journaling::Journaling(const Journaling &other)
 : PublicObject() {
 	*this = other;
 }
@@ -71,7 +71,7 @@ Journaling::~Journaling() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::operator==(const Journaling& rhs) const {
+bool Journaling::operator==(const Journaling &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -80,7 +80,7 @@ bool Journaling::operator==(const Journaling& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::operator!=(const Journaling& rhs) const {
+bool Journaling::operator!=(const Journaling &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,7 +89,7 @@ bool Journaling::operator!=(const Journaling& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::equal(const Journaling& other) const {
+bool Journaling::equal(const Journaling &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -98,7 +98,7 @@ bool Journaling::equal(const Journaling& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Journaling& Journaling::operator=(const Journaling& other) {
+Journaling &Journaling::operator=(const Journaling &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -108,10 +108,11 @@ Journaling& Journaling::operator=(const Journaling& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::assign(Object* other) {
-	Journaling* otherJournaling = Journaling::Cast(other);
-	if ( other == nullptr )
+bool Journaling::assign(Object *other) {
+	Journaling *otherJournaling = Journaling::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherJournaling;
 
@@ -123,7 +124,7 @@ bool Journaling::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::attachTo(PublicObject* parent) {
+bool Journaling::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -132,7 +133,7 @@ bool Journaling::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::detachFrom(PublicObject* object) {
+bool Journaling::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,8 +151,8 @@ bool Journaling::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Journaling::clone() const {
-	Journaling* clonee = new Journaling();
+Object *Journaling::clone() const {
+	Journaling *clonee = new Journaling();
 	*clonee = *this;
 	return clonee;
 }
@@ -161,7 +162,7 @@ Object* Journaling::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::updateChild(Object* child) {
+bool Journaling::updateChild(Object *child) {
 	// Do not know how to fetch child of type JournalEntry without an index
 
 	return false;
@@ -172,7 +173,7 @@ bool Journaling::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Journaling::accept(Visitor* visitor) {
+void Journaling::accept(Visitor *visitor) {
 	for ( auto &&elem : _journalEntrys )
 		elem->accept(visitor);
 }
@@ -191,7 +192,7 @@ size_t Journaling::journalEntryCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-JournalEntry* Journaling::journalEntry(size_t i) const {
+JournalEntry *Journaling::journalEntry(size_t i) const {
 	return _journalEntrys[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -200,11 +201,11 @@ JournalEntry* Journaling::journalEntry(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-JournalEntry* Journaling::findJournalEntry(JournalEntry* journalEntry) const {
-	std::vector<JournalEntryPtr>::const_iterator it;
-	for ( it = _journalEntrys.begin(); it != _journalEntrys.end(); ++it ) {
-		if ( *journalEntry == **it )
-			return (*it).get();
+JournalEntry *Journaling::findJournalEntry(JournalEntry *journalEntry) const {
+	for ( const auto &elem : _journalEntrys ) {
+		if ( *journalEntry == *elem ) {
+			return elem.get();
+		}
 	}
 
 	return nullptr;
@@ -215,9 +216,10 @@ JournalEntry* Journaling::findJournalEntry(JournalEntry* journalEntry) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::add(JournalEntry* journalEntry) {
-	if ( journalEntry == nullptr )
+bool Journaling::add(JournalEntry *journalEntry) {
+	if ( !journalEntry ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( journalEntry->parent() != nullptr ) {
@@ -246,8 +248,8 @@ bool Journaling::add(JournalEntry* journalEntry) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Journaling::remove(JournalEntry* journalEntry) {
-	if ( journalEntry == nullptr )
+bool Journaling::remove(JournalEntry *journalEntry) {
+	if ( !journalEntry )
 		return false;
 
 	if ( journalEntry->parent() != this ) {
@@ -305,7 +307,7 @@ bool Journaling::removeJournalEntry(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Journaling::serialize(Archive& ar) {
+void Journaling::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

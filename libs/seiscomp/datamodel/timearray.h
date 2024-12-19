@@ -49,25 +49,25 @@ class SC_SYSTEM_CORE_API TimeArray : public Core::BaseObject {
 		TimeArray();
 
 		//! Copy constructor
-		TimeArray(const TimeArray& other);
+		TimeArray(const TimeArray &other);
 
 		//! Destructor
 		~TimeArray() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		TimeArray& operator=(const TimeArray& other);
+		TimeArray &operator=(const TimeArray &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const TimeArray& other) const;
-		bool operator!=(const TimeArray& other) const;
+		bool operator==(const TimeArray &other) const;
+		bool operator!=(const TimeArray &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const TimeArray& other) const;
+		bool equal(const TimeArray &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -75,8 +75,8 @@ class SC_SYSTEM_CORE_API TimeArray : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	public:
 		void setContent(const std::vector< Seiscomp::Core::Time >&);
-		const std::vector< Seiscomp::Core::Time >& content() const;
-		std::vector< Seiscomp::Core::Time >& content();
+		const std::vector< Seiscomp::Core::Time > &content() const;
+		std::vector< Seiscomp::Core::Time > &content();
 
 
 	// ------------------------------------------------------------------

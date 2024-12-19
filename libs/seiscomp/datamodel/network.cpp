@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Network, PublicObject, "Network");
 
 
-Network::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Network::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &Network::setCode, &Network::code));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Network::setStart, &Network::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Network::setEnd, &Network::end));
@@ -74,7 +74,7 @@ NetworkIndex::NetworkIndex(const std::string& code_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-NetworkIndex::NetworkIndex(const NetworkIndex& idx) {
+NetworkIndex::NetworkIndex(const NetworkIndex &idx) {
 	code = idx.code;
 	start = idx.start;
 }
@@ -84,7 +84,7 @@ NetworkIndex::NetworkIndex(const NetworkIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NetworkIndex::operator==(const NetworkIndex& idx) const {
+bool NetworkIndex::operator==(const NetworkIndex &idx) const {
 	return code == idx.code &&
 	       start == idx.start;
 }
@@ -94,7 +94,7 @@ bool NetworkIndex::operator==(const NetworkIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NetworkIndex::operator!=(const NetworkIndex& idx) const {
+bool NetworkIndex::operator!=(const NetworkIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -111,7 +111,7 @@ Network::Network() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network::Network(const Network& other)
+Network::Network(const Network &other)
 : PublicObject() {
 	*this = other;
 }
@@ -144,8 +144,8 @@ Network::~Network() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Network::Create() {
-	Network* object = new Network();
+Network *Network::Create() {
+	Network *object = new Network();
 	return static_cast<Network*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -154,7 +154,7 @@ Network* Network::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Network::Create(const std::string& publicID) {
+Network *Network::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -171,7 +171,7 @@ Network* Network::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Network::Find(const std::string& publicID) {
+Network *Network::Find(const std::string& publicID) {
 	return Network::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -180,7 +180,7 @@ Network* Network::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::operator==(const Network& rhs) const {
+bool Network::operator==(const Network &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _description != rhs._description ) return false;
@@ -200,7 +200,7 @@ bool Network::operator==(const Network& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::operator!=(const Network& rhs) const {
+bool Network::operator!=(const Network &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -209,7 +209,7 @@ bool Network::operator!=(const Network& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::equal(const Network& other) const {
+bool Network::equal(const Network &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -453,7 +453,7 @@ const Blob& Network::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const NetworkIndex& Network::index() const {
+const NetworkIndex &Network::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -462,8 +462,11 @@ const NetworkIndex& Network::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::equalIndex(const Network* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Network::equalIndex(const Network *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -472,7 +475,7 @@ bool Network::equalIndex(const Network* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* Network::inventory() const {
+Inventory *Network::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -481,7 +484,7 @@ Inventory* Network::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network& Network::operator=(const Network& other) {
+Network &Network::operator=(const Network &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_end = other._end;
@@ -502,10 +505,11 @@ Network& Network::operator=(const Network& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::assign(Object* other) {
-	Network* otherNetwork = Network::Cast(other);
-	if ( other == nullptr )
+bool Network::assign(Object *other) {
+	Network *otherNetwork = Network::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherNetwork;
 
@@ -517,11 +521,13 @@ bool Network::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Network::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -534,11 +540,13 @@ bool Network::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Network::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -546,7 +554,7 @@ bool Network::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Network* child = inventory->findNetwork(publicID());
+			Network *child = inventory->findNetwork(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -566,8 +574,9 @@ bool Network::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Network::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -577,8 +586,8 @@ bool Network::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Network::clone() const {
-	Network* clonee = new Network();
+Object *Network::clone() const {
+	Network *clonee = new Network();
 	*clonee = *this;
 	return clonee;
 }
@@ -588,10 +597,10 @@ Object* Network::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Network::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -600,9 +609,9 @@ bool Network::updateChild(Object* child) {
 		return false;
 	}
 
-	Station* stationChild = Station::Cast(child);
+	Station *stationChild = Station::Cast(child);
 	if ( stationChild != nullptr ) {
-		Station* stationElement
+		Station *stationElement
 			= Station::Cast(PublicObject::Find(stationChild->publicID()));
 		if ( stationElement && stationElement->parent() == this ) {
 			*stationElement = *stationChild;
@@ -620,7 +629,7 @@ bool Network::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Network::accept(Visitor* visitor) {
+void Network::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -650,7 +659,7 @@ size_t Network::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Network::comment(size_t i) const {
+Comment *Network::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -659,10 +668,12 @@ Comment* Network::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Network::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Network::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -672,9 +683,10 @@ Comment* Network::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Network::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -711,8 +723,8 @@ bool Network::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Network::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -770,9 +782,12 @@ bool Network::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Network::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -790,7 +805,7 @@ size_t Network::stationCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Network::station(size_t i) const {
+Station *Network::station(size_t i) const {
 	return _stations[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -799,10 +814,12 @@ Station* Network::station(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Network::station(const StationIndex& i) const {
-	for ( std::vector<StationPtr>::const_iterator it = _stations.begin(); it != _stations.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Station *Network::station(const StationIndex &i) const {
+	for ( const auto &elem : _stations ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -812,10 +829,12 @@ Station* Network::station(const StationIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Network::findStation(const std::string& publicID) const {
-	for ( std::vector<StationPtr>::const_iterator it = _stations.begin(); it != _stations.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Station *Network::findStation(const std::string& publicID) const {
+	for ( const auto &elem : _stations ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -825,9 +844,10 @@ Station* Network::findStation(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::add(Station* station) {
-	if ( station == nullptr )
+bool Network::add(Station *station) {
+	if ( !station ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( station->parent() != nullptr ) {
@@ -836,17 +856,20 @@ bool Network::add(Station* station) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Station* stationCached = Station::Find(station->publicID());
+		Station *stationCached = Station::Find(station->publicID());
 		if ( stationCached ) {
 			if ( stationCached->parent() ) {
-				if ( stationCached->parent() == this )
+				if ( stationCached->parent() == this ) {
 					SEISCOMP_ERROR("Network::add(Station*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Network::add(Station*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				station = stationCached;
+			}
 		}
 	}
 
@@ -871,8 +894,8 @@ bool Network::add(Station* station) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::remove(Station* station) {
-	if ( station == nullptr )
+bool Network::remove(Station *station) {
+	if ( !station )
 		return false;
 
 	if ( station->parent() != this ) {
@@ -930,9 +953,12 @@ bool Network::removeStation(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Network::removeStation(const StationIndex& i) {
-	Station* object = station(i);
-	if ( object == nullptr ) return false;
+bool Network::removeStation(const StationIndex &i) {
+	Station *object = station(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -941,7 +967,7 @@ bool Network::removeStation(const StationIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Network::serialize(Archive& ar) {
+void Network::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

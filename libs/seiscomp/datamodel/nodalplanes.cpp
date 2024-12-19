@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(NodalPlanes, "NodalPlanes");
 
 
-NodalPlanes::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+NodalPlanes::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<NodalPlane>("nodalPlane1", "NodalPlane", false, false, true, &NodalPlanes::setNodalPlane1, &NodalPlanes::nodalPlane1));
 	addProperty(objectProperty<NodalPlane>("nodalPlane2", "NodalPlane", false, false, true, &NodalPlanes::setNodalPlane2, &NodalPlanes::nodalPlane2));
 	addProperty(Core::simpleProperty("preferredPlane", "int", false, false, false, false, true, false, nullptr, &NodalPlanes::setPreferredPlane, &NodalPlanes::preferredPlane));
@@ -50,7 +50,7 @@ NodalPlanes::NodalPlanes() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-NodalPlanes::NodalPlanes(const NodalPlanes& other)
+NodalPlanes::NodalPlanes(const NodalPlanes &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -68,7 +68,7 @@ NodalPlanes::~NodalPlanes() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlanes::operator==(const NodalPlanes& rhs) const {
+bool NodalPlanes::operator==(const NodalPlanes &rhs) const {
 	if ( !(_nodalPlane1 == rhs._nodalPlane1) )
 		return false;
 	if ( !(_nodalPlane2 == rhs._nodalPlane2) )
@@ -83,7 +83,7 @@ bool NodalPlanes::operator==(const NodalPlanes& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlanes::operator!=(const NodalPlanes& rhs) const {
+bool NodalPlanes::operator!=(const NodalPlanes &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ bool NodalPlanes::operator!=(const NodalPlanes& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool NodalPlanes::equal(const NodalPlanes& other) const {
+bool NodalPlanes::equal(const NodalPlanes &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -183,7 +183,7 @@ int NodalPlanes::preferredPlane() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-NodalPlanes& NodalPlanes::operator=(const NodalPlanes& other) {
+NodalPlanes &NodalPlanes::operator=(const NodalPlanes &other) {
 	_nodalPlane1 = other._nodalPlane1;
 	_nodalPlane2 = other._nodalPlane2;
 	_preferredPlane = other._preferredPlane;
@@ -195,7 +195,7 @@ NodalPlanes& NodalPlanes::operator=(const NodalPlanes& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void NodalPlanes::serialize(Archive& ar) {
+void NodalPlanes::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

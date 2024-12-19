@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(AuxSource, Object, "AuxSource");
 
 
-AuxSource::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+AuxSource::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &AuxSource::setName, &AuxSource::name));
 	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &AuxSource::setDescription, &AuxSource::description));
 	addProperty(Core::simpleProperty("unit", "string", false, false, false, false, false, false, nullptr, &AuxSource::setUnit, &AuxSource::unit));
@@ -64,7 +64,7 @@ AuxSourceIndex::AuxSourceIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxSourceIndex::AuxSourceIndex(const AuxSourceIndex& idx) {
+AuxSourceIndex::AuxSourceIndex(const AuxSourceIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -73,7 +73,7 @@ AuxSourceIndex::AuxSourceIndex(const AuxSourceIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSourceIndex::operator==(const AuxSourceIndex& idx) const {
+bool AuxSourceIndex::operator==(const AuxSourceIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -82,7 +82,7 @@ bool AuxSourceIndex::operator==(const AuxSourceIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSourceIndex::operator!=(const AuxSourceIndex& idx) const {
+bool AuxSourceIndex::operator!=(const AuxSourceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,7 +99,7 @@ AuxSource::AuxSource() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxSource::AuxSource(const AuxSource& other)
+AuxSource::AuxSource(const AuxSource &other)
 : Object() {
 	*this = other;
 }
@@ -148,7 +148,7 @@ AuxSource::~AuxSource() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::operator==(const AuxSource& rhs) const {
+bool AuxSource::operator==(const AuxSource &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _description != rhs._description ) return false;
 	if ( _unit != rhs._unit ) return false;
@@ -164,7 +164,7 @@ bool AuxSource::operator==(const AuxSource& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::operator!=(const AuxSource& rhs) const {
+bool AuxSource::operator!=(const AuxSource &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -173,7 +173,7 @@ bool AuxSource::operator!=(const AuxSource& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::equal(const AuxSource& other) const {
+bool AuxSource::equal(const AuxSource &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -325,7 +325,7 @@ const Blob& AuxSource::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const AuxSourceIndex& AuxSource::index() const {
+const AuxSourceIndex &AuxSource::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -334,8 +334,11 @@ const AuxSourceIndex& AuxSource::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::equalIndex(const AuxSource* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool AuxSource::equalIndex(const AuxSource *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -344,7 +347,7 @@ bool AuxSource::equalIndex(const AuxSource* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxDevice* AuxSource::auxDevice() const {
+AuxDevice *AuxSource::auxDevice() const {
 	return static_cast<AuxDevice*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -353,7 +356,7 @@ AuxDevice* AuxSource::auxDevice() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxSource& AuxSource::operator=(const AuxSource& other) {
+AuxSource &AuxSource::operator=(const AuxSource &other) {
 	_index = other._index;
 	_description = other._description;
 	_unit = other._unit;
@@ -369,10 +372,11 @@ AuxSource& AuxSource::operator=(const AuxSource& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::assign(Object* other) {
-	AuxSource* otherAuxSource = AuxSource::Cast(other);
-	if ( other == nullptr )
+bool AuxSource::assign(Object *other) {
+	AuxSource *otherAuxSource = AuxSource::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherAuxSource;
 
@@ -384,11 +388,13 @@ bool AuxSource::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool AuxSource::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	AuxDevice* auxDevice = AuxDevice::Cast(parent);
+	AuxDevice *auxDevice = AuxDevice::Cast(parent);
 	if ( auxDevice != nullptr )
 		return auxDevice->add(this);
 
@@ -401,11 +407,13 @@ bool AuxSource::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool AuxSource::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool AuxSource::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	AuxDevice* auxDevice = AuxDevice::Cast(object);
+	AuxDevice *auxDevice = AuxDevice::Cast(object);
 	if ( auxDevice != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -413,7 +421,7 @@ bool AuxSource::detachFrom(PublicObject* object) {
 			return auxDevice->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			AuxSource* child = auxDevice->auxSource(index());
+			AuxSource *child = auxDevice->auxSource(index());
 			if ( child != nullptr )
 				return auxDevice->remove(child);
 			else {
@@ -433,8 +441,9 @@ bool AuxSource::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxSource::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -444,8 +453,8 @@ bool AuxSource::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* AuxSource::clone() const {
-	AuxSource* clonee = new AuxSource();
+Object *AuxSource::clone() const {
+	AuxSource *clonee = new AuxSource();
 	*clonee = *this;
 	return clonee;
 }
@@ -455,7 +464,7 @@ Object* AuxSource::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AuxSource::accept(Visitor* visitor) {
+void AuxSource::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -464,7 +473,7 @@ void AuxSource::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AuxSource::serialize(Archive& ar) {
+void AuxSource::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

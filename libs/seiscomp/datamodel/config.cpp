@@ -35,7 +35,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Config, PublicObject, "Config");
 
 
-Config::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Config::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayObjectProperty("parameterSet", "ParameterSet", &Config::parameterSetCount, &Config::parameterSet, static_cast<bool (Config::*)(ParameterSet*)>(&Config::add), &Config::removeParameterSet, static_cast<bool (Config::*)(ParameterSet*)>(&Config::remove)));
 	addProperty(arrayObjectProperty("module", "ConfigModule", &Config::configModuleCount, &Config::configModule, static_cast<bool (Config::*)(ConfigModule*)>(&Config::add), &Config::removeConfigModule, static_cast<bool (Config::*)(ConfigModule*)>(&Config::remove)));
 }
@@ -52,7 +52,7 @@ Config::Config(): PublicObject("Config") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Config::Config(const Config& other)
+Config::Config(const Config &other)
 : PublicObject() {
 	*this = other;
 }
@@ -76,7 +76,7 @@ Config::~Config() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::operator==(const Config& rhs) const {
+bool Config::operator==(const Config &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -85,7 +85,7 @@ bool Config::operator==(const Config& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::operator!=(const Config& rhs) const {
+bool Config::operator!=(const Config &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -94,7 +94,7 @@ bool Config::operator!=(const Config& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::equal(const Config& other) const {
+bool Config::equal(const Config &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ bool Config::equal(const Config& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Config& Config::operator=(const Config& other) {
+Config &Config::operator=(const Config &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -113,10 +113,11 @@ Config& Config::operator=(const Config& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::assign(Object* other) {
-	Config* otherConfig = Config::Cast(other);
-	if ( other == nullptr )
+bool Config::assign(Object *other) {
+	Config *otherConfig = Config::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherConfig;
 
@@ -128,7 +129,7 @@ bool Config::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::attachTo(PublicObject* parent) {
+bool Config::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -137,7 +138,7 @@ bool Config::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::detachFrom(PublicObject* object) {
+bool Config::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -155,8 +156,8 @@ bool Config::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Config::clone() const {
-	Config* clonee = new Config();
+Object *Config::clone() const {
+	Config *clonee = new Config();
 	*clonee = *this;
 	return clonee;
 }
@@ -166,10 +167,10 @@ Object* Config::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::updateChild(Object* child) {
-	ParameterSet* parameterSetChild = ParameterSet::Cast(child);
+bool Config::updateChild(Object *child) {
+	ParameterSet *parameterSetChild = ParameterSet::Cast(child);
 	if ( parameterSetChild != nullptr ) {
-		ParameterSet* parameterSetElement
+		ParameterSet *parameterSetElement
 			= ParameterSet::Cast(PublicObject::Find(parameterSetChild->publicID()));
 		if ( parameterSetElement && parameterSetElement->parent() == this ) {
 			*parameterSetElement = *parameterSetChild;
@@ -179,9 +180,9 @@ bool Config::updateChild(Object* child) {
 		return false;
 	}
 
-	ConfigModule* configModuleChild = ConfigModule::Cast(child);
+	ConfigModule *configModuleChild = ConfigModule::Cast(child);
 	if ( configModuleChild != nullptr ) {
-		ConfigModule* configModuleElement
+		ConfigModule *configModuleElement
 			= ConfigModule::Cast(PublicObject::Find(configModuleChild->publicID()));
 		if ( configModuleElement && configModuleElement->parent() == this ) {
 			*configModuleElement = *configModuleChild;
@@ -199,7 +200,7 @@ bool Config::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Config::accept(Visitor* visitor) {
+void Config::accept(Visitor *visitor) {
 	for ( auto &&elem : _parameterSets )
 		elem->accept(visitor);
 	for ( auto &&elem : _configModules )
@@ -220,7 +221,7 @@ size_t Config::parameterSetCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ParameterSet* Config::parameterSet(size_t i) const {
+ParameterSet *Config::parameterSet(size_t i) const {
 	return _parameterSets[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -229,10 +230,12 @@ ParameterSet* Config::parameterSet(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ParameterSet* Config::findParameterSet(const std::string& publicID) const {
-	for ( std::vector<ParameterSetPtr>::const_iterator it = _parameterSets.begin(); it != _parameterSets.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ParameterSet *Config::findParameterSet(const std::string& publicID) const {
+	for ( const auto &elem : _parameterSets ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -242,9 +245,10 @@ ParameterSet* Config::findParameterSet(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::add(ParameterSet* parameterSet) {
-	if ( parameterSet == nullptr )
+bool Config::add(ParameterSet *parameterSet) {
+	if ( !parameterSet ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( parameterSet->parent() != nullptr ) {
@@ -253,17 +257,20 @@ bool Config::add(ParameterSet* parameterSet) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ParameterSet* parameterSetCached = ParameterSet::Find(parameterSet->publicID());
+		ParameterSet *parameterSetCached = ParameterSet::Find(parameterSet->publicID());
 		if ( parameterSetCached ) {
 			if ( parameterSetCached->parent() ) {
-				if ( parameterSetCached->parent() == this )
+				if ( parameterSetCached->parent() == this ) {
 					SEISCOMP_ERROR("Config::add(ParameterSet*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Config::add(ParameterSet*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				parameterSet = parameterSetCached;
+			}
 		}
 	}
 
@@ -288,8 +295,8 @@ bool Config::add(ParameterSet* parameterSet) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::remove(ParameterSet* parameterSet) {
-	if ( parameterSet == nullptr )
+bool Config::remove(ParameterSet *parameterSet) {
+	if ( !parameterSet )
 		return false;
 
 	if ( parameterSet->parent() != this ) {
@@ -356,7 +363,7 @@ size_t Config::configModuleCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigModule* Config::configModule(size_t i) const {
+ConfigModule *Config::configModule(size_t i) const {
 	return _configModules[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -365,10 +372,12 @@ ConfigModule* Config::configModule(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigModule* Config::findConfigModule(const std::string& publicID) const {
-	for ( std::vector<ConfigModulePtr>::const_iterator it = _configModules.begin(); it != _configModules.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ConfigModule *Config::findConfigModule(const std::string& publicID) const {
+	for ( const auto &elem : _configModules ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -378,9 +387,10 @@ ConfigModule* Config::findConfigModule(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::add(ConfigModule* configModule) {
-	if ( configModule == nullptr )
+bool Config::add(ConfigModule *configModule) {
+	if ( !configModule ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( configModule->parent() != nullptr ) {
@@ -389,17 +399,20 @@ bool Config::add(ConfigModule* configModule) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ConfigModule* configModuleCached = ConfigModule::Find(configModule->publicID());
+		ConfigModule *configModuleCached = ConfigModule::Find(configModule->publicID());
 		if ( configModuleCached ) {
 			if ( configModuleCached->parent() ) {
-				if ( configModuleCached->parent() == this )
+				if ( configModuleCached->parent() == this ) {
 					SEISCOMP_ERROR("Config::add(ConfigModule*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Config::add(ConfigModule*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				configModule = configModuleCached;
+			}
 		}
 	}
 
@@ -424,8 +437,8 @@ bool Config::add(ConfigModule* configModule) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Config::remove(ConfigModule* configModule) {
-	if ( configModule == nullptr )
+bool Config::remove(ConfigModule *configModule) {
+	if ( !configModule )
 		return false;
 
 	if ( configModule->parent() != this ) {
@@ -483,7 +496,7 @@ bool Config::removeConfigModule(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Config::serialize(Archive& ar) {
+void Config::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

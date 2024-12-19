@@ -42,7 +42,7 @@ static Seiscomp::Core::MetaEnumImpl<EvaluationStatus> metaEvaluationStatus;
 }
 
 
-Pick::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Pick::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<TimeQuantity>("time", "TimeQuantity", false, false, false, &Pick::setTime, &Pick::time));
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, false, &Pick::setWaveformID, &Pick::waveformID));
 	addProperty(Core::simpleProperty("filterID", "string", false, false, false, false, false, false, nullptr, &Pick::setFilterID, &Pick::filterID));
@@ -71,7 +71,7 @@ Pick::Pick() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick::Pick(const Pick& other)
+Pick::Pick(const Pick &other)
 : PublicObject() {
 	*this = other;
 }
@@ -101,8 +101,8 @@ Pick::~Pick() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* Pick::Create() {
-	Pick* object = new Pick();
+Pick *Pick::Create() {
+	Pick *object = new Pick();
 	return static_cast<Pick*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -111,7 +111,7 @@ Pick* Pick::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* Pick::Create(const std::string& publicID) {
+Pick *Pick::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -128,7 +128,7 @@ Pick* Pick::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* Pick::Find(const std::string& publicID) {
+Pick *Pick::Find(const std::string& publicID) {
 	return Pick::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -137,7 +137,7 @@ Pick* Pick::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::operator==(const Pick& rhs) const {
+bool Pick::operator==(const Pick &rhs) const {
 	if ( _time != rhs._time ) return false;
 	if ( _waveformID != rhs._waveformID ) return false;
 	if ( _filterID != rhs._filterID ) return false;
@@ -159,7 +159,7 @@ bool Pick::operator==(const Pick& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::operator!=(const Pick& rhs) const {
+bool Pick::operator!=(const Pick &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -168,7 +168,7 @@ bool Pick::operator!=(const Pick& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::equal(const Pick& other) const {
+bool Pick::equal(const Pick &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -489,7 +489,7 @@ const CreationInfo& Pick::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters* Pick::eventParameters() const {
+EventParameters *Pick::eventParameters() const {
 	return static_cast<EventParameters*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -498,7 +498,7 @@ EventParameters* Pick::eventParameters() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick& Pick::operator=(const Pick& other) {
+Pick &Pick::operator=(const Pick &other) {
 	PublicObject::operator=(other);
 	_time = other._time;
 	_waveformID = other._waveformID;
@@ -521,10 +521,11 @@ Pick& Pick::operator=(const Pick& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::assign(Object* other) {
-	Pick* otherPick = Pick::Cast(other);
-	if ( other == nullptr )
+bool Pick::assign(Object *other) {
+	Pick *otherPick = Pick::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherPick;
 
@@ -536,11 +537,13 @@ bool Pick::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Pick::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(parent);
+	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
@@ -553,11 +556,13 @@ bool Pick::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Pick::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(object);
+	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -565,7 +570,7 @@ bool Pick::detachFrom(PublicObject* object) {
 			return eventParameters->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Pick* child = eventParameters->findPick(publicID());
+			Pick *child = eventParameters->findPick(publicID());
 			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
@@ -585,8 +590,9 @@ bool Pick::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Pick::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -596,8 +602,8 @@ bool Pick::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Pick::clone() const {
-	Pick* clonee = new Pick();
+Object *Pick::clone() const {
+	Pick *clonee = new Pick();
 	*clonee = *this;
 	return clonee;
 }
@@ -607,10 +613,10 @@ Object* Pick::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Pick::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -627,7 +633,7 @@ bool Pick::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Pick::accept(Visitor* visitor) {
+void Pick::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -655,7 +661,7 @@ size_t Pick::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Pick::comment(size_t i) const {
+Comment *Pick::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -664,10 +670,12 @@ Comment* Pick::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Pick::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Pick::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -677,9 +685,10 @@ Comment* Pick::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Pick::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -716,8 +725,8 @@ bool Pick::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Pick::remove(Comment *comment) {
+	if ( !comment )
 		return false;
 
 	if ( comment->parent() != this ) {
@@ -775,9 +784,12 @@ bool Pick::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Pick::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Pick::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -786,7 +798,7 @@ bool Pick::removeComment(const CommentIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Pick::serialize(Archive& ar) {
+void Pick::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

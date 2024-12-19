@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(PickReference, Object, "PickReference");
 
 
-PickReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+PickReference::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("pickID", "string", false, false, true, true, false, false, nullptr, &PickReference::setPickID, &PickReference::pickID));
 }
 
@@ -58,7 +58,7 @@ PickReferenceIndex::PickReferenceIndex(const std::string& pickID_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickReferenceIndex::PickReferenceIndex(const PickReferenceIndex& idx) {
+PickReferenceIndex::PickReferenceIndex(const PickReferenceIndex &idx) {
 	pickID = idx.pickID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -67,7 +67,7 @@ PickReferenceIndex::PickReferenceIndex(const PickReferenceIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReferenceIndex::operator==(const PickReferenceIndex& idx) const {
+bool PickReferenceIndex::operator==(const PickReferenceIndex &idx) const {
 	return pickID == idx.pickID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ bool PickReferenceIndex::operator==(const PickReferenceIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReferenceIndex::operator!=(const PickReferenceIndex& idx) const {
+bool PickReferenceIndex::operator!=(const PickReferenceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +93,7 @@ PickReference::PickReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickReference::PickReference(const PickReference& other)
+PickReference::PickReference(const PickReference &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ PickReference::~PickReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::operator==(const PickReference& rhs) const {
+bool PickReference::operator==(const PickReference &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -131,7 +131,7 @@ bool PickReference::operator==(const PickReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::operator!=(const PickReference& rhs) const {
+bool PickReference::operator!=(const PickReference &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ bool PickReference::operator!=(const PickReference& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::equal(const PickReference& other) const {
+bool PickReference::equal(const PickReference &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ const std::string& PickReference::pickID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const PickReferenceIndex& PickReference::index() const {
+const PickReferenceIndex &PickReference::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,8 +176,11 @@ const PickReferenceIndex& PickReference::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::equalIndex(const PickReference* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool PickReference::equalIndex(const PickReference *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +189,7 @@ bool PickReference::equalIndex(const PickReference* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* PickReference::reading() const {
+Reading *PickReference::reading() const {
 	return static_cast<Reading*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +198,7 @@ Reading* PickReference::reading() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickReference& PickReference::operator=(const PickReference& other) {
+PickReference &PickReference::operator=(const PickReference &other) {
 	_index = other._index;
 	return *this;
 }
@@ -205,10 +208,11 @@ PickReference& PickReference::operator=(const PickReference& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::assign(Object* other) {
-	PickReference* otherPickReference = PickReference::Cast(other);
-	if ( other == nullptr )
+bool PickReference::assign(Object *other) {
+	PickReference *otherPickReference = PickReference::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherPickReference;
 
@@ -220,11 +224,13 @@ bool PickReference::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool PickReference::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Reading* reading = Reading::Cast(parent);
+	Reading *reading = Reading::Cast(parent);
 	if ( reading != nullptr )
 		return reading->add(this);
 
@@ -237,11 +243,13 @@ bool PickReference::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PickReference::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool PickReference::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Reading* reading = Reading::Cast(object);
+	Reading *reading = Reading::Cast(object);
 	if ( reading != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -249,7 +257,7 @@ bool PickReference::detachFrom(PublicObject* object) {
 			return reading->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			PickReference* child = reading->pickReference(index());
+			PickReference *child = reading->pickReference(index());
 			if ( child != nullptr )
 				return reading->remove(child);
 			else {
@@ -269,8 +277,9 @@ bool PickReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickReference::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -280,8 +289,8 @@ bool PickReference::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* PickReference::clone() const {
-	PickReference* clonee = new PickReference();
+Object *PickReference::clone() const {
+	PickReference *clonee = new PickReference();
 	*clonee = *this;
 	return clonee;
 }
@@ -291,7 +300,7 @@ Object* PickReference::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickReference::accept(Visitor* visitor) {
+void PickReference::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,7 +309,7 @@ void PickReference::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickReference::serialize(Archive& ar) {
+void PickReference::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

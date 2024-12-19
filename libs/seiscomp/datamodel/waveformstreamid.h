@@ -69,7 +69,7 @@ class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
 		WaveformStreamID();
 
 		//! Copy constructor
-		WaveformStreamID(const WaveformStreamID& other);
+		WaveformStreamID(const WaveformStreamID &other);
 
 		//! Custom constructor
 		WaveformStreamID(const std::string& resourceURI);
@@ -81,7 +81,7 @@ class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
 
 		//! Destructor
 		~WaveformStreamID() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -91,14 +91,14 @@ class SC_SYSTEM_CORE_API WaveformStreamID : public Core::BaseObject {
 		operator const std::string&() const;
 
 		//! Copies the metadata of other to this
-		WaveformStreamID& operator=(const WaveformStreamID& other);
+		WaveformStreamID &operator=(const WaveformStreamID &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const WaveformStreamID& other) const;
-		bool operator!=(const WaveformStreamID& other) const;
+		bool operator==(const WaveformStreamID &other) const;
+		bool operator!=(const WaveformStreamID &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const WaveformStreamID& other) const;
+		bool equal(const WaveformStreamID &other) const;
 
 
 	// ------------------------------------------------------------------

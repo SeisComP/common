@@ -54,28 +54,28 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 
 	public:
 		//! Copy constructor
-		MomentTensorStationContribution(const MomentTensorStationContribution& other);
+		MomentTensorStationContribution(const MomentTensorStationContribution &other);
 
 		//! Constructor with publicID
 		MomentTensorStationContribution(const std::string& publicID);
 
 		//! Destructor
 		~MomentTensorStationContribution() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static MomentTensorStationContribution* Create();
-		static MomentTensorStationContribution* Create(const std::string& publicID);
+		static MomentTensorStationContribution *Create();
+		static MomentTensorStationContribution *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static MomentTensorStationContribution* Find(const std::string& publicID);
+		static MomentTensorStationContribution *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -84,14 +84,14 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		MomentTensorStationContribution& operator=(const MomentTensorStationContribution& other);
+		MomentTensorStationContribution &operator=(const MomentTensorStationContribution &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const MomentTensorStationContribution& other) const;
-		bool operator!=(const MomentTensorStationContribution& other) const;
+		bool operator==(const MomentTensorStationContribution &other) const;
+		bool operator!=(const MomentTensorStationContribution &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const MomentTensorStationContribution& other) const;
+		bool equal(const MomentTensorStationContribution &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -111,7 +111,7 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 		void setTimeShift(const OPT(double)& timeShift);
 		double timeShift() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -124,7 +124,7 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(MomentTensorComponentContribution* obj);
+		bool add(MomentTensorComponentContribution *obj);
 
 		/**
 		 * Removes an object.
@@ -133,7 +133,7 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(MomentTensorComponentContribution* obj);
+		bool remove(MomentTensorComponentContribution *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -142,19 +142,19 @@ class SC_SYSTEM_CORE_API MomentTensorStationContribution : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeMomentTensorComponentContribution(size_t i);
-		bool removeMomentTensorComponentContribution(const MomentTensorComponentContributionIndex& i);
+		bool removeMomentTensorComponentContribution(const MomentTensorComponentContributionIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t momentTensorComponentContributionCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		MomentTensorComponentContribution* momentTensorComponentContribution(size_t i) const;
-		MomentTensorComponentContribution* momentTensorComponentContribution(const MomentTensorComponentContributionIndex& i) const;
+		MomentTensorComponentContribution *momentTensorComponentContribution(size_t i) const;
+		MomentTensorComponentContribution *momentTensorComponentContribution(const MomentTensorComponentContributionIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		MomentTensor* momentTensor() const;
+		MomentTensor *momentTensor() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

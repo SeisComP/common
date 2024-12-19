@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(TimeQuantity, "TimeQuantity");
 
 
-TimeQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+TimeQuantity::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("value", "datetime", false, false, false, false, false, false, nullptr, &TimeQuantity::setValue, &TimeQuantity::value));
 	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setUncertainty, &TimeQuantity::uncertainty));
 	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, nullptr, &TimeQuantity::setLowerUncertainty, &TimeQuantity::lowerUncertainty));
@@ -53,7 +53,7 @@ TimeQuantity::TimeQuantity() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeQuantity::TimeQuantity(const TimeQuantity& other)
+TimeQuantity::TimeQuantity(const TimeQuantity &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -108,7 +108,7 @@ TimeQuantity::operator Seiscomp::Core::Time() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeQuantity::operator==(const TimeQuantity& rhs) const {
+bool TimeQuantity::operator==(const TimeQuantity &rhs) const {
 	if ( !(_value == rhs._value) )
 		return false;
 	if ( !(_uncertainty == rhs._uncertainty) )
@@ -129,7 +129,7 @@ bool TimeQuantity::operator==(const TimeQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeQuantity::operator!=(const TimeQuantity& rhs) const {
+bool TimeQuantity::operator!=(const TimeQuantity &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,7 +138,7 @@ bool TimeQuantity::operator!=(const TimeQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeQuantity::equal(const TimeQuantity& other) const {
+bool TimeQuantity::equal(const TimeQuantity &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -276,7 +276,7 @@ const TimePDF1D& TimeQuantity::pdf() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeQuantity& TimeQuantity::operator=(const TimeQuantity& other) {
+TimeQuantity &TimeQuantity::operator=(const TimeQuantity &other) {
 	_value = other._value;
 	_uncertainty = other._uncertainty;
 	_lowerUncertainty = other._lowerUncertainty;
@@ -291,7 +291,7 @@ TimeQuantity& TimeQuantity::operator=(const TimeQuantity& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimeQuantity::serialize(Archive& ar) {
+void TimeQuantity::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
