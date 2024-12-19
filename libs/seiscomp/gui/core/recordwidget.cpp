@@ -932,24 +932,27 @@ void RecordWidget::Stream::setDirty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::Stream::free() {
-	if ( records[0] != nullptr && ownRawRecords ) delete records[0];
-	if ( records[1] != nullptr && ownFilteredRecords ) delete records[1];
-	if ( filter != nullptr ) delete filter;
+	if ( records[0] && ownRawRecords ) {
+		delete records[0];
+	}
+	if ( records[1] && ownFilteredRecords ) {
+		delete records[1];
+	}
+	if ( filter ) {
+		delete filter;
+	}
 
-	records[0] = records[1] = nullptr;
 	filter = nullptr;
 
-	traces[0].poly = nullptr;
-	traces[1].poly = nullptr;
-
-	traces[0].status = QString();
-	traces[1].status = QString();
-
-	traces[0].timingQuality = -1;
-	traces[0].timingQualityCount = 0;
-
-	traces[1].timingQuality = -1;
-	traces[1].timingQualityCount = 0;
+	for ( int i = 0; i < 2; ++i ) {
+		records[i] = nullptr;
+		traces[i].poly = nullptr;
+		traces[i].dirty = true;
+		traces[i].dirtyData = true;
+		traces[i].status = QString();
+		traces[i].timingQuality = -1;
+		traces[i].timingQualityCount = 0;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1142,7 +1145,9 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 	}
 
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
+	if ( !stream ) {
+		return false;
+	}
 
 	// If the same sequence is set again, make sure that it will
 	// not be destroyed by free()
@@ -1163,6 +1168,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 	stream->free();
 
 	stream->records[Stream::Raw] = s;
+	stream->traces[Stream::Raw].dirtyData = true;
 	stream->ownRawRecords = owner;
 	stream->filter = newFilter;
 
@@ -1173,7 +1179,47 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 		stream->traces[Stream::Raw].timingQualityCount = success ? count   :  0;
 		stream->traces[Stream::Raw].timingQuality      = success ? quality : -1;
 
-		if ( stream->filtering ) createFilter(slot);
+		if ( stream->filtering ) {
+			createFilter(slot);
+		}
+
+		_drawRecords = true;
+	}
+
+	changedRecords(slot, s);
+
+	stream->traces[Stream::Raw].dirtyData = true;
+	stream->traces[Stream::Filtered].dirtyData = true;
+
+	update();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Filtered) ) {
+		_shadowWidget->setFilteredRecords(slot, s, owner);
+		_shadowWidget->setDirty();
+	}
+
+	Stream *stream = getStream(slot);
+	if ( !stream ) {
+		return false;
+	}
+
+	if ( stream->ownFilteredRecords && stream->records[Stream::Filtered] ) {
+		delete stream->records[Stream::Filtered];
+	}
+
+	stream->records[Stream::Filtered] = s;
+	stream->traces[Stream::Filtered].dirtyData = true;
+	stream->ownFilteredRecords = owner;
+
+	if ( s ) {
 		_drawRecords = true;
 	}
 
@@ -1185,30 +1231,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
-	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Filtered) ) {
-		_shadowWidget->setFilteredRecords(slot, s, owner);
-		_shadowWidget->setDirty();
-	}
 
-	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
-
-	if ( stream->ownFilteredRecords && stream->records[Stream::Filtered] )
-		delete stream->records[Stream::Filtered];
-
-	stream->records[Stream::Filtered] = s;
-	stream->ownFilteredRecords = owner;
-	if ( s ) _drawRecords = true;
-
-	changedRecords(slot, s);
-	stream->setDirty();
-
-	update();
-	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1218,10 +1241,11 @@ void RecordWidget::changedRecords(int slot, RecordSequence*) {
 
 
 
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) {
+	if ( !stream ) {
 		return false;
 	}
 
@@ -1229,11 +1253,13 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 		return true;
 	}
 
-	if ( stream->filter )
+	if ( stream->filter ) {
 		delete stream->filter;
+	}
 
-	if ( filter )
+	if ( filter ) {
 		stream->filter = filter->clone();
+	}
 	else {
 		// Create a default filter
 		stream->filter = new Math::Filtering::SelfFilter<double>();
@@ -1243,6 +1269,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	if ( stream->records[Stream::Filtered] && stream->ownFilteredRecords ) {
 		delete stream->records[Stream::Filtered];
 		stream->records[Stream::Filtered] = nullptr;
+		stream->traces[Stream::Filtered].dirtyData = true;
 	}
 
 	stream->traces[Stream::Filtered].status = QString();
@@ -1302,6 +1329,7 @@ bool RecordWidget::setRecordScale(int slot, double scale) {
 
 
 
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::isRecordVisible(int slot) {
 	Stream *stream = getStream(slot);
@@ -1310,6 +1338,7 @@ bool RecordWidget::isRecordVisible(int slot) {
 	return stream->visible;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 
@@ -1648,6 +1677,7 @@ RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
 
 			RecordSequence *seq = s->records[Stream::Raw]->clone();
 			ns->records[Stream::Raw] = seq;
+			ns->traces[Stream::Raw].dirtyData = true;
 			ns->ownRawRecords = owner;
 
 			setRecordFilter(slot, s->filter);
@@ -2035,16 +2065,23 @@ RecordSequence *RecordWidget::filteredRecords(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* RecordWidget::takeRecords(int slot) {
-	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
+	if ( slot < 0 || slot >= _streams.size() ) {
+		return nullptr;
+	}
 
 	RecordSequence *seq = _streams[slot]->records[Stream::Raw];
 	_streams[slot]->records[Stream::Raw] = nullptr;
+	_streams[slot]->traces[Stream::Raw].dirtyData = true;
 	delete _streams[slot];
 	_streams.remove(slot);
 
-	if ( _drawMode == InRows ) emit layoutRequest();
+	if ( _drawMode == InRows ) {
+		emit layoutRequest();
+	}
 
-	if ( _shadowWidget ) _shadowWidget->takeRecords(slot);
+	if ( _shadowWidget ) {
+		_shadowWidget->takeRecords(slot);
+	}
 
 	return seq;
 }
@@ -2240,19 +2277,19 @@ const Seiscomp::Core::TimeWindow & RecordWidget::normalizationWindow() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::prepareRecords(Stream *s) {
 	for ( int i = 0; i < 2; ++i ) {
-		auto trace = &s->traces[i];
-		if ( s->records[i] && (!s->filtering || _showAllRecords) ) {
+		auto &trace = s->traces[i];
+		if ( s->records[i] && ((s->filtering == static_cast<bool>(i)) || _showAllRecords) ) {
 			if ( (!_useGlobalOffset && _normalizationWindow) || s->traces[i].dirtyData ) {
-				trace->visible = minmax(s->records[i], _normalizationWindow,
-				                        trace->dOffset, trace->dyMin, trace->dyMax,
-				                        _useGlobalOffset);
-				trace->absMax = std::max(std::abs(trace->dOffset - trace->dyMin),
-				                         std::abs(trace->dOffset - trace->dyMax));
+				trace.visible = minmax(s->records[i], _normalizationWindow,
+				                       trace.dOffset, trace.dyMin, trace.dyMax,
+				                       _useGlobalOffset);
+				trace.absMax = std::max(std::abs(trace.dOffset - trace.dyMin),
+				                        std::abs(trace.dOffset - trace.dyMax));
 			}
-			s->traces[i].dirtyData = false;
+			trace.dirtyData = false;
 		}
 		else {
-			trace->visible = false;
+			trace.visible = false;
 		}
 	}
 }
@@ -4269,6 +4306,8 @@ void RecordWidget::setFilter(Filter *filter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::filterRecords(Stream *s) {
 	s->records[Stream::Filtered] = s->records[Stream::Raw]->clone();
+	s->traces[Stream::Filtered].dirtyData = true;
+
 	RecordPtr lastRec;
 	for ( RecordSequence::const_iterator it = s->records[Stream::Raw]->begin();
 	      it != s->records[Stream::Raw]->end(); ++it) {
