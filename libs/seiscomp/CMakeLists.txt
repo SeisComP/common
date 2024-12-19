@@ -223,6 +223,7 @@ SC_LIB_LINK_LIBRARIES(
 		${Boost_iostreams_LIBRARY}
 		${Boost_filesystem_LIBRARY}
 		${Boost_regex_LIBRARY}
+		${Boost_program_options_LIBRARY}
 		${Boost_LIBRARIES}
 		pthread
 		tau_internal
@@ -276,12 +277,6 @@ SET(SYSTEM_CLIENT_DATA client/data/cities.xml)
 SC_INSTALL_DATA(SYSTEM_CLIENT "")
 
 SC_LIB_LINK_LIBRARIES_INTERNAL(client core)
-SC_LIB_LINK_LIBRARIES(client
-	${Boost_iostreams_LIBRARY}
-	${Boost_thread_LIBRARY}
-	${Boost_program_options_LIBRARY}
-	${Boost_LIBRARIES}
-)
 SC_LIB_VERSION(client ${SC_COMMON_VERSION} ${SC_COMMON_VERSION_MAJOR})
 
 IF(WIN32)
