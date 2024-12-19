@@ -771,7 +771,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		IO::DatabaseInterfacePtr     _database;
 		Util::Timer                  _userTimer;
 		Util::Timer                  _sohTimer;
-		Core::Time                   _sohLastUpdate;
+		OPT(Core::Time)              _sohLastUpdate;
 
 		std::mutex                   _objectLogMutex;
 };

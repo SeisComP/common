@@ -2172,8 +2172,8 @@ void Application::stateOfHealth() {
 	// Save current time
 	Core::Time now = Core::Time::Now();
 
-	if ( _sohLastUpdate.valid() ) {
-		double factor = double(now - _sohLastUpdate) / _settings.soh.interval;
+	if ( _sohLastUpdate ) {
+		double factor = double(now - *_sohLastUpdate) / _settings.soh.interval;
 
 		// Latency of factor 10 or higher
 		if ( factor >= 10 ) {
