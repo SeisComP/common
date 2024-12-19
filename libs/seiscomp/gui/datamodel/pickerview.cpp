@@ -5851,7 +5851,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			//tmpOrigin->assign(SC_D.origin.get());
 			tmpOrigin->setLatitude(dialog.latitude());
 			tmpOrigin->setLongitude(dialog.longitude());
-			tmpOrigin->setTime(Core::Time(dialog.getTime_t()));
+			tmpOrigin->setTime(Core::Time(dialog.getTime_t(), 0));
 			tmpOrigin->setDepth(RealQuantity(dialog.depth()));
 			tmpOrigin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 			tmpOrigin->setEvaluationMode(EvaluationMode(MANUAL));
@@ -8504,7 +8504,7 @@ void PickerView::modifyOrigin() {
 		//tmpOrigin->assign(SC_D.origin.get());
 		tmpOrigin->setLatitude(dialog.latitude());
 		tmpOrigin->setLongitude(dialog.longitude());
-		tmpOrigin->setTime(Core::Time(dialog.getTime_t()));
+		tmpOrigin->setTime(Core::Time(dialog.getTime_t(), 0));
 		tmpOrigin->setDepth(RealQuantity(dialog.depth()));
 		tmpOrigin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 		tmpOrigin->setEvaluationMode(EvaluationMode(MANUAL));
