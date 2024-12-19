@@ -26,6 +26,7 @@
 
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/exceptions.h>
+#include <seiscomp/core/optional.h>
 #include <seiscomp/logging/log.h>
 
 
@@ -483,6 +484,51 @@ BOOST_AUTO_TEST_CASE(timeZone) {
 
 	BOOST_CHECK_THROW(utc.timeZoneOffset("XXX"), std::runtime_error);
 	BOOST_CHECK_THROW(utc.toZonedString("%FT%T.%f", "XXX"), std::runtime_error);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(opt) {
+	OPT(sc::Time) t1, t2;
+
+	// Both are None
+	BOOST_CHECK(  t1 == t2);
+	BOOST_CHECK(!(t1 != t2));
+	BOOST_CHECK(!(t1 <  t2));
+	BOOST_CHECK(  t1 <= t2);
+	BOOST_CHECK(!(t1 >  t2));
+	BOOST_CHECK(  t1 >= t2);
+
+	// t1 is set and t2 is None
+	t1 = sc::Time::Now();
+	BOOST_CHECK(!(t1 == t2));
+	BOOST_CHECK(  t1 != t2);
+	BOOST_CHECK(!(t1 <  t2));
+	BOOST_CHECK(!(t1 <= t2));
+	BOOST_CHECK(  t1 >  t2);
+	BOOST_CHECK(  t1 >= t2);
+
+	// t1 is None and t2 is set
+	t1 = sc::None;
+	t2 = sc::Time::Now();
+	BOOST_CHECK(!(t1 == t2));
+	BOOST_CHECK(  t1 != t2);
+	BOOST_CHECK(  t1 <  t2);
+	BOOST_CHECK(  t1 <= t2);
+	BOOST_CHECK(!(t1 >  t2));
+	BOOST_CHECK(!(t1 >= t2));
+
+	// Both are set and t1 < t2
+	t1 = *t2 - sc::TimeSpan(1, 0);
+	BOOST_CHECK(!(t1 == t2));
+	BOOST_CHECK(  t1 != t2);
+	BOOST_CHECK(  t1 <  t2);
+	BOOST_CHECK(  t1 <= t2);
+	BOOST_CHECK(!(t1 >  t2));
+	BOOST_CHECK(!(t1 >= t2));
 }
 
 
