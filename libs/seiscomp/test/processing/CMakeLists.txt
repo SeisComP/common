@@ -1,5 +1,6 @@
 SET(TESTS
 	amplitudes.cpp
+	ncomps.cpp
 )
 
 FOREACH(testSrc ${TESTS})
