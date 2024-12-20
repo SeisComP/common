@@ -2214,14 +2214,12 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 
 	lock_guard<mutex> l(_objectLogMutex);
 
-	ObjectMonitor::const_iterator it;
-
 	_inputMonitor->update(now);
 	_outputMonitor->update(now);
 
 	bool first = true;
 
-	for ( it = _inputMonitor->begin(); it != _inputMonitor->end(); ++it ) {
+	for ( auto it = _inputMonitor->begin(); it != _inputMonitor->end(); ++it ) {
 		if ( first ) {
 			os << "&";
 			first = false;
@@ -2236,13 +2234,11 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 		os << "cnt:" << it->count << ",";
 		os << "avg:" << ((float)it->count / (float)it->test->timeSpan()) << ",";
 		os << "tw:" << it->test->timeSpan();
-
-		if ( it->test->last() )
-			os << ",last:" << it->test->last().iso();
+		os << ",last:" << it->test->last().iso();
 		os << /*"utime:" << now.iso() <<*/ ")&";
 	}
 
-	for ( it = _outputMonitor->begin(); it != _outputMonitor->end(); ++it ) {
+	for ( auto it = _outputMonitor->begin(); it != _outputMonitor->end(); ++it ) {
 		if ( first ) {
 			os << "&";
 			first = false;
@@ -2257,9 +2253,7 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 		os << "cnt:" << it->count << ",";
 		os << "avg:" << ((float)it->count / (float)it->test->timeSpan()) << ",";
 		os << "tw:" << it->test->timeSpan();
-
-		if ( it->test->last() )
-			os << ",last:" << it->test->last().iso();
+		os << ",last:" << it->test->last().iso();
 		os << /*"utime:" << now.iso() <<*/ ")&";
 	}
 }
