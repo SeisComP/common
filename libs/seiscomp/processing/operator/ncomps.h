@@ -25,6 +25,7 @@
 
 #include <seiscomp/processing/waveformoperator.h>
 #include <seiscomp/core/genericrecord.h>
+#include <seiscomp/core/optional.h>
 #include <seiscomp/core/recordsequence.h>
 
 
@@ -72,8 +73,8 @@ class NCompsOperator : public WaveformOperator {
 	protected:
 		struct State {
 			State() : buffer(BSIZE) {}
-			RingBuffer  buffer;
-			Core::Time  endTime;
+			RingBuffer      buffer;
+			OPT(Core::Time) endTime;
 		};
 
 		// Stores the N channel codes and the according record buffer
@@ -94,12 +95,17 @@ template <typename T, template <typename,int> class PROC>
 class CodeWrapper<T,2,PROC> {
 	public:
 		CodeWrapper(const std::string &code1, const std::string &code2,
-		            const PROC<T,2> &proc) : _proc(proc) {}
+		            const PROC<T,2> &proc)
+		: _proc(proc), _code1(code1), _code2(code2) {}
 
 		void operator()(const Record *rec, T *data[2], int n, const Core::Time &stime, double sfreq) const { _proc(rec, data, n, stime, sfreq); }
 		bool publish(int c) const { return _proc.publish(c); }
 
-		int compIndex(const std::string &code) const { return -1; }
+		int compIndex(const std::string &code) const {
+			if ( code == _code1 ) return 0;
+			else if ( code == _code2 ) return 1;
+			return -1;
+		}
 
 		const std::string &translateChannelCode(int c, const std::string &code) { return code; }
 
