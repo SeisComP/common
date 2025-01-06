@@ -43,6 +43,7 @@ SET(CORE_HEADERS
 	metaproperty.h
 	serialization.h
 	datetime.h
+	datetime.ipp
 	timewindow.h
 	optional.h
 	optional.inl
