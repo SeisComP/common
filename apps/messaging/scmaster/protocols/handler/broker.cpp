@@ -311,22 +311,11 @@ void BrokerHandler::handleFrame(Websocket::Frame &frame) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BrokerHandler::buffersFlushed() {
-	// If we have sent less than 4kb this turn keep on sending otherwise
-	// return control to other sessions to not starve slow clients
-	if ( _bytesSent < 4096 )
-		outboxFlushed();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BrokerHandler::outboxFlushed() {
 	Broker::Message *msg;
 
-	if ( !_continueWithSeqNo )
+	if ( !_continueWithSeqNo ) {
 		return;
+	}
 
 	// If there aren't any more messages, allow real-time
 	msg = _queue->getMessage(*_continueWithSeqNo, this);

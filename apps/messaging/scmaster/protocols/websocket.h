@@ -60,10 +60,6 @@ class WebsocketHandler : public Seiscomp::Core::BaseObject {
 		//! flushed.
 		virtual void buffersFlushed() = 0;
 
-		//! Callback when the outbox in the underlying session has been
-		//! flushed.
-		virtual void outboxFlushed() = 0;
-
 		//! Called when a websocket close frame has been received.
 		virtual void close() = 0;
 
@@ -98,7 +94,6 @@ class WebsocketSession : public HttpSession {
 
 		void close() override;
 		void buffersFlushed() override;
-		void outboxFlushed() override;
 
 		void requestFinished() override;
 

@@ -48,7 +48,6 @@ class DBHandler : public WebsocketHandler {
 		void start() override;
 		void handleFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
 		void buffersFlushed() override;
-		void outboxFlushed() override;
 		void close() override;
 
 	private:

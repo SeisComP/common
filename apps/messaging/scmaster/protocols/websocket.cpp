@@ -123,13 +123,14 @@ void WebsocketSession::upgradeToWebsocket(const char *protocol,
 	send("\r\n");
 	handler->addUpgradeHeader();
 	send("\r\n");
-	flush();
 
 	_upgradedToWebsocket = true;
-	if ( !_websocketFrame )
+	if ( !_websocketFrame ) {
 		_websocketFrame = new Websocket::Frame;
-	else
+	}
+	else {
 		_websocketFrame->reset();
+	}
 	_websocketFrame->setMaxPayloadSize(maxPayloadSize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -203,21 +204,10 @@ void WebsocketSession::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketSession::buffersFlushed() {
+	HttpSession::buffersFlushed();
+
 	if ( _handler ) {
 		_handler->buffersFlushed();
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::outboxFlushed() {
-	HttpSession::outboxFlushed();
-
-	if ( _handler ) {
-		_handler->outboxFlushed();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
