@@ -194,6 +194,8 @@ bool Reactor::run() {
 	while ( _shouldRun ) {
 		for ( Device *device = wait(); device; device = _devices.next() ) {
 			Session *session = device->session();
+			// Reset bytes allocated in the current turn.
+			_sessionBytesAllocated = 0;
 
 			// Socket closed by peer or other error -> close the session
 			if ( !device->isValid() ) {
@@ -208,6 +210,7 @@ bool Reactor::run() {
 					removeSession(session);
 				}
 				else {
+					session->_writeQuota = _writeQuota;
 					session->update();
 
 					// Session closed in update -> remove it
@@ -353,6 +356,24 @@ Reactor::TriggerMode Reactor::triggerMode() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Reactor::setReadQuota(size_t limit) {
+	_readQuota = limit;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Reactor::setWriteQuota(size_t limit) {
+	_writeQuota = limit;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const SessionList &Reactor::sessions() const {
 	return _sessions;
 }
@@ -392,9 +413,15 @@ void Reactor::sessionTagged(Session *) {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reactor::getBuffer(char *&buf, size_t &len) {
+size_t Reactor::getBuffer(char *&buf) {
 	buf = &_buffer[0];
-	len = _buffer.size();
+	size_t len = _readQuota - _sessionBytesAllocated;
+	if ( len > _buffer.size() ) {
+		len = _buffer.size();
+	}
+	_sessionBytesAllocated += len;
+	SEISCOMP_DEBUG("Allocated {} bytes", len);
+	return len;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

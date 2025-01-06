@@ -41,12 +41,7 @@ namespace Wired {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ClientSession::ClientSession(Device *dev, size_t maxCharactersPerLine)
 : Session(dev), _bytesSent(0) {
-	_inboxPos = 0;
-	_flags = NoFlags;
-	_postDataSize = 0;
 	_inbox.resize(maxCharactersPerLine);
-
-	_bufferBytesPending = 0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,53 +79,31 @@ void ClientSession::setMIMEUnfoldingEnabled(bool f) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::flushOutbox() {
-	if ( _outbox.empty() ) {
-		if ( erroneous() ) {
-			SEISCOMP_DEBUG("Closing erroneous session");
-			close();
-		}
-
-		return;
-	}
-
+void ClientSession::flush(bool flagFlush) {
 	// Try to empty the outbox
-	ssize_t written = _device->write(&_outbox[0], _outbox.size());
-	// Error on socket?
-	if ( written < 0 ) {
-		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
-			// Close the session
-			//SEISCOMP_ERROR("[client] read error: %s", strerror(errno));
-			close();
+	if ( !_currentBuffer ) {
+		if ( _flags & PendingFlush ) {
+			_flags &= ~PendingFlush;
+			buffersFlushed();
+			if ( !_currentBuffer ) {
+				// If there is nothing to do, return.
+				return;
+				// Otherwise try to flush as much as possible.
+			}
+		}
+		else {
 			return;
 		}
 	}
-	// No non-blocking writing possible?
-	else if ( written == 0 ) {
-	}
-	else {
-		_bytesSent += static_cast<Device::count_t>(written);
-		_outbox.erase(_outbox.begin(), _outbox.begin() + written);
-	}
 
-	if ( _outbox.empty() )
-		outboxFlushed();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::flush() {
-	// Try to empty the outbox
-	if ( !_currentBuffer ) {
-		flushOutbox();
+	if ( !_writeQuota ) {
 		return;
 	}
 
+	_flags &= ~PendingFlush;
+
 	while ( _currentBuffer ) {
-		size_t remaining = _currentBuffer->header.size() - _currentBufferHeaderOffset;
+		size_t remaining = min(_currentBuffer->header.size() - _currentBufferHeaderOffset, _writeQuota);
 		ssize_t written;
 
 		if ( remaining > 0 ) {
@@ -138,6 +111,7 @@ void ClientSession::flush() {
 				&_currentBuffer->header[_currentBufferHeaderOffset],
 				static_cast<size_t>(remaining)
 			);
+
 			// Error on socket?
 			if ( written < 0 ) {
 				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
@@ -151,19 +125,24 @@ void ClientSession::flush() {
 			else if ( written == 0 ) {
 			}
 			else {
+				_writeQuota -= static_cast<size_t>(written);
 				_currentBufferHeaderOffset += static_cast<size_t>(written);
-				if ( static_cast<size_t>(written) <= _bufferBytesPending )
+				if ( static_cast<size_t>(written) <= _bufferBytesPending ) {
 					_bufferBytesPending -= static_cast<size_t>(written);
-				else
+				}
+				else {
 					_bufferBytesPending = 0;
 				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+				}
 			}
 		}
 
 		// header not yet completely sent
-		if ( _currentBufferHeaderOffset < _currentBuffer->header.size() ) return;
+		if ( _currentBufferHeaderOffset < _currentBuffer->header.size() ) {
+			return;
+		}
 
-		remaining = _currentBuffer->data.size() - _currentBufferDataOffset;
+		remaining = min(_currentBuffer->data.size() - _currentBufferDataOffset, _writeQuota);
 		if ( remaining > 0 ) {
 			written = _device->write(&_currentBuffer->data[_currentBufferDataOffset],
 			                         remaining);
@@ -181,13 +160,15 @@ void ClientSession::flush() {
 			else if ( written == 0 ) {
 			}
 			else {
-				_bytesSent += static_cast<size_t>(written);
+				_writeQuota -= static_cast<size_t>(written);
 				_currentBufferDataOffset += static_cast<size_t>(written);
-				if ( static_cast<size_t>(written) <= _bufferBytesPending )
+				if ( static_cast<size_t>(written) <= _bufferBytesPending ) {
 					_bufferBytesPending -= static_cast<size_t>(written);
-				else
+				}
+				else {
 					_bufferBytesPending = 0;
 				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+				}
 			}
 		}
 
@@ -218,30 +199,15 @@ void ClientSession::flush() {
 			break;
 
 		if ( !_currentBuffer ) {
-			//_socket->flush();
-			buffersFlushed();
-
-			if ( _outbox.empty() )
-				outboxFlushed();
+			if ( flagFlush ) {
+				_flags |= PendingFlush;
+			}
+			else {
+				buffersFlushed();
+			}
 		}
 	}
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-size_t ClientSession::inAvail() const {
-	return _outbox.size() + _bufferBytesPending;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::outboxFlushed() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -270,12 +236,10 @@ void ClientSession::update() {
 		char *buf;
 		size_t len;
 
-		_parent->getBuffer(buf, len);
+		 _flags |= KeepReading;
 
-		_flags |= KeepReading;
-
-		// Only read if requested by the device
-		while ( (_device->mode() & Device::Read) && (len > 0) ) {
+		while ( (_device->mode() & Device::Read)
+		     && ((len = _parent->getBuffer(buf)) > 0) ) {
 			ssize_t read = _device->read(buf, len);
 
 			// Check if the conncection was unexpectely closed by peer
@@ -297,19 +261,19 @@ void ClientSession::update() {
 				break;
 			}
 
-			len = static_cast<size_t>(read);
-			handleReceive(buf, len);
+			handleReceive(buf, static_cast<size_t>(read));
 
-			if ( valid() && (_flags & KeepReading) )
-				_parent->getBuffer(buf, len);
-			else
+			if ( (read < static_cast<ssize_t>(len)) || !valid() || !(_flags & KeepReading) ) {
 				break;
+			}
 		}
 
 		flush();
 	}
 
-	if ( !_device->isValid() ) return;
+	if ( !_device->isValid() ) {
+		return;
+	}
 
 	if ( erroneous() ) {
 		SEISCOMP_DEBUG("Closing erroneous session");
@@ -317,9 +281,10 @@ void ClientSession::update() {
 		return;
 	}
 
-	if ( inAvail() > 0 )
+	if ( inAvail() > 0 ) {
 		_device->addMode(Device::Write);
-	else if ( _device->mode() & Device::Write ) {
+	}
+	else {
 		_device->removeMode(Device::Write);
 	}
 }
@@ -331,6 +296,16 @@ void ClientSession::update() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClientSession::finishReading() {
 	_flags &= ~KeepReading;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ClientSession::close() {
+	_flags &= ~KeepReading;
+	Session::close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -366,7 +341,6 @@ void ClientSession::handleReceive(const char *buf, size_t len) {
 
 			handleInbox(&_inbox[0], _inboxPos);
 			if ( erroneous() ) {
-				len = 0;
 				break;
 			}
 
@@ -458,15 +432,68 @@ void ClientSession::handleInbox(const char *data, size_t len) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClientSession::send(const char *data, size_t len) {
-	// TODO: write as much as possible to the device and remember the
-	//       blocking state
+	if ( _currentBuffer ) {
+		if ( _flags & AppendBuffer ) {
+			// Append to the last buffer, even the current one
+			if ( _bufferQueue.empty() ) {
+				_currentBuffer->data.append(data, len);
+			}
+			else {
+				_bufferQueue.back()->data.append(data, len);
+			}
+			_bufferBytesPending += len;
+			/*
+			SEISCOMP_DEBUG("%p appended %d bytes to private buffer",
+			               static_cast<void*>(this), len);
+			*/
+		}
+		else {
+			// Create a new buffer and queue it
+			auto buffer = new Buffer();
+			buffer->data.assign(data, len);
+			/*
+			SEISCOMP_DEBUG("%p queued private buffer of %d bytes",
+			               static_cast<void*>(this), buffer->data.size());
+			*/
+			_flags |= AppendBuffer;
+			queue(buffer);
+		}
+		return;
+	}
 
-	//if ( len == 0 ) {
-	//	SEISCOMP_ERROR("Session tries to send packet with no data");
-	//}
+	// Limit to remaining quota for the current turn.
+	auto chunk = std::min(len, _writeQuota);
 
-	_outbox.insert(_outbox.end(), data, data+len);
-	_device->addMode(Device::Write);
+	auto r = chunk > 0 ? _device->write(data, chunk) : 0;
+	if ( r < 0 ) {
+		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
+			invalidate();
+			close();
+			return;
+		}
+
+		// Would block, queue it.
+		r = 0;
+	}
+	else {
+		_flags |= PendingFlush;
+	}
+
+	// Adjust quota
+	_writeQuota -= r;
+	len -= r;
+
+	if ( len ) {
+		// Queue the remaining bytes
+		auto buffer = new Buffer();
+		buffer->data.assign(data + r, len);
+		/*
+		SEISCOMP_DEBUG("%p queued buffer overflow of %d bytes",
+		               static_cast<void*>(this), buffer->data.size());
+		*/
+		_flags |= AppendBuffer;
+		queue(buffer);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -484,18 +511,53 @@ void ClientSession::send(const char *data) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ClientSession::send(Buffer *buf) {
-	// TODO: write as much as possible to the device and remember the
-	//       blocking state
+	// Clear "private buffer" flag
+	_flags &= ~AppendBuffer;
+
+	if ( _currentBuffer || !_writeQuota ) {
+		// If another buffer is currently active or no quota left
+		// then queue this one.
+		return queue(buf);
+	}
+
+	_currentBuffer = buf;
+	_currentBufferHeaderOffset = 0;
+	_currentBufferDataOffset = 0;
+	_bufferBytesPending += buf->header.size();
+
+	size_t buf_length = _currentBuffer->length();
+	if ( buf_length == string::npos ) {
+		_bufferBytesPending += _currentBuffer->data.size();
+	}
+	else {
+		_bufferBytesPending += buf_length;
+	}
+
+	// Do not all buffersFlushed() inside this call to prevent recursion.
+	// Instead set the flag PendingFlush if the buffer has been flushed
+	// to call buffersFlushed() in update.
+	flush(true);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ClientSession::queue(Buffer *buf) {
 	_bufferBytesPending += buf->header.size();
 
 	size_t buf_length = buf->length();
-
-	if ( buf_length != string::npos )
-		_bufferBytesPending += buf_length;
-	else
+	if ( buf_length == string::npos ) {
 		_bufferBytesPending += buf->data.size();
+	}
+	else {
+		_bufferBytesPending += buf_length;
+	}
 
-	if ( _currentBuffer == nullptr ) {
+	if ( !_currentBuffer ) {
 		_currentBuffer = buf;
 		_currentBufferHeaderOffset = 0;
 		_currentBufferDataOffset = 0;
@@ -510,16 +572,6 @@ bool ClientSession::send(Buffer *buf) {
 	_device->addMode(Device::Write);
 
 	return false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ClientSession::close() {
-	_flags &= ~KeepReading;
-	Session::close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

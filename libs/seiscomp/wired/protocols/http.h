@@ -408,7 +408,7 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 		void handleInbox(const char *data, size_t len) override;
 		void handleInboxError(Error error) override;
 		void handlePostData(const char *data, size_t len) override;
-		void outboxFlushed() override;
+		void buffersFlushed() override;
 
 		virtual bool validatePostDataSize(size_t postDataSize);
 		virtual void requestFinished();

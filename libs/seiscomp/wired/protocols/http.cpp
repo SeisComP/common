@@ -378,8 +378,6 @@ void HttpSession::sendResponse(HttpStatus status) {
 
 	send("\r\nContent-Length: 0");
 	send("\r\n\r\n", 4);
-
-	flush();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -391,8 +389,6 @@ void HttpSession::sendResponse(const char *content, size_t len,
                                HttpStatus status,
                                const char *contentType,
                                const char *cookie) {
-	bool empty = inAvail() == 0;
-
 	// Save status in request
 	_request.status = status;
 
@@ -433,8 +429,6 @@ void HttpSession::sendResponse(const char *content, size_t len,
 	send("\r\n\r\n", 4);
 
 	send(content, len);
-
-	if ( empty ) flush();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -557,7 +551,7 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
 		buf->header += tmp;
 	}
 
-	if ( send(buf) ) flush();
+	send(buf);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -978,7 +972,7 @@ void HttpSession::handleInboxError(Error error) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::outboxFlushed() {
+void HttpSession::buffersFlushed() {
 	if ( _request.state == HttpRequest::FINISHED ) {
 		_request.tx = _bytesSent;
 		SEISCOMP_DEBUG("[http] request %s in session %p finished",
@@ -1101,7 +1095,6 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 	     "Access-Control-Allow-Headers: Accept, Content-Type, X-Requested-With, Origin\r\n"
 	     "Content-Type: text/plain\r\n"
 	     "Content-Length: 0\r\n\r\n");
-	flush();
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1176,13 +1169,14 @@ void HttpSession::upgradeToWebsocket(HttpRequest &req, const char *protocol,
 	Seiscomp::Util::encodeBase64(key, sha1, SHA_DIGEST_LENGTH);
 	send(key.data(), key.size());
 	send("\r\n\r\n");
-	flush();
 
 	_upgradedToWebsocket = true;
-	if ( !_websocketFrame )
+	if ( !_websocketFrame ) {
 		_websocketFrame = new Websocket::Frame;
-	else
+	}
+	else {
 		_websocketFrame->reset();
+	}
 	_websocketFrame->setMaxPayloadSize(maxPayloadSize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1257,10 +1251,9 @@ void HttpSession::sendStatus(HttpStatus status, const string &content,
 
 	send("\r\n\r\n", 4);
 
-	if ( content.size() )
+	if ( content.size() ) {
 		send(content.data(), content.size());
-
-	flush();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
