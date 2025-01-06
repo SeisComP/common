@@ -231,6 +231,20 @@ bool Frame::dataComplete() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Frame::readStatus() {
+	if ( type == ConnectionClose ) {
+		if ( isMasked ) {
+			uint8_t *bb = reinterpret_cast<uint8_t*>(&status);
+			uint8_t *mb = reinterpret_cast<uint8_t*>(&mask);
+			for ( size_t i = 0; i < 2; ++i ) {
+				bb[i] ^= mb[i];
+			}
+			// Shift mask to demask payload correctly
+			uint8_t tmp;
+			tmp = mb[0]; mb[0] = mb[2];     mb[2] = tmp;
+			tmp = mb[1]; mb[1] = mb[3];     mb[3] = tmp;
+		}
+	}
+
 	Core::Endianess::ByteSwapper<Core::Endianess::Current::LittleEndian,2>::Take(&status, 1);
 
 	if ( payloadLength > 0 ) {
