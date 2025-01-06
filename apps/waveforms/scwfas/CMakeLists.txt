@@ -8,7 +8,6 @@ SET(
 		server.cpp
 		session.cpp
 		settings.cpp
-		arclink.cpp
 		fdsnws.cpp
 )
 

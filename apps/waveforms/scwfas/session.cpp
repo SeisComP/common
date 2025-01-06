@@ -102,12 +102,7 @@ ClientSession::ClientSession(Wired::Socket *s, size_t maxLen)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-size_t ClientSession::inAvail() const {
-	return _bytesPending + Wired::ClientSession::inAvail();
+}
+}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-}
-}
-}

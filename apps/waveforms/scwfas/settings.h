@@ -40,23 +40,6 @@ struct Settings : System::Application::AbstractSettings {
 		filebase = Environment::Instance()->installDir() + "/var/lib/archive";
 	}
 
-	struct Arclink {
-		Arclink() {
-			port = -1;
-		}
-
-		int         port;
-
-		void accept(System::Application::SettingsLinker &linker) {
-			linker
-			& cfg(port, "port")
-			& cli(port,
-			      "Server", "arclink-port",
-			      "Port to listen to for data requests with Arclink protocol",
-			      true);
-		}
-	} arclink;
-
 	struct FDSNWS {
 		FDSNWS() {
 			port = 8080;
@@ -88,7 +71,6 @@ struct Settings : System::Application::AbstractSettings {
 
 	virtual void accept(System::Application::SettingsLinker &linker) {
 		linker
-		& cfg(arclink, "arclink")
 		& cfg(fdsnws, "fdsnws")
 		& cfg(sdsBackend, "handlerSDS")
 		& cfgAsPath(filebase, "filebase");

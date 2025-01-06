@@ -699,13 +699,16 @@ bool FDSNWSSession::handlePOSTRequest(Wired::HttpRequest &req) {
 	}
 
 	if ( !buf->hasData() ) {
-		if ( noData404 )
+		if ( noData404 ) {
 			sendError(req.path, req.options, Wired::HTTP_404);
-		else
+		}
+		else {
 			sendResponse(Wired::HTTP_204);
+		}
 	}
-	else
+	else {
 		sendResponse(buf.get(), Wired::HTTP_200, "application/vnd.fdsn.mseed");
+	}
 
 	return true;
 }

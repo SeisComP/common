@@ -105,11 +105,6 @@ class ClientSession : public Wired::ClientSession {
 	public:
 		ClientSession(Wired::Socket *s, size_t maxLen);
 
-
-	protected:
-		virtual size_t inAvail() const override;
-
-
 	protected:
 		enum ClientState {
 			Unspecific,
@@ -122,11 +117,6 @@ class ClientSession : public Wired::ClientSession {
 		RequestItem          _currentItem;
 		IO::RecordStreamPtr  _recordStream;
 		IO::RecordInputPtr   _recordInput;
-
-		Chunk                _currentChunk;
-		size_t               _currentHeaderOffset;
-		size_t               _currentDataOffset;
-		size_t               _bytesPending;
 };
 
 
