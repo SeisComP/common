@@ -80,6 +80,24 @@ BOOST_AUTO_TEST_CASE(data) {
 	for ( int i = 0; i < l2data->size(); ++i ) {
 		BOOST_CHECK_EQUAL((*l2data)[i], 5);
 	}
+
+	auto gap = Core::TimeSpan(10, 0);
+
+	nRec = new GenericRecord("XX", "ABCD", "", "BHN", startTime + gap, fsamp);
+	nRec->setData(nData.get());
+	eRec = new GenericRecord("XX", "ABCD", "", "BHE", startTime + gap, fsamp);
+	eRec->setData(eData.get());
+
+	op->feed(nRec.get());
+	op->feed(eRec.get());
+
+	BOOST_CHECK_EQUAL(seq.size(), 2);
+	BOOST_CHECK_EQUAL(seq.timeWindow(), TimeWindow(startTime, gap + TimeSpan(0, std::min(nData->size(), eData->size()) * 1000000 / fsamp)));
+
+	l2data = DoubleArray::ConstCast((*(++seq.begin()))->data());
+	for ( int i = 0; i < l2data->size(); ++i ) {
+		BOOST_CHECK_EQUAL((*l2data)[i], 5);
+	}
 }
 
 
