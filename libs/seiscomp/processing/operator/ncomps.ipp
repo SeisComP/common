@@ -52,7 +52,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 	for ( int i = 0; i < N; ++i ) {
 		// Not all traces available, nothing to do
 		if ( _states[i].endTime ) {
-			if ( *_states[i].endTime > *minStartTime ) {
+			if ( !minStartTime || (*_states[i].endTime > *minStartTime) ) {
 				minStartTime = *_states[i].endTime;
 			}
 		}
