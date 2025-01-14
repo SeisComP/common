@@ -62,7 +62,8 @@ class SC_GUI_API RecordStreamThread : public QThread {
 		// Needs to be called after connect()
 		bool addStream(const std::string& network, const std::string& station,
 		               const std::string& location, const std::string& channel,
-		               const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime);
+		               const OPT(Seiscomp::Core::Time) &stime,
+		               const OPT(Seiscomp::Core::Time) &etime);
 
 		// Needs to be called after connect()
 		bool addStream(const std::string& network, const std::string& station,

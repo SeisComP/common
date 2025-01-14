@@ -102,7 +102,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		const_iterator end() const;
 
 		//! Implemented from baseclass
-		bool empty() const;
+		bool empty() const override;
 
 		/**
 		 * @return Returns the number of objects attached to a message
@@ -114,7 +114,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 	//  Protected interface
 	// ----------------------------------------------------------------------
 	protected:
-		MessageIterator::Impl* iterImpl() const;
+		MessageIterator::Impl* iterImpl() const override;
 
 	// ----------------------------------------------------------------------
 	//  Implementation

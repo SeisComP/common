@@ -44,23 +44,23 @@ class SC_SYSTEM_CORE_API GenericRecord : public Record {
 	public:
 		//! Default Constructor
 		GenericRecord(Array::DataType dt = Array::DOUBLE, Hint h = DATA_ONLY);
-	
+
 		//! Initializing Constructor
 		GenericRecord(std::string net, std::string sta,
 		              std::string loc, std::string cha,
 		              Core::Time stime, double fsamp, int tqual = -1,
 		              Array::DataType dt = Array::DOUBLE,
 		              Hint h = DATA_ONLY);
-	
+
 		//! Copy Constructor
 		GenericRecord(const GenericRecord& rec);
-	
+
 		//! Another Constructor
 		GenericRecord(const Record& rec);
 
 		//! Destructor
 		virtual ~GenericRecord();
-	
+
 
 	// ----------------------------------------------------------------------
 	//  Operators
@@ -68,7 +68,7 @@ class SC_SYSTEM_CORE_API GenericRecord : public Record {
 	public:
 		//! Assignment operator
 		GenericRecord& operator=(const GenericRecord& rec);
-	
+
 
 	// ----------------------------------------------------------------------
 	//  Public interface
@@ -78,20 +78,20 @@ class SC_SYSTEM_CORE_API GenericRecord : public Record {
 		void setSamplingFrequency(double freq);
 
 		//! Returns the data samples if the data is available; otherwise 0
-		Array* data();
+		Array *data();
 
 		//! Returns the data samples if the data is available; otherwise 0
-		const Array* data() const;
+		const Array* data() const override;
 
 		//! Same as data()
-		const Array* raw() const;
+		const Array* raw() const override;
 
 		//! Returns the clipmask. The size of the clipmask matches the size
 		//! of the data array and each element (bit) is set to one if the
 		//! sample at the same index is clipped. The returned pointer is
 		//! managed by this instance and must not be deleted. But it is safe
 		//! to store it in a smart pointer.
-		const BitSet *clipMask() const;
+		const BitSet *clipMask() const override;
 
 		//! Sets the data sample array. The ownership goes over to the record.
 		//! Note that this call will remove any clip mask set with previous
@@ -113,14 +113,14 @@ class SC_SYSTEM_CORE_API GenericRecord : public Record {
 		void dataUpdated();
 
 		//! This method does nothing.
-		void saveSpace() const;
+		void saveSpace() const override;
 
 		//! Returns a deep copy of the calling object.
-		Record* copy() const;
+		Record* copy() const override;
 
-		void read(std::istream &in);
-		void write(std::ostream &out);
-	
+		void read(std::istream &in) override;
+		void write(std::ostream &out) override;
+
 
 	// ----------------------------------------------------------------------
 	//  Private members
@@ -129,7 +129,7 @@ class SC_SYSTEM_CORE_API GenericRecord : public Record {
 		ArrayPtr  _data;
 		BitSetPtr _clipMask;
 };
- 
+
 }
 
 #endif

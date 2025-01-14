@@ -148,7 +148,10 @@ void RecordStreamThread::setTimeWindow(const Core::TimeWindow &tw) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::setTimeout(int seconds) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
+
 	return _recordStream->setTimeout(seconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +161,9 @@ bool RecordStreamThread::setTimeout(int seconds) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStation(const std::string& network, const std::string& station) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.??.???", ID(), network.c_str(), station.c_str());
 	return _recordStream->addStream(network, station, "??", "???");
@@ -171,7 +176,9 @@ bool RecordStreamThread::addStation(const std::string& network, const std::strin
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s", ID(), network.c_str(), station.c_str(), location.c_str(), channel.c_str());
 	return _recordStream->addStream(network, station, location, channel);
@@ -184,12 +191,15 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel,
-                                   const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime) {
-	if ( _recordStream == nullptr ) return false;
+                                   const OPT(Core::Time) &stime, const OPT(Core::Time) &etime) {
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s - %s~%s", ID(),
-	               network.c_str(), station.c_str(), location.c_str(), channel.c_str(),
-	               stime.iso().c_str(), etime.iso().c_str());
+	               network, station, location, channel,
+	               stime ? stime->iso() : "",
+	               etime ? etime->iso() : "");
 	return _recordStream->addStream(network, station, location, channel, stime, etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

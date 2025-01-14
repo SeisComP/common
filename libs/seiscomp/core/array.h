@@ -63,7 +63,7 @@ class SC_SYSTEM_CORE_API Array : public Seiscomp::Core::BaseObject {
 		DataType dataType() const { return _datatype; }
 	
 		//! Returns a clone of the array
-		Array* clone() const;
+		Array *clone() const override;
 
 		//! Returns a copy of the array of the specified data type.
 		virtual Array* copy(DataType dt) const = 0;

@@ -339,7 +339,7 @@ struct SchemaPluginParameters : SchemaParameters {
 struct SchemaStructExtent : SchemaPluginParameters {
 	DECLARE_SC_CLASS(SchemaStructExtent);
 
-	void serialize(Archive& ar);
+	void serialize(Archive& ar) override;
 	std::string type;
 	std::string matchName;
 };

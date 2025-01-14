@@ -1303,11 +1303,9 @@ void JSONArchive::write(std::string &value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(Core::Time &value) {
 	if ( !_buf ) return;
-	if ( (hint() & XML_MANDATORY) || value.valid() ) {
-		preAttrib();
-		*_os << jsontime(value);
-		postAttrib();
-	}
+	preAttrib();
+	*_os << jsontime(value);
+	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
