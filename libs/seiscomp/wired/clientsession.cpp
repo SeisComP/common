@@ -28,6 +28,10 @@
 #include <iostream>
 
 
+#define SEISCOMP_TRACE(...) \
+	// _scprintf(_SCLOGID, Seiscomp::Logging::_SCDebugChannel, ##__VA_ARGS__)
+
+
 using namespace std;
 
 
@@ -82,8 +86,10 @@ void ClientSession::setMIMEUnfoldingEnabled(bool f) {
 void ClientSession::flush(bool flagFlush) {
 	// Try to empty the outbox
 	if ( !_currentBuffer ) {
-		if ( _flags & PendingFlush ) {
+		if ( !flagFlush && (_flags & PendingFlush) ) {
 			_flags &= ~PendingFlush;
+			SEISCOMP_TRACE("%p: stop write pending", static_cast<void*>(this));
+			_device->removeMode(Device::Write);
 			buffersFlushed();
 			if ( !_currentBuffer ) {
 				// If there is nothing to do, return.
@@ -96,11 +102,13 @@ void ClientSession::flush(bool flagFlush) {
 		}
 	}
 
+	_flags &= ~PendingFlush;
+
 	if ( !_writeQuota ) {
+		SEISCOMP_TRACE("%p: want write", static_cast<void*>(this));
+		_device->addMode(Device::Write);
 		return;
 	}
-
-	_flags &= ~PendingFlush;
 
 	while ( _currentBuffer ) {
 		size_t remaining = min(_currentBuffer->header.size() - _currentBufferHeaderOffset, _writeQuota);
@@ -125,14 +133,22 @@ void ClientSession::flush(bool flagFlush) {
 			else if ( written == 0 ) {
 			}
 			else {
-				_writeQuota -= static_cast<size_t>(written);
 				_currentBufferHeaderOffset += static_cast<size_t>(written);
 				if ( static_cast<size_t>(written) <= _bufferBytesPending ) {
 					_bufferBytesPending -= static_cast<size_t>(written);
 				}
 				else {
 					_bufferBytesPending = 0;
-				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+					//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+				}
+
+				_writeQuota -= static_cast<size_t>(written);
+				SEISCOMP_TRACE("%p: sent_h %d, quota = %d", static_cast<void*>(this), written, _writeQuota);
+				if ( !_writeQuota ) {
+					if ( _bufferBytesPending ) {
+						SEISCOMP_TRACE("%p: want write", static_cast<void*>(this));
+						_device->addMode(Device::Write);
+					}
 				}
 			}
 		}
@@ -160,14 +176,22 @@ void ClientSession::flush(bool flagFlush) {
 			else if ( written == 0 ) {
 			}
 			else {
-				_writeQuota -= static_cast<size_t>(written);
 				_currentBufferDataOffset += static_cast<size_t>(written);
 				if ( static_cast<size_t>(written) <= _bufferBytesPending ) {
 					_bufferBytesPending -= static_cast<size_t>(written);
 				}
 				else {
 					_bufferBytesPending = 0;
-				//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+					//SEISCOMP_DEBUG("Bytes pending: %d, written: %d", (int)_bytesPending, written);
+				}
+
+				_writeQuota -= static_cast<size_t>(written);
+				SEISCOMP_TRACE("%p: sent_d %d, quota = %d", static_cast<void*>(this), written, _writeQuota);
+				if ( !_writeQuota ) {
+					if ( _bufferBytesPending ) {
+						SEISCOMP_TRACE("%p: want write", static_cast<void*>(this));
+						_device->addMode(Device::Write);
+					}
 				}
 			}
 		}
@@ -194,16 +218,27 @@ void ClientSession::flush(bool flagFlush) {
 					_bufferBytesPending += _currentBuffer->data.size();
 			}
 		}
-		else
+		else {
 			// No all data has been written
 			break;
+		}
 
 		if ( !_currentBuffer ) {
 			if ( flagFlush ) {
 				_flags |= PendingFlush;
+				_device->addMode(Device::Write);
+				break;
 			}
 			else {
+				SEISCOMP_TRACE("%p: stop write flushed2", static_cast<void*>(this));
+				_device->removeMode(Device::Write);
 				buffersFlushed();
+				while ( !_currentBuffer && (_flags & PendingFlush) ) {
+					_flags &= ~PendingFlush;
+					SEISCOMP_TRACE("%p: stop write flushed3", static_cast<void*>(this));
+					_device->removeMode(Device::Write);
+					buffersFlushed();
+				}
 			}
 		}
 	}
@@ -229,6 +264,7 @@ void ClientSession::bufferSent(Buffer*) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClientSession::update() {
+	SEISCOMP_TRACE("%p: write quota: %d", static_cast<void*>(this), _writeQuota);
 	// Flush the outbox
 	flush();
 
@@ -281,12 +317,7 @@ void ClientSession::update() {
 		return;
 	}
 
-	if ( inAvail() > 0 ) {
-		_device->addMode(Device::Write);
-	}
-	else {
-		_device->removeMode(Device::Write);
-	}
+	SEISCOMP_TRACE("InAvail: %d, quota: %d", inAvail(), _writeQuota);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -464,29 +495,33 @@ void ClientSession::send(const char *data, size_t len) {
 	// Limit to remaining quota for the current turn.
 	auto chunk = std::min(len, _writeQuota);
 
-	auto r = chunk > 0 ? _device->write(data, chunk) : 0;
-	if ( r < 0 ) {
-		if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
-			invalidate();
-			close();
-			return;
+	if ( chunk > 0 ) {
+		auto r = _device->write(data, chunk);
+		if ( r < 0 ) {
+			if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
+				invalidate();
+				close();
+				return;
+			}
+
+			// Would block, queue it.
+			r = 0;
+		}
+		else {
+			_flags |= PendingFlush;
 		}
 
-		// Would block, queue it.
-		r = 0;
+		// Adjust quota
+		_writeQuota -= r;
+		SEISCOMP_TRACE("%p: sent direct %d, quota = %d", static_cast<void*>(this), r, _writeQuota);
+		len -= r;
+		data += r;
 	}
-	else {
-		_flags |= PendingFlush;
-	}
-
-	// Adjust quota
-	_writeQuota -= r;
-	len -= r;
 
 	if ( len ) {
 		// Queue the remaining bytes
 		auto buffer = new Buffer();
-		buffer->data.assign(data + r, len);
+		buffer->data.assign(data, len);
 		/*
 		SEISCOMP_DEBUG("%p queued buffer overflow of %d bytes",
 		               static_cast<void*>(this), buffer->data.size());
@@ -511,6 +546,7 @@ void ClientSession::send(const char *data) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ClientSession::send(Buffer *buf) {
+	SEISCOMP_TRACE("%p: buf[%d,%d]", static_cast<void*>(this), buf->header.size(), buf->data.size());
 	// Clear "private buffer" flag
 	_flags &= ~AppendBuffer;
 
@@ -562,6 +598,7 @@ bool ClientSession::queue(Buffer *buf) {
 		_currentBufferHeaderOffset = 0;
 		_currentBufferDataOffset = 0;
 
+		SEISCOMP_TRACE("%p: want write", static_cast<void*>(this));
 		_device->addMode(Device::Write);
 
 		return true;
@@ -569,6 +606,7 @@ bool ClientSession::queue(Buffer *buf) {
 
 	_bufferQueue.push_back(buf);
 
+	SEISCOMP_TRACE("%p: want write", static_cast<void*>(this));
 	_device->addMode(Device::Write);
 
 	return false;
