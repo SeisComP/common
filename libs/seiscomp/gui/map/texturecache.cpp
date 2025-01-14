@@ -39,7 +39,11 @@ namespace Map {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QMap<QString, TextureCache::CacheEntry> TextureCache::_images;
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 QMutex imageCacheMutex(QMutex::Recursive);
+#else
+QRecursiveMutex imageCacheMutex;
+#endif
 Texture dummyTexture(true);
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
