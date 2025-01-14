@@ -274,6 +274,8 @@ class SC_GUI_API Scheme {
 
 			int  stationSize;
 			int  originSymbolMinSize;
+			double originSymbolMinMag;
+			double originSymbolScaleMag;
 			bool vectorLayerAntiAlias;
 			bool bilinearFilter;
 			bool showGrid;

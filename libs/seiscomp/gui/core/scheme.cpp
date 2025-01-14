@@ -62,6 +62,10 @@
 	try { location = SCApp->configGetInt("scheme."#location); } \
 	catch ( ... ) {}
 
+#define READ_DOUBLE(location) \
+	try { location = SCApp->configGetDouble("scheme."#location); } \
+	catch ( ... ) {}
+
 #define READ_POINT(location) \
 	{\
 		int x = location.x();\
@@ -425,6 +429,8 @@ Scheme::Splash::Splash() {
 Scheme::Map::Map() {
 	stationSize = 12;
 	originSymbolMinSize = 9;
+	originSymbolMinMag = 1.2;
+	originSymbolScaleMag = 4.9;
 	vectorLayerAntiAlias = true;
 	bilinearFilter = true;
 	showGrid = true;
@@ -744,6 +750,8 @@ void Scheme::fetch() {
 
 	READ_INT(map.stationSize);
 	READ_INT(map.originSymbolMinSize);
+	READ_DOUBLE(map.originSymbolMinMag);
+	READ_DOUBLE(map.originSymbolScaleMag);
 	READ_BOOL(map.vectorLayerAntiAlias);
 	READ_BOOL(map.bilinearFilter);
 	READ_BOOL(map.showGrid);
