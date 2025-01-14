@@ -110,6 +110,8 @@
 namespace Seiscomp {
 namespace Core {
 
+SC_SYSTEM_CORE_API std::string getHostname();
+
 SC_SYSTEM_CORE_API void sleep(unsigned long seconds);
 SC_SYSTEM_CORE_API void msleep(unsigned long milliseconds);
 
