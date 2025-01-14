@@ -420,7 +420,7 @@ size_t Reactor::getBuffer(char *&buf) {
 		len = _buffer.size();
 	}
 	_sessionBytesAllocated += len;
-	SEISCOMP_DEBUG("Allocated {} bytes", len);
+	// SEISCOMP_DEBUG("Allocated %d bytes", len);
 	return len;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
