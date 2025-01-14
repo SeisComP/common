@@ -63,10 +63,12 @@ void fetch_current_zone() {
 }
 
 
-const double TimeSpan::MinSpan = std::numeric_limits<TimeSpan::Storage>::min() * 1E-6;
-const double TimeSpan::MaxSpan = std::numeric_limits<TimeSpan::Storage>::max() * 1E-6;
+const double TimeSpan::MinSpan = static_cast<double>(std::numeric_limits<TimeSpan::Storage>::min()) * 1E-6;
+const double TimeSpan::MaxSpan = static_cast<double>(std::numeric_limits<TimeSpan::Storage>::max()) * 1E-6;
 const TimeSpan::Storage TimeSpan::MinSeconds = std::chrono::duration_cast<TimeSpan::Seconds>(TimeSpan::MicroSeconds(std::numeric_limits<TimeSpan::Storage>::min())).count();
 const TimeSpan::Storage TimeSpan::MaxSeconds = std::chrono::duration_cast<TimeSpan::Seconds>(TimeSpan::MicroSeconds(std::numeric_limits<TimeSpan::Storage>::max())).count();
+const double Time::MinTime = static_cast<double>(std::numeric_limits<Time::Storage>::min()) * 1E-6;
+const double Time::MaxTime = static_cast<double>(std::numeric_limits<Time::Storage>::max()) * 1E-6;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -122,10 +124,7 @@ std::ostream &operator<<(std::ostream &os, const TimeSpan &ts) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan &TimeSpan::operator=(int ts) {
-	if ( ts < MinSeconds || ts > MaxSeconds ) {
-		throw OverflowException("Integer span not fit into TimeSpan storage");
-	}
-
+	// Integer values cannot overflow as storage is signed 64bit.
 	_repr = std::chrono::duration_cast<Duration>(Seconds(ts));
 	return *this;
 }

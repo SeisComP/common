@@ -262,8 +262,8 @@ class Time {
 
 		static Time Null;
 
-		static constexpr const double MinTime = std::numeric_limits<Storage>::min() * 1E-6;
-		static constexpr const double MaxTime = std::numeric_limits<Storage>::max() * 1E-6;
+		static const double MinTime;
+		static const double MaxTime;
 
 
 	// ----------------------------------------------------------------------
