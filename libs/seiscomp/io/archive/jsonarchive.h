@@ -232,6 +232,9 @@ class SC_SYSTEM_CORE_API JSONArchive : public Core::Archive {
 		template <typename T>
 		void writeVector(std::vector<T> &value);
 
+		template <typename T>
+		void writeVectorNumber(std::vector<T> &value);
+
 
 	private:
 		int             _forceWriteVersion;
