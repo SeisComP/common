@@ -51,7 +51,7 @@ Legend::Legend(const QString& title, QObject *parent)
 , _title(title)
 , _alignment(Qt::AlignLeft | Qt::AlignTop)
 , _enabled(true)
-,_visible(true) {}
+, _visible(true) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

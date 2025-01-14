@@ -305,7 +305,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		 * @brief connect
 		 * @param address The connection address, e.g. host:port/queue
 		 * @param timeoutMs The timeout in milliseconds
-		 * @param clientName The desirec client name. If it is nullptr then the
+		 * @param clientName The desired client name. If it is nullptr then the
 		 *                   server will choose a random client name.
 		 * @return
 		 */
