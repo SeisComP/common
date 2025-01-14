@@ -97,10 +97,11 @@ void Timeout() {
 		                                     Protocol::Status,
 		                                     Protocol::ContentEncoding(Protocol::Identity),
 		                                     Protocol::ContentType(Protocol::Text));
-		if ( !r && r.code() != NotConnected )
+		if ( !r && r.code() != NotConnected ) {
 			SEISCOMP_ERROR("Failed to send status message to %s: %d: %s",
 			               Protocol::STATUS_GROUP.c_str(),
 			               r.toInt(), r.toString());
+		}
 	}
 }
 

@@ -246,8 +246,9 @@ Queue::Result Queue::push(Client *sender, Message *msg, int packetSize) {
 		//    scheduled.
 		publish(sender, msg);
 	}
-	else
+	else {
 		_tasks.push(ProcessingTask(sender, msg));
+	}
 
 	return Success;
 }
