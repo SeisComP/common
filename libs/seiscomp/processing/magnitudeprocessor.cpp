@@ -588,8 +588,9 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 
 		regionalizationRegistry[type()] = regionalizedSettings;
 	}
-	else
+	else {
 		regionalizedSettings = it->second;
+	}
 
 	return regionalizedSettings ? true : false;
 }
