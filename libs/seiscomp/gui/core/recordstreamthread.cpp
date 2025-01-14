@@ -243,8 +243,7 @@ void RecordStreamThread::run()
 	IO::RecordInput recInput(_recordStream.get(), _dataType, _recordHint);
 	_mutex.unlock();
 	try {
-		for (IO::RecordIterator it = recInput.begin(); it != recInput.end(); ++it)
-		{
+		for ( Record *rec : recInput ) {
 			bool stopAcquisition;
 			_mutex.lock();
 			stopAcquisition = _requestedClose;
@@ -253,7 +252,6 @@ void RecordStreamThread::run()
 				SEISCOMP_DEBUG("[rthread %d] close request leads to breaking the acquisition loop", ID());
 				break;
 			}
-			Record* rec = *it;
 			if ( rec ) {
 				if ( !_gainMap.empty() ) {
 					std::string id = rec->stationCode()+"."+rec->locationCode()+"."+rec->channelCode();
