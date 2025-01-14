@@ -1434,7 +1434,7 @@ Result WebsocketConnection::fetchAndQueuePacket() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
                                       Packet *p, Result *r) {
-	FrameHeaders headers(_recvFrame.data.data(), _recvFrame.data.size());
+	FrameHeaders headers(frame.data.data(), frame.data.size());
 	if ( r ) *r = OK;
 
 	if ( !headers.next() ) {
@@ -1758,7 +1758,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		}
 
 		string errorMessage;
-		errorMessage.assign(headers.getptr(), _recvFrame.data.data()+_recvFrame.data.size()-headers.getptr());
+		errorMessage.assign(headers.getptr(), frame.data.data()+frame.data.size()-headers.getptr());
 
 		size_t p = errorMessage.find(' ');
 		if ( p != string::npos ) {
