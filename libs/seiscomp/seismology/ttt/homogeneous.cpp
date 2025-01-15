@@ -213,7 +213,10 @@ Homogeneous::compute(const char *phase,
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
-		throw NoPhaseError();
+		throw std::out_of_range(
+			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
+			                _model.c_str(), lat1, lon1, dep1)
+		);
 	}
 
 	// straight ray path since we are in a homogeneous media
@@ -252,7 +255,10 @@ Homogeneous::computeTime(const char *phase,
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
-		throw NoPhaseError();
+		throw std::out_of_range(
+			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
+			                _model.c_str(), lat1, lon1, dep1)
+		);
 	}
 
 	// straight ray path since we are in a homogeneous media
