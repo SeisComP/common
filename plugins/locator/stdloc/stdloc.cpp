@@ -257,7 +257,7 @@ REGISTER_LOCATOR(StdLoc, "StdLoc");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int StdLoc::capabilities() const {
-	return InitialLocation | FixedDepth;
+	return InitialLocation | FixedDepth | IgnoreInitialLocation;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1020,6 +1020,10 @@ Origin *StdLoc::locate(PickList &pickList) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
                        double initDepth, const Core::Time &initTime) {
+
+	if ( isInitialLocationIgnored() ) {
+		return locate(pickList);
+	}
 
 	_rejectLocation = false;
 	_rejectionMsg = "";
@@ -1950,6 +1954,10 @@ void StdLoc::locateLeastSquares(
     CovMtrx &covm, bool computeCovMtrx) const {
 
 	double initDepth = _currentProfile.leastSquares.depthInit;
+	if ( usingFixedDepth() ) {
+		initDepth = fixedDepth();
+	}
+
 	double initLat = computeMean(sensorLat);
 	double initLon = Geo::GeoCoordinate::normalizeLon(
 	                      computeCircularMean(sensorLon, false));
