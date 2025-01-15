@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <string.h>
 
+#include <seiscomp/core/strings.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/seismology/ttt/locsat.h>
@@ -51,8 +52,20 @@ double takeoff_angle(double dtdd, double dtdh, double depth) {
 
 	double takeoff = std::atan2(dtdh, dtdd2) * 180.0 / M_PI; // degress
 	takeoff += 90; // -90(down):+90(up) -> 0(down):180(up)
- 
+
 	return takeoff;
+}
+
+
+inline void checkDepth(double depth) {
+	if ( (depth < 0) || (depth > 800) ) {
+		throw std::out_of_range(
+			Seiscomp::Core::stringify(
+				"Source depth of %f km is out of range of 0 < z <= 800",
+				depth
+			)
+		);
+	}
 }
 
 
@@ -182,6 +195,8 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 	int nphases = num_phases();
 	char **phases = phase_types();
 
+	checkDepth(depth);
+
 	TravelTimeList *ttlist = new TravelTimeList;
 	ttlist->delta = delta;
 	ttlist->depth = depth;
@@ -194,10 +209,14 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 		double dtdd, dtdh;
 		double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
 		                             &dtdd, &dtdh, &errorflag);
-		if (errorflag != 0)
+		if (errorflag != 0) {
 			continue;
+		}
+
 		// This comparison is there to also skip NaN values
-		if ( !(ttime > 0) ) continue;
+		if ( !(ttime > 0) ) {
+			continue;
+		}
 
 		double takeoff = takeoff_angle(dtdd, dtdh, depth);
 		ttlist->push_back(TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff));
@@ -216,6 +235,9 @@ TravelTimeList *Locsat::compute(double delta, double depth) {
 TravelTime Locsat::compute(const char *phase, double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
+
+	checkDepth(depth);
+
 	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
 	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
@@ -233,13 +255,16 @@ double
 Locsat::computeTime(const char *phase, double delta, double depth) {
 	int errorflag=0;
 	double dtdd, dtdh;
+
+	checkDepth(depth);
+
 	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
 	                             &dtdd, &dtdh, &errorflag);
 	if ( errorflag!=0 ) throw NoPhaseError();
 	if ( !(ttime > 0) ) throw NoPhaseError();
 	return ttime;
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
@@ -248,7 +273,11 @@ Locsat::computeTime(const char *phase, double delta, double depth) {
 TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
-	if ( !initTables() ) return nullptr;
+	checkDepth(dep1);
+
+	if ( !initTables() ) {
+		return nullptr;
+	}
 
 	double delta, azi1, azi2;
 
@@ -260,11 +289,10 @@ TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
 	ttlist->depth = dep1;
 
 	if ( ellc ) {
-		TravelTimeList::iterator it;
-		for ( it = ttlist->begin(); it != ttlist->end(); ++it ) {
+		for ( auto &tt : *ttlist ) {
 			double ecorr = 0.;
-			if ( ellipcorr((*it).phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-				(*it).time += ecorr;
+			if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
+				tt.time += ecorr;
 		}
 	}
 
@@ -280,7 +308,11 @@ TravelTime Locsat::compute(const char *phase,
                            double lat1, double lon1, double dep1,
                            double lat2, double lon2, double alt2,
                            int ellc) {
-	if ( !initTables() ) throw NoPhaseError();
+	checkDepth(dep1);
+
+	if ( !initTables() ) {
+		throw NoPhaseError();
+	}
 
 	double delta, azi1, azi2;
 	distaz2_(&lat1, &lon1, &lat2, &lon2, &delta, &azi1, &azi2);
@@ -305,8 +337,11 @@ double Locsat::computeTime(const char *phase,
                            double lat1, double lon1, double dep1,
                            double lat2, double lon2, double alt2,
                            int ellc) {
+	checkDepth(dep1);
 
-	if ( !initTables() ) throw NoPhaseError();
+	if ( !initTables() ) {
+		throw NoPhaseError();
+	}
 
 	double delta, azi1, azi2;
 	distaz2_(&lat1, &lon1, &lat2, &lon2, &delta, &azi1, &azi2);
@@ -321,22 +356,30 @@ double Locsat::computeTime(const char *phase,
 
 	return ttime;
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TravelTime Locsat::computeFirst(double delta, double depth) {
+	checkDepth(depth);
+
 	char **phases = phase_types();
 	char *phase = phases[_Pindex];
 	int errorflag=0;
 	double dtdd, dtdh;
 	double ttime = compute_ttime(delta, depth, phase, EXTRAPOLATE,
 	                             &dtdd, &dtdh, &errorflag);
-	if ( errorflag!=0 ) throw NoPhaseError();
-	if ( !(ttime > 0) ) throw NoPhaseError();
+	if ( errorflag ) {
+		throw NoPhaseError();
+	}
+
+	if ( !(ttime > 0) ) {
+		throw NoPhaseError();
+	}
+
 	double takeoff = takeoff_angle(dtdd, dtdh, depth);
-	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff); 
+	return TravelTime(phase, ttime, dtdd, dtdh, 0, takeoff);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -347,7 +390,11 @@ TravelTime Locsat::computeFirst(double delta, double depth) {
 TravelTime Locsat::computeFirst(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
-	if ( !initTables() ) throw NoPhaseError();
+	checkDepth(dep1);
+
+	if ( !initTables() ) {
+		throw NoPhaseError();
+	}
 
 	double delta, azi1, azi2;
 	distaz2_(&lat1, &lon1, &lat2, &lon2, &delta, &azi1, &azi2);

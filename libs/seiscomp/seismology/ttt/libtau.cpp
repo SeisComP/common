@@ -24,6 +24,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <seiscomp/core/strings.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/seismology/ttt/libtau.h>
@@ -130,14 +131,13 @@ void LibTau::initPath(const std::string &model) {
 
 
 void LibTau::setDepth(double depth) {
-	if ( depth <= 0. ) depth = 0.01; // XXX Hack!!!
-
-	if ( depth <= 0. || depth > 800 ) {
-		std::ostringstream errmsg;
-		errmsg.precision(8);
-		errmsg  << "Source depth of " << depth
-			<< " km is out of range of 0 < z <= 800";
-		throw std::out_of_range(errmsg.str());
+	if ( (depth < 0.01) || (depth > 800) ) {
+		throw std::out_of_range(
+			Core::stringify(
+				"Source depth of %f km is out of range of 0 < z <= 800",
+				depth
+			)
+		);
 	}
 
 	if ( depth != _depth ) {
