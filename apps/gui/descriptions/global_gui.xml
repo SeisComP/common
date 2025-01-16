@@ -204,8 +204,33 @@
 					</parameter>
 					<parameter name="originSymbolMinSize" type="int" default="9" unit="px">
 						<description>
-							The origin symbol minimum size. The formula to compute the
-							size of the origin symbol is: 4.9*(M-1.2).
+						The minimum symbol size of origins. The size is scaled
+						with magnitude according to
+						&quot;scheme.mag.originSymbolScaleMag&quot;.
+						</description>
+					</parameter>
+					<parameter name="originSymbolMinMag" type="double" default="1.2" unit="">
+						<description>
+						The minimum magnitude to be represented by an origin
+						symbol. The symbol size of origins with this or lower
+						magnitude is configured by
+						&quot;scheme.mag.originSymbolMinSize&quot;. For origins
+						with larger magnitudes the symbol sizes are scaled according
+						to &quot;scheme.mag.originSymbolScaleMag&quot;.
+
+						Starting from the minimum magnitude legends explaining
+						magnitudes will show eight symbols in steps of one
+						magnitude.
+						</description>
+					</parameter>
+					<parameter name="originSymbolScaleMag" type="double" default="4.9" unit="px/magnitude">
+						<description>
+						The factor for scaling the symbol size of origins with
+						some magnitude as:
+						&quot;scheme.mag.originSymbolScaleMag&quot; * (magnitude - &quot;scheme.mag.originSymbolMinMag&quot;).
+
+						The color of origins symbols is controlled by the parameters
+						&quot;scheme.colors.originSymbol.*&quot;.
 						</description>
 					</parameter>
 					<parameter name="vectorLayerAntiAlias" type="boolean" default="false">
@@ -876,6 +901,11 @@
 					</group>
 
 					<group name="originSymbol">
+						<description>
+						Parameters controlling the color of origin symbols. The
+						size is controlled by the parameters
+						&quot;scheme.mag.originSymbol*&quot;.
+						</description>
 						<parameter name="classic" type="boolean" default="false"/>
 						<group name="depth">
 							<parameter name="gradient" type="gradient" default="0:FF0000,50:ffA500,100:FFFF00,250:00FF00,600:0000FF">
