@@ -326,12 +326,12 @@ QString numberToEngineering(double value, int precision) {
 	static const char* pos_units[] = {"k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"};
 
 	if ( value == 0 ) {
-		return QString("%1").arg(value, 0, 'f', 1);
+		return QString("%1 ").arg(value, 0, 'f', 1);
 	}
 
 	int fi = static_cast<int>(floor(log10(abs(value)) / 3));
 	if ( !fi ) {
-		return QString("%1").arg(value, 0, 'f', 1);
+		return QString("%1 ").arg(value, 0, 'f', 1);
 	}
 
 	const char *prefix;
