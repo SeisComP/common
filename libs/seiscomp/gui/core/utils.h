@@ -59,7 +59,7 @@ SC_GUI_API QString depthToString(double depth, int precision = 0);
 SC_GUI_API QString timeToString(const Core::Time &t, const char *fmt, bool addTimeZone = false);
 SC_GUI_API void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTimeZone = false);
 SC_GUI_API QString elapsedTimeString(const Core::TimeSpan &dt);
-
+SC_GUI_API QString numberToEngineering(double value, int precision = 1);
 
 /**
  * @brief Derives the hypocentral distance from an epicentral distance

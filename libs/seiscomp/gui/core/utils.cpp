@@ -305,15 +305,53 @@ void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTi
 
 
 QString elapsedTimeString(const Core::TimeSpan &dt) {
-	int d=0, h=0, m=0, s=0;
+	int d{0}, h{0}, m{0}, s{0};
 	QLatin1Char fill('0');
-	dt.elapsedTime(&d, &h, &m, &s);
-	if (d)
+	dt.get(&d, &h, &m, &s);
+
+	if ( d ) {
 		return QString("O.T. +%1d %2h").arg(d,2).arg(h, 2, 10, fill);
-	else if (h)
+	}
+	else if ( h ) {
 		return QString("O.T. +%1h %2m").arg(h,2).arg(m, 2, 10, fill);
-	else
+	}
+	else {
 		return QString("O.T. +%1m %2s").arg(m,2).arg(s, 2, 10, fill);
+	}
+}
+
+
+QString numberToEngineering(double value, int precision) {
+	static const char* neg_units[] = {"m", "µ", "n", "p", "f", "a", "z", "y", "r", "q"};
+	static const char* pos_units[] = {"k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q"};
+
+	if ( value == 0 ) {
+		return QString("%1").arg(value, 0, 'f', 1);
+	}
+
+	int fi = static_cast<int>(floor(log10(abs(value)) / 3));
+	if ( !fi ) {
+		return QString("%1").arg(value, 0, 'f', 1);
+	}
+
+	const char *prefix;
+
+	if ( fi < 0 ) {
+		if ( fi < -static_cast<int>(sizeof(neg_units) / sizeof(char*)) ) {
+			fi = -static_cast<int>(sizeof(neg_units) / sizeof(char*));
+		}
+		prefix = neg_units[-fi - 1];
+	}
+	else {
+		if ( fi > static_cast<int>(sizeof(pos_units) / sizeof(char*)) ) {
+			fi = static_cast<int>(sizeof(pos_units) / sizeof(char*));
+		}
+		prefix = pos_units[fi - 1];
+	}
+
+	value /= exp10(fi * 3);
+
+	return QString("%1 %2").arg(value, 0, 'f', precision).arg(prefix);
 }
 
 
