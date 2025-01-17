@@ -368,15 +368,18 @@ void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
 	linker
 	& cliSwitch(
 		showDrivers, "Records", "record-driver-list",
-		"List all supported record stream drivers."
+		"List all supported RecordStream drivers."
 	)
 	& cli(
 		URI, "Records", "record-url,I",
-		"The recordstream URL, format: [service://]location[#type]"
+		"The RecordStream source URL. Format: [service://]location[#type]. "
+		"'service' is the name of the RecordStream driver which can be queried "
+		"with '--record-driver-list'. If 'service' is not given, "
+		"'file://' is used and simply the name of a miniSEED file can be given."
 	)
 	& cli(
 		file, "Records", "record-file",
-		"Specify a file as recordsource."
+		"Specify a file as record source."
 	)
 	& cli(
 		fileType, "Records", "record-type",

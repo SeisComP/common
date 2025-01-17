@@ -835,12 +835,12 @@
 
 				<option flag="I" long-flag="record-url" argument="arg" default="" publicID="records#record-url">
 					<description>
-					The recordstream source URL, format:
+					The RecordStream source URL. Format:
 					[service://]location[#type].
-					&quot;service&quot; is the name of the recordstream driver
+					&quot;service&quot; is the name of the RecordStream driver
 					which can be queried with &quot;--record-driver-list&quot;.
 					If &quot;service&quot; is not given, &quot;file://&quot; is
-					used.
+					used and simply the name of a miniSEED file can be given.
 					</description>
 				</option>
 
