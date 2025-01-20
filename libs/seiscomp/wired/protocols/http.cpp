@@ -453,8 +453,8 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
                                const char *cookie,
                                const char *additionalHeader) {
 	// Check modification times and send 304 is not modified
-	if ( _request.ifModifiedSince.valid() && (buf->lastModified > 0) ) {
-		if ( buf->lastModified <= _request.ifModifiedSince.epochSeconds() ) {
+	if ( _request.ifModifiedSince && (buf->lastModified > 0) ) {
+		if ( buf->lastModified <= _request.ifModifiedSince->epochSeconds() ) {
 			sendResponse(HTTP_304);
 			return;
 		}
@@ -692,7 +692,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 		_request.secWebsocketProtocol.clear();
 		_request.secWebsocketKey.clear();
 		_request.secWebsocketVersion = -1;
-		_request.ifModifiedSince = HttpRequest::Time();
+		_request.ifModifiedSince = Core::None;
 		_request.tx = 0;
 		// Reset data sent which is increased by ClientSession::flush
 		_bytesSent = 0;
@@ -874,15 +874,17 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				string tmp;
 				tmp.assign(data, len);
 
+				Core::Time timestamp;
 				// RFC 822
-				if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%a, %d %b %Y %H:%M:%S GMT") ) {
-					// RFC 850
-					if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%A, %d-%b-%y %H:%M:%S GMT") ) {
-						// ANSI C's asctime()
-						if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%a %d %e %H:%M:%S %Y") ) {
-							SEISCOMP_WARNING("Unable to parse If-Modified-Since date: %s", tmp.c_str());
-						}
-					}
+				if ( timestamp.fromString(tmp.c_str(), "%a, %d %b %Y %H:%M:%S GMT")
+				  // RFC 850
+				  || timestamp.fromString(tmp.c_str(), "%A, %d-%b-%y %H:%M:%S GMT")
+				  // ANSI C's asctime()
+				  || timestamp.fromString(tmp.c_str(), "%a %d %e %H:%M:%S %Y") ) {
+					_request.ifModifiedSince = timestamp;
+				}
+				else {
+					SEISCOMP_WARNING("Unable to parse If-Modified-Since date: %s", tmp.c_str());
 				}
 			}
 			else if ( len == 7 && strncasecmp("Upgrade", data, len) == 0 ) {

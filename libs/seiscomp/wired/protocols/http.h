@@ -185,7 +185,7 @@ struct HttpRequest {
 	std::string secWebsocketProtocol;
 	std::string secWebsocketKey;
 	int         secWebsocketVersion;
-	Time        ifModifiedSince;
+	OPT(Time)   ifModifiedSince;
 	bool        keepAlive;
 	bool        addKeepAliveHeader;
 	bool        upgrade;
