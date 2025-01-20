@@ -71,6 +71,10 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		 */
 		void send(const char *data, size_t size);
 
+		//! Returns the number of bytes currently in the output buffer
+		//! which haven't been sent yet.
+		size_t outputBufferSize() const;
+
 		bool valid() const;
 		bool erroneous() const;
 
@@ -85,9 +89,6 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		size_t postDataSize() const;
 
 		void setMIMEUnfoldingEnabled(bool);
-
-		//! Returns the available bytes to send.
-		virtual size_t inAvail() const;
 
 		void setError(const char* msg);
 
@@ -153,7 +154,7 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 };
 
 
-inline size_t ClientSession::inAvail() const {
+inline size_t ClientSession::outputBufferSize() const {
 	return _bufferBytesPending;
 }
 
