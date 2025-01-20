@@ -163,6 +163,7 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 		double               elevation;
 		int                  unit;
 		QString              gainUnit[3];
+		double               gainToSI[3];
 		ThreeComponentTrace  data;
 		Math::Matrix3d       orientationZNE;
 		Math::Matrix3d       orientationZRT;

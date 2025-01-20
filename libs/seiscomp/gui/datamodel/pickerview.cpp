@@ -56,6 +56,7 @@
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/utils/misc.h>
 #include <seiscomp/utils/keyvalues.h>
+#include <seiscomp/utils/units.h>
 #include <seiscomp/logging/log.h>
 
 #include <QMessageBox>
@@ -296,8 +297,10 @@ class ZoomRecordWidget : public RecordWidget {
 				for ( int i = 0; i < 3; ++i ) {
 					const double *scale = recordScale(i);
 					// Scale is is nm and needs to be converted to m
-					if ( scale != nullptr ) spectrogram[i].setScale(*scale * 1E-9);
-					spectrogram[i].setRecords(traces != nullptr ? traces[i].raw : nullptr);
+					if ( scale ) {
+						spectrogram[i].setScale(*scale);
+					}
+					spectrogram[i].setRecords(traces ? traces[i].raw : nullptr);
 					spectrogram[i].renderSpectrogram();
 				}
 				qApp->restoreOverrideCursor();
@@ -1765,31 +1768,37 @@ void ThreeComponentTrace::setTransformationEnabled(bool f) {
 			delete traces[i].transformed;
 			traces[i].transformed = nullptr;
 
-			if ( widget ) widget->setRecords(i, nullptr);
+			if ( widget ) {
+				widget->setRecords(i, nullptr);
+			}
 		}
 
 		if ( enableTransformation ) {
 			Math::Vector3d r = transformation.row(2-i);
 			bool passthrough = true;
 
-			if ( enableL2Horizontals && i > 0 )
+			if ( enableL2Horizontals && i > 0 ) {
 				passthrough = false;
+			}
 			else {
 				for ( int j = 0; j < 3; ++j ) {
 					if ( j == 2-i ) {
-						if ( (fabs(r[j])-1.0) > 1E-6 )
+						if ( (fabs(r[j])-1.0) > 1E-6 ) {
 							passthrough = false;
+						}
 					}
 					else {
-						if ( fabs(r[j]) > 1E-6 )
+						if ( fabs(r[j]) > 1E-6 ) {
 							passthrough = false;
+						}
 					}
 				}
 			}
 
 			setPassThrough(i, passthrough);
-			if ( !passthrough )
+			if ( !passthrough ) {
 				needTransformation = true;
+			}
 		}
 	}
 
@@ -1936,8 +1945,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 		double samplingFrequency, timeTolerance;
 
 		// Initialize iterators for each component
-		for ( int i = 0; i < 3; ++i )
+		for ( int i = 0; i < 3; ++i ) {
 			it[i] = traces[i].raw->begin();
+		}
 
 		// Store sampling frequency of first record of first component
 		// All records must match this sampling frequency
@@ -1951,8 +1961,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 						if ( (*it[i])->endTime() <= *minStartTime ) {
 							++it[i];
 						}
-						else
+						else {
 							break;
+						}
 					}
 
 					// End of stream?
@@ -1968,8 +1979,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 				while ( ((*it[i])->samplingFrequency() != samplingFrequency) ) {
 					++it[i];
 					// No matching sampling frequency found?
-					if ( it[i] == traces[i].raw->end() )
+					if ( it[i] == traces[i].raw->end() ) {
 						return gotRecords;
+					}
 				}
 			}
 
@@ -1993,8 +2005,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 						++it[i];
 
 						// End of sequence? Nothing can be done anymore
-						if ( it[i] == traces[i].raw->end() )
+						if ( it[i] == traces[i].raw->end() ) {
 							return gotRecords;
+						}
 
 						// Increase skip counter
 						++skips;
@@ -2011,10 +2024,14 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 					const Record *rec = it_end[i]->get();
 
 					// Skip records with wrong sampling frequency
-					if ( rec->samplingFrequency() != samplingFrequency ) break;
+					if ( rec->samplingFrequency() != samplingFrequency ) {
+						break;
+					}
 
 					double diff = (double)(rec->startTime()-(*tmp)->endTime());
-					if ( fabs(diff) > timeTolerance ) break;
+					if ( fabs(diff) > timeTolerance ) {
+						break;
+					}
 
 					tmp = it_end[i];
 					++it_end[i];
@@ -2025,16 +2042,18 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// Find minimum end time of all three records
 			for ( int i = 0; i < 3; ++i ) {
-				if ( !i || minEndTime > (*it_end[i])->endTime() )
+				if ( !i || minEndTime > (*it_end[i])->endTime() ) {
 					minEndTime = (*it_end[i])->endTime();
+				}
 			}
 
 			GenericRecordPtr comps[3];
 			int minLen = 0;
 
 			// Clip maxStartTime to minStartTime
-			if ( *maxStartTime < *minStartTime )
+			if ( *maxStartTime < *minStartTime ) {
 				*maxStartTime = *minStartTime;
+			}
 
 			// Rotate records
 			for ( int i = 0; i < 3; ++i ) {
@@ -2057,8 +2076,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 						return gotRecords;
 					}
 
-					if ( (*rec_it)->startTime() > minEndTime )
+					if ( (*rec_it)->startTime() > minEndTime ) {
 						break;
+					}
 
 					++it[i];
 
@@ -2072,16 +2092,20 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 					int startIndex = 0;
 					int endIndex = srcData->size();
 
-					if ( (*rec_it)->startTime() < *maxStartTime )
+					if ( (*rec_it)->startTime() < *maxStartTime ) {
 						startIndex += (int)(double(*maxStartTime-(*rec_it)->startTime())*(*rec_it)->samplingFrequency()+0.5);
+					}
 
-					if ( (*rec_it)->endTime() > *minEndTime )
+					if ( (*rec_it)->endTime() > *minEndTime ) {
 						endIndex -= (int)(double((*rec_it)->endTime()-*minEndTime)*(*rec_it)->samplingFrequency());
+					}
 
 					int len = endIndex-startIndex;
 
 					// Skip empty records
-					if ( len <= 0 ) continue;
+					if ( len <= 0 ) {
+						continue;
+					}
 
 					if ( (*rec_it)->timingQuality() >= 0 ) {
 						tq += (*rec_it)->timingQuality();
@@ -2091,8 +2115,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 					data->append(len, srcData->typedData()+startIndex);
 				}
 
-				if ( tqCount > 0 )
+				if ( tqCount > 0 ) {
 					rec->setTimingQuality((int)(tq / tqCount));
+				}
 
 				minLen = i==0?data->size():std::min(minLen, data->size());
 
@@ -2141,7 +2166,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// And filter
 			for ( int i = 0; i < 3; ++i ) {
-				if ( traces[i].passthrough ) continue;
+				if ( traces[i].passthrough ) {
+					continue;
+				}
 				if ( !traces[i].filter.apply(comps[i].get()) ) {
 					comps[i] = nullptr;
 					if ( widget ) {
@@ -2152,7 +2179,9 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 
 			// Create record sequences
 			for ( int i = 0; i < 3; ++i ) {
-				if ( traces[i].passthrough ) continue;
+				if ( traces[i].passthrough ) {
+					continue;
+				}
 				if ( !comps[i] ) {
 					if ( traces[i].transformed ) {
 						delete traces[i].transformed;
@@ -6174,20 +6203,38 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 
 		if ( tc.comps[ThreeComponents::Vertical] ) {
 			comps[0] = *tc.comps[ThreeComponents::Vertical]->code().rbegin();
-			label->gainUnit[0] = tc.comps[ThreeComponents::Vertical]->gainUnit().c_str();
+			auto uc = UnitConverter::get(tc.comps[ThreeComponents::Vertical]->gainUnit());
+			if ( uc ) {
+				label->gainUnit[0] = uc->toUnit.c_str();
+				label->gainToSI[0] = uc->scale;
+			}
+			else {
+				label->gainUnit[0] = tc.comps[ThreeComponents::Vertical]->gainUnit().c_str();
+				label->gainToSI[0] = 1.0;
+			}
 			label->unit = fromGainUnit(tc.comps[ThreeComponents::Vertical]->gainUnit());
 		}
 		else {
 			allComponents = false;
-			if ( base )
+			if ( base ) {
 				comps[0] = *base->code().rbegin();
-			else
+			}
+			else {
 				comps[0] = COMP_NO_METADATA;
+			}
 		}
 
 		if ( tc.comps[ThreeComponents::FirstHorizontal] ) {
 			comps[1] = *tc.comps[ThreeComponents::FirstHorizontal]->code().rbegin();
-			label->gainUnit[1] = tc.comps[ThreeComponents::FirstHorizontal]->gainUnit().c_str();
+			auto uc = UnitConverter::get(tc.comps[ThreeComponents::FirstHorizontal]->gainUnit());
+			if ( uc ) {
+				label->gainUnit[1] = uc->toUnit.c_str();
+				label->gainToSI[1] = uc->scale;
+			}
+			else {
+				label->gainUnit[1] = tc.comps[ThreeComponents::FirstHorizontal]->gainUnit().c_str();
+				label->gainToSI[1] = 1.0;
+			}
 			label->unit = fromGainUnit(tc.comps[ThreeComponents::FirstHorizontal]->gainUnit());
 		}
 		else {
@@ -6197,7 +6244,15 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 
 		if ( tc.comps[ThreeComponents::SecondHorizontal] ) {
 			comps[2] = *tc.comps[ThreeComponents::SecondHorizontal]->code().rbegin();
-			label->gainUnit[2] = tc.comps[ThreeComponents::SecondHorizontal]->gainUnit().c_str();
+			auto uc = UnitConverter::get(tc.comps[ThreeComponents::SecondHorizontal]->gainUnit());
+			if ( uc ) {
+				label->gainUnit[2] = uc->toUnit.c_str();
+				label->gainToSI[2] = uc->scale;
+			}
+			else {
+				label->gainUnit[2] = tc.comps[ThreeComponents::SecondHorizontal]->gainUnit().c_str();
+				label->gainToSI[2] = 1.0;
+			}
 			label->unit = fromGainUnit(tc.comps[ThreeComponents::SecondHorizontal]->gainUnit());
 		}
 		else {
@@ -6356,8 +6411,8 @@ void PickerView::setupItem(const char comps[3],
 	connect(item->widget(), SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateMainCursor(RecordWidget*,int)));
 
-	connect(item, SIGNAL(componentChanged(RecordViewItem*, char)),
-	        this, SLOT(updateItemLabel(RecordViewItem*, char)));
+	connect(item, SIGNAL(componentChanged(RecordViewItem*,char)),
+	        this, SLOT(updateItemLabel(RecordViewItem*,char)));
 
 	connect(item, SIGNAL(firstRecordAdded(const Seiscomp::Record*)),
 	        this, SLOT(updateItemRecordState(const Seiscomp::Record*)));
@@ -6375,25 +6430,34 @@ void PickerView::setupItem(const char comps[3],
 	item->widget()->setSlotCount(3);
 
 	for ( int i = 0; i < 3; ++i ) {
-		if ( comps[i] != COMP_NO_METADATA )
+		if ( comps[i] != COMP_NO_METADATA ) {
 			item->insertComponent(comps[i], i);
-		else
+		}
+		else {
 			item->widget()->setRecordID(i, "No metadata");
+		}
 	}
 
 	Client::Inventory *inv = Client::Inventory::Instance();
 	if ( inv ) {
 		std::string channelCode = item->streamID().channelCode().substr(0,2);
+		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
+
 		for ( int i = 0; i < 3; ++i ) {
-			if ( comps[i] == COMP_NO_METADATA ) continue;
+			if ( comps[i] == COMP_NO_METADATA ) {
+				continue;
+			}
+
 			Processing::Stream stream;
+
 			try {
 				stream.init(item->streamID().networkCode(),
 				            item->streamID().stationCode(),
 				            item->streamID().locationCode(),
 				            channelCode + comps[i], SC_D.origin->time().value());
-				if ( stream.gain != 0 )
-					item->widget()->setRecordScale(i, 1E9 / stream.gain);
+				if ( stream.gain != 0 ) {
+					item->widget()->setRecordScale(i, label->gainToSI[i] / stream.gain);
+				}
 			}
 			catch ( ... ) {}
 		}
@@ -9255,31 +9319,37 @@ void PickerView::updateRecordAxisLabel(RecordViewItem *item) {
 		case UT_ACC:
 			if ( label->unit != UT_RAW ) {
 				if ( item->widget()->areScaledValuesShown() ) {
-					for ( int i = 0; i < 3; ++i )
-						item->widget()->setRecordLabel(i, tr("n%1").arg(Units[SC_D.currentUnitMode-UT_ACC]));
+					for ( int i = 0; i < 3; ++i ) {
+						item->widget()->setRecordLabel(i, tr("%1").arg(Units[SC_D.currentUnitMode-UT_ACC]));
+					}
 				}
 				else {
-					for ( int i = 0; i < 3; ++i )
+					for ( int i = 0; i < 3; ++i ) {
 						item->widget()->setRecordLabel(i, tr("counts"));
+					}
 				}
 			}
 			else {
-				for ( int i = 0; i < 3; ++i )
+				for ( int i = 0; i < 3; ++i ) {
 					item->widget()->setRecordLabel(i, QString());
+				}
 			}
 			break;
 		default:
 			if ( item->widget()->areScaledValuesShown() ) {
 				for ( int i = 0; i < 3; ++i ) {
-					if ( label->gainUnit[i].isEmpty() )
+					if ( label->gainUnit[i].isEmpty() ) {
 						item->widget()->setRecordLabel(i, tr("-"));
-					else
-						item->widget()->setRecordLabel(i, tr("%1 * 1E9").arg(label->gainUnit[i]));
+					}
+					else {
+						item->widget()->setRecordLabel(i, tr("%1").arg(label->gainUnit[i]));
+					}
 				}
 			}
 			else {
-				for ( int i = 0; i < 3; ++i )
+				for ( int i = 0; i < 3; ++i ) {
 					item->widget()->setRecordLabel(i, tr("counts"));
+				}
 			}
 	}
 }
