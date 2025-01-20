@@ -107,7 +107,6 @@ class WebsocketSession : public HttpSession {
 
 		Seiscomp::Wired::HttpRequest &request() { return _request; }
 		Seiscomp::Wired::Websocket::Frame *frame() { return _websocketFrame.get(); }
-		size_t bufferdOutgoingBytes() { return inAvail(); }
 
 		// Expose protected method to public
 		using HttpSession::invalidate;

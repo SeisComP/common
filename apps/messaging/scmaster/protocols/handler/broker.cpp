@@ -376,7 +376,7 @@ size_t BrokerHandler::publish(Broker::Client *sender, Broker::Message *msg) {
 			++_messageBacklog;
 			return 0;
 		}
-		else if ( _session->bufferdOutgoingBytes() ) {
+		else if ( _session->outputBufferSize() ) {
 			// Remember that there are new messages queued for us. We don't
 			// queue more messages if our output buffer still contains some
 			// bytes
