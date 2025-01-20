@@ -1577,17 +1577,21 @@ void EventSummaryView::updateEventName() {
 }
 
 
-static void elapsedTimeString(const Core::TimeSpan &dt, QString &str)
-{
-	int d=0, h=0, m=0, s=0;
+static void elapsedTimeString(const Core::TimeSpan &dt, QString &str) {
+	int d{0}, h{0}, m{0}, s{0};
 	QLatin1Char fill('0');
-	dt.elapsedTime(&d, &h, &m, &s);
-	if (d)
+
+	dt.get(&d, &h, &m, &s);
+
+	if ( d ) {
 		str = QString("O.T. +%1d %2h").arg(d,2).arg(h, 2, 10, fill);
-	else if (h)
+	}
+	else if ( h ) {
 		str = QString("O.T. +%1h %2m").arg(h,2).arg(m, 2, 10, fill);
-	else
+	}
+	else {
 		str = QString("O.T. +%1m %2s").arg(m,2).arg(s, 2, 10, fill);
+	}
 }
 
 
