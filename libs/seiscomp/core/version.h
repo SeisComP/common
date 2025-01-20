@@ -64,6 +64,8 @@ namespace Core {
      Seiscomp::IO::RecordStream::setEndTime to OPT(Seiscomp::Core::Time)
    - Changed Seiscomp::Core::Time in Seiscomp::Client::StreamApplication::setStartTime
      and Seiscomp::Client::StreamApplication::setEndTime to OPT(Seiscomp::Core::Time)
+   - Rename Seiscomp::Wired::ClientSession::inAvail to outputBufferSize and
+     remove virtual declaration
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
