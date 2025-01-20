@@ -3822,12 +3822,14 @@ void RecordWidget::mousePressEvent(QMouseEvent *event) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mouseReleaseEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::LeftButton ) {
-		if ( _startDragPos.valid() ) {
-			if ( _startDragPos < _cursorPos )
-				emit selectedTimeRange(_startDragPos, _cursorPos);
-			else
-				emit selectedTimeRange(_cursorPos, _startDragPos);
-			_startDragPos = Core::Time();
+		if ( _startDragPos ) {
+			if ( *_startDragPos < _cursorPos ) {
+				emit selectedTimeRange(*_startDragPos, _cursorPos);
+			}
+			else {
+				emit selectedTimeRange(_cursorPos, *_startDragPos);
+			}
+			_startDragPos = Core::None;
 		}
 	}
 
@@ -3897,15 +3899,18 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 			_currentCursorYPos = event->pos().y();
 			setCursorPos(event->pos());
 
-			if ( _startDragPos.valid() ) {
-				if ( _startDragPos < _cursorPos )
-					emit selectedTimeRangeChanged(_startDragPos, _cursorPos);
-				else
-					emit selectedTimeRangeChanged(_cursorPos, _startDragPos);
+			if ( _startDragPos ) {
+				if ( *_startDragPos < _cursorPos ) {
+					emit selectedTimeRangeChanged(*_startDragPos, _cursorPos);
+				}
+				else {
+					emit selectedTimeRangeChanged(_cursorPos, *_startDragPos);
+				}
 			}
 		}
-		else
+		else {
 			event->ignore();
+		}
 	}
 
 	/*

@@ -816,7 +816,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int                  _margins[4];
 		QString              _cursorText;
 		Seiscomp::Core::Time _cursorPos;
-		Seiscomp::Core::Time _startDragPos;
+		OPT(Seiscomp::Core::Time)  _startDragPos;
 
 		Seiscomp::Core::TimeWindow _normalizationWindow;
 
