@@ -828,7 +828,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	}
 
 	const Util::UnitConversion *uc = Util::UnitConverter::get(amplitudeUnit);
-	if ( uc == nullptr ) {
+	if ( !uc ) {
 		// No conversion known, invalid amplitude unit
 		return false;
 	}
@@ -837,7 +837,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	double amplitudeSI = uc->convert(amplitude);
 
 	uc = Util::UnitConverter::get(desiredAmplitudeUnit);
-	if ( uc == nullptr ) {
+	if ( !uc ) {
 		SEISCOMP_ERROR("This must not happen: no converter for amplitude target unit '%s'",
 		               desiredAmplitudeUnit.c_str());
 		// This must not happen. The desired amplitude unit should always
