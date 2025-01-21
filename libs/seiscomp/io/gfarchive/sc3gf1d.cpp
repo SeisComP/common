@@ -1090,8 +1090,9 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 	}
 	else {
 		TTPhases::iterator pit = config.travelTimes.find(phase);
-		if ( pit == config.travelTimes.end() )
+		if ( pit == config.travelTimes.end() ) {
 			return Core::None;
+		}
 
 		TTDistance &distanceDepths = pit->second;
 
@@ -1109,8 +1110,9 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 		TTDistance::iterator it_dist_from = it_dist_to;
 
 		// Distance out of range
-		if ( it_dist_to == distanceDepths.end() )
+		if ( it_dist_to == distanceDepths.end() ) {
 			return Core::None;
+		}
 
 		double toDist = it_dist_to->first;
 		double fromDist = toDist;
@@ -1135,7 +1137,7 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 		}
 
 		// Interpolate distances
-		return (tt1 * (toDist-dist) + tt2 * (dist-fromDist)) / (toDist - fromDist);
+		return (tt1 * (toDist - dist) + tt2 * (dist - fromDist)) / (toDist - fromDist);
 	}
 
 	return Core::None;
