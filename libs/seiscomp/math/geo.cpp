@@ -385,9 +385,9 @@ void xyz2ltp(double x, double y, double z,
 void _ltp2xyz(double lat, double lon, double alt,
               double *x, double *y, double *z) {
 	// 1st eccentricity squared
-	static double esqr = WGS84_FLATTENING * (2.0 - WGS84_FLATTENING);
+	static constexpr double esqr = WGS84_FLATTENING * (2.0 - WGS84_FLATTENING);
 	// 1 minus eccentricity squared
-	static double omes = 1.0 - esqr;
+	static constexpr double omes = 1.0 - esqr;
 
 	double slat = sin(lat);
 	double clat = cos(lat);

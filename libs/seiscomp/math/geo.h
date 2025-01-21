@@ -21,18 +21,18 @@
 #ifndef SEISCOMP_MATH_GEO
 #define SEISCOMP_MATH_GEO
 
+
 #include <seiscomp/core.h>
 #include <seiscomp/math/coord.h>
+#include <seiscomp/math/vector3.h>
+
 #include <vector>
 
-namespace Seiscomp
-{
 
-namespace Math
-{
+namespace Seiscomp {
+namespace Math {
+namespace Geo {
 
-namespace Geo
-{
 
 /**
  * For two points (lat1, lon1) and (lat2, lon2),
@@ -151,6 +151,11 @@ SC_SYSTEM_CORE_API
 void xyz2ltp(const double x, const double y, const double z,
              double *lat, double *lon, double *alt);
 
+SC_SYSTEM_CORE_API
+inline void vec2ltp(const Vector3d &vec, double *lat, double *lon, double *alt) {
+	return xyz2ltp(vec.x, vec.y, vec.z, lat, lon, alt);
+}
+
 /**
  * Converts LTP coordinates to X, Y, Z coordinates using WGS-84 constants for
  * the ellipsoid.
@@ -169,6 +174,11 @@ void xyz2ltp(const double x, const double y, const double z,
 SC_SYSTEM_CORE_API
 void ltp2xyz(double lat, double lon, double alt,
              double *x, double *y, double *z);
+
+SC_SYSTEM_CORE_API
+inline void ltp2vec(double lat, double lon, double alt, Vector3d &vec) {
+	ltp2xyz(lat, lon, alt, &vec.x, &vec.y, &vec.z);
+}
 
 
 
@@ -303,9 +313,8 @@ inline double PositionInterpolator::longitude() const {
 
 
 } // namespace Seiscomp::Math::Geo
-
 } // namespace Seiscomp::Math
-
 } // namespace Seiscomp
+
 
 #endif
