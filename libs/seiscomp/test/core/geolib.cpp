@@ -30,8 +30,9 @@
 
 namespace bu = boost::unit_test;
 using namespace std;
-using namespace Seiscomp::Math::Geo;
+using namespace Seiscomp::Math;
 using namespace Seiscomp::Geo;
+using namespace Seiscomp::Math::Geo;
 
 
 BOOST_AUTO_TEST_SUITE(seiscomp_core_geolib)
@@ -346,6 +347,39 @@ BOOST_AUTO_TEST_CASE(quadtree) {
 	qt.addItem(&f2);
 
 	qt.accept(QtVisitor());
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(latlon2xyz) {
+	Vector3d v0, v1;
+
+	ltp2vec(52, 12, 0, v0);
+	ltp2vec(52, 12, -1000, v1);
+
+	BOOST_CHECK_CLOSE((v0 - v1).length(), 1000, 1e-6);
+
+	ltp2vec(52, 12, 1000, v1);
+
+	BOOST_CHECK_CLOSE((v0 - v1).length(), 1000, 1e-6);
+
+	ltp2vec(52, 12, -2000, v0);
+
+	BOOST_CHECK_CLOSE((v0 - v1).length(), 3000, 1e-6);
+
+	ltp2vec(52, 12, 0, v0);
+
+	double lat, lon;
+	delandaz2coord(1, 90, 52, 12, &lat, &lon);
+
+	ltp2vec(lat, lon, -deg2km(1) * 1000, v1);
+
+	auto down = Vector3d(0, 0, 0) - v0;
+	down.normalize();
+	BOOST_CHECK_CLOSE((v1 - v0).normalize().dot(down), 0.714, 0.1);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
