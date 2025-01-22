@@ -349,7 +349,7 @@ QString numberToEngineering(double value, int precision) {
 		prefix = pos_units[fi - 1];
 	}
 
-	value /= exp10(fi * 3);
+	value /= pow(10, fi * 3);
 
 	return QString("%1 %2").arg(value, 0, 'f', precision).arg(prefix);
 }
