@@ -23,6 +23,7 @@
 
 
 #include <seiscomp/math/math.h>
+#include <ostream>
 
 
 namespace Seiscomp {
@@ -31,6 +32,8 @@ namespace Math {
 
 template <typename T>
 struct Vector3 {
+	using Type = T;
+
 	Vector3() {}
 	Vector3(const Vector3<T> &other) : x(other.x), y(other.y), z(other.z) {}
 	Vector3(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
@@ -40,6 +43,7 @@ struct Vector3 {
 
 	Vector3<T> &cross(const Vector3<T> &a, const Vector3<T> &b);
 	Vector3<T> &normalize();
+	Vector3<T> normalized() const;
 
 	Vector3<T> &operator=(const Vector3<T> &other);
 	Vector3<T> operator*(T scale) const;
@@ -48,6 +52,9 @@ struct Vector3 {
 
 	operator T *() { return (T*)this; }
 	operator const T *() const { return (const T*)this; }
+
+	Vector3<T> operator+() const;
+	Vector3<T> operator-() const;
 
 	Vector3<T> &operator+=(const Vector3<T> &other);
 	Vector3<T> &operator-=(const Vector3<T> &other);
@@ -62,8 +69,12 @@ struct Vector3 {
 };
 
 
-typedef Vector3<float>  Vector3f;
-typedef Vector3<double> Vector3d;
+using Vector3f = Vector3<float>;
+using Vector3d = Vector3<double>;
+
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Vector3<T> &v);
 
 
 #include <seiscomp/math/vector3.ipp>

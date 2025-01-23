@@ -22,6 +22,7 @@
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/math/geo.h>
+#include <seiscomp/math/matrix3.h>
 #include <seiscomp/geo/coordinate.h>
 #include <seiscomp/geo/boundingbox.h>
 #include <seiscomp/geo/feature.h>
@@ -380,6 +381,96 @@ BOOST_AUTO_TEST_CASE(latlon2xyz) {
 	auto down = Vector3d(0, 0, 0) - v0;
 	down.normalize();
 	BOOST_CHECK_CLOSE((v1 - v0).normalize().dot(down), 0.714, 0.1);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(mmult, *bu::tolerance(0.01)) {
+	Matrix3d rh;
+	rh.identity();
+	rh[0][0] = -1.0;
+
+	auto rotateZ = Matrix3d::RotationZ(deg2rad(90));
+	auto trans = rotateZ * rh;
+
+	BOOST_TEST(trans[0][0] == +0.0);
+	BOOST_TEST(trans[0][1] == -1.0);
+	BOOST_TEST(trans[0][2] == +0.0);
+	BOOST_TEST(trans[1][0] == -1.0);
+	BOOST_TEST(trans[1][1] == +0.0);
+	BOOST_TEST(trans[1][2] == +0.0);
+	BOOST_TEST(trans[2][0] == +0.0);
+	BOOST_TEST(trans[2][1] == +0.0);
+	BOOST_TEST(trans[2][2] == +1.0);
+
+	rotateZ = Matrix3d::RotationZ(deg2rad(13));
+	rh.identity();
+	rh[0][0] = -1.0;
+
+	Vector3d v1, v2;
+
+	v1 = rotateZ * rh * Vector3d(1, 0, 0);
+
+	v2 = rh * Vector3d(1, 0, 0);
+	v2 = rotateZ * v2;
+
+	BOOST_TEST(v1.x == v2.x);
+	BOOST_TEST(v1.y == v2.y);
+	BOOST_TEST(v1.z == v2.z);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(inclination, *bu::tolerance(0.005)) {
+	Vector3d tgt, src;
+	// Test from ZRT to LQT
+	// ZRT is left-handed
+	// LQT is right-handed
+
+	// Convert into right-handed system
+	Matrix3d rh;
+	rh.identity();
+	rh[1][1] = -1.0;
+
+	//
+	// Target is on top of Source (ray directly from beneath)
+	// Inclination should be zero, meaning Z is L
+	ltp2vec(52, 12, -1000, src);
+	ltp2vec(52, 12, 0, tgt);
+
+	auto thInclination = acos((src - tgt).normalize().dot(-tgt.normalized()));
+	BOOST_TEST(thInclination == +0.0);
+
+	// Validation vector: x is T, y is R, z is Z
+	auto v = rh * Matrix3d::RotationX(+thInclination) * Vector3d(0, 1, 1);
+
+	// Output vector in TQL
+	BOOST_CHECK_CLOSE(v.x, +0.0, 1);
+	BOOST_CHECK_CLOSE(v.y, -1.0, 1);
+	BOOST_CHECK_CLOSE(v.z, +1.0, 1);
+
+	//
+	// Target is parallel to surface (ray directly from the side (west))
+	// Inclination should be 90 degree / 1.5708 rad, meaning Z is Q, R is L
+	ltp2vec(52, 12, 0, src);
+	ltp2vec(52, 13, 0, tgt);
+
+	thInclination = acos((src - tgt).normalize().dot(-tgt.normalized()));
+	BOOST_CHECK_CLOSE(thInclination, +1.5708, 1);
+
+	// Validation vector: x is T, y is R, z is Z
+	v = rh * Matrix3d::RotationX(thInclination) * Vector3d(0, -1, 1);
+
+	// Output vector in TQL
+	BOOST_CHECK_CLOSE(v.x, +0.0, 1);
+	BOOST_CHECK_CLOSE(v.y, +1.0, 1);
+	BOOST_CHECK_CLOSE(v.z, -1.0, 1);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

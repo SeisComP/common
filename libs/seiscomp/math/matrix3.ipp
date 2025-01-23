@@ -17,8 +17,15 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#define _mat3_elem(row,column) d[row][column]
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#define _mat3_elem(row,column) d[row][column]
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 inline Vector3<T> &Matrix3<T>::transform(Vector3<T> &dst, const Vector3<T> &v) const {
 	for ( int r = 0; r < 3; ++r )
@@ -28,8 +35,12 @@ inline Vector3<T> &Matrix3<T>::transform(Vector3<T> &dst, const Vector3<T> &v) c
 
 	return dst;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 inline Vector3<T> &Matrix3<T>::invTransform(Vector3<T> &dst, const Vector3<T> &v) const {
 	for ( int r = 0; r < 3; ++r )
@@ -39,11 +50,67 @@ inline Vector3<T> &Matrix3<T>::invTransform(Vector3<T> &dst, const Vector3<T> &v
 
 	return dst;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 inline Vector3<T> Matrix3<T>::operator*(const Vector3<T> &v) const {
 	Vector3<T> r;
 	transform(r, v);
 	return r;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+inline Matrix3<T> Matrix3<T>::RotationX(T theta) {
+	Matrix3<T> r;
+	r.loadRotateX(theta);
+	return r;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+inline Matrix3<T> Matrix3<T>::RotationY(T theta) {
+	Matrix3<T> r;
+	r.loadRotateY(theta);
+	return r;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+inline Matrix3<T> Matrix3<T>::RotationZ(T theta) {
+	Matrix3<T> r;
+	r.loadRotateZ(theta);
+	return r;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Matrix3<T> &v) {
+	os << "("
+	      "(" << v[0][0] << ", " << v[0][1] << ", " << v[0][2] << "), "
+	      "(" << v[1][0] << ", " << v[1][1] << ", " << v[1][2] << "), "
+	      "(" << v[2][0] << ", " << v[2][1] << ", " << v[2][2] << ")"
+	      ")";
+	return os;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
