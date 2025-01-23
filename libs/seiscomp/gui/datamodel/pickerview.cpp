@@ -1221,10 +1221,10 @@ class SpectrumView : public SpectrumViewBase {
 			}
 
 			_infoLabel->setText(QString("%1, %2, %3, %4")
-			                    .arg(sensor->manufacturer().c_str())
-			                    .arg(sensor->model().c_str())
-			                    .arg(sensor->type().c_str())
-			                    .arg(sensor->unit().c_str()));
+			                    .arg(sensor->manufacturer().c_str(),
+			                         sensor->model().c_str(),
+			                         sensor->type().c_str(),
+			                         sensor->unit().c_str()));
 		}
 
 
@@ -2595,14 +2595,14 @@ void PickerView::init() {
 	SC_D.recordView->setSelectionEnabled(false);
 	SC_D.recordView->setRecordUpdateInterval(1000);
 
-	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*, RecordViewItem*)),
-	        this, SLOT(itemSelected(RecordViewItem*, RecordViewItem*)));
+	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*,RecordViewItem*)),
+	        this, SLOT(itemSelected(RecordViewItem*,RecordViewItem*)));
 
-	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*, const Seiscomp::Record*)),
-	        this, SLOT(updateTraceInfo(RecordViewItem*, const Seiscomp::Record*)));
+	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*,const Seiscomp::Record*)),
+	        this, SLOT(updateTraceInfo(RecordViewItem*,const Seiscomp::Record*)));
 
-	connect(SC_D.recordView, SIGNAL(filterChanged(const QString&)),
-	        this, SLOT(addNewFilter(const QString&)));
+	connect(SC_D.recordView, SIGNAL(filterChanged(QString)),
+	        this, SLOT(addNewFilter(QString)));
 
 	connect(SC_D.recordView, SIGNAL(progressStarted()),
 	        this, SLOT(beginWaitForRecords()));
@@ -2622,8 +2622,8 @@ void PickerView::init() {
 	//SC_D.recordView->setDefaultActions();
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
-	connect(SC_D.connectionState, SIGNAL(customInfoWidgetRequested(const QPoint &)),
-	        this, SLOT(openConnectionInfo(const QPoint &)));
+	connect(SC_D.connectionState, SIGNAL(customInfoWidgetRequested(QPoint)),
+	        this, SLOT(openConnectionInfo(QPoint)));
 
 	QWidget *wrapper = new QWidget;
 	wrapper->setBackgroundRole(QPalette::Base);
@@ -2649,8 +2649,8 @@ void PickerView::init() {
 	SC_D.searchLabel->setVisible(false);
 	SC_D.searchLabel->setText(tr("Type the station code to search for"));
 
-	connect(SC_D.searchStation, SIGNAL(textChanged(const QString&)),
-	        this, SLOT(search(const QString&)));
+	connect(SC_D.searchStation, SIGNAL(textChanged(QString)),
+	        this, SLOT(search(QString)));
 
 	connect(SC_D.searchStation, SIGNAL(returnPressed()),
 	        this, SLOT(nextSearch()));
@@ -2680,8 +2680,8 @@ void PickerView::init() {
 	SC_D.currentRecord->setRecordColor(2, Qt::blue);
 	*/
 
-	connect(SC_D.currentRecord, SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(openRecordContextMenu(const QPoint &)));
+	connect(SC_D.currentRecord, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(openRecordContextMenu(QPoint)));
 	connect(SC_D.currentRecord, SIGNAL(currentMarkerChanged(Seiscomp::Gui::RecordMarker*)),
 	        this, SLOT(currentMarkerChanged(Seiscomp::Gui::RecordMarker*)));
 
@@ -2709,8 +2709,8 @@ void PickerView::init() {
 	        this, SLOT(enableAutoScale()));
 	connect(SC_D.timeScale, SIGNAL(rangeChangeRequested(double,double)),
 	        this, SLOT(applyTimeRange(double,double)));
-	connect(SC_D.timeScale, SIGNAL(selectionHandleMoved(int, double, Qt::KeyboardModifiers)),
-	        this, SLOT(zoomSelectionHandleMoved(int, double, Qt::KeyboardModifiers)));
+	connect(SC_D.timeScale, SIGNAL(selectionHandleMoved(int,double,Qt::KeyboardModifiers)),
+	        this, SLOT(zoomSelectionHandleMoved(int,double,Qt::KeyboardModifiers)));
 	connect(SC_D.timeScale, SIGNAL(selectionHandleMoveFinished()),
 	        this, SLOT(zoomSelectionHandleMoveFinished()));
 
@@ -3130,17 +3130,17 @@ void PickerView::init() {
 	connect(SC_D.ui.actionSwitchFullscreen, SIGNAL(triggered(bool)),
 	        this, SLOT(showFullscreen(bool)));
 
-	connect(SC_D.timeScale, SIGNAL(changedInterval(double, double, double)),
-	        SC_D.currentRecord, SLOT(setGridSpacing(double, double, double)));
+	connect(SC_D.timeScale, SIGNAL(changedInterval(double,double,double)),
+	        SC_D.currentRecord, SLOT(setGridSpacing(double,double,double)));
 	connect(SC_D.recordView, SIGNAL(toggledFilter(bool)),
 	        SC_D.currentRecord, SLOT(enableFiltering(bool)));
-	connect(SC_D.recordView, SIGNAL(scaleChanged(double, double)),
-	        this, SLOT(changeScale(double, double)));
-	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double, double)),
-	        this, SLOT(changeTimeRange(double, double)));
-	connect(SC_D.recordView, SIGNAL(selectionChanged(double, double)),
-	        SC_D.currentRecord, SLOT(setSelected(double, double)));
-	connect(SC_D.recordView, SIGNAL(alignmentChanged(const Seiscomp::Core::Time&)),
+	connect(SC_D.recordView, SIGNAL(scaleChanged(double,double)),
+	        this, SLOT(changeScale(double,double)));
+	connect(SC_D.recordView, SIGNAL(timeRangeChanged(double,double)),
+	        this, SLOT(changeTimeRange(double,double)));
+	connect(SC_D.recordView, SIGNAL(selectionChanged(double,double)),
+	        SC_D.currentRecord, SLOT(setSelected(double,double)));
+	connect(SC_D.recordView, SIGNAL(alignmentChanged(Seiscomp::Core::Time)),
 	        this, SLOT(setAlignment(Seiscomp::Core::Time)));
 	connect(SC_D.recordView, SIGNAL(amplScaleChanged(double)),
 	        SC_D.currentRecord, SLOT(setAmplScale(double)));
@@ -3195,14 +3195,14 @@ void PickerView::init() {
 	SC_D.strongMotionCodes.push_back("LN");
 	*/
 
-	connect(SC_D.recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)),
-	        this, SLOT(onSelectedTime(Seiscomp::Gui::RecordWidget*, Seiscomp::Core::Time)));
+	connect(SC_D.recordView, SIGNAL(selectedTime(Seiscomp::Gui::RecordWidget*,Seiscomp::Core::Time)),
+	        this, SLOT(onSelectedTime(Seiscomp::Gui::RecordWidget*,Seiscomp::Core::Time)));
 
 	connect(SC_D.currentRecord, SIGNAL(selectedTime(Seiscomp::Core::Time)),
 	        this, SLOT(onSelectedTime(Seiscomp::Core::Time)));
 
-	connect(SC_D.recordView, SIGNAL(addedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)),
-	        this, SLOT(onAddedItem(const Seiscomp::Record*, Seiscomp::Gui::RecordViewItem*)));
+	connect(SC_D.recordView, SIGNAL(addedItem(const Seiscomp::Record*,Seiscomp::Gui::RecordViewItem*)),
+	        this, SLOT(onAddedItem(const Seiscomp::Record*,Seiscomp::Gui::RecordViewItem*)));
 
 	connect(&RecordStreamState::Instance(), SIGNAL(firstConnectionEstablished()),
 	        this, SLOT(firstConnectionEstablished()));
@@ -3281,22 +3281,19 @@ namespace {
 
 void createPhaseMenus(QActionGroup *actionGroup, QList<QMenu*> &menus,
                       const PickerView::Config::GroupList &list,
-                      QMenu *root = nullptr, int depth = 0)
-{
-	QMenu *actionRoot = depth == 0?nullptr:root;
+                      QMenu *root = nullptr, int depth = 0) {
+	QMenu *actionRoot = depth == 0 ? nullptr : root;
 
 	foreach ( const PickerView::Config::PhaseGroup &group, list ) {
 		if ( group.childs.empty() ) {
-			if ( actionRoot == nullptr ) {
-				if ( root == nullptr ) {
+			if ( !actionRoot ) {
+				if ( !root ) {
 					actionRoot = new QMenu(group.name);
 					menus.append(actionRoot);
 				}
-				else
+				else {
 					actionRoot = root->addMenu("unnamed");
-
-				// Store top-level menus
-				if ( depth == 0 ) menus.append(actionRoot);
+				}
 			}
 
 			QAction *action = new QAction(group.name, actionGroup);
@@ -3305,15 +3302,15 @@ void createPhaseMenus(QActionGroup *actionGroup, QList<QMenu*> &menus,
 		else {
 			QMenu *subMenu;
 
-			if ( root == nullptr )
+			if ( !root ) {
 				subMenu = new QMenu(group.name);
-			else
+				menus.append(subMenu);
+			}
+			else {
 				subMenu = root->addMenu(group.name);
+			}
 
-			// Store top-level menus
-			if ( depth == 0 ) menus.append(subMenu);
-
-			createPhaseMenus(actionGroup, menus, group.childs, subMenu, depth+1);
+			createPhaseMenus(actionGroup, menus, group.childs, subMenu, depth + 1);
 		}
 	}
 }
@@ -3321,22 +3318,24 @@ void createPhaseMenus(QActionGroup *actionGroup, QList<QMenu*> &menus,
 
 void createAlignPhaseMenus(QActionGroup *actionGroup, QList<QMenu*> &menus,
                            const PickerView::Config::GroupList &list,
-                           QMenu *root = nullptr, int depth = 0)
-{
-	QMenu *actionRoot = depth == 0?nullptr:root;
+                           QMenu *root = nullptr, int depth = 0) {
+	QMenu *actionRoot = depth == 0 ? nullptr : root;
 
 	foreach ( const PickerView::Config::PhaseGroup &group, list ) {
 		if ( group.childs.empty() ) {
-			if ( actionRoot == nullptr ) {
-				if ( root == nullptr ) {
+			if ( !actionRoot ) {
+				if ( !root ) {
 					actionRoot = new QMenu(group.name);
 					menus.append(actionRoot);
 				}
-				else
+				else {
 					actionRoot = root->addMenu("unnamed");
+				}
 
 				// Store top-level menus
-				if ( depth == 0 ) menus.append(actionRoot);
+				if ( depth == 0 ) {
+					menus.append(actionRoot);
+				}
 			}
 
 			QAction *action = new QAction(group.name, actionGroup);
@@ -3352,13 +3351,13 @@ void createAlignPhaseMenus(QActionGroup *actionGroup, QList<QMenu*> &menus,
 		else {
 			QMenu *subMenu;
 
-			if ( root == nullptr )
+			if ( !root ) {
 				subMenu = new QMenu(group.name);
-			else
+				menus.append(subMenu);
+			}
+			else {
 				subMenu = root->addMenu(group.name);
-
-			// Store top-level menus
-			if ( depth == 0 ) menus.append(subMenu);
+			}
 
 			createAlignPhaseMenus(actionGroup, menus, group.childs, subMenu, depth+1);
 		}
@@ -5044,8 +5043,9 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		double delta, az1;
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
-		double edep = SC_D.config.defaultDepth;
-		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+		double edep;
+		try { edep = SC_D.origin->depth(); }
+		catch ( ... ) { edep = SC_D.config.defaultDepth; }
 		double slat, slon, salt = elevation(loc);
 
 		try {
@@ -5668,8 +5668,9 @@ void PickerView::openContextMenu(const QPoint &p) {
 
 	double delta, az;
 	if ( SC_D.origin ) {
-		double edep = SC_D.config.defaultDepth;
-		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
+		double edep;
+		try { edep = SC_D.origin->depth(); }
+		catch ( ... ) { edep = SC_D.config.defaultDepth; }
 
 		delta = computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
 		                        loc->latitude(), loc->longitude(), loc->elevation(), &az);
@@ -5862,8 +5863,10 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			SC_D.currentRecord->update();
 		}
 
-		double dep = SC_D.config.defaultDepth;
-		try { dep = SC_D.origin->depth(); } catch ( ... ) {}
+		double dep;
+		try { dep = SC_D.origin->depth(); }
+		catch ( ... ) { dep = SC_D.config.defaultDepth; }
+
 		OriginDialog dialog(
 			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->longitude,
 			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->latitude,
@@ -5904,8 +5907,9 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			SC_D.currentRecord->update();
 		}
 
-		double dep = SC_D.config.defaultDepth;
-		try { dep = SC_D.origin->depth(); } catch ( ... ) {}
+		double dep;
+		try { dep = SC_D.origin->depth(); }
+		catch ( ... ) { dep = SC_D.config.defaultDepth; }
 
 		emit requestArtificialOrigin(
 			static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label())->latitude,
@@ -5928,8 +5932,8 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			EditUncertainties dlg(this);
 
 			dlg.setUncertainties(SC_D.tmpLowerUncertainty, SC_D.tmpUpperUncertainty);
-			connect(&dlg, SIGNAL(uncertaintiesChanged(double, double)),
-			        this, SLOT(previewUncertainty(double, double)));
+			connect(&dlg, SIGNAL(uncertaintiesChanged(double,double)),
+			        this, SLOT(previewUncertainty(double,double)));
 
 			int res = dlg.exec();
 
@@ -6528,10 +6532,12 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 
 			int index = text.lastIndexOf(' ');
 			if ( index >= 0 ) {
-				if ( text.size() - index > 2 )
-					text[text.size()-1] = SC_D.currentRecord->recordID(slot)[0];
-				else
-					text += SC_D.currentRecord->recordID(slot)[0];
+				if ( (text.size() - index) > 2 ) {
+					text[text.size() - 1] = SC_D.currentRecord->recordID(slot).at(0);
+				}
+				else {
+					text += SC_D.currentRecord->recordID(slot).at(0);
+				}
 
 				SC_D.ui.labelCode->setText(text);
 			}
@@ -7014,9 +7020,9 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 
 	SC_D.ui.labelStationCode->setText(streamID.stationCode().c_str());
 	SC_D.ui.labelCode->setText(QString("%1  %2%3")
-	                        .arg(streamID.networkCode().c_str())
-	                        .arg(streamID.locationCode().c_str())
-	                        .arg(cha.c_str()));
+	                        .arg(streamID.networkCode().c_str(),
+	                             streamID.locationCode().c_str(),
+	                             cha.c_str()));
 	/*
 	const RecordSequence* seq = SC_D.currentRecord->records();
 	if ( seq && !seq->empty() )
@@ -8302,8 +8308,8 @@ void PickerView::acquireStreams() {
 		return;
 	}
 
-	connect(t, SIGNAL(handleError(const QString &)),
-	        this, SLOT(handleAcquisitionError(const QString &)));
+	connect(t, SIGNAL(handleError(QString)),
+	        this, SLOT(handleAcquisitionError(QString)));
 
 	connect(t, SIGNAL(receivedRecord(Seiscomp::Record*)),
 	        this, SLOT(receivedRecord(Seiscomp::Record*)));
@@ -8326,11 +8332,12 @@ void PickerView::acquireStreams() {
 				             it->streamID.locationCode(),
 				             it->streamID.channelCode());
 		}
-		else
+		else {
 			t->addStream(it->streamID.networkCode(),
 			             it->streamID.stationCode(),
 			             it->streamID.locationCode(),
 			             it->streamID.channelCode());
+		}
 
 		RecordViewItem *item = SC_D.recordView->item(adjustWaveformStreamID(it->streamID));
 		if ( item ) {
@@ -8555,8 +8562,10 @@ void PickerView::relocate() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::modifyOrigin() {
-	double dep = SC_D.config.defaultDepth;
-	try { dep = SC_D.origin->depth(); } catch ( ... ) {}
+	double dep;
+	try { dep = SC_D.origin->depth(); }
+	catch ( ... ) { dep = SC_D.config.defaultDepth; }
+
 	OriginDialog dialog(SC_D.origin->longitude().value(), SC_D.origin->latitude().value(), dep, this);
 	dialog.setTime(SC_D.origin->time().value());
 	dialog.setWindowTitle("Modify origin");
@@ -9509,7 +9518,8 @@ void PickerView::changeFilter(int index, bool) {
 	if ( !newFilter ) {
 		QApplication::setOverrideCursor(Qt::ArrowCursor);
 		QMessageBox::critical(this, "Invalid filter",
-		                      QString("Unable to create filter: %1\nFilter: %2").arg(name).arg(filter));
+		                      QString("Unable to create filter: %1\nFilter: %2")
+		                      .arg(name, filter));
 		QApplication::restoreOverrideCursor();
 
 		SC_D.comboFilter->blockSignals(true);
