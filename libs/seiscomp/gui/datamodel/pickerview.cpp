@@ -111,6 +111,7 @@ namespace {
 
 char ZNE_COMPS[3] = {'Z', 'N', 'E'};
 char ZRT_COMPS[3] = {'Z', 'R', 'T'};
+char LQT_COMPS[3] = {'L', 'Q', 'T'};
 char ZH_COMPS[3] = {'Z', 'H', '-'};
 char Z12_COMPS[3] = {'Z', '1', '2'};
 
@@ -121,12 +122,14 @@ MAKEENUM(
 		RT_123,
 		RT_ZNE,
 		RT_ZRT,
+		RT_LQT,
 		RT_ZH
 	),
 	ENAMES(
 		"123",
 		"ZNE",
 		"ZRT",
+		"LQT",
 		"ZH(L2)"
 	)
 );
@@ -938,9 +941,9 @@ class PickerMarker : public RecordMarker {
 				return QString("manual %1 pick (local)\n"
 				               "filter: %2\n"
 				               "arrival: %3")
-				       .arg(text())
-				       .arg(_filter.isEmpty()?"None":_filter)
-				       .arg(isArrival()?"yes":"no");
+				       .arg(text(),
+				            _filter.isEmpty() ? "None" : _filter,
+				            isArrival() ? "yes" : "no");
 
 			QString text;
 
@@ -4818,6 +4821,49 @@ int PickerView::loadPicks() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::updateTransformations(PickerRecordLabel *label) {
+	if ( SC_D.origin ) {
+		double baz;
+		double edep;
+		try {
+			edep = SC_D.origin->depth();
+		}
+		catch ( ... ) {
+			edep = SC_D.config.defaultDepth;
+		}
+
+		computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
+		                label->latitude, label->longitude, label->elevation,
+		                nullptr, &baz);
+
+		label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
+
+		Math::Vector3d vSource, vTarget;
+		Math::Geo::ltp2vec(SC_D.origin->latitude(), SC_D.origin->longitude(), - edep * 1000,
+		                   vSource);
+		Math::Geo::ltp2vec(label->latitude, label->longitude, label->elevation,
+		                   vTarget);
+
+		auto inclinationAngle = acos((vSource - vTarget).normalize().dot(-vTarget.normalized()));
+
+		// Convert into right-handed system
+		Math::Matrix3d rh;
+		rh.identity();
+		rh[1][1] = -1.0;
+
+		label->orientationLQT = rh * Math::Matrix3<double>::RotationX(inclinationAngle) * label->orientationZRT;
+	}
+	else {
+		label->orientationZRT.identity();
+		label->orientationLQT.identity();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	SC_D.origin = o;
 	figureOutTravelTimeTable();
@@ -4894,29 +4940,22 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem *item = SC_D.recordView->itemAt(r);
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
-
-		if ( SC_D.origin ) {
-			double baz;
-			double edep = SC_D.config.defaultDepth;
-			try { edep = SC_D.origin->depth(); } catch ( ... ) {}
-
-			computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
-			                label->latitude, label->longitude, label->elevation,
-			                nullptr, &baz);
-
-			label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
-		}
-		else
-			label->orientationZRT.identity();
+		updateTransformations(label);
 	}
 
 
-	if ( SC_D.comboRotation->currentIndex() == RT_ZRT )
+	if ( SC_D.comboRotation->currentIndex() == RT_ZRT ) {
 		changeRotation(RT_ZRT);
-	else if ( SC_D.comboRotation->currentIndex() == RT_ZNE )
+	}
+	else if ( SC_D.comboRotation->currentIndex() == RT_LQT ) {
+		changeRotation(RT_LQT);
+	}
+	else if ( SC_D.comboRotation->currentIndex() == RT_ZNE ) {
 		changeRotation(RT_ZNE);
-	else if ( SC_D.comboRotation->currentIndex() == RT_ZH )
+	}
+	else if ( SC_D.comboRotation->currentIndex() == RT_ZH ) {
 		changeRotation(RT_ZH);
+	}
 
 	componentByState();
 	updateOriginInformation();
@@ -6159,8 +6198,9 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 			const Config::ChannelMapItem &value = it.previous();
 			if ( value.first == locChannel || value.first == channel ) {
 				QStringList toks = value.second.split('.');
-				if ( toks.size() == 1 )
+				if ( toks.size() == 1 ) {
 					streamID.setChannelCode(toks[0].toStdString() + streamID.channelCode().substr(2));
+				}
 				else if ( toks.size() == 2 ) {
 					streamID.setLocationCode(toks[0].toStdString());
 					streamID.setChannelCode(toks[1].toStdString() + streamID.channelCode().substr(2));
@@ -6179,8 +6219,8 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 	}
 
 	item->label()->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(item->label(), SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(openContextMenu(const QPoint &)));
+	connect(item->label(), SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(openContextMenu(QPoint)));
 
 	if ( SC_D.currentRecord )
 		item->widget()->setCursorText(SC_D.currentRecord->cursorText());
@@ -6270,21 +6310,14 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 		label->longitude = loc->longitude();
 		label->elevation = elevation(loc);
 
-		double baz;
-		double edep = SC_D.config.defaultDepth;
-		try { edep = SC_D.origin->depth(); } catch ( ... ) {}
-
-		computeDistance(SC_D.origin->latitude(), SC_D.origin->longitude(), edep,
-		                label->latitude, label->longitude, label->elevation,
-		                nullptr, &baz);
-
-		label->orientationZRT.loadRotateZ(deg2rad(baz + 180.0));
+		updateTransformations(label);
 	}
 	else {
 		label->latitude = 999;
 		label->longitude = 999;
 		label->elevation = 0;
 		label->orientationZRT.identity();
+		label->orientationLQT.identity();
 		allComponents = false;
 		comps[0] = COMP_NO_METADATA;
 		comps[1] = COMP_NO_METADATA;
@@ -6621,6 +6654,9 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 					break;
 				case RT_ZRT:
 					comp = ZRT_COMPS[slot];
+					break;
+				case RT_LQT:
+					comp = LQT_COMPS[slot];
 					break;
 				case RT_ZH:
 					comp = ZH_COMPS[slot];
@@ -6985,6 +7021,9 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 			case RT_ZRT:
 				component = ZRT_COMPS[slot];
 				break;
+			case RT_LQT:
+				component = LQT_COMPS[slot];
+				break;
 			case RT_ZH:
 				component = ZH_COMPS[slot];
 				break;
@@ -7006,6 +7045,9 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 				break;
 			case RT_ZRT:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZRT_COMPS[i]));
+				break;
+			case RT_LQT:
+				SC_D.currentRecord->setRecordID(i, QString("%1").arg(LQT_COMPS[i]));
 				break;
 			case RT_ZH:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZH_COMPS[i]));
@@ -8044,6 +8086,9 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 							break;
 						case RT_ZRT:
 							comp = ZRT_COMPS[marker->slot()];
+							break;
+						case RT_LQT:
+							comp = LQT_COMPS[marker->slot()];
 							break;
 						case RT_ZH:
 							comp = ZH_COMPS[marker->slot()];
@@ -9263,7 +9308,7 @@ void PickerView::changeRotation(int index) {
 	}
 
 
-	if ( index == RT_ZNE || index == RT_ZRT || index == RT_ZH ) {
+	if ( index == RT_ZNE || index == RT_ZRT || index == RT_LQT || index == RT_ZH ) {
 		bool tmp = SC_D.config.loadAllComponents;
 		SC_D.config.loadAllComponents = true;
 
@@ -9289,6 +9334,9 @@ void PickerView::changeRotation(int index) {
 					break;
 				case RT_ZRT:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZRT_COMPS[i]));
+					break;
+				case RT_LQT:
+					SC_D.currentRecord->setRecordID(i, QString("%1").arg(LQT_COMPS[i]));
 					break;
 				case RT_ZH:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZH_COMPS[i]));
@@ -9472,6 +9520,14 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation.mult(label->orientationZRT, label->orientationZNE);
+			label->data.setL2Horizontals(false);
+			label->data.setTransformationEnabled(true);
+			break;
+		}
+		case RT_LQT:
+		{
+			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
+			label->data.transformation.mult(label->orientationLQT, label->orientationZNE);
 			label->data.setL2Horizontals(false);
 			label->data.setTransformationEnabled(true);
 			break;

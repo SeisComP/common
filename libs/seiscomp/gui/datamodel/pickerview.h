@@ -167,6 +167,7 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 		ThreeComponentTrace  data;
 		Math::Matrix3d       orientationZNE;
 		Math::Matrix3d       orientationZRT;
+		Math::Matrix3d       orientationLQT;
 
 		bool                 hasGotData;
 		bool                 isEnabledByConfig;
@@ -527,6 +528,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 	private:
 		void figureOutTravelTimeTable();
+		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
 
 		void init();
 		void initPhases();
