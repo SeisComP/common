@@ -1929,12 +1929,14 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 		for ( int i = 0; i < 3; ++i ) {
 			if ( !traces[i].passthrough && traces[i].transformed ) {
 				Core::Time endTime = traces[i].transformed->back()->endTime();
-				if ( endTime > minStartTime )
+				if ( !minStartTime || endTime > minStartTime ) {
 					minStartTime = endTime;
+				}
 			}
 
-			if ( !traces[i].raw || traces[i].raw->empty() )
+			if ( !traces[i].raw || traces[i].raw->empty() ) {
 				return gotRecords;
+			}
 		}
 
 		// Find common start time for all three components
@@ -2051,8 +2053,8 @@ bool ThreeComponentTrace::transform(int comp, Seiscomp::Record *rec) {
 			int minLen = 0;
 
 			// Clip maxStartTime to minStartTime
-			if ( *maxStartTime < *minStartTime ) {
-				*maxStartTime = *minStartTime;
+			if ( maxStartTime < minStartTime ) {
+				maxStartTime = minStartTime;
 			}
 
 			// Rotate records
