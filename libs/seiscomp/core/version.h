@@ -67,6 +67,16 @@ namespace Core {
    - Rename Seiscomp::Wired::ClientSession::inAvail to outputBufferSize and
      remove virtual declaration
 
+ "16.4.0"   0x100400
+   - Add Seiscomp::Math::Matrix3<T> ostream output operator
+   - Add Seiscomp::Math::Vector3<T> ostream output operator
+   - Add Seiscomp::Math::Matrix3<T>::operator*
+   - Add Seiscomp::Math::Matrix3<T>::operator=
+   - Add static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
+   - Add unary Seiscomp::Math::Vector3<T>::operator+
+   - Add unary Seiscomp::Math::Vector3<T>::operator-
+   - Add Seiscomp::Math::Vector3<T>::normalized
+
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
    - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3)
