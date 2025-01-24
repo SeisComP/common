@@ -2,10 +2,16 @@ StdLoc is a SeisComP locator plugin that combines standard location methods
 and was developed with the focus on local seismicity, although the methods
 are generic enough to work at larger scales as well.
 
+
 Plugin
 ======
 
-To enable StdLoc the plugin ``stdloc`` must be loaded.
+To enable StdLoc the plugin ``stdloc`` must be loaded. Add this value to the
+global configuration parameter :confval:`plugins` as or similar to
+
+.. code-block:: sh
+
+   plugins = ${plugins},stdloc
 
 
 How does it work?
@@ -14,7 +20,7 @@ How does it work?
 The locator can apply a multitude of location methods and it is particularly useful to
 combine them to achieve better solutions:
 
-- LeastSquares: this is the classic algorithm that solves the linearized problem of
+* LeastSquares: this is the classic algorithm that solves the linearized problem of
   travel time residual minimization via iterative least squares. However an initial
   location estimate is required. This is the intended method to select when StdLoc
   is used in combination with a pick associator: it provides the initial location
@@ -22,11 +28,11 @@ combine them to achieve better solutions:
   the location of the origin to be relocated is used as starting estimate.
   The configuration doesn't require any mandatory parameters:
 
-   .. code-block:: params
+  .. code-block:: params
 
-      method = LeastSquares
+     method = LeastSquares
 
-- GridSearch: finds the source parameters by evaluating the hypocenter probability
+* GridSearch: finds the source parameters by evaluating the hypocenter probability
   of each point in a grid and returning the maximum likelihood hypocenter.
   Because the search space is fully evaluated there is no need for an initial
   location estimate and the location uncertainty is completely known. However the
@@ -36,14 +42,14 @@ combine them to achieve better solutions:
   location of the picked stations. The grid points are spaced apart 0.5km
   horizontally and 2km vertically.
 
-   .. code-block:: params
+  .. code-block:: params
 
-      method = GridSearch
-      GridSearch.center = auto,auto,15
-      GridSearch.size = 40,40,30
-      GridSearch.numPoints = 81,81,16
+     method = GridSearch
+     GridSearch.center = auto,auto,15
+     GridSearch.size = 40,40,30
+     GridSearch.numPoints = 81,81,16
 
-- GridSearch+LeastSquares: this method can be used in very complex networks where
+* GridSearch+LeastSquares: this method can be used in very complex networks where
   a bad initial location estimates can get LeastSquares stuck in a local minimum.
   The method finds a LeastSquares solution for each cell in a (coarse) grid, using
   the cell centroid as initial location estimate. If finally returns the maximum
@@ -52,14 +58,14 @@ combine them to achieve better solutions:
   The following example configuration returns the best among the 75 (5x5x3)
   LeastSquares solutions, computed for every point in the grid.
 
-   .. code-block:: params
+  .. code-block:: params
 
-      method = GridSearch+LeastSquares
-      GridSearch.center = auto,auto,15
-      GridSearch.size = 100,100,30
-      GridSearch.numPoints = 5,5,3
+     method = GridSearch+LeastSquares
+     GridSearch.center = auto,auto,15
+     GridSearch.size = 100,100,30
+     GridSearch.numPoints = 5,5,3
 
-- OctTree: this method produces similar results to GridSearch but it is extremely
+* OctTree: this method produces similar results to GridSearch but it is extremely
   faster and it follows the NonLinLoc approach. The OctTree search starts by
   evaluating the hypocenter probability of each cell in a grid, computed as the
   probability density at the cell center coordinates times the cell volume. The
@@ -76,20 +82,20 @@ combine them to achieve better solutions:
   The following example is a plausible configuration for the entire Swiss
   network:
 
-   .. code-block:: params
+  .. code-block:: params
 
-      method = OctTree
-      GridSearch.center = 47.0,8.5,50
-      GridSearch.size = 700,700,100
-      GridSearch.numPoints = 21,21,11
-      OctTree.maxIterations = 100000
-      OctTree.minCellSize = 0.001
+     method = OctTree
+     GridSearch.center = 47.0,8.5,50
+     GridSearch.size = 700,700,100
+     GridSearch.numPoints = 21,21,11
+     OctTree.maxIterations = 100000
+     OctTree.minCellSize = 0.001
 
   However in this example we are at the size limit for a flat earth study
   geometry and for bigger regions `GridSearch.center` should be set to
   `auto` and `GridSearch.size` to a smaller size. 
 
-- OctTree+LeastSquares: this method allows the OctTree search to find the
+* OctTree+LeastSquares: this method allows the OctTree search to find the
   maximum probability cell in the network and uses that as the initial
   location estimate for LeastSquares. 
   This method is intended to be used in :ref:`screloc` or :ref:`scolv` to
@@ -97,14 +103,14 @@ combine them to achieve better solutions:
   The following example is a plausible configuration for the entire Swiss
   network:
 
-   .. code-block:: params
+  .. code-block:: params
 
-      method = OctTree+LeastSquares
-      GridSearch.center = 47.0,8.5,50
-      GridSearch.size = 700,700,100
-      GridSearch.numPoints = 21,21,11
-      OctTree.maxIterations = 10000
-      OctTree.minCellSize = 1.0
+     method = OctTree+LeastSquares
+     GridSearch.center = 47.0,8.5,50
+     GridSearch.size = 700,700,100
+     GridSearch.numPoints = 21,21,11
+     OctTree.maxIterations = 10000
+     OctTree.minCellSize = 1.0
 
   However in this example we are at the size limit for a flat earth study
   geometry and for bigger regions `GridSearch.center` should be set to
@@ -123,9 +129,9 @@ When dealing with very local seismicity (few kilometers or hundreds of meters)
 simplifications that are common for regional seismicity have to be removed. 
 In particular the locator should take into consideration:
 
-- station elevation and even negative elevation (e.g. borehole sensors)
-- earthquake location can be above a seismic sensor (e.g. borehole sensors)
-- possible negative earthquake depth (above surface)
+* Station elevation and even negative elevation (e.g. borehole sensors)
+* Earthquake location can be above a seismic sensor (e.g. borehole sensors)
+* Possible negative earthquake depth (above surface).
 
 More importantly the travel time tables used by the locator must be able to take
 into consideration all the above too.
