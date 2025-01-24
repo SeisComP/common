@@ -2044,7 +2044,6 @@ void StdLoc::locateLeastSquares(
 			newLon = prevLon;
 			newDepth = prevDepth;
 			newTime = prevTime;
-			SEISCOMP_DEBUG("Locator stopped early, at iteration %d", iteration);
 		}
 
 		//
@@ -2133,10 +2132,10 @@ void StdLoc::locateLeastSquares(
 			eq.r[i] = residual;
 
 			const double bazi = deg2rad(backazis[i]);
-			eq.G[i][0] = dtdds[i] * sin(bazi); // dx [sec/deg]
-			eq.G[i][1] = dtdds[i] * cos(bazi); // dy [sec/deg]
-			eq.G[i][2] = dtdhs[i];             // dz [sec/km]
-			eq.G[i][3] = 1.;                   // dtime [sec]
+			eq.G[i][0] = dtdds[i] / KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
+			eq.G[i][1] = dtdds[i] / KM_OF_DEGREE * cos(bazi); // dy [sec/deg-> sec/km]
+			eq.G[i][2] = dtdhs[i];                            // dz [sec/km]
+			eq.G[i][3] = 1.;                                  // dtime [sec]
 
 			if ( usingFixedDepth() && !(lastIteration && computeCovMtrx) ) {
 				eq.G[i][2] = 0;                  // dz [sec/km]
@@ -2197,8 +2196,8 @@ void StdLoc::locateLeastSquares(
 		//
 		// Load the solution
 		//
-		double lonCorrection = eq.m[0];   // deg
-		double latCorrection = eq.m[1];   // deg
+		double lonCorrection = eq.m[0];   // km
+		double latCorrection = eq.m[1];   // km
 		double depthCorrection = eq.m[2]; // km
 		double timeCorrection = eq.m[3];  // sec
 
@@ -2215,11 +2214,18 @@ void StdLoc::locateLeastSquares(
 		prevDepth = newDepth;
 		prevTime = newTime;
 
-		// prepare values for next iteration
-		newLat += latCorrection;
-		newLon += lonCorrection;
+		// update source parameters, which will be used in the next iteration
 		newDepth += depthCorrection;
 		newTime += Core::TimeSpan(timeCorrection);
+
+		// compute distance and azimuth of the event to the new location
+		double distance = sqrt(lonCorrection * lonCorrection +
+		                       latCorrection * latCorrection); // km
+		double azimuth = rad2deg(atan2(lonCorrection, latCorrection));
+
+		// Computes the coordinates (lat, lon) of the point which is at a degree
+		// azimuth and km distance as seen from the original event location
+		computeCoordinates(distance, azimuth, prevLat, prevLon, newLat, newLon);
 	}
 
 	SEISCOMP_DEBUG("Least Square solution lat %g lon %g depth %g time %s",
@@ -2382,18 +2388,24 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	//  covm = sigma^2 * inverse_matrix(G.T * G)
 	//
-	// sigma^2 is the variance of the arrival times multiplied by the
-	// identity matrix defined as:
-	//
-	//   sigma^2 = 1/nfd * sum(residual^2)
-	//
-	// nfd is the degrees of freedom (numer of phases - 4) and the
-	// residuals are computed on the best fitting hypocenter
-	//
 	// G is the matrix of the partial derivatives of the slowness vector
 	// with respect to event/station location in the 3 directions and
 	// 1 in the last column corresponding to the source time correction
 	// term and G.T is G transposed
+	//
+	// sigma^2 is the variance of the arrival times multiplied by the
+	// identity matrix. The arrival-time variance is a critical variable in
+	// the error analysis. Most location programs estimates it from the
+	// residuals, like this:
+	//
+	//   sigma^2 = 1/nfd * sum(residual^2)
+	//
+	// nfd is the degrees of freedom (numer of phases - 4). Division by ndf rather
+	// than by n compensates for the improvement in fit resulting from the use
+	// of the arrival times from the data. However, this only partly works and
+	// some programs allow setting an a priori value which is used only if the
+	// number of observations is small. For small networks this can be a critical
+	// parameter.
 	//
 	// Note: the resulting confidence ellipsoid seems in the same order
 	// of magnitude of NonLinLoc. LOCSAT seems to be using sigma^2 = 1,
@@ -2401,24 +2413,37 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	covm.valid = false;
 
-	if ( eq.numRowsG <= 4 ) {
+	//
+	// Compute sigma^2
+	//
+	int validArrivals = 0;
+	double sigma2 = 0;
+	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
+		if ( eq.W[ob] == 0 ) continue;
+		validArrivals++;
+		sigma2 += eq.r[ob] * eq.r[ob];
+	}
+
+	if ( validArrivals <= (usingFixedDepth() ? 3 : 4) ) {
 		SEISCOMP_DEBUG(
 		    "Cannot compute covariance matrix: less than 5 arrivals");
 		return;
 	}
+	sigma2 /= validArrivals - (usingFixedDepth() ? 3 : 4);
 
-	double sigma2 = 0;
-	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
-		sigma2 += eq.r[ob] * eq.r[ob];
-	}
-	sigma2 /= eq.numRowsG - 4;
 
+	//
+	// Compute G.T * G
+	//
 	std::array<std::array<double, 4>, 4> GtG = {}; // G.T * G
 	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
-		double gLon = eq.G[ob][0] / KM_OF_DEGREE;
-		double gLat = eq.G[ob][1] / KM_OF_DEGREE;
-		double gDepth = eq.G[ob][2];
-		double gTime = eq.G[ob][3];
+
+		if ( eq.W[ob] == 0 ) continue;
+
+		double gLon = eq.G[ob][0];  // dx [sec/km]
+		double gLat = eq.G[ob][1];  // dy [sec/km]
+		double gDepth = eq.G[ob][2];// dz [sec/km]
+		double gTime = eq.G[ob][3]; // 1  [sec]
 		GtG[0][0] += gLon   * gLon;
 		GtG[0][1] += gLon   * gLat;
 		GtG[0][2] += gLon   * gDepth;
@@ -2437,6 +2462,9 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		GtG[3][3] += gTime  * gTime;
 	}
 
+	//
+	// Compute inverse_matrix(G.T * G)
+	//
 	std::array<std::array<double, 4>, 4> inverseGtG;
 	if ( !invertMatrix4x4(GtG, inverseGtG) ) {
 		SEISCOMP_DEBUG(
@@ -2444,6 +2472,9 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		return;
 	}
 
+	//
+	// Compute covm
+	//
 	covm.sxx = inverseGtG[0][0] * sigma2;
 	covm.sxy = inverseGtG[0][1] * sigma2;
 	covm.sxz = inverseGtG[0][2] * sigma2;
