@@ -2106,6 +2106,7 @@ void StdLoc::locateLeastSquares(
 		if ( unableToComputeTT ) {
 			SEISCOMP_WARNING("No travel times available: stop here");
 			revertToPrevIteration = true;
+			if ( lastIteration ) iteration--;
 			continue;
 		}
 
