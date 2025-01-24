@@ -1355,17 +1355,6 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			continue;
 		}
 
-		if ( ttime < 0 ) {
-			SEISCOMP_WARNING("Travel Time Table error: data not returned for "
-			                 "%s@%s.%s.%s and lat %g lon %g depth %g",
-			                 pick->phaseHint().code().c_str(),
-			                 pick->waveformID().networkCode().c_str(),
-			                 pick->waveformID().stationCode().c_str(),
-			                 pick->waveformID().locationCode().c_str(), lat,
-			                 lon, depth);
-			continue;
-		}
-
 		travelTimes[i] = ttime;
 		double pickTime = pick->time().value().epoch();
 		originTimes.push_back(pickTime - travelTimes[i]);
@@ -2095,19 +2084,6 @@ void StdLoc::locateLeastSquares(
 				    pick->waveformID().stationCode().c_str(),
 				    pick->waveformID().locationCode().c_str(),
 				    newLat, newLon, newDepth, e.what());
-				continue;
-			}
-
-			if ( tt.time < 0 ||
-			     (tt.time > 0 && tt.dtdd == 0 && tt.dtdh == 0) ) {
-				SEISCOMP_WARNING(
-				    "Travel Time Table error: data not returned for "
-				    "%s@%s.%s.%s and lat %g lon %g depth %g",
-				    pick->phaseHint().code().c_str(),
-				    pick->waveformID().networkCode().c_str(),
-				    pick->waveformID().stationCode().c_str(),
-				    pick->waveformID().locationCode().c_str(),
-				    newLat, newLon, newDepth);
 				continue;
 			}
 
