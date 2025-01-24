@@ -1868,9 +1868,11 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 				                   cellTravelTimes, covm, computeCovMtrx);
 			}
 			catch ( exception &e ) {
-				SEISCOMP_DEBUG(
-				    "Could not get a Least Square solution (%s): skip cell",
-				    e.what());
+				continue;
+			}
+			if ( _rejectLocation ) {
+				// rejecting this cell doesn't mean we reject the whole location
+				_rejectLocation = false;
 				continue;
 			}
 		}
