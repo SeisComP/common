@@ -2155,41 +2155,43 @@ void StdLoc::locateLeastSquares(
 		//
 		// Solve the system
 		//
-		try {
-			ostringstream solverLogs;
+		if ( _currentProfile.leastSquares.solverType == "LSMR" ) {
+			Adapter<lsmrBase> solver =
+			   solve<lsmrBase>(eq, nullptr,
+			                   _currentProfile.leastSquares.dampingFactor);
 
-			if ( _currentProfile.leastSquares.solverType == "LSMR" ) {
-				Adapter<lsmrBase> solver =
-				    solve<lsmrBase>(eq, &solverLogs,
-				                    _currentProfile.leastSquares.dampingFactor);
-				// SEISCOMP_DEBUG(
-				//     "Solver stopped because %u : %s (used %u iterations)",
-				//     solver.GetStoppingReason(),
-				//     solver.GetStoppingReasonMessage().c_str(),
-				//     solver.GetNumberOfIterationsPerformed());
-			}
-			else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
-				Adapter<lsqrBase> solver =
-				    solve<lsqrBase>(eq, &solverLogs,
-				                    _currentProfile.leastSquares.dampingFactor);
-				// SEISCOMP_DEBUG(
-				//     "Solver stopped because %u : %s (used %u iterations)",
-				//     solver.GetStoppingReason(),
-				//     solver.GetStoppingReasonMessage().c_str(),
-				//     solver.GetNumberOfIterationsPerformed());
-			}
-			else {
-				throw LocatorException(
-				    "Solver type can only be LSMR or LSQR, but it is set to" +
-				    _currentProfile.leastSquares.solverType);
-			}
+			//SEISCOMP_DEBUG(
+			//    "Solver stopped because %u : %s (used %u iterations)",
+			//    solver.GetStoppingReason(),
+			//    solver.GetStoppingReasonMessage().c_str(),
+			//    solver.GetNumberOfIterationsPerformed());
 
-			// SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
+			if (solver.GetStoppingReason() == 4) {
+				revertToPrevIteration = true;
+				continue;
+			}
 		}
-		catch ( exception &e ) {
-			SEISCOMP_WARNING("%s", e.what());
-			revertToPrevIteration = true;
-			continue;
+		else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
+			Adapter<lsqrBase> solver =
+			    solve<lsqrBase>(eq, nullptr,
+			                    _currentProfile.leastSquares.dampingFactor);
+
+			//SEISCOMP_DEBUG(
+			//    "Solver stopped because %u : %s (used %u iterations)",
+			//    solver.GetStoppingReason(),
+			//    solver.GetStoppingReasonMessage().c_str(),
+			//    solver.GetNumberOfIterationsPerformed());
+
+			if (solver.GetStoppingReason() == 3 ||
+			    solver.GetStoppingReason() == 6 ) {
+				revertToPrevIteration = true;
+				continue;
+			}
+		}
+		else {
+			throw LocatorException(
+					"Solver type can only be LSMR or LSQR, but it is set to" +
+					_currentProfile.leastSquares.solverType);
 		}
 
 		//
