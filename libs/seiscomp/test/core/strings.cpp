@@ -176,15 +176,12 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	}
 
 	{
-		// Only signed 64bit values are supported for string conversions. So
-		// unsigned 64bit integers must produce ERANGE when reading values
-		// larger than 2**63.
 		uint64_t value;
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
-		BOOST_CHECK(!fromString(value, toString(std::numeric_limits<uint64_t>::max())));
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<unsigned long long int>::max()/2);
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<unsigned long long int>::min());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max())) && value == std::numeric_limits<uint64_t>::max());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<uint64_t>::max()/2);
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<uint64_t>::min());
 		BOOST_CHECK(!fromString(value, "abc"));
 	}
 
