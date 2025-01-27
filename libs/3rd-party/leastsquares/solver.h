@@ -205,12 +205,6 @@ Adapter<T> solve(System &eq, std::ostringstream *solverLogs = nullptr,
 
   solver.Solve();
 
-  if (solver.GetStoppingReason() == 4) {
-    std::string msg =
-        "Solver: no solution found:" + solver.GetStoppingReasonMessage();
-    throw std::runtime_error(msg);
-  }
-
   if (normalizeG) {
     solver.L2DeNormalize();
   }
