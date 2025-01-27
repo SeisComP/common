@@ -2006,19 +2006,25 @@ void StdLoc::locateLeastSquares(
 
 	travelTimes.resize(pickList.size());
 
+	vector<double> residuals(pickList.size());
 	vector<double> backazis(pickList.size());
 	vector<double> dtdds(pickList.size());
 	vector<double> dtdhs(pickList.size());
 
-	double prevLat, prevLon, prevDepth;
-	Core::Time prevTime;
+	// loop variables for current and previous loop
+	struct {
+		double lat, lon, depth;
+		Core::Time time;
+		double residuals;
+	} curr, prev;
 
-	prevLat = newLat = initLat;
-	prevLon = newLon = initLon;
-	prevDepth = newDepth = initDepth;
-	prevTime = newTime = initTime;
+	curr.lat = initLat;
+	curr.lon = initLon;
+	curr.depth = initDepth;
+	curr.time = initTime;
 
 	bool revertToPrevIteration = false;
+	int convergence = 0;
 
 	//
 	// Solve the system via least squares multiple times. Each time
@@ -2039,17 +2045,18 @@ void StdLoc::locateLeastSquares(
 			if ( iteration <= 1 ) {
 				throw LocatorException("Unable to find a location");
 			}
+			if ( convergence < 3 ) {
+				throw LocatorException("Unable to find a stable solution");
+			}
 			lastIteration = true;
-			newLat = prevLat;
-			newLon = prevLon;
-			newDepth = prevDepth;
-			newTime = prevTime;
+			curr = prev;
 		}
 
 		//
 		// Load the information we need to build the Equation System
 		//
 		bool unableToComputeTT = true;
+		curr.residuals = 0;
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
 			const PickItem &pi = pickList[i];
 			const PickPtr pick = pi.pick;
@@ -2060,6 +2067,7 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
+			// Query ttt
 			TravelTime tt;
 
 			try {
@@ -2073,7 +2081,7 @@ void StdLoc::locateLeastSquares(
 					}
 				}
 
-				tt = _ttt->compute(phaseName, newLat, newLon, newDepth,
+				tt = _ttt->compute(phaseName, curr.lat, curr.lon, curr.depth,
 				                   sensorLat[i], sensorLon[i], sensorElev[i]);
 			}
 			catch ( exception &e ) {
@@ -2084,10 +2092,11 @@ void StdLoc::locateLeastSquares(
 				    pick->waveformID().networkCode().c_str(),
 				    pick->waveformID().stationCode().c_str(),
 				    pick->waveformID().locationCode().c_str(),
-				    newLat, newLon, newDepth, e.what());
+				    curr.lat, curr.lon, curr.depth, e.what());
 				continue;
 			}
 
+			// Store the ttt and derived info
 			travelTimes[i] = tt.time;
 			dtdds[i] = tt.dtdd;
 			dtdhs[i] = tt.dtdh;
@@ -2095,10 +2104,13 @@ void StdLoc::locateLeastSquares(
 				backazis[i] = *tt.azi;
 			}
 			else {
-				computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
+				computeDistance(curr.lat, curr.lon, sensorLat[i], sensorLon[i],
 				                nullptr, &backazis[i]);
 			}
-
+			residuals[i] =
+			    (pick->time().value() - (curr.time + Core::TimeSpan(travelTimes[i])))
+			    .length();
+			curr.residuals += std::fabs(residuals[i]);
 			unableToComputeTT = false;
 		}
 
@@ -2110,14 +2122,26 @@ void StdLoc::locateLeastSquares(
 		}
 
 		//
+		// Check for convergence of the solution (now we know the residuals)
+		//
+		if ( iteration > 1 && !revertToPrevIteration) {
+			double resChange = std::fabs(curr.residuals / prev.residuals);
+			if ( resChange < 1.0 ) { // improved solution
+				convergence++;
+			} else if ( resChange > 1.1 ) { // 10% worse
+				convergence--;
+			}
+			if ( convergence < -3 ) {
+				throw LocatorException("Unable to find a stable solution");
+			}
+		}
+
+		//
 		// Prepare the Equation System
 		//
 		System eq(pickList.size());
 
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
-			const PickItem &pi = pickList[i];
-			const PickPtr pick = pi.pick;
-
 			eq.W[i] = weights[i];
 
 			if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
@@ -2125,11 +2149,7 @@ void StdLoc::locateLeastSquares(
 				continue;
 			}
 
-			Core::Time pickTime = pick->time().value();
-			double residual =
-			    (pickTime - (newTime + Core::TimeSpan(travelTimes[i])))
-			        .length();
-			eq.r[i] = residual;
+			eq.r[i] = residuals[i];
 
 			const double bazi = deg2rad(backazis[i]);
 			eq.G[i][0] = dtdds[i] / KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
@@ -2193,30 +2213,29 @@ void StdLoc::locateLeastSquares(
 					_currentProfile.leastSquares.solverType);
 		}
 
-		//
-		// Load the solution
-		//
-		double lonCorrection = eq.m[0];   // km
-		double latCorrection = eq.m[1];   // km
-		double depthCorrection = eq.m[2]; // km
-		double timeCorrection = eq.m[3];  // sec
-
-		if ( !isfinite(lonCorrection) || !isfinite(latCorrection) ||
-		     !isfinite(depthCorrection) || !isfinite(timeCorrection) ) {
+		if ( !isfinite(eq.m[0]) || !isfinite(eq.m[1]) ||
+		     !isfinite(eq.m[2]) || !isfinite(eq.m[3]) ) {
 			SEISCOMP_WARNING("Couldn't find a solution to the equation system");
 			revertToPrevIteration = true;
 			continue;
 		}
 
-		// save old values in case the next iteration fails
-		prevLat = newLat;
-		prevLon = newLon;
-		prevDepth = newDepth;
-		prevTime = newTime;
+		// save current loop values
+		prev = curr;
 
+		//
+		// Load the solution
+		//
+		double lonCorrection   = eq.m[0]; // km
+		double latCorrection   = eq.m[1]; // km
+		double depthCorrection = eq.m[2]; // km
+		double timeCorrection  = eq.m[3]; // sec
+
+		//
 		// update source parameters, which will be used in the next iteration
-		newDepth += depthCorrection;
-		newTime += Core::TimeSpan(timeCorrection);
+		//
+		curr.depth += depthCorrection;
+		curr.time += Core::TimeSpan(timeCorrection);
 
 		// compute distance and azimuth of the event to the new location
 		double distance = sqrt(lonCorrection * lonCorrection +
@@ -2225,8 +2244,13 @@ void StdLoc::locateLeastSquares(
 
 		// Computes the coordinates (lat, lon) of the point which is at a degree
 		// azimuth and km distance as seen from the original event location
-		computeCoordinates(distance, azimuth, prevLat, prevLon, newLat, newLon);
+		computeCoordinates(distance, azimuth, curr.lat, curr.lon, curr.lat, curr.lon);
 	}
+
+	newLat   = curr.lat;
+	newLon   = curr.lon;
+	newDepth = curr.depth;
+	newTime  = curr.time;
 
 	SEISCOMP_DEBUG("Least Square solution lat %g lon %g depth %g time %s",
 	               newLat, newLon, newDepth, newTime.iso().c_str());
@@ -2430,7 +2454,6 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		return;
 	}
 	sigma2 /= validArrivals - (usingFixedDepth() ? 3 : 4);
-
 
 	//
 	// Compute G.T * G
