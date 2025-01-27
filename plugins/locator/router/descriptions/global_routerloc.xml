@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="RouterLocator">
+		<extends>global</extends>
+		<description>
+		Meta locator routing location requests of picks and origins to actual
+		locator implementations.
+		</description>
+		<configuration>
+			<group name="RouterLocator">
+				<description>
+					Locator parameters: RouterLocator
+				</description>
+				<parameter name="regions" type="string">
+					<description>
+					A GeoJSON or BNA file defining locator profiles by region.
+					Supported Polygon attributes:
+					locator: Name of the locator interface;
+					profile: Name of the locator specific profile;
+					minDepth: Minimum depth in km
+					maxDepth: Minimum depth in km
+					</description>
+				</parameter>
+				<group name="initial">
+					<description>
+						Configuration of initial locator used to create an
+						initial solution based on a pick set. If a solution is
+						found, relocate of the actual locator configured in the
+						region file is invoked.
+					</description>
+					<parameter name="locator" type="string">
+						<description>
+						Name of the initial locator interface, e.g., LOCSAT
+						</description>
+					</parameter>
+					<parameter name="profile" type="string">
+						<description>
+						Profile name of the initial locator, e.g., iasp91
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</plugin>
+</seiscomp>
