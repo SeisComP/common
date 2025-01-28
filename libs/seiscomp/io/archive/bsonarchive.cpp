@@ -826,10 +826,7 @@ void BSONArchive::read(std::vector<std::complex<double> >& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BSONArchive::write(Seiscomp::Core::Time& value) {
-	if ( value.valid() || (hint() & XML_MANDATORY) )
-		bson_append_utf8(_impl->current, _attribName.c_str(), -1, Core::toString(value).c_str(), -1);
-	else
-		bson_append_null(_impl->current, _attribName.c_str(), -1);
+	bson_append_utf8(_impl->current, _attribName.c_str(), -1, Core::toString(value).c_str(), -1);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
