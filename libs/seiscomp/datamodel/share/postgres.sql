@@ -91,7 +91,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.0');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.2');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (DEFAULT);
@@ -133,7 +133,7 @@ CREATE TABLE Comment (
 	_oid BIGINT NOT NULL,
 	_parent_oid BIGINT NOT NULL,
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	m_text BYTEA NOT NULL,
+	m_text TEXT NOT NULL,
 	m_id VARCHAR(255),
 	m_start TIMESTAMP,
 	m_start_ms INTEGER,
@@ -1878,7 +1878,7 @@ CREATE TABLE JournalEntry (
 	m_objectID VARCHAR(255) NOT NULL,
 	m_sender VARCHAR(80) NOT NULL,
 	m_action VARCHAR(160) NOT NULL,
-	m_parameters BYTEA,
+	m_parameters TEXT,
 	PRIMARY KEY(_oid),
 	FOREIGN KEY(_oid)
 		REFERENCES Object(_oid)
