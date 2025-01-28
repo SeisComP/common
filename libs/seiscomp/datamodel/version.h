@@ -33,7 +33,7 @@ struct Version {
 	enum {
 		Major = 0,
 		Minor = 13,
-		Revision = 0
+		Revision = 2
 	};
 };
 
