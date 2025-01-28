@@ -507,13 +507,13 @@ struct StationLayer : Map::Layer {
 	void setVisible(bool v) {
 		Map::Layer::setVisible(v);
 		if ( !v ) {
-			for ( auto entry : stations ) {
+			for ( auto &entry : stations ) {
 				if ( entry->annotation )
 					entry->annotation->visible = false;
 			}
 		}
 		else {
-			for ( auto entry : stations ) {
+			for ( auto &entry : stations ) {
 				if ( entry->annotation )
 					entry->annotation->visible = entry->isVisible();
 			}
@@ -521,7 +521,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void calculateMapPosition(const Map::Canvas *canvas) override {
-		for ( auto entry : stations ) {
+		for ( auto &entry : stations ) {
 			entry->setVisible(true);
 			entry->calculateMapPosition(canvas);
 
@@ -591,7 +591,7 @@ struct StationLayer : Map::Layer {
 			}
 
 			p.setPen(SCScheme.colors.map.lines);
-			for ( auto s : stations ) {
+			for ( auto &s : stations ) {
 				canvas->drawLine(p, refSymbol->location(), s->location());
 			}
 
@@ -636,7 +636,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void clear() {
-		for ( auto symbol : stations ) {
+		for ( auto &symbol : stations ) {
 			delete symbol;
 		}
 		stations.clear();
@@ -1781,10 +1781,10 @@ void EventEdit::init() {
 	}
 
 	if ( !_scriptColumns.isEmpty() ) {
-		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(const QString &, const QString &, const QString &, const QString &)),
-		        this, SLOT(evalResultAvailable(const QString &, const QString &, const QString &, const QString &)));
-		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultError(const QString &, const QString &, const QString &, int)),
-		        this, SLOT(evalResultError(const QString &, const QString &, const QString &, int)));
+		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultAvailable(QString,QString,QString,QString)),
+		        this, SLOT(evalResultAvailable(QString,QString,QString,QString)));
+		connect(&PublicObjectEvaluator::Instance(), SIGNAL(resultError(QString,QString,QString,int)),
+		        this, SLOT(evalResultError(QString,QString,QString,int)));
 	}
 
 	_originTree = new OriginTreeWidget(this, _ui.frameOrigins);
@@ -1823,17 +1823,17 @@ void EventEdit::init() {
 
 	_originTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	connect(_originTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-	        this, SLOT(currentOriginChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(_originTree, SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(originTreeCustomContextMenu(const QPoint &)));
-	connect(_originTree->header(), SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(originTreeHeaderCustomContextMenu(const QPoint &)));
+	connect(_originTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+	        this, SLOT(currentOriginChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+	connect(_originTree, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(originTreeCustomContextMenu(QPoint)));
+	connect(_originTree->header(), SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(originTreeHeaderCustomContextMenu(QPoint)));
 
-	connect(_ui.treeMagnitudes, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-	        this, SLOT(currentMagnitudeChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(_ui.treeMagnitudes, SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(magnitudeTreeCustomContextMenu(const QPoint &)));
+	connect(_ui.treeMagnitudes, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+	        this, SLOT(currentMagnitudeChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+	connect(_ui.treeMagnitudes, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(magnitudeTreeCustomContextMenu(QPoint)));
 
 	connect(_ui.comboTypes, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(currentTypeChanged(int)));
@@ -1853,8 +1853,8 @@ void EventEdit::init() {
 	connect(_ui.buttonFixFmMw, SIGNAL(clicked()), this, SLOT(fixFmMw()));
 	connect(_ui.buttonReleaseMw, SIGNAL(clicked()), this, SLOT(releaseMw()));
 
-	connect(_originTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
-	        this, SLOT(originSelected(QTreeWidgetItem *, int)));
+	connect(_originTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+	        this, SLOT(originSelected(QTreeWidgetItem*,int)));
 
 	//_ui.comboFixOrigin->addItem("nothing");
 	for ( int i = (int)EvaluationMode::First; i < (int)EvaluationMode::Quantity; ++i )
@@ -1870,15 +1870,15 @@ void EventEdit::init() {
 	header->setSectionsClickable(true);
 	header->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(header, SIGNAL(sectionClicked(int)), this, SLOT(sortFMItems(int)));
-	connect(header, SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(fmTreeHeaderCustomContextMenu(const QPoint &)));
+	connect(header, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(fmTreeHeaderCustomContextMenu(QPoint)));
 
-	connect(_ui.fmTree, SIGNAL(customContextMenuRequested(const QPoint &)),
-	        this, SLOT(fmTreeCustomContextMenu(const QPoint &)));
-	connect(_ui.fmTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-	        this, SLOT(currentFMChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
-	connect(_ui.fmTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
-	        this, SLOT(fmSelected(QTreeWidgetItem *, int)));
+	connect(_ui.fmTree, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(fmTreeCustomContextMenu(QPoint)));
+	connect(_ui.fmTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+	        this, SLOT(currentFMChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+	connect(_ui.fmTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+	        this, SLOT(fmSelected(QTreeWidgetItem*,int)));
 	connect(_ui.fmFixButton, SIGNAL(clicked()), this, SLOT(fixFM()));
 	connect(_ui.fmAutoButton, SIGNAL(clicked()), this, SLOT(releaseFM()));
 	connect(_ui.fmTriggerButton, SIGNAL(clicked()), this, SLOT(triggerMw()));
@@ -2710,10 +2710,10 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 			if ( c->id() != _commentID ) continue;
 
 			item->setText(_customColumn, c->text().c_str());
-			QMap<std::string, QColor>::const_iterator it =
-				_customColorMap.find(c->text());
-			if ( it != _customColorMap.end() )
+			auto it = _customColorMap.find(c->text());
+			if ( it != _customColorMap.end() ) {
 				item->setData(_customColumn, Qt::ForegroundRole, it.value());
+			}
 			break;
 		}
 	}
@@ -3188,8 +3188,8 @@ bool EventEdit::sendJournal(const std::string &action,
 				else
 					QMessageBox::critical(this, "Error",
 					                      QString("Unable to find a magnitude with type %1 within origin %2.")
-					                      .arg(params.c_str())
-					                      .arg(_currentEvent->preferredOriginID().c_str()));
+					                      .arg(params.c_str(),
+					                           _currentEvent->preferredOriginID().c_str()));
 			}
 		}
 
@@ -3259,10 +3259,10 @@ void EventEdit::addJournal(JournalEntry *entry) {
 
 	_ui.listJournal->append(
 		QString("<font color=gray>%1</font> %3(<i>%4</i>) <font color=gray>from %2</font>")
-		 .arg(created)
-		 .arg(entry->sender().c_str())
-		 .arg(action)
-		 .arg(entry->parameters().c_str())
+		 .arg(created,
+		      entry->sender().c_str(),
+		      action,
+		      entry->parameters().c_str())
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

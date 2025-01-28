@@ -72,7 +72,7 @@ class SC_GUI_API ExtTensorSymbol : public TensorSymbol {
 
 		const DataModel::FocalMechanism *model() const { return _fm.get(); }
 		const QString &agencyID() const { return _agency; }
-		const Core::Time &created() const { return _created; }
+		OPT(Core::Time) created() const { return _created; }
 
 	protected:
 		virtual void customDraw(const Map::Canvas *canvas, QPainter &painter);
@@ -85,7 +85,7 @@ class SC_GUI_API ExtTensorSymbol : public TensorSymbol {
 		QString                       _agency;
 		QString                       _magnitude;
 		QString                       _depth;
-		Core::Time                    _created;
+		OPT(Core::Time)               _created;
 
 		bool                          _drawAgency;
 		bool                          _drawMagnitude;
