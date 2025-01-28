@@ -142,6 +142,9 @@ class SC_GUI_API Canvas : public QObject {
 		bool setZoomLevel(float);
 		float zoomLevel() const;
 
+		void setMaxZoomLevel(float);
+		float maxZoomLevel() const;
+
 		float pixelPerDegree() const;
 
 		void setView(QPoint c, float zoom);
@@ -411,7 +414,7 @@ class SC_GUI_API Canvas : public QObject {
 		QColor                        _backgroundColor{Qt::lightGray};
 
 		uint                          _polygonRoughness;
-		double                        _maxZoom;
+		float                         _maxZoom;
 		QPointF                       _center;
 		float                         _zoomLevel{1.0f};
 		bool                          _grayScale{false};

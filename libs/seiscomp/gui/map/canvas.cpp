@@ -35,6 +35,7 @@
 #include <QMouseEvent>
 #include <QMutex>
 
+#include <algorithm>
 #include <cmath>
 
 #ifdef WIN32
@@ -423,12 +424,7 @@ void Canvas::init() {
 
 	_projection->setView(_center, _zoomLevel);
 
-	/*
-	if ( _maptree )
-		_maxZoom = 1 << (_maptree->depth()*2);
-	else*/
-		_maxZoom = MAX_ZOOM;
-
+	setMaxZoomLevel(pow(2, std::min(24, std::max(0, SCScheme.map.maxZoom))));
 	setDrawLayers(SCScheme.map.showLayers);
 	setDrawLegends(SCScheme.map.showLegends);
 
@@ -654,13 +650,13 @@ const QPointF& Canvas::mapCenter() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::setZoomLevel(float l) {
 	// Assure: 1 <= l <= maxZoom
-	l = l < 1.0f ? 1.0f : l > _maxZoom ? _maxZoom : l;
+	l = std::max(std::min(l, _maxZoom), 1.0f);
 
-	if ( l == _zoomLevel )
+	if ( l == _zoomLevel ) {
 		return false;
-	else
-		_zoomLevel = l;
+	}
 
+	_zoomLevel = l;
 	_projection->setZoom(_zoomLevel);
 	updateBuffer();
 	return true;
@@ -673,6 +669,24 @@ bool Canvas::setZoomLevel(float l) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 float Canvas::zoomLevel() const {
 	return _zoomLevel;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Canvas::setMaxZoomLevel(float l) {
+	_maxZoom = std::min(l, static_cast<float>(MAX_ZOOM));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+float Canvas::maxZoomLevel() const {
+	return _maxZoom;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

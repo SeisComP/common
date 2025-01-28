@@ -292,6 +292,11 @@
 							Minimum screen distance to plot a polygon or polyline line segment.
 						</description>
 					</parameter>
+					<parameter name="maxZoom" type="float" default="24" range="1:24">
+						<description>
+							Maximum allowed zoom level.
+						</description>
+					</parameter>
 				</group>
 
 				<group name="colors">

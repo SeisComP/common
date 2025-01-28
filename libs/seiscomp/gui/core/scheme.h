@@ -287,6 +287,7 @@ class SC_GUI_API Scheme {
 			bool toBGR;
 			int  polygonRoughness;
 			std::string projection;
+			int  maxZoom;
 		};
 
 		struct Marker {

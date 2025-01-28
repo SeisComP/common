@@ -442,6 +442,7 @@ Scheme::Map::Map() {
 	toBGR = false;
 	polygonRoughness = 3;
 	projection = "";
+	maxZoom = 24;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -763,6 +764,7 @@ void Scheme::fetch() {
 	READ_BOOL(map.toBGR);
 	READ_INT(map.polygonRoughness);
 	READ_STRING(map.projection);
+	READ_INT(map.maxZoom);
 
 	READ_INT(precision.depth);
 	READ_INT(precision.distance);
