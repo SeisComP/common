@@ -75,7 +75,7 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		int lineNum() const;
 
 	private:
-		void publish(const Data &data);
+		void publish(const Data &data) override;
 
 	protected:
 		bool _logComponent;
@@ -83,7 +83,7 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		bool _useUTC;
 
 	private:
-		PublishLoc* _publisher;
+		PublishLoc *_publisher;
 };
 
 }
