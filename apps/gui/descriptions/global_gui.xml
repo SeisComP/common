@@ -73,9 +73,12 @@
 					/path/to/maps/%l/%c/%r.png.
 					</description>
 				</parameter>
-				<parameter name="format" type="string" default="Rectangular" values="Rectangular,Mercator">
+				<parameter name="format" type="string" default="rectangular">
 					<description>
-					Projection of the map tiles configured in 'map.location'.
+					Projection of the map tiles configured in &quot;map.location&quot;.
+
+					Supported values: rectangular, mercator
+
 					Note: Additional projections may be available by plugins.
 					</description>
 				</parameter>
@@ -131,7 +134,7 @@
 					<group name="fep">
 						<description>
 						Configuration for the fep layer showing the polygons
-						of FEP (FLinn-Engdahl-Polygon) files on maps if they
+						of FEP (Flinn-Engdahl-Polygon) files on maps if they
 						exist in @DATADIR@/fep or @CONFIGDIR@/fep.
 						</description>
 						<parameter name="visible" type="boolean" default="true">
@@ -144,9 +147,9 @@
 						<parameter name="topPopulatedPlaces" type="int" default="-1">
 							<description>
 							Maximum number of cities to be rendered. If
-							cityPopulationWeight is less or equal than 0 then
-							all cities are rendered ordered by population count,
-							highest first.
+							&quot;scheme.map.cityPopulationWeight&quot; is less
+							or equal than 0 then all cities are rendered ordered
+							by population count, highest first.
 							To show the N most populated places in the visible
 							map region, set
 							&quot;scheme.map.cityPopulationWeight&quot; to 0
