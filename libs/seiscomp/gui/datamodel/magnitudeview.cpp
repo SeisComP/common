@@ -2418,7 +2418,9 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
                                         QList<Seiscomp::DataModel::AmplitudePtr> *amps,
                                         MagnitudeStats *errors) {
 	Processing::MagnitudeProcessorPtr magProc = Processing::MagnitudeProcessorFactory::Create(magType.c_str());
-	if ( !magProc ) return nullptr;
+	if ( !magProc ) {
+	        return nullptr;
+	}
 
 	string ampType = magProc->amplitudeType();
 	bool addMag = false;
@@ -2468,9 +2470,9 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	mag->setEvaluationStatus(Core::None);
 	mag->setOriginID("");
 
-	if ( amps == nullptr ) {
+	if ( !amps ) {
 		// Typedef a pickmap that maps a streamcode to a pick
-		typedef QMap<string, PickCPtr> PickStreamMap;
+		using PickStreamMap = QMap<string, PickCPtr>;
 
 		// This map is needed to find the earliest P pick of
 		// a certain stream
@@ -2487,7 +2489,9 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				continue;
 
 			Pick *pick = Pick::Find(ar->pickID());
-			if ( !pick ) continue;
+			if ( !pick ) {
+				continue;
+			}
 
 			DataModel::WaveformStreamID wfid = pick->waveformID();
 			// Strip the component code because every AmplitudeProcessor
@@ -2499,15 +2503,15 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 
 			// When there is already a pick registered for this stream which has
 			// been picked earlier, ignore the current pick
-			if ( p && p->time().value() < pick->time().value() )
+			if ( p && p->time().value() < pick->time().value() ) {
 				continue;
+			}
 
 			pickStreamMap[streamID] = pick;
 		}
 
 		// Fetch all amplitudes for all picks
-		for ( PickStreamMap::iterator it = pickStreamMap.begin(); it != pickStreamMap.end(); ++it ) {
-			string streamID = it.key();
+		for ( auto it = pickStreamMap.begin(); it != pickStreamMap.end(); ++it ) {
 			PickCPtr pick = it.value();
 
 			// The amplitude map contains always the newest manual amplitudes
@@ -2516,11 +2520,13 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 
 			bool gotAmplitude = false;
 
-			for ( PickAmplitudeMap::iterator it = itp.first; it != itp.second; ++it ) {
+			for ( auto it = itp.first; it != itp.second; ++it ) {
 				AmplitudePtr amp = it->second.first;
 
 				// Skip unrequestes amplitude types
-				if ( amp->type() != ampType ) continue;
+				if ( amp->type() != ampType ) {
+					continue;
+				}
 
 				// Use this amplitude
 				tmpAmps.append(amp);
@@ -2529,19 +2535,25 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				break;
 			}
 
-			if ( gotAmplitude ) continue;
+			if ( gotAmplitude ) {
+				continue;
+			}
 
 			if ( _reader ) {
-				DatabaseIterator it = _reader->getAmplitudesForPick(pick->publicID());
+				auto it = _reader->getAmplitudesForPick(pick->publicID());
 				for ( ; *it; ++it ) {
 					AmplitudePtr amp = Amplitude::Cast(*it);
-					if ( !amp ) continue;
+					if ( !amp ) {
+						continue;
+					}
 
 					// Save to cache
 					_amplitudes.insert(PickAmplitudeMap::value_type(amp->pickID(), AmplitudeEntry(amp, false)));
 
 					// Skip unrequestes amplitude types
-					if ( amp->type() != ampType ) continue;
+					if ( amp->type() != ampType ) {
+						continue;
+					}
 
 					// Use this amplitude
 					tmpAmps.append(amp);
@@ -2549,14 +2561,20 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				}
 			}
 
-			if ( gotAmplitude ) continue;
+			if ( gotAmplitude ) {
+				continue;
+			}
 
 			EventParameters *ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 			if ( ep ) {
 				for ( size_t i = 0; i < ep->amplitudeCount(); ++i ) {
 					Amplitude *amp = ep->amplitude(i);
-					if ( amp->pickID() != pick->publicID() ) continue;
-					if ( amp->type() != ampType ) continue;
+					if ( amp->pickID() != pick->publicID() ) {
+						continue;
+					}
+					if ( amp->type() != ampType ) {
+						continue;
+					}
 
 					// Use this amplitude
 					tmpAmps.append(amp);
@@ -2572,7 +2590,9 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 		QList<Seiscomp::DataModel::AmplitudePtr>::iterator it;
 		for ( it = amps->begin(); it != amps->end(); ++it ) {
 			AmplitudePtr amp = *it;
-			if ( amp->type() != ampType ) continue;
+			if ( amp->type() != ampType ) {
+				continue;
+			}
 
 			// Create a magnitude processor for each amplitude. Basically this is
 			// done for safety reasons since each station might have another configuration
@@ -2606,7 +2626,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				amp->waveformID().networkCode(), amp->waveformID().stationCode(),
 				amp->waveformID().locationCode(), amp->timeWindow().reference());
 
-			if ( loc == nullptr ) {
+			if ( !loc ) {
 				SEISCOMP_ERROR("Failed to get meta data for %s.%s.%s",
 				               amp->waveformID().networkCode().c_str(),
 				               amp->waveformID().stationCode().c_str(),
@@ -2644,14 +2664,16 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				               (int)stat, stat.toString());
 
 				if ( !magProc->treatAsValidMagnitude() ) {
-					if ( errors != nullptr )
+					if ( errors ) {
 						errors->append(MagnitudeStatus(magProc->type(), amp.get(), stat));
+					}
 					continue;
 				}
 				else {
 					passedQC = false;
-					if ( errors != nullptr )
+					if ( errors ) {
 						errors->append(MagnitudeStatus(magProc->type(), amp.get(), stat, true));
+					}
 				}
 			}
 
@@ -2680,10 +2702,12 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	}
 
 	if ( addMag ) {
-		if ( mag->stationMagnitudeContributionCount() > 0 )
+		if ( mag->stationMagnitudeContributionCount() > 0 ) {
 			_origin->add(mag.get());
-		else
+		}
+		else {
 			return nullptr;
+		}
 	}
 
 	return mag.get();

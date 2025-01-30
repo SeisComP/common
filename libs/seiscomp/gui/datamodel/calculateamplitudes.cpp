@@ -245,11 +245,13 @@ bool CalculateAmplitudes::process() {
 	_processors.clear();
 	_ui.table->setRowCount(0);
 
-	if ( !_origin || (_recomputeAmplitudes && !_thread) )
+	if ( !_origin || (_recomputeAmplitudes && !_thread) ) {
 		return false;
+	}
 
-	if ( _amplitudeTypes.empty() )
+	if ( _amplitudeTypes.empty() ) {
 		return false;
+	}
 
 	_timeWindow = Core::TimeWindow();
 
@@ -271,27 +273,29 @@ bool CalculateAmplitudes::process() {
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if ( _thread )
+	if ( _thread ) {
 		_thread->connect();
+	}
 
 	// Typedef a pickmap that maps a streamcode to a pick
-	typedef map<string, PickStreamEntry> PickStreamMap;
+	using PickStreamMap = map<string, PickStreamEntry>;
 
 	// This map is needed to find the earliest P pick of
 	// a certain stream
 	PickStreamMap pickStreamMap;
 
 	for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
-		Arrival *ar = _origin->arrival(i);
+		Arrival *arr = _origin->arrival(i);
 
 		double weight = 1.;
-		try { weight = ar->weight(); } catch (Seiscomp::Core::ValueException &) {}
+		try { weight = arr->weight(); }
+		catch (Seiscomp::Core::ValueException &) {}
 
 		if ( Util::getShortPhaseName(ar->phase().code()) != 'P' || weight < 0.5 ) {
 			continue;
 		}
 
-		Pick *pick = Pick::Find(ar->pickID());
+		auto pick = Pick::Find(arr->pickID());
 		if ( !pick ) {
 			//cerr << " - Skipping arrival " << i << " -> no pick found" << endl;
 			continue;
@@ -302,16 +306,17 @@ bool CalculateAmplitudes::process() {
 		loc = Client::Inventory::Instance()->getSensorLocation(pick);
 
 		try {
-			dist = ar->distance();
+			dist = arr->distance();
 		}
-		catch ( Core::ValueError &e ) {
+		catch ( Core::ValueError & ) {
 			try {
 				double azi1, azi2;
 
-				if ( loc != nullptr )
+				if ( loc ) {
 					Math::Geo::delazi_wgs84(loc->latitude(), loc->longitude(),
 					                        _origin->latitude(), _origin->longitude(),
 					                        &dist, &azi1, &azi2);
+				}
 			}
 			catch ( Core::GeneralException &e ) {}
 		}
@@ -323,31 +328,34 @@ bool CalculateAmplitudes::process() {
 		wfid.setChannelCode(wfid.channelCode().substr(0,2));
 
 		string streamID = waveformIDToStdString(wfid);
-		PickStreamEntry &e = pickStreamMap[streamID];
+		auto &e = pickStreamMap[streamID];
 
 		// When there is already a pick registered for this stream which has
 		// been picked earlier, ignore the current pick
-		if ( e.pick && e.pick->time().value() < pick->time().value() )
+		if ( e.pick && e.pick->time().value() < pick->time().value() ) {
 			continue;
+		}
 
 		e.pick = pick;
 		e.dist = dist;
 		e.loc = loc;
 	}
 
-	for ( PickStreamMap::iterator it = pickStreamMap.begin(); it != pickStreamMap.end(); ++it ) {
-		PickCPtr pick = it->second.pick;
-		SensorLocation *loc = it->second.loc;
-		double dist = it->second.dist;
+	for ( const auto &[streamID, e] : pickStreamMap ) {
+		PickCPtr pick = e.pick;
+		SensorLocation *loc = e.loc;
+		double dist = e.dist;
 
 		_ui.comboFilterType->clear();
 		_ui.comboFilterType->addItem("- Any -");
-		for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-			_ui.comboFilterType->addItem(ita->c_str());
+		for ( const auto &type : _amplitudeTypes ) {
+			_ui.comboFilterType->addItem(type.c_str());
+		}
 
 		if ( _recomputeAmplitudes ) {
-			for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-				addProcessor(*ita, pick.get(), loc, dist);
+			for ( const auto &type : _amplitudeTypes ) {
+				addProcessor(type, pick.get(), loc, dist);
+			}
 		}
 		else {
 			string streamID = waveformIDToStdString(pick->waveformID());
@@ -355,8 +363,7 @@ bool CalculateAmplitudes::process() {
 			TypeSet usedTypes;
 
 			if ( !_amplitudes.empty() ) {
-				iterator_range itp;
-				itp = _amplitudes.equal_range(pick->publicID());
+				auto itp = _amplitudes.equal_range(pick->publicID());
 
 				for ( iterator it = itp.first; it != itp.second; ) {
 					AmplitudePtr amp = it->second.first;
@@ -385,15 +392,15 @@ bool CalculateAmplitudes::process() {
 
 			bool foundAmplitudes = false;
 			if ( _externalAmplitudeCache ) {
-				iterator_range itp;
-				itp = _externalAmplitudeCache->equal_range(pick->publicID());
+				auto itp = _externalAmplitudeCache->equal_range(pick->publicID());
 
-				for ( iterator ita = itp.first; ita != itp.second; ++ita ) {
+				for ( auto ita = itp.first; ita != itp.second; ++ita ) {
 					AmplitudePtr amp = ita->second.first;
 
 					// The amplitude type is not one of the wanted types
-					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() )
+					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
 						continue;
+					}
 
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
@@ -412,15 +419,19 @@ bool CalculateAmplitudes::process() {
 			}
 
 			if ( _query && !foundAmplitudes ) {
-				DatabaseIterator it = _query->getAmplitudesForPick(pick->publicID());
+				auto it = _query->getAmplitudesForPick(pick->publicID());
 				for ( ; *it; ++it ) {
 					AmplitudePtr amp = Amplitude::Cast(*it);
-					if ( !amp ) continue;
+					if ( !amp ) {
+						continue;
+					}
 
 					foundAmplitudes = true;
 
 					// The amplitude type is not one of the wanted types
-					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
+					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
+						continue;
+					}
 
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
@@ -442,10 +453,14 @@ bool CalculateAmplitudes::process() {
 				if ( ep ) {
 					for ( size_t i = 0; i < ep->amplitudeCount(); ++i ) {
 						Amplitude *amp = ep->amplitude(i);
-						if ( amp->pickID() != pick->publicID() ) continue;
+						if ( amp->pickID() != pick->publicID() ) {
+							continue;
+						}
 
 						// The amplitude type is not one of the wanted types
-						if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
+						if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
+							continue;
+						}
 
 						// Already has an amplitude of this type processed
 						if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
@@ -468,11 +483,11 @@ bool CalculateAmplitudes::process() {
 			               usedTypes.begin(), usedTypes.end(),
 			               inserter(remainingTypes, remainingTypes.begin()));
 
-			for ( TypeSet::iterator ita = remainingTypes.begin(); ita != remainingTypes.end(); ++ita ) {
-				if ( _thread )
-					addProcessor(*ita, pick.get(), loc, dist);
+				if ( _thread ) {
+					addProcessor(type, pick.get(), loc, dist);
+				}
 				else {
-					int row = addProcessingRow(streamID, *ita);
+					int row = addProcessingRow(streamID, type);
 					setError(row, "missing");
 				}
 			}
