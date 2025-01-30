@@ -4682,6 +4682,33 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 						SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
 					}
 				}
+				else {
+					std::string defaultLocator = "LOCSAT";
+					try {
+						defaultLocator = SCApp->configGetString("olv.locator.interface");
+					}
+					catch ( ... ) {
+						try {
+							defaultLocator = SCApp->configGetString("olv.locator");
+						}
+						catch ( ... ) {}
+					}
+
+					int defaultLocatorIdx = SC_D.ui.cbLocator->findText(defaultLocator.c_str());
+					if ( defaultLocatorIdx < 0 ) {
+						defaultLocatorIdx = SC_D.ui.cbLocator->findText("LOCSAT");
+						if ( defaultLocatorIdx < 0 ) {
+							defaultLocatorIdx = 0;
+						}
+					}
+
+					if ( defaultLocatorIdx != SC_D.ui.cbLocator->currentIndex() ) {
+						SC_D.ui.cbLocator->setCurrentIndex(defaultLocatorIdx);
+					}
+					else {
+						locatorChanged(SC_D.ui.cbLocator->currentText());
+					}
+				}
 			}
 
 			// Preset fixed depth
