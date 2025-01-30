@@ -293,7 +293,7 @@ class ModelFieldValueFilter : public ModelAbstractRowFilter {
 
 		virtual QString toString() {
 			StaMagsListColumns c = (EStaMagsListColumns)_column;
-			QString str = QString("%1,%2,%3").arg(c.toString()).arg(_op.toString()).arg(_value);
+			QString str = QString("%1,%2,%3").arg(c.toString(), _op.toString(), _value);
 			return str;
 		}
 
@@ -1343,8 +1343,8 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	_map = new MagnitudeMap(_maptree.get(), _ui->frameMap);
 
 	if ( _map ) {
-		connect(_map, SIGNAL(magnitudeChanged(int, bool)),
-		        this, SLOT(changeStationState(int, bool)));
+		connect(_map, SIGNAL(magnitudeChanged(int,bool)),
+		        this, SLOT(changeStationState(int,bool)));
 		connect(_map, SIGNAL(clickedMagnitude(int)), this, SLOT(selectMagnitude(int)));
 		connect(_map, SIGNAL(clickedStation(const std::string &, const std::string &)), this, SLOT(selectStation(const std::string &, const std::string &)));
 	}
