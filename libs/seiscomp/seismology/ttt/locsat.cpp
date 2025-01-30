@@ -61,7 +61,7 @@ inline void checkDepth(double depth) {
 	if ( (depth < 0) || (depth > 800) ) {
 		throw std::out_of_range(
 			Seiscomp::Core::stringify(
-				"Source depth of %f km is out of range of 0 < z <= 800",
+				"Source depth of %f km is out of range of 0 <= z <= 800",
 				depth
 			)
 		);
