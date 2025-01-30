@@ -293,8 +293,7 @@ class ModelFieldValueFilter : public ModelAbstractRowFilter {
 
 		virtual QString toString() {
 			StaMagsListColumns c = (EStaMagsListColumns)_column;
-			QString str = QString("%1,%2,%3").arg(c.toString(), _op.toString(), _value);
-			return str;
+			return QString("%1,%2,%3").arg(c.toString(), _op.toString()).arg(_value);
 		}
 
 		virtual bool fromString(const QString &) { return false; }
