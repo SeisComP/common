@@ -4585,6 +4585,8 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	}
 
 	SC_D.blockReadPicks = false;
+	SC_D.localOrigin = local;
+
 	updateOrigin(o);
 
 	if ( SC_D.recordView ) {
@@ -4596,7 +4598,6 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 		}
 	}
 
-	SC_D.localOrigin = local;
 	emit newOriginSet(o, SC_D.baseEvent.get(), SC_D.localOrigin, false);
 	SC_D.ui.btnMagnitudes->setEnabled(false);
 
@@ -6357,12 +6358,12 @@ bool OriginLocatorView::undo() {
 	);
 
 	OriginPtr origin = SC_D.undoList.top().origin;
-	bool newOrigin = SC_D.undoList.top().newOrigin;
+	SC_D.localOrigin = SC_D.undoList.top().newOrigin;
 	SC_D.changedPicks = SC_D.undoList.top().newPicks;
 	SC_D.changedAmplitudes = SC_D.undoList.top().newAmplitudes;
 	SC_D.undoList.pop();
 
-	SC_D.ui.btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
+	SC_D.ui.btnMagnitudes->setEnabled(SC_D.localOrigin && (origin->magnitudeCount() == 0));
 
 	SC_D.blockReadPicks = true;
 	updateOrigin(origin.get());
@@ -6377,9 +6378,7 @@ bool OriginLocatorView::undo() {
 		}
 	}
 
-	SC_D.localOrigin = newOrigin;
-
-	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), newOrigin, false);
+	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), SC_D.localOrigin, false);
 	emit undoStateChanged(!SC_D.undoList.isEmpty());
 	emit redoStateChanged(!SC_D.redoList.isEmpty());
 
@@ -6404,12 +6403,12 @@ bool OriginLocatorView::redo() {
 	);
 
 	OriginPtr origin = SC_D.redoList.top().origin;
-	bool newOrigin = SC_D.redoList.top().newOrigin;
+	SC_D.localOrigin = SC_D.redoList.top().newOrigin;
 	SC_D.changedPicks = SC_D.redoList.top().newPicks;
 	SC_D.changedAmplitudes = SC_D.redoList.top().newAmplitudes;
 	SC_D.redoList.pop();
 
-	SC_D.ui.btnMagnitudes->setEnabled(newOrigin && (origin->magnitudeCount() == 0));
+	SC_D.ui.btnMagnitudes->setEnabled(SC_D.localOrigin && (origin->magnitudeCount() == 0));
 
 	SC_D.blockReadPicks = true;
 	updateOrigin(origin.get());
@@ -6424,9 +6423,7 @@ bool OriginLocatorView::redo() {
 		}
 	}
 
-	SC_D.localOrigin = newOrigin;
-
-	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), newOrigin, false);
+	emit newOriginSet(origin.get(), SC_D.baseEvent.get(), SC_D.localOrigin, false);
 	emit undoStateChanged(!SC_D.undoList.isEmpty());
 	emit redoStateChanged(!SC_D.redoList.isEmpty());
 
