@@ -4697,7 +4697,7 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 				SC_D.ui.cbDepthType->setCurrentIndex(idx > 0 ? idx : 1);
 			}
 			catch ( ValueException & ) {
-				SC_D.ui.cbDepthType->setCurrentIndex(1);
+				// No depth type set: use the defaul behaviour
 			}
 		}
 	}

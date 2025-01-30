@@ -27,6 +27,7 @@
 #include <limits>
 #include <iostream>
 #include <cmath>
+#include <string_view>
 
 
 namespace Seiscomp {
@@ -200,10 +201,10 @@ class TimeSpan {
 
 		/**
 		 * @brief Converts a string to a time span representation.
-		 * @param str The input string
+		 * @param sv The input string_view
 		 * @return The conversion result
 		 */
-		bool fromString(const std::string &str);
+		bool fromString(std::string_view sv);
 
 
 	// ----------------------------------------------------------------------
@@ -456,7 +457,7 @@ class Time {
 		 * @param str The string representation of the time
 		 * @return The conversion result
 		 */
-		bool fromString(const std::string &str);
+		bool fromString(std::string_view sv);
 
 		/**
 		 * Converts a string into a time representation.
@@ -465,7 +466,7 @@ class Time {
 		 *            specification (-> toString)
 		 * @return The conversion result
 		 */
-		bool fromString(const std::string &str, const char *format);
+		bool fromString(std::string_view sv, const char *format);
 
 		/**
 		 * @brief Converts a string to a Time object.

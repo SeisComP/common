@@ -204,9 +204,9 @@ std::string TimeSpan::toString() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::fromString(const std::string &str) {
+bool TimeSpan::fromString(std::string_view sv) {
 	double secs;
-	if ( !Core::fromString(secs, str) ) {
+	if ( !Core::fromString(secs, sv) ) {
 		return false;
 	}
 	try {
@@ -464,11 +464,11 @@ std::string Time::toZonedString(const char *format, const std::string &tz) const
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::fromString(const std::string &str, const char *format) {
+bool Time::fromString(std::string_view sv, const char *format) {
 	std::chrono::time_point<date::local_t, Duration> lt;
 	std::string tz_name;
 	std::chrono::minutes offset(0);
-	std::istringstream in{str};
+	InputStringViewStream in{sv};
 
 	in >> date::parse(format, lt, tz_name, offset);
 	if ( in.fail() ) {
@@ -476,7 +476,7 @@ bool Time::fromString(const std::string &str, const char *format) {
 		return false;
 	}
 
-	if ( (in.tellg() < static_cast<std::streamoff>(str.size())) && !in.eof() ) {
+	if ( (in.tellg() < static_cast<std::streamoff>(sv.size())) && !in.eof() ) {
 		// Not all characters read from string
 		return false;
 	}
@@ -502,9 +502,9 @@ bool Time::fromString(const std::string &str, const char *format) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::fromString(const std::string &str) {
+bool Time::fromString(std::string_view sv) {
 	for ( size_t i = 0; i < sizeof(timeFormats) / sizeof(const char*); ++i ) {
-		if ( fromString(str, timeFormats[i]) ) {
+		if ( fromString(sv, timeFormats[i]) ) {
 			return true;
 		}
 	}
