@@ -36,8 +36,8 @@ namespace Util {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Url::Url(const std::string &url, bool implyAuthority) {
-	setUrl(url, implyAuthority);
+Url::Url(const std::string &url) {
+	setUrl(url);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -45,7 +45,7 @@ Url::Url(const std::string &url, bool implyAuthority) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Url::setUrl(const std::string &url, bool implyAuthority) {
+bool Url::setUrl(const std::string &url) {
 	reset();
 
 	_url = url;
@@ -54,7 +54,7 @@ bool Url::setUrl(const std::string &url, bool implyAuthority) {
 		return false;
 	}
 
-	auto ret = parse(_url, implyAuthority);
+	auto ret = parse(_url, true);
 	_isValid = ret == STATUS_OK;
 
 	return _isValid;
@@ -500,17 +500,24 @@ void Url::setSchemeDefaults() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string Url::withoutScheme() const {
-	size_t pos = _url.find(":");
-	if ( pos != std::string::npos ) {
-		if ( _url.size() >= pos + 3 ) {
-			if ( _url[pos + 1] == '/' && _url[pos + 2] == '/' ) {
-				pos += 2;
-			}
-		}
-		return _url.substr(pos + 1);
+	size_t pos = _url.find("://");
+	if ( pos == std::string::npos ) {
+		return _url;
 	}
 
-	return _url;
+	if ( true ) {
+		if ( _url.size() < pos + 3 ) {
+			return _url;
+		}
+
+		if ( _url[pos + 1] != '/' || _url[pos + 2] != '/' ) {
+			return _url;
+		}
+
+		pos += 2;
+	}
+
+	return _url.substr(pos + 1);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

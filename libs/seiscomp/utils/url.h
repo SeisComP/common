@@ -39,6 +39,12 @@ namespace Util {
  *
  * The general layout of an URL is:
  * scheme://username:password@host:port/path?query#fragment
+ *
+ * There is no support for the generic form:
+ * scheme:<scheme-specific-part>
+ *
+ * The scheme must be separated from the scheme specific part
+ * with "://".
  */
 class SC_SYSTEM_CORE_API Url {
 	// ----------------------------------------------------------------------
@@ -75,7 +81,7 @@ class SC_SYSTEM_CORE_API Url {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		Url(const std::string &url = {}, bool implyAuthority = false);
+		Url(const std::string &url = {});
 
 
 	// ----------------------------------------------------------------------
@@ -86,13 +92,10 @@ class SC_SYSTEM_CORE_API Url {
 		/**
 		 * @brief Sets a URL from string and decomposes it into its parts.
 		 * @param url The URL string
-		 * @param implyAuthority If no scheme is given then this flag indicates
-		 *                       whether to imply an empty scheme in the format
-		 *                       "://" or to parse for URNs without an authority.
 		 * @return true if the URL could be parsed, false in case of any
 		 *         invalid URL.
 		 */
-		bool setUrl(const std::string &url, bool implyAuthority = false);
+		bool setUrl(const std::string &url);
 
 		/**
 		 * @brief Returns the URL scheme
