@@ -313,7 +313,7 @@ Result WebsocketConnection::connect(const char *address,
 		string host = "localhost";
 		string path, queue;
 
-		Util::Url url(address, true);
+		Util::Url url(address);
 		if ( !url ) {
 			_errorMessage = "Invalid URL";
 			return InvalidURL;

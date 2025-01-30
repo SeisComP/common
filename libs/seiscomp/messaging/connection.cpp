@@ -159,8 +159,9 @@ Result Connection::setSource(const char *URL) {
 		return InvalidURL;
 
 	string protoType = url.scheme();
-	if ( protoType.empty() && !_protocol )
+	if ( protoType.empty() && !_protocol ) {
 		protoType = "scmp";
+	}
 
 	if ( !protoType.empty() ) {
 		ProtocolPtr proto = ProtocolFactory::Create(protoType.c_str());
