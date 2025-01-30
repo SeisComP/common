@@ -7149,11 +7149,11 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 				if ( SC_D.reader ) {
 					DatabaseIterator it;
 					string lastFix;
-					Time lastFixCreated;
+					OPT(Time) lastFixCreated;
 					it = SC_D.reader->getJournalAction(SC_D.baseEvent->publicID(), "EvPrefMagType");
 					while ( *it ) {
 						auto entry = static_cast<JournalEntry*>(*it);
-						if ( !lastFixCreated.valid() || lastFixCreated < entry->created() ) {
+						if ( !lastFixCreated || *lastFixCreated < entry->created() ) {
 							lastFix = entry->parameters();
 							lastFixCreated = entry->created();
 						}
