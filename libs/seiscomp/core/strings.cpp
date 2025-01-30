@@ -190,8 +190,14 @@ inline bool convertFromString(T &value, std::string_view &sv) {
 		return false;
 	}
 
-	auto last = sv.data() + sv.size();
-	auto r = std::from_chars(sv.data(), last, value, 10);
+	auto first = sv.data();
+	auto last = first + sv.size();
+
+	if ( *first == '+' ) {
+		++first;
+	}
+
+	auto r = std::from_chars(first, last, value, 10);
 	if ( r.ec == std::errc() ) {
 		if ( r.ptr != last ) {
 			// Not all characters consumed
@@ -269,8 +275,15 @@ bool fromString(double &value, std::string_view sv) {
 		return false;
 	}
 
-	auto last = sv.data() + sv.size();
-	auto r = std::from_chars(sv.data(), last, value);
+	auto first = sv.data();
+	auto last = first + sv.size();
+
+	if ( *first == '+' ) {
+		// from_chars does not support a leading '+'
+		++first;
+	}
+
+	auto r = std::from_chars(first, last, value);
 
 	if ( r.ec == std::errc() ) {
 		return r.ptr == last;

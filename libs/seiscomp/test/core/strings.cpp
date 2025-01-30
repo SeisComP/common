@@ -108,6 +108,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "127") && value == 127);
+		BOOST_CHECK(fromString(value, "+127") && value == 127);
 		BOOST_CHECK(fromString(value, "-128") && value == -128);
 		BOOST_CHECK(!fromString(value, "129"));
 		BOOST_CHECK(!fromString(value, "-129"));
@@ -119,6 +120,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(fromString(value, "255") && value == 255);
+		BOOST_CHECK(fromString(value, "+255") && value == 255);
 		BOOST_CHECK(fromString(value, "0") && value == 0);
 		BOOST_CHECK(!fromString(value, "256"));
 		BOOST_CHECK(!fromString(value, "abc"));
@@ -129,6 +131,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "32767") && value == 32767);
+		BOOST_CHECK(fromString(value, "+32767") && value == 32767);
 		BOOST_CHECK(fromString(value, "-32768") && value == -32768);
 		BOOST_CHECK(!fromString(value, "32768"));
 		BOOST_CHECK(!fromString(value, "-32769"));
@@ -140,6 +143,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(fromString(value, "65535") && value == 65535);
+		BOOST_CHECK(fromString(value, "+65535") && value == 65535);
 		BOOST_CHECK(fromString(value, "0") && value == 0);
 		BOOST_CHECK(!fromString(value, "65536"));
 		BOOST_CHECK(!fromString(value, "abc"));
@@ -150,6 +154,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "2147483647") && value == 2147483647);
+		BOOST_CHECK(fromString(value, "+2147483647") && value == 2147483647);
 		BOOST_CHECK(fromString(value, "-2147483648") && value == -2147483648);
 		BOOST_CHECK(!fromString(value, "2147483649"));
 		BOOST_CHECK(!fromString(value, "-2147483649"));
@@ -178,6 +183,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	{
 		uint64_t value;
 		BOOST_CHECK(fromString(value, "10") && value == 10);
+		BOOST_CHECK(fromString(value, "+10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max())) && value == std::numeric_limits<uint64_t>::max());
 		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<uint64_t>::max()/2);
@@ -188,6 +194,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	{
 		float value;
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0f) < 0.000001f);
+		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0f) < 0.000001f);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0f) < 0.000001f);
 		BOOST_CHECK(!fromString(value, "abc"));
 		BOOST_CHECK(!fromString(value, "1.0e-40"));
@@ -211,6 +218,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	{
 		double value;
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0) < 0.000001);
+		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0) < 0.000001);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0) < 0.000001);
 		BOOST_CHECK(!fromString(value, "abc"));
 		BOOST_CHECK(fromString(value, "inf"));
