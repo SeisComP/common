@@ -4546,8 +4546,9 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	}
 
 	// Reset plot filter if a new event has been loaded
-	if ( (e != nullptr) && SC_D.baseEvent != e )
+	if ( (e != nullptr) && SC_D.baseEvent != e ) {
 		setPlotFilter(nullptr);
+	}
 
 	stopBlinking();
 
@@ -4572,10 +4573,12 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 	SC_D.ui.btnImportAllArrivals->setEnabled(true);
 
 	try {
-		if ( o && o->evaluationMode() == AUTOMATIC )
+		if ( o && o->evaluationMode() == AUTOMATIC ) {
 			SC_D.ui.btnCommit->setEnabled(false);
-		else
+		}
+		else {
 			SC_D.ui.btnCommit->setEnabled(true);
+		}
 	}
 	catch ( ... ) {
 		SC_D.ui.btnCommit->setEnabled(false);
@@ -4646,7 +4649,9 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if ( o ) readPicks(o);
+	if ( o ) {
+		readPicks(o);
+	}
 
 	SC_D.currentOrigin = o;
 	SC_D.modelArrivals.setOrigin(o);
@@ -6313,7 +6318,9 @@ void OriginLocatorView::pushUndo() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::undo() {
-	if ( SC_D.undoList.isEmpty() ) return false;
+	if ( SC_D.undoList.isEmpty() ) {
+		return false;
+	}
 
 	SC_D.redoList.push(
 		OriginLocatorViewPrivate::OriginMemento(
