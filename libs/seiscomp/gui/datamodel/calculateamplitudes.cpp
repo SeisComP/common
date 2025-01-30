@@ -234,6 +234,7 @@ struct PickStreamEntry {
 	PickCPtr        pick;
 	double          dist;
 	SensorLocation *loc;
+	bool            used{false};
 };
 
 }
@@ -250,6 +251,20 @@ bool CalculateAmplitudes::process() {
 
 	if ( _amplitudeTypes.empty() )
 		return false;
+
+	std::map<std::string, bool> considerUnusedArrivals;
+
+	for ( const auto &type : _amplitudeTypes ) {
+		bool consider = false;
+		try {
+			consider = SCApp->configGetBool(
+				fmt::format("amplitudes.{}.considerUnusedArrivals", type)
+			);
+		}
+		catch ( ... ) {}
+		considerUnusedArrivals[type] = consider;
+		SEISCOMP_DEBUG("%s: consider unused arrivals = %s", type, consider ? "true" : "false");
+	}
 
 	_timeWindow = Core::TimeWindow();
 
@@ -287,7 +302,7 @@ bool CalculateAmplitudes::process() {
 		double weight = 1.;
 		try { weight = ar->weight(); } catch (Seiscomp::Core::ValueException &) {}
 
-		if ( Util::getShortPhaseName(ar->phase().code()) != 'P' || weight < 0.5 ) {
+		if ( Util::getShortPhaseName(ar->phase().code()) != 'P' ) {
 			continue;
 		}
 
@@ -333,25 +348,34 @@ bool CalculateAmplitudes::process() {
 		e.pick = pick;
 		e.dist = dist;
 		e.loc = loc;
+		if ( !e.used ) {
+			e.used = weight >= 0.5;
+		}
 	}
 
 	for ( PickStreamMap::iterator it = pickStreamMap.begin(); it != pickStreamMap.end(); ++it ) {
 		PickCPtr pick = it->second.pick;
 		SensorLocation *loc = it->second.loc;
 		double dist = it->second.dist;
+		bool used = it->second.used;
 
 		_ui.comboFilterType->clear();
 		_ui.comboFilterType->addItem("- Any -");
-		for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-			_ui.comboFilterType->addItem(ita->c_str());
+		for ( const auto &type : _amplitudeTypes ) {
+			_ui.comboFilterType->addItem(type.c_str());
+		}
 
 		if ( _recomputeAmplitudes ) {
-			for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-				addProcessor(*ita, pick.get(), loc, dist);
+			for ( const auto &type : _amplitudeTypes ) {
+				if ( !used && !considerUnusedArrivals[type] ) {
+					continue;
+				}
+
+				addProcessor(type, pick.get(), loc, dist);
+			}
 		}
 		else {
 			string streamID = waveformIDToStdString(pick->waveformID());
-
 			TypeSet usedTypes;
 
 			if ( !_amplitudes.empty() ) {
@@ -365,6 +389,15 @@ bool CalculateAmplitudes::process() {
 					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
 						++it;
 						continue;
+					}
+
+					// Station is disabled, check if amplitude type is overriden
+					if ( !used ) {
+						auto ait = considerUnusedArrivals.find(amp->type());
+						if ( ait == considerUnusedArrivals.end() || !ait->second ) {
+							++it;
+							continue;
+						}
 					}
 
 					// Already has an amplitude of this type processed
@@ -395,6 +428,14 @@ bool CalculateAmplitudes::process() {
 					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() )
 						continue;
 
+					// Station is disabled, check if amplitude type is overriden
+					if ( !used ) {
+						auto ait = considerUnusedArrivals.find(amp->type());
+						if ( ait == considerUnusedArrivals.end() || !ait->second ) {
+							continue;
+						}
+					}
+
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 						checkPriority(ita->second);
@@ -422,6 +463,14 @@ bool CalculateAmplitudes::process() {
 					// The amplitude type is not one of the wanted types
 					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
 
+					// Station is disabled, check if amplitude type is overriden
+					if ( !used ) {
+						auto ait = considerUnusedArrivals.find(amp->type());
+						if ( ait == considerUnusedArrivals.end() || !ait->second ) {
+							continue;
+						}
+					}
+
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 						checkPriority(AmplitudeEntry(amp, false));
@@ -447,6 +496,14 @@ bool CalculateAmplitudes::process() {
 						// The amplitude type is not one of the wanted types
 						if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
 
+						// Station is disabled, check if amplitude type is overriden
+						if ( !used ) {
+							auto ait = considerUnusedArrivals.find(amp->type());
+							if ( ait == considerUnusedArrivals.end() || !ait->second ) {
+								continue;
+							}
+						}
+
 						// Already has an amplitude of this type processed
 						if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 							checkPriority(AmplitudeEntry(amp, false));
@@ -468,11 +525,19 @@ bool CalculateAmplitudes::process() {
 			               usedTypes.begin(), usedTypes.end(),
 			               inserter(remainingTypes, remainingTypes.begin()));
 
-			for ( TypeSet::iterator ita = remainingTypes.begin(); ita != remainingTypes.end(); ++ita ) {
-				if ( _thread )
-					addProcessor(*ita, pick.get(), loc, dist);
+			for ( const auto &type : remainingTypes ) {
+				if ( !used ) {
+					auto ait = considerUnusedArrivals.find(type);
+					if ( ait == considerUnusedArrivals.end() || !ait->second ) {
+						continue;
+					}
+				}
+
+				if ( _thread ) {
+					addProcessor(type, pick.get(), loc, dist);
+				}
 				else {
-					int row = addProcessingRow(streamID, *ita);
+					int row = addProcessingRow(streamID, type);
 					setError(row, "missing");
 				}
 			}

@@ -2466,7 +2466,15 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	mag->setEvaluationStatus(Core::None);
 	mag->setOriginID("");
 
-	if ( amps == nullptr ) {
+	bool considerUnusedArrivals = false;
+	try {
+		SCApp->configGetBool(fmt::format("amplitudes.{}.considerUnusedArrivals", ampType));
+	}
+	catch ( ... ) {
+		considerUnusedArrivals = true;
+	}
+
+	if ( !amps ) {
 		// Typedef a pickmap that maps a streamcode to a pick
 		typedef QMap<string, PickCPtr> PickStreamMap;
 
@@ -2481,8 +2489,13 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 			double weight = 1.;
 			try { weight = ar->weight(); } catch (Seiscomp::Core::ValueException &) {}
 
-			if ( Util::getShortPhaseName(ar->phase().code()) != 'P' || weight < 0.5 )
+			if ( Util::getShortPhaseName(ar->phase().code()) != 'P' ) {
 				continue;
+			}
+
+			if ( (weight < 0.5) && !considerUnusedArrivals ) {
+				continue;
+			}
 
 			Pick *pick = Pick::Find(ar->pickID());
 			if ( !pick ) continue;

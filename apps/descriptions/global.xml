@@ -464,6 +464,15 @@
 						</description>
 					</parameter>
 				</group>
+				<struct type="GlobalAmplitudeProfile" title="Amplitude-type profile" aliases="config:amplitudes.aliases">
+					<parameter name="considerUnusedArrivals" type="boolean" default="false">
+						<description>
+						If enabled then also stations with unused (disabled)
+						arrivals are considerd for amplitude and implicitly
+						magnitude computations, e.g. by scamp, scmag and scolv.
+						</descripion>
+					</parameter>
+				</struct>
 			</group>
 			<group name="magnitudes">
 				<description>
