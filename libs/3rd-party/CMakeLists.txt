@@ -1,4 +1,4 @@
-SUBDIRS(tau locsat libbson)
+SUBDIRS(tau locsat)
 
 INSTALL(
 	DIRECTORY rapidjson

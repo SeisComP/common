@@ -33,7 +33,7 @@
 #include <seiscomp/io/recordstream/streamidx.h>
 
 extern "C" {
-	#include "bson/bson.h"
+	#include <bson/bson.h>
 }
 
 namespace Seiscomp {
