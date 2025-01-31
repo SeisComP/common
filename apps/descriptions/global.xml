@@ -470,7 +470,7 @@
 						If enabled then also stations with unused (disabled)
 						arrivals are considerd for amplitude and implicitly
 						magnitude computations, e.g. by scamp, scmag and scolv.
-						</descripion>
+						</description>
 					</parameter>
 				</struct>
 			</group>
