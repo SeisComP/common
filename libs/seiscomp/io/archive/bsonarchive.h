@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #ifndef SCARCHIVE_BSON_H
 #define SCARCHIVE_BSON_H
+
 
 #include <seiscomp/core/io.h>
 #include <seiscomp/core.h>

@@ -23,6 +23,8 @@
 
 #include <string>
 #include <set>
+#include <bson.h>
+
 
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/exceptions.h>

@@ -32,9 +32,10 @@
 #include <seiscomp/io/httpsocket.h>
 #include <seiscomp/io/recordstream/streamidx.h>
 
-extern "C" {
-	#include <bson/bson.h>
-}
+
+struct _bson_t;
+typedef bson_t _bson_t;
+
 
 namespace Seiscomp {
 namespace RecordStream {

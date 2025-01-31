@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT BSONArchive
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/archive/bsonarchive.h>
@@ -33,10 +34,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <limits>
-
-extern "C" {
-	#include <bson/bson.h>
-}
+#include <bson.h>
 
 
 namespace Seiscomp {
@@ -309,7 +307,7 @@ bool BSONArchive::create(std::streambuf* buf, bool writeVersion) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BSONArchive::create(const char* filename, bool writeVersion) {
-	close();
+	BSONArchive::close();
 
 	if ( !strcmp(filename, "-") ) {
 		_buf = std::cout.rdbuf();
