@@ -169,27 +169,18 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.host(), ".");
 	BOOST_CHECK_EQUAL(url.path(), "/file");
 
-	/*
-	BOOST_REQUIRE(url.setUrl("urn:example:animal:ferret:nose"));
-	BOOST_CHECK_EQUAL(url.scheme(), "urn");
-	BOOST_CHECK_EQUAL(url.path(), "example:animal:ferret:nose");
-	*/
-
 	BOOST_REQUIRE(url.setUrl("https://example.com/search?Hello%20World%21%26lang%3Den"));
 	BOOST_REQUIRE(url.setUrl("ftp://ftp.is.co.za/rfc/rfc1808.txt"));
 	BOOST_REQUIRE(url.setUrl("http://www.ietf.org/rfc/rfc2396.txt"));
 	BOOST_REQUIRE(url.setUrl("ldap://[2001:db8::7]/c=GB?objectClass?one"));
-	//BOOST_REQUIRE(url.setUrl("mailto:John.Doe@example.com"));
-	//BOOST_REQUIRE(url.setUrl("news:comp.infosystems.www.servers.unix"));
-	//BOOST_REQUIRE(url.setUrl("tel:+1-816-555-1212"));
 	BOOST_REQUIRE(url.setUrl("telnet://192.0.2.16:80/"));
 }
 
 BOOST_AUTO_TEST_CASE(Extract) {
 	BOOST_CHECK_EQUAL(Url("http://localhost").withoutScheme(), "localhost");
-	BOOST_CHECK_EQUAL(Url("loc:/localhost").withoutScheme(), "/localhost");
-	BOOST_CHECK_EQUAL(Url("urn:localhost").withoutScheme(), "localhost");
-	BOOST_CHECK_EQUAL(Url("urn:localhost:proc").withoutScheme(), "localhost:proc");
+	BOOST_CHECK_EQUAL(Url("loc:/localhost").withoutScheme(), "loc:/localhost");
+	BOOST_CHECK_EQUAL(Url("urn:localhost").withoutScheme(), "urn:localhost");
+	BOOST_CHECK_EQUAL(Url("urn:localhost:proc").withoutScheme(), "urn:localhost:proc");
 }
 
 BOOST_AUTO_TEST_CASE(Encode) {
