@@ -7,23 +7,23 @@
 		</description>
 		<configuration>
 			<group name="StdLoc">
-
+				<description>
+				Locator parameters: StdLoc. This locator requires the plugin
+				&quot;stdloc&quot; to be loaded.
+				</description>
 				<parameter name="profiles" type="list:string" default="">
 					<description>
 					Defines a list of profiles to make available to the plugin.
 					</description>
 				</parameter>
-
 				<group name="profile">
 					<struct type="stdloc profile" link = "StdLoc.profiles">
-
 						<parameter name="method" type="string" default="LeastSquares" values="LeastSquares,GridSearch,OctTree,GridSearch+LeastSquares,OctTree+LeastSquares">
 							<description>
 							The location method to use: LeastSquares, GridSearch,
 							OctTree, GridSearch+LeastSquares or OctTree+LeastSquares.
 							</description>
 						</parameter>
-
 						<parameter name="tableType" type="string" default="LOCSAT">
 							<description>
 							Travel time table format type. Also consider
@@ -52,7 +52,6 @@
 							and &quot;pickUncertaintyClasses&quot;.
 							</description>
 						</parameter>
-
 						<parameter name="pickUncertaintyClasses" type="list:string" unit="s" default="0.000,0.025,0.050,0.100,0.200,0.400">
 							<description>
 							Comma-separated list of time limits of uncertainty
@@ -137,7 +136,6 @@
 								</description>
 							</parameter>
 						</group>
-
 						<group name="OctTree">
 							<description>
 								Parameters controlling the OctTree method. OctTree
@@ -164,7 +162,6 @@
 								</description>
 							</parameter>
 						</group>
-
 						<group name="LeastSquares">
 							<description>
 							Parameters controlling the LeastSquares method.
@@ -197,7 +194,6 @@
 								</description>
 							</parameter>
 						</group>
-
 					</struct>
 				</group> 
 			</group>
