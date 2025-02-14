@@ -2314,6 +2314,8 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	try { _config.iaspeiAmplitudes = cfg->getBool("amplitudes.iaspei"); }
 	catch ( ... ) {}
 
+	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.iaspeiAmplitudes);
+
 	if ( _usedComponent >= Vertical && _usedComponent <= SecondHorizontal ) {
 		SignalUnit unit;
 		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
