@@ -247,25 +247,17 @@ SC_SYSTEM_CORE_API bool wildcmp(const std::string &wild, const std::string &str)
 SC_SYSTEM_CORE_API bool wildicmp(const char *wild, const char *str);
 SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str);
 
-
-// -------------------------------------------------------------------------
-//  Plain C string functions which do not modify the input string and work
-//  mostly with length rather than an terminating null byte.
-// -------------------------------------------------------------------------
-
 /**
  * @brief Tokenizes an input string. Empty tokens will be skipped and not
  *        returned (also referred to as compression).
- * @param str The input string. The address is modified that it will point to
- *            the next token.
+ * @param sv The input string. The address is modified that it will point to
+ *           the next token.
  * @param delim A string of characters of allowed delimiters
- * @param len_source The source length. This parameter will be modified
- *                   to match the remaining length of the string.
- * @param len_tok The length of the returned token.
- * @return The address to the token found or nullptr.
+ * @return The matching substring as string_view. If the data pointer is
+ *         nullptr then no further matches are possible.
  */
-template <typename T>
-T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
+SC_SYSTEM_CORE_API
+std::string_view tokenize(std::string_view &sv, const char *delim);
 
 /**
  * @brief Works like tokenize but does not compress empty tokens.
@@ -277,6 +269,18 @@ T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
  * @param len_tok The length of the returned token.
  * @return The address to the token found or nullptr.
  */
+SC_SYSTEM_CORE_API
+std::string_view tokenize2(std::string_view &sv, const char *delim);
+
+
+// -------------------------------------------------------------------------
+//  Plain C string functions which do not modify the input string and work
+//  mostly with length rather than an terminating null byte.
+// -------------------------------------------------------------------------
+
+template <typename T>
+T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
+
 template <typename T>
 T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
 

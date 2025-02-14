@@ -851,6 +851,53 @@ bool wildicmp(const std::string &wild, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view tokenize(std::string_view &sv, const char *delim) {
+	std::string_view tok;
+
+	size_t p0 = sv.find_first_not_of(delim, 0);
+	if ( p0 == std::string::npos ) {
+		return tok;
+	}
+
+	size_t p1 = sv.find_first_of(delim, p0 + 1);
+	if ( p1 != std::string::npos ) {
+		tok = sv.substr(p0, p1 - p0);
+		sv = sv.substr(p1);
+	}
+	else {
+		tok = sv.substr(p0);
+		sv = std::string_view();
+	}
+
+	return tok;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view tokenize2(std::string_view &sv, const char *delim) {
+	std::string_view tok;
+
+	size_t p0 = sv.find_first_of(delim, 0);
+	if ( p0 == std::string::npos ) {
+		tok = sv;
+		sv = {};
+	}
+	else {
+		tok = sv.substr(0, p0);
+		sv = sv.substr(p0 + 1);
+	}
+
+	return tok;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 char *strnchr(char *p, size_t n, char c) {
 	while ( n-- > 0 && *p != '\0' ) {
 		if ( *p == c )

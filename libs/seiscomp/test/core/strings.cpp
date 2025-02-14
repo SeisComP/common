@@ -401,8 +401,9 @@ BOOST_AUTO_TEST_CASE(stringify1) {
 	for ( size_t i = 1; i <= 100; ++i ) {
 		string tmp;
 		tmp.resize(i);
-		for ( size_t j = 0; j < tmp.size(); ++j )
+		for ( size_t j = 0; j < tmp.size(); ++j ) {
 			tmp[j] = static_cast<char>(random() * 25 / RAND_MAX + 'A');
+		}
 		string out = stringify("%s", tmp.c_str());
 		BOOST_CHECK_EQUAL(tmp, out);
 	}
@@ -419,10 +420,10 @@ BOOST_AUTO_TEST_CASE(split1) {
 	data.push_back(TestCase("ab", true,  "1a2b3",       vec("1", "2", "3")));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		split(result, it->source, it->delimiter, it->compressOn);
+	for ( auto &testcase : data ) {
+		split(result, testcase.source, testcase.delimiter, testcase.compressOn);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -447,10 +448,10 @@ BOOST_AUTO_TEST_CASE(splitExtNoUnescape) {
 	data.push_back(TestCase(" ",  true,  " foo\\ bar\r\n     a ",     vec("", "foo\\ bar\r\n", "a", "" ), false));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		splitExt(result, it->source, it->delimiter, it->compressOn, false, it->trim);
+	for ( auto &testcase : data ) {
+		splitExt(result, testcase.source, testcase.delimiter, testcase.compressOn, false, testcase.trim);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -484,10 +485,10 @@ BOOST_AUTO_TEST_CASE(splitExtUnescape) {
 	data.push_back(TestCase(",",  true,  "'\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t'", vec("\\\"\\t\\\\ \\,\\\\ \\\\t"), true));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		splitExt(result, it->source, it->delimiter, it->compressOn, true, it->trim);
+	for ( auto &testcase : data ) {
+		splitExt(result, testcase.source, testcase.delimiter, testcase.compressOn, true, testcase.trim);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -505,6 +506,59 @@ BOOST_AUTO_TEST_CASE(enums) {
 	e = TEST1;
 	s = fmt::format("{}", e);
 	BOOST_CHECK_EQUAL(s, "test1");
+}
+
+BOOST_AUTO_TEST_CASE(trim1) {
+	string s = "  abc     ";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "  abc";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "abc     ";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "            ";
+	BOOST_CHECK_EQUAL(trim(s), "");
+	s = {};
+	BOOST_CHECK_EQUAL(trim(s), "");
+}
+
+BOOST_AUTO_TEST_CASE(tok1) {
+	string s = "A;B;;;;C;D";
+	string_view sv(s);
+
+	auto tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "A");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "B");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "C");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "D");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	BOOST_CHECK_EQUAL(tok.data(), nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(tok2) {
+	string s = "A;B;;;;C;D";
+	string_view sv(s);
+
+	auto tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "A");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "B");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "C");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "D");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	BOOST_CHECK_EQUAL(tok.data(), nullptr);
 }
 
 
