@@ -3368,51 +3368,52 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_TimePoint swig_types[159]
 #define SWIGTYPE_p_Type swig_types[160]
 #define SWIGTYPE_p_ValueType swig_types[161]
-#define SWIGTYPE_p_Weeks swig_types[162]
-#define SWIGTYPE_p_allocator_type swig_types[163]
-#define SWIGTYPE_p_boost__any swig_types[164]
-#define SWIGTYPE_p_char swig_types[165]
-#define SWIGTYPE_p_const_iterator swig_types[166]
-#define SWIGTYPE_p_difference_type swig_types[167]
-#define SWIGTYPE_p_double swig_types[168]
-#define SWIGTYPE_p_int swig_types[169]
-#define SWIGTYPE_p_iterator swig_types[170]
-#define SWIGTYPE_p_long_long swig_types[171]
-#define SWIGTYPE_p_p_PyObject swig_types[172]
-#define SWIGTYPE_p_short swig_types[173]
-#define SWIGTYPE_p_signed_char swig_types[174]
-#define SWIGTYPE_p_size_type swig_types[175]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t swig_types[176]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t swig_types[177]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t swig_types[178]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t swig_types[179]
-#define SWIGTYPE_p_std__allocatorT_double_t swig_types[180]
-#define SWIGTYPE_p_std__allocatorT_float_t swig_types[181]
-#define SWIGTYPE_p_std__allocatorT_std__complexT_double_t_t swig_types[182]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[183]
-#define SWIGTYPE_p_std__exception swig_types[184]
-#define SWIGTYPE_p_std__invalid_argument swig_types[185]
-#define SWIGTYPE_p_std__ostream swig_types[186]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[187]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[188]
-#define SWIGTYPE_p_std__string swig_types[189]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[190]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[191]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[192]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[193]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[194]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[195]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[196]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[197]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[198]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[199]
-#define SWIGTYPE_p_unsigned_char swig_types[200]
-#define SWIGTYPE_p_unsigned_int swig_types[201]
-#define SWIGTYPE_p_unsigned_long_long swig_types[202]
-#define SWIGTYPE_p_unsigned_short swig_types[203]
-#define SWIGTYPE_p_value_type swig_types[204]
-static swig_type_info *swig_types[206];
-static swig_module_info swig_module = {swig_types, 205, 0, 0, 0, 0};
+#define SWIGTYPE_p_Vector3d swig_types[162]
+#define SWIGTYPE_p_Weeks swig_types[163]
+#define SWIGTYPE_p_allocator_type swig_types[164]
+#define SWIGTYPE_p_boost__any swig_types[165]
+#define SWIGTYPE_p_char swig_types[166]
+#define SWIGTYPE_p_const_iterator swig_types[167]
+#define SWIGTYPE_p_difference_type swig_types[168]
+#define SWIGTYPE_p_double swig_types[169]
+#define SWIGTYPE_p_int swig_types[170]
+#define SWIGTYPE_p_iterator swig_types[171]
+#define SWIGTYPE_p_long_long swig_types[172]
+#define SWIGTYPE_p_p_PyObject swig_types[173]
+#define SWIGTYPE_p_short swig_types[174]
+#define SWIGTYPE_p_signed_char swig_types[175]
+#define SWIGTYPE_p_size_type swig_types[176]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_double_t_t swig_types[177]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__CityT_float_t_t swig_types[178]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_double_t_t swig_types[179]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Math__Geo__NamedCoordT_float_t_t swig_types[180]
+#define SWIGTYPE_p_std__allocatorT_double_t swig_types[181]
+#define SWIGTYPE_p_std__allocatorT_float_t swig_types[182]
+#define SWIGTYPE_p_std__allocatorT_std__complexT_double_t_t swig_types[183]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[184]
+#define SWIGTYPE_p_std__exception swig_types[185]
+#define SWIGTYPE_p_std__invalid_argument swig_types[186]
+#define SWIGTYPE_p_std__ostream swig_types[187]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[188]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[189]
+#define SWIGTYPE_p_std__string swig_types[190]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[191]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[192]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[193]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[194]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[195]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[196]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[197]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[198]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[199]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[200]
+#define SWIGTYPE_p_unsigned_char swig_types[201]
+#define SWIGTYPE_p_unsigned_int swig_types[202]
+#define SWIGTYPE_p_unsigned_long_long swig_types[203]
+#define SWIGTYPE_p_unsigned_short swig_types[204]
+#define SWIGTYPE_p_value_type swig_types[205]
+static swig_type_info *swig_types[207];
+static swig_module_info swig_module = {swig_types, 206, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -46615,6 +46616,68 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_vec2ltp(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector3d *arg1 = 0 ;
+  double *arg2 = (double *) 0 ;
+  double *arg3 = (double *) 0 ;
+  double *arg4 = (double *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "vec2ltp", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Vector3d,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "vec2ltp" "', argument " "1"" of type '" "Vector3d const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "vec2ltp" "', argument " "1"" of type '" "Vector3d const &""'"); 
+  }
+  arg1 = reinterpret_cast< Vector3d * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "vec2ltp" "', argument " "2"" of type '" "double *""'"); 
+  }
+  arg2 = reinterpret_cast< double * >(argp2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "vec2ltp" "', argument " "3"" of type '" "double *""'"); 
+  }
+  arg3 = reinterpret_cast< double * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "vec2ltp" "', argument " "4"" of type '" "double *""'"); 
+  }
+  arg4 = reinterpret_cast< double * >(argp4);
+  {
+    try {
+      Seiscomp::Math::Geo::vec2ltp((Vector3d const &)*arg1,arg2,arg3,arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_ltp2xyz(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
@@ -46672,6 +46735,68 @@ SWIGINTERN PyObject *_wrap_ltp2xyz(PyObject *self, PyObject *args) {
   {
     try {
       Seiscomp::Math::Geo::ltp2xyz(arg1,arg2,arg3,arg4,arg5,arg6);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ltp2vec(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double arg2 ;
+  double arg3 ;
+  Vector3d *arg4 = 0 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "ltp2vec", 4, 4, swig_obj)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "ltp2vec" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ltp2vec" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ltp2vec" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Vector3d,  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ltp2vec" "', argument " "4"" of type '" "Vector3d &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ltp2vec" "', argument " "4"" of type '" "Vector3d &""'"); 
+  }
+  arg4 = reinterpret_cast< Vector3d * >(argp4);
+  {
+    try {
+      Seiscomp::Math::Geo::ltp2vec(arg1,arg2,arg3,*arg4);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -52653,7 +52778,9 @@ static PyMethodDef SwigMethods[] = {
 	 { "scxsc", _wrap_scxsc, METH_VARARGS, "scxsc(double lat1, double lon1, double r1, double lat2, double lon2, double r2, double * latx1, double * lonx1, double * latx2, double * lonx2, double epsilon=0) -> int"},
 	 { "scdraw", _wrap_scdraw, METH_VARARGS, "scdraw(double lat0, double lon0, double radius, int n, double * lat, double * lon) -> int"},
 	 { "xyz2ltp", _wrap_xyz2ltp, METH_VARARGS, "xyz2ltp(double const x, double const y, double const z, double * lat, double * lon, double * alt)"},
+	 { "vec2ltp", _wrap_vec2ltp, METH_VARARGS, "vec2ltp(Vector3d const & vec, double * lat, double * lon, double * alt)"},
 	 { "ltp2xyz", _wrap_ltp2xyz, METH_VARARGS, "ltp2xyz(double lat, double lon, double alt, double * x, double * y, double * z)"},
+	 { "ltp2vec", _wrap_ltp2vec, METH_VARARGS, "ltp2vec(double lat, double lon, double alt, Vector3d & vec)"},
 	 { "nearestHotspot", _wrap_nearestHotspot, METH_VARARGS, "nearestHotspot(double lat, double lon, double maxDist, HotspotListD coords) -> NamedCoordD"},
 	 { "nearestCity", _wrap_nearestCity, METH_VARARGS, "\n"
 		"nearestCity(double lat, double lon, double maxDist, double minPopulation, int nCities, CityD cityArray) -> CityD\n"
@@ -53421,6 +53548,7 @@ static swig_type_info _swigt__p_Storage = {"_p_Storage", "Storage *", 0, 0, (voi
 static swig_type_info _swigt__p_TimePoint = {"_p_TimePoint", "TimePoint *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Type = {"_p_Type", "Type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ValueType = {"_p_ValueType", "ValueType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Vector3d = {"_p_Vector3d", "Vector3d *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Weeks = {"_p_Weeks", "Weeks *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
@@ -53641,6 +53769,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_TimePoint,
   &_swigt__p_Type,
   &_swigt__p_ValueType,
+  &_swigt__p_Vector3d,
   &_swigt__p_Weeks,
   &_swigt__p_allocator_type,
   &_swigt__p_boost__any,
@@ -53835,6 +53964,7 @@ static swig_cast_info _swigc__p_Storage[] = {  {&_swigt__p_Storage, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_TimePoint[] = {  {&_swigt__p_TimePoint, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Type[] = {  {&_swigt__p_Type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ValueType[] = {  {&_swigt__p_ValueType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Vector3d[] = {  {&_swigt__p_Vector3d, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Weeks[] = {  {&_swigt__p_Weeks, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
@@ -54055,6 +54185,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_TimePoint,
   _swigc__p_Type,
   _swigc__p_ValueType,
+  _swigc__p_Vector3d,
   _swigc__p_Weeks,
   _swigc__p_allocator_type,
   _swigc__p_boost__any,

@@ -2746,9 +2746,17 @@ def xyz2ltp(x, y, z, lat, lon, alt):
     r"""xyz2ltp(double const x, double const y, double const z, double * lat, double * lon, double * alt)"""
     return _math.xyz2ltp(x, y, z, lat, lon, alt)
 
+def vec2ltp(vec, lat, lon, alt):
+    r"""vec2ltp(Vector3d const & vec, double * lat, double * lon, double * alt)"""
+    return _math.vec2ltp(vec, lat, lon, alt)
+
 def ltp2xyz(lat, lon, alt, x, y, z):
     r"""ltp2xyz(double lat, double lon, double alt, double * x, double * y, double * z)"""
     return _math.ltp2xyz(lat, lon, alt, x, y, z)
+
+def ltp2vec(lat, lon, alt, vec):
+    r"""ltp2vec(double lat, double lon, double alt, Vector3d & vec)"""
+    return _math.ltp2vec(lat, lon, alt, vec)
 
 def nearestHotspot(lat, lon, maxDist, coords):
     r"""nearestHotspot(double lat, double lon, double maxDist, HotspotListD coords) -> NamedCoordD"""

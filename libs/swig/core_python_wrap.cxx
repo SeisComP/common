@@ -3345,40 +3345,41 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[136]
 #define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[137]
 #define SWIGTYPE_p_std__string swig_types[138]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[139]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[140]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[141]
-#define SWIGTYPE_p_std__vectorT_char_t swig_types[142]
-#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[143]
-#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[144]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[145]
-#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[146]
-#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[147]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[148]
-#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[149]
-#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[150]
-#define SWIGTYPE_p_std__vectorT_int_t swig_types[151]
-#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[152]
-#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[153]
-#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[154]
-#define SWIGTYPE_p_std__vectorT_short_t swig_types[155]
-#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[156]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[157]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[158]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[159]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[160]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[161]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[162]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[164]
-#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[165]
-#define SWIGTYPE_p_unsigned_char swig_types[166]
-#define SWIGTYPE_p_unsigned_int swig_types[167]
-#define SWIGTYPE_p_unsigned_long_long swig_types[168]
-#define SWIGTYPE_p_unsigned_short swig_types[169]
-#define SWIGTYPE_p_void swig_types[170]
-static swig_type_info *swig_types[172];
-static swig_module_info swig_module = {swig_types, 171, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__string_view swig_types[139]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[140]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[141]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[142]
+#define SWIGTYPE_p_std__vectorT_char_t swig_types[143]
+#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[144]
+#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[145]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[146]
+#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[147]
+#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[148]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[149]
+#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[150]
+#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[151]
+#define SWIGTYPE_p_std__vectorT_int_t swig_types[152]
+#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[153]
+#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[154]
+#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[155]
+#define SWIGTYPE_p_std__vectorT_short_t swig_types[156]
+#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[157]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[158]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[159]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[160]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[161]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[162]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[163]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[164]
+#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[165]
+#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[166]
+#define SWIGTYPE_p_unsigned_char swig_types[167]
+#define SWIGTYPE_p_unsigned_int swig_types[168]
+#define SWIGTYPE_p_unsigned_long_long swig_types[169]
+#define SWIGTYPE_p_unsigned_short swig_types[170]
+#define SWIGTYPE_p_void swig_types[171]
+static swig_type_info *swig_types[173];
+static swig_module_info swig_module = {swig_types, 172, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -6981,10 +6982,11 @@ fail:
 SWIGINTERN PyObject *_wrap_Enumeration_fromString(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Enumeration *arg1 = (Seiscomp::Core::Enumeration *) 0 ;
-  std::string *arg2 = 0 ;
+  std::string_view arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 ;
+  int res2 = 0 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -6996,22 +6998,22 @@ SWIGINTERN PyObject *_wrap_Enumeration_fromString(PyObject *self, PyObject *args
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Enumeration * >(argp1);
   {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__string_view,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Enumeration_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Enumeration_fromString" "', argument " "2"" of type '" "std::string_view""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Enumeration_fromString" "', argument " "2"" of type '" "std::string_view""'");
+    } else {
+      std::string_view * temp = reinterpret_cast< std::string_view * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
     }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Enumeration_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
   }
-  result = (bool)(arg1)->fromString((std::string const &)*arg2);
+  result = (bool)(arg1)->fromString(SWIG_STD_MOVE(arg2));
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -13313,10 +13315,11 @@ fail:
 SWIGINTERN PyObject *_wrap_TimeSpan_fromString(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::TimeSpan *arg1 = (Seiscomp::Core::TimeSpan *) 0 ;
-  std::string *arg2 = 0 ;
+  std::string_view arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 ;
+  int res2 = 0 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -13328,19 +13331,21 @@ SWIGINTERN PyObject *_wrap_TimeSpan_fromString(PyObject *self, PyObject *args) {
   }
   arg1 = reinterpret_cast< Seiscomp::Core::TimeSpan * >(argp1);
   {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__string_view,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string_view""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string_view""'");
+    } else {
+      std::string_view * temp = reinterpret_cast< std::string_view * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
     }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "TimeSpan_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
   }
   {
     try {
-      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+      result = (bool)(arg1)->fromString(SWIG_STD_MOVE(arg2));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13353,10 +13358,8 @@ SWIGINTERN PyObject *_wrap_TimeSpan_fromString(PyObject *self, PyObject *args) {
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -13539,6 +13542,34 @@ SWIGINTERN PyObject *_wrap_Time_Null_set(PyObject *SWIGUNUSEDPARM(self), PyObjec
   
   res = Swig_var_Time_Null_set(args);
   return !res ? SWIG_Py_Void() : NULL;
+}
+
+
+SWIGINTERN int Swig_var_Time_MinTime_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable Time_MinTime is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Time_MinTime_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MinTime));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Time_MaxTime_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable Time_MaxTime is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Time_MaxTime_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MaxTime));
+  return pyobj;
 }
 
 
@@ -16647,10 +16678,11 @@ fail:
 SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  std::string *arg2 = 0 ;
+  std::string_view arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 ;
+  int res2 = 0 ;
   bool result;
   
   (void)self;
@@ -16661,19 +16693,21 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_0(PyObject *self, Py_ssize_t no
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__string_view,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string_view""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string_view""'");
+    } else {
+      std::string_view * temp = reinterpret_cast< std::string_view * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
     }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
   }
   {
     try {
-      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+      result = (bool)(arg1)->fromString(SWIG_STD_MOVE(arg2));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16686,10 +16720,8 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_0(PyObject *self, Py_ssize_t no
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   return NULL;
 }
 
@@ -16697,11 +16729,12 @@ fail:
 SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Time *arg1 = (Seiscomp::Core::Time *) 0 ;
-  std::string *arg2 = 0 ;
+  std::string_view arg2 ;
   char *arg3 = (char *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  void *argp2 ;
+  int res2 = 0 ;
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
@@ -16715,15 +16748,17 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t no
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Time * >(argp1);
   {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__string_view,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string_view""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string_view""'");
+    } else {
+      std::string_view * temp = reinterpret_cast< std::string_view * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
     }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Time_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
   }
   res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
   if (!SWIG_IsOK(res3)) {
@@ -16732,7 +16767,7 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t no
   arg3 = reinterpret_cast< char * >(buf3);
   {
     try {
-      result = (bool)(arg1)->fromString((std::string const &)*arg2,(char const *)arg3);
+      result = (bool)(arg1)->fromString(SWIG_STD_MOVE(arg2),(char const *)arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16745,11 +16780,9 @@ SWIGINTERN PyObject *_wrap_Time_fromString__SWIG_1(PyObject *self, Py_ssize_t no
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
   if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
   if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
   return NULL;
 }
@@ -16769,7 +16802,7 @@ SWIGINTERN PyObject *_wrap_Time_fromString(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__string_view, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_Time_fromString__SWIG_0(self, argc, argv);
@@ -16782,7 +16815,7 @@ SWIGINTERN PyObject *_wrap_Time_fromString(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__Time, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__string_view, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         int res = SWIG_AsCharPtrAndSize(argv[2], 0, NULL, 0);
@@ -16797,8 +16830,8 @@ SWIGINTERN PyObject *_wrap_Time_fromString(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Time_fromString'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Core::Time::fromString(std::string const &)\n"
-    "    Seiscomp::Core::Time::fromString(std::string const &,char const *)\n");
+    "    Seiscomp::Core::Time::fromString(std::string_view)\n"
+    "    Seiscomp::Core::Time::fromString(std::string_view,char const *)\n");
   return 0;
 }
 
@@ -53818,6 +53851,7 @@ static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t", "Seiscomp::Core::MetaObjectHandle *|std::shared_ptr< Seiscomp::Core::MetaObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t", "Seiscomp::Core::MetaPropertyHandle *|std::shared_ptr< Seiscomp::Core::MetaProperty > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__string_view = {"_p_std__string_view", "std::string_view *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__Time_t = {"_p_std__vectorT_Seiscomp__Core__Time_t", "Seiscomp::TypedArray< Seiscomp::Core::Time >::DataArray *|std::vector< Seiscomp::Core::Time > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__Time_t__const_iterator = {"_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator", "Seiscomp::TypedArray< Seiscomp::Core::Time >::const_iterator *|std::vector< Seiscomp::Core::Time >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__Time_t__iterator = {"_p_std__vectorT_Seiscomp__Core__Time_t__iterator", "Seiscomp::TypedArray< Seiscomp::Core::Time >::iterator *|std::vector< Seiscomp::Core::Time >::iterator *", 0, 0, (void*)0, 0};
@@ -53991,6 +54025,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
   &_swigt__p_std__string,
+  &_swigt__p_std__string_view,
   &_swigt__p_std__vectorT_Seiscomp__Core__Time_t,
   &_swigt__p_std__vectorT_Seiscomp__Core__Time_t__const_iterator,
   &_swigt__p_std__vectorT_Seiscomp__Core__Time_t__iterator,
@@ -54164,6 +54199,7 @@ static swig_cast_info _swigc__p_std__ostream[] = {  {&_swigt__p_std__ostream, 0,
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__string_view[] = {  {&_swigt__p_std__string_view, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Core__Time_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Core__Time_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Core__Time_t__const_iterator[] = {  {&_swigt__p_std__vectorT_Seiscomp__Core__Time_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Core__Time_t__iterator[] = {  {&_swigt__p_std__vectorT_Seiscomp__Core__Time_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
@@ -54337,6 +54373,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
   _swigc__p_std__string,
+  _swigc__p_std__string_view,
   _swigc__p_std__vectorT_Seiscomp__Core__Time_t,
   _swigc__p_std__vectorT_Seiscomp__Core__Time_t__const_iterator,
   _swigc__p_std__vectorT_Seiscomp__Core__Time_t__iterator,
@@ -54851,8 +54888,6 @@ SWIG_init(void) {
   }
   PyDict_SetItemString(md, "cvar", globals);
   SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x110000)));
-  SWIG_Python_SetConstant(d, "Time_MinTime",SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MinTime)));
-  SWIG_Python_SetConstant(d, "Time_MaxTime",SWIG_From_double(static_cast< double >(Seiscomp::Core::Time::MaxTime)));
   SWIG_Python_SetConstant(d, "GenericArchive_NONE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::NONE)));
   SWIG_Python_SetConstant(d, "GenericArchive_STATIC_TYPE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::STATIC_TYPE)));
   SWIG_Python_SetConstant(d, "GenericArchive_IGNORE_CHILDS",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::IGNORE_CHILDS)));
@@ -54897,6 +54932,8 @@ SWIG_init(void) {
   SWIG_addvarlink(globals, "TimeSpan_MinSeconds", Swig_var_TimeSpan_MinSeconds_get, Swig_var_TimeSpan_MinSeconds_set);
   SWIG_addvarlink(globals, "TimeSpan_MaxSeconds", Swig_var_TimeSpan_MaxSeconds_get, Swig_var_TimeSpan_MaxSeconds_set);
   SWIG_addvarlink(globals, "Time_Null", Swig_var_Time_Null_get, Swig_var_Time_Null_set);
+  SWIG_addvarlink(globals, "Time_MinTime", Swig_var_Time_MinTime_get, Swig_var_Time_MinTime_set);
+  SWIG_addvarlink(globals, "Time_MaxTime", Swig_var_Time_MaxTime_get, Swig_var_Time_MaxTime_set);
   SWIG_addvarlink(globals, "CharArrayT_ArrayType", Swig_var_CharArrayT_ArrayType_get, Swig_var_CharArrayT_ArrayType_set);
   SWIG_addvarlink(globals, "IntArrayT_ArrayType", Swig_var_IntArrayT_ArrayType_get, Swig_var_IntArrayT_ArrayType_set);
   SWIG_addvarlink(globals, "FloatArrayT_ArrayType", Swig_var_FloatArrayT_ArrayType_get, Swig_var_FloatArrayT_ArrayType_set);

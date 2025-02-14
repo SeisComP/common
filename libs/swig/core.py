@@ -243,8 +243,8 @@ class Enumeration(object):
     def toString(self):
         return _core.Enumeration_toString(self)
 
-    def fromString(self, str):
-        return _core.Enumeration_fromString(self, str)
+    def fromString(self, sv):
+        return _core.Enumeration_fromString(self, sv)
 
     def toInt(self):
         return _core.Enumeration_toInt(self)
@@ -610,8 +610,8 @@ class TimeSpan(object):
     def toString(self):
         return _core.TimeSpan_toString(self)
 
-    def fromString(self, str):
-        return _core.TimeSpan_fromString(self, str)
+    def fromString(self, sv):
+        return _core.TimeSpan_fromString(self, sv)
 
     def toDouble(self):
         return _core.TimeSpan_toDouble(self)
@@ -632,8 +632,6 @@ class Time(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     Null = property(_core.Time_Null_get, _core.Time_Null_set)
-    MinTime = _core.Time_MinTime
-    MaxTime = _core.Time_MaxTime
 
     def __init__(self, *args):
         _core.Time_swiginit(self, _core.new_Time(*args))
@@ -788,6 +786,9 @@ class Time(object):
 
 # Register Time in _core:
 _core.Time_swigregister(Time)
+Time.MinTime = _core.cvar.Time_MinTime
+Time.MaxTime = _core.cvar.Time_MaxTime
+
 
 def __lshift__(*args):
     return _core.__lshift__(*args)
