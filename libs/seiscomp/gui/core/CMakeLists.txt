@@ -6,6 +6,7 @@ SET(
 		connectiondialog.cpp
 		connectionstatelabel.cpp
 		flowlayout.cpp
+		fontawesome6.cpp
 		questionbox.cpp
 		infotext.cpp
 		diagramwidget.cpp
@@ -43,6 +44,7 @@ ENDIF(MACOSX)
 
 SET(
 	GUI_CORE_HEADERS
+		fontawesome6.h
 		maps.h
 		messages.h
 		scheme.h
