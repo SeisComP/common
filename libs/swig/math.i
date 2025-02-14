@@ -186,6 +186,9 @@ namespace std {
 %template(GenericSeismometerFilterF) Seiscomp::Math::Filtering::IIR::GenericSeismometer<float>;
 %template(GenericSeismometerFilterD) Seiscomp::Math::Filtering::IIR::GenericSeismometer<double>;
 
+%ignore Seiscomp::Math::Geo::vec2ltp;
+%ignore Seiscomp::Math::Geo::ltp2vec;
+
 %include "seiscomp/math/geo.h"
 
 %template(deg2km) Seiscomp::Math::Geo::deg2km<double>;
