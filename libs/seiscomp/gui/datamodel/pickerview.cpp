@@ -5248,6 +5248,7 @@ bool PickerView::addRawPick(Seiscomp::DataModel::Pick *pick) {
 	catch ( ... ) {}
 
 	marker->setPick(pick);
+	marker->setVisible(CFG_LOAD_PICKS);
 	marker->update();
 
 	return true;
