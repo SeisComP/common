@@ -6,12 +6,6 @@ OPTION(SC_TRUNK_DB_POSTGRESQL "Add PostgreSQL support" OFF)
 
 SET(PROJECT_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/data)
 
-IF(CMAKE_COMPILER_IS_GNUCC)
-	IF(GCC_VERSION VERSION_LESS "4.7")
-		MESSAGE(FATAL_ERROR "GCC version ${GCC_VERSION} found but 4.7 required as minimum")
-	ENDIF()
-ENDIF()
-
 #SET(Boost_DEBUG ON)
 
 # Static Boost libs are not compiled with -fPIC on some
