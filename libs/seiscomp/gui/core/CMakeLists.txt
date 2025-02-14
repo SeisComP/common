@@ -21,6 +21,7 @@ SET(
 		recordwidget.cpp
 		streamwidget.cpp
 		ruler.cpp
+		vruler.cpp
 		scheme.cpp
 		timescale.cpp
 		xmlview.cpp
@@ -74,6 +75,7 @@ SET(
 		recordwidget.h
 		streamwidget.h
 		ruler.h
+		vruler.h
 		timescale.h
 		xmlview.h
 		inspector.h
