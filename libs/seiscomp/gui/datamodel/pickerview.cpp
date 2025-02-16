@@ -991,7 +991,7 @@ class PickerMarker : public RecordMarker {
 				text += QString("\nmethod: %1").arg(_referencedPick->methodID().c_str());
 			try {
 				double confidence = _referencedPick->time().confidenceLevel();
-				text += QString("\nconfidence: %1").arg(confidence);
+				text += QString("\ntime confidence: %1").arg(confidence);
 			}
 			catch ( ... ) {}
 			if ( !_referencedPick->filterID().empty() )
@@ -1006,6 +1006,13 @@ class PickerMarker : public RecordMarker {
 				text += QString("\nhoriz. slowness: %1 deg/s").arg(hs);
 			}
 			catch ( ... ) {}
+			for (size_t i = 0; i < _referencedPick->commentCount(); ++i) {
+				Seiscomp::DataModel::Comment *comment = _referencedPick->comment(i);
+				if (!comment) continue;
+
+				text += QString("\ncomment %1: ").arg(comment->id().c_str());
+				text += QString("%1").arg(comment->text().c_str());
+			}
 
 			text += QString("\narrival: %1").arg(isArrival()?"yes":"no");
 
@@ -4574,6 +4581,7 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget* widget,
 		                                        arrival->phase().code().c_str(),
 		                                        PickerMarker::Arrival, false);
 
+		SC_D.reader->loadComments(pick);
 		marker->setPick(pick);
 		marker->setId(id);
 
