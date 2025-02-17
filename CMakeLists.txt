@@ -13,7 +13,7 @@ SET(PROJECT_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/data)
 # Disabled it so far.
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_DETAILED_FAILURE_MSG ON)
-FIND_PACKAGE(Boost REQUIRED COMPONENTS program_options thread filesystem iostreams regex)
+FIND_PACKAGE(Boost REQUIRED COMPONENTS program_options thread filesystem iostreams regex container)
 IF (WIN32)
 	ADD_DEFINITIONS("-DBOOST_ALL_NO_LIB")
 	ADD_DEFINITIONS("-DBOOST_LIB_DIAGNOSTIC")

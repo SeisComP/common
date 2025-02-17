@@ -35,6 +35,12 @@
 #include <limits>
 #include <type_traits>
 
+#if defined __GNUC__ && __GNUC__ < 11 && __cplusplus >= 201703L
+// gcc < 11 does not fully support from_chars for floating point
+// values. So a backported implementation has to be used instead.
+#include <seiscomp/core/backports/charconv/charconv-float.h>
+#endif
+
 
 #define AUTO_FLOAT_PRECISION 1
 
@@ -275,27 +281,31 @@ bool fromString(double &value, std::string_view sv) {
 		return false;
 	}
 
-	auto first = sv.data();
-	auto last = first + sv.size();
 
-	if ( *first == '+' ) {
-		// from_chars does not support a leading '+'
-		++first;
-	}
+		auto first = sv.data();
+		auto last = first + sv.size();
 
-	auto r = std::from_chars(first, last, value);
+		if ( *first == '+' ) {
+			// from_chars does not support a leading '+'
+			++first;
+		}
 
-	if ( r.ec == std::errc() ) {
-		return r.ptr == last;
-	}
-	else if ( r.ec == std::errc::result_out_of_range ) {
-		errno = ERANGE;
-	}
-	else if ( r.ec == std::errc::invalid_argument ) {
-		errno = EINVAL;
-	}
+#if defined __GNUC__ && __GNUC__ < 11 && __cplusplus >= 201703L
+		auto r = std::backports::from_chars(first, last, value);
+#else
+	    auto r = std::from_chars(first, last, value);
+#endif
 
-	return false;
+		if ( r.ec == std::errc() ) {
+			return r.ptr == last;
+		}
+		else if ( r.ec == std::errc::result_out_of_range ) {
+			errno = ERANGE;
+		}
+		else if ( r.ec == std::errc::invalid_argument ) {
+			errno = EINVAL;
+		}
+		return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -10,6 +10,7 @@ INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${Boost_filesystem_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Boost_regex_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${Boost_thread_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${Boost_container_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${THIRD_PARTY_DIRECTORY}/libbson/src)
 INCLUDE_DIRECTORIES(${SC3_PACKAGE_BINARY_DIR}/libs/3rd-party/libbson/src)
 INCLUDE_DIRECTORIES(${SC3_PACKAGE_SOURCE_DIR}/apps/messaging/scmaster)
@@ -224,6 +225,7 @@ SC_LIB_LINK_LIBRARIES(
 		${Boost_filesystem_LIBRARY}
 		${Boost_regex_LIBRARY}
 		${Boost_program_options_LIBRARY}
+		${Boost_container_LIBRARY}
 		${Boost_LIBRARIES}
 		pthread
 		rt
