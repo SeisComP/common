@@ -226,6 +226,7 @@ SC_LIB_LINK_LIBRARIES(
 		${Boost_program_options_LIBRARY}
 		${Boost_LIBRARIES}
 		pthread
+		rt
 		tau_internal
 		${LIBXML2_LIBRARIES}
 		${OPENSSL_LIBRARIES}
@@ -253,6 +254,11 @@ ENDIF (CMAKE_SYSTEM_NAME STREQUAL SunOS)
 IF (MSEED_FOUND)
 	SC_LIB_LINK_LIBRARIES(core ${LIBMSEED_LIBRARY})
 ENDIF (MSEED_FOUND)
+
+FIND_LIBRARY(LIBRT rt)
+IF(LIBRT)
+	SC_LIB_LINK_LIBRARIES(core ${LIBRT})
+ENDIF()
 
 
 # ------------------------------------------------------------------------------
