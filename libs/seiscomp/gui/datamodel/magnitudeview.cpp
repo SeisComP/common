@@ -2671,7 +2671,8 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				);
 
 			if ( stat != Processing::MagnitudeProcessor::OK ) {
-				SEISCOMP_ERROR("Failed to compute magnitude for station %s: %d (%s)",
+				SEISCOMP_DEBUG("Do not compute %s magnitude for station %s: %d (%s)",
+				               mag->type().c_str(),
 				               amp->waveformID().stationCode().c_str(),
 				               (int)stat, stat.toString());
 

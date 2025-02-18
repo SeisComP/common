@@ -5889,7 +5889,8 @@ void AmplitudeView::commit() {
 			);
 
 		if ( stat != Processing::MagnitudeProcessor::OK ) {
-			SEISCOMP_ERROR("Failed to compute magnitude for station %s: %s",
+			SEISCOMP_DEBUG("Do not compute %s magnitude for station %s: %s",
+			               SC_D.magnitudeType.c_str(),
 			               item->data().toString().toStdString().c_str(),
 			               stat.toString());
 			continue;
