@@ -32,6 +32,7 @@
 %import "seiscomp/core/factory.h"
 %include stdint.i
 %include std_string.i
+%include std_string_view.i
 %include std_complex.i
 %include "seiscomp/core/archive.h"
 %include "seiscomp/core/io.h"
