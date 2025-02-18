@@ -64,11 +64,7 @@ def createMYSQLDB(
 
     q = "CREATE DATABASE \\`{}\\`".format(db)
     if characterset is not None:
-        q += " CHARACTER SET "
-        if characterset == "utf8":
-            q += "utf8 COLLATE utf8_bin"
-        else:
-            q += characterset
+        q += f" CHARACTER SET {characterset} COLLATE {characterset}_bin"
     q += ";"
 
     res = execute(cmd + " -e \"{}\"".format(q))
