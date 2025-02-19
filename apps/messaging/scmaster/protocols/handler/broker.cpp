@@ -608,8 +608,9 @@ void BrokerHandler::replyWithError(const char *msg, size_t len) {
 		      SCMP_PROTO_REPLY_ERROR_HEADER_SEQ_NUMBER ":" << _sequenceNumber << "\n\n";
 	}
 
-	if ( msg )
+	if ( msg ) {
 		resp->data.append(msg, msg + len);
+	}
 
 	Websocket::Frame::finalizeBuffer(resp.get(), Websocket::Frame::TextFrame);
 	_session->send(resp.get());

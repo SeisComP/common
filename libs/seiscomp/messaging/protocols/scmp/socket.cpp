@@ -129,18 +129,38 @@ Result Socket::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::wait(mutex *m, mutex *waitLock) {
-	Wired::Device *dev = nullptr;
+	Wired::Device *dev{nullptr};
+
 	while ( dev != _socket ) {
-		if ( _inWait ) SEISCOMP_WARNING("Sync error");
+		if ( _inWait ) {
+			SEISCOMP_WARNING("Sync error");
+		}
+
 		_inWait = true;
-		if ( m ) m->unlock();
-		if ( waitLock ) waitLock->lock();
+
+		if ( m ) {
+			m->unlock();
+		}
+
+		if ( waitLock ) {
+			waitLock->lock();
+		}
+
 		dev = _select.wait();
-		if ( waitLock ) waitLock->unlock();
-		if ( m ) m->lock();
+
+		if ( waitLock ) {
+			waitLock->unlock();
+		}
+
+		if ( m ) {
+			m->lock();
+		}
+
 		_inWait = false;
-		if ( !dev )
+
+		if ( !dev ) {
 			return errno == EINTR;
+		}
 	}
 
 	return true;

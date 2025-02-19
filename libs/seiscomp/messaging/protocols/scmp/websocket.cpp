@@ -719,8 +719,9 @@ Result WebsocketConnection::unsubscribe(const std::string &group) {
 	{
 		lock_guard<mutex> l(_readMutex);
 		do {
-			if ( _subscriptions.find(group) != _subscriptions.end() )
+			if ( _subscriptions.find(group) != _subscriptions.end() ) {
 				return OK;
+			}
 
 			r = fetchAndQueuePacket();
 		}
@@ -740,26 +741,31 @@ Result WebsocketConnection::sendData(const string &targetGroup,
                                      MessageType type,
                                      ContentEncoding contentEncoding,
                                      ContentType contentType) {
-	if ( targetGroup.empty() )
+	if ( targetGroup.empty() ) {
 		return MissingGroup;
+	}
 
 	{
 		lock_guard<mutex> l(_readMutex);
-		if ( _registeredClientName.empty() )
+		if ( _registeredClientName.empty() ) {
 			return NotConnected;
+		}
 
-		if ( _groups.find(targetGroup) == _groups.end() )
+		if ( _groups.find(targetGroup) == _groups.end() ) {
 			return GroupDoesNotExist;
+		}
 	}
 
 	{
 		lock_guard<mutex> l(_writeMutex);
 
-		if ( _state.bytesBuffered > _state.maxBufferedBytes )
+		if ( _state.bytesBuffered > _state.maxBufferedBytes ) {
 			_state.maxBufferedBytes = _state.bytesBuffered;
+		}
 
-		if ( _outbox.size() > _state.maxOutboxSize )
+		if ( _outbox.size() > _state.maxOutboxSize ) {
 			_state.maxOutboxSize = _outbox.size();
+		}
 
 		BufferPtr websocketFrame = new Buffer;
 
@@ -771,11 +777,13 @@ Result WebsocketConnection::sendData(const string &targetGroup,
 				os << SCMP_PROTO_CMD_SEND << "\n"
 				      SCMP_PROTO_CMD_SEND_HEADER_DESTINATION ":" << targetGroup << "\n"
 				      SCMP_PROTO_CMD_SEND_HEADER_CONTENT_LENGTH ":" << len << "\n";
-				if ( contentEncoding != Identity )
+				if ( contentEncoding != Identity ) {
 					os << SCMP_PROTO_CMD_SEND_HEADER_ENCODING ":" << contentEncoding.toString() << "\n";
+				}
 				os << SCMP_PROTO_CMD_SEND_HEADER_MIMETYPE ":" << contentType.toString() << "\n";
-				if ( type == Protocol::Transient )
+				if ( type == Protocol::Transient ) {
 					os << SCMP_PROTO_CMD_SEND_HEADER_TRANSIENT << "\n";
+				}
 				os << "\n";
 				break;
 			}
@@ -796,7 +804,9 @@ Result WebsocketConnection::sendData(const string &targetGroup,
 		websocketFrame->data.append(data, len);
 
 		Result r = send(websocketFrame.get(), WSFrame::BinaryFrame, true);
-		if ( r != OK ) return r;
+		if ( r != OK ) {
+			return r;
+		}
 	}
 
 	//updateReceiveBuffer();
@@ -814,38 +824,46 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
                                         MessageType type,
                                         OPT(ContentEncoding) contentEncoding,
                                         OPT(ContentType) contentType) {
-	if ( targetGroup.empty() )
+	if ( targetGroup.empty() ) {
 		return MissingGroup;
+	}
 
-	if ( !contentType )
+	if ( !contentType ) {
 		return ContentTypeRequired;
+	}
 
-	if ( !contentEncoding )
+	if ( !contentEncoding ) {
 		return ContentEncodingRequired;
+	}
 
 	{
 		lock_guard<mutex> l(_readMutex);
-		if ( _registeredClientName.empty() )
+		if ( _registeredClientName.empty() ) {
 			return NotConnected;
+		}
 
-		if ( _groups.find(targetGroup) == _groups.end() )
+		if ( _groups.find(targetGroup) == _groups.end() ) {
 			return GroupDoesNotExist;
+		}
 	}
 
 	{
 		lock_guard<mutex> l(_writeMutex);
 
-		if ( _state.bytesBuffered > _state.maxBufferedBytes )
+		if ( _state.bytesBuffered > _state.maxBufferedBytes ) {
 			_state.maxBufferedBytes = _state.bytesBuffered;
+		}
 
-		if ( _outbox.size() > _state.maxOutboxSize )
+		if ( _outbox.size() > _state.maxOutboxSize ) {
 			_state.maxOutboxSize = _outbox.size();
+		}
 
 		BufferPtr websocketFrame = new Buffer;
 
 		string blob;
-		if ( !encode(blob, msg, *contentEncoding, *contentType, schemaVersion().packed) || blob.empty() )
+		if ( !encode(blob, msg, *contentEncoding, *contentType, schemaVersion().packed) || blob.empty() ) {
 			return EncodingError;
+		}
 
 		{
 			osstream os(websocketFrame->data);
@@ -863,7 +881,9 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 		websocketFrame->data.append(blob);
 
 		Result r = send(websocketFrame.get(), WSFrame::BinaryFrame, true);
-		if ( r != OK ) return r;
+		if ( r != OK ) {
+			return r;
+		}
 	}
 
 	//updateReceiveBuffer();
@@ -879,8 +899,9 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 Result WebsocketConnection::fetchInbox() {
 	lock_guard<mutex> l(_readMutex);
 	Result r = readFrame(_recvFrame, &_readMutex);
-	if ( r != OK ) return r;
-	handleFrame(_recvFrame, nullptr, &r);
+	if ( r == OK ) {
+		handleFrame(_recvFrame, nullptr, &r);
+	}
 	return r;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -949,8 +970,9 @@ Result WebsocketConnection::recv(Packet &p) {
 		// Fill the inbox as much as possible without blocking
 		if ( _inboxWaterLevel ) {
 			while ( _inbox.size() < _inboxWaterLevel ) {
-				if ( readFrame(_recvFrame, nullptr, false) != OK )
+				if ( readFrame(_recvFrame, nullptr, false) != OK ) {
 					break;
+				}
 				handleFrame(_recvFrame, nullptr);
 			}
 		}
@@ -999,8 +1021,9 @@ Packet *WebsocketConnection::recv(Result *result) {
 		// Fill the inbox as much as possible without blocking
 		if ( _inboxWaterLevel ) {
 			while ( _inbox.size() < _inboxWaterLevel ) {
-				if ( readFrame(_recvFrame, nullptr, false) != OK )
+				if ( readFrame(_recvFrame, nullptr, false) != OK ) {
 					break;
+				}
 				handleFrame(_recvFrame, nullptr);
 			}
 		}
@@ -1008,15 +1031,23 @@ Packet *WebsocketConnection::recv(Result *result) {
 		if ( !_inbox.empty() ) {
 			Packet *p0 = _inbox.front();
 			_inbox.pop_front();
-			if ( p ) delete p;
-			if ( result ) *result = OK;
+			if ( p ) {
+				delete p;
+			}
+			if ( result ) {
+				*result = OK;
+			}
 			return p0;
 		}
 
-		if ( !p ) p = new Packet;
+		if ( !p ) {
+			p = new Packet;
+		}
 
 		r = readFrame(_recvFrame, &_readMutex);
-		if ( r != OK ) break;
+		if ( r != OK ) {
+			break;
+		}
 
 		if ( handleFrame(_recvFrame, p, &r) ) {
 			// Check the inbox again to make sure that messages are
@@ -1025,19 +1056,30 @@ Packet *WebsocketConnection::recv(Result *result) {
 				Packet *p0 = _inbox.front();
 				_inbox.pop_front();
 				queuePacket(p);
-				if ( result ) *result = OK;
+				if ( result ) {
+					*result = OK;
+				}
 				return p0;
 			}
 
-			if ( result ) *result = OK;
+			if ( result ) {
+				*result = OK;
+			}
 			return p;
 		}
-		else if ( r != OK )
+		else if ( r != OK ) {
 			break;
+		}
 	}
 
-	if ( result ) *result = r;
-	if ( p ) delete p;
+	if ( result ) {
+		*result = r;
+	}
+
+	if ( p ) {
+		delete p;
+	}
+
 	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1047,10 +1089,14 @@ Packet *WebsocketConnection::recv(Result *result) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketConnection::waitForAck() {
-	if ( _ackWindow == 0 ) return;
+	if ( _ackWindow == 0 ) {
+		return;
+	}
 
 	lock_guard<mutex> lw(_writeMutex);
-	if ( _state.localSequenceNumber < _ackWindow ) return;
+	if ( _state.localSequenceNumber < _ackWindow ) {
+		return;
+	}
 
 	while ( _outbox.size() >= _ackWindow ) {
 		_writeMutex.unlock();
@@ -1161,8 +1207,9 @@ Result WebsocketConnection::disconnect() {
 	// Receive and ignore all frames unless a receipt frame is
 	// received
 	Packet p;
-	while ( readFrame(_recvFrame, nullptr, true) == OK )
+	while ( readFrame(_recvFrame, nullptr, true) == OK ) {
 		handleFrame(_recvFrame, &p);
+	}
 
 	_registeredClientName = string();
 	_state.sequenceNumber = Core::None;
@@ -1210,7 +1257,9 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
                                       mutex *mutex,
                                       bool forceBlock) {
 	while ( true ) {
-		if ( frame.isFinished() ) frame.reset();
+		if ( frame.isFinished() ) {
+			frame.reset();
+		}
 		while ( _getcount ) {
 			while ( !frame.isFinished() ) {
 				int len = frame.feed(_getp, _getcount);
@@ -1222,7 +1271,9 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 
 				_getcount -= len;
 				_getp += len;
-				if ( !_getcount ) break;
+				if ( !_getcount ) {
+					break;
+				}
 			}
 
 			if ( frame.isFinished() ) {
@@ -1272,18 +1323,22 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 			}
 			else {
 				if ( mutex ) {
-					if ( !wait(mutex, &_waitMutex) )
+					if ( !wait(mutex, &_waitMutex) ) {
 						return SystemError;
-					else if ( _select.timedOut() )
+					}
+					else if ( _select.timedOut() ) {
 						return TimeoutError;
+					}
 					continue;
 				}
 				else if ( forceBlock ) {
 					if ( !_inWait ) {
-						if ( !wait(nullptr, &_waitMutex) )
+						if ( !wait(nullptr, &_waitMutex) ) {
 							return SystemError;
-						else if ( _select.timedOut() )
+						}
+						else if ( _select.timedOut() ) {
 							return TimeoutError;
+						}
 					}
 					else {
 						_waitMutex.lock();
@@ -1328,10 +1383,15 @@ Result WebsocketConnection::send(Buffer *msg, WSFrame::Type type, bool isRegular
 	}
 
 	Wired::Websocket::Frame::finalizeBuffer(msg, type);
+
 	_socket->addMode(Wired::Device::Write);
+
 	r = sendSocket(msg->header.data(), msg->header.size());
-	if ( r == OK )
+
+	if ( r == OK ) {
 		r = sendSocket(msg->data.data(), msg->data.size());
+	}
+
 	_socket->removeMode(Wired::Device::Write);
 	_sockMutex.unlock();
 
@@ -1421,8 +1481,9 @@ void WebsocketConnection::updateReceiveBuffer() {
 Result WebsocketConnection::fetchAndQueuePacket() {
 	Result r;
 
-	if ( (r = readFrame(_recvFrame, nullptr, true)) == OK )
+	if ( (r = readFrame(_recvFrame, nullptr, true)) == OK ) {
 		handleFrame(_recvFrame, nullptr, &r);
+	}
 
 	return r;
 }
@@ -1435,16 +1496,20 @@ Result WebsocketConnection::fetchAndQueuePacket() {
 bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
                                       Packet *p, Result *r) {
 	FrameHeaders headers(frame.data.data(), frame.data.size());
-	if ( r ) *r = OK;
+	if ( r ) {
+		*r = OK;
+	}
 
 	if ( !headers.next() ) {
 		SEISCOMP_ERROR("decoding frame");
-		if ( r ) *r = Error;
+		if ( r ) {
+			*r = Error;
+		}
 		return false;
 	}
 
 	if ( headers.nameEquals(SCMP_PROTO_REPLY_SEND) ) {
-		Packet *inboxPkt = nullptr;
+		Packet *inboxPkt{nullptr};
 		if ( !p ) {
 			inboxPkt = new Packet;
 			p = inboxPkt;
@@ -1455,7 +1520,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		while ( headers.next() ) {
 			// End of header section
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
+
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_SEND_HEADER_SEQ_NUMBER) ) {
 				char *end;
 				((char*)headers.val_start)[headers.val_len] = '\0';
@@ -1489,17 +1557,25 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			contentLength = payloadLength;
 		else if ( contentLength != payloadLength ) {
 			SEISCOMP_ERROR("Mismatching payload length with respect to header");
-			if ( r ) *r = NetworkProtocolError;
+			if ( r ) {
+				*r = NetworkProtocolError;
+			}
+			if ( inboxPkt ) {
+				delete inboxPkt;
+			}
 			return false;
 		}
 
 		p->type = Packet::Data;
-		if ( gotSequenceNumber )
+
+		if ( gotSequenceNumber ) {
 			p->seqNo = *_state.sequenceNumber;
+		}
 		p->payload.assign(headers.getptr(), payloadLength);
 
-		if ( inboxPkt )
+		if ( inboxPkt ) {
 			queuePacket(inboxPkt);
+		}
 
 		return true;
 	}
@@ -1507,7 +1583,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 	if ( headers.nameEquals(SCMP_PROTO_REPLY_ACK) ) {
 		// Handle acknowledgement
 		while ( headers.next() ) {
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
+
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_ACK_HEADER_SEQ_NUMBER) ) {
 				char *end;
 				((char*)headers.val_start)[headers.val_len] = '\0';
@@ -1546,7 +1625,8 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		}
 	}
 	else if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER) ) {
-		Packet *inboxPkt = nullptr;
+		Packet *inboxPkt{nullptr};
+
 		if ( !p ) {
 			inboxPkt = new Packet;
 			p = inboxPkt;
@@ -1555,7 +1635,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		bool hasClient = false, hasGroup = false;
 
 		while ( headers.next() ) {
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
+
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_ENTER_HEADER_GROUP) ) {
 				p->target.assign(headers.val_start, headers.val_len);
 				hasGroup = true;
@@ -1568,7 +1651,12 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		if ( !hasClient || !hasGroup ) {
 			SEISCOMP_ERROR("Expected client and group tags in " SCMP_PROTO_REPLY_ENTER " message");
-			if ( r ) *r = NetworkProtocolError;
+			if ( r ) {
+				*r = NetworkProtocolError;
+			}
+			if ( inboxPkt ) {
+				delete inboxPkt;
+			}
 			return false;
 		}
 
@@ -1584,8 +1672,9 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			SEISCOMP_DEBUG("Subscribed to group %s", p->target.c_str());
 		}
 
-		if ( inboxPkt )
+		if ( inboxPkt ) {
 			queuePacket(inboxPkt);
+		}
 
 		return true;
 	}
@@ -1599,7 +1688,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		bool hasClient = false, hasGroup = false;
 
 		while ( headers.next() ) {
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
+
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_LEAVE_HEADER_GROUP) ) {
 				p->target.assign(headers.val_start, headers.val_len);
 				hasGroup = true;
@@ -1612,7 +1704,12 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		if ( !hasClient || !hasGroup ) {
 			SEISCOMP_ERROR("Expected client and group tags in " SCMP_PROTO_REPLY_ENTER " message");
-			if ( r ) *r = NetworkProtocolError;
+			if ( r ) {
+				*r = NetworkProtocolError;
+			}
+			if ( inboxPkt ) {
+				delete inboxPkt;
+			}
 			return false;
 		}
 
@@ -1632,8 +1729,9 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			}
 		}
 
-		if ( inboxPkt )
+		if ( inboxPkt ) {
 			queuePacket(inboxPkt);
+		}
 
 		return true;
 	}
@@ -1648,7 +1746,10 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		while ( headers.next() ) {
 			// End of header section
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
+
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_STATE_HEADER_DESTINATION) ) {
 				p->target.assign(headers.val_start, headers.val_len);
 			}
@@ -1670,15 +1771,21 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			contentLength = payloadLength;
 		else if ( contentLength != payloadLength ) {
 			SEISCOMP_ERROR("Mismatching payload length with respect to header");
-			if ( r ) *r = NetworkProtocolError;
+			if ( r ) {
+				*r = NetworkProtocolError;
+			}
+			if ( inboxPkt ) {
+				delete inboxPkt;
+			}
 			return false;
 		}
 
 		p->type = Packet::Status;
 		p->payload.assign(headers.getptr(), payloadLength);
 
-		if ( inboxPkt )
+		if ( inboxPkt ) {
 			queuePacket(inboxPkt);
+		}
 
 		return true;
 	}
@@ -1690,15 +1797,19 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		}
 
 		while ( headers.next() ) {
-			if ( !headers.name_len ) break;
-			if ( headers.nameEquals(SCMP_PROTO_REPLY_DISCONNECTED_HEADER_CLIENT) )
+			if ( !headers.name_len ) {
+				break;
+			}
+			if ( headers.nameEquals(SCMP_PROTO_REPLY_DISCONNECTED_HEADER_CLIENT) ) {
 				p->subject.assign(headers.val_start, headers.val_len);
+			}
 		}
 
 		p->type = Packet::Disconnected;
 
-		if ( inboxPkt )
+		if ( inboxPkt ) {
 			queuePacket(inboxPkt);
+		}
 
 		return true;
 	}
@@ -1718,10 +1829,14 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		}
 	}
 	else if ( headers.nameEquals(SCMP_PROTO_REPLY_ERROR) ) {
-		if ( r ) *r = ConnectionClosedByPeer;
+		if ( r ) {
+			*r = ConnectionClosedByPeer;
+		}
 
 		while ( headers.next() ) {
-			if ( !headers.name_len ) break;
+			if ( !headers.name_len ) {
+				break;
+			}
 			if ( headers.nameEquals(SCMP_PROTO_REPLY_ERROR_HEADER_SEQ_NUMBER) ) {
 				char *end;
 				((char*)headers.val_start)[headers.val_len] = '\0';
@@ -1758,7 +1873,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 		}
 
 		string errorMessage;
-		errorMessage.assign(headers.getptr(), frame.data.data()+frame.data.size()-headers.getptr());
+		errorMessage.assign(headers.getptr(), frame.data.data() + frame.data.size() - headers.getptr());
 
 		size_t p = errorMessage.find(' ');
 		if ( p != string::npos ) {

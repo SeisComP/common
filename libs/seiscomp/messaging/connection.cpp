@@ -61,10 +61,14 @@ void Timeout() {
 
 	// Send state-of-health messages
 	for ( auto &&connection : Pool ) {
-		if ( !connection->protocol() ) continue;
+		if ( !connection->protocol() ) {
+			continue;
+		}
 
 		double usedCPU = floor(HostInfo.getCurrentCpuUsage() * 1E4) * 1E-4;
-		if ( usedCPU < 0 ) usedCPU = 0;
+		if ( usedCPU < 0 ) {
+			usedCPU = 0;
+		}
 
 		string content;
 		{
