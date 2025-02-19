@@ -75,40 +75,38 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		for ( auto oit = seq->begin(); oit != it; ++oit ) {
 			RecordCPtr rec = (*it);
 			int ns = rec->sampleCount();
-			if ( ns == 0 || rec->data() == nullptr ) {
+			if ( !ns || !rec->data() ) {
 				continue;
 			}
 
 			auto dataType = rec->data()->dataType();
-			if ( globalOffset ) {
-				if ( dataType == Array::FLOAT ) {
-					auto arr = static_cast<const FloatArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
+			if ( dataType == Array::FLOAT ) {
+				auto arr = static_cast<const FloatArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
 				}
-				else if ( dataType == Array::DOUBLE ) {
-					auto arr = static_cast<const DoubleArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else if ( dataType == Array::INT ) {
-					auto arr = static_cast<const IntArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else {
-					continue;
-				}
-
-				offsetSampleCount += ns;
 			}
+			else if ( dataType == Array::DOUBLE ) {
+				auto arr = static_cast<const DoubleArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::INT ) {
+				auto arr = static_cast<const IntArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else {
+				continue;
+			}
+
+			offsetSampleCount += ns;
 		}
 	}
 
-	for (; it != seq->end(); ++it) {
+	for ( ; it != seq->end(); ++it ) {
 		RecordCPtr rec = (*it);
 		int imin = 0, imax = 0;
 		int ns = rec->sampleCount();
@@ -210,36 +208,34 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		for ( auto oit = it; oit != seq->end(); ++oit ) {
 			RecordCPtr rec = (*it);
 			int ns = rec->sampleCount();
-			if ( ns == 0 || rec->data() == nullptr ) {
+			if ( !ns || !rec->data() ) {
 				continue;
 			}
 
 			auto dataType = rec->data()->dataType();
-			if ( globalOffset ) {
-				if ( dataType == Array::FLOAT ) {
-					auto arr = static_cast<const FloatArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
+			if ( dataType == Array::FLOAT ) {
+				auto arr = static_cast<const FloatArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
 				}
-				else if ( dataType == Array::DOUBLE ) {
-					auto arr = static_cast<const DoubleArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else if ( dataType == Array::INT ) {
-					auto arr = static_cast<const IntArray*>(rec->data());
-					for ( int i = 0; i < ns; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else {
-					continue;
-				}
-
-				offsetSampleCount += ns;
 			}
+			else if ( dataType == Array::DOUBLE ) {
+				auto arr = static_cast<const DoubleArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::INT ) {
+				auto arr = static_cast<const IntArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else {
+				continue;
+			}
+
+			offsetSampleCount += ns;
 		}
 	}
 
@@ -1346,7 +1342,9 @@ bool RecordWidget::isRecordVisible(int slot) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordVisible(int slot, bool visible) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
+	if ( !stream ) {
+		return false;
+	}
 
 	stream->visible = visible;
 
@@ -1354,7 +1352,10 @@ bool RecordWidget::setRecordVisible(int slot, bool visible) {
 		_shadowWidget->setRecordVisible(slot, visible);
 	}
 
-	if ( _drawMode != Single ) setDirty();
+	if ( _drawMode != Single ) {
+		setDirty();
+	}
+
 	update();
 	return true;
 }
@@ -1994,7 +1995,7 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 	}
 
 	if ( copyMarker ) {
-		for ( auto *m : _marker ) {
+		for ( auto *m : qAsConst(_marker) ) {
 			_shadowWidget->addMarker(m->copy());
 		}
 	}
@@ -2564,7 +2565,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				}
 			}
 			else {
-				for ( auto *s : _streams ) {
+				for ( auto *s : qAsConst(_streams) ) {
 					int frontIndex = s->filtering?Stream::Filtered:Stream::Raw;
 					if ( s->visible && s->traces[frontIndex].visible ) {
 						stream = s;
@@ -2749,7 +2750,7 @@ void RecordWidget::showScaledValues(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setDirty() {
 	_drawRecords = true;
-	for ( Stream *s : _streams ) {
+	for ( Stream *s : qAsConst(_streams) ) {
 		if ( s ) {
 			s->setDirty();
 		}
@@ -2943,13 +2944,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		case Stacked:
 		{
 			bool isDirty = false;
-			bool isFirst[2] = {true,true};
+			bool isFirst[2] = {true, true};
 			double minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-				Stream *stream = *it;
+			for ( auto &stream : _streams ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -2959,9 +2959,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->posY = 0;
 				stream->height = h;
 
-				if ( stream->hasCustomBackgroundColor &&
-					 !customBackgroundColor.isValid() )
+				if ( stream->hasCustomBackgroundColor && !customBackgroundColor.isValid() ) {
 					customBackgroundColor = stream->customBackgroundColor;
+				}
 
 				if ( (stream->records[Stream::Filtered] && (stream->filtering || _showAllRecords) && stream->traces[Stream::Filtered].dirty) ||
 					(stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
@@ -2988,13 +2988,16 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				painter.fillRect(_canvasRect.translated(-_canvasRect.topLeft()), blend(bg, customBackgroundColor));
 			}
 
-			if ( !isDirty ) break;
+			if ( !isDirty ) {
+				break;
+			}
 
 			// Second pass draws all records
 			slot = 0;
-			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:nullptr;
-				if ( stream == nullptr ) continue;
+			for ( auto &stream : _streams ) {
+				if ( !stream->visible ) {
+					continue;
+				}
 
 				stream->traces[0].dyMin = minAmpl[0];
 				stream->traces[0].dyMax = maxAmpl[0];
@@ -3003,7 +3006,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->traces[1].dyMax = maxAmpl[1];
 
 				drawRecords(stream, slot);
+
 				emitUpdated = true;
+				++slot;
 			}
 			break;
 		}
@@ -3512,12 +3517,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						QString str;
 						if ( _showScaledValues )
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax, _valuePrecision))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							           stream->axisLabel);
 
 						int rh = 2 * painter.fontMetrics().ascent() + 4;
 						int y = stream->height - rh;
@@ -3528,12 +3533,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)))
-								      .arg(stream->axisLabel);
+								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								           stream->axisLabel);
 							else
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset, _valuePrecision))
-								      .arg(stream->axisLabel);
+								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								           stream->axisLabel);
 
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
@@ -3600,12 +3605,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( _showScaledValues )
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax, _valuePrecision))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							           stream->axisLabel);
 
 						int rh = 2*painter.fontMetrics().ascent()+4;
 						int y = stream->posY + stream->height - rh;
@@ -3616,12 +3621,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->posY+stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)))
-								      .arg(stream->axisLabel);
+								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								           stream->axisLabel);
 							else
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset, _valuePrecision))
-								      .arg(stream->axisLabel);
+								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								           stream->axisLabel);
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
 					}
@@ -3702,12 +3707,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( _showScaledValues )
 						str = tr("amax: %1%2")
-						      .arg(numberToEngineering(absMax * (stream->scale > 0 ? stream->scale : -stream->scale)))
-						      .arg(stream->axisLabel);
+						      .arg(numberToEngineering(absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+						           stream->axisLabel);
 					else
 						str = tr("amax: %1%2")
-						      .arg(numberToEngineering(absMax, _valuePrecision))
-						      .arg(stream->axisLabel);
+						      .arg(numberToEngineering(absMax, _valuePrecision),
+						           stream->axisLabel);
 
 					int rh = 2*painter.fontMetrics().ascent()+4;
 					int y = stream->height - rh;
@@ -3718,12 +3723,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					if ( stream->height >= y+rh ) {
 						if ( _showScaledValues )
 							str = tr("mean: %1%2")
-							      .arg(numberToEngineering(offset * (stream->scale > 0 ? stream->scale : -stream->scale)))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(offset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
 							str = tr("mean: %1%2")
-							      .arg(numberToEngineering(offset, _valuePrecision))
-							      .arg(stream->axisLabel);
+							      .arg(numberToEngineering(offset, _valuePrecision),
+							           stream->axisLabel);
 						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 					}
 				}
