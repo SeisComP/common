@@ -25,6 +25,7 @@
 #include <seiscomp/core/io.h>
 
 #include <ostream>
+#include <string_view>
 #include <fmt/ostream.h>
 
 
