@@ -559,10 +559,10 @@ Result WebsocketConnection::connect(const char *address,
 			}
 			else if ( headers.nameEquals("DB-Access") ) {
 				string readParameters(headers.val_start, headers.val_len);
-				auto packet = new Packet;
 
 				size_t p = readParameters.find("://");
 				if ( p != string::npos ) {
+					auto packet = new Packet;
 					auto proto = readParameters.substr(0, p);
 					auto params = readParameters.substr(p + 3);
 
