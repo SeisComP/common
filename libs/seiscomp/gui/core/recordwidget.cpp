@@ -2287,6 +2287,9 @@ void RecordWidget::prepareRecords(Stream *s) {
 				trace.absMax = std::max(std::abs(trace.dOffset - trace.dyMin),
 				                        std::abs(trace.dOffset - trace.dyMax));
 			}
+			else {
+				trace.visible = true;
+			}
 			trace.dirtyData = false;
 		}
 		else {
