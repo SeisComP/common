@@ -1553,9 +1553,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		int headerLength = headers.getptr() - frame.data.data();
 		int payloadLength = frame.data.size() - headerLength;
-		if ( contentLength < 0 )
-			contentLength = payloadLength;
-		else if ( contentLength != payloadLength ) {
+		if ( contentLength != payloadLength ) {
 			SEISCOMP_ERROR("Mismatching payload length with respect to header");
 			if ( r ) {
 				*r = NetworkProtocolError;
@@ -1767,9 +1765,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 
 		int headerLength = headers.getptr() - frame.data.data();
 		int payloadLength = frame.data.size() - headerLength;
-		if ( contentLength < 0 )
-			contentLength = payloadLength;
-		else if ( contentLength != payloadLength ) {
+		if ( contentLength != payloadLength ) {
 			SEISCOMP_ERROR("Mismatching payload length with respect to header");
 			if ( r ) {
 				*r = NetworkProtocolError;
