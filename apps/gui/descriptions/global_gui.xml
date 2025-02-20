@@ -191,7 +191,7 @@
 					<description>Show status bar.</description>
 				</parameter>
 
-				<parameter name="tabPosition" type="string" values="off, north, south, east, west">
+				<parameter name="tabPosition" type="string" values="off,north,south,east,west">
 					<description>
 					The position of tab bar of GUI applications like scolv.
 					An unset value lets the application decide where to place
@@ -209,7 +209,6 @@
 					</parameter>
 					<parameter name="originSymbolMinSize" type="int" default="9" unit="px">
 						<description>
-<<<<<<< HEAD
 						The minimum symbol size of origins. The size is scaled
 						with magnitude according to
 						&quot;scheme.mag.originSymbolScaleMag&quot;.
@@ -355,7 +354,7 @@
 							<parameter name="color" type="color" default="FFA000">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine">
+							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>
 								The style of the pen. Supported values are:
 								NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
@@ -372,7 +371,7 @@
 							<parameter name="color" type="color" default="FFFFFF">
 								<description>The color of the pen.</description>
 							</parameter>
-							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine">
+							<parameter name="style" type="string" default="DotLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>
 								The style of the pen. Supported values are:
 								NoPen, SolidLine, DashLine, DotLine, DashDotLine,
@@ -571,7 +570,7 @@
 								</group>
 								<group name="brush">
 									<description>
-									Defines the brush of the enlcosed area.
+									Defines the brush of the enclosed area.
 									</description>
 									<parameter name="color" type="color" default="">
 										<description>The color of the pen.</description>
