@@ -17,19 +17,17 @@
 		from the event.
 		</description>
 		<configuration>
-			<group name="magnitudes">
-				<group name="mb(IDC)">
-					<parameter name="Q" type="path">
-						<description>
-						Location of the station specific Q table. If not
-						specified then @DATADIR@/magnitudes/IDC/qfvc.ml will be
-						used as fallback. {net}, {sta} and {loc} are placeholders
-						which will be replaced with the concrete network code,
-						station code and location code.
-						</description>
-					</parameter>
-				</group>
-			</group>
+			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="mb(IDC)">
+				<parameter name="Q" type="path">
+					<description>
+					Location of the station specific Q table. If not
+					specified then @DATADIR@/magnitudes/IDC/qfvc.ml will be
+					used as fallback. {net}, {sta} and {loc} are placeholders
+					which will be replaced with the concrete network code,
+					station code and location code.
+					</description>
+				</parameter>
+			</extend-struct>
 		</configuration>
 	</binding>
 </seiscomp>

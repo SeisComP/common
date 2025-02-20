@@ -1070,7 +1070,7 @@
 						</description>
 					</parameter>
 				</group>
-				<struct type="GlobalAmplitudeProfile" title="Amplitude type profile">
+				<struct type="GlobalBindingsAmplitudeProfile" title="Amplitude type profile" aliases="config:amplitudes.aliases">
 					<description>
 					An amplitude profile configures global parameters for a
 					particular amplitude type. The available amplitude types
@@ -1260,7 +1260,7 @@
 				For magnitude correction parameters, e.g., network of station
 				corrections, create a magnitude type profile.
 				</description>
-				<struct type="GlobalBindingsMagnitudeTypeProfile" title="Magnitude type profile">
+				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile" aliases="config:magnitudes.aliases">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types

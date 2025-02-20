@@ -25,74 +25,69 @@
 		Standard local (Richter) magnitude
 		</description>
 		<configuration>
-			<group name="amplitudes">
-				<group name="ML">
+			<extend-struct type="GlobalBindingsAmplitudeProfile" match-name="ML">
+				<description>
+				Parameters for measuring ML amplitudes. Add more parameters
+				by adding an amplitude type profile 'ML',
+				</description>
+				<parameter name="preFilter" type="string" default="">
 					<description>
-					Parameters for measuring ML amplitudes. Add more parameters
-					by adding an amplitude type profile 'ML',
+					The filter applied to raw records before applying
+					Wood-Anderson simulation. Default: no pre-filtering.
 					</description>
-					<parameter name="preFilter" type="string" default="">
-						<description>
-						The filter applied to raw records before applying
-						Wood-Anderson simulation. Default: no pre-filtering.
-						</description>
-					</parameter>
-					<parameter name="measureType" type="string" default="AbsMax">
-						<description>
-						This parameter allows to set how the amplitude is measured.
-						Either by finding the absolute maximum of the demeaned
-						trace (AbsMax), the difference of maximum and minimum of
-						the signal window (MinMax) or the maximum peak-trough
-						of one cycle (PeakTrough).
-
-						Note that if absMax is already explicitly configured, this
-						parameter has no effect.
-						</description>
-					</parameter>
-					<parameter name="combiner" type="string" default="average">
-						<description>
-						Defines the combiner operation for the amplitudes measured
-						on either both horizontal component. The default is to
-						use the average. Allowed values are: &quot;average&quot;,
-						&quot;min&quot;, &quot;max&quot; and &quot;geometric_mean&quot;.
-						&quot;geometric_mean&quot; corresponds to averaging single-trace
-						magnitudes instead of their amplitudes.
-						</description>
-					</parameter>
-				</group>
-			</group>
-
-			<group name="magnitudes">
-				<group name="ML">
+				</parameter>
+				<parameter name="measureType" type="string" default="AbsMax">
 					<description>
-					Parameters for computing ML magnitudes from ML amplitudes.
+					This parameter allows to set how the amplitude is measured.
+					Either by finding the absolute maximum of the demeaned
+					trace (AbsMax), the difference of maximum and minimum of
+					the signal window (MinMax) or the maximum peak-trough
+					of one cycle (PeakTrough).
+
+					Note that if absMax is already explicitly configured, this
+					parameter has no effect.
 					</description>
-					<parameter name="logA0" type="string" default="0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85">
-						<description>
-						The calibration function log10(A0).
+				</parameter>
+				<parameter name="combiner" type="string" default="average">
+					<description>
+					Defines the combiner operation for the amplitudes measured
+					on either both horizontal component. The default is to
+					use the average. Allowed values are: &quot;average&quot;,
+					&quot;min&quot;, &quot;max&quot; and &quot;geometric_mean&quot;.
+					&quot;geometric_mean&quot; corresponds to averaging single-trace
+					magnitudes instead of their amplitudes.
+					</description>
+				</parameter>
+			</extend-struct>
+			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="ML">
+				<description>
+				Parameters for computing ML magnitudes from ML amplitudes.
+				</description>
+				<parameter name="logA0" type="string" default="0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85">
+					<description>
+					The calibration function log10(A0).
 
-						Format: any list of distance-value pairs separated by
-						comma. Values within pairs are separated by colon.
+					Format: any list of distance-value pairs separated by
+					comma. Values within pairs are separated by colon.
 
-						Example: &quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;
-						specifies 4 distance intervals from
-						0...60, 60...100, 100...400 and 400...1000 km distance.
-						Within these intervals log10(A0) is interpolated linearly
-						between -1.3...-2.8, -2.8...-3.0, -3.0...-4.5 and -4.5...-5.8,
-						respectively.
+					Example: &quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;
+					specifies 4 distance intervals from
+					0...60, 60...100, 100...400 and 400...1000 km distance.
+					Within these intervals log10(A0) is interpolated linearly
+					between -1.3...-2.8, -2.8...-3.0, -3.0...-4.5 and -4.5...-5.8,
+					respectively.
 
-						Note: The first and last distance samples limit the
-						maximum distance range for computing ML.
-						</description>
-					</parameter>
-					<parameter name="maxDistanceKm" type="double" unit="km" default="-1.0">
-						<description>
-							Maximum epicentral distance for computing ML.
-							No distance limitation for maxDistanceKm = -1.
-						</description>
-					</parameter>
-				</group>
-			</group>
+					Note: The first and last distance samples limit the
+					maximum distance range for computing ML.
+					</description>
+				</parameter>
+				<parameter name="maxDistanceKm" type="double" unit="km" default="-1.0">
+					<description>
+						Maximum epicentral distance for computing ML.
+						No distance limitation for maxDistanceKm = -1.
+					</description>
+				</parameter>
+			</extend-struct>
 		</configuration>
 	</binding>
 </seiscomp>

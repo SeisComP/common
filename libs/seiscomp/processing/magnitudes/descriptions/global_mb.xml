@@ -11,25 +11,23 @@
 		Body wave magnitude at teleseismic distances measured at 1 s period.
 		</description>
 		<configuration>
-			<group name="magnitudes">
-				<group name="mb">
+			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="mb">
+				<description>
+				Parameters for computing mb magnitudes from mb amplitudes.
+				</description>
+				<parameter name="minDist" type="double" unit="deg" default="5">
 					<description>
-					Parameters for computing mb magnitudes from mb amplitudes.
+					Minimum epicentral distance for computing mb. Note: According
+					to the IASPEI recommendations in 2013, the minimum distance
+					should be 20 deg.
 					</description>
-					<parameter name="minDist" type="double" unit="deg" default="5">
-						<description>
-						Minimum epicentral distance for computing mb. Note: According
-						to the IASPEI recommendations in 2013, the minimum distance
-						should be 20 deg.
-						</description>
-					</parameter>
-					<parameter name="maxDist" type="double" unit="deg" default="105">
-						<description>
-						Maximum epicentral distance for computing mb.
-						</description>
-					</parameter>
-				</group>
-			</group>
+				</parameter>
+				<parameter name="maxDist" type="double" unit="deg" default="105">
+					<description>
+					Maximum epicentral distance for computing mb.
+					</description>
+				</parameter>
+			</extend-struct>
 		</configuration>
 	</binding>
 </seiscomp>

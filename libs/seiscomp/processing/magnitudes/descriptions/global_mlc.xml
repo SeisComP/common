@@ -101,216 +101,212 @@
 		Custom magnitude for local events measured on horizontal components
 		</description>
 		<configuration>
-			<group name="amplitudes">
-				<group name="MLc">
+			<extend-struct type="GlobalBindingsAmplitudeProfile" match-name="MLc">
+				<description>
+				Parameters for measuring MLc amplitudes. Add more parameters
+				by adding an amplitude type profile 'MLc',
+				</description>
+				<parameter name="preFilter" type="string" default="BW(3,0.5,12)">
 					<description>
-					Parameters for measuring MLc amplitudes. Add more parameters
-					by adding an amplitude type profile 'MLc',
+					The filter applied to raw records before applying
+					Wood-Anderson simulation.
 					</description>
-					<parameter name="preFilter" type="string" default="BW(3,0.5,12)">
+				</parameter>
+				<parameter name="applyWoodAnderson" type="boolean" default="true">
+					<description>
+					Applying Wood-Anderson simulation. To achieve displacement
+					records without WA simulation, an integration filter can
+					be applied with the pre-filter.
+					</description>
+				</parameter>
+				<parameter name="amplitudeScale" type="string" default="1.0">
+					<description>
+					Scaling value multiplied to the measured amplitudes to
+					match the amplitude units expected by the magnitude
+					calibration function.
+
+					Expected amplitudes are
+					in units of mym but actual amplitudes provided from
+					Wood-Anderson-corrected seismograms are in units of mm:
+					amplitudeScale = 1000.
+
+					If data are not corrected for WA, measured amplitudes
+					take the unit of gain-corrected data considering the
+					preFilter:
+					amplitudeScale converts between units of measured and
+					excpected amplitude.
+					</description>
+				</parameter>
+				<parameter name="measureType" type="string" default="AbsMax" values="AbsMax,MinMax,PeakTrough">
+					<description>
+					Type for measuring amplitudes.
+
+					AbsMax: absolute maximum
+
+					MinMax: half difference between absolute maximum and minimum
+
+					PeakTrough: half difference between maximum and minimum
+					on a half cycle
+					</description>
+				</parameter>
+				<parameter name="combiner" type="string" default="max" values="min,max,average,geometric_mean">
+					<description>
+					Define how to combine the amplitudes measured on both
+					horizontals components:
+
+					min: take the minimum
+
+					max: take the maxium
+
+					avgerage: form the average
+
+					geometric_mean: form the geometric mean
+					</description>
+				</parameter>
+			</extend-struct>
+			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="MLc">
+				<description>
+				Parameters for computing MLc magnitudes from MLc amplitudes.
+				</description>
+				<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
+					<description>
+					Considered distance measure between source and receiver.
+
+					hypocentral: hypocentral distance
+
+					epicentral: epicentral distance
+					</description>
+				</parameter>
+				<parameter name="minDist" type="double" default="-1.0" unit="deg">
+					<description>
+					The minimum distance for computing magnitudes from amplitudes.
+					Negative values deactivate the check.
+					</description>
+				</parameter>
+				<parameter name="maxDist" type="double" default="8" unit="deg">
+					<description>
+					The maximum distance for computing magnitudes from amplitudes.
+					Negative values deactivate the check.
+					</description>
+				</parameter>
+				<parameter name="minDepth" type="double" default="-10" unit="km">
+					<description>
+					The minimum source depth below which magnitudes are computed.
+					</description>
+				</parameter>
+				<parameter name="maxDepth" type="double" default="80" unit="km">
+					<description>
+					The maximum source depth up to which magnitudes are computed.
+					</description>
+				</parameter>
+				<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="" values="parametric,A0">
+					<description>
+					Type of magnitude calibration formula to be considered.
+					The calibration parameters are considered accordingly.
+
+					&quot;parametric&quot;: consider parameters of parametric
+					configuration in parametric section
+
+					&quot;A0&quot;: consider parameters of non-parametric
+					configuration in A0 section.
+					</description>
+				</parameter>
+				<group name="A0">
+					<description>
+					Parameters for A0, non-parametric magnitude calibration.
+					Considered if magnitude.MLc.calibrationType = "A0".
+					</description>
+					<parameter name="logA0" type="string" default="0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85">
 						<description>
-						The filter applied to raw records before applying
-						Wood-Anderson simulation.
-						</description>
-					</parameter>
-					<parameter name="applyWoodAnderson" type="boolean" default="true">
-						<description>
-						Applying Wood-Anderson simulation. To achieve displacement
-						records without WA simulation, an integration filter can
-						be applied with the pre-filter.
-						</description>
-					</parameter>
-					<parameter name="amplitudeScale" type="string" default="1.0">
-						<description>
-						Scaling value multiplied to the measured amplitudes to
-						match the amplitude units expected by the magnitude
-						calibration function.
+						The non-parametric calibration function log10(A0).
 
-						Expected amplitudes are
-						in units of mym but actual amplitudes provided from
-						Wood-Anderson-corrected seismograms are in units of mm:
-						amplitudeScale = 1000.
+						Format: any list of distance-value pairs separated by
+						comma. Values within pairs are separated by colon.
 
-						If data are not corrected for WA, measured amplitudes
-						take the unit of gain-corrected data considering the
-						preFilter:
-						amplitudeScale converts between units of measured and
-						excpected amplitude.
-						</description>
-					</parameter>
-					<parameter name="measureType" type="string" default="AbsMax" values="AbsMax,MinMax,PeakTrough">
-						<description>
-						Type for measuring amplitudes.
+						Example: &quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;
+						specifies 4 distance intervals from
+						0...60, 60...100, 100...400 and 400...1000 km distance.
+						Within these intervals log10(A0) is interpolated linearly
+						between -1.3...-2.8, -2.8...-3.0, -3.0...-4.5 and -4.5...-5.8,
+						respectively.
 
-						AbsMax: absolute maximum
-
-						MinMax: half difference between absolute maximum and minimum
-
-						PeakTrough: half difference between maximum and minimum
-						on a half cycle
-						</description>
-					</parameter>
-					<parameter name="combiner" type="string" default="max" values="min,max,average,geometric_mean">
-						<description>
-						Define how to combine the amplitudes measured on both
-						horizontals components:
-
-						min: take the minimum
-
-						max: take the maxium
-
-						avgerage: form the average
-
-						geometric_mean: form the geometric mean
+						Note: The first and last distance samples limit the
+						maximum distance range for computing MLv.
 						</description>
 					</parameter>
 				</group>
-			</group>
-			<group name="magnitudes">
-				<group name="MLc">
+				<group name="parametric">
 					<description>
-					Parameters for computing MLc magnitudes from MLc amplitudes.
+					Parameters for parametric magnitude calibration:
+					MLc = log10(A) + c7 * e^(c8 * r) + c6 * h + c3 * log10(r / c5) + c2 * (r + c4) + c1 + c0(station)
+
+					Considered if magnitude.MLc.calibrationType = "parametric".
 					</description>
-					<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
+					<parameter name="c0" type="double" default="0.0">
 						<description>
-						Considered distance measure between source and receiver.
-
-						hypocentral: hypocentral distance
-
-						epicentral: epicentral distance
+						Station correction. This is the calibration value 'c0'
+						applied in the
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<parameter name="minDist" type="double" default="-1.0" unit="deg">
+					<parameter name="c1" type="double" default="0.69">
 						<description>
-						The minimum distance for computing magnitudes from amplitudes.
-						Negative values deactivate the check.
+						The calibration value 'c1' applied in the
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<parameter name="maxDist" type="double" default="8" unit="deg">
+					<parameter name="c2" type="double"  default="0.00095">
 						<description>
-						The maximum distance for computing magnitudes from amplitudes.
-						Negative values deactivate the check.
+						The calibration value 'c2' applied in the
+						magnitude calibration formula
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<parameter name="minDepth" type="double" default="-10" unit="km">
+					<parameter name="c3" type="double" default="1.11">
 						<description>
-						The minimum source depth below which magnitudes are computed.
+						The calibration value 'c3' applied in the
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<parameter name="maxDepth" type="double" default="80" unit="km">
+					<parameter name="c4" type="double" default="0.0">
 						<description>
-						The maximum source depth up to which magnitudes are computed.
+						The calibration value 'c4' applied in the
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="" values="parametric,A0">
+					<parameter name="c5" type="double" default="1.0">
 						<description>
-						Type of magnitude calibration formula to be considered.
-						The calibration parameters are considered accordingly.
-
-						&quot;parametric&quot;: consider parameters of parametric
-						configuration in parametric section
-
-						&quot;A0&quot;: consider parameters of non-parametric
-						configuration in A0 section.
+						The calibration value 'c5' applied in the
+						parametric magnitude calibration formula.
 						</description>
 					</parameter>
-					<group name="A0">
+					<parameter name="c6" type="double" default="0.0">
 						<description>
-						Parameters for A0, non-parametric magnitude calibration.
-						Considered if magnitude.MLc.calibrationType = "A0".
+						The calibration value 'c6' applied in the
+						parametric magnitude calibration formula.
 						</description>
-						<parameter name="logA0" type="string" default="0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85">
-							<description>
-							The non-parametric calibration function log10(A0).
-
-							Format: any list of distance-value pairs separated by
-							comma. Values within pairs are separated by colon.
-
-							Example: &quot;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85&quot;
-							specifies 4 distance intervals from
-							0...60, 60...100, 100...400 and 400...1000 km distance.
-							Within these intervals log10(A0) is interpolated linearly
-							between -1.3...-2.8, -2.8...-3.0, -3.0...-4.5 and -4.5...-5.8,
-							respectively.
-
-							Note: The first and last distance samples limit the
-							maximum distance range for computing MLv.
-							</description>
-						</parameter>
-					</group>
-					<group name="parametric">
+					</parameter>
+					<parameter name="c7" type="double" default="0.0">
 						<description>
-						Parameters for parametric magnitude calibration:
-						MLc = log10(A) + c7 * e^(c8 * r) + c6 * h + c3 * log10(r / c5) + c2 * (r + c4) + c1 + c0(station)
-
-						Considered if magnitude.MLc.calibrationType = "parametric".
+						The calibration value 'c7' applied in the
+						parametric magnitude calibration formula.
 						</description>
-						<parameter name="c0" type="double" default="0.0">
-							<description>
-							Station correction. This is the calibration value 'c0'
-							applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c1" type="double" default="0.69">
-							<description>
-							The calibration value 'c1' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c2" type="double"  default="0.00095">
-							<description>
-							The calibration value 'c2' applied in the
-							magnitude calibration formula
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c3" type="double" default="1.11">
-							<description>
-							The calibration value 'c3' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c4" type="double" default="0.0">
-							<description>
-							The calibration value 'c4' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c5" type="double" default="1.0">
-							<description>
-							The calibration value 'c5' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c6" type="double" default="0.0">
-							<description>
-							The calibration value 'c6' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c7" type="double" default="0.0">
-							<description>
-							The calibration value 'c7' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="c8" type="double" default="0.0">
-							<description>
-							The calibration value 'c8' applied in the
-							parametric magnitude calibration formula.
-							</description>
-						</parameter>
-						<parameter name="H" type="double" default="40" unit="km">
-							<description>
-							The calibration value 'H' applied in the
-							parametric magnitude calibration formula for forming
-							h. Read the documentation.
-							</description>
-						</parameter>
-					</group>
+					</parameter>
+					<parameter name="c8" type="double" default="0.0">
+						<description>
+						The calibration value 'c8' applied in the
+						parametric magnitude calibration formula.
+						</description>
+					</parameter>
+					<parameter name="H" type="double" default="40" unit="km">
+						<description>
+						The calibration value 'H' applied in the
+						parametric magnitude calibration formula for forming
+						h. Read the documentation.
+						</description>
+					</parameter>
 				</group>
-			</group>
+			</extend-struct>
 		</configuration>
 	</binding>
 </seiscomp>

@@ -1922,8 +1922,6 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 		return mit->second;
 	}
 
-	std::cerr << "+ " << def->name << std::endl;
-
 	set<string> imports;
 
 	// Default is: standalone = false
@@ -2007,8 +2005,6 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 
 	mod->add(sec.get());
 
-	std::cerr << "+ " << def->name << " main section added" << std::endl;
-
 	// Create bindings model
 	vector<SchemaBinding*> schemaBindings = schema->bindingsForModule(def->name);
 	vector<SchemaBinding*> globalBindings;
@@ -2059,8 +2055,6 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 				injectExtensions(sec, sb->parameters.get());
 			}
 		}
-
-		std::cerr << "+ " << def->name << " global bindings added" << std::endl;
 	}
 
 	Section *bindingSection = nullptr;
@@ -2135,8 +2129,6 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 			injectExtensions(sec, sb->parameters.get());
 		}
 	}
-
-	std::cerr << "+ " << def->name << " module bindings added" << std::endl;
 
 	if ( mod->bindingTemplate ) {
 		for ( size_t i = 0; i < mod->bindingTemplate->categories.size(); ++i ) {
