@@ -60,6 +60,54 @@ BOOST_AUTO_TEST_CASE(index) {
 	BOOST_CHECK_EQUAL(c.green(), 14);
 	BOOST_CHECK_EQUAL(c.blue(), 15);
 	BOOST_CHECK_EQUAL(c.alpha(), 255);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "ABC"));
+	BOOST_CHECK_EQUAL(c.red(), 0xaa);
+	BOOST_CHECK_EQUAL(c.green(), 0xbb);
+	BOOST_CHECK_EQUAL(c.blue(), 0xcc);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xff);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "abc"));
+	BOOST_CHECK_EQUAL(c.red(), 0xaa);
+	BOOST_CHECK_EQUAL(c.green(), 0xbb);
+	BOOST_CHECK_EQUAL(c.blue(), 0xcc);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xff);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "DCBA"));
+	BOOST_CHECK_EQUAL(c.red(), 0xdd);
+	BOOST_CHECK_EQUAL(c.green(), 0xcc);
+	BOOST_CHECK_EQUAL(c.blue(), 0xbb);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xaa);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "dcba"));
+	BOOST_CHECK_EQUAL(c.red(), 0xdd);
+	BOOST_CHECK_EQUAL(c.green(), 0xcc);
+	BOOST_CHECK_EQUAL(c.blue(), 0xbb);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xaa);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "ABCDEF"));
+	BOOST_CHECK_EQUAL(c.red(), 0xab);
+	BOOST_CHECK_EQUAL(c.green(), 0xcd);
+	BOOST_CHECK_EQUAL(c.blue(), 0xef);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xff);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "abcdef"));
+	BOOST_CHECK_EQUAL(c.red(), 0xab);
+	BOOST_CHECK_EQUAL(c.green(), 0xcd);
+	BOOST_CHECK_EQUAL(c.blue(), 0xef);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xff);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "FEDCBACA"));
+	BOOST_CHECK_EQUAL(c.red(), 0xfe);
+	BOOST_CHECK_EQUAL(c.green(), 0xdc);
+	BOOST_CHECK_EQUAL(c.blue(), 0xba);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xca);
+
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "fedcbaca"));
+	BOOST_CHECK_EQUAL(c.red(), 0xfe);
+	BOOST_CHECK_EQUAL(c.green(), 0xdc);
+	BOOST_CHECK_EQUAL(c.blue(), 0xba);
+	BOOST_CHECK_EQUAL(c.alpha(), 0xca);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

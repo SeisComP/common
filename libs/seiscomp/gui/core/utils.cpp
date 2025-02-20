@@ -19,13 +19,15 @@
 
 #define SEISCOMP_COMPONENT Gui::Utils
 
-#include <cstdio>
-#include <cmath>
-#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/utils.h>
-#include <seiscomp/logging/log.h>
+
+#include <cstdio>
+#include <cmath>
+#include <stdexcept>
 
 #include <boost/assign.hpp>
 
@@ -37,109 +39,135 @@
 namespace Seiscomp {
 namespace Gui {
 
+
 QChar degrees = (ushort)0x00b0;
 std::string colorConvertError;
 
-bool fromString(QColor& value, const std::string& str) {
+
+namespace {
+
+int fromHexChar(char c) {
+	if ( c >= '0' && c <= '9' ) {
+		return c - '0';
+	}
+	else if ( c >= 'a' && c <= 'f' ) {
+		return (c - 'a') + 10;
+	}
+	else if ( c >= 'A' && c <= 'F' ) {
+		return (c - 'A') + 10;
+	}
+
+	throw std::invalid_argument("invalid hex character");
+}
+
+}
+
+
+bool fromString(QColor& value, std::string_view str) {
 	if ( str.empty() ) {
 		colorConvertError = "invalid color: empty string";
 		return false;
 	}
 
-	std::string col = str;
-
-	QColor tmp(str.c_str());
+	QColor tmp(QString::fromStdString(std::string(str)));
 	if ( tmp.isValid() ) {
 		value = tmp;
 		return true;
 	}
 
-	int red = 0, green = 0, blue = 0, alpha = 255;
+	int rgba[4] = { 0, 0, 0, 255 };
+	bool ok = true;
 
-	if ( col.substr(0,4) == "rgb(" ) {
-		if ( col[col.size()-1] != ')' ) {
-			colorConvertError = std::string("invalid color ") + col + ": missing closing bracket";
+	if ( str.substr(0, 4) == "rgb(" ) {
+		if ( str[str.size() - 1] != ')' ) {
+			colorConvertError = Core::stringify("invalid color %s: missing closing bracket", str);
 			return false;
 		}
-		col = col.substr(4, col.size()-4-1);
+		str = str.substr(4, str.size() - 4 - 1);
 
-		std::vector<std::string> toks;
-		Core::split(toks, col.c_str(), ",");
-		if ( toks.size() != 3 ) {
-			colorConvertError = std::string("invalid color ") + col + ": rgb() expects 3 components";
-			return false;
+		for ( int i = 0; i < 3; ++i ) {
+			auto tok = Core::tokenize(str, ",");
+			if ( !tok.data() ) {
+				colorConvertError = Core::stringify("invalid color %s: rgb() expects 3 components", str);
+				return false;
+			}
+
+			ok = Core::fromString(rgba[i], Core::trim(tok)) && ok;
 		}
-
-		bool ok = true;
-		ok = Core::fromString(red, Core::trim(std::string_view(toks[0]))) && ok;
-		ok = Core::fromString(green, Core::trim(std::string_view(toks[1]))) && ok;
-		ok = Core::fromString(blue, Core::trim(std::string_view(toks[2]))) && ok;
-		alpha = 255;
 
 		if ( !ok ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format of component inside rgb()";
+			colorConvertError = Core::stringify("invalid color %s: wrong format of component inside rgb()", str);
 			return false;
 		}
 	}
-	else if ( col.substr(0,5) == "rgba(" ) {
-		if ( col[col.size()-1] != ')' ) {
-			colorConvertError = std::string("invalid color ") + col + ": missing closing bracket";
+	else if ( str.substr(0, 5) == "rgba(" ) {
+		if ( str[str.size() - 1] != ')' ) {
+			colorConvertError = Core::stringify("invalid color %s: missing closing bracket", str);
 			return false;
 		}
-		col = col.substr(5, col.size()-5-1);
+		str = str.substr(5, str.size() - 5 - 1);
 
-		std::vector<std::string> toks;
-		Core::split(toks, col.c_str(), ",");
-		if ( toks.size() != 4 ) {
-			colorConvertError = std::string("invalid color ") + col + ": rgba() expects 4 components";
-			return false;
+		for ( int i = 0; i < 4; ++i ) {
+			auto tok = Core::tokenize(str, ",");
+			if ( !tok.data() ) {
+				colorConvertError = Core::stringify("invalid color %s: rgba() expects 4 components", str);
+				return false;
+			}
+
+			ok = Core::fromString(rgba[i], Core::trim(tok)) && ok;
 		}
-
-		bool ok = true;
-		ok = Core::fromString(red, Core::trim(std::string_view(toks[0]))) && ok;
-		ok = Core::fromString(green, Core::trim(std::string_view(toks[1]))) && ok;
-		ok = Core::fromString(blue, Core::trim(std::string_view(toks[2]))) && ok;
-		ok = Core::fromString(alpha, Core::trim(std::string_view(toks[3]))) && ok;
 
 		if ( !ok ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format of component inside rgba()";
+			colorConvertError = Core::stringify("invalid color %s: wrong format of component inside rgba()", str);
 			return false;
 		}
 	}
 	else {
-		if ( col.size() != 3 && col.size() != 4
-		 && col.size() != 6 && col.size() != 8 ) {
-			colorConvertError = std::string("invalid color ") + col + ": expected 3, 4, 6 or 8 characters";
+		if ( str.size() != 3 && str.size() != 4
+		 && str.size() != 6 && str.size() != 8 ) {
+			colorConvertError = Core::stringify("invalid color %s: expected 3, 4, 6 or 8 characters", str);
 			return false;
 		}
 
-		int readItems;
-
-		if ( col.size() > 4 )
-			readItems = sscanf(col.c_str(), "%2X%2X%2X%2X",
-					(unsigned int*)&red, (unsigned int*)&green,
-					(unsigned int*)&blue, (unsigned int*)&alpha);
-		else {
-			readItems = sscanf(col.c_str(), "%1X%1X%1X%1X",
-					(unsigned int*)&red, (unsigned int*)&green,
-					(unsigned int*)&blue, (unsigned int*)&alpha);
-			red = (red << 4) | red;
-			green = (green << 4) | green;
-			blue = (blue << 4) | blue;
-			if ( readItems > 3 )
-				alpha = (alpha << 4) | alpha;
+		try {
+			switch ( str.size() ) {
+				case 3:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[0]);
+					rgba[1] = (fromHexChar(str[1]) << 4) | fromHexChar(str[1]);
+					rgba[2] = (fromHexChar(str[2]) << 4) | fromHexChar(str[2]);
+					break;
+				case 4:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[0]);
+					rgba[1] = (fromHexChar(str[1]) << 4) | fromHexChar(str[1]);
+					rgba[2] = (fromHexChar(str[2]) << 4) | fromHexChar(str[2]);
+					rgba[3] = (fromHexChar(str[3]) << 4) | fromHexChar(str[3]);
+					break;
+				case 6:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[1]);
+					rgba[1] = (fromHexChar(str[2]) << 4) | fromHexChar(str[3]);
+					rgba[2] = (fromHexChar(str[4]) << 4) | fromHexChar(str[5]);
+					break;
+				case 8:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[1]);
+					rgba[1] = (fromHexChar(str[2]) << 4) | fromHexChar(str[3]);
+					rgba[2] = (fromHexChar(str[4]) << 4) | fromHexChar(str[5]);
+					rgba[3] = (fromHexChar(str[6]) << 4) | fromHexChar(str[7]);
+					break;
+				default:
+					colorConvertError = Core::stringify("invalid color %s: wrong format", str);
+					return false;
+			}
 		}
-
-		if ( readItems < 3 ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format";
+		catch ( ... ) {
+			colorConvertError = Core::stringify("invalid color %s: wrong format", str);
 			return false;
 		}
 	}
 
-	value.setRed(red);
-	value.setGreen(green);
-	value.setBlue(blue);
-	value.setAlpha(alpha);
+	value.setRed(rgba[0]);
+	value.setGreen(rgba[1]);
+	value.setBlue(rgba[2]);
+	value.setAlpha(rgba[3]);
 
 	return true;
 }

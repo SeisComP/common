@@ -26,7 +26,10 @@
 #include <seiscomp/gui/qt.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/defs.h>
+
 #include <QWidget>
+
+#include <string_view>
 #include <vector>
 
 
@@ -41,7 +44,7 @@ SC_GUI_API extern QChar degrees;
 
 SC_GUI_API extern std::string colorConvertError;
 
-SC_GUI_API bool fromString(QColor &value, const std::string &str);
+SC_GUI_API bool fromString(QColor &value, std::string_view str);
 SC_GUI_API QColor readColor(const std::string &query, const std::string &str,
                             const QColor &base, bool *ok = nullptr);
 
