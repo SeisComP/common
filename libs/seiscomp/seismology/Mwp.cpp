@@ -34,7 +34,9 @@ namespace Magnitudes {
 
 bool compute_Mwp(double amplitude, double delta, double &Mwp, double offset,double slope,double alpha,double rho,double fp)
 {
-	if(delta<DELTA_MIN||delta>DELTA_MAX) return false;
+	if ( (delta < DELTA_MIN) || (delta > DELTA_MAX) ) {
+		return false;
+	}
 
 	double r=(D2R*delta)*EARTH_RADIUS; // convert delta to meters
 	double momfac=4*M_PI*rho*pow(alpha,3.)*r/fp;

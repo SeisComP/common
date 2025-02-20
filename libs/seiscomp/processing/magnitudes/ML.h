@@ -31,16 +31,13 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ML : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_ML);
-
 	public:
 		MagnitudeProcessor_ML();
 
 
 	public:
+		void setDefaults() override;
 		bool setup(const Settings &settings) override;
-
-		std::string amplitudeType() const override;
 
 
 	protected:
@@ -59,7 +56,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_ML : public MagnitudeProcessor {
 
 	private:
 		LogA0  _logA0;
-		double _maxDistanceKm;
 };
 
 

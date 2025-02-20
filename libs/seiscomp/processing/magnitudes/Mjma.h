@@ -34,6 +34,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mjma : public MagnitudeProcessor {
 		MagnitudeProcessor_Mjma();
 
 	protected:
+		void setDefaults() override {}
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
 		                        double delta, double depth,

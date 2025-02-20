@@ -63,6 +63,7 @@ mutex mutexTableA;
 Magnitude_ML_idc::Magnitude_ML_idc()
 : MagnitudeProcessor(MAG_TYPE) {
 	_amplitudeType = AMP_TYPE;
+	Magnitude_ML_idc::setDefaults();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -70,8 +71,10 @@ Magnitude_ML_idc::Magnitude_ML_idc()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Magnitude_ML_idc::amplitudeType() const {
-	return MagnitudeProcessor::amplitudeType();
+void Magnitude_ML_idc::setDefaults() {
+	_minimumDistanceDeg = MINIMUM_DISTANCE;
+	_maximumDistanceDeg = MAXIMUM_DISTANCE;
+	_maximumDepthKm = MAXIMUM_DEPTH;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -82,8 +85,9 @@ std::string Magnitude_ML_idc::amplitudeType() const {
 bool Magnitude_ML_idc::setup(const Settings &settings) {
 	_attenuation.reset();
 
-	if ( !MagnitudeProcessor::setup(settings) )
+	if ( !MagnitudeProcessor::setup(settings) ) {
 		return false;
+	}
 
 	try {
 		string tablePath = Environment::Instance()->absolutePath(settings.getString("magnitudes.ML(IDC).A"));
@@ -160,14 +164,6 @@ Magnitude_ML_idc::computeMagnitude(double amplitude,
                                    double &value) {
 	if ( !_attenuation && !validTableA ) {
 		return IncompleteConfiguration;
-	}
-
-	if ( (delta < MINIMUM_DISTANCE) || (delta > MAXIMUM_DISTANCE) ) {
-		return DistanceOutOfRange;
-	}
-
-	if ( depth > MAXIMUM_DEPTH ) {
-		return DepthOutOfRange;
 	}
 
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {

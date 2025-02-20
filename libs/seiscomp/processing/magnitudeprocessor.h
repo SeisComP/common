@@ -124,6 +124,9 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 			OPT(double)            maximumDistance;
 			OPT(double)            minimumDepth;
 			OPT(double)            maximumDepth;
+			OPT(double)            minimumSNR;
+			OPT(double)            minimumPeriod;
+			OPT(double)            maximumPeriod;
 			double                 multiplier;
 			double                 offset;
 
@@ -161,9 +164,20 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		 * Returns the amplitude type used as input for this magnitude
 		 * processor.
 		 * The default implementation returns type()
-		 * @return 
+		 * @return
 		 */
 		virtual std::string amplitudeType() const;
+
+		/**
+		 * @brief Sets default parameters.
+		 *
+		 * This method is called as first in the setup() call to reset
+		 * the configuration to default.
+		 *
+		 * The distance, depth, period and SNR limits are set to Core::None
+		 * before this call.
+		 */
+		virtual void setDefaults() = 0;
 
 		virtual bool setup(const Settings &settings) override;
 
@@ -316,8 +330,17 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 		std::string   _amplitudeType;
 		std::string   _networkCode;
 		std::string   _stationCode;
+		std::string   _locationCode;
+		bool          _treatAsValidMagnitude;
 		Correction    _corrections;
 		Correction::A _defaultCorrection;
+		OPT(double)   _minimumDistanceDeg;
+		OPT(double)   _maximumDistanceDeg;
+		OPT(double)   _minimumDepthKm;
+		OPT(double)   _maximumDepthKm;
+		OPT(double)   _minimumSNR;
+		OPT(double)   _minimumPeriod;
+		OPT(double)   _maximumPeriod;
 
 		friend class MagnitudeProcessorAliasFactory;
 };

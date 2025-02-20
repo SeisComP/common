@@ -1573,7 +1573,7 @@ const std::string& AmplitudeProcessor::unit() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::computeTimeWindow() {
-	if ( !(bool)_trigger ) {
+	if ( !_trigger ) {
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
@@ -1615,8 +1615,8 @@ void AmplitudeProcessor::computeTimeWindow() {
 		return;
 	}
 
-	Core::Time startTime = _trigger + Core::TimeSpan(_config.noiseBegin);
-	Core::Time   endTime = _trigger + Core::TimeSpan(_config.signalEnd);
+	Core::Time startTime = *_trigger + Core::TimeSpan(_config.noiseBegin);
+	Core::Time   endTime = *_trigger + Core::TimeSpan(_config.signalEnd);
 
 	// Add the taper length to the requested time window otherwise
 	// amplitudes are damped
@@ -1711,10 +1711,10 @@ void AmplitudeProcessor::reprocess(OPT(double) searchBegin,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::reset() {
 	TimeWindowProcessor::reset();
+	_trigger = Core::None;
 	_noiseAmplitude = Core::None;
 	_noiseOffset = Core::None;
 	_responseApplied = false;
-	_trigger = Core::Time();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1733,13 +1733,14 @@ void AmplitudeProcessor::process(const Record *record, const DoubleArray &) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::process(const Record *record) {
 	// Sampling frequency has not been set yet
-	if ( _stream.fsamp == 0.0 )
+	if ( !_trigger || (_stream.fsamp == 0.0) ) {
 		return;
+	}
 
 	int n = static_cast<int>(_data.size());
 
 	// signal and noise window relative to _continuous->startTime()
-	double dt0  = (_trigger - dataTimeWindow().startTime()).length();
+	double dt0  = (*_trigger - dataTimeWindow().startTime()).length();
 	double dt1  = (dataTimeWindow().endTime() - dataTimeWindow().startTime()).length();
 	double dtw1  = (timeWindow().endTime() - dataTimeWindow().startTime()).length();
 	double dtn1 = dt0 + _config.noiseBegin;
@@ -1980,9 +1981,9 @@ void AmplitudeProcessor::initFilter(double fsamp) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
                                    double, double, size_t) {
-	if ( _stream.dataTimeWindow.endTime()+span < timeWindow().startTime() ) {
+	if ( _stream.dataTimeWindow.endTime() + span < timeWindow().startTime() ) {
 		// Save trigger, because reset will unset it
-		Core::Time t = _trigger;
+		auto t = _trigger;
 		reset();
 		_trigger = t;
 		return true;
@@ -2501,8 +2502,9 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::setTrigger(const Core::Time& trigger) {
-	if ( _trigger )
+	if ( _trigger ) {
 		throw Core::ValueException("The trigger has been set already");
+	}
 
 	_trigger = trigger;
 }
@@ -2513,7 +2515,11 @@ void AmplitudeProcessor::setTrigger(const Core::Time& trigger) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::Time AmplitudeProcessor::trigger() const {
-	return _trigger;
+	if ( !_trigger ) {
+		throw Core::ValueException("The trigger has not been set");
+	}
+
+	return *_trigger;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

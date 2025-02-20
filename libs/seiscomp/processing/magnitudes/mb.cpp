@@ -37,7 +37,6 @@ std::string ExpectedAmplitudeUnit = "nm";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_mb, MagnitudeProcessor, "MagnitudeProcessor_mb");
 REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mb, "mb");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -46,28 +45,24 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mb, "mb");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_mb::MagnitudeProcessor_mb()
- : MagnitudeProcessor("mb") {}
+ : MagnitudeProcessor("mb") {
+	MagnitudeProcessor_mb::setDefaults();
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MagnitudeProcessor_mb::MagnitudeProcessor_mb::setup(const Settings &settings) {
-	if ( !MagnitudeProcessor::setup(settings) )
-		return false;
+void MagnitudeProcessor_mb::setDefaults() {
+	_minimumDepthKm     = 0.0;
+	_maximumDepthKm     = 700.0;
+	_minimumDistanceDeg = 5.0;   // default minimum distance
+	_maximumDistanceDeg = 105.0; // default maximum distance
 
-	minDistanceDeg = 5.0; // default minimum distance
-	maxDistanceDeg = 105.0; // default maximum distance
-
-	// distance range in degree
-	try { minDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist"); }
-	catch ( ... ) {}
-
-	try { maxDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist"); }
-	catch ( ... ) {}
-
-	return true;
+	// maximum allowed period is 3 s according to IASPEI standard (pers. comm. Peter Bormann)
+	_minimumPeriod = 0.4;
+	_maximumPeriod = 3.0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -85,27 +80,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	const Locale *,
 	double &value) {
 
-	// Clip depth to 0
-	if ( depth < 0 ) {
-		depth = 0;
-	}
-
-	if ( delta < minDistanceDeg || delta > maxDistanceDeg ) {
-		return DistanceOutOfRange;
-	}
-
-	if ( (depth < 0) || (depth > 700) ) {
-		return DepthOutOfRange;
-	}
-
 	if ( amplitude <= 0 ) {
 		return AmplitudeOutOfRange;
-	}
-
-	// maximum allowed period is 3 s according to IASPEI standard (pers. comm. Peter Bormann)
-	if ( (period < 0.4) || (period > 3.0) ) {
-		SEISCOMP_DEBUG("mb: period is %.2f s", period);
-		return PeriodOutOfRange;
 	}
 
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
@@ -113,7 +89,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	}
 
 	// amplitude is nanometers, whereas compute_mb wants micrometers
-	bool valid = Magnitudes::compute_mb(amplitude*1.E-3, period, delta, depth+1, &value);
+	bool valid = Magnitudes::compute_mb(amplitude * 1.E-3, period, delta, depth + 1, &value);
 	return valid ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

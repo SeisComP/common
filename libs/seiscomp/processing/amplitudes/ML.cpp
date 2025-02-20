@@ -432,7 +432,10 @@ void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
 	// Default settings
 	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
+	// Maximum distance is 8 degrees
 	setMaxDist(8);
+	// Maximum depth is 80 km
+	setMaxDepth(80);
 
 	_amplitudeMeasureType = AbsMax;
 	_preFilter = string();

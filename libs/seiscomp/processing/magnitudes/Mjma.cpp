@@ -49,7 +49,11 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_Mjma, "Mjma");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_Mjma::MagnitudeProcessor_Mjma()
- : MagnitudeProcessor("Mjma") {}
+ : MagnitudeProcessor("Mjma") {
+	_maximumDepthKm = DEPTH_MAX;
+	_minimumDistanceDeg = DELTA_MIN;
+	_maximumDistanceDeg = DELTA_MAX;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -58,25 +62,19 @@ MagnitudeProcessor_Mjma::MagnitudeProcessor_Mjma()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_Mjma::computeMagnitude(
 	double amplitude, const std::string &unit,
-	double, double, double delta, double depth,
+	double, double, double delta, double,
 	const DataModel::Origin *, const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
 	const Locale *,
 	double &value) {
-	if ( delta < DELTA_MIN || delta > DELTA_MAX )
-		return DistanceOutOfRange;
 
-	if ( amplitude <= 0 )
+	if ( amplitude <= 0 ) {
 		return AmplitudeOutOfRange;
+	}
 
-	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
-
-	if ( depth > DEPTH_MAX )
-		return DepthOutOfRange;
-
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
 	double a1 = 1.73, a2 = 0., a3 = -0.83;
 	double r = Math::Geo::deg2km(delta);

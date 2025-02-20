@@ -233,11 +233,23 @@ std::string MagnitudeProcessor::amplitudeType() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::setup(const Settings &settings) {
-	if ( !Processor::setup(settings) )
+	_minimumDistanceDeg = Core::None;
+	_maximumDistanceDeg = Core::None;
+	_minimumDepthKm = Core::None;
+	_maximumDepthKm = Core::None;
+	_minimumSNR = Core::None;
+	_minimumPeriod = Core::None;
+	_maximumPeriod = Core::None;
+
+	setDefaults();
+
+	if ( !Processor::setup(settings) ) {
 		return false;
+	}
 
 	_networkCode = settings.networkCode;
 	_stationCode = settings.stationCode;
+	_locationCode = settings.locationCode;
 
 	if ( !initRegionalization(settings) )
 		return false;
@@ -403,8 +415,9 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				auto it1 = linearCorrections.find(cfg.name);
 				auto it2 = constantCorrections.find(cfg.name);
 
-				if ( it1 == linearCorrections.end() and it2 == constantCorrections.end() )
+				if ( it1 == linearCorrections.end() and it2 == constantCorrections.end() ) {
 					continue;
+				}
 
 				Correction::A c(cfg.multiplier, cfg.offset);
 				if ( it1 != linearCorrections.end() ) {
@@ -421,6 +434,48 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 			}
 		}
 	}
+
+	try {
+		_minimumDistanceDeg = Math::Geo::km2deg(settings.getDouble("magnitudes." + type() + ".minDistKm"));
+	}
+	catch ( ... ) {
+		try {
+			_minimumDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist");
+		}
+		catch ( ... ) {}
+	}
+	try {
+		_maximumDistanceDeg = Math::Geo::km2deg(settings.getDouble("magnitudes." + type() + ".maxDistKm"));
+	}
+	catch ( ... ) {
+		try {
+			_maximumDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist");
+		}
+		catch ( ... ) {}
+	}
+
+	try {
+		_minimumDepthKm = settings.getDouble("magnitudes." + type() + ".minDepth");
+	}
+	catch ( ... ) {}
+	try {
+		_maximumDepthKm = settings.getDouble("magnitudes." + type() + ".maxDepth");
+	}
+	catch ( ... ) {}
+
+	try {
+		_minimumSNR = settings.getDouble("magnitudes." + type() + ".minSNR");
+	}
+	catch ( ... ) {}
+
+	try {
+		_minimumPeriod = settings.getDouble("magnitudes." + type() + ".minPeriod");
+	}
+	catch ( ... ) {}
+	try {
+		_maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod");
+	}
+	catch ( ... ) {}
 
 	return true;
 }
@@ -452,6 +507,9 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 	try { locale->maximumDistance  = cfg->getDouble(cfgPrefix + "maxDist"); } catch ( ... ) {}
 	try { locale->minimumDepth = cfg->getDouble(cfgPrefix + "minDepth"); } catch ( ... ) {}
 	try { locale->maximumDepth = cfg->getDouble(cfgPrefix + "maxDepth"); } catch ( ... ) {}
+	try { locale->minimumSNR = cfg->getDouble(cfgPrefix + "minSNR"); } catch ( ... ) {}
+	try { locale->minimumPeriod = cfg->getDouble(cfgPrefix + "minPeriod"); } catch ( ... ) {}
+	try { locale->maximumPeriod = cfg->getDouble(cfgPrefix + "maxPeriod"); } catch ( ... ) {}
 	try { locale->multiplier = cfg->getDouble(cfgPrefix + "multiplier"); } catch ( ... ) {}
 	try { locale->offset = cfg->getDouble(cfgPrefix + "offset"); } catch ( ... ) {}
 
@@ -610,6 +668,21 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
                                      const DataModel::Amplitude *amplitude,
                                      double &value) {
 	const Locale *locale = nullptr;
+	_treatAsValidMagnitude = false;
+
+	if ( _minimumDepthKm && (depth < *_minimumDepthKm) ) {
+		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f < %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               depth, *_minimumDepthKm);
+		return DepthOutOfRange;
+	}
+
+	if ( _maximumDepthKm && (depth > *_maximumDepthKm) ) {
+		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f > %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               depth, *_maximumDepthKm);
+		return DepthOutOfRange;
+	}
 
 	// Check if regionalization is desired
 	{
@@ -710,16 +783,49 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 		}
 	}
 
-	if ( locale )
+	if ( locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: locale = '%s'",
 		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
 		               locale->name.c_str());
+	}
 
 	auto r = computeMagnitude(amplitudeValue, unit, period, snr, delta, depth,
 	                          hypocenter, receiver, amplitude, locale, value);
 
-	if ( r != OK )
+	if ( r != OK ) {
 		return r;
+	}
+
+	/**
+	 * ------------------------------------------------------------------------
+	 * Station specific distance and depth checks
+	 * ------------------------------------------------------------------------
+	 *
+	 * The distance checks will be performed after computing the magnitude so
+	 * that a concrete implementation can still decide if it wants to keep the
+	 * computed magnitude but with weight 0 and with passedQC flag set to
+	 * false (_treatAsValidMagnitude = true).
+	 * An example is to compute and keep all magnitudes at close distances
+	 * but to not let them contribute to the network magnitude.
+	 */
+
+	if ( _minimumDistanceDeg && delta < *_minimumDistanceDeg ) {
+		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f < %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               delta, *_minimumDistanceDeg);
+		return DistanceOutOfRange;
+	}
+
+	if ( _maximumDistanceDeg && delta > *_maximumDistanceDeg ) {
+		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f > %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               delta, *_maximumDistanceDeg);
+		return DistanceOutOfRange;
+	}
+
+	auto minimumSNR = _minimumSNR;
+	auto minimumPeriod = _minimumPeriod;
+	auto maximumPeriod = _maximumPeriod;
 
 	if ( !locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: effective correction (no locale) = %.2f:%.2f",
@@ -740,6 +846,53 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 			               locale->multiplier, locale->offset);
 			value = locale->multiplier * value + locale->offset;
 		}
+
+		// Set locale values if not specified in bindings
+		if ( !minimumSNR ) {
+			minimumSNR = locale->minimumSNR;
+		}
+
+		if ( !minimumPeriod ) {
+			minimumPeriod = locale->minimumPeriod;
+		}
+
+		if ( !maximumPeriod ) {
+			maximumPeriod = locale->maximumPeriod;
+		}
+	}
+
+	/**
+	 * ------------------------------------------------------------------------
+	 * Quality checks
+	 * ------------------------------------------------------------------------
+	 *
+	 * All quality checks will keep the computed magnitude but associated with
+	 * weight 0 and with passedQC flag set to false. If amplitudes and
+	 * magnitudes should be omitted completely then the corresponding amplitude
+	 * should be configured to check those thresholds already.
+	 */
+
+	if ( minimumSNR && snr < *minimumSNR ) {
+		r = SNROutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: SNR out of range: %f > %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               snr, *minimumSNR);
+		_treatAsValidMagnitude = true;
+	}
+
+	if ( minimumPeriod && period < *minimumPeriod ) {
+		r = PeriodOutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f < %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               period, *minimumPeriod);
+		_treatAsValidMagnitude = true;
+	}
+	else if ( maximumPeriod && period > *maximumPeriod ) {
+		r = PeriodOutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f > %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               period, *maximumPeriod);
+		_treatAsValidMagnitude = true;
 	}
 
 	return r;
@@ -862,7 +1015,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::treatAsValidMagnitude() const {
-	return false;
+	return _treatAsValidMagnitude;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

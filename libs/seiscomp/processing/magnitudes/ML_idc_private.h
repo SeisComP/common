@@ -39,18 +39,17 @@ class SC_SYSTEM_CLIENT_API Magnitude_ML_idc : public MagnitudeProcessor {
 		Magnitude_ML_idc();
 
 	public:
-		virtual std::string amplitudeType() const;
+		void setDefaults() override;
+		bool setup(const Settings &settings) override;
 
-		virtual bool setup(const Settings &settings);
-
-		virtual Status computeMagnitude(double amplitude, const std::string &unit,
-		                                double period, double snr,
-		                                double delta, double depth,
-		                                const DataModel::Origin *hypocenter,
-		                                const DataModel::SensorLocation *receiver,
-		                                const DataModel::Amplitude *,
-		                                const Locale *,
-		                                double &value);
+		Status computeMagnitude(double amplitude, const std::string &unit,
+		                        double period, double snr,
+		                        double delta, double depth,
+		                        const DataModel::Origin *hypocenter,
+		                        const DataModel::SensorLocation *receiver,
+		                        const DataModel::Amplitude *,
+		                        const Locale *,
+		                        double &value) override;
 
 	private:
 		Util::TabValuesPtr _attenuation;

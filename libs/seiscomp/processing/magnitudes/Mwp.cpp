@@ -33,7 +33,6 @@ std::string ExpectedAmplitudeUnit = "nm*s";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_Mwp, MagnitudeProcessor, "MagnitudeProcessor_Mwp");
 REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_Mwp, "Mwp");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -42,7 +41,10 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_Mwp, "Mwp");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_Mwp::MagnitudeProcessor_Mwp()
- : MagnitudeProcessor("Mwp") {}
+ : MagnitudeProcessor("Mwp") {
+	_minimumDistanceDeg = 5.0;
+	_maximumDistanceDeg = 105.0;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -61,16 +63,16 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 		return AmplitudeOutOfRange;
 	}
 
-	if ( delta < 5 || delta > 105 ) {
-		return DistanceOutOfRange;
-	}
-
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
 	}
 
-	bool status = Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value);
-	return status ? OK : Error;
+	if ( Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value) ) {
+		return OK;
+	}
+	else {
+		return DistanceOutOfRange;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

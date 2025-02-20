@@ -37,9 +37,8 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 
 
 	public:
+		void setDefaults() override;
 		bool setup(const Settings &settings) override;
-
-		std::string amplitudeType() const override;
 
 
 	protected:
@@ -57,10 +56,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLc : public MagnitudeProcessor {
 		                const std::string &configPrefix) override;
 
 	private:
-		double      _minDistanceKm{-1.0};
-		double      _maxDistanceKm{8.0 * KM_OF_DEGREE};
-		double      _maxDepth{80.0};
-		double      _minDepth{-10.0};
 		std::string _distanceMode{"hypocentral"};
 		std::string _calibrationType{"parametric"};
 		// parameters for parametric magnitude calibration

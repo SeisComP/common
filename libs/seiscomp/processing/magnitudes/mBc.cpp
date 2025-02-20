@@ -23,12 +23,11 @@
 #include <seiscomp/seismology/magnitudes.h>
 #include <math.h>
 
-namespace Seiscomp {
 
+namespace Seiscomp {
 namespace Processing {
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_mBc, MagnitudeProcessor, "MagnitudeProcessor_mBc");
 REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mBc, "mBc");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

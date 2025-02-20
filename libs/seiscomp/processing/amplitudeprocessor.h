@@ -377,7 +377,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		//! Sets the trigger used to compute the timewindow to calculate
 		//! the amplitude
 		//! Once a trigger has been set all succeeding calls will fail.
-		virtual void setTrigger(const Core::Time& trigger);
+		virtual void setTrigger(const Core::Time &trigger);
 
 		Core::Time trigger() const;
 
@@ -501,28 +501,27 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 	//  Protected Members
 	// ----------------------------------------------------------------------
 	protected:
-		Core::Time  _trigger;
+		OPT(Core::Time) _trigger;
 
 		// User defined amplitude search window
-		OPT(double) _searchBegin, _searchEnd;
+		OPT(double)     _searchBegin, _searchEnd;
 
 		// pre-arrival offset and rms
-		OPT(double) _noiseOffset, _noiseAmplitude, _lastAmplitude;
+		OPT(double)     _noiseOffset, _noiseAmplitude, _lastAmplitude;
 
-		double      _snrMax, _snrRMS;
-		bool        _enableUpdates;
-		bool        _enableResponses;
+		bool            _enableUpdates;
+		bool            _enableResponses;
 
 		// config
-		Config      _config;
-		Environment _environment;
+		Config          _config;
+		Environment     _environment;
 
-		std::string _type;
-		std::string _unit;
+		std::string     _type;
+		std::string     _unit;
 
-		std::string _pickID;
+		std::string     _pickID;
 
-		bool        _responseApplied;
+		bool            _responseApplied;
 
 
 	// ----------------------------------------------------------------------
