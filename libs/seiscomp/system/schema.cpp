@@ -50,7 +50,6 @@ IMPLEMENT_SC_CLASS(SchemaGroup, "Configuration::Group");
 IMPLEMENT_SC_CLASS(SchemaStructure, "Configuration::Struct");
 IMPLEMENT_SC_CLASS(SchemaStructExtent, "Configuration::Struct::Extent");
 IMPLEMENT_SC_CLASS(SchemaModule, "Configuration::Module");
-IMPLEMENT_SC_CLASS(SchemaPluginParameters, "Configuration::Plugin::Parameters");
 IMPLEMENT_SC_CLASS(SchemaPlugin, "Configuration::Plugin");
 IMPLEMENT_SC_CLASS(SchemaBinding, "Configuration::Binding");
 IMPLEMENT_SC_CLASS(SchemaSetupInputOption, "Configuration::SetupInputOption");
@@ -158,6 +157,16 @@ void SchemaParameters::serialize(Archive& ar) {
 			_structs,
 			[this](const SchemaStructurePtr &schemaStructure) {
 				return add(schemaStructure.get());
+			}
+		),
+		Archive::STATIC_TYPE
+	);
+
+	ar & NAMED_OBJECT_HINT("extend-struct",
+		Seiscomp::Core::Generic::containerMember(
+			structExtents,
+			[this](const SchemaStructExtentPtr &extension) {
+				return structExtents.push_back(extension);
 			}
 		),
 		Archive::STATIC_TYPE
@@ -302,22 +311,7 @@ void SchemaModule::serialize(Archive& ar) {
 void SchemaStructExtent::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("type", type, Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT("match-name", matchName);
-	SchemaPluginParameters::serialize(ar);
-}
-
-
-void SchemaPluginParameters::serialize(Archive& ar) {
 	SchemaParameters::serialize(ar);
-
-	ar & NAMED_OBJECT_HINT("extend-struct",
-		Seiscomp::Core::Generic::containerMember(
-			structExtents,
-			[this](const SchemaStructExtentPtr &extension) {
-				return structExtents.push_back(extension);
-			}
-		),
-		Archive::STATIC_TYPE
-	);
 }
 
 

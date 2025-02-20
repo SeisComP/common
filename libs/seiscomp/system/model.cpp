@@ -347,10 +347,19 @@ void populate(Container *container, SchemaParameters *params, const string &pref
 	for ( size_t i = 0; i < params->parameterCount(); ++i ) {
 		SchemaParameter *pdef = params->parameter(i);
 		std::string paramName = prefix;
-		if ( !pdef->name.empty() )
+		if ( !pdef->name.empty() ) {
 			paramName += "." + pdef->name;
-		ParameterPtr param = new Parameter(pdef, paramName);
-		container->add(param.get());
+		}
+
+		auto existingParam = container->findParameter(paramName);
+		if ( existingParam ) {
+			existingParam->definition = pdef;
+			existingParam->variableName = paramName;
+		}
+		else {
+			ParameterPtr param = new Parameter(pdef, paramName);
+			container->add(param.get());
+		}
 	}
 
 	for ( size_t i = 0; i < params->groupCount(); ++i ) {
@@ -609,9 +618,10 @@ struct StructureExtender : public ModelVisitor {
 	}
 
 	bool visit(Group *group) override {
-		for ( auto structure : group->structureTypes ) {
+		for ( auto &structure : group->structureTypes ) {
 			if ( structure->definition->type == extension->type ) {
 				structure->extensions.push_back(extension);
+				hasExtended = true;
 			}
 		}
 		return true;
@@ -624,11 +634,12 @@ struct StructureExtender : public ModelVisitor {
 	void visit(Parameter*, bool) override { }
 
 	SchemaStructExtent *extension;
+	bool hasExtended{false};
 };
 
 
-void injectExtensions(Container *container, SchemaPluginParameters *pluginParams) {
-	for ( auto e : pluginParams->structExtents ) {
+void injectExtensions(Container *container, SchemaParameters *params) {
+	for ( auto &e : params->structExtents ) {
 		StructureExtender v(e.get());
 		container->accept(&v);
 	}
@@ -858,17 +869,21 @@ Structure *Structure::copy(bool backImport) {
 
 Structure *Structure::clone() const {
 	Structure *struc = new Structure(definition, path, name);
-	for ( size_t i = 0; i < parameters.size(); ++i )
+	for ( size_t i = 0; i < parameters.size(); ++i ) {
 		struc->add(parameters[i]->clone());
+	}
 
-	for ( size_t i = 0; i < groups.size(); ++i )
+	for ( size_t i = 0; i < groups.size(); ++i ) {
 		struc->add(groups[i]->clone());
+	}
 
-	for ( size_t i = 0; i < structures.size(); ++i )
+	for ( size_t i = 0; i < structures.size(); ++i ) {
 		struc->add(structures[i]->clone());
+	}
 
-	for ( size_t i = 0; i < structureTypes.size(); ++i )
+	for ( size_t i = 0; i < structureTypes.size(); ++i ) {
 		struc->addType(structureTypes[i]->clone());
+	}
 
 	struc->extensions = extensions;
 
@@ -877,10 +892,13 @@ Structure *Structure::clone() const {
 
 
 Structure *Structure::instantiate(const char *n) const {
-	if ( !name.empty() ) return nullptr;
+	if ( !name.empty() ) {
+		return nullptr;
+	}
+
 	Structure *struc = loadStructure(definition, path, n);
 
-	for ( auto e : extensions ) {
+	for ( auto &e : extensions ) {
 		if ( e->matchName.empty() || boost::regex_match(n, boost::regex(e->matchName)) ) {
 			populate(struc, e.get(), struc->path);
 			injectExtensions(struc, e.get());
@@ -1894,37 +1912,46 @@ bool Model::recreate() {
 
 
 Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
-	if ( def == nullptr ) return nullptr;
+	if ( !def ) {
+		return nullptr;
+	}
 
 	// Loaded already?
-	ModMap::iterator mit = modMap.find(def->name);
-	if ( mit != modMap.end() ) return mit->second;
+	auto mit = modMap.find(def->name);
+	if ( mit != modMap.end() ) {
+		return mit->second;
+	}
+
+	std::cerr << "+ " << def->name << std::endl;
 
 	set<string> imports;
 
 	// Default is: standalone = false
 	// Then "global" is automatically imported
-	if ( def->name != "global" && (!def->standalone || *def->standalone == false) )
+	if ( def->name != "global" && (!def->standalone || *def->standalone == false) ) {
 		imports.insert("global");
+	}
 
-	if ( !def->import.empty() && def->import != def->name )
+	if ( !def->import.empty() && def->import != def->name ) {
 		imports.insert(def->import);
+	}
 
 	ModulePtr mod = new Module(def);
 
-	if ( !def->category.empty() )
+	if ( !def->category.empty() ) {
 		categories.insert(def->category);
+	}
 
 	set<string>::iterator it;
 	for ( it = imports.begin(); it != imports.end(); ++it ) {
 		SchemaModule *baseDef = schema->module(*it);
-		if ( baseDef == nullptr ) {
+		if ( !baseDef ) {
 			// TODO: set error message
 			return nullptr;
 		}
 
 		Module *base = create(schema, baseDef);
-		if ( base == nullptr ) {
+		if ( !base ) {
 			// TODO: set error message
 			return nullptr;
 		}
@@ -1980,13 +2007,16 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 
 	mod->add(sec.get());
 
+	std::cerr << "+ " << def->name << " main section added" << std::endl;
+
 	// Create bindings model
 	vector<SchemaBinding*> schemaBindings = schema->bindingsForModule(def->name);
 	vector<SchemaBinding*> globalBindings;
 
 	if ( !schemaBindings.empty() && imports.find("global") != imports.end() &&
-	     def->inheritGlobalBinding && *def->inheritGlobalBinding == true )
+	     def->inheritGlobalBinding && *def->inheritGlobalBinding == true ) {
 		globalBindings = schema->bindingsForModule("global");
+	}
 
 	// Import global
 	if ( !globalBindings.empty() ) {
@@ -2007,7 +2037,9 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 			SchemaBinding *sb = globalBindings[i];
 
 			// Category bindings are not supported for import
-			if ( !sb->category.empty() ) continue;
+			if ( !sb->category.empty() ) {
+				continue;
+			}
 
 			if ( sb->parameters ) {
 				for ( size_t j = 0; j < sb->parameters->parameterCount(); ++j ) {
@@ -2016,13 +2048,19 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 					sec->add(param.get());
 				}
 
-				for ( size_t j = 0; j < sb->parameters->groupCount(); ++j )
+				for ( size_t j = 0; j < sb->parameters->groupCount(); ++j ) {
 					loadGroup(sec, sb->parameters->group(j), "");
+				}
 
-				for ( size_t j = 0; j < sb->parameters->structureCount(); ++j )
+				for ( size_t j = 0; j < sb->parameters->structureCount(); ++j ) {
 					sec->addType(loadStructure(sb->parameters->structure(j), "", ""));
+				}
+
+				injectExtensions(sec, sb->parameters.get());
 			}
 		}
+
+		std::cerr << "+ " << def->name << " global bindings added" << std::endl;
 	}
 
 	Section *bindingSection = nullptr;
@@ -2086,13 +2124,19 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 				sec->add(param.get());
 			}
 
-			for ( size_t j = 0; j < sb->parameters->groupCount(); ++j )
+			for ( size_t j = 0; j < sb->parameters->groupCount(); ++j ) {
 				loadGroup(sec, sb->parameters->group(j), prefix);
+			}
 
-			for ( size_t j = 0; j < sb->parameters->structureCount(); ++j )
+			for ( size_t j = 0; j < sb->parameters->structureCount(); ++j ) {
 				sec->addType(loadStructure(sb->parameters->structure(j), prefix, ""));
+			}
+
+			injectExtensions(sec, sb->parameters.get());
 		}
 	}
+
+	std::cerr << "+ " << def->name << " module bindings added" << std::endl;
 
 	if ( mod->bindingTemplate ) {
 		for ( size_t i = 0; i < mod->bindingTemplate->categories.size(); ++i ) {
