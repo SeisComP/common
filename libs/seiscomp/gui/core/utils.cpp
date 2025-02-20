@@ -71,9 +71,9 @@ bool fromString(QColor& value, const std::string& str) {
 		}
 
 		bool ok = true;
-		ok = Core::fromString(red, toks[0]) && ok;
-		ok = Core::fromString(green, toks[1]) && ok;
-		ok = Core::fromString(blue, toks[2]) && ok;
+		ok = Core::fromString(red, Core::trim(std::string_view(toks[0]))) && ok;
+		ok = Core::fromString(green, Core::trim(std::string_view(toks[1]))) && ok;
+		ok = Core::fromString(blue, Core::trim(std::string_view(toks[2]))) && ok;
 		alpha = 255;
 
 		if ( !ok ) {
@@ -96,10 +96,10 @@ bool fromString(QColor& value, const std::string& str) {
 		}
 
 		bool ok = true;
-		ok = Core::fromString(red, toks[0]) && ok;
-		ok = Core::fromString(green, toks[1]) && ok;
-		ok = Core::fromString(blue, toks[2]) && ok;
-		ok = Core::fromString(alpha, toks[3]) && ok;
+		ok = Core::fromString(red, Core::trim(std::string_view(toks[0]))) && ok;
+		ok = Core::fromString(green, Core::trim(std::string_view(toks[1]))) && ok;
+		ok = Core::fromString(blue, Core::trim(std::string_view(toks[2]))) && ok;
+		ok = Core::fromString(alpha, Core::trim(std::string_view(toks[3]))) && ok;
 
 		if ( !ok ) {
 			colorConvertError = std::string("invalid color ") + col + ": wrong format of component inside rgba()";
