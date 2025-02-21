@@ -493,11 +493,13 @@ SchemaBinding *SchemaDefinitions::binding(const std::string &name) {
 bool SchemaDefinitions::add(SchemaBinding *binding) {
 	for ( size_t i = 0; i < _bindings.size(); ++i ) {
 		if ( _bindings[i]->name == binding->name &&
-		     _bindings[i]->module == binding->module )
+		     _bindings[i]->module == binding->module ) {
 			return false;
+		}
 	}
 
 	_bindings.push_back(binding);
+
 	return true;
 }
 
@@ -506,10 +508,22 @@ std::vector<SchemaPlugin*> SchemaDefinitions::pluginsForModule(const char *name)
 	std::vector<SchemaPlugin*> plugins;
 
 	for ( size_t i = 0; i < _plugins.size(); ++i ) {
-		for ( size_t j = 0; j < _plugins[i]->extends.size(); ++j )
-			if ( _plugins[i]->extends[j] == name )
+		for ( size_t j = 0; j < _plugins[i]->extends.size(); ++j ) {
+			if ( _plugins[i]->extends[j] == name ) {
 				plugins.push_back(_plugins[i].get());
+			}
+		}
 	}
+
+	std::sort(plugins.begin(), plugins.end(), [](SchemaPlugin *a, SchemaPlugin *b) {
+		if ( !a->parameters ) {
+			return b->parameters != nullptr;
+		}
+		if ( !b->parameters ) {
+			return false;
+		}
+		return a->parameters->structExtents.size() < b->parameters->structExtents.size();
+	});
 
 	return plugins;
 }
@@ -597,9 +611,20 @@ std::vector<SchemaBinding*> SchemaDefinitions::bindingsForModule(const char *nam
 	std::vector<SchemaBinding*> bindings;
 
 	for ( size_t i = 0; i < _bindings.size(); ++i ) {
-		if ( _bindings[i]->module == name )
+		if ( _bindings[i]->module == name ) {
 			bindings.push_back(_bindings[i].get());
+		}
 	}
+
+	std::sort(bindings.begin(), bindings.end(), [](SchemaBinding *a, SchemaBinding *b) {
+		if ( !a->parameters ) {
+			return b->parameters != nullptr;
+		}
+		if ( !b->parameters ) {
+			return false;
+		}
+		return a->parameters->structExtents.size() < b->parameters->structExtents.size();
+	});
 
 	return bindings;
 }
