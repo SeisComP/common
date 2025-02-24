@@ -66,6 +66,8 @@ namespace Core {
      and Seiscomp::Client::StreamApplication::setEndTime to OPT(Seiscomp::Core::Time)
    - Rename Seiscomp::Wired::ClientSession::inAvail to outputBufferSize and
      remove virtual declaration
+   - Added abstract virtual function MagnitudeProcessor::setDefaults() which must
+     be implemented by all derived classes.
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator
