@@ -673,7 +673,10 @@ const QString& RecordMarker::renderText() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordMarker::setVisible(bool visible) {
-	if ( _visible == visible ) return;
+	if ( _visible == visible ) {
+		return;
+	}
+
 	_visible = visible;
 	update();
 }
