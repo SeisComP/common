@@ -120,13 +120,10 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor : public Processor {
 				SourceReceiverPath
 			};
 
-			OPT(double)            minimumDistance;
-			OPT(double)            maximumDistance;
-			OPT(double)            minimumDepth;
-			OPT(double)            maximumDepth;
-			OPT(double)            minimumSNR;
-			OPT(double)            minimumPeriod;
-			OPT(double)            maximumPeriod;
+			OPT(double)            minimumDistanceDeg;
+			OPT(double)            maximumDistanceDeg;
+			OPT(double)            minimumDepthKm;
+			OPT(double)            maximumDepthKm;
 			double                 multiplier;
 			double                 offset;
 

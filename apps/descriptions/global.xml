@@ -565,7 +565,7 @@
 								Enable the region or not.
 								</description>
 							</parameter>
-							<parameter name="minDist" type="double" unit="deg">
+							<parameter name="minDist" type="string" unit="deg">
 								<description>
 								The minimum distance required to compute a
 								magnitude. This settings has no effect with e.g.
@@ -574,7 +574,7 @@
 								The default value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="maxDist" type="double" unit="deg">
+							<parameter name="maxDist" type="string" unit="deg">
 								<description>
 								The maximum distance allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick
@@ -583,7 +583,7 @@
 								value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="minDepth" type="double" unit="km">
+							<parameter name="minDepth" type="string" unit="km">
 								<description>
 								The minimum depth required to compute a magnitude.
 								This settings has no effect with e.g. scautopick
@@ -592,40 +592,13 @@
 								value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="maxDepth" type="double" unit="km">
+							<parameter name="maxDepth" type="string" unit="km">
 								<description>
 								The maximum depth allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to retrieve the depth. The default
 								value is implementation specific.
-								</description>
-							</parameter>
-							<parameter name="minSNR" type="double">
-								<description>
-								The minimum SNR required for a magnitude to pass
-								the QC check. The station magnitude will be computed
-								anyway but if the SNR is below this threshold it will
-								be associated with weight zero and will not contribute
-								to the network magnitude.
-								</description>
-							</parameter>
-							<parameter name="minPeriod" type="double" unit="s">
-								<description>
-								The minimum period required for a magnitude to pass
-								the QC check. The station magnitude will be computed
-								anyway but if the period is below this threshold it will
-								be associated with weight zero and will not contribute
-								to the network magnitude.
-								</description>
-							</parameter>
-							<parameter name="maxPeriod" type="double" unit="s">
-								<description>
-								The maximum period allowed for a magnitude to pass
-								the QC check. The station magnitude will be computed
-								anyway but if the period is above this threshold it will
-								be associated with weight zero and will not contribute
-								to the network magnitude.
 								</description>
 							</parameter>
 							<parameter name="check" type="string" default="source">
@@ -1288,7 +1261,7 @@
 						Example: &quot;0.0, regionA: -0.1, regionB: 0.2&quot;.
 						</description>
 					</parameter>
-					<parameter name="minDist" type="double" unit="deg">
+					<parameter name="minDist" type="string" unit="deg">
 						<description>
 						The minimum distance in degree required to compute a
 						magnitude. This settings has no effect with e.g.
@@ -1297,17 +1270,7 @@
 						The default value is implementation specific.
 						</description>
 					</parameter>
-					<parameter name="minDistKm" type="double" unit="km">
-						<description>
-						The minimum distance in km required to compute a
-						magnitude. This settings has no effect with e.g.
-						scautopick as there is no information about the
-						source of the event to compute the distance.
-						The default value is implementation specific. This value
-						has higher priority than minDist.
-						</description>
-					</parameter>
-					<parameter name="maxDist" type="double" unit="deg">
+					<parameter name="maxDist" type="string" unit="deg">
 						<description>
 						The maximum distance in degree allowed to compute a magnitude.
 						This settings has no effect with e.g. scautopick
@@ -1316,17 +1279,7 @@
 						value is implementation specific.
 						</description>
 					</parameter>
-					<parameter name="maxDistKm" type="double" unit="km">
-						<description>
-						The maximum distance in km allowed to compute a magnitude.
-						This settings has no effect with e.g. scautopick
-						as there is no information about the source of
-						the event to compute the distance. The default
-						value is implementation specific. This value
-						has higher priority than maxDist.
-						</description>
-					</parameter>
-					<parameter name="minDepth" type="double" unit="km">
+					<parameter name="minDepth" type="string" unit="km">
 						<description>
 						The minimum depth required to compute a magnitude.
 						This settings has no effect with e.g. scautopick
@@ -1335,7 +1288,7 @@
 						value is implementation specific.
 						</description>
 					</parameter>
-					<parameter name="maxDepth" type="double" unit="km">
+					<parameter name="maxDepth" type="string" unit="km">
 						<description>
 						The maximum depth allowed to compute a magnitude.
 						This settings has no effect with e.g. scautopick

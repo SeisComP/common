@@ -296,12 +296,12 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 			}
 		}
 
-		if ( locale->minimumDistance ) {
-			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistance);
+		if ( locale->minimumDistanceDeg ) {
+			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistanceDeg);
 		}
 
-		if ( locale->maximumDistance ) {
-			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistance);
+		if ( locale->maximumDistanceDeg ) {
+			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistanceDeg);
 		}
 	}
 	else {
