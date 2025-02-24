@@ -1144,7 +1144,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="minDist" type="double" unit="deg">
+					<parameter name="minDist" type="string" unit="deg">
 						<description>
 						The minimum distance required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1153,7 +1153,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDist" type="double" unit="deg">
+					<parameter name="maxDist" type="string" unit="deg">
 						<description>
 						The maximum distance allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1162,7 +1162,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="minDepth" type="double" unit="km">
+					<parameter name="minDepth" type="string" unit="km">
 						<description>
 						The minimum depth required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1171,7 +1171,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDepth" type="double" unit="km">
+					<parameter name="maxDepth" type="string" unit="km">
 						<description>
 						The maximum depth allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there

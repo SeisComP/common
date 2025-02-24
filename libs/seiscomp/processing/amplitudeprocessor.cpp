@@ -34,6 +34,7 @@
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/seismology/ttt.h>
+#include <seiscomp/utils/units.h>
 
 #include <cmath>
 #include <functional>
@@ -1114,6 +1115,22 @@ Expression::InterfacePtr Expression::Interface::parse(const std::string &text, s
 	}
 
 	return result;
+}
+
+
+template <typename T, typename CFG>
+void readValue(T &value, const CFG *cfg, const std::string &var, const string &unit) {
+	try {
+		auto s = cfg->getString(var);
+		try {
+			value = Util::UnitConverter::parse<double>(s, unit);
+		}
+		catch ( exception &e ) {
+			SEISCOMP_ERROR("%s: invalid value: %s", var, e.what());
+			throw e;
+		}
+	}
+	catch ( ... ) {}
 }
 
 
@@ -2270,10 +2287,14 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.snrMin, "amplitudes." + _type + ".minSNR");
 	settings.getValue(_config.minimumPeriod, "amplitudes." + _type + ".minPeriod");
 	settings.getValue(_config.maximumPeriod, "amplitudes." + _type + ".maxPeriod");
-	settings.getValue(_config.minimumDistance, "amplitudes." + _type + ".minDist");
-	settings.getValue(_config.maximumDistance, "amplitudes." + _type + ".maxDist");
-	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
-	settings.getValue(_config.maximumDepth, "amplitudes." + _type + ".maxDepth");
+	try { readValue(_config.minimumDistance, &settings, "amplitudes." + _type + ".minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.maximumDistance, &settings, "amplitudes." + _type + ".maxDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.minimumDepth, &settings, "amplitudes." + _type + ".minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.maximumDepth, &settings, "amplitudes." + _type + ".maxDepth", "km"); }
+	catch ( ... ) { return false; }
 
 	SEISCOMP_DEBUG("  + WA.gain = %f", _config.woodAndersonResponse.gain);
 	SEISCOMP_DEBUG("  + WA.T0 = %f", _config.woodAndersonResponse.T0);
@@ -2349,10 +2370,14 @@ bool AmplitudeProcessor::readLocale(Locale *locale,
 	OPT(double) minDist, maxDist, minDepth, maxDepth;
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 
-	try { minDist  = cfg->getDouble(cfgPrefix + "minDist"); } catch ( ... ) {}
-	try { maxDist  = cfg->getDouble(cfgPrefix + "maxDist"); } catch ( ... ) {}
-	try { minDepth = cfg->getDouble(cfgPrefix + "minDepth"); } catch ( ... ) {}
-	try { maxDepth = cfg->getDouble(cfgPrefix + "maxDepth"); } catch ( ... ) {}
+	try { readValue(minDist, cfg, cfgPrefix + "minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(maxDist, cfg, cfgPrefix + "maxDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(minDepth, cfg, cfgPrefix + "minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(maxDepth, cfg, cfgPrefix + "maxDepth", "km"); }
+	catch ( ... ) { return false; }
 
 	locale->check = Locale::Source;
 	locale->minimumDistance = minDist ? *minDist : _config.minimumDistance;
