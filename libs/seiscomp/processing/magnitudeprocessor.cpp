@@ -179,6 +179,11 @@ void readValue(T &value, const CFG *cfg, const std::string &var, const string &u
 }
 
 
+std::string toString(const OPT(double) &value, const char *format) {
+	return value ? Core::stringify(format, *value) : std::string("unlimited");
+}
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -245,6 +250,13 @@ std::string MagnitudeProcessor::amplitudeType() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::setup(const Settings &settings) {
+	SEISCOMP_DEBUG("%s.%s.%s.%s - %s magnitude configuration:",
+	               settings.networkCode.c_str(),
+	               settings.stationCode.c_str(),
+	               settings.locationCode.c_str(),
+	               settings.channelCode.c_str(),
+	               _type.c_str());
+
 	_minimumDistanceDeg = Core::None;
 	_maximumDistanceDeg = Core::None;
 	_minimumDepthKm = Core::None;
@@ -464,6 +476,14 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 	catch ( ... ) {}
 	try { _maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod"); }
 	catch ( ... ) {}
+
+	SEISCOMP_DEBUG("  + minimum distance = %s deg", toString(_minimumDistanceDeg, "%.5f deg"));
+	SEISCOMP_DEBUG("  + maximum distance = %s deg", toString(_maximumDistanceDeg, "%.5f deg"));
+	SEISCOMP_DEBUG("  + minimum depth = %s km", toString(_minimumDepthKm, "%.3f km"));
+	SEISCOMP_DEBUG("  + maximum depth = %s km", toString(_maximumDepthKm, "%.3f km"));
+	SEISCOMP_DEBUG("  + minimum SNR = %s", toString(_minimumSNR, "%f"));
+	SEISCOMP_DEBUG("  + minimum period = %ss", toString(_minimumPeriod, "%f"));
+	SEISCOMP_DEBUG("  + maximum period = %ss", toString(_maximumPeriod, "%f"));
 
 	return true;
 }
