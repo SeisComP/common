@@ -76,4 +76,26 @@ BOOST_AUTO_TEST_CASE(units) {
 }
 
 
+BOOST_AUTO_TEST_CASE(strings) {
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.23", "deg"), 1.23);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1234 m", "km"), 1.234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1234m", "km"), 1.234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.234 km", "m"), 1234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.234km", "m"), 1234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2 cm", "km"), 0.00002);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2cm", "km"), 0.00002);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2 km", "cm"), 200000);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2km", "cm"), 200000);
+
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("111.195079734632 km", "deg"), 1);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1 deg", "km"), 111.195079734632);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1°", "km"), 111.195079734632);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1°", "deg"), 1);
+
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1°", "m/s"), std::invalid_argument);
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1°", "ABC"), std::invalid_argument);
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1 m/s", "m/s**2"), std::invalid_argument);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -23,6 +23,9 @@
 
 
 #include <seiscomp/core.h>
+#include <seiscomp/core/strings.h>
+
+#include <stdexcept>
 #include <string>
 #include <map>
 
@@ -90,12 +93,72 @@ class SC_SYSTEM_CORE_API UnitConverter {
 		 */
 		static const UnitConversion *get(const std::string &fromUnit);
 
+		/**
+		 * @brief Convertes a string to a numeric value in the requested unit.
+		 *
+		 * An example string is "1.23 km". If the requested unit is "m" then
+		 * 1230 will be returned. If the requested unit is "m" and the input
+		 * string is "1.23" then "1.23" will be returned.
+		 *
+		 * If the input cannot be converted, an exception is thrown.
+		 *
+		 * @param str The input string to be converted
+		 * @param unit The requested unit of the value
+		 * @return The value which will populated with the parsed value.
+		 */
+		template <typename T>
+		static T parse(std::string_view str, const std::string &unit) {
+			if ( str.empty() ) {
+				throw std::invalid_argument("input string empty");
+			}
+
+			auto outputConv = get(unit);
+			if ( !outputConv ) {
+				throw std::invalid_argument("invalid target unit");
+			}
+
+			size_t p = str.size();
+			while ( p > 0 ) {
+				--p;
+
+				if ( (str[p] >= '0') && (str[p] <= '9') ) {
+					// Found digit
+					break;
+				}
+			}
+
+			++p;
+
+			T value;
+
+			if ( !Core::fromString(value, str.substr(0, p)) ) {
+				throw std::invalid_argument("invalid value string");
+			}
+
+			if ( p < str.size() ) {
+				auto inputUnit = Core::trimFront(str.substr(p));
+				auto inputConv = get(std::string(inputUnit));
+				if ( !inputConv) {
+					throw std::invalid_argument(Core::stringify("invalid input unit: '%s'", inputUnit));
+				}
+
+				if ( inputConv->toUnit != outputConv->toUnit ) {
+					// Incompatible units
+					throw std::invalid_argument("units are not compatible");
+				}
+
+				value = inputConv->convert(outputConv->revert(value));
+			}
+
+			return value;
+		}
+
 
 	// ----------------------------------------------------------------------
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		typedef std::map<std::string, UnitConversion> ConversionMap;
+		using ConversionMap = std::map<std::string, UnitConversion>;
 		static ConversionMap _conversionMap;
 };
 

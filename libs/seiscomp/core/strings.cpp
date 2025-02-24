@@ -699,6 +699,36 @@ int compareNoCase(std::string_view a, std::string_view b) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view trimFront(std::string_view sv) {
+	auto pos = sv.find_first_not_of(WHITESPACE);
+	if ( pos == std::string::npos ) {
+		// All whitespace characters
+		return { sv.data(), 0 };
+	}
+
+	// Remove leading whitespaces
+	return sv.substr(pos);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view trimBack(std::string_view sv) {
+	auto pos = sv.find_last_not_of(WHITESPACE);
+	if ( pos != std::string::npos ) {
+		sv = sv.substr(0, pos + 1);
+	}
+
+	return sv;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string_view trim(std::string_view sv) {
 	auto pos = sv.find_first_not_of(WHITESPACE);
 	if ( pos == std::string::npos ) {

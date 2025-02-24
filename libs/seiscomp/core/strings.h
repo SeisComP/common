@@ -216,13 +216,6 @@ SC_SYSTEM_CORE_API bool isEmpty(const char*);
  */
 SC_SYSTEM_CORE_API int compareNoCase(std::string_view a, std::string_view b);
 
-/** Removes whitespace at the beginning and end of the string.
- * @param string to be trimmed (in/out parameter)
- * @return returns the trimmed string
- */
-SC_SYSTEM_CORE_API std::string_view trim(std::string_view sv);
-SC_SYSTEM_CORE_API std::string &trim(std::string &str);
-
 template <typename T>
 void toHex(std::string &target, T source);
 
@@ -357,6 +350,7 @@ SC_SYSTEM_CORE_API bool isEmpty(const char*);
  */
 char *trimFront(char *&data, size_t &len);
 const char *trimFront(const char *&data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trimFront(std::string_view sv);
 
 /**
  * @brief Removes whitespaces from the back of a string.
@@ -367,6 +361,7 @@ const char *trimFront(const char *&data, size_t &len);
  */
 char *trimBack(char *data, size_t &len);
 const char *trimBack(const char *data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trimBack(std::string_view sv);
 
 /**
  * @brief Strips whitespaces from the front and the back of the string.
@@ -378,6 +373,9 @@ const char *trimBack(const char *data, size_t &len);
  */
 char *trim(char *&data, size_t &len);
 const char *trim(const char *&data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trim(std::string_view sv);
+SC_SYSTEM_CORE_API std::string &trim(std::string &str);
+
 
 char *strnchr(char *p, size_t n, char c);
 const char *strnchr(const char *p, size_t n, char c);
