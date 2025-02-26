@@ -3630,21 +3630,27 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
-		if ( isLinkedItem(item) ) continue;
+		if ( isLinkedItem(item) ) {
+			continue;
+		}
 
 		// Force state to false if item has no data yet and should be hidden
 		item->forceInvisibilty(!isTracePicked(item->widget())
 		                    && ((SC_D.config.hideStationsWithoutData && !label->hasGotData)
 		                     || (SC_D.config.hideDisabledStations && !label->isEnabledByConfig)));
 
-		if ( item == SC_D.recordView->currentItem() )
+		if ( item == SC_D.recordView->currentItem() ) {
 			reselectCurrentItem = true;
+		}
 	}
 
-	if ( SC_D.recordView->currentItem() == nullptr ) reselectCurrentItem = true;
+	if ( !SC_D.recordView->currentItem() ) {
+		reselectCurrentItem = true;
+	}
 
-	if ( reselectCurrentItem )
+	if ( reselectCurrentItem ) {
 		selectFirstVisibleItem(SC_D.recordView);
+	}
 
 	SC_D.ui.actionShowUnassociatedPicks->setChecked(SC_D.config.loadAllPicks);
 
@@ -4616,10 +4622,15 @@ void PickerView::figureOutTravelTimeTable() {
 bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
                            double relTimeWindowStart,
                            double relTimeWindowEnd) {
-	if ( origin == SC_D.origin ) return false;
+	if ( origin == SC_D.origin ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("stopping record acquisition");
 	stop();
+
+	double tmin = SC_D.currentRecord->tmin();
+	double tmax = SC_D.currentRecord->tmax();
 
 	SC_D.recordView->clear();
 	SC_D.recordItemLabels.clear();
@@ -4759,6 +4770,11 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	selectFirstVisibleItem(SC_D.recordView);
 
 	setUpdatesEnabled(true);
+
+	SC_D.currentRecord->showTimeRange(tmin, tmax);
+	if ( SC_D.recordView->currentItem() ) {
+		SC_D.recordView->currentItem()->widget()->setSelected(SC_D.currentRecord->tmin(), SC_D.currentRecord->tmax());
+	}
 
 	return true;
 }
