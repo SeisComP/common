@@ -765,7 +765,9 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 
 			data = tokenize(src_data, ":", data_len, len);
 			if ( len == 14 && strncasecmp("Content-Length", data, len) == 0 ) {
-				data = tokenize(src_data, ":", data_len, len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				string tmp;
 				tmp.assign(data, len);
 				if ( !Seiscomp::Core::fromString(_dataSize, tmp) ) {
@@ -784,7 +786,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 			else if ( len == 12 && strncasecmp("Content-Type", data, len) == 0 ) {
 				data = src_data + 1;
 				len = data_len - 1;
-				trim(data,len);
+				trim(data, len);
 
 				_request.contentType.assign(data, len);
 			}
