@@ -104,6 +104,7 @@ struct CommitOptions {
 	OPT(EventType)               eventType;
 	OPT(EventTypeCertainty)      eventTypeCertainty;
 	OPT(OPT(EvaluationStatus))   originStatus;
+	OPT(string)                  originAgencyID;
 	OPT(string)                  magnitudeType;
 	string                       eventName;
 	string                       eventComment;
@@ -118,6 +119,7 @@ struct CommitOptions {
 
 	vector<pair<string, string>> magnitudeTypes;
 	vector<OriginCommentProfile> originCommentProfiles;
+	vector<string>               originAgencyIDs;
 
 	void init(const std::string &prefix, Origin *origin) {
 		try {
@@ -184,6 +186,11 @@ struct CommitOptions {
 				originCommentProfiles.push_back(commentProfile);
 				ids.insert(commentProfile.id);
 			}
+		}
+		catch ( ... ) {}
+
+		try {
+			originAgencyIDs = SCApp->configGetStrings("olv.originAgencyIDs");
 		}
 		catch ( ... ) {}
 
@@ -686,11 +693,11 @@ class OriginCommitOptions : public QDialog {
 					ui.editEQComment->setVisible(false);
 					ui.comboEQComment->setVisible(true);
 
-					for ( vector<string>::const_iterator it = commentOptions.begin();
-					      it != commentOptions.end(); ++it ) {
-						ui.comboEQComment->addItem(it->c_str());
-						if ( options.eventComment == *it )
+					for ( auto &opt : commentOptions ) {
+						ui.comboEQComment->addItem(opt.c_str());
+						if ( options.eventComment == opt ) {
 							ui.comboEQComment->setCurrentIndex(ui.comboEQComment->count() - 1);
+						}
 					}
 				}
 			}
@@ -781,6 +788,20 @@ class OriginCommitOptions : public QDialog {
 				ui.frameEventOptions->layout()->addWidget(comboComment);
 			}
 
+			if ( !options.originAgencyIDs.empty() ) {
+				ui.frameEventOptions->layout()->addWidget(new QLabel(tr("Origin AgencyID override:")));
+				originAgencyIDs = new QComboBox;
+				originAgencyIDs->setToolTip(tr("Override the origins agencyID (in particular: creationInfo.agencyID)"));
+				originAgencyIDs->addItem(tr("- No override -"));
+				for ( auto &id : options.originAgencyIDs ) {
+					originAgencyIDs->addItem(id.c_str());
+				}
+				ui.frameEventOptions->layout()->addWidget(originAgencyIDs);
+			}
+			else {
+				originAgencyIDs = nullptr;
+			}
+
 			auto preferredSize = sizeHint();
 			if ( preferredSize.width() < width() ) {
 				preferredSize.setWidth(width());
@@ -856,6 +877,10 @@ class OriginCommitOptions : public QDialog {
 				}
 			}
 
+			if ( originAgencyIDs && originAgencyIDs->currentIndex() > 0 ) {
+				options.originAgencyID = originAgencyIDs->currentText().toStdString();
+			}
+
 			return true;
 		}
 
@@ -864,6 +889,7 @@ class OriginCommitOptions : public QDialog {
 		Ui::OriginCommitOptions ui;
 		vector<string>          commentOptions;
 		QVector<QComboBox*>     originComments;
+		QComboBox              *originAgencyIDs{};
 };
 
 
@@ -3323,7 +3349,7 @@ void OriginLocatorView::init() {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1eventType': %2")
 				                      .arg(prefix.c_str())
-				                      .arg(SCApp->configGetString("olv.commit.bulk.eventType").c_str()));
+				                      .arg(SCApp->configGetString(prefix + "eventType").c_str()));
 				continue;
 			}
 		}
@@ -3337,7 +3363,7 @@ void OriginLocatorView::init() {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1eventTypeCertainty': %2")
 				                      .arg(prefix.c_str())
-				                      .arg(SCApp->configGetString("olv.commit.bulk.eventTypeCertainty").c_str()));
+				                      .arg(SCApp->configGetString(prefix + "eventTypeCertainty").c_str()));
 				continue;
 			}
 		}
@@ -3354,7 +3380,7 @@ void OriginLocatorView::init() {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1originStatus': %2")
 				                      .arg(prefix.c_str())
-				                      .arg(SCApp->configGetString("olv.commit.bulk.originStatus").c_str()));
+				                      .arg(SCApp->configGetString(prefix + "originStatus").c_str()));
 				continue;
 			}
 		}
@@ -6689,6 +6715,16 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 
 	SC_D.ui.labelEvaluation->setText(evalMode);
 
+	// AgencyID could have been changed
+	try {
+		SC_D.ui.labelAgency->setText(SC_D.currentOrigin->creationInfo().agencyID().c_str());
+		SC_D.ui.labelAgency->setToolTip(SC_D.currentOrigin->creationInfo().agencyID().c_str());
+	}
+	catch ( Core::ValueException & ) {
+		SC_D.ui.labelAgency->setText("-");
+		SC_D.ui.labelAgency->setToolTip("");
+	}
+
 	if ( SC_D.recordView )
 		SC_D.recordView->applyPicks();
 
@@ -7054,28 +7090,47 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 	const CommitOptions &options = *options_ptr;
 	bool isLocalOrigin = SC_D.localOrigin;
+	bool needCommit = false;
+
+	if ( options.originAgencyID ) {
+		try {
+			auto &ci = SC_D.currentOrigin->creationInfo(); // throws
+			if ( ci.agencyID() != *options.originAgencyID ) {
+				ci.setAgencyID(*options.originAgencyID);
+				needCommit = true;
+			}
+		}
+		catch ( ... ) {
+			CreationInfo ci;
+			ci.setAgencyID(*options.originAgencyID);
+			ci.setModificationTime(Core::Time::UTC());
+			SC_D.currentOrigin->setCreationInfo(ci);
+			needCommit = true;
+		}
+	}
 
 	if ( options.originStatus ) {
 		if ( SC_D.localOrigin ) {
 			SC_D.currentOrigin->setEvaluationStatus(*options.originStatus);
-
-			// Do not override the status in commit
-			SC_D.newOriginStatus = EvaluationStatus::Quantity;
-			commit(options.forceEventAssociation, true);
-			SC_D.newOriginStatus = CONFIRMED;
+			needCommit = true;
 		}
 		else {
 			OPT(EvaluationStatus) os;
-			try { os = SC_D.currentOrigin->evaluationStatus(); } catch ( ... ) {}
+			try { os = SC_D.currentOrigin->evaluationStatus(); }
+			catch ( ... ) {}
 
 			if ( os != *options.originStatus ) {
 				SC_D.currentOrigin->setEvaluationStatus(*options.originStatus);
-
-				SC_D.newOriginStatus = EvaluationStatus::Quantity;
-				commit(true, true);
-				SC_D.newOriginStatus = CONFIRMED;
+				needCommit = true;
 			}
 		}
+	}
+
+	if ( needCommit ) {
+		// Do not override the status in commit
+		SC_D.newOriginStatus = EvaluationStatus::Quantity;
+		commit(SC_D.localOrigin ? options.forceEventAssociation : true, true);
+		SC_D.newOriginStatus = CONFIRMED;
 	}
 
 	// wait for event
