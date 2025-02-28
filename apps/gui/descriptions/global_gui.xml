@@ -117,6 +117,18 @@
 						layer is &quot;cities&quot;.
 					</description>
 				</parameter>
+				<group name="mercator">
+					<description>
+					Parameters specifically related to maps loaded with
+					mercator projection.
+					</description>
+					<parameter name="discrete" type="boolean" default="false">
+						<description>
+						Only support discrete zoom levels. The parameter impacts
+						the effect of &quot;map.zoom.sensitivity&quot;.
+						</description>
+					</parameter>
+				</group>
 				<group name="layers">
 					<group name="events">
 						<description>
@@ -283,7 +295,8 @@
 					</parameter>
 					<parameter name="projection" type="string" default="Rectangular">
 						<description>
-						SeisComP ships with the rectangular projection built-in.
+						SeisComP ships with the Rectangular and the Mercator
+						projection built-in.
 						Other projections may be provided through plugins.
 						</description>
 					</parameter>
