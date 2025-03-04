@@ -27,19 +27,37 @@
 #include <iostream>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace IO {
 namespace XML {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OutputHandler::~OutputHandler() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool NodeHandler::strictNsCheck = true;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 NodeHandler::~NodeHandler() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void NodeHandler::propagate(Core::BaseObject *o, bool ni, bool opt) {
 	object = o;
 	newInstance = ni;
@@ -48,8 +66,12 @@ void NodeHandler::propagate(Core::BaseObject *o, bool ni, bool opt) {
 	childHandler = nullptr;
 	memberHandler = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string NodeHandler::content(void *n) const {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 	for ( xmlNodePtr child = node->children; child != nullptr; child = child->next ) {
@@ -68,8 +90,12 @@ std::string NodeHandler::content(void *n) const {
 
 	return "";
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool NodeHandler::equalsTag(void *n, const char *tag, const char *ns) const {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 
@@ -97,12 +123,19 @@ bool NodeHandler::equalsTag(void *n, const char *tag, const char *ns) const {
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MemberHandler::~MemberHandler() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MemberHandler::put(Core::BaseObject *object, const char *tag, const char *ns,
                         bool opt, OutputHandler *output, NodeHandler *h) {
 	try {
@@ -123,19 +156,31 @@ bool MemberHandler::put(Core::BaseObject *object, const char *tag, const char *n
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MemberNodeHandler::MemberNodeHandler(const char *t, const char *ns, bool opt, MemberHandler *s)
 	: tag(t), nameSpace(ns), optional(opt) {
 	setter = std::shared_ptr<MemberHandler>(s);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MemberNodeHandler::put(Core::BaseObject *obj, OutputHandler *output, NodeHandler *h) {
 	return setter->put(obj, tag.c_str(), nameSpace.c_str(), optional, output, h);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MemberNodeHandler::get(Core::BaseObject *obj, void *n, NodeHandler *h) {
 	if ( setter->get(obj, n, h) ) return true;
 
@@ -148,13 +193,21 @@ bool MemberNodeHandler::get(Core::BaseObject *obj, void *n, NodeHandler *h) {
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MemberNodeHandler::finalize(Core::BaseObject *parent, Core::BaseObject *child) {
 	return setter->finalize(parent, child);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PropertyHandler::get(Core::BaseObject *object, void *n, NodeHandler *h) {
 	if ( _property->isClass() ) {
 		if ( _property->isOptional() ) {
@@ -177,8 +230,12 @@ bool PropertyHandler::get(Core::BaseObject *object, void *n, NodeHandler *h) {
 	//if ( v.empty() ) return false;
 	return _property->writeString(object, v);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PropertyHandler::finalize(Core::BaseObject *parent, Core::BaseObject *member) {
 	if ( !member ) {
 		if ( _property->isClass() && _property->isOptional() )
@@ -192,25 +249,41 @@ bool PropertyHandler::finalize(Core::BaseObject *parent, Core::BaseObject *membe
 	*/
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool NoneHandler::put(Core::BaseObject *, const char *, const char *, OutputHandler *) {
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool NoneHandler::get(Core::BaseObject *, void *n) {
 	//xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 	//std::cout << "ignored node " << node->name << std::endl;
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GenericHandler::put(Core::BaseObject *, const char *, const char *, OutputHandler *) {
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GenericHandler::get(Core::BaseObject *, void *n) {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 
@@ -231,42 +304,55 @@ bool GenericHandler::get(Core::BaseObject *, void *n) {
 	propagate(obj, true, true);
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeHandler::~TypeHandler() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ClassHandler::init(Core::BaseObject *obj, void *n, TagSet &mandatory) {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 
 	// Fill in mandatory tags
-	for ( MemberList::iterator it = attributes.begin();
-	      it != attributes.end(); ++it ) {
-		if ( !it->optional ) mandatory.insert(it->tag);
+	for ( auto &handler : attributes ) {
+		if ( !handler.optional ) {
+			mandatory.insert(handler.tag);
+		}
 	}
 
-	for ( MemberList::iterator it = elements.begin();
-	      it != elements.end(); ++it ) {
-		if ( !it->optional && !it->tag.empty() ) mandatory.insert(it->tag);
+	for ( auto &handler : elements ) {
+		if ( !handler.optional && !handler.tag.empty() ) {
+			mandatory.insert(handler.tag);
+		}
 	}
 
-	for ( MemberList::iterator it = childs.begin();
-	      it != childs.end(); ++it ) {
-		if ( !it->optional && !it->tag.empty() ) mandatory.insert(it->tag);
+	for ( auto &handler : childs ) {
+		if ( !handler.optional && !handler.tag.empty() ) {
+			mandatory.insert(handler.tag);
+		}
 	}
 
-	if ( cdataUsed )
+	if ( cdataUsed ) {
 		cdata.get(obj, n, this);
+	}
 
-	if ( attributes.empty() ) return true;
+	if ( attributes.empty() ) {
+		return true;
+	}
 
 	for ( xmlAttrPtr attr = node->properties; attr != nullptr; attr = attr->next ) {
 		if ( attr->children ) {
-			for ( MemberList::iterator it = attributes.begin();
-			      it != attributes.end(); ++it ) {
-				if ( equalsTag(attr, it->tag.c_str(), it->nameSpace.c_str()) ) {
-					if ( it->get(obj, attr, this) && !it->optional ) {
-						mandatory.erase(it->tag);
+			for ( auto &handler : attributes ) {
+				if ( equalsTag(attr, handler.tag.c_str(), handler.nameSpace.c_str()) ) {
+					if ( handler.get(obj, attr, this) && !handler.optional ) {
+						mandatory.erase(handler.tag);
 						break;
 					}
 				}
@@ -276,40 +362,42 @@ bool ClassHandler::init(Core::BaseObject *obj, void *n, TagSet &mandatory) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ClassHandler::get(Core::BaseObject *obj, void *n) {
 	MemberNodeHandler *anyMemberHandler = nullptr;
 	bool anyIsOptional = true;
 
-	for ( MemberList::iterator it = elements.begin();
-	      it != elements.end(); ++it ) {
-		if ( it->tag == "" ) {
+	for ( auto &handler : elements ) {
+		if ( handler.tag == "" ) {
 			if ( anyMemberHandler == nullptr ) {
-				anyMemberHandler = &*it;
-				anyIsOptional = it->optional;
+				anyMemberHandler = &handler;
+				anyIsOptional = handler.optional;
 			}
 		}
-		else if ( equalsTag(n, it->tag.c_str(), it->nameSpace.c_str()) ) {
-			it->get(obj, n, this);
-			isOptional = it->optional;
-			memberHandler = &*it;
+		else if ( equalsTag(n, handler.tag.c_str(), handler.nameSpace.c_str()) ) {
+			handler.get(obj, n, this);
+			isOptional = handler.optional;
+			memberHandler = &handler;
 			return true;
 		}
 	}
 
-	for ( MemberList::iterator it = childs.begin();
-	      it != childs.end(); ++it ) {
-		if ( it->tag == "" ) {
+	for ( auto &handler : childs ) {
+		if ( handler.tag == "" ) {
 			if ( anyMemberHandler == nullptr ) {
-				anyMemberHandler = &*it;
-				anyIsOptional = it->optional;
+				anyMemberHandler = &handler;
+				anyIsOptional = handler.optional;
 			}
 		}
-		else if ( equalsTag(n, it->tag.c_str(), it->nameSpace.c_str()) ) {
-			it->get(obj, n, this);
-			isOptional = it->optional;
-			memberHandler = &*it;
+		else if ( equalsTag(n, handler.tag.c_str(), handler.nameSpace.c_str()) ) {
+			handler.get(obj, n, this);
+			isOptional = handler.optional;
+			memberHandler = &handler;
 			return true;
 		}
 	}
@@ -323,21 +411,27 @@ bool ClassHandler::get(Core::BaseObject *obj, void *n) {
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ClassHandler::put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output) {
-	if ( !output->openElement(tag, ns) ) return false;
-
-	for ( MemberList::iterator it = attributes.begin();
-	      it != attributes.end(); ++it ) {
-		std::string v = it->value(obj);
-		if ( v.empty() && it->optional ) continue;
-		output->addAttribute(it->tag.c_str(), it->nameSpace.c_str(), v.c_str());
+	if ( !output->openElement(tag, ns) ) {
+		return false;
 	}
 
-	for ( MemberRefList::iterator it = orderedMembers.begin();
-	      it != orderedMembers.end(); ++it ) {
-		(*it)->put(obj, output, this);
+	for ( auto &handler : attributes ) {
+		std::string v = handler.value(obj);
+		if ( v.empty() && handler.optional ) {
+			continue;
+		}
+		output->addAttribute(handler.tag.c_str(), handler.nameSpace.c_str(), v.c_str());
+	}
+
+	for ( auto *handler : orderedMembers ) {
+		handler->put(obj, output, this);
 	}
 
 	/*
@@ -354,16 +448,21 @@ bool ClassHandler::put(Core::BaseObject *obj, const char *tag, const char *ns, O
 
 	if ( cdataUsed ) {
 		std::string v = cdata.value(obj);
-		if ( !v.empty() )
+		if ( !v.empty() ) {
 			output->put(v.c_str());
+		}
 	}
 
 	output->closeElement(tag, ns);
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClassHandler::addMember(const char *t, const char *ns, Type opt, Location l, MemberHandler *s) {
 	switch ( l ) {
 		case Attribute:
@@ -381,37 +480,65 @@ void ClassHandler::addMember(const char *t, const char *ns, Type opt, Location l
 			break;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClassHandler::addChild(const char *t, const char *ns, MemberHandler *s) {
 	childs.push_back(MemberNodeHandler(t, ns, true, s));
 	orderedMembers.push_back(&childs.back());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeMap::Tag::Tag() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeMap::Tag::Tag(const std::string &name_, const std::string &ns_)
  : name(name_), ns(ns_) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool TypeMap::Tag::operator<(const Tag &other) const {
 	if ( name < other.name ) return true;
 	if ( name > other.name ) return false;
 	return ns < other.ns;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeMap::TypeMap() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeMap::~TypeMap() {
 	for ( HandlerMap::iterator it = handlers.begin(); it != handlers.end(); ++it )
 		delete it->second;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TypeMap::registerMapping(const char *tag, const char *ns, const char *classname, NodeHandler *handler) {
 	tags[Tag(tag, ns)] = classname;
 
@@ -424,8 +551,12 @@ void TypeMap::registerMapping(const char *tag, const char *ns, const char *class
 	classes[classname] = Tag(tag, ns);
 	handlers[classname] = new TypeNameHandler(handler, classname);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char *TypeMap::getClassname(const char *tag, const char *ns, bool strictNsCheck) {
 	TagMap::iterator it = tags.find(Tag(tag, ns));
 	if ( it == tags.end() ) {
@@ -439,29 +570,46 @@ const char *TypeMap::getClassname(const char *tag, const char *ns, bool strictNs
 	}
 	return it->second.c_str();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const TypeMap::Tag *TypeMap::getTag(const char *classname) {
 	ClassMap::iterator it = classes.find(classname);
 	if ( it == classes.end() ) return nullptr;
 	return &it->second;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 NodeHandler *TypeMap::getHandler(const char *classname) {
 	HandlerMap::iterator it = handlers.find(classname);
 	if ( it == handlers.end() ) return nullptr;
 	return it->second->nodeHandler;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::BaseObject *TypeMap::createClass(const char *classname) {
 	HandlerMap::iterator it = handlers.find(classname);
 	if ( it == handlers.end() ) return nullptr;
 	return it->second->createClass();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

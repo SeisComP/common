@@ -29,11 +29,16 @@
 #endif
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace IO {
 namespace XML {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -59,35 +64,65 @@ int streamBufCloseCallback(void* context) {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 NoneHandler Importer::_none;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Importer::Importer() {
 	_typemap = nullptr;
 	_strictNamespaceCheck = true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TypeMap* Importer::typeMap() {
 	return _typemap;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Importer::setTypeMap(TypeMap *map) {
 	_typemap = map;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Importer::setStrictNamespaceCheck(bool e) {
 	_strictNamespaceCheck = e;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Importer::setRootName(std::string h) {
 	_headerNode = h;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::BaseObject *Importer::get(std::streambuf* buf) {
 	if ( _typemap == nullptr ) return nullptr;
 	if ( buf == nullptr ) return nullptr;
@@ -136,8 +171,12 @@ Core::BaseObject *Importer::get(std::streambuf* buf) {
 
 	return _result;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject *target) {
 	xmlNodePtr node = reinterpret_cast<xmlNodePtr>(n);
 	xmlNodePtr childs = reinterpret_cast<xmlNodePtr>(c);
@@ -149,7 +188,9 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 	bool result = true;
 
 	for ( xmlNodePtr child = childs; child != nullptr; child = child->next ) {
-		if ( child->type != XML_ELEMENT_NODE ) continue;
+		if ( child->type != XML_ELEMENT_NODE ) {
+			continue;
+		}
 
 		handler->propagate(nullptr, false, true);
 
@@ -157,14 +198,16 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 			handler->get(target, child);
 		}
 		catch ( std::exception &e ) {
-			if ( handler->isOptional )
+			if ( handler->isOptional ) {
 				SEISCOMP_WARNING("L%ld: (optional) %s.%s: %s",
 				                 xmlGetLineNo(node),
 				                 reinterpret_cast<const char*>(node->name),
 				                 reinterpret_cast<const char*>(child->name),
 				                 e.what());
-			else
+			}
+			else {
 				throw e;
+			}
 		}
 
 		if ( !handler->isOptional )
@@ -257,17 +300,21 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 
 	handler->finalize(target, &remaining);
 
-	if ( target != nullptr ) {
-		for ( ChildList::iterator it = remaining.begin(); it != remaining.end(); ++it )
-			if ( *it != nullptr ) delete *it;
+	if ( target ) {
+		for ( auto *child : remaining )
+			if ( child ) {
+				delete child;
+			}
 	}
 	else {
-		for ( ChildList::iterator it = remaining.begin(); it != remaining.end(); ++it ) {
-			if ( *it != nullptr ) {
-				if ( _result == nullptr )
-					_result = *it;
-				else
-					delete *it;
+		for ( auto *child : remaining ) {
+			if ( child ) {
+				if ( !_result ) {
+					_result = child;
+				}
+				else {
+					delete child;
+				}
 			}
 		}
 	}
@@ -275,7 +322,9 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 	if ( !mandatory.empty() ) {
 		std::string attribs;
 		for ( TagSet::iterator it = mandatory.begin(); it != mandatory.end(); ++it ) {
-			if ( it != mandatory.begin() ) attribs += ", ";
+			if ( it != mandatory.begin() ) {
+				attribs += ", ";
+			}
 			attribs += *it;
 		}
 		SEISCOMP_WARNING("L%ld: %s: missing mandatory attribute%s: %s",
@@ -286,8 +335,13 @@ bool Importer::traverse(NodeHandler *handler, void *n, void *c, Core::BaseObject
 
 	return result;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

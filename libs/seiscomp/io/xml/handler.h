@@ -35,8 +35,8 @@ namespace IO {
 namespace XML {
 
 
-typedef std::vector<Core::BaseObject *> ChildList;
-typedef std::set<std::string> TagSet;
+using ChildList = std::vector<Core::BaseObject*>;
+using TagSet = std::set<std::string>;
 
 
 struct SC_SYSTEM_CORE_API NodeHandler;
