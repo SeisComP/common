@@ -111,8 +111,8 @@ std::ostream &operator<<(std::ostream &os, const ValueMapper &m) {
 }
 
 
-const std::string &toSQL(IO::DatabaseInterface *db, const std::string &str) {
-	static std::string converted;
+std::string toSQL(IO::DatabaseInterface *db, const std::string &str) {
+	std::string converted;
 
 	if ( !db->escape(converted, str) ) {
 		converted = "";
@@ -1483,7 +1483,7 @@ DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string
 	_indexAttributes.clear();
 	_childTables.clear();
 	_childDepth = 0;
-	
+
 	_ignoreIndexAttributes = true;
 
 	resetAttributePrefix();
@@ -1782,7 +1782,7 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 	_childDepth = 0;
 
 	PublicObject *po = PublicObject::Cast(object);
-	
+
 	_ignoreIndexAttributes = (po == nullptr);
 
 	resetAttributePrefix();
@@ -2043,7 +2043,7 @@ bool DatabaseArchive::locateObjectByName(const char *name, const char *targetCla
 		fromString(childId, _field);
 		SEISCOMP_DEBUG("should read child table '%s' with _oid=%" PRIu64, targetClass, childId);
 	}
-	
+
 	return _field != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2155,14 +2155,14 @@ void DatabaseArchive::serialize(SerializeDispatcher &disp) {
 			_currentAttributePrefix = backupPrefix;
 			_currentAttributeName = CHILD_ID_POSTFIX;
 			--_childDepth;
-	
+
 			if ( !_childDepth )
 				_objectAttributes = &_rootAttributes;
 			else {
 				--_currentChildTable;
 				_objectAttributes = &_currentChildTable->second;
 			}
-	
+
 			if ( !insertRow(_currentChildTable->first,
 			                _currentChildTable->second) )
 				return;
