@@ -48,6 +48,171 @@ namespace {
 auto SchemaVersion = Core::Version(DataModel::Version::Major, DataModel::Version::Minor).toString();
 
 
+bool deletePath(IO::DatabaseInterface *db, const vector<string> &path,
+                const string &tableOverride, IO::DatabaseInterface::OID oid) {
+	const string &table = tableOverride.empty() ? path.back() : tableOverride;
+	stringstream ss;
+
+	if ( tableOverride.empty() && path.size() == 2 ) {
+		ss << "DELETE FROM " << table
+		   << " WHERE " << path[1] << "._parent_oid=" << oid;
+	}
+	else {
+		ss << "DELETE FROM " << table << " WHERE _oid IN (" << endl;
+		ss << "  SELECT " << path.back() << "._oid" << endl
+		    << "  FROM ";
+		for ( size_t i = 1; i < path.size(); ++i ) {
+			if ( i > 1 ) {
+				ss << ", ";
+			}
+			ss << path[i];
+		}
+		ss << endl;
+
+		ss << "  WHERE ";
+
+		for ( size_t i = 1; i < path.size(); ++i ) {
+			if ( i > 1 ) {
+				ss << "    AND ";
+			}
+			ss << path[i] << "._parent_oid=";
+			if ( i > 1 ) {
+				ss << path[i-1] << "._oid";
+			}
+			else {
+				ss << oid;
+			}
+			ss << endl;
+		}
+
+		ss << ")";
+	}
+
+	return db->execute(ss.str().c_str());
+}
+
+
+bool dumpPath(IO::DatabaseInterface *db, vector<string> &path,
+              const string &type, IO::DatabaseInterface::OID oid) {
+	auto f = Core::ClassFactory::FindByClassName(type.c_str());
+	if ( !f ) {
+		SEISCOMP_ERROR("Class %s not registered", type.c_str());
+		return false;
+	}
+
+	auto meta = f->meta();
+	if ( !meta ) {
+		SEISCOMP_ERROR("Class %s has no meta record", type.c_str());
+		return false;
+	}
+
+	path.push_back(type);
+
+	auto cnt = meta->propertyCount();
+	for ( decltype(meta->propertyCount()) i = 0; i < cnt; ++i ) {
+		auto p = meta->property(i);
+		if ( p->isArray() && p->isClass() ) {
+			if ( !dumpPath(db, path, p->type(), oid) ) {
+				return false;
+			}
+		}
+	}
+
+	bool isPublicObject = meta->rtti()->isTypeOf(DataModel::PublicObject::TypeInfo());
+
+	if ( !deletePath(db, path, "Object", oid) ) {
+		return false;
+	}
+
+	if ( isPublicObject ) {
+		if ( !deletePath(db, path, "PublicObject", oid) ) {
+			return false;
+		}
+	}
+
+	if ( !deletePath(db, path, string(), oid) ) {
+		return false;
+	}
+
+	path.pop_back();
+	return true;
+}
+
+
+bool deleteTree(IO::DatabaseInterface *db,
+                const string &type,
+                IO::DatabaseInterface::OID oid) {
+	auto f = Core::ClassFactory::FindByClassName(type.c_str());
+	if ( !f ) {
+		SEISCOMP_ERROR("Class %s not registered", type.c_str());
+		return false;
+	}
+
+	auto meta = f->meta();
+	if ( !meta ) {
+		SEISCOMP_ERROR("Class %s has no meta record", type.c_str());
+		return false;
+	}
+
+	vector<string> typePath;
+	typePath.push_back(type);
+
+	auto cnt = meta->propertyCount();
+	for ( decltype(meta->propertyCount()) i = 0; i < cnt; ++i ) {
+		auto p = meta->property(i);
+		if ( p->isArray() && p->isClass() ) {
+			if ( !dumpPath(db, typePath, p->type(), oid) ) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool deleteTree(IO::DatabaseInterface *db, DataModel::Object *object) {
+	if ( !db || !object ) {
+		return false;
+	}
+
+	IO::DatabaseInterface::OID oid = IO::DatabaseInterface::INVALID_OID;
+	stringstream ss;
+	string escapedPublicID;
+
+	DataModel::PublicObject *po = DataModel::PublicObject::Cast(object);
+	if ( !po ) {
+		return false;
+	}
+
+	bool status = true;
+	if ( db->escape(escapedPublicID, po->publicID()) ) {
+		ss << "SELECT _oid FROM PublicObject WHERE "
+		   << db->convertColumnName("publicID") << "='" << escapedPublicID << "'";
+
+		if ( db->beginQuery(ss.str().c_str()) ) {
+			if ( db->fetchRow() ) {
+				if ( !Core::fromString(oid, static_cast<const char*>(db->getRowField(0))) ) {
+					SEISCOMP_ERROR("Invalid oid read from db: %s", static_cast<const char*>(db->getRowField(0)));
+					status = false;
+				}
+			}
+			else {
+				SEISCOMP_ERROR("Object with id %s not found", po->publicID().c_str());
+				status = false;
+			}
+
+			db->endQuery();
+
+			if ( status ) {
+				return deleteTree(db, object->className(), oid);
+			}
+		}
+	}
+
+	return status;
+}
+
+
 class DBStore : public Messaging::Broker::MessageProcessor {
 	public:
 		DBStore() {
@@ -153,6 +318,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 							}
 								break;
 							case DataModel::OP_REMOVE:
+								deleteTree(_dbArchive->driver(), notifier->object());
 								++_statistics.removedObjects;
 								result = _dbArchive->remove(notifier->object(), notifier->parentID());
 								break;
