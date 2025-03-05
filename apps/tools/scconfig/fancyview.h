@@ -156,6 +156,16 @@ class FancyView : public QAbstractItemView {
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Structure *struc);
 		FancyViewItem add(QLayout *layout, const QModelIndex &idx);
 
+		/**
+		 * @brief Evaluate a value based on properities adding to a text string
+		 * @param value The value to evaluate
+		 * @param param The object of properties
+		 * @param eval The text string to return
+		 * @return True if issues were found, false if no issues were found
+		 */
+		bool evaluateValue(const std::string& value,
+		                   const Seiscomp::System::Parameter *param,
+		                   QString &eval, bool verbose);
 
 	private:
 		typedef QHash<QPersistentModelIndex, FancyViewItem> ViewItems;

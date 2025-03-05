@@ -29,6 +29,8 @@
 #include <QComboBox>
 #include <QDialog>
 #include <QMessageBox>
+#include <QDir>
+#include <QFileInfo>
 
 #include <QScrollBar>
 #include <QResizeEvent>
@@ -36,6 +38,7 @@
 #include <iostream>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/config/config.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/gui/core/flowlayout.h>
 
 #include "fancyview.h"
@@ -1551,6 +1554,12 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	if ( !param->definition->description.empty() ) {
 		descText = param->definition->description;
 	}
+	if ( !param->definition->type.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Type: " + param->definition->type;
+	}
 	if ( !param->definition->values.empty() ) {
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
@@ -1562,6 +1571,12 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			descText = descText + "\n";
 		}
 		descText = descText + "Range: " + param->definition->range;
+	}
+	if ( !param->definition->options.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Options: " + param->definition->options;
 	}
 	if ( !descText.empty() ) {
 		DescLabel *desc = new DescLabel;
@@ -1739,21 +1754,335 @@ void FancyView::lockChanged(bool state) {
 	updateToolTip(item.input->widget(), param);
 }
 
+bool FancyView::evaluateValue(const std::string& valueTest,
+                              const Seiscomp::System::Parameter *param,
+                              QString &eval, bool verbose=false) {
+	bool isPathType = false;
+	auto evalSize = eval.size();
+
+	// test values types
+	// types tested: int, uint, boolean, float, double, time, boolean, file,
+	// directory, host and port, gradient
+	const auto& type = param->definition->type;
+	string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
+
+	// boolean
+	if ( type == "boolean" ) {
+		if ( valueTest != "true" && valueTest != "false" ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' must be true or false " << endl;
+			}
+			eval += "<b>Value must be true or false:</b> ";
+		}
+	}
+	// double/float
+	else if ( type == "double" || type == "list:double" ||
+	          type == "float" || type == "list:float" ) {
+		double value;
+		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' must be double"<< endl;
+			}
+			eval += "<b>Value must be double:</b> ";
+		}
+	}
+	// integer
+	else if ( type == "int" || type == "list:int" ) {
+		int value;
+		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '" << valueTest
+				     << "' must be integer"<< endl;
+			}
+			eval += "<b>Value must be integer:</b> ";
+		}
+	}
+	// unsigned integer
+	else if ( type == "uint" || type == "list:uint" ) {
+		int value;
+		if ( !valueTest.empty() && (
+		         !Core::fromString(value, valueTest) || value < 0 ) ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '" << valueTest
+				     << "' must be unsigned integer"<< endl;
+			}
+			eval += "<b>Value must be unsigned integer:</b> ";
+		}
+	}
+	// time
+	else if ( type == "time" || type == "list:time" ) {
+		Core::Time value;
+		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' must be time"<< endl;
+			}
+			eval += "<b>Value must be time:</b> ";
+		}
+	}
+	else if ( type == "file" || type == "list:file" ) {
+		if ( valueTest.empty() ) {
+			return eval.size() > evalSize;
+		}
+		auto value = Seiscomp::Environment::Instance()->absolutePath(valueTest);
+		// file must not exist as directory
+		QFile dir(value.c_str());
+		QFileInfo fileInfo(dir);
+		if ( fileInfo.exists() && fileInfo.isDir() ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '" << valueTest
+				     << "' file is actually an existing directory" << endl;
+			}
+			eval += "<b>File is actually a directory:</b> ";
+			return eval.size() > evalSize;
+		}
+
+		isPathType = true;
+		vector<string> toks;
+		Core::split(toks, param->definition->options.c_str(), ",");
+		for ( auto &item : toks) {
+			if ( item == "read" ) {
+				// files must exist if tagged as read
+				QFile file(value.c_str());
+				QFileInfo fileInfo(file);
+				// File not found is actually not an error
+				if ( !fileInfo.isReadable() ) {
+					if ( verbose ) {
+						cerr << symbolURIString << param->variableName << " = '"
+						     << valueTest << "' readable file must exist"<< endl;
+					}
+					eval += "<b>Readable file must exist:</b> ";
+					break;
+				}
+			}
+			else if (item == "write" ) {
+				QFile file(value.c_str());
+				QFileInfo fileInfo(file);
+				// File exists and is writable is actually not an error
+				if ( fileInfo.isWritable() ) {
+					continue;
+				}
+				// Check if the parent directory exists
+				QDir checkDir(QFileInfo(value.c_str()).absolutePath());
+				if (!checkDir.exists()) {
+					if ( verbose ) {
+						cerr << symbolURIString << param->variableName << " = '" << valueTest
+						     << "' parent directory must exist" << endl;
+					}
+					eval += "<b>Parent directory must exist:</b> ";
+					break;
+				}
+			}
+			else if (item == "execute" ) {
+				// files must be executable if tagged as execute
+				QFile file(value.c_str());
+				QFileInfo fileInfo(file);
+				if ( !valueTest.empty() && !fileInfo.isExecutable() ) {
+					if ( verbose ) {
+						cerr << symbolURIString << param->variableName << " = '"
+						     << valueTest << "' executable file must exist"<< endl;
+					}
+					eval += "<b>Executable file must exist:</b> ";
+					break;
+				}
+			}
+			else {
+				continue;
+			}
+		}
+	}
+	else if ( type == "directory" || type == "list:directory" ) {
+		if ( valueTest.empty() ) {
+			return eval.size() > evalSize;
+		}
+		auto value = Seiscomp::Environment::Instance()->absolutePath(valueTest);
+		// directory must not exist as file
+		QFile dir(value.c_str());
+		QFileInfo fileInfo(dir);
+		if ( fileInfo.exists() && fileInfo.isFile() ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '" << valueTest
+				     << "' directory is actually an existing file" << endl;
+			}
+			eval += "<b>Directory is actually a file:</b> ";
+		}
+
+		isPathType = true;
+		// check options
+		vector<string> toks;
+		Core::split(toks, param->definition->options.c_str(), ",");
+		for ( auto &item : toks) {
+			if ( item == "read") {
+				// directoryies must exist if tagged as read
+				QDir dir(value.c_str());
+				// Directory not found is actually not an error
+				if ( !dir.exists() ) {
+					if ( verbose ) {
+						cerr << symbolURIString << param->variableName << " = '"
+						     << valueTest << "' directory must exist"<< endl;
+					}
+					eval += "<b>Directory must exist:</b> ";
+					break;
+				}
+			}
+			else if (item == "write" ) {
+				// directory must exist or parent directory must be writable
+				// and it must not be a file if tagged as read
+				// Check if the parent directory exists and is writable
+				QString parentDir = QFileInfo(dir).absolutePath();
+				QDir parentDirObj(parentDir);
+				if ( !parentDirObj.exists() ) {
+					if ( verbose ) {
+						cerr << symbolURIString << param->variableName << " = '" << valueTest
+						     << "' parent directory must exist" << endl;
+					}
+					eval += "<b>Parent directory must exist:</b> ";
+					break;
+				}
+			}
+			else {
+				continue;
+			}
+		}
+	}
+	// host and port [ip][:port]
+	else if ( type == "host-with-port" ) {
+		vector<string> toks;
+		Seiscomp::Core::split(toks, valueTest, ":", false);
+		if ( toks.size() > 2 ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' only one colon allowed"<< endl;
+			}
+			eval += "<b>Only one colon allowed:</b> ";
+		}
+		else if ( toks.size() == 2 ) {
+			int port;
+			if ( !Seiscomp::Core::fromString(port, toks[1]) ||
+			     port < 1 || port > 65535 ) {
+				if ( verbose ) {
+					cerr << symbolURIString << param->variableName << " = '"
+					     << valueTest
+					     << "' port not a valid integer in range [1, 65535]"
+					     << endl;
+				}
+				eval += "<b>Port not a valid integer in range [1, 65535]:</b> ";
+			}
+		}
+	}
+	// gradient
+	else if ( type == "gradient" ) {
+		// value must contain a colon
+		if ( valueTest.find(':') == std::string::npos ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest
+				     << "' gradient value must contain ':' " << endl;
+			}
+			eval += "<b>Gradient value must contain ':'<b>: ";
+		}
+	}
+
+	// test values themselves
+	if ( !param->definition->values.empty() && !isPathType ) {
+		bool valueAccept = false;
+		vector<string> valuesAllowed;
+		Core::split(valuesAllowed, param->definition->values.c_str(), ",");
+		for ( const auto &value : valuesAllowed ) {
+			if ( valueTest == Core::trim(value) ) {
+				valueAccept = true;
+				break;
+			}
+		}
+
+		if ( !valueAccept ) {
+			if ( verbose ) {
+				cerr << symbolURIString << param->variableName << " = '" << valueTest
+				     << "' is not a member of '" << param->definition->values
+				     << "'" << endl;
+			}
+			eval += "<b>Unsupported value:</b> ";
+		}
+	}
+
+	// test if values are in range
+	if ( !param->definition->range.empty() ) {
+		double value;
+		vector<string> toks;
+		Core::split(toks, param->definition->range.c_str(), ":");
+		double rangeMin = std::numeric_limits<double>::min();
+		double rangeMax = std::numeric_limits<double>::max();
+		if ( toks.size() == 2 ) {
+			if ( !Core::fromString(rangeMin, Core::trim(toks[0])) ) {
+				if ( verbose ) {
+					cerr << "Undescribed range minimum of parameter " << param->definition->name
+						 << " : " << param->definition->range << " - assuming "
+						 << rangeMin << endl;
+				}
+			}
+			if ( !Core::fromString(rangeMax, Core::trim(toks[1])) ) {
+				if ( verbose ) {
+					cerr << "Undescribed range maximum of parameter " << param->definition->name
+						 << " : " << param->definition->range << " - assuming "
+						 << rangeMax << endl;
+				}
+			}
+
+			if ( Core::fromString(value, valueTest) && (
+			     value < rangeMin || value > rangeMax ) ) {
+				if ( verbose ) {
+					cerr << symbolURIString << param->variableName << " = '"
+					     << valueTest << "' is not in range: '"
+					     << param->definition->range << "'" << endl;
+				}
+				eval += "<b>Out of range value:</b> ";
+			}
+		}
+		else {
+			if ( verbose ) {
+				cerr << "Undescribed range of parameter " << param->definition->name
+					 << " : " << param->definition->range << endl;
+			}
+		}
+	}
+
+	return eval.size() > evalSize;
+}
 
 void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	bool isOverridden = param->symbol.stage > _configStage;
-
 	vector<string> values;
 	QString eval;
 	string errmsg;
 	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
-		for ( size_t i = 0; i < values.size(); ++i ) {
-			if ( i > 0 ) eval += "<br/>";
-			eval += encodeHTML(values[i].c_str());
+		// value must not be a list, strings may contain commas and are not tested
+		if ( (param->definition->type.size() < 5)
+		     || ((param->definition->type != "string")
+		         && (param->definition->type != "gradient")
+		         && (param->definition->type.substr(0, 5) != "list:")) ) {
+			string valueTest = param->symbol.content;
+			// value to test contains a comma which is not supported
+			string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
+			if ( valueTest.find(',') != std::string::npos ) {
+					cerr << symbolURIString << param->variableName << " = '"
+					     << valueTest << "' is not described as list " << endl;
+				eval += "<b>Value is not described as list</b>";
+			}
+		}
+
+		for ( const auto& value : values ) {
+			if ( !eval.isEmpty() ) {
+				eval += "<br/>";
+			}
+			FancyView::evaluateValue(value, param, eval, true);
+			eval += encodeHTML(value.c_str());
 		}
 	}
-	else
+	else {
 		eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
+	}
 
 	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
 	                          "<b>Evaluated</b><br/>%2")
@@ -1799,31 +2128,53 @@ void FancyView::optionTextChanged(const QString &txt) {
 	QWidget *w = static_cast<QWidget*>(sender());
 
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
-	if ( !item.isValid() ) return;
+	if ( !item.isValid() ) {
+		return;
+	}
 
 	if ( _optionEditHint == NULL ) {
 		_optionEditHint = new EvalHintWidget(this);
 		_optionEditHint->setMargin(6);
 	}
 
-	/*
 	Parameter *param = reinterpret_cast<Parameter*>(
 		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
 	);
-	*/
-
 	vector<string> values;
 	QString eval;
 	string errmsg;
 	QPalette pal = _optionEditHint->palette();
 	pal.setColor(QPalette::Window, QColor(255,255,255,192));
 
+	bool issueFound = false;
 	if ( Config::Config::Eval(item.input->value().toStdString(), values, true, NULL, &errmsg) ) {
-		for ( size_t i = 0; i < values.size(); ++i ) {
-			if ( i > 0 ) eval += "<hr/>";
-			eval += encodeHTML(values[i].c_str());
+		// value must not be a list, strings may contain commas and are not tested
+		if ( (param->definition->type.size() < 5)
+		     || (param->definition->type != "string"
+		         && (param->definition->type != "gradient")
+		         && param->definition->type.substr(0, 5) != "list:") ) {
+			string valueTest = item.input->value().toStdString();
+			// value to test contains a comma which is not supported
+			if ( valueTest.find(',') != std::string::npos ) {
+				eval += "<b>Value is not described as list</b>";
+				issueFound = true;
+			}
 		}
-		pal.setColor(QPalette::WindowText, QColor(32,128,32));
+
+		for ( const auto& value : values ) {
+			if ( !eval.isEmpty() ) {
+				eval += "<hr/>";
+			}
+
+			if ( FancyView::evaluateValue(value, param, eval) ) {
+				issueFound = true;
+			}
+			eval += encodeHTML(value.c_str());
+		}
+
+		// paint text in orange if issues are found
+		pal.setColor(QPalette::WindowText,
+		             issueFound ? QColor(255,127,0) : QColor(32,128,32));
 
 		_optionEditHint->setText(QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
 		                         .arg(values.size()).arg(values.size() == 1?"":"s")
