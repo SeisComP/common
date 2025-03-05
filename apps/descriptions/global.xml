@@ -34,7 +34,7 @@
 				comma. Add ${plugins} to consider all previously read values.
 				</description>
 			</parameter>
-			<parameter name="cityXML" type="string">
+			<parameter name="cityXML" type="file" values="*.xml" options="read">
 				<description>
 				Path to the cities XML file. If undefined, the data is read
 				from &quot;@CONFIGDIR@/cities.xml&quot; or
@@ -115,7 +115,7 @@
 				are written to log files per modules as
 				&quot;@CONFIGDIR@/log/[module].log&quot;.
 				</description>
-				<parameter name="level" type="int" default="2" values="1,2,3,4´">
+				<parameter name="level" type="int" default="2" values="1,2,3,4">
 					<description>
 					Set the logging level between 1 and 4 where 1=ERROR,
 					2=WARNING, 3=INFO and 4=DEBUG.
@@ -269,14 +269,14 @@
 				is established. Override these values only if you know what you
 				are doing.
 				</description>
-				<parameter name="inventory" type="string">
+				<parameter name="inventory" type="file" options="read" values="*.xml">
 					<description>
 					Load the inventory database from a given XML file if set.
 					This overrides the inventory definitions loaded from the
 					database backend.
 					</description>
 				</parameter>
-				<parameter name="config" type="string">
+				<parameter name="config" type="file" options="read" values="*.xml">
 					<description>
 					Load the configuration database from a given XML file if set.
 					This overrides the configuration definitions loaded from the
@@ -344,7 +344,7 @@
 				</group>
 			</group>
 			<group name="scripts">
-				<parameter name="crashHandler" type="path">
+				<parameter name="crashHandler" type="file" options="read">
 					<description>
 					Path to crash handler script.
 					</description>
@@ -538,7 +538,7 @@
 						interpolated but not extrapolated.
 						</description>
 					</parameter>
-					<parameter name="regionFile" type="path">
+					<parameter name="regionFile" type="file" options="read">
 						<description>
 						Path to a geofeature file, e.g. in BNA or GeoJSON format,
 						with one or more polygons defining geographic regions.
@@ -883,7 +883,7 @@
 			</group>
 
 			<group name="Cities"  publicID="cities">
-				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml">
+				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml" type="file" options="read" values="*.xml">
 					<description>
 					The path to the cities XML file. This overrides the default
 					paths. Compare with the global parameter &quot;citiesXML&quot;.
@@ -1094,7 +1094,7 @@
 						<description>
 						Define the minimum period of the measured amplitude. If
 						the period is below this value, the amplitude will not be emittet.
-						This valus is amplitude type specific and has no global
+						This value is amplitude type specific and has no global
 						default value. A value lower or equal than 0 will disable
 						this check.
 						</description>
@@ -1103,12 +1103,12 @@
 						<description>
 						Define the maximum period of the measured amplitude. If
 						the period is above this value, the amplitude will not be emittet.
-						This valus is amplitude type specific and has no global
+						This value is amplitude type specific and has no global
 						default value. A value lower or equal than 0 will disable
 						this check.
 						</description>
 					</parameter>
-					<parameter name="noiseBegin" type="double" unit="s">
+					<parameter name="noiseBegin" type="string" unit="time grammar">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
@@ -1117,7 +1117,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="noiseEnd" type="double" unit="s">
+					<parameter name="noiseEnd" type="string" unit="time grammar">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
@@ -1126,7 +1126,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalBegin" type="double" unit="s">
+					<parameter name="signalBegin" type="string" unit="time grammar">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
@@ -1135,7 +1135,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalEnd" type="double" unit="s">
+					<parameter name="signalEnd" type="string" unit="time grammar">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
