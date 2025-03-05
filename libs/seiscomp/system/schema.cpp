@@ -108,6 +108,7 @@ void SchemaParameter::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("description", description, Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT("values", values);
 	ar & NAMED_OBJECT("range", range);
+	ar & NAMED_OBJECT("options", options);
 	if ( ar.isReading() ) convertDoc(description);
 }
 
