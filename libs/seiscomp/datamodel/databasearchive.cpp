@@ -903,6 +903,61 @@ size_t DatabaseArchive::getObjectCount(const PublicObject *parent,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::pair<std::string,bool>
+DatabaseArchive::getObjectsQuery(const std::string &parentID,
+                                 const Seiscomp::Core::RTTI &classType,
+                                 bool ignorePublicObject)  {
+	if ( !validInterface() ) {
+		SEISCOMP_ERROR("no valid database interface");
+		return {{}, false};
+	}
+
+	std::string query;
+	bool ignorePOTable = ignorePublicObject || !classType.isTypeOf(PublicObject::TypeInfo());
+	bool hasWhereClause = false;
+
+	if ( ignorePOTable ) {
+		query = std::string("select * from ") + classType.className();
+	}
+	else {
+		std::stringstream ss;
+		ss << "select " << PublicObject::ClassName() << "." << _publicIDColumn << ","
+		   << classType.className() << ".* from "
+		   << PublicObject::ClassName() << "," << classType.className()
+		   << " where " << PublicObject::ClassName() << "._oid="
+		   << classType.className() << "._oid";
+
+		query = ss.str();
+		hasWhereClause = true;
+	}
+
+	if ( !parentID.empty() ) {
+		OID parentOID = publicObjectId(parentID);
+		if ( parentOID == IO::DatabaseInterface::INVALID_OID ) {
+			SEISCOMP_INFO("parent object with id '%s' not found in database", parentID.c_str());
+			return {{}, false};
+		}
+
+		if ( !ignorePOTable ) {
+			query += " and ";
+		}
+		else {
+			query += " where ";
+			hasWhereClause = true;
+		}
+
+		query += classType.className();
+		query += "._parent_oid=" + toString(parentOID);
+	}
+
+	return {query, hasWhereClause};
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator DatabaseArchive::getObjectIterator(OID parentID,
                                                     const RTTI &classType,
                                                     bool ignorePublicObject) {
