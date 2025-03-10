@@ -453,8 +453,9 @@ bool Inventory::add(StationGroup *stationGroup) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(StationGroup *stationGroup) {
-	if ( !stationGroup )
+	if ( !stationGroup ) {
 		return false;
+	}
 
 	if ( stationGroup->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(StationGroup*) -> element has another parent");
@@ -470,8 +471,7 @@ bool Inventory::remove(StationGroup *stationGroup) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -624,8 +624,9 @@ bool Inventory::add(AuxDevice *auxDevice) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(AuxDevice *auxDevice) {
-	if ( !auxDevice )
+	if ( !auxDevice ) {
 		return false;
+	}
 
 	if ( auxDevice->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(AuxDevice*) -> element has another parent");
@@ -641,8 +642,7 @@ bool Inventory::remove(AuxDevice *auxDevice) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -795,8 +795,9 @@ bool Inventory::add(Sensor *sensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(Sensor *sensor) {
-	if ( !sensor )
+	if ( !sensor ) {
 		return false;
+	}
 
 	if ( sensor->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Sensor*) -> element has another parent");
@@ -812,8 +813,7 @@ bool Inventory::remove(Sensor *sensor) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -966,8 +966,9 @@ bool Inventory::add(Datalogger *datalogger) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(Datalogger *datalogger) {
-	if ( !datalogger )
+	if ( !datalogger ) {
 		return false;
+	}
 
 	if ( datalogger->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Datalogger*) -> element has another parent");
@@ -983,8 +984,7 @@ bool Inventory::remove(Datalogger *datalogger) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1137,8 +1137,9 @@ bool Inventory::add(ResponsePAZ *responsePAZ) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(ResponsePAZ *responsePAZ) {
-	if ( !responsePAZ )
+	if ( !responsePAZ ) {
 		return false;
+	}
 
 	if ( responsePAZ->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponsePAZ*) -> element has another parent");
@@ -1154,8 +1155,7 @@ bool Inventory::remove(ResponsePAZ *responsePAZ) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1308,8 +1308,9 @@ bool Inventory::add(ResponseFIR *responseFIR) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(ResponseFIR *responseFIR) {
-	if ( !responseFIR )
+	if ( !responseFIR ) {
 		return false;
+	}
 
 	if ( responseFIR->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseFIR*) -> element has another parent");
@@ -1325,8 +1326,7 @@ bool Inventory::remove(ResponseFIR *responseFIR) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1479,8 +1479,9 @@ bool Inventory::add(ResponseIIR *responseIIR) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(ResponseIIR *responseIIR) {
-	if ( !responseIIR )
+	if ( !responseIIR ) {
 		return false;
+	}
 
 	if ( responseIIR->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseIIR*) -> element has another parent");
@@ -1496,8 +1497,7 @@ bool Inventory::remove(ResponseIIR *responseIIR) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1650,8 +1650,9 @@ bool Inventory::add(ResponsePolynomial *responsePolynomial) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(ResponsePolynomial *responsePolynomial) {
-	if ( !responsePolynomial )
+	if ( !responsePolynomial ) {
 		return false;
+	}
 
 	if ( responsePolynomial->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponsePolynomial*) -> element has another parent");
@@ -1667,8 +1668,7 @@ bool Inventory::remove(ResponsePolynomial *responsePolynomial) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1821,8 +1821,9 @@ bool Inventory::add(ResponseFAP *responseFAP) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(ResponseFAP *responseFAP) {
-	if ( !responseFAP )
+	if ( !responseFAP ) {
 		return false;
+	}
 
 	if ( responseFAP->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseFAP*) -> element has another parent");
@@ -1838,8 +1839,7 @@ bool Inventory::remove(ResponseFAP *responseFAP) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1992,8 +1992,9 @@ bool Inventory::add(Network *network) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inventory::remove(Network *network) {
-	if ( !network )
+	if ( !network ) {
 		return false;
+	}
 
 	if ( network->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Network*) -> element has another parent");
@@ -2009,8 +2010,7 @@ bool Inventory::remove(Network *network) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

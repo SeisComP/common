@@ -540,8 +540,9 @@ bool Route::add(RouteArclink *routeArclink) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::remove(RouteArclink *routeArclink) {
-	if ( !routeArclink )
+	if ( !routeArclink ) {
 		return false;
+	}
 
 	if ( routeArclink->parent() != this ) {
 		SEISCOMP_ERROR("Route::remove(RouteArclink*) -> element has another parent");
@@ -557,8 +558,7 @@ bool Route::remove(RouteArclink *routeArclink) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -686,8 +686,9 @@ bool Route::add(RouteSeedlink *routeSeedlink) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::remove(RouteSeedlink *routeSeedlink) {
-	if ( !routeSeedlink )
+	if ( !routeSeedlink ) {
 		return false;
+	}
 
 	if ( routeSeedlink->parent() != this ) {
 		SEISCOMP_ERROR("Route::remove(RouteSeedlink*) -> element has another parent");
@@ -703,8 +704,7 @@ bool Route::remove(RouteSeedlink *routeSeedlink) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

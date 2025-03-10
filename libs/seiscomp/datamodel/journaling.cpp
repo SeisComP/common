@@ -249,8 +249,9 @@ bool Journaling::add(JournalEntry *journalEntry) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Journaling::remove(JournalEntry *journalEntry) {
-	if ( !journalEntry )
+	if ( !journalEntry ) {
 		return false;
+	}
 
 	if ( journalEntry->parent() != this ) {
 		SEISCOMP_ERROR("Journaling::remove(JournalEntry*) -> element has another parent");
@@ -266,8 +267,7 @@ bool Journaling::remove(JournalEntry *journalEntry) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

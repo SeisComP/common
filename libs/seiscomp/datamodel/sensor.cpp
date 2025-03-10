@@ -660,8 +660,9 @@ bool Sensor::add(SensorCalibration *sensorCalibration) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Sensor::remove(SensorCalibration *sensorCalibration) {
-	if ( !sensorCalibration )
+	if ( !sensorCalibration ) {
 		return false;
+	}
 
 	if ( sensorCalibration->parent() != this ) {
 		SEISCOMP_ERROR("Sensor::remove(SensorCalibration*) -> element has another parent");
@@ -677,8 +678,7 @@ bool Sensor::remove(SensorCalibration *sensorCalibration) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

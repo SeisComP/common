@@ -572,8 +572,9 @@ bool StationMagnitude::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitude::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("StationMagnitude::remove(Comment*) -> element has another parent");
@@ -589,8 +590,7 @@ bool StationMagnitude::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

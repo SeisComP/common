@@ -461,8 +461,9 @@ bool ParameterSet::add(Parameter *parameter) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::remove(Parameter *parameter) {
-	if ( !parameter )
+	if ( !parameter ) {
 		return false;
+	}
 
 	if ( parameter->parent() != this ) {
 		SEISCOMP_ERROR("ParameterSet::remove(Parameter*) -> element has another parent");
@@ -478,8 +479,7 @@ bool ParameterSet::remove(Parameter *parameter) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -593,8 +593,9 @@ bool ParameterSet::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ParameterSet::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("ParameterSet::remove(Comment*) -> element has another parent");
@@ -610,8 +611,7 @@ bool ParameterSet::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

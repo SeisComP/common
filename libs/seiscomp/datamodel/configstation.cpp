@@ -534,8 +534,9 @@ bool ConfigStation::add(Setup *setup) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::remove(Setup *setup) {
-	if ( !setup )
+	if ( !setup ) {
 		return false;
+	}
 
 	if ( setup->parent() != this ) {
 		SEISCOMP_ERROR("ConfigStation::remove(Setup*) -> element has another parent");
@@ -551,8 +552,7 @@ bool ConfigStation::remove(Setup *setup) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

@@ -309,8 +309,9 @@ bool ArclinkLog::add(ArclinkRequest *arclinkRequest) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::remove(ArclinkRequest *arclinkRequest) {
-	if ( !arclinkRequest )
+	if ( !arclinkRequest ) {
 		return false;
+	}
 
 	if ( arclinkRequest->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkLog::remove(ArclinkRequest*) -> element has another parent");
@@ -326,8 +327,7 @@ bool ArclinkLog::remove(ArclinkRequest *arclinkRequest) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -480,8 +480,9 @@ bool ArclinkLog::add(ArclinkUser *arclinkUser) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkLog::remove(ArclinkUser *arclinkUser) {
-	if ( !arclinkUser )
+	if ( !arclinkUser ) {
 		return false;
+	}
 
 	if ( arclinkUser->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkLog::remove(ArclinkUser*) -> element has another parent");
@@ -497,8 +498,7 @@ bool ArclinkLog::remove(ArclinkUser *arclinkUser) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

@@ -585,8 +585,9 @@ bool Magnitude::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Magnitude::remove(Comment*) -> element has another parent");
@@ -602,8 +603,7 @@ bool Magnitude::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -731,8 +731,9 @@ bool Magnitude::add(StationMagnitudeContribution *stationMagnitudeContribution) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Magnitude::remove(StationMagnitudeContribution *stationMagnitudeContribution) {
-	if ( !stationMagnitudeContribution )
+	if ( !stationMagnitudeContribution ) {
 		return false;
+	}
 
 	if ( stationMagnitudeContribution->parent() != this ) {
 		SEISCOMP_ERROR("Magnitude::remove(StationMagnitudeContribution*) -> element has another parent");
@@ -748,8 +749,7 @@ bool Magnitude::remove(StationMagnitudeContribution *stationMagnitudeContributio
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

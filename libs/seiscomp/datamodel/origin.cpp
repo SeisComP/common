@@ -866,8 +866,9 @@ bool Origin::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Origin::remove(Comment*) -> element has another parent");
@@ -883,8 +884,7 @@ bool Origin::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1004,8 +1004,9 @@ bool Origin::add(CompositeTime *compositeTime) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(CompositeTime *compositeTime) {
-	if ( !compositeTime )
+	if ( !compositeTime ) {
 		return false;
+	}
 
 	if ( compositeTime->parent() != this ) {
 		SEISCOMP_ERROR("Origin::remove(CompositeTime*) -> element has another parent");
@@ -1021,8 +1022,7 @@ bool Origin::remove(CompositeTime *compositeTime) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1136,8 +1136,9 @@ bool Origin::add(Arrival *arrival) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Arrival *arrival) {
-	if ( !arrival )
+	if ( !arrival ) {
 		return false;
+	}
 
 	if ( arrival->parent() != this ) {
 		SEISCOMP_ERROR("Origin::remove(Arrival*) -> element has another parent");
@@ -1153,8 +1154,7 @@ bool Origin::remove(Arrival *arrival) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1292,8 +1292,9 @@ bool Origin::add(StationMagnitude *stationMagnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(StationMagnitude *stationMagnitude) {
-	if ( !stationMagnitude )
+	if ( !stationMagnitude ) {
 		return false;
+	}
 
 	if ( stationMagnitude->parent() != this ) {
 		SEISCOMP_ERROR("Origin::remove(StationMagnitude*) -> element has another parent");
@@ -1309,8 +1310,7 @@ bool Origin::remove(StationMagnitude *stationMagnitude) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1434,8 +1434,9 @@ bool Origin::add(Magnitude *magnitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Origin::remove(Magnitude *magnitude) {
-	if ( !magnitude )
+	if ( !magnitude ) {
 		return false;
+	}
 
 	if ( magnitude->parent() != this ) {
 		SEISCOMP_ERROR("Origin::remove(Magnitude*) -> element has another parent");
@@ -1451,8 +1452,7 @@ bool Origin::remove(Magnitude *magnitude) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

@@ -604,8 +604,9 @@ bool SensorLocation::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("SensorLocation::remove(Comment*) -> element has another parent");
@@ -621,8 +622,7 @@ bool SensorLocation::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -750,8 +750,9 @@ bool SensorLocation::add(AuxStream *auxStream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(AuxStream *auxStream) {
-	if ( !auxStream )
+	if ( !auxStream ) {
 		return false;
+	}
 
 	if ( auxStream->parent() != this ) {
 		SEISCOMP_ERROR("SensorLocation::remove(AuxStream*) -> element has another parent");
@@ -767,8 +768,7 @@ bool SensorLocation::remove(AuxStream *auxStream) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -921,8 +921,9 @@ bool SensorLocation::add(Stream *stream) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SensorLocation::remove(Stream *stream) {
-	if ( !stream )
+	if ( !stream ) {
 		return false;
+	}
 
 	if ( stream->parent() != this ) {
 		SEISCOMP_ERROR("SensorLocation::remove(Stream*) -> element has another parent");
@@ -938,8 +939,7 @@ bool SensorLocation::remove(Stream *stream) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);

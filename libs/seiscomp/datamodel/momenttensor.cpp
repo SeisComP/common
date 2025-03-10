@@ -862,8 +862,9 @@ bool MomentTensor::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensor::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(Comment*) -> element has another parent");
@@ -879,8 +880,7 @@ bool MomentTensor::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1000,8 +1000,9 @@ bool MomentTensor::add(DataUsed *dataUsed) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensor::remove(DataUsed *dataUsed) {
-	if ( !dataUsed )
+	if ( !dataUsed ) {
 		return false;
+	}
 
 	if ( dataUsed->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(DataUsed*) -> element has another parent");
@@ -1017,8 +1018,7 @@ bool MomentTensor::remove(DataUsed *dataUsed) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1132,8 +1132,9 @@ bool MomentTensor::add(MomentTensorPhaseSetting *momentTensorPhaseSetting) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensor::remove(MomentTensorPhaseSetting *momentTensorPhaseSetting) {
-	if ( !momentTensorPhaseSetting )
+	if ( !momentTensorPhaseSetting ) {
 		return false;
+	}
 
 	if ( momentTensorPhaseSetting->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(MomentTensorPhaseSetting*) -> element has another parent");
@@ -1149,8 +1150,7 @@ bool MomentTensor::remove(MomentTensorPhaseSetting *momentTensorPhaseSetting) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1288,8 +1288,9 @@ bool MomentTensor::add(MomentTensorStationContribution *momentTensorStationContr
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensor::remove(MomentTensorStationContribution *momentTensorStationContribution) {
-	if ( !momentTensorStationContribution )
+	if ( !momentTensorStationContribution ) {
 		return false;
+	}
 
 	if ( momentTensorStationContribution->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(MomentTensorStationContribution*) -> element has another parent");
@@ -1305,8 +1306,7 @@ bool MomentTensor::remove(MomentTensorStationContribution *momentTensorStationCo
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
