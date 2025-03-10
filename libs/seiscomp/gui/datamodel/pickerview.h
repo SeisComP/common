@@ -267,6 +267,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 			bool showAllComponents;
 			bool hideStationsWithoutData;
 			bool hideDisabledStations;
+			bool showDataInSensorUnit;
 
 			int    limitStationCount;
 			double allComponentsMaximumStationDistance;
