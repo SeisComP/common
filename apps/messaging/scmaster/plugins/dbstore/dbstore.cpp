@@ -139,6 +139,30 @@ bool dumpPath(IO::DatabaseInterface *db, vector<string> &path,
 }
 
 
+bool deleteObject(IO::DatabaseInterface *db, const string &type,
+                  IO::DatabaseInterface::OID oid) {
+	stringstream ss;
+
+	SEISCOMP_DEBUG("deleting object with id %d", oid);
+
+	ss << "DELETE FROM Object WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+	ss.str(string());
+	ss << "DELETE FROM PublicObject WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+	ss.str(string());
+	ss << "DELETE FROM " << type << " WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+
+	return true;
+}
+
 bool deleteTree(IO::DatabaseInterface *db,
                 const string &type,
                 IO::DatabaseInterface::OID oid) {
@@ -170,19 +194,14 @@ bool deleteTree(IO::DatabaseInterface *db,
 	return true;
 }
 
-bool deleteTree(IO::DatabaseInterface *db, DataModel::Object *object) {
-	if ( !db || !object ) {
+bool deleteTree(IO::DatabaseInterface *db, DataModel::PublicObject *po) {
+	if ( !db || !po ) {
 		return false;
 	}
 
 	IO::DatabaseInterface::OID oid = IO::DatabaseInterface::INVALID_OID;
 	stringstream ss;
 	string escapedPublicID;
-
-	DataModel::PublicObject *po = DataModel::PublicObject::Cast(object);
-	if ( !po ) {
-		return false;
-	}
 
 	bool status = true;
 	if ( db->escape(escapedPublicID, po->publicID()) ) {
@@ -204,7 +223,8 @@ bool deleteTree(IO::DatabaseInterface *db, DataModel::Object *object) {
 			db->endQuery();
 
 			if ( status ) {
-				return deleteTree(db, object->className(), oid);
+				deleteTree(db, po->className(), oid);
+				status = deleteObject(db, po->className(), oid);
 			}
 		}
 	}
@@ -247,7 +267,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			SEISCOMP_DEBUG("Checking database '%s' and trying to connect", _settings.driver.c_str());
 
 			_db = IO::DatabaseInterface::Create(_settings.driver.c_str());
-			if ( _db == NULL ) {
+			if ( !_db ) {
 				SEISCOMP_ERROR("Could not get database driver '%s'", _settings.driver.c_str());
 				return false;
 			}
@@ -318,10 +338,17 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 							}
 								break;
 							case DataModel::OP_REMOVE:
-								deleteTree(_dbArchive->driver(), notifier->object());
+							{
+								DataModel::PublicObject *po = DataModel::PublicObject::Cast(notifier->object());
+								if ( !po ) {
+									result = _dbArchive->remove(notifier->object(), notifier->parentID());
+								}
+								else {
+									result = deleteTree(_dbArchive->driver(), po);
+								}
 								++_statistics.removedObjects;
-								result = _dbArchive->remove(notifier->object(), notifier->parentID());
 								break;
+							}
 							case DataModel::OP_UPDATE:
 								++_statistics.updatedObjects;
 								result = _dbArchive->update(notifier->object(), notifier->parentID());
