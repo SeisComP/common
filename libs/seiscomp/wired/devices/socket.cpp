@@ -244,8 +244,9 @@ bool Socket::IPAddress::fromString(const char *str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::IPAddress::fromStringV4(const char *str) {
-	if ( inet_pton(AF_INET, str, bytes) != 1 )
+	if ( inet_pton(AF_INET, str, bytes) != 1 ) {
 		return false;
+	}
 
 	dwords[1] = dwords[2] = dwords[3] = 0;
 	dwords[0] = ntohl(dwords[0]);
@@ -259,11 +260,13 @@ bool Socket::IPAddress::fromStringV4(const char *str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Socket::IPAddress::fromStringV6(const char *str) {
-	if ( inet_pton(AF_INET6, str, bytes) != 1 )
+	if ( inet_pton(AF_INET6, str, bytes) != 1 ) {
 		return false;
+	}
 
-	for ( int i = 0; i < BYTES/2; ++i )
-		std::swap(bytes[i], bytes[BYTES-1-i]);
+	for ( int i = 0; i < BYTES / 2; ++i ) {
+		std::swap(bytes[i], bytes[BYTES - 1 - i]);
+	}
 
 	return true;
 }
@@ -286,36 +289,29 @@ int Socket::IPAddress::toString(char *str, bool anonymize) const {
 		memset(&addr, 0, sizeof(addr));
 
 		// Just keep 24 bit
-		for ( int i = IPAddress::BYTES-3; i < IPAddress::BYTES; ++i )
+		for ( int i = IPAddress::BYTES-3; i < IPAddress::BYTES; ++i ) {
 			addr.s6_addr[i] = bytes[IPAddress::BYTES-1-i];
+		}
 
-		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr )
+		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr ) {
 			return -1;
+		}
 
 		return static_cast<int>(strlen(str));
-		/*
-		return snprintf(str, 46, "%04x:%04x::",
-		               (dwords[3] >> 16) & 0xffff, dwords[3] & 0xff00);
-		*/
 	}
 	else {
 		in6_addr addr;
 		memset(&addr, 0, sizeof(addr));
 
-		for ( int i = 0; i < IPAddress::BYTES; ++i )
-			addr.s6_addr[i] = bytes[IPAddress::BYTES-1-i];
+		for ( int i = 0; i < IPAddress::BYTES; ++i ) {
+			addr.s6_addr[i] = bytes[IPAddress::BYTES - 1 - i];
+		}
 
-		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr )
+		if ( inet_ntop(AF_INET6, &addr, str, MAX_IP_STRING_LEN) == nullptr ) {
 			return -1;
+		}
 
 		return static_cast<int>(strlen(str));
-		/*
-		return snprintf(str, 46, "%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x",
-		               (dwords[3] >> 16) & 0xffff, dwords[3] & 0xffff,
-		               (dwords[2] >> 16) & 0xffff, dwords[2] & 0xffff,
-		               (dwords[1] >> 16) & 0xffff, dwords[1] & 0xffff,
-		               (dwords[0] >> 16) & 0xffff, dwords[0] & 0xffff);
-		*/
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
