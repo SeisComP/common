@@ -413,8 +413,7 @@ bool EventParameters::removePick(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_picks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _picks[i].get());
 	}
 
 	_picks[i]->setParent(nullptr);
@@ -555,8 +554,7 @@ bool EventParameters::removeAmplitude(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudes[i].get());
 	}
 
 	_amplitudes[i]->setParent(nullptr);
@@ -697,8 +695,7 @@ bool EventParameters::removeReading(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_readings[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _readings[i].get());
 	}
 
 	_readings[i]->setParent(nullptr);
@@ -839,8 +836,7 @@ bool EventParameters::removeOrigin(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_origins[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _origins[i].get());
 	}
 
 	_origins[i]->setParent(nullptr);
@@ -981,8 +977,7 @@ bool EventParameters::removeFocalMechanism(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_focalMechanisms[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _focalMechanisms[i].get());
 	}
 
 	_focalMechanisms[i]->setParent(nullptr);
@@ -1123,8 +1118,7 @@ bool EventParameters::removeEvent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_events[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _events[i].get());
 	}
 
 	_events[i]->setParent(nullptr);

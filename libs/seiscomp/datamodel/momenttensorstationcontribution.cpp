@@ -511,8 +511,7 @@ bool MomentTensorStationContribution::removeMomentTensorComponentContribution(si
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensorComponentContributions[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensorComponentContributions[i].get());
 	}
 
 	_momentTensorComponentContributions[i]->setParent(nullptr);

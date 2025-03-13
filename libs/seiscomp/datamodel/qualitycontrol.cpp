@@ -366,8 +366,7 @@ bool QualityControl::removeQCLog(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_qCLogs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _qCLogs[i].get());
 	}
 
 	_qCLogs[i]->setParent(nullptr);
@@ -512,8 +511,7 @@ bool QualityControl::removeWaveformQuality(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_waveformQualitys[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _waveformQualitys[i].get());
 	}
 
 	_waveformQualitys[i]->setParent(nullptr);
@@ -658,8 +656,7 @@ bool QualityControl::removeOutage(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_outages[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _outages[i].get());
 	}
 
 	_outages[i]->setParent(nullptr);

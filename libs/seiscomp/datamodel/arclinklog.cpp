@@ -350,8 +350,7 @@ bool ArclinkLog::removeArclinkRequest(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkRequests[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkRequests[i].get());
 	}
 
 	_arclinkRequests[i]->setParent(nullptr);
@@ -521,8 +520,7 @@ bool ArclinkLog::removeArclinkUser(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkUsers[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkUsers[i].get());
 	}
 
 	_arclinkUsers[i]->setParent(nullptr);

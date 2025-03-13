@@ -581,8 +581,7 @@ bool Route::removeRouteArclink(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routeArclinks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routeArclinks[i].get());
 	}
 
 	_routeArclinks[i]->setParent(nullptr);
@@ -727,8 +726,7 @@ bool Route::removeRouteSeedlink(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routeSeedlinks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routeSeedlinks[i].get());
 	}
 
 	_routeSeedlinks[i]->setParent(nullptr);

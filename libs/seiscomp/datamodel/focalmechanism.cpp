@@ -715,8 +715,7 @@ bool FocalMechanism::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -871,8 +870,7 @@ bool FocalMechanism::removeMomentTensor(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensors[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensors[i].get());
 	}
 
 	_momentTensors[i]->setParent(nullptr);

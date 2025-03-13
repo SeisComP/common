@@ -494,8 +494,7 @@ bool Inventory::removeStationGroup(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_stationGroups[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _stationGroups[i].get());
 	}
 
 	_stationGroups[i]->setParent(nullptr);
@@ -665,8 +664,7 @@ bool Inventory::removeAuxDevice(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_auxDevices[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _auxDevices[i].get());
 	}
 
 	_auxDevices[i]->setParent(nullptr);
@@ -836,8 +834,7 @@ bool Inventory::removeSensor(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensors[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensors[i].get());
 	}
 
 	_sensors[i]->setParent(nullptr);
@@ -1007,8 +1004,7 @@ bool Inventory::removeDatalogger(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataloggers[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataloggers[i].get());
 	}
 
 	_dataloggers[i]->setParent(nullptr);
@@ -1178,8 +1174,7 @@ bool Inventory::removeResponsePAZ(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responsePAZs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responsePAZs[i].get());
 	}
 
 	_responsePAZs[i]->setParent(nullptr);
@@ -1349,8 +1344,7 @@ bool Inventory::removeResponseFIR(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseFIRs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseFIRs[i].get());
 	}
 
 	_responseFIRs[i]->setParent(nullptr);
@@ -1520,8 +1514,7 @@ bool Inventory::removeResponseIIR(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseIIRs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseIIRs[i].get());
 	}
 
 	_responseIIRs[i]->setParent(nullptr);
@@ -1691,8 +1684,7 @@ bool Inventory::removeResponsePolynomial(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responsePolynomials[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responsePolynomials[i].get());
 	}
 
 	_responsePolynomials[i]->setParent(nullptr);
@@ -1862,8 +1854,7 @@ bool Inventory::removeResponseFAP(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseFAPs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseFAPs[i].get());
 	}
 
 	_responseFAPs[i]->setParent(nullptr);
@@ -2033,8 +2024,7 @@ bool Inventory::removeNetwork(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_networks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _networks[i].get());
 	}
 
 	_networks[i]->setParent(nullptr);

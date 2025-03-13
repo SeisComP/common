@@ -349,8 +349,7 @@ bool Routing::removeRoute(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routes[i].get());
 	}
 
 	_routes[i]->setParent(nullptr);
@@ -495,8 +494,7 @@ bool Routing::removeAccess(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_accesss[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _accesss[i].get());
 	}
 
 	_accesss[i]->setParent(nullptr);

@@ -767,8 +767,7 @@ bool Pick::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);

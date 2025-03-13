@@ -645,8 +645,7 @@ bool SensorLocation::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -791,8 +790,7 @@ bool SensorLocation::removeAuxStream(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_auxStreams[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _auxStreams[i].get());
 	}
 
 	_auxStreams[i]->setParent(nullptr);
@@ -962,8 +960,7 @@ bool SensorLocation::removeStream(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_streams[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _streams[i].get());
 	}
 
 	_streams[i]->setParent(nullptr);

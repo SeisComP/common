@@ -760,8 +760,7 @@ bool Datalogger::removeDataloggerCalibration(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataloggerCalibrations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataloggerCalibrations[i].get());
 	}
 
 	_dataloggerCalibrations[i]->setParent(nullptr);
@@ -906,8 +905,7 @@ bool Datalogger::removeDecimation(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_decimations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _decimations[i].get());
 	}
 
 	_decimations[i]->setParent(nullptr);

@@ -701,8 +701,7 @@ bool Sensor::removeSensorCalibration(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensorCalibrations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensorCalibrations[i].get());
 	}
 
 	_sensorCalibrations[i]->setParent(nullptr);

@@ -499,8 +499,7 @@ bool ConfigModule::removeConfigStation(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_configStations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _configStations[i].get());
 	}
 
 	_configStations[i]->setParent(nullptr);

@@ -332,8 +332,7 @@ bool DataAvailability::removeDataExtent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataExtents[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataExtents[i].get());
 	}
 
 	_dataExtents[i]->setParent(nullptr);

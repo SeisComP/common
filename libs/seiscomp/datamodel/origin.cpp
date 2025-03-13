@@ -907,8 +907,7 @@ bool Origin::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -1045,8 +1044,7 @@ bool Origin::removeCompositeTime(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_compositeTimes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _compositeTimes[i].get());
 	}
 
 	_compositeTimes[i]->setParent(nullptr);
@@ -1177,8 +1175,7 @@ bool Origin::removeArrival(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arrivals[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arrivals[i].get());
 	}
 
 	_arrivals[i]->setParent(nullptr);
@@ -1333,8 +1330,7 @@ bool Origin::removeStationMagnitude(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_stationMagnitudes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _stationMagnitudes[i].get());
 	}
 
 	_stationMagnitudes[i]->setParent(nullptr);
@@ -1475,8 +1471,7 @@ bool Origin::removeMagnitude(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_magnitudes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _magnitudes[i].get());
 	}
 
 	_magnitudes[i]->setParent(nullptr);

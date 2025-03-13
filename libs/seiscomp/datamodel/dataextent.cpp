@@ -628,8 +628,7 @@ bool DataExtent::removeDataSegment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataSegments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataSegments[i].get());
 	}
 
 	_dataSegments[i]->setParent(nullptr);
@@ -774,8 +773,7 @@ bool DataExtent::removeDataAttributeExtent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataAttributeExtents[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataAttributeExtents[i].get());
 	}
 
 	_dataAttributeExtents[i]->setParent(nullptr);

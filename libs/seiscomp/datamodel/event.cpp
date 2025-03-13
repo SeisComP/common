@@ -608,8 +608,7 @@ bool Event::removeEventDescription(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_eventDescriptions[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _eventDescriptions[i].get());
 	}
 
 	_eventDescriptions[i]->setParent(nullptr);
@@ -754,8 +753,7 @@ bool Event::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -900,8 +898,7 @@ bool Event::removeOriginReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_originReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _originReferences[i].get());
 	}
 
 	_originReferences[i]->setParent(nullptr);
@@ -1046,8 +1043,7 @@ bool Event::removeFocalMechanismReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_focalMechanismReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _focalMechanismReferences[i].get());
 	}
 
 	_focalMechanismReferences[i]->setParent(nullptr);

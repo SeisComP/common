@@ -290,8 +290,7 @@ bool Journaling::removeJournalEntry(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_journalEntrys[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _journalEntrys[i].get());
 	}
 
 	_journalEntrys[i]->setParent(nullptr);

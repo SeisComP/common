@@ -903,8 +903,7 @@ bool MomentTensor::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -1041,8 +1040,7 @@ bool MomentTensor::removeDataUsed(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataUseds[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataUseds[i].get());
 	}
 
 	_dataUseds[i]->setParent(nullptr);
@@ -1173,8 +1171,7 @@ bool MomentTensor::removeMomentTensorPhaseSetting(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensorPhaseSettings[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensorPhaseSettings[i].get());
 	}
 
 	_momentTensorPhaseSettings[i]->setParent(nullptr);
@@ -1329,8 +1326,7 @@ bool MomentTensor::removeMomentTensorStationContribution(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensorStationContributions[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensorStationContributions[i].get());
 	}
 
 	_momentTensorStationContributions[i]->setParent(nullptr);

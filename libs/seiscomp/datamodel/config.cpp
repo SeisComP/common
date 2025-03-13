@@ -337,8 +337,7 @@ bool Config::removeParameterSet(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_parameterSets[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _parameterSets[i].get());
 	}
 
 	_parameterSets[i]->setParent(nullptr);
@@ -479,8 +478,7 @@ bool Config::removeConfigModule(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_configModules[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _configModules[i].get());
 	}
 
 	_configModules[i]->setParent(nullptr);

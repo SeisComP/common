@@ -760,8 +760,7 @@ bool ArclinkRequest::removeArclinkStatusLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkStatusLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkStatusLines[i].get());
 	}
 
 	_arclinkStatusLines[i]->setParent(nullptr);
@@ -906,8 +905,7 @@ bool ArclinkRequest::removeArclinkRequestLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkRequestLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkRequestLines[i].get());
 	}
 
 	_arclinkRequestLines[i]->setParent(nullptr);

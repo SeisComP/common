@@ -425,8 +425,7 @@ bool Reading::removePickReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_pickReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _pickReferences[i].get());
 	}
 
 	_pickReferences[i]->setParent(nullptr);
@@ -571,8 +570,7 @@ bool Reading::removeAmplitudeReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudeReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudeReferences[i].get());
 	}
 
 	_amplitudeReferences[i]->setParent(nullptr);
