@@ -1020,6 +1020,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				struct PrintHelper<T,0> {
 					static void process(std::ostream &os, const T &value, bool) {
+						using namespace Seiscomp::Core;
 						os << toString(value);
 					}
 				};
