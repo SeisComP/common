@@ -62,14 +62,11 @@ template <class T>
 bool diffProperty(const T &v1, const T &v2, LogNode *node, LogNode *child) {
 	bool equals = v1 == v2;
 	if ( node && node->level() >= LogNode::DIFFERENCES) {
-		stringstream ss;
 		if ( !equals ) {
-			ss << "{ " << v1 << " != " << v2 << " }";
-			node->addChild(child, ss.str());
+			node->addChild(child, "{ " + Core::toString(v1) + " != " + Core::toString(v2) + " }");
 		}
 		else if (node->level() == LogNode::ALL) {
-			ss << "{ " << v1 << " }";
-			node->addChild(child, ss.str());
+			node->addChild(child, "{ " + Core::toString(v1) + " }");
 		}
 	}
 	return equals;
