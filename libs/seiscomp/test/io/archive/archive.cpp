@@ -24,6 +24,7 @@
 #include "eventxml.h"
 
 #include <seiscomp/datamodel/eventparameters.h>
+#include <seiscomp/datamodel/journaling.h>
 #include <seiscomp/io/archive/jsonarchive.h>
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/logging/fd.h>
@@ -65,7 +66,7 @@ struct TestData {
 		logger.logContext(true);
 
 		// Convert test event to current datamodel schema
-		stringbuf xmlOrigBuf(gempa2021ijvk, ios_base::in);
+		stringbuf xmlOrigBuf(XML_gempa2021ijvk, ios_base::in);
 		IO::XMLArchive ar(&xmlOrigBuf, true);
 
 		ar >> referenceEP;
@@ -135,6 +136,47 @@ BOOST_AUTO_TEST_CASE(json_archive) {
 
 	string xml = xmlBuf.str();
 	BOOST_CHECK_EQUAL(xml, referenceXML);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(xmlEp) {
+	stringbuf xmlBuf(XML_ep, ios_base::in);
+	IO::XMLArchive ar(&xmlBuf, true);
+
+	DataModel::EventParametersPtr ep;
+	DataModel::JournalingPtr ej;
+
+	ar >> ep >> ej;
+	ar.close();
+
+	BOOST_CHECK(ep != nullptr);
+	BOOST_CHECK(ej == nullptr);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(xmlMixed) {
+	stringbuf xmlBuf(XML_mixed, ios_base::in);
+	IO::XMLArchive ar(&xmlBuf, true);
+
+	DataModel::EventParametersPtr ep;
+	DataModel::JournalingPtr ej;
+
+	ar >> ep >> ej;
+	ar.close();
+
+	BOOST_CHECK(ep != nullptr);
+	BOOST_CHECK(ej != nullptr);
+
+	BOOST_CHECK_EQUAL(ep->className(), DataModel::EventParameters::ClassName());
+	BOOST_CHECK_EQUAL(ej->className(), DataModel::Journaling::ClassName());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
