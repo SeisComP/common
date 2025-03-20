@@ -68,6 +68,7 @@ namespace Core {
      remove virtual declaration
    - Added abstract virtual function MagnitudeProcessor::setDefaults() which must
      be implemented by all derived classes.
+   - Added Seiscomp::Core::metaValueCast
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator

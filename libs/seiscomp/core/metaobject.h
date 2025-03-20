@@ -39,7 +39,19 @@ namespace Core {
 
 class BaseObject;
 
-typedef boost::any MetaValue;
+using MetaValue = boost::any;
+
+template<typename ValueType>
+inline ValueType metaValueCast(const MetaValue &operand) {
+	return boost::any_cast<ValueType>(operand);
+}
+
+template<typename ValueType>
+inline ValueType metaValueCast(MetaValue &&operand) {
+	return boost::any_cast<ValueType>(operand);
+}
+
+using BadMetaValueCast = boost::bad_any_cast;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
