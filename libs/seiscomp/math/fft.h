@@ -70,12 +70,12 @@ void ifft(std::vector<T> &out, ComplexArray &spec) {
 
 template <typename T>
 void ifft(TypedArray<T> &out, ComplexArray &spec) {
-	ifft(out.impl(), &out[0], spec);
+	ifft(out.impl(), spec);
 }
 
 template <typename T>
 void ifft(TypedArray<T> &out, Seiscomp::ComplexDoubleArray &spec) {
-	ifft(out.impl(), &out[0], spec.impl());
+	ifft(out.impl(), spec.impl());
 }
 
 inline void ifft(DoubleArray &out, Seiscomp::ComplexDoubleArray &spec) {
