@@ -1467,8 +1467,9 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	QHBoxLayout *nameLayout = new QHBoxLayout;
 
 	QString paramLabel = idx.data().toString();
-	if ( !param->definition->unit.empty() )
+	if ( !param->definition->unit.empty() ) {
 		paramLabel += QString(" [%1]").arg(param->definition->unit.c_str());
+	}
 
 	if ( param->definition->type == "boolean" ) {
 		paramLayout->addStretch();
@@ -1769,7 +1770,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 	// boolean
 	if ( type == "boolean" ) {
 		if ( valueTest != "true" && valueTest != "false" ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '"
 				     << valueTest << "' must be true or false " << endl;
 			}
@@ -1777,11 +1778,11 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 	}
 	// double/float
-	else if ( type == "double" || type == "list:double" ||
-	          type == "float" || type == "list:float" ) {
+	else if ( (type == "double") || (type == "list:double") ||
+	          (type == "float") || (type == "list:float") ) {
 		double value;
 		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '"
 				     << valueTest << "' must be double"<< endl;
 			}
@@ -1789,10 +1790,10 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 	}
 	// integer
-	else if ( type == "int" || type == "list:int" ) {
+	else if ( (type == "int") || (type == "list:int") ) {
 		int value;
 		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
 				     << "' must be integer"<< endl;
 			}
@@ -1800,11 +1801,11 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 	}
 	// unsigned integer
-	else if ( type == "uint" || type == "list:uint" ) {
+	else if ( (type == "uint") || (type == "list:uint") ) {
 		int value;
 		if ( !valueTest.empty() && (
 		         !Core::fromString(value, valueTest) || value < 0 ) ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
 				     << "' must be unsigned integer"<< endl;
 			}
@@ -1812,17 +1813,17 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 	}
 	// time
-	else if ( type == "time" || type == "list:time" ) {
+	else if ( (type == "time") || (type == "list:time") ) {
 		Core::Time value;
 		if ( !valueTest.empty() && !Core::fromString(value, valueTest) ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '"
 				     << valueTest << "' must be time"<< endl;
 			}
 			eval += "<b>Value must be time:</b> ";
 		}
 	}
-	else if ( type == "file" || type == "list:file" ) {
+	else if ( (type == "file") || (type == "list:file") ) {
 		if ( valueTest.empty() ) {
 			return eval.size() > evalSize;
 		}
@@ -1831,7 +1832,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		QFile dir(value.c_str());
 		QFileInfo fileInfo(dir);
 		if ( fileInfo.exists() && fileInfo.isDir() ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
 				     << "' file is actually an existing directory" << endl;
 			}
@@ -1849,7 +1850,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 				QFileInfo fileInfo(file);
 				// File not found is actually not an error
 				if ( !fileInfo.isReadable() ) {
-					if ( verbose ) {
+					if ( verbose && !symbolURIString.empty() ) {
 						cerr << symbolURIString << param->variableName << " = '"
 						     << valueTest << "' readable file must exist"<< endl;
 					}
@@ -1857,7 +1858,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 					break;
 				}
 			}
-			else if (item == "write" ) {
+			else if ( item == "write" ) {
 				QFile file(value.c_str());
 				QFileInfo fileInfo(file);
 				// File exists and is writable is actually not an error
@@ -1866,8 +1867,8 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 				}
 				// Check if the parent directory exists
 				QDir checkDir(QFileInfo(value.c_str()).absolutePath());
-				if (!checkDir.exists()) {
-					if ( verbose ) {
+				if ( !checkDir.exists() ) {
+					if ( verbose && !symbolURIString.empty() ) {
 						cerr << symbolURIString << param->variableName << " = '" << valueTest
 						     << "' parent directory must exist" << endl;
 					}
@@ -1875,12 +1876,12 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 					break;
 				}
 			}
-			else if (item == "execute" ) {
+			else if ( item == "execute" ) {
 				// files must be executable if tagged as execute
 				QFile file(value.c_str());
 				QFileInfo fileInfo(file);
 				if ( !valueTest.empty() && !fileInfo.isExecutable() ) {
-					if ( verbose ) {
+					if ( verbose && !symbolURIString.empty() ) {
 						cerr << symbolURIString << param->variableName << " = '"
 						     << valueTest << "' executable file must exist"<< endl;
 					}
@@ -1893,7 +1894,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 			}
 		}
 	}
-	else if ( type == "directory" || type == "list:directory" ) {
+	else if ( (type == "directory") || (type == "list:directory") ) {
 		if ( valueTest.empty() ) {
 			return eval.size() > evalSize;
 		}
@@ -1902,7 +1903,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		QFile dir(value.c_str());
 		QFileInfo fileInfo(dir);
 		if ( fileInfo.exists() && fileInfo.isFile() ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
 				     << "' directory is actually an existing file" << endl;
 			}
@@ -1919,7 +1920,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 				QDir dir(value.c_str());
 				// Directory not found is actually not an error
 				if ( !dir.exists() ) {
-					if ( verbose ) {
+					if ( verbose && !symbolURIString.empty() ) {
 						cerr << symbolURIString << param->variableName << " = '"
 						     << valueTest << "' directory must exist"<< endl;
 					}
@@ -1927,14 +1928,14 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 					break;
 				}
 			}
-			else if (item == "write" ) {
+			else if ( item == "write" ) {
 				// directory must exist or parent directory must be writable
 				// and it must not be a file if tagged as read
 				// Check if the parent directory exists and is writable
 				QString parentDir = QFileInfo(dir).absolutePath();
 				QDir parentDirObj(parentDir);
 				if ( !parentDirObj.exists() ) {
-					if ( verbose ) {
+					if ( verbose && !symbolURIString.empty() ) {
 						cerr << symbolURIString << param->variableName << " = '" << valueTest
 						     << "' parent directory must exist" << endl;
 					}
@@ -1952,7 +1953,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		vector<string> toks;
 		Seiscomp::Core::split(toks, valueTest, ":", false);
 		if ( toks.size() > 2 ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '"
 				     << valueTest << "' only one colon allowed"<< endl;
 			}
@@ -1962,7 +1963,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 			int port;
 			if ( !Seiscomp::Core::fromString(port, toks[1]) ||
 			     port < 1 || port > 65535 ) {
-				if ( verbose ) {
+				if ( verbose && !symbolURIString.empty() ) {
 					cerr << symbolURIString << param->variableName << " = '"
 					     << valueTest
 					     << "' port not a valid integer in range [1, 65535]"
@@ -1976,7 +1977,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 	else if ( type == "gradient" ) {
 		// value must contain a colon
 		if ( valueTest.find(':') == std::string::npos ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '"
 				     << valueTest
 				     << "' gradient value must contain ':' " << endl;
@@ -1998,7 +1999,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 
 		if ( !valueAccept ) {
-			if ( verbose ) {
+			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
 				     << "' is not a member of '" << param->definition->values
 				     << "'" << endl;
@@ -2032,7 +2033,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 
 			if ( Core::fromString(value, valueTest) && (
 			     value < rangeMin || value > rangeMax ) ) {
-				if ( verbose ) {
+				if ( verbose && !symbolURIString.empty() ) {
 					cerr << symbolURIString << param->variableName << " = '"
 					     << valueTest << "' is not in range: '"
 					     << param->definition->range << "'" << endl;
@@ -2101,12 +2102,16 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 
 
 void FancyView::optionTextEdited() {
-	if ( _optionEditHint != NULL ) _optionEditHint->hide();
+	if ( _optionEditHint != NULL ) {
+		_optionEditHint->hide();
+	}
 
 	QWidget *w = static_cast<QWidget*>(sender());
 
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
-	if ( !item.isValid() ) return;
+	if ( !item.isValid() ) {
+		return;
+	}
 
 	Parameter *param = reinterpret_cast<Parameter*>(
 		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
