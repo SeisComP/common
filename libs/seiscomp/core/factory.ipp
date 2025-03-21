@@ -140,8 +140,19 @@ ClassFactoryInterface<ROOT_TYPE> *ClassFactoryInterface<ROOT_TYPE>::FindByClassN
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
-unsigned int ClassFactoryInterface<ROOT_TYPE>::NumberOfRegisteredClasses() {
-	return static_cast<unsigned int>(Classes().size());
+size_t ClassFactoryInterface<ROOT_TYPE>::NumberOfRegisteredClasses() {
+	return Classes().size();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename ROOT_TYPE>
+const typename ClassFactoryInterface<ROOT_TYPE>::ClassNames &
+ClassFactoryInterface<ROOT_TYPE>::RegisteredClasses() {
+	return Names();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -216,7 +227,7 @@ bool ClassFactoryInterface<ROOT_TYPE>::RegisterFactory(ClassFactoryInterface<ROO
 
 	Classes()[factory->className()] = factory;
 	Names()[factory->typeInfo()] = factory->className();
-	
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

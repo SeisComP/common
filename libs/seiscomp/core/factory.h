@@ -62,8 +62,9 @@ class ClassFactoryInterface {
 		using RootType = ROOT_TYPE;
 		using ClassPool = std::map<std::string, ClassFactoryInterface<ROOT_TYPE>*>;
 		using ClassNames = std::map<const RTTI*, std::string>;
+		using NameList = std::list<std::string>;
 
-	
+
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
@@ -97,8 +98,12 @@ class ClassFactoryInterface {
 
 		static bool IsTypeOf(const char *baseName, const char *derivedName);
 
-		//! Returns the number of registered classes
-		static unsigned int NumberOfRegisteredClasses();
+		//! Returns the number of registered classes. This is equal to
+		//! Classes().size().
+		static size_t NumberOfRegisteredClasses();
+
+		//! Returns the registered classes.
+		static const ClassNames &RegisteredClasses();
 
 		//! Returns the name of the class (as given during construction) which can be created
 		//! by this factory
