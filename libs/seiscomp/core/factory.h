@@ -94,7 +94,8 @@ class ClassFactoryInterface {
 		static const char* ClassName(const RTTI *rtti);
 
 		//! Looks up a class factory for a given class name
-		static ClassFactoryInterface* FindByClassName(const char *className);
+		static ClassFactoryInterface *FindByClassName(const char *className);
+		static ClassFactoryInterface *FindByClassName(const std::string &className);
 
 		static bool IsTypeOf(const char *baseName, const char *derivedName);
 

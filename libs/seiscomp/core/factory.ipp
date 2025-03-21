@@ -124,14 +124,30 @@ const char *ClassFactoryInterface<ROOT_TYPE>::ClassName(const RTTI *info) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 ClassFactoryInterface<ROOT_TYPE> *ClassFactoryInterface<ROOT_TYPE>::FindByClassName(const char *className) {
-	if ( !className )
+	if ( !className ) {
 		return nullptr;
+	}
 
-	typename ClassPool::iterator it = Classes().find(className);
-	if ( it == Classes().end() )
+	auto it = Classes().find(className);
+	if ( it == Classes().end() ) {
 		return nullptr;
+	}
 
 	return (*it).second;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename ROOT_TYPE>
+ClassFactoryInterface<ROOT_TYPE> *
+ClassFactoryInterface<ROOT_TYPE>::FindByClassName(const std::string &className) {
+	if ( auto it = Classes().find(className); it != Classes().end() ) {
+		return it->second;
+	}
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
