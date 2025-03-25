@@ -42,7 +42,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 	// ----------------------------------------------------------------------
 	public:
 		using AttachmentType = T;
-		using AttachmentList = std::list<typename Seiscomp::Core::SmartPointer<T>::Impl>;
+		using AttachmentList = std::list<Seiscomp::Core::SmartPointer<T>>;
 		typedef typename AttachmentList::iterator iterator;
 		typedef typename AttachmentList::const_iterator const_iterator;
 
@@ -70,8 +70,8 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		 * @retval true The operation was successfull and the object has been attached properly
 		 * @retval false The object is nullptr or the object has been attached already
 		 */
-		bool attach(AttachmentType* attachment);
-		bool attach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment);
+		bool attach(AttachmentType *attachment);
+		bool attach(typename Seiscomp::Core::SmartPointer<AttachmentType> &attachment);
 
 		/**
 		 * Detaches an already attached object from the message
@@ -79,8 +79,8 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		 * @retval true The object has been detached successfully
 		 * @retval false The object has not been attached before
 		 */
-		bool detach(AttachmentType* attachment);
-		bool detach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment);
+		bool detach(AttachmentType *attachment);
+		bool detach(typename Seiscomp::Core::SmartPointer<AttachmentType> &attachment);
 
 		/**
 		 * Detaches an object from the message
@@ -132,7 +132,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 	class APIDef TYPENAME : public ::Seiscomp::Core::GenericMessage<CLASS> { \
 		DECLARE_SC_CLASS(TYPENAME); \
 	}; \
-	typedef ::Seiscomp::Core::SmartPointer<TYPENAME>::Impl TYPENAME##Ptr
+	using TYPENAME##Ptr = ::Seiscomp::Core::SmartPointer<TYPENAME>
 
 #define IMPLEMENT_MESSAGE_FOR(CLASS, TYPENAME, NAME) \
 	IMPLEMENT_SC_CLASS_DERIVED(TYPENAME, ::Seiscomp::Core::Message, NAME)

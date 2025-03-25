@@ -86,10 +86,10 @@ inline bool GenericMessage<T>::attach(AttachmentType* attachment) {
 	iterator it = std::find(_attachments.begin(), _attachments.end(), attachment);
 	if ( it != _attachments.end() )
 		return false;
-		
+
 	_attachments.push_back(attachment);
-	return true;	
-	
+	return true;
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -98,9 +98,9 @@ inline bool GenericMessage<T>::attach(AttachmentType* attachment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool GenericMessage<T>::attach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment) {
+inline bool GenericMessage<T>::attach(typename Seiscomp::Core::SmartPointer<AttachmentType> &attachment) {
 	return attach(attachment.get());
-	
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -124,7 +124,7 @@ inline bool GenericMessage<T>::detach(AttachmentType* attachment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool GenericMessage<T>::detach(typename Seiscomp::Core::SmartPointer<AttachmentType>::Impl& attachment) {
+inline bool GenericMessage<T>::detach(typename Seiscomp::Core::SmartPointer<AttachmentType> &attachment) {
 	return detach(attachment.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -415,7 +415,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	if ( !data_len ) return nullptr;
 
 	// Ring buffer is filled at this point.
-	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
+	Core::SmartPointer< TypedArray<T> > resampled_data;
 	Core::Time startTime;
 
 	do {
@@ -424,10 +424,12 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 			double *coeff = &((*stage->coefficients)[0]);
 			double weightedSum = 0;
 
-			for ( size_t i = stage->front; i < stage->buffer.size(); ++i )
+			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {
 				weightedSum += buffer[i] * *(coeff++);
-			for ( size_t i = 0; i < stage->front; ++i )
+			}
+			for ( size_t i = 0; i < stage->front; ++i ) {
 				weightedSum += buffer[i] * *(coeff++);
+			}
 
 			if ( !resampled_data ) {
 				startTime = stage->startTime;
@@ -436,8 +438,9 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 			T sample = (T)weightedSum;
 			resampled_data->append(1, &sample);
-			if ( Math::isNaN(sample) )
+			if ( Math::isNaN(sample) ) {
 				SEISCOMP_WARNING("[dec] produced NaN sample");
+			}
 
 			// Still need to wait until N samples have been fed.
 			stage->samplesToSkip = stage->N;
@@ -563,7 +566,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		startTime = stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
 
 	// Ring buffer is filled at this point.
-	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
+	Core::SmartPointer< TypedArray<T> > resampled_data;
 
 	if ( !data_len ) return nullptr;
 

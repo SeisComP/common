@@ -174,6 +174,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_REQUIRE(url.setUrl("http://www.ietf.org/rfc/rfc2396.txt"));
 	BOOST_REQUIRE(url.setUrl("ldap://[2001:db8::7]/c=GB?objectClass?one"));
 	BOOST_REQUIRE(url.setUrl("telnet://192.0.2.16:80/"));
+
+	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test"));
 }
 
 BOOST_AUTO_TEST_CASE(Extract) {

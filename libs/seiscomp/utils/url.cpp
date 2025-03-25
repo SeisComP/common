@@ -309,7 +309,7 @@ Url::Status Url::parseAuthority(const std::string &url) {
 	}
 
 	if ( end != std::string::npos ) {
-		_host = Decoded(_authority.substr(userInfoEnd, end));
+		_host = Decoded(_authority.substr(userInfoEnd, end - userInfoEnd));
 		if ( _host.empty() ) {
 			return STATUS_INVALID_HOST;
 		}

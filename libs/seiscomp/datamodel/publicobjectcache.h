@@ -246,8 +246,7 @@ class SC_SYSTEM_CORE_API PublicObjectCache : public Core::BaseObject {
 		Core::TimeWindow timeWindow() const;
 
 		template <typename T>
-		typename Core::SmartPointer<T>::Impl
-		get(const std::string &publicID) {
+		Core::SmartPointer<T> get(const std::string &publicID) {
 			return static_cast<T*>(find(T::TypeInfo(), publicID));
 		}
 

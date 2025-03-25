@@ -171,7 +171,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 			}
 		}
 
-		using DataArrayPtr = typename Core::SmartPointer< NumericArray<T> >::Impl;
+		using DataArrayPtr = Core::SmartPointer< NumericArray<T> >;
 
 		DataArrayPtr data[N];
 		GenericRecordPtr comps[N];
@@ -211,7 +211,7 @@ WaveformProcessor::Status NCompsOperator<T,N,PROC,BSIZE>::process(int, const Rec
 				++it[i];
 
 				const NumericArray<T> *srcData = NumericArray<T>::ConstCast(rec_data);
-				typename Core::SmartPointer< NumericArray<T> >::Impl tmp;
+				Core::SmartPointer<NumericArray<T>> tmp;
 				if ( srcData == nullptr ) {
 					tmp = (NumericArray<T>*)rec_data->copy(NumericArray<T>::ArrayType);
 					srcData = tmp.get();

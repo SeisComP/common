@@ -83,7 +83,7 @@ class BandPassEnvelope : public InPlaceFilter<T> {
 		double _samplingFrequency;
 		double _K, _yp;
 
-		using FilterPtr = typename Core::SmartPointer<Math::Filtering::InPlaceFilter<T>>::Impl;
+		using FilterPtr = Core::SmartPointer<Math::Filtering::InPlaceFilter<T>>;
 		FilterPtr _bp;
 
 		// Flag to indicate some pending initialization

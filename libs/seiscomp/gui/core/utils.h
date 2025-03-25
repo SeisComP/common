@@ -119,8 +119,7 @@ class SC_GUI_API EllipsisDrawer : public QObject {
 
 
 template <typename T>
-class ObjectChangeList : public std::vector<std::pair<typename Core::SmartPointer<T>::Impl, bool> > {
-};
+using ObjectChangeList = std::vector<std::pair<Core::SmartPointer<T>, bool>>;
 
 
 }
