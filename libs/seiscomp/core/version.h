@@ -69,6 +69,10 @@ namespace Core {
    - Added abstract virtual function MagnitudeProcessor::setDefaults() which must
      be implemented by all derived classes.
    - Added Seiscomp::Core::metaValueCast
+   - Removed typedef Seiscomp::Core::SmartPointer::Impl
+   - Added Seiscomp::Core::SmartPointer as typedef for boost::instrusive_ptr
+   - Removed typedef Seiscomp::Core::Optional::Impl
+   - Added Seiscomp::Core::Optional as typedef for boost::optional
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator
