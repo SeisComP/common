@@ -3763,7 +3763,7 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[50]
 #define SWIGTYPE_p_Seiscomp__Core__Message swig_types[51]
 #define SWIGTYPE_p_Seiscomp__Core__MetaObject swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t swig_types[53]
 #define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[54]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[55]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[56]
@@ -16753,7 +16753,7 @@ fail:
 SWIGINTERN PyObject *_wrap_SchemaParameter_readOnly_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::SchemaParameter *arg1 = (Seiscomp::System::SchemaParameter *) 0 ;
-  Seiscomp::Core::Optional< bool >::Impl *arg2 = (Seiscomp::Core::Optional< bool >::Impl *) 0 ;
+  Seiscomp::Core::Optional< bool > *arg2 = (Seiscomp::Core::Optional< bool > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -16767,11 +16767,11 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_readOnly_set(PyObject *self, PyObject
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_readOnly_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaParameter_readOnly_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool >::Impl *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaParameter_readOnly_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool > *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool > * >(argp2);
   if (arg1) (arg1)->readOnly = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -16786,7 +16786,7 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_readOnly_get(PyObject *self, PyObject
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< bool >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< bool > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -16796,8 +16796,8 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_readOnly_get(PyObject *self, PyObject
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaParameter_readOnly_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaParameter *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaParameter * >(argp1);
-  result = (Seiscomp::Core::Optional< bool >::Impl *)& ((arg1)->readOnly);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  result = (Seiscomp::Core::Optional< bool > *)& ((arg1)->readOnly);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -23390,7 +23390,7 @@ fail:
 SWIGINTERN PyObject *_wrap_SchemaModule_standalone_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::SchemaModule *arg1 = (Seiscomp::System::SchemaModule *) 0 ;
-  Seiscomp::Core::Optional< bool >::Impl *arg2 = (Seiscomp::Core::Optional< bool >::Impl *) 0 ;
+  Seiscomp::Core::Optional< bool > *arg2 = (Seiscomp::Core::Optional< bool > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -23404,11 +23404,11 @@ SWIGINTERN PyObject *_wrap_SchemaModule_standalone_set(PyObject *self, PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaModule_standalone_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaModule *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaModule * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaModule_standalone_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool >::Impl *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaModule_standalone_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool > *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool > * >(argp2);
   if (arg1) (arg1)->standalone = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -23423,7 +23423,7 @@ SWIGINTERN PyObject *_wrap_SchemaModule_standalone_get(PyObject *self, PyObject 
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< bool >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< bool > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -23433,8 +23433,8 @@ SWIGINTERN PyObject *_wrap_SchemaModule_standalone_get(PyObject *self, PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaModule_standalone_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaModule *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaModule * >(argp1);
-  result = (Seiscomp::Core::Optional< bool >::Impl *)& ((arg1)->standalone);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  result = (Seiscomp::Core::Optional< bool > *)& ((arg1)->standalone);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -23444,7 +23444,7 @@ fail:
 SWIGINTERN PyObject *_wrap_SchemaModule_inheritGlobalBinding_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::SchemaModule *arg1 = (Seiscomp::System::SchemaModule *) 0 ;
-  Seiscomp::Core::Optional< bool >::Impl *arg2 = (Seiscomp::Core::Optional< bool >::Impl *) 0 ;
+  Seiscomp::Core::Optional< bool > *arg2 = (Seiscomp::Core::Optional< bool > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -23458,11 +23458,11 @@ SWIGINTERN PyObject *_wrap_SchemaModule_inheritGlobalBinding_set(PyObject *self,
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaModule_inheritGlobalBinding_set" "', argument " "1"" of type '" "Seiscomp::System::SchemaModule *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaModule * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaModule_inheritGlobalBinding_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool >::Impl *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SchemaModule_inheritGlobalBinding_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< bool > *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::Optional< bool > * >(argp2);
   if (arg1) (arg1)->inheritGlobalBinding = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -23477,7 +23477,7 @@ SWIGINTERN PyObject *_wrap_SchemaModule_inheritGlobalBinding_get(PyObject *self,
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< bool >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< bool > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -23487,8 +23487,8 @@ SWIGINTERN PyObject *_wrap_SchemaModule_inheritGlobalBinding_get(PyObject *self,
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SchemaModule_inheritGlobalBinding_get" "', argument " "1"" of type '" "Seiscomp::System::SchemaModule *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::System::SchemaModule * >(argp1);
-  result = (Seiscomp::Core::Optional< bool >::Impl *)& ((arg1)->inheritGlobalBinding);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t__Impl, 0 |  0 );
+  result = (Seiscomp::Core::Optional< bool > *)& ((arg1)->inheritGlobalBinding);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_bool_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -50691,7 +50691,7 @@ static swig_type_info _swigt__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core
 static swig_type_info _swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t = {"_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t", "Seiscomp::Core::ClassFactory *|Seiscomp::Core::Generic::ClassFactoryInterface< Seiscomp::Core::BaseObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__InterruptibleObject = {"_p_Seiscomp__Core__InterruptibleObject", "Seiscomp::Core::InterruptibleObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__MetaObject = {"_p_Seiscomp__Core__MetaObject", "Seiscomp::Core::MetaObject *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_bool_t__Impl = {"_p_Seiscomp__Core__OptionalT_bool_t__Impl", "Seiscomp::Core::Optional< bool >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_bool_t = {"_p_Seiscomp__Core__OptionalT_bool_t", "Seiscomp::Core::Optional< bool > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__RTTI = {"_p_Seiscomp__Core__RTTI", "Seiscomp::Core::RTTI *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array > *", 0, 0, (void*)0, 0};
@@ -50942,7 +50942,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__InterruptibleObject,
   &_swigt__p_Seiscomp__Core__Message,
   &_swigt__p_Seiscomp__Core__MetaObject,
-  &_swigt__p_Seiscomp__Core__OptionalT_bool_t__Impl,
+  &_swigt__p_Seiscomp__Core__OptionalT_bool_t,
   &_swigt__p_Seiscomp__Core__RTTI,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
@@ -51205,7 +51205,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {  {&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},  {&_swigt__p_Seiscomp__System__Application, _p_Seiscomp__System__ApplicationTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__MetaObject[] = {  {&_swigt__p_Seiscomp__Core__MetaObject, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_bool_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_bool_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_bool_t[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_bool_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__RTTI[] = {  {&_swigt__p_Seiscomp__Core__RTTI, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -51456,7 +51456,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__InterruptibleObject,
   _swigc__p_Seiscomp__Core__Message,
   _swigc__p_Seiscomp__Core__MetaObject,
-  _swigc__p_Seiscomp__Core__OptionalT_bool_t__Impl,
+  _swigc__p_Seiscomp__Core__OptionalT_bool_t,
   _swigc__p_Seiscomp__Core__RTTI,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,

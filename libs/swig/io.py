@@ -519,7 +519,7 @@ class GFArchive(seiscomp.core.BaseObject):
         return _io.GFArchive_get(self)
 
     def getTravelTime(self, phase, model, source, receiver):
-        r"""getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >::Impl"""
+        r"""getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >"""
         return _io.GFArchive_getTravelTime(self, phase, model, source, receiver)
 
     def hasLocalTravelTimes(self):
@@ -593,16 +593,16 @@ class RecordStream(object):
     def addStream(self, *args):
         r"""
         addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool
+        addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool
         """
         return _io.RecordStream_addStream(self, *args)
 
     def setStartTime(self, startTime):
-        r"""setStartTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"""
+        r"""setStartTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"""
         return _io.RecordStream_setStartTime(self, startTime)
 
     def setEndTime(self, endTime):
-        r"""setEndTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"""
+        r"""setEndTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"""
         return _io.RecordStream_setEndTime(self, endTime)
 
     def setTimeWindow(self, timeWindow):
@@ -1517,16 +1517,16 @@ class FileRecordStream(RecordStream):
     def addStream(self, *args):
         r"""
         addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool
+        addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool
         """
         return _io.FileRecordStream_addStream(self, *args)
 
     def setStartTime(self, startTime):
-        r"""setStartTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"""
+        r"""setStartTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"""
         return _io.FileRecordStream_setStartTime(self, startTime)
 
     def setEndTime(self, endTime):
-        r"""setEndTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"""
+        r"""setEndTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"""
         return _io.FileRecordStream_setEndTime(self, endTime)
 
     def close(self):
@@ -1600,7 +1600,7 @@ class SLStreamIdx(object):
         r"""
         __init__(SLStreamIdx self) -> SLStreamIdx
         __init__(SLStreamIdx self, string net, string sta, string loc, string cha) -> SLStreamIdx
-        __init__(SLStreamIdx self, string net, string sta, string loc, string cha, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> SLStreamIdx
+        __init__(SLStreamIdx self, string net, string sta, string loc, string cha, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> SLStreamIdx
         """
         _io.SLStreamIdx_swiginit(self, _io.new_SLStreamIdx(*args))
 
@@ -1633,19 +1633,19 @@ class SLStreamIdx(object):
         return _io.SLStreamIdx_selector(self)
 
     def startTime(self):
-        r"""startTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"""
+        r"""startTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"""
         return _io.SLStreamIdx_startTime(self)
 
     def endTime(self):
-        r"""endTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"""
+        r"""endTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"""
         return _io.SLStreamIdx_endTime(self)
 
     def timestamp(self):
-        r"""timestamp(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"""
+        r"""timestamp(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"""
         return _io.SLStreamIdx_timestamp(self)
 
     def setTimestamp(self, rectime):
-        r"""setTimestamp(SLStreamIdx self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & rectime)"""
+        r"""setTimestamp(SLStreamIdx self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & rectime)"""
         return _io.SLStreamIdx_setTimestamp(self, rectime)
     __swig_destroy__ = _io.delete_SLStreamIdx
 
@@ -1710,16 +1710,16 @@ class SLConnection(RecordStream):
     def addStream(self, *args):
         r"""
         addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool
+        addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool
         """
         return _io.SLConnection_addStream(self, *args)
 
     def setStartTime(self, startTime):
-        r"""setStartTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"""
+        r"""setStartTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"""
         return _io.SLConnection_setStartTime(self, startTime)
 
     def setEndTime(self, endTime):
-        r"""setEndTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"""
+        r"""setEndTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"""
         return _io.SLConnection_setEndTime(self, endTime)
 
     def setTimeout(self, seconds):
@@ -1795,16 +1795,16 @@ class ArclinkConnection(RecordStream):
     def addStream(self, *args):
         r"""
         addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool
+        addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool
         """
         return _io.ArclinkConnection_addStream(self, *args)
 
     def setStartTime(self, stime):
-        r"""setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"""
+        r"""setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime) -> bool"""
         return _io.ArclinkConnection_setStartTime(self, stime)
 
     def setEndTime(self, etime):
-        r"""setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"""
+        r"""setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool"""
         return _io.ArclinkConnection_setEndTime(self, etime)
 
     def setTimeout(self, seconds):
@@ -1854,16 +1854,16 @@ class CombinedConnection(RecordStream):
     def addStream(self, *args):
         r"""
         addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool
+        addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool
         """
         return _io.CombinedConnection_addStream(self, *args)
 
     def setStartTime(self, stime):
-        r"""setStartTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"""
+        r"""setStartTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime) -> bool"""
         return _io.CombinedConnection_setStartTime(self, stime)
 
     def setEndTime(self, etime):
-        r"""setEndTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"""
+        r"""setEndTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool"""
         return _io.CombinedConnection_setEndTime(self, etime)
 
     def setTimeout(self, seconds):

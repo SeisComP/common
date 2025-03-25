@@ -336,7 +336,7 @@ class Protocol(object):
         return _client.Protocol_sendData(self, targetGroup, data, len, type, contentEncoding, contentType)
 
     def sendMessage(self, *args):
-        r"""sendMessage(Protocol self, std::string const & targetGroup, Message msg, Seiscomp::Client::Protocol::MessageType type=Regular, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl contentEncoding=Unset, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl contentType=Unset) -> Seiscomp::Client::Result"""
+        r"""sendMessage(Protocol self, std::string const & targetGroup, Message msg, Seiscomp::Client::Protocol::MessageType type=Regular, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > contentEncoding=Unset, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType > contentType=Unset) -> Seiscomp::Client::Result"""
         return _client.Protocol_sendMessage(self, *args)
 
     def recv(self):
@@ -1474,11 +1474,11 @@ class StreamApplication(Application):
         return _client.StreamApplication_addStream(self, networkCode, stationCode, locationCode, channelCode)
 
     def setStartTime(self, arg2):
-        r"""setStartTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"""
+        r"""setStartTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & arg2)"""
         return _client.StreamApplication_setStartTime(self, arg2)
 
     def setEndTime(self, arg2):
-        r"""setEndTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"""
+        r"""setEndTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & arg2)"""
         return _client.StreamApplication_setEndTime(self, arg2)
 
     def setTimeWindow(self, arg2):
@@ -1792,7 +1792,7 @@ class ConfigDB(object):
 
     def load(self, *args):
         r"""
-        load(ConfigDB self, DatabaseReader reader, Seiscomp::Core::Optional< std::string >::Impl const & moduleName=Unset, Seiscomp::Core::Optional< std::string >::Impl const & networkCode=Unset, Seiscomp::Core::Optional< std::string >::Impl const & stationCode=Unset, Seiscomp::Core::Optional< std::string >::Impl const & setupName=Unset, std::set< std::string,std::less< std::string >,std::allocator< std::string > > const & parameterNames=std::set< std::string >())
+        load(ConfigDB self, DatabaseReader reader, Seiscomp::Core::Optional< std::string > const & moduleName=Unset, Seiscomp::Core::Optional< std::string > const & networkCode=Unset, Seiscomp::Core::Optional< std::string > const & stationCode=Unset, Seiscomp::Core::Optional< std::string > const & setupName=Unset, std::set< std::string,std::less< std::string >,std::allocator< std::string > > const & parameterNames=std::set< std::string >())
         load(ConfigDB self, char const * xml)
         """
         return _client.ConfigDB_load(self, *args)

@@ -12126,7 +12126,7 @@ SWIGINTERN PyObject *_wrap_GFArchive_getTravelTime(PyObject *self, PyObject *arg
   void *argp5 = 0 ;
   int res5 = 0 ;
   PyObject *swig_obj[5] ;
-  SwigValueWrapper< Seiscomp::Core::Optional< double >::Impl > result;
+  SwigValueWrapper< Seiscomp::Core::Optional< double > > result;
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "GFArchive_getTravelTime", 5, 5, swig_obj)) SWIG_fail;
@@ -12911,16 +12911,16 @@ SWIGINTERN PyObject *_wrap_RecordStream_addStream__SWIG_1(PyObject *self, Py_ssi
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp7 ;
   bool result;
   
   (void)self;
@@ -12998,7 +12998,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_addStream__SWIG_1(PyObject *self, Py_ssi
   }
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13108,7 +13108,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'RecordStream_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::IO::RecordStream::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -13116,10 +13116,10 @@ fail:
 SWIGINTERN PyObject *_wrap_RecordStream_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::RecordStream *arg1 = (Seiscomp::IO::RecordStream *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -13143,7 +13143,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_setStartTime(PyObject *self, PyObject *a
   }
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13165,10 +13165,10 @@ fail:
 SWIGINTERN PyObject *_wrap_RecordStream_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::RecordStream *arg1 = (Seiscomp::IO::RecordStream *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -13192,7 +13192,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_setEndTime(PyObject *self, PyObject *arg
   }
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27693,16 +27693,16 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_addStream__SWIG_1(PyObject *self, Py
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp7 ;
   bool result;
   
   (void)self;
@@ -27780,7 +27780,7 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_addStream__SWIG_1(PyObject *self, Py
   }
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27890,7 +27890,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'FileRecordStream_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::RecordStream::File::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -27898,10 +27898,10 @@ fail:
 SWIGINTERN PyObject *_wrap_FileRecordStream_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::File *arg1 = (Seiscomp::RecordStream::File *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -27925,7 +27925,7 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_setStartTime(PyObject *self, PyObjec
   }
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27947,10 +27947,10 @@ fail:
 SWIGINTERN PyObject *_wrap_FileRecordStream_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::File *arg1 = (Seiscomp::RecordStream::File *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -27974,7 +27974,7 @@ SWIGINTERN PyObject *_wrap_FileRecordStream_setEndTime(PyObject *self, PyObject 
   }
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28757,14 +28757,14 @@ SWIGINTERN PyObject *_wrap_new_SLStreamIdx__SWIG_2(PyObject *self, Py_ssize_t no
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg5 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp5 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp5 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
   Seiscomp::RecordStream::SLStreamIdx *result = 0 ;
   
   (void)self;
@@ -28837,7 +28837,7 @@ SWIGINTERN PyObject *_wrap_new_SLStreamIdx__SWIG_2(PyObject *self, Py_ssize_t no
   }
   {
     try {
-      result = (Seiscomp::RecordStream::SLStreamIdx *)new Seiscomp::RecordStream::SLStreamIdx((std::string const &)*arg1,(std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6);
+      result = (Seiscomp::RecordStream::SLStreamIdx *)new Seiscomp::RecordStream::SLStreamIdx((std::string const &)*arg1,(std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28941,7 +28941,7 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx()\n"
     "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::RecordStream::SLStreamIdx::SLStreamIdx(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -29241,7 +29241,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_startTime(PyObject *self, PyObject *args)
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29253,7 +29253,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_startTime(PyObject *self, PyObject *args)
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->startTime();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time > *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->startTime();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29286,7 +29286,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_endTime(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29298,7 +29298,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_endTime(PyObject *self, PyObject *args) {
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->endTime();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time > *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->endTime();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29331,7 +29331,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_timestamp(PyObject *self, PyObject *args)
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -29343,7 +29343,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_timestamp(PyObject *self, PyObject *args)
   arg1 = reinterpret_cast< Seiscomp::RecordStream::SLStreamIdx * >(argp1);
   {
     try {
-      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->timestamp();
+      result = (Seiscomp::Core::Optional< Seiscomp::Core::Time > *) &((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->timestamp();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29373,10 +29373,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLStreamIdx_setTimestamp(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLStreamIdx *arg1 = (Seiscomp::RecordStream::SLStreamIdx *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -29399,7 +29399,7 @@ SWIGINTERN PyObject *_wrap_SLStreamIdx_setTimestamp(PyObject *self, PyObject *ar
   }
   {
     try {
-      ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->setTimestamp((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      ((Seiscomp::RecordStream::SLStreamIdx const *)arg1)->setTimestamp((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30152,16 +30152,16 @@ SWIGINTERN PyObject *_wrap_SLConnection_addStream__SWIG_1(PyObject *self, Py_ssi
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp7 ;
   bool result;
   
   (void)self;
@@ -30239,7 +30239,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_addStream__SWIG_1(PyObject *self, Py_ssi
   }
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30349,7 +30349,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'SLConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::RecordStream::SLConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -30357,10 +30357,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -30384,7 +30384,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_setStartTime(PyObject *self, PyObject *a
   }
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30406,10 +30406,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SLConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::SLConnection *arg1 = (Seiscomp::RecordStream::SLConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -30433,7 +30433,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_setEndTime(PyObject *self, PyObject *arg
   }
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31286,16 +31286,16 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_1(PyObject *self, P
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp7 ;
   bool result;
   
   (void)self;
@@ -31373,7 +31373,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_addStream__SWIG_1(PyObject *self, P
   }
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31483,7 +31483,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'ArclinkConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::Arclink::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::RecordStream::Arclink::ArclinkConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -31491,10 +31491,10 @@ fail:
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -31518,7 +31518,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setStartTime(PyObject *self, PyObje
   }
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31540,10 +31540,10 @@ fail:
 SWIGINTERN PyObject *_wrap_ArclinkConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::Arclink::ArclinkConnection *arg1 = (Seiscomp::RecordStream::Arclink::ArclinkConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -31567,7 +31567,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_setEndTime(PyObject *self, PyObject
   }
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32120,16 +32120,16 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_addStream__SWIG_1(PyObject *self, 
   std::string *arg3 = 0 ;
   std::string *arg4 = 0 ;
   std::string *arg5 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg6 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg7 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg6 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
   int res3 = SWIG_OLDOBJ ;
   int res4 = SWIG_OLDOBJ ;
   int res5 = SWIG_OLDOBJ ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp6 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp7 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp6 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp7 ;
   bool result;
   
   (void)self;
@@ -32207,7 +32207,7 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_addStream__SWIG_1(PyObject *self, 
   }
   {
     try {
-      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg7);
+      result = (bool)(arg1)->addStream((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg6,(Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg7);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32317,7 +32317,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'CombinedConnection_addStream'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &)\n"
-    "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &,Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)\n");
+    "    Seiscomp::RecordStream::CombinedConnection::addStream(std::string const &,std::string const &,std::string const &,std::string const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &,Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)\n");
   return 0;
 }
 
@@ -32325,10 +32325,10 @@ fail:
 SWIGINTERN PyObject *_wrap_CombinedConnection_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::CombinedConnection *arg1 = (Seiscomp::RecordStream::CombinedConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -32352,7 +32352,7 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_setStartTime(PyObject *self, PyObj
   }
   {
     try {
-      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32374,10 +32374,10 @@ fail:
 SWIGINTERN PyObject *_wrap_CombinedConnection_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::RecordStream::CombinedConnection *arg1 = (Seiscomp::RecordStream::CombinedConnection *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -32401,7 +32401,7 @@ SWIGINTERN PyObject *_wrap_CombinedConnection_setEndTime(PyObject *self, PyObjec
   }
   {
     try {
-      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      result = (bool)(arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37889,7 +37889,7 @@ static PyMethodDef SwigMethods[] = {
 		"GFArchive_addRequest(GFArchive self, string id, string model, GFSource source, GFReceiver receiver, TimeSpan span) -> bool\n"
 		""},
 	 { "GFArchive_get", _wrap_GFArchive_get, METH_O, "GFArchive_get(GFArchive self) -> GreensFunction"},
-	 { "GFArchive_getTravelTime", _wrap_GFArchive_getTravelTime, METH_VARARGS, "GFArchive_getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >::Impl"},
+	 { "GFArchive_getTravelTime", _wrap_GFArchive_getTravelTime, METH_VARARGS, "GFArchive_getTravelTime(GFArchive self, string phase, string model, GFSource source, GFReceiver receiver) -> Seiscomp::Core::Optional< double >"},
 	 { "GFArchive_hasLocalTravelTimes", _wrap_GFArchive_hasLocalTravelTimes, METH_O, "GFArchive_hasLocalTravelTimes(GFArchive self) -> bool"},
 	 { "GFArchive_Create", _wrap_GFArchive_Create, METH_O, "GFArchive_Create(char const * service) -> GFArchive"},
 	 { "GFArchive_Open", _wrap_GFArchive_Open, METH_O, "GFArchive_Open(char const * url) -> GFArchive"},
@@ -37911,10 +37911,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "RecordStream_close", _wrap_RecordStream_close, METH_O, "RecordStream_close(RecordStream self)"},
 	 { "RecordStream_addStream", _wrap_RecordStream_addStream, METH_VARARGS, "\n"
 		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
+		"RecordStream_addStream(RecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool\n"
 		""},
-	 { "RecordStream_setStartTime", _wrap_RecordStream_setStartTime, METH_VARARGS, "RecordStream_setStartTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
-	 { "RecordStream_setEndTime", _wrap_RecordStream_setEndTime, METH_VARARGS, "RecordStream_setEndTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
+	 { "RecordStream_setStartTime", _wrap_RecordStream_setStartTime, METH_VARARGS, "RecordStream_setStartTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"},
+	 { "RecordStream_setEndTime", _wrap_RecordStream_setEndTime, METH_VARARGS, "RecordStream_setEndTime(RecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"},
 	 { "RecordStream_setTimeWindow", _wrap_RecordStream_setTimeWindow, METH_VARARGS, "RecordStream_setTimeWindow(RecordStream self, Seiscomp::Core::TimeWindow const & timeWindow) -> bool"},
 	 { "RecordStream_setTimeout", _wrap_RecordStream_setTimeout, METH_VARARGS, "RecordStream_setTimeout(RecordStream self, int seconds) -> bool"},
 	 { "RecordStream_setRecordType", _wrap_RecordStream_setRecordType, METH_VARARGS, "RecordStream_setRecordType(RecordStream self, char const * type) -> bool"},
@@ -38260,10 +38260,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "FileRecordStream_setSource", _wrap_FileRecordStream_setSource, METH_VARARGS, "FileRecordStream_setSource(FileRecordStream self, string filename) -> bool"},
 	 { "FileRecordStream_addStream", _wrap_FileRecordStream_addStream, METH_VARARGS, "\n"
 		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
+		"FileRecordStream_addStream(FileRecordStream self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool\n"
 		""},
-	 { "FileRecordStream_setStartTime", _wrap_FileRecordStream_setStartTime, METH_VARARGS, "FileRecordStream_setStartTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
-	 { "FileRecordStream_setEndTime", _wrap_FileRecordStream_setEndTime, METH_VARARGS, "FileRecordStream_setEndTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
+	 { "FileRecordStream_setStartTime", _wrap_FileRecordStream_setStartTime, METH_VARARGS, "FileRecordStream_setStartTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"},
+	 { "FileRecordStream_setEndTime", _wrap_FileRecordStream_setEndTime, METH_VARARGS, "FileRecordStream_setEndTime(FileRecordStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"},
 	 { "FileRecordStream_close", _wrap_FileRecordStream_close, METH_O, "FileRecordStream_close(FileRecordStream self)"},
 	 { "FileRecordStream_setRecordType", _wrap_FileRecordStream_setRecordType, METH_VARARGS, "FileRecordStream_setRecordType(FileRecordStream self, char const * type) -> bool"},
 	 { "FileRecordStream_next", _wrap_FileRecordStream_next, METH_O, "FileRecordStream_next(FileRecordStream self) -> Record"},
@@ -38292,7 +38292,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_SLStreamIdx", _wrap_new_SLStreamIdx, METH_VARARGS, "\n"
 		"SLStreamIdx()\n"
 		"SLStreamIdx(string net, string sta, string loc, string cha)\n"
-		"new_SLStreamIdx(string net, string sta, string loc, string cha, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> SLStreamIdx\n"
+		"new_SLStreamIdx(string net, string sta, string loc, string cha, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> SLStreamIdx\n"
 		""},
 	 { "SLStreamIdx___lt__", _wrap_SLStreamIdx___lt__, METH_VARARGS, "SLStreamIdx___lt__(SLStreamIdx self, SLStreamIdx other) -> bool"},
 	 { "SLStreamIdx___eq__", _wrap_SLStreamIdx___eq__, METH_VARARGS, "SLStreamIdx___eq__(SLStreamIdx self, SLStreamIdx other) -> bool"},
@@ -38301,10 +38301,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "SLStreamIdx_channel", _wrap_SLStreamIdx_channel, METH_O, "SLStreamIdx_channel(SLStreamIdx self) -> string"},
 	 { "SLStreamIdx_location", _wrap_SLStreamIdx_location, METH_O, "SLStreamIdx_location(SLStreamIdx self) -> string"},
 	 { "SLStreamIdx_selector", _wrap_SLStreamIdx_selector, METH_O, "SLStreamIdx_selector(SLStreamIdx self) -> string"},
-	 { "SLStreamIdx_startTime", _wrap_SLStreamIdx_startTime, METH_O, "SLStreamIdx_startTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
-	 { "SLStreamIdx_endTime", _wrap_SLStreamIdx_endTime, METH_O, "SLStreamIdx_endTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
-	 { "SLStreamIdx_timestamp", _wrap_SLStreamIdx_timestamp, METH_O, "SLStreamIdx_timestamp(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &"},
-	 { "SLStreamIdx_setTimestamp", _wrap_SLStreamIdx_setTimestamp, METH_VARARGS, "SLStreamIdx_setTimestamp(SLStreamIdx self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & rectime)"},
+	 { "SLStreamIdx_startTime", _wrap_SLStreamIdx_startTime, METH_O, "SLStreamIdx_startTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"},
+	 { "SLStreamIdx_endTime", _wrap_SLStreamIdx_endTime, METH_O, "SLStreamIdx_endTime(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"},
+	 { "SLStreamIdx_timestamp", _wrap_SLStreamIdx_timestamp, METH_O, "SLStreamIdx_timestamp(SLStreamIdx self) -> Seiscomp::Core::Optional< Seiscomp::Core::Time > const &"},
+	 { "SLStreamIdx_setTimestamp", _wrap_SLStreamIdx_setTimestamp, METH_VARARGS, "SLStreamIdx_setTimestamp(SLStreamIdx self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & rectime)"},
 	 { "delete_SLStreamIdx", _wrap_delete_SLStreamIdx, METH_O, "delete_SLStreamIdx(SLStreamIdx self)"},
 	 { "SLStreamIdx_swigregister", SLStreamIdx_swigregister, METH_O, NULL},
 	 { "SLStreamIdx_swiginit", SLStreamIdx_swiginit, METH_VARARGS, NULL},
@@ -38329,10 +38329,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "SLConnection_setSource", _wrap_SLConnection_setSource, METH_VARARGS, "SLConnection_setSource(SLConnection self, string source) -> bool"},
 	 { "SLConnection_addStream", _wrap_SLConnection_addStream, METH_VARARGS, "\n"
 		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
+		"SLConnection_addStream(SLConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool\n"
 		""},
-	 { "SLConnection_setStartTime", _wrap_SLConnection_setStartTime, METH_VARARGS, "SLConnection_setStartTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime) -> bool"},
-	 { "SLConnection_setEndTime", _wrap_SLConnection_setEndTime, METH_VARARGS, "SLConnection_setEndTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool"},
+	 { "SLConnection_setStartTime", _wrap_SLConnection_setStartTime, METH_VARARGS, "SLConnection_setStartTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime) -> bool"},
+	 { "SLConnection_setEndTime", _wrap_SLConnection_setEndTime, METH_VARARGS, "SLConnection_setEndTime(SLConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool"},
 	 { "SLConnection_setTimeout", _wrap_SLConnection_setTimeout, METH_VARARGS, "SLConnection_setTimeout(SLConnection self, int seconds) -> bool"},
 	 { "SLConnection_close", _wrap_SLConnection_close, METH_O, "SLConnection_close(SLConnection self)"},
 	 { "SLConnection_swigregister", SLConnection_swigregister, METH_O, NULL},
@@ -38359,10 +38359,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "ArclinkConnection_setUser", _wrap_ArclinkConnection_setUser, METH_VARARGS, "ArclinkConnection_setUser(ArclinkConnection self, string name, string password) -> bool"},
 	 { "ArclinkConnection_addStream", _wrap_ArclinkConnection_addStream, METH_VARARGS, "\n"
 		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool\n"
+		"ArclinkConnection_addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool\n"
 		""},
-	 { "ArclinkConnection_setStartTime", _wrap_ArclinkConnection_setStartTime, METH_VARARGS, "ArclinkConnection_setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"},
-	 { "ArclinkConnection_setEndTime", _wrap_ArclinkConnection_setEndTime, METH_VARARGS, "ArclinkConnection_setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"},
+	 { "ArclinkConnection_setStartTime", _wrap_ArclinkConnection_setStartTime, METH_VARARGS, "ArclinkConnection_setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime) -> bool"},
+	 { "ArclinkConnection_setEndTime", _wrap_ArclinkConnection_setEndTime, METH_VARARGS, "ArclinkConnection_setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool"},
 	 { "ArclinkConnection_setTimeout", _wrap_ArclinkConnection_setTimeout, METH_VARARGS, "ArclinkConnection_setTimeout(ArclinkConnection self, int seconds) -> bool"},
 	 { "ArclinkConnection_close", _wrap_ArclinkConnection_close, METH_O, "ArclinkConnection_close(ArclinkConnection self)"},
 	 { "ArclinkConnection_next", _wrap_ArclinkConnection_next, METH_O, "ArclinkConnection_next(ArclinkConnection self) -> Record"},
@@ -38379,10 +38379,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "CombinedConnection_setSource", _wrap_CombinedConnection_setSource, METH_VARARGS, "CombinedConnection_setSource(CombinedConnection self, string serverloc) -> bool"},
 	 { "CombinedConnection_addStream", _wrap_CombinedConnection_addStream, METH_VARARGS, "\n"
 		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool\n"
-		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & endTime) -> bool\n"
+		"CombinedConnection_addStream(CombinedConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & startTime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & endTime) -> bool\n"
 		""},
-	 { "CombinedConnection_setStartTime", _wrap_CombinedConnection_setStartTime, METH_VARARGS, "CombinedConnection_setStartTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & stime) -> bool"},
-	 { "CombinedConnection_setEndTime", _wrap_CombinedConnection_setEndTime, METH_VARARGS, "CombinedConnection_setEndTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & etime) -> bool"},
+	 { "CombinedConnection_setStartTime", _wrap_CombinedConnection_setStartTime, METH_VARARGS, "CombinedConnection_setStartTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime) -> bool"},
+	 { "CombinedConnection_setEndTime", _wrap_CombinedConnection_setEndTime, METH_VARARGS, "CombinedConnection_setEndTime(CombinedConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool"},
 	 { "CombinedConnection_setTimeout", _wrap_CombinedConnection_setTimeout, METH_VARARGS, "CombinedConnection_setTimeout(CombinedConnection self, int seconds) -> bool"},
 	 { "CombinedConnection_close", _wrap_CombinedConnection_close, METH_O, "CombinedConnection_close(CombinedConnection self)"},
 	 { "CombinedConnection_next", _wrap_CombinedConnection_next, METH_O, "CombinedConnection_next(CombinedConnection self) -> Record"},

@@ -3793,7 +3793,7 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__Core__MemoryException swig_types[80]
 #define SWIGTYPE_p_Seiscomp__Core__Message swig_types[81]
 #define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t__Impl swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t swig_types[83]
 #define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[84]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[85]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[86]
@@ -13145,7 +13145,7 @@ fail:
 SWIGINTERN PyObject *_wrap_TravelTime_azi_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::TravelTime *arg1 = (Seiscomp::TravelTime *) 0 ;
-  Seiscomp::Core::Optional< double >::Impl *arg2 = (Seiscomp::Core::Optional< double >::Impl *) 0 ;
+  Seiscomp::Core::Optional< double > *arg2 = (Seiscomp::Core::Optional< double > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -13159,11 +13159,11 @@ SWIGINTERN PyObject *_wrap_TravelTime_azi_set(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime_azi_set" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::TravelTime * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t__Impl, 0 |  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TravelTime_azi_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< double >::Impl *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "TravelTime_azi_set" "', argument " "2"" of type '" "Seiscomp::Core::Optional< double > *""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::Optional< double >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::Optional< double > * >(argp2);
   if (arg1) (arg1)->azi = *arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -13178,7 +13178,7 @@ SWIGINTERN PyObject *_wrap_TravelTime_azi_get(PyObject *self, PyObject *args) {
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject *swig_obj[1] ;
-  Seiscomp::Core::Optional< double >::Impl *result = 0 ;
+  Seiscomp::Core::Optional< double > *result = 0 ;
   
   (void)self;
   if (!args) SWIG_fail;
@@ -13188,8 +13188,8 @@ SWIGINTERN PyObject *_wrap_TravelTime_azi_get(PyObject *self, PyObject *args) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime_azi_get" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::TravelTime * >(argp1);
-  result = (Seiscomp::Core::Optional< double >::Impl *)& ((arg1)->azi);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t__Impl, 0 |  0 );
+  result = (Seiscomp::Core::Optional< double > *)& ((arg1)->azi);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__OptionalT_double_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -18903,8 +18903,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "TravelTime_dddp_get", _wrap_TravelTime_dddp_get, METH_O, "TravelTime_dddp_get(TravelTime self) -> double"},
 	 { "TravelTime_takeoff_set", _wrap_TravelTime_takeoff_set, METH_VARARGS, "TravelTime_takeoff_set(TravelTime self, double takeoff)"},
 	 { "TravelTime_takeoff_get", _wrap_TravelTime_takeoff_get, METH_O, "TravelTime_takeoff_get(TravelTime self) -> double"},
-	 { "TravelTime_azi_set", _wrap_TravelTime_azi_set, METH_VARARGS, "TravelTime_azi_set(TravelTime self, Seiscomp::Core::Optional< double >::Impl * azi)"},
-	 { "TravelTime_azi_get", _wrap_TravelTime_azi_get, METH_O, "TravelTime_azi_get(TravelTime self) -> Seiscomp::Core::Optional< double >::Impl *"},
+	 { "TravelTime_azi_set", _wrap_TravelTime_azi_set, METH_VARARGS, "TravelTime_azi_set(TravelTime self, Seiscomp::Core::Optional< double > * azi)"},
+	 { "TravelTime_azi_get", _wrap_TravelTime_azi_get, METH_O, "TravelTime_azi_get(TravelTime self) -> Seiscomp::Core::Optional< double > *"},
 	 { "delete_TravelTime", _wrap_delete_TravelTime, METH_O, "delete_TravelTime(TravelTime self)"},
 	 { "TravelTime_swigregister", TravelTime_swigregister, METH_O, NULL},
 	 { "TravelTime_swiginit", TravelTime_swiginit, METH_VARARGS, NULL},
@@ -20082,7 +20082,7 @@ static swig_type_info _swigt__p_Seiscomp__IO__BinaryArchive = {"_p_Seiscomp__IO_
 static swig_type_info _swigt__p_Seiscomp__IO__VBinaryArchive = {"_p_Seiscomp__IO__VBinaryArchive", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__XMLArchive = {"_p_Seiscomp__IO__XMLArchive", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t = {"_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t", "Seiscomp::Core::ClassFactory *|Seiscomp::Core::Generic::ClassFactoryInterface< Seiscomp::Core::BaseObject > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_double_t__Impl = {"_p_Seiscomp__Core__OptionalT_double_t__Impl", "Seiscomp::Core::Optional< double >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_double_t = {"_p_Seiscomp__Core__OptionalT_double_t", "Seiscomp::Core::Optional< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const > *", 0, 0, (void*)0, 0};
@@ -20569,7 +20569,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__MemoryException,
   &_swigt__p_Seiscomp__Core__Message,
   &_swigt__p_Seiscomp__Core__OperationInterrupted,
-  &_swigt__p_Seiscomp__Core__OptionalT_double_t__Impl,
+  &_swigt__p_Seiscomp__Core__OptionalT_double_t,
   &_swigt__p_Seiscomp__Core__OverflowException,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
@@ -21384,7 +21384,7 @@ static swig_cast_info _swigc__p_Seiscomp__IO__VBinaryArchive[] = {{&_swigt__p_Se
 static swig_cast_info _swigc__p_Seiscomp__IO__XMLArchive[] = {{&_swigt__p_Seiscomp__IO__XMLArchive, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DatabaseArchive, _p_Seiscomp__DataModel__DatabaseArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},  {&_swigt__p_Seiscomp__IO__BinaryArchive, _p_Seiscomp__IO__BinaryArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},  {&_swigt__p_Seiscomp__IO__VBinaryArchive, _p_Seiscomp__IO__VBinaryArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},  {&_swigt__p_Seiscomp__IO__XMLArchive, _p_Seiscomp__IO__XMLArchiveTo_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_double_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_double_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_double_t[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -21871,7 +21871,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__MemoryException,
   _swigc__p_Seiscomp__Core__Message,
   _swigc__p_Seiscomp__Core__OperationInterrupted,
-  _swigc__p_Seiscomp__Core__OptionalT_double_t__Impl,
+  _swigc__p_Seiscomp__Core__OptionalT_double_t,
   _swigc__p_Seiscomp__Core__OverflowException,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,

@@ -3825,9 +3825,9 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[112]
 #define SWIGTYPE_p_Seiscomp__Core__Message swig_types[113]
 #define SWIGTYPE_p_Seiscomp__Core__MetaObject swig_types[114]
-#define SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl swig_types[115]
-#define SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl swig_types[116]
-#define SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl swig_types[117]
+#define SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t swig_types[115]
+#define SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t swig_types[116]
+#define SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t swig_types[117]
 #define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[118]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[119]
 #define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[120]
@@ -11774,8 +11774,8 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage__SWIG_0(PyObject *self, Py_ssize
   std::string *arg2 = 0 ;
   Seiscomp::Core::Message *arg3 = (Seiscomp::Core::Message *) 0 ;
   SwigValueWrapper< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EMessageType,Seiscomp::Client::Protocol::EMessageTypeQuantity,Seiscomp::Client::Protocol::EMessageTypeNames > > arg4 ;
-  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > >::Impl > arg5 ;
-  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentType,Seiscomp::Client::Protocol::EContentTypeQuantity,Seiscomp::Client::Protocol::EContentTypeNames > >::Impl > arg6 ;
+  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > > > arg5 ;
+  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentType,Seiscomp::Client::Protocol::EContentTypeQuantity,Seiscomp::Client::Protocol::EContentTypeNames > > > arg6 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
@@ -11826,27 +11826,27 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage__SWIG_0(PyObject *self, Py_ssize
     }
   }
   {
-    res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl,  0  | 0);
+    res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t,  0  | 0);
     if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >""'"); 
     }  
     if (!argp5) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl""'");
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >""'");
     } else {
-      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl * >(argp5);
+      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > * >(argp5);
       arg5 = *temp;
       if (SWIG_IsNewObj(res5)) delete temp;
     }
   }
   {
-    res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl,  0  | 0);
+    res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t,  0  | 0);
     if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "Protocol_sendMessage" "', argument " "6"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "Protocol_sendMessage" "', argument " "6"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >""'"); 
     }  
     if (!argp6) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "6"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl""'");
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "6"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >""'");
     } else {
-      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl * >(argp6);
+      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType > * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType > * >(argp6);
       arg6 = *temp;
       if (SWIG_IsNewObj(res6)) delete temp;
     }
@@ -11886,7 +11886,7 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage__SWIG_1(PyObject *self, Py_ssize
   std::string *arg2 = 0 ;
   Seiscomp::Core::Message *arg3 = (Seiscomp::Core::Message *) 0 ;
   SwigValueWrapper< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EMessageType,Seiscomp::Client::Protocol::EMessageTypeQuantity,Seiscomp::Client::Protocol::EMessageTypeNames > > arg4 ;
-  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > >::Impl > arg5 ;
+  SwigValueWrapper< Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > > > arg5 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int res2 = SWIG_OLDOBJ ;
@@ -11935,14 +11935,14 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage__SWIG_1(PyObject *self, Py_ssize
     }
   }
   {
-    res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl,  0  | 0);
+    res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t,  0  | 0);
     if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >""'"); 
     }  
     if (!argp5) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl""'");
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Protocol_sendMessage" "', argument " "5"" of type '" "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >""'");
     } else {
-      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl * >(argp5);
+      Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > * temp = reinterpret_cast< Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > * >(argp5);
       arg5 = *temp;
       if (SWIG_IsNewObj(res5)) delete temp;
     }
@@ -12184,7 +12184,7 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage(PyObject *self, PyObject *args) 
           int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EMessageType_Seiscomp__Client__Protocol__EMessageTypeQuantity_Seiscomp__Client__Protocol__EMessageTypeNames_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl, SWIG_POINTER_NO_NULL | 0);
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t, SWIG_POINTER_NO_NULL | 0);
             _v = SWIG_CheckState(res);
             if (_v) {
               return _wrap_Protocol_sendMessage__SWIG_1(self, argc, argv);
@@ -12210,10 +12210,10 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage(PyObject *self, PyObject *args) 
           int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EMessageType_Seiscomp__Client__Protocol__EMessageTypeQuantity_Seiscomp__Client__Protocol__EMessageTypeNames_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl, SWIG_POINTER_NO_NULL | 0);
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t, SWIG_POINTER_NO_NULL | 0);
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl, SWIG_POINTER_NO_NULL | 0);
+              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t, SWIG_POINTER_NO_NULL | 0);
               _v = SWIG_CheckState(res);
               if (_v) {
                 return _wrap_Protocol_sendMessage__SWIG_0(self, argc, argv);
@@ -12228,8 +12228,8 @@ SWIGINTERN PyObject *_wrap_Protocol_sendMessage(PyObject *self, PyObject *args) 
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Protocol_sendMessage'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *,Seiscomp::Client::Protocol::MessageType,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl)\n"
-    "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *,Seiscomp::Client::Protocol::MessageType,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl)\n"
+    "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *,Seiscomp::Client::Protocol::MessageType,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >)\n"
+    "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *,Seiscomp::Client::Protocol::MessageType,Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >)\n"
     "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *,Seiscomp::Client::Protocol::MessageType)\n"
     "    Seiscomp::Client::Protocol::sendMessage(std::string const &,Seiscomp::Core::Message const *)\n");
   return 0;
@@ -26421,10 +26421,10 @@ fail:
 SWIGINTERN PyObject *_wrap_StreamApplication_setStartTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Client::StreamApplication *arg1 = (Seiscomp::Client::StreamApplication *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -26447,7 +26447,7 @@ SWIGINTERN PyObject *_wrap_StreamApplication_setStartTime(PyObject *self, PyObje
   }
   {
     try {
-      (arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      (arg1)->setStartTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -26472,10 +26472,10 @@ fail:
 SWIGINTERN PyObject *_wrap_StreamApplication_setEndTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Client::StreamApplication *arg1 = (Seiscomp::Client::StreamApplication *) 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl *arg2 = 0 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl tmp2 ;
+  Seiscomp::Core::Optional< Seiscomp::Core::Time > tmp2 ;
   PyObject *swig_obj[2] ;
   
   (void)self;
@@ -26498,7 +26498,7 @@ SWIGINTERN PyObject *_wrap_StreamApplication_setEndTime(PyObject *self, PyObject
   }
   {
     try {
-      (arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const &)*arg2);
+      (arg1)->setEndTime((Seiscomp::Core::Optional< Seiscomp::Core::Time > const &)*arg2);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31463,10 +31463,10 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_0(PyObject *self, Py_ssize_t nobj
   PyObject *resultobj = 0;
   Seiscomp::Client::ConfigDB *arg1 = (Seiscomp::Client::ConfigDB *) 0 ;
   Seiscomp::DataModel::DatabaseReader *arg2 = (Seiscomp::DataModel::DatabaseReader *) 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg3 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg4 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg5 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg3 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg4 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg5 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg6 = 0 ;
   std::set< std::string,std::less< std::string >,std::allocator< std::string > > *arg7 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -31495,38 +31495,38 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_0(PyObject *self, Py_ssize_t nobj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConfigDB_load" "', argument " "2"" of type '" "Seiscomp::DataModel::DatabaseReader *""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::DataModel::DatabaseReader * >(argp2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp3);
-  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp4);
-  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp4);
+  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp5);
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp5);
+  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp6);
+  arg6 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp6);
   res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_std__setT_std__string_std__lessT_std__string_t_std__allocatorT_std__string_t_t,  0  | 0);
   if (!SWIG_IsOK(res7)) {
     SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ConfigDB_load" "', argument " "7"" of type '" "std::set< std::string,std::less< std::string >,std::allocator< std::string > > const &""'"); 
@@ -31537,7 +31537,7 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_0(PyObject *self, Py_ssize_t nobj
   arg7 = reinterpret_cast< std::set< std::string,std::less< std::string >,std::allocator< std::string > > * >(argp7);
   {
     try {
-      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg3,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg4,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg5,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg6,(std::set< std::string,std::less< std::string >,std::allocator< std::string > > const &)*arg7);
+      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string > const &)*arg3,(Seiscomp::Core::Optional< std::string > const &)*arg4,(Seiscomp::Core::Optional< std::string > const &)*arg5,(Seiscomp::Core::Optional< std::string > const &)*arg6,(std::set< std::string,std::less< std::string >,std::allocator< std::string > > const &)*arg7);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31563,10 +31563,10 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_1(PyObject *self, Py_ssize_t nobj
   PyObject *resultobj = 0;
   Seiscomp::Client::ConfigDB *arg1 = (Seiscomp::Client::ConfigDB *) 0 ;
   Seiscomp::DataModel::DatabaseReader *arg2 = (Seiscomp::DataModel::DatabaseReader *) 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg3 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg4 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg5 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg6 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg3 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg4 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg5 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg6 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -31592,41 +31592,41 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_1(PyObject *self, Py_ssize_t nobj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConfigDB_load" "', argument " "2"" of type '" "Seiscomp::DataModel::DatabaseReader *""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::DataModel::DatabaseReader * >(argp2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp3);
-  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp4);
-  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp4);
+  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp5);
-  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp5);
+  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp6) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "6"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg6 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp6);
+  arg6 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp6);
   {
     try {
-      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg3,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg4,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg5,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg6);
+      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string > const &)*arg3,(Seiscomp::Core::Optional< std::string > const &)*arg4,(Seiscomp::Core::Optional< std::string > const &)*arg5,(Seiscomp::Core::Optional< std::string > const &)*arg6);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31652,9 +31652,9 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_2(PyObject *self, Py_ssize_t nobj
   PyObject *resultobj = 0;
   Seiscomp::Client::ConfigDB *arg1 = (Seiscomp::Client::ConfigDB *) 0 ;
   Seiscomp::DataModel::DatabaseReader *arg2 = (Seiscomp::DataModel::DatabaseReader *) 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg3 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg4 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg5 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg3 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg4 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg5 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -31678,33 +31678,33 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_2(PyObject *self, Py_ssize_t nobj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConfigDB_load" "', argument " "2"" of type '" "Seiscomp::DataModel::DatabaseReader *""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::DataModel::DatabaseReader * >(argp2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp3);
-  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp4);
-  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp4);
+  res5 = SWIG_ConvertPtr(swig_obj[4], &argp5, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp5) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "5"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp5);
+  arg5 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp5);
   {
     try {
-      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg3,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg4,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg5);
+      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string > const &)*arg3,(Seiscomp::Core::Optional< std::string > const &)*arg4,(Seiscomp::Core::Optional< std::string > const &)*arg5);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31730,8 +31730,8 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_3(PyObject *self, Py_ssize_t nobj
   PyObject *resultobj = 0;
   Seiscomp::Client::ConfigDB *arg1 = (Seiscomp::Client::ConfigDB *) 0 ;
   Seiscomp::DataModel::DatabaseReader *arg2 = (Seiscomp::DataModel::DatabaseReader *) 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg3 = 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg4 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg3 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg4 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -31753,25 +31753,25 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_3(PyObject *self, Py_ssize_t nobj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConfigDB_load" "', argument " "2"" of type '" "Seiscomp::DataModel::DatabaseReader *""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::DataModel::DatabaseReader * >(argp2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp3);
-  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp3);
+  res4 = SWIG_ConvertPtr(swig_obj[3], &argp4, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp4) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "4"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp4);
+  arg4 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp4);
   {
     try {
-      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg3,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg4);
+      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string > const &)*arg3,(Seiscomp::Core::Optional< std::string > const &)*arg4);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31797,7 +31797,7 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_4(PyObject *self, Py_ssize_t nobj
   PyObject *resultobj = 0;
   Seiscomp::Client::ConfigDB *arg1 = (Seiscomp::Client::ConfigDB *) 0 ;
   Seiscomp::DataModel::DatabaseReader *arg2 = (Seiscomp::DataModel::DatabaseReader *) 0 ;
-  Seiscomp::Core::Optional< std::string >::Impl *arg3 = 0 ;
+  Seiscomp::Core::Optional< std::string > *arg3 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -31817,17 +31817,17 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load__SWIG_4(PyObject *self, Py_ssize_t nobj
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConfigDB_load" "', argument " "2"" of type '" "Seiscomp::DataModel::DatabaseReader *""'"); 
   }
   arg2 = reinterpret_cast< Seiscomp::DataModel::DatabaseReader * >(argp2);
-  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl,  0  | 0);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t,  0  | 0);
   if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
   if (!argp3) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string >::Impl const &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ConfigDB_load" "', argument " "3"" of type '" "Seiscomp::Core::Optional< std::string > const &""'"); 
   }
-  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string >::Impl * >(argp3);
+  arg3 = reinterpret_cast< Seiscomp::Core::Optional< std::string > * >(argp3);
   {
     try {
-      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string >::Impl const &)*arg3);
+      (arg1)->load(arg2,(Seiscomp::Core::Optional< std::string > const &)*arg3);
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
@@ -31987,7 +31987,7 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__DataModel__DatabaseReader, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
           return _wrap_ConfigDB_load__SWIG_4(self, argc, argv);
@@ -32005,10 +32005,10 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__DataModel__DatabaseReader, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
-          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
             return _wrap_ConfigDB_load__SWIG_3(self, argc, argv);
@@ -32027,13 +32027,13 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__DataModel__DatabaseReader, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
-          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
             _v = SWIG_CheckState(res);
             if (_v) {
               return _wrap_ConfigDB_load__SWIG_2(self, argc, argv);
@@ -32053,16 +32053,16 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__DataModel__DatabaseReader, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
-          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
               _v = SWIG_CheckState(res);
               if (_v) {
                 return _wrap_ConfigDB_load__SWIG_1(self, argc, argv);
@@ -32083,16 +32083,16 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__DataModel__DatabaseReader, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
         _v = SWIG_CheckState(res);
         if (_v) {
-          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
           _v = SWIG_CheckState(res);
           if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
             _v = SWIG_CheckState(res);
             if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t__Impl, SWIG_POINTER_NO_NULL | 0);
+              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_Seiscomp__Core__OptionalT_std__string_t, SWIG_POINTER_NO_NULL | 0);
               _v = SWIG_CheckState(res);
               if (_v) {
                 int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_std__setT_std__string_std__lessT_std__string_t_std__allocatorT_std__string_t_t, SWIG_POINTER_NO_NULL | 0);
@@ -32111,11 +32111,11 @@ SWIGINTERN PyObject *_wrap_ConfigDB_load(PyObject *self, PyObject *args) {
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'ConfigDB_load'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,std::set< std::string,std::less< std::string >,std::allocator< std::string > > const &)\n"
-    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &)\n"
-    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &)\n"
-    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string >::Impl const &,Seiscomp::Core::Optional< std::string >::Impl const &)\n"
-    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string >::Impl const &)\n"
+    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,std::set< std::string,std::less< std::string >,std::allocator< std::string > > const &)\n"
+    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &)\n"
+    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &)\n"
+    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string > const &,Seiscomp::Core::Optional< std::string > const &)\n"
+    "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *,Seiscomp::Core::Optional< std::string > const &)\n"
     "    Seiscomp::Client::ConfigDB::load(Seiscomp::DataModel::DatabaseReader *)\n"
     "    Seiscomp::Client::ConfigDB::load(char const *)\n");
   return 0;
@@ -32273,7 +32273,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Protocol_subscribe", _wrap_Protocol_subscribe, METH_VARARGS, "Protocol_subscribe(Protocol self, std::string const & group) -> Seiscomp::Client::Result"},
 	 { "Protocol_unsubscribe", _wrap_Protocol_unsubscribe, METH_VARARGS, "Protocol_unsubscribe(Protocol self, std::string const & group) -> Seiscomp::Client::Result"},
 	 { "Protocol_sendData", _wrap_Protocol_sendData, METH_VARARGS, "Protocol_sendData(Protocol self, std::string const & targetGroup, char const * data, size_t len, Seiscomp::Client::Protocol::MessageType type, Seiscomp::Client::Protocol::ContentEncoding contentEncoding, Seiscomp::Client::Protocol::ContentType contentType) -> Seiscomp::Client::Result"},
-	 { "Protocol_sendMessage", _wrap_Protocol_sendMessage, METH_VARARGS, "Protocol_sendMessage(Protocol self, std::string const & targetGroup, Message msg, Seiscomp::Client::Protocol::MessageType type=Regular, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl contentEncoding=Unset, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl contentType=Unset) -> Seiscomp::Client::Result"},
+	 { "Protocol_sendMessage", _wrap_Protocol_sendMessage, METH_VARARGS, "Protocol_sendMessage(Protocol self, std::string const & targetGroup, Message msg, Seiscomp::Client::Protocol::MessageType type=Regular, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > contentEncoding=Unset, Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType > contentType=Unset) -> Seiscomp::Client::Result"},
 	 { "Protocol_recv", _wrap_Protocol_recv, METH_VARARGS, "Protocol_recv(Protocol self) -> Packet"},
 	 { "Protocol_fetchInbox", _wrap_Protocol_fetchInbox, METH_O, "Protocol_fetchInbox(Protocol self) -> Seiscomp::Client::Result"},
 	 { "Protocol_syncOutbox", _wrap_Protocol_syncOutbox, METH_O, "Protocol_syncOutbox(Protocol self) -> Seiscomp::Client::Result"},
@@ -32594,8 +32594,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "StreamApplication_recordStream", _wrap_StreamApplication_recordStream, METH_O, "StreamApplication_recordStream(StreamApplication self) -> RecordStream"},
 	 { "StreamApplication_addStation", _wrap_StreamApplication_addStation, METH_VARARGS, "StreamApplication_addStation(StreamApplication self, std::string const & networkCode, std::string const & stationCode) -> bool"},
 	 { "StreamApplication_addStream", _wrap_StreamApplication_addStream, METH_VARARGS, "StreamApplication_addStream(StreamApplication self, std::string const & networkCode, std::string const & stationCode, std::string const & locationCode, std::string const & channelCode) -> bool"},
-	 { "StreamApplication_setStartTime", _wrap_StreamApplication_setStartTime, METH_VARARGS, "StreamApplication_setStartTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"},
-	 { "StreamApplication_setEndTime", _wrap_StreamApplication_setEndTime, METH_VARARGS, "StreamApplication_setEndTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & arg2)"},
+	 { "StreamApplication_setStartTime", _wrap_StreamApplication_setStartTime, METH_VARARGS, "StreamApplication_setStartTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & arg2)"},
+	 { "StreamApplication_setEndTime", _wrap_StreamApplication_setEndTime, METH_VARARGS, "StreamApplication_setEndTime(StreamApplication self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & arg2)"},
 	 { "StreamApplication_setTimeWindow", _wrap_StreamApplication_setTimeWindow, METH_VARARGS, "StreamApplication_setTimeWindow(StreamApplication self, Seiscomp::Core::TimeWindow const & arg2) -> bool"},
 	 { "StreamApplication_setAutoAcquisitionStart", _wrap_StreamApplication_setAutoAcquisitionStart, METH_VARARGS, "StreamApplication_setAutoAcquisitionStart(StreamApplication self, bool arg2)"},
 	 { "StreamApplication_setAutoCloseOnAcquisitionFinished", _wrap_StreamApplication_setAutoCloseOnAcquisitionFinished, METH_VARARGS, "StreamApplication_setAutoCloseOnAcquisitionFinished(StreamApplication self, bool arg2)"},
@@ -32691,7 +32691,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "ConfigDB_Instance", _wrap_ConfigDB_Instance, METH_NOARGS, "ConfigDB_Instance() -> ConfigDB"},
 	 { "ConfigDB_Reset", _wrap_ConfigDB_Reset, METH_NOARGS, "ConfigDB_Reset()"},
 	 { "ConfigDB_load", _wrap_ConfigDB_load, METH_VARARGS, "\n"
-		"ConfigDB_load(ConfigDB self, DatabaseReader reader, Seiscomp::Core::Optional< std::string >::Impl const & moduleName=Unset, Seiscomp::Core::Optional< std::string >::Impl const & networkCode=Unset, Seiscomp::Core::Optional< std::string >::Impl const & stationCode=Unset, Seiscomp::Core::Optional< std::string >::Impl const & setupName=Unset, std::set< std::string,std::less< std::string >,std::allocator< std::string > > const & parameterNames=std::set< std::string >())\n"
+		"ConfigDB_load(ConfigDB self, DatabaseReader reader, Seiscomp::Core::Optional< std::string > const & moduleName=Unset, Seiscomp::Core::Optional< std::string > const & networkCode=Unset, Seiscomp::Core::Optional< std::string > const & stationCode=Unset, Seiscomp::Core::Optional< std::string > const & setupName=Unset, std::set< std::string,std::less< std::string >,std::allocator< std::string > > const & parameterNames=std::set< std::string >())\n"
 		"ConfigDB_load(ConfigDB self, char const * xml)\n"
 		""},
 	 { "ConfigDB_config", _wrap_ConfigDB_config, METH_O, "ConfigDB_config(ConfigDB self) -> Config"},
@@ -34059,9 +34059,9 @@ static swig_type_info _swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_
 static swig_type_info _swigt__p_Seiscomp__Core__InterruptibleObject = {"_p_Seiscomp__Core__InterruptibleObject", "Seiscomp::Core::InterruptibleObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__Message = {"_p_Seiscomp__Core__Message", "Seiscomp::Core::Message *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__MetaObject = {"_p_Seiscomp__Core__MetaObject", "Seiscomp::Core::MetaObject *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl = {"_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl", "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding >::Impl *|Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl = {"_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl", "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType >::Impl *|Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentType,Seiscomp::Client::Protocol::EContentTypeQuantity,Seiscomp::Client::Protocol::EContentTypeNames > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_std__string_t__Impl = {"_p_Seiscomp__Core__OptionalT_std__string_t__Impl", "Seiscomp::Core::Optional< std::string >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t = {"_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t", "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentEncoding > *|Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentEncoding,Seiscomp::Client::Protocol::EContentEncodingQuantity,Seiscomp::Client::Protocol::EContentEncodingNames > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t = {"_p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t", "Seiscomp::Core::Optional< Seiscomp::Client::Protocol::ContentType > *|Seiscomp::Core::Optional< Seiscomp::Core::Enum< enum Seiscomp::Client::Protocol::EContentType,Seiscomp::Client::Protocol::EContentTypeQuantity,Seiscomp::Client::Protocol::EContentTypeNames > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__OptionalT_std__string_t = {"_p_Seiscomp__Core__OptionalT_std__string_t", "Seiscomp::Core::Optional< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__RTTI = {"_p_Seiscomp__Core__RTTI", "Seiscomp::Core::RTTI *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array > *", 0, 0, (void*)0, 0};
@@ -34641,9 +34641,9 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__InterruptibleObject,
   &_swigt__p_Seiscomp__Core__Message,
   &_swigt__p_Seiscomp__Core__MetaObject,
-  &_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__OptionalT_std__string_t__Impl,
+  &_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t,
+  &_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t,
+  &_swigt__p_Seiscomp__Core__OptionalT_std__string_t,
   &_swigt__p_Seiscomp__Core__RTTI,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
@@ -35569,9 +35569,9 @@ static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_
 static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {  {&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},  {&_swigt__p_Seiscomp__Client__Application, _p_Seiscomp__Client__ApplicationTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__Client__Protocol, _p_Seiscomp__Client__ProtocolTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__Client__StreamApplication, _p_Seiscomp__Client__StreamApplicationTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__System__Application, _p_Seiscomp__System__ApplicationTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Message[] = {  {&_swigt__p_Seiscomp__Core__Message, 0, 0, 0},  {&_swigt__p_Seiscomp__Client__ApplicationStatusMessage, _p_Seiscomp__Client__ApplicationStatusMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Client__DatabaseProvideMessage, _p_Seiscomp__Client__DatabaseProvideMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Client__DatabaseRequestMessage, _p_Seiscomp__Client__DatabaseRequestMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Client__ServiceProvideMessage, _p_Seiscomp__Client__ServiceProvideMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Client__ServiceRequestMessage, _p_Seiscomp__Client__ServiceRequestMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Core__DataMessage, _p_Seiscomp__Core__DataMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_tTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__Core__GenericMessageT_Seiscomp__DataModel__Notifier_t, _p_Seiscomp__Core__GenericMessageT_Seiscomp__DataModel__Notifier_tTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArtificialEventParametersMessage, _p_Seiscomp__DataModel__ArtificialEventParametersMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArtificialOriginMessage, _p_Seiscomp__DataModel__ArtificialOriginMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ConfigSyncMessage, _p_Seiscomp__DataModel__ConfigSyncMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__DataModel__InventorySyncMessage, _p_Seiscomp__DataModel__InventorySyncMessageTo_p_Seiscomp__Core__Message, 0, 0},  {&_swigt__p_Seiscomp__DataModel__NotifierMessage, _p_Seiscomp__DataModel__NotifierMessageTo_p_Seiscomp__Core__Message, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__MetaObject[] = {  {&_swigt__p_Seiscomp__Core__MetaObject, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_std__string_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_std__string_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__OptionalT_std__string_t[] = {  {&_swigt__p_Seiscomp__Core__OptionalT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__RTTI[] = {  {&_swigt__p_Seiscomp__Core__RTTI, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -36151,9 +36151,9 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__InterruptibleObject,
   _swigc__p_Seiscomp__Core__Message,
   _swigc__p_Seiscomp__Core__MetaObject,
-  _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t__Impl,
-  _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t__Impl,
-  _swigc__p_Seiscomp__Core__OptionalT_std__string_t__Impl,
+  _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentEncoding_Seiscomp__Client__Protocol__EContentEncodingQuantity_Seiscomp__Client__Protocol__EContentEncodingNames_t_t,
+  _swigc__p_Seiscomp__Core__OptionalT_Seiscomp__Core__EnumT_Seiscomp__Client__Protocol__EContentType_Seiscomp__Client__Protocol__EContentTypeQuantity_Seiscomp__Client__Protocol__EContentTypeNames_t_t,
+  _swigc__p_Seiscomp__Core__OptionalT_std__string_t,
   _swigc__p_Seiscomp__Core__RTTI,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
   _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,

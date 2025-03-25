@@ -623,7 +623,7 @@ class TravelTime(object):
     dtdh = property(_seismology.TravelTime_dtdh_get, _seismology.TravelTime_dtdh_set, doc=r"""dtdh : double""")
     dddp = property(_seismology.TravelTime_dddp_get, _seismology.TravelTime_dddp_set, doc=r"""dddp : double""")
     takeoff = property(_seismology.TravelTime_takeoff_get, _seismology.TravelTime_takeoff_set, doc=r"""takeoff : double""")
-    azi = property(_seismology.TravelTime_azi_get, _seismology.TravelTime_azi_set, doc=r"""azi : Seiscomp::Core::Optional<(double)>::Impl""")
+    azi = property(_seismology.TravelTime_azi_get, _seismology.TravelTime_azi_set, doc=r"""azi : Seiscomp::Core::Optional<(double)>""")
     __swig_destroy__ = _seismology.delete_TravelTime
 
 # Register TravelTime in _seismology:
