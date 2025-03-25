@@ -142,14 +142,14 @@ class NotifierMessageBase(seiscomp.core.Message):
     def attach(self, *args):
         r"""
         attach(NotifierMessageBase self, Notifier attachment) -> bool
-        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
+        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType > & attachment) -> bool
         """
         return _datamodel.NotifierMessageBase_attach(self, *args)
 
     def detach(self, *args):
         r"""
         detach(NotifierMessageBase self, Notifier attachment) -> bool
-        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
+        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType > & attachment) -> bool
         detach(NotifierMessageBase self, Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator it) -> Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator
         """
         return _datamodel.NotifierMessageBase_detach(self, *args)
@@ -699,6 +699,10 @@ class DatabaseArchive(Observer):
     def benchmarkQueries(self, count):
         r"""benchmarkQueries(DatabaseArchive self, int count)"""
         return _datamodel.DatabaseArchive_benchmarkQueries(self, count)
+
+    def getObjectsQuery(self, parentID, classType, ignorePublicObject=False):
+        r"""getObjectsQuery(DatabaseArchive self, std::string const & parentID, RTTI classType, bool ignorePublicObject=False) -> std::pair< std::string,bool >"""
+        return _datamodel.DatabaseArchive_getObjectsQuery(self, parentID, classType, ignorePublicObject)
 
     def getObject(self, classType, publicID):
         r"""getObject(DatabaseArchive self, RTTI classType, std::string const & publicID) -> PublicObject"""

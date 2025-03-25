@@ -3757,67 +3757,67 @@ namespace Swig {
 #define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[44]
 #define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[45]
 #define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[46]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[47]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[48]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[49]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[50]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[51]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[53]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[54]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[55]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[56]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[57]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[58]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[59]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[60]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[61]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl swig_types[62]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl swig_types[63]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl swig_types[64]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl swig_types[65]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl swig_types[66]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl swig_types[67]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl swig_types[68]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl swig_types[69]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl swig_types[70]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl swig_types[71]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl swig_types[72]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl swig_types[73]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl swig_types[74]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl swig_types[75]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl swig_types[76]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl swig_types[77]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl swig_types[78]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl swig_types[79]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[80]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[81]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[83]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[84]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[85]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[86]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[87]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl swig_types[88]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl swig_types[89]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl swig_types[90]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl swig_types[91]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl swig_types[92]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl swig_types[93]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl swig_types[94]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl swig_types[95]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl swig_types[96]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl swig_types[97]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[98]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[99]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[100]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[101]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[102]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[103]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[104]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[105]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[106]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[107]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[47]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[48]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t swig_types[49]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t swig_types[50]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t swig_types[51]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t swig_types[52]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t swig_types[54]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t swig_types[55]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t swig_types[56]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t swig_types[57]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t swig_types[58]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t swig_types[59]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t swig_types[60]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t swig_types[61]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t swig_types[62]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t swig_types[63]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t swig_types[64]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t swig_types[65]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t swig_types[66]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t swig_types[67]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t swig_types[68]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t swig_types[69]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t swig_types[70]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t swig_types[71]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t swig_types[72]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t swig_types[73]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t swig_types[74]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t swig_types[75]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t swig_types[76]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t swig_types[77]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t swig_types[78]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t swig_types[79]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t swig_types[80]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t swig_types[81]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t swig_types[85]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t swig_types[86]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t swig_types[87]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t swig_types[90]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t swig_types[91]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t swig_types[92]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t swig_types[94]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t swig_types[95]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t swig_types[100]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t swig_types[106]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t swig_types[107]
 #define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[108]
 #define SWIGTYPE_p_Seiscomp__Core__Time swig_types[109]
 #define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[110]
@@ -3933,75 +3933,76 @@ namespace Swig {
 #define SWIGTYPE_p_allocator_type swig_types[220]
 #define SWIGTYPE_p_bool swig_types[221]
 #define SWIGTYPE_p_boost__any swig_types[222]
-#define SWIGTYPE_p_char swig_types[223]
-#define SWIGTYPE_p_char_type swig_types[224]
-#define SWIGTYPE_p_const_iterator swig_types[225]
-#define SWIGTYPE_p_const_reference swig_types[226]
-#define SWIGTYPE_p_difference_type swig_types[227]
-#define SWIGTYPE_p_double swig_types[228]
-#define SWIGTYPE_p_f_enum_std__ios_base__event_r_std__ios_base_int__void swig_types[229]
-#define SWIGTYPE_p_float swig_types[230]
-#define SWIGTYPE_p_fmtflags swig_types[231]
-#define SWIGTYPE_p_int swig_types[232]
-#define SWIGTYPE_p_int_type swig_types[233]
-#define SWIGTYPE_p_iostate swig_types[234]
-#define SWIGTYPE_p_iterator swig_types[235]
-#define SWIGTYPE_p_iterator_category swig_types[236]
-#define SWIGTYPE_p_long swig_types[237]
-#define SWIGTYPE_p_long_long swig_types[238]
-#define SWIGTYPE_p_off_type swig_types[239]
-#define SWIGTYPE_p_openmode swig_types[240]
-#define SWIGTYPE_p_p_PyObject swig_types[241]
-#define SWIGTYPE_p_p_void swig_types[242]
-#define SWIGTYPE_p_pos_type swig_types[243]
-#define SWIGTYPE_p_reference swig_types[244]
-#define SWIGTYPE_p_seekdir swig_types[245]
-#define SWIGTYPE_p_short swig_types[246]
-#define SWIGTYPE_p_signed_char swig_types[247]
-#define SWIGTYPE_p_size_t swig_types[248]
-#define SWIGTYPE_p_size_type swig_types[249]
-#define SWIGTYPE_p_state_type swig_types[250]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t swig_types[251]
-#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[252]
-#define SWIGTYPE_p_std__basic_ostreamT_char_std__char_traitsT_char_t_t swig_types[253]
-#define SWIGTYPE_p_std__basic_streambufT_char_std__char_traitsT_char_t_t swig_types[254]
-#define SWIGTYPE_p_std__basic_stringT_char_t swig_types[255]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[256]
-#define SWIGTYPE_p_std__complexT_float_t swig_types[257]
-#define SWIGTYPE_p_std__exception swig_types[258]
-#define SWIGTYPE_p_std__invalid_argument swig_types[259]
-#define SWIGTYPE_p_std__ios_base swig_types[260]
-#define SWIGTYPE_p_std__istream swig_types[261]
-#define SWIGTYPE_p_std__listT_double_t swig_types[262]
-#define SWIGTYPE_p_std__listT_std__basic_stringT_char_t_t swig_types[263]
-#define SWIGTYPE_p_std__locale swig_types[264]
-#define SWIGTYPE_p_std__ostream swig_types[265]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[266]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[267]
-#define SWIGTYPE_p_std__streambuf swig_types[268]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[269]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t swig_types[270]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[271]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[272]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[273]
-#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[274]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[275]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[276]
-#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[277]
-#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[278]
-#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[279]
-#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[280]
-#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[281]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[282]
-#define SWIGTYPE_p_traits_type swig_types[283]
-#define SWIGTYPE_p_unsigned_char swig_types[284]
-#define SWIGTYPE_p_unsigned_int swig_types[285]
-#define SWIGTYPE_p_unsigned_long_long swig_types[286]
-#define SWIGTYPE_p_unsigned_short swig_types[287]
-#define SWIGTYPE_p_value_type swig_types[288]
-#define SWIGTYPE_p_void swig_types[289]
-static swig_type_info *swig_types[291];
-static swig_module_info swig_module = {swig_types, 290, 0, 0, 0, 0};
+#define SWIGTYPE_p_boost__bad_any_cast swig_types[223]
+#define SWIGTYPE_p_char swig_types[224]
+#define SWIGTYPE_p_char_type swig_types[225]
+#define SWIGTYPE_p_const_iterator swig_types[226]
+#define SWIGTYPE_p_const_reference swig_types[227]
+#define SWIGTYPE_p_difference_type swig_types[228]
+#define SWIGTYPE_p_double swig_types[229]
+#define SWIGTYPE_p_f_enum_std__ios_base__event_r_std__ios_base_int__void swig_types[230]
+#define SWIGTYPE_p_float swig_types[231]
+#define SWIGTYPE_p_fmtflags swig_types[232]
+#define SWIGTYPE_p_int swig_types[233]
+#define SWIGTYPE_p_int_type swig_types[234]
+#define SWIGTYPE_p_iostate swig_types[235]
+#define SWIGTYPE_p_iterator swig_types[236]
+#define SWIGTYPE_p_iterator_category swig_types[237]
+#define SWIGTYPE_p_long swig_types[238]
+#define SWIGTYPE_p_long_long swig_types[239]
+#define SWIGTYPE_p_off_type swig_types[240]
+#define SWIGTYPE_p_openmode swig_types[241]
+#define SWIGTYPE_p_p_PyObject swig_types[242]
+#define SWIGTYPE_p_p_void swig_types[243]
+#define SWIGTYPE_p_pos_type swig_types[244]
+#define SWIGTYPE_p_reference swig_types[245]
+#define SWIGTYPE_p_seekdir swig_types[246]
+#define SWIGTYPE_p_short swig_types[247]
+#define SWIGTYPE_p_signed_char swig_types[248]
+#define SWIGTYPE_p_size_t swig_types[249]
+#define SWIGTYPE_p_size_type swig_types[250]
+#define SWIGTYPE_p_state_type swig_types[251]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__Core__BaseObject_p_t swig_types[252]
+#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[253]
+#define SWIGTYPE_p_std__basic_ostreamT_char_std__char_traitsT_char_t_t swig_types[254]
+#define SWIGTYPE_p_std__basic_streambufT_char_std__char_traitsT_char_t_t swig_types[255]
+#define SWIGTYPE_p_std__basic_stringT_char_t swig_types[256]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[257]
+#define SWIGTYPE_p_std__complexT_float_t swig_types[258]
+#define SWIGTYPE_p_std__exception swig_types[259]
+#define SWIGTYPE_p_std__invalid_argument swig_types[260]
+#define SWIGTYPE_p_std__ios_base swig_types[261]
+#define SWIGTYPE_p_std__istream swig_types[262]
+#define SWIGTYPE_p_std__listT_double_t swig_types[263]
+#define SWIGTYPE_p_std__listT_std__basic_stringT_char_t_t swig_types[264]
+#define SWIGTYPE_p_std__locale swig_types[265]
+#define SWIGTYPE_p_std__ostream swig_types[266]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[267]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[268]
+#define SWIGTYPE_p_std__streambuf swig_types[269]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[270]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t swig_types[271]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[272]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[273]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[274]
+#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[275]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[276]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[277]
+#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[278]
+#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[279]
+#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[280]
+#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[281]
+#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[282]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[283]
+#define SWIGTYPE_p_traits_type swig_types[284]
+#define SWIGTYPE_p_unsigned_char swig_types[285]
+#define SWIGTYPE_p_unsigned_int swig_types[286]
+#define SWIGTYPE_p_unsigned_long_long swig_types[287]
+#define SWIGTYPE_p_unsigned_short swig_types[288]
+#define SWIGTYPE_p_value_type swig_types[289]
+#define SWIGTYPE_p_void swig_types[290]
+static swig_type_info *swig_types[292];
+static swig_module_info swig_module = {swig_types, 291, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -9227,7 +9228,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DatabaseInterface_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::DatabaseInterface *result = 0 ;
@@ -9235,7 +9236,7 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_Cast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseInterface_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -9288,7 +9289,7 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_Cast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DatabaseInterface_Cast__SWIG_1(self, argc, argv);
@@ -9306,7 +9307,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DatabaseInterface_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::DatabaseInterface *result = 0 ;
@@ -9314,7 +9315,7 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_ConstCast__SWIG_1(PyObject *self, P
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseInterface_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -9366,7 +9367,7 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_ConstCast(PyObject *self, PyObject 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DatabaseInterface_ConstCast__SWIG_1(self, argc, argv);
@@ -11406,7 +11407,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GFArchive_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::GFArchive *result = 0 ;
@@ -11414,7 +11415,7 @@ SWIGINTERN PyObject *_wrap_GFArchive_Cast__SWIG_1(PyObject *self, Py_ssize_t nob
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GFArchive_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -11467,7 +11468,7 @@ SWIGINTERN PyObject *_wrap_GFArchive_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GFArchive_Cast__SWIG_1(self, argc, argv);
@@ -11485,7 +11486,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GFArchive_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::GFArchive *result = 0 ;
@@ -11493,7 +11494,7 @@ SWIGINTERN PyObject *_wrap_GFArchive_ConstCast__SWIG_1(PyObject *self, Py_ssize_
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GFArchive_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -11545,7 +11546,7 @@ SWIGINTERN PyObject *_wrap_GFArchive_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GFArchive_ConstCast__SWIG_1(self, argc, argv);
@@ -12530,7 +12531,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RecordStream_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::RecordStream *result = 0 ;
@@ -12538,7 +12539,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_Cast__SWIG_1(PyObject *self, Py_ssize_t 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordStream_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -12591,7 +12592,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_RecordStream_Cast__SWIG_1(self, argc, argv);
@@ -12609,7 +12610,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_RecordStream_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::RecordStream *result = 0 ;
@@ -12617,7 +12618,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_ConstCast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "RecordStream_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -12669,7 +12670,7 @@ SWIGINTERN PyObject *_wrap_RecordStream_ConstCast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_RecordStream_ConstCast__SWIG_1(self, argc, argv);
@@ -16112,7 +16113,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Importer_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::Importer *result = 0 ;
@@ -16120,7 +16121,7 @@ SWIGINTERN PyObject *_wrap_Importer_Cast__SWIG_1(PyObject *self, Py_ssize_t nobj
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Importer_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -16173,7 +16174,7 @@ SWIGINTERN PyObject *_wrap_Importer_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Importer_Cast__SWIG_1(self, argc, argv);
@@ -16191,7 +16192,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Importer_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::Importer *result = 0 ;
@@ -16199,7 +16200,7 @@ SWIGINTERN PyObject *_wrap_Importer_ConstCast__SWIG_1(PyObject *self, Py_ssize_t
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Importer_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -16251,7 +16252,7 @@ SWIGINTERN PyObject *_wrap_Importer_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Importer_ConstCast__SWIG_1(self, argc, argv);
@@ -16888,7 +16889,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Exporter_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::Exporter *result = 0 ;
@@ -16896,7 +16897,7 @@ SWIGINTERN PyObject *_wrap_Exporter_Cast__SWIG_1(PyObject *self, Py_ssize_t nobj
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Exporter_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -16949,7 +16950,7 @@ SWIGINTERN PyObject *_wrap_Exporter_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Exporter_Cast__SWIG_1(self, argc, argv);
@@ -16967,7 +16968,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Exporter_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::Exporter *result = 0 ;
@@ -16975,7 +16976,7 @@ SWIGINTERN PyObject *_wrap_Exporter_ConstCast__SWIG_1(PyObject *self, Py_ssize_t
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Exporter_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -17027,7 +17028,7 @@ SWIGINTERN PyObject *_wrap_Exporter_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Exporter_ConstCast__SWIG_1(self, argc, argv);
@@ -25496,7 +25497,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_MSeedRecord_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::MSeedRecord *result = 0 ;
@@ -25504,7 +25505,7 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_Cast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -25557,7 +25558,7 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_MSeedRecord_Cast__SWIG_1(self, argc, argv);
@@ -25575,7 +25576,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_MSeedRecord_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::IO::MSeedRecord *result = 0 ;
@@ -25583,7 +25584,7 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_ConstCast__SWIG_1(PyObject *self, Py_ssiz
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -25635,7 +25636,7 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_ConstCast(PyObject *self, PyObject *args)
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_MSeedRecord_ConstCast__SWIG_1(self, argc, argv);
@@ -29665,7 +29666,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_SLConnection_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::RecordStream::SLConnection *result = 0 ;
@@ -29673,7 +29674,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_Cast__SWIG_1(PyObject *self, Py_ssize_t 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -29726,7 +29727,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_SLConnection_Cast__SWIG_1(self, argc, argv);
@@ -29744,7 +29745,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_SLConnection_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::RecordStream::SLConnection *result = 0 ;
@@ -29752,7 +29753,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_ConstCast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SLConnection_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -29804,7 +29805,7 @@ SWIGINTERN PyObject *_wrap_SLConnection_ConstCast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_SLConnection_ConstCast__SWIG_1(self, argc, argv);
@@ -30743,7 +30744,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
@@ -30751,7 +30752,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -30804,7 +30805,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_Cast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ArclinkConnection_Cast__SWIG_1(self, argc, argv);
@@ -30822,7 +30823,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::RecordStream::Arclink::ArclinkConnection *result = 0 ;
@@ -30830,7 +30831,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast__SWIG_1(PyObject *self, P
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ArclinkConnection_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -30882,7 +30883,7 @@ SWIGINTERN PyObject *_wrap_ArclinkConnection_ConstCast(PyObject *self, PyObject 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ArclinkConnection_ConstCast__SWIG_1(self, argc, argv);
@@ -39276,67 +39277,67 @@ static swig_type_info _swigt__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_
 static swig_type_info _swigt__p_Seiscomp__Core__GreensFunction = {"_p_Seiscomp__Core__GreensFunction", "Seiscomp::Core::GreensFunction *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__InterruptibleObject = {"_p_Seiscomp__Core__InterruptibleObject", "Seiscomp::Core::InterruptibleObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__RTTI = {"_p_Seiscomp__Core__RTTI", "Seiscomp::Core::RTTI *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl", "Seiscomp::BitSetPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl", "Seiscomp::Core::BaseObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl", "Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl", "Seiscomp::Core::DataMessagePtr *|::Seiscomp::Core::SmartPointer< Seiscomp::Core::DataMessage >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl", "Seiscomp::Core::GreensFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl", "Seiscomp::Core::GreensFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl", "Seiscomp::Core::InterruptibleObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl", "Seiscomp::Core::InterruptibleObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl", "Seiscomp::Core::MessageCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl", "Seiscomp::Core::MessagePtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl", "Seiscomp::GenericRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl", "Seiscomp::GenericRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl", "Seiscomp::IO::CropperCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Cropper const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl", "Seiscomp::IO::CropperPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Cropper >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl", "Seiscomp::IO::DatabaseInterfaceCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::DatabaseInterface const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl", "Seiscomp::IO::DatabaseInterfacePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::DatabaseInterface >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl", "Seiscomp::IO::ExporterCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Exporter const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl", "Seiscomp::IO::ExporterPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Exporter >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl", "Seiscomp::IO::GFArchiveCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::GFArchive const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl", "Seiscomp::IO::GFArchivePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::GFArchive >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl", "Seiscomp::IO::ImporterCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Importer const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl", "Seiscomp::IO::ImporterPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Importer >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl", "Seiscomp::IO::MSeedRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::MSeedRecord const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl", "Seiscomp::IO::MSeedRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::MSeedRecord >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl", "Seiscomp::IO::RecordFilterInterfaceCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordFilterInterface const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl", "Seiscomp::IO::RecordFilterInterfacePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordFilterInterface >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl", "Seiscomp::IO::RecordInputCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordInput const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl", "Seiscomp::IO::RecordInputPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordInput >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl", "Seiscomp::Math::Restitution::FFT::TransferFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Math::Restitution::FFT::TransferFunction const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl", "Seiscomp::Math::Restitution::FFT::TransferFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Math::Restitution::FFT::TransferFunction >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl", "Seiscomp::CharArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl", "Seiscomp::CharArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl", "Seiscomp::DoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl", "Seiscomp::DoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl", "Seiscomp::FloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl", "Seiscomp::FloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl", "Seiscomp::Int32ArrayCPtr *|Seiscomp::IntArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl", "Seiscomp::Int32ArrayPtr *|Seiscomp::IntArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl", "Seiscomp::RecordStream::Arclink::ArclinkConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl", "Seiscomp::RecordStream::Arclink::ArclinkConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl", "Seiscomp::RecordStream::CombinedConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl", "Seiscomp::RecordStream::CombinedConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl", "Seiscomp::RecordStream::FileCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::File const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl", "Seiscomp::RecordStream::FilePtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::File >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl", "Seiscomp::RecordStream::SLConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::SLConnection const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl", "Seiscomp::RecordStream::SLConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::SLConnection >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl", "Seiscomp::IO::RecordStreamCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl", "Seiscomp::IO::RecordStreamPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl", "Seiscomp::RecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl", "Seiscomp::RecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl", "Seiscomp::DateTimeArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl", "Seiscomp::DateTimeArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl", "Seiscomp::ComplexDoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl", "Seiscomp::ComplexDoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl", "Seiscomp::ComplexFloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl", "Seiscomp::ComplexFloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl", "Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > const >::Impl *|Seiscomp::StringArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::basic_string< char,std::char_traits< char >,std::allocator< char > > > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl", "Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > >::Impl *|Seiscomp::StringArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::basic_string< char,std::char_traits< char >,std::allocator< char > > > >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t", "Seiscomp::BitSetPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t", "Seiscomp::Core::BaseObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t", "Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t", "Seiscomp::Core::DataMessagePtr *|::Seiscomp::Core::SmartPointer< Seiscomp::Core::DataMessage > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t", "Seiscomp::Core::GreensFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t", "Seiscomp::Core::GreensFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t", "Seiscomp::Core::InterruptibleObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t", "Seiscomp::Core::InterruptibleObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t", "Seiscomp::Core::MessageCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t", "Seiscomp::Core::MessagePtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t", "Seiscomp::GenericRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t", "Seiscomp::GenericRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t", "Seiscomp::IO::CropperCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Cropper const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t", "Seiscomp::IO::CropperPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Cropper > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t", "Seiscomp::IO::DatabaseInterfaceCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::DatabaseInterface const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t", "Seiscomp::IO::DatabaseInterfacePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::DatabaseInterface > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t", "Seiscomp::IO::ExporterCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Exporter const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t", "Seiscomp::IO::ExporterPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Exporter > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t", "Seiscomp::IO::GFArchiveCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::GFArchive const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t", "Seiscomp::IO::GFArchivePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::GFArchive > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t", "Seiscomp::IO::ImporterCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Importer const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t", "Seiscomp::IO::ImporterPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::Importer > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t", "Seiscomp::IO::MSeedRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::MSeedRecord const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t", "Seiscomp::IO::MSeedRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::MSeedRecord > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t", "Seiscomp::IO::RecordFilterInterfaceCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordFilterInterface const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t", "Seiscomp::IO::RecordFilterInterfacePtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordFilterInterface > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t", "Seiscomp::IO::RecordInputCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordInput const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t", "Seiscomp::IO::RecordInputPtr *|Seiscomp::Core::SmartPointer< Seiscomp::IO::RecordInput > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t", "Seiscomp::Math::Restitution::FFT::TransferFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Math::Restitution::FFT::TransferFunction const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t", "Seiscomp::Math::Restitution::FFT::TransferFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Math::Restitution::FFT::TransferFunction > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t", "Seiscomp::CharArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t", "Seiscomp::CharArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t", "Seiscomp::DoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t", "Seiscomp::DoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t", "Seiscomp::FloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t", "Seiscomp::FloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t", "Seiscomp::Int32ArrayCPtr *|Seiscomp::IntArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t", "Seiscomp::Int32ArrayPtr *|Seiscomp::IntArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t", "Seiscomp::RecordStream::Arclink::ArclinkConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t", "Seiscomp::RecordStream::Arclink::ArclinkConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::Arclink::ArclinkConnection > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t", "Seiscomp::RecordStream::CombinedConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t", "Seiscomp::RecordStream::CombinedConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::CombinedConnection > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t", "Seiscomp::RecordStream::FileCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::File const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t", "Seiscomp::RecordStream::FilePtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::File > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t", "Seiscomp::RecordStream::SLConnectionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::SLConnection const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t", "Seiscomp::RecordStream::SLConnectionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream::SLConnection > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t", "Seiscomp::IO::RecordStreamCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t", "Seiscomp::IO::RecordStreamPtr *|Seiscomp::Core::SmartPointer< Seiscomp::RecordStream > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t", "Seiscomp::RecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t", "Seiscomp::RecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t", "Seiscomp::DateTimeArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t", "Seiscomp::DateTimeArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t", "Seiscomp::ComplexDoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t", "Seiscomp::ComplexDoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t", "Seiscomp::ComplexFloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t", "Seiscomp::ComplexFloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t", "Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > const > *|Seiscomp::StringArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::basic_string< char,std::char_traits< char >,std::allocator< char > > > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t", "Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > > *|Seiscomp::StringArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::basic_string< char,std::char_traits< char >,std::allocator< char > > > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__StreamException = {"_p_Seiscomp__Core__StreamException", "Seiscomp::Core::StreamException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__Time = {"_p_Seiscomp__Core__Time", "Seiscomp::Core::Time *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__TimeSpan = {"_p_Seiscomp__Core__TimeSpan", "Seiscomp::Core::TimeSpan *", 0, 0, (void*)0, 0};
@@ -39401,6 +39402,7 @@ static swig_type_info _swigt__p_Weeks = {"_p_Weeks", "Weeks *", 0, 0, (void*)0, 
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_bool = {"_p_bool", "bool *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_boost__bad_any_cast = {"_p_boost__bad_any_cast", "Seiscomp::Core::BadMetaValueCast *|boost::bad_any_cast *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char_type = {"_p_char_type", "char_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
@@ -39519,67 +39521,67 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__OperationInterrupted,
   &_swigt__p_Seiscomp__Core__OverflowException,
   &_swigt__p_Seiscomp__Core__RTTI,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t,
   &_swigt__p_Seiscomp__Core__StreamException,
   &_swigt__p_Seiscomp__Core__Time,
   &_swigt__p_Seiscomp__Core__TimeSpan,
@@ -39695,6 +39697,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_allocator_type,
   &_swigt__p_bool,
   &_swigt__p_boost__any,
+  &_swigt__p_boost__bad_any_cast,
   &_swigt__p_char,
   &_swigt__p_char_type,
   &_swigt__p_const_iterator,
@@ -39860,67 +39863,67 @@ static swig_cast_info _swigc__p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_
 static swig_cast_info _swigc__p_Seiscomp__Core__GreensFunction[] = {  {&_swigt__p_Seiscomp__Core__GreensFunction, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__InterruptibleObject[] = {  {&_swigt__p_Seiscomp__Core__InterruptibleObject, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStream, _p_Seiscomp__IO__RecordStreamTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__Arclink__ArclinkConnection, _p_Seiscomp__RecordStream__Arclink__ArclinkConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__CombinedConnection, _p_Seiscomp__RecordStream__CombinedConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__File, _p_Seiscomp__RecordStream__FileTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SLConnection, _p_Seiscomp__RecordStream__SLConnectionTo_p_Seiscomp__Core__InterruptibleObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__RTTI[] = {  {&_swigt__p_Seiscomp__Core__RTTI, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__StreamException[] = {  {&_swigt__p_Seiscomp__Core__StreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__LibmseedException, _p_Seiscomp__IO__LibmseedExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamException, _p_Seiscomp__IO__RecordStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordStreamTimeout, _p_Seiscomp__IO__RecordStreamTimeoutTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkCommandException, _p_Seiscomp__RecordStream__SeedlinkCommandExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},  {&_swigt__p_Seiscomp__RecordStream__SeedlinkException, _p_Seiscomp__RecordStream__SeedlinkExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Time[] = {  {&_swigt__p_Seiscomp__Core__Time, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TimeSpan[] = {  {&_swigt__p_Seiscomp__Core__TimeSpan, 0, 0, 0},{0, 0, 0, 0}};
@@ -39985,6 +39988,7 @@ static swig_cast_info _swigc__p_Weeks[] = {  {&_swigt__p_Weeks, 0, 0, 0},{0, 0, 
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_bool[] = {  {&_swigt__p_bool, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_boost__bad_any_cast[] = {  {&_swigt__p_boost__bad_any_cast, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char_type[] = {  {&_swigt__p_char_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
@@ -40103,67 +40107,67 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__OperationInterrupted,
   _swigc__p_Seiscomp__Core__OverflowException,
   _swigc__p_Seiscomp__Core__RTTI,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__Arclink__ArclinkConnection_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t,
   _swigc__p_Seiscomp__Core__StreamException,
   _swigc__p_Seiscomp__Core__Time,
   _swigc__p_Seiscomp__Core__TimeSpan,
@@ -40279,6 +40283,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_allocator_type,
   _swigc__p_bool,
   _swigc__p_boost__any,
+  _swigc__p_boost__bad_any_cast,
   _swigc__p_char,
   _swigc__p_char_type,
   _swigc__p_const_iterator,
