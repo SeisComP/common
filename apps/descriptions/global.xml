@@ -1083,7 +1083,7 @@
 						will be used instead.
 						</description>
 					</parameter>
-					<parameter name="minSNR" type="double">
+					<parameter name="minSNR" type="double" default="3">
 						<description>
 						Define the minimum SNR to be reached to compute the
 						amplitudes. This value is amplitude type specific and
@@ -1108,7 +1108,7 @@
 						this check.
 						</description>
 					</parameter>
-					<parameter name="noiseBegin" type="string" unit="time grammar">
+					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
@@ -1117,7 +1117,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="noiseEnd" type="string" unit="time grammar">
+					<parameter name="noiseEnd" type="string" unit="time grammar" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
@@ -1126,7 +1126,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalBegin" type="string" unit="time grammar">
+					<parameter name="signalBegin" type="string" unit="time grammar" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
@@ -1135,7 +1135,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalEnd" type="string" unit="time grammar">
+					<parameter name="signalEnd" type="string" unit="time grammar" default="30">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
@@ -1144,7 +1144,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="minDist" type="string" unit="deg">
+					<parameter name="minDist" type="string" unit="deg" default="0">
 						<description>
 						The minimum distance required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1153,7 +1153,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDist" type="string" unit="deg">
+					<parameter name="maxDist" type="string" unit="deg" default="180">
 						<description>
 						The maximum distance allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1162,7 +1162,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="minDepth" type="string" unit="km">
+					<parameter name="minDepth" type="string" unit="km" default="-1000000">
 						<description>
 						The minimum depth required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1171,7 +1171,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDepth" type="string" unit="km">
+					<parameter name="maxDepth" type="string" unit="km" default="1000000">
 						<description>
 						The maximum depth allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
