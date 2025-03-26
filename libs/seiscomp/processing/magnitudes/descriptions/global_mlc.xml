@@ -173,6 +173,8 @@
 				<description>
 				Parameters for computing MLc magnitudes from MLc amplitudes.
 				</description>
+				<parameter name="maxDist" type="string" unit="deg" default="8"/>
+				<parameter name="maxDepth" type="string" unit="km" default="80"/>
 				<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
 					<description>
 					Considered distance measure between source and receiver.
