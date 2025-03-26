@@ -193,6 +193,9 @@ void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
 	setMinDepth(-10);
 	setMaxDepth(80);
 
+	_amplitudeScale = 1.0;
+	_combiner = TakeMax;
+
 	_ampE._preFilter = _ampN._preFilter = "BW(3,0.5,12)";
 
 	// Propagate configuration to single processors
