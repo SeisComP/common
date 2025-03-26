@@ -30,10 +30,21 @@
 				Parameters for measuring ML amplitudes. Add more parameters
 				by adding an amplitude type profile 'ML',
 				</description>
+				<parameter name="minSNR" type="double" default="0"/>
+				<parameter name="maxDist" type="string" unit="deg" default="8"/>
+				<parameter name="maxDepth" type="string" unit="km" default="80"/>
+				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
 				<parameter name="preFilter" type="string" default="">
 					<description>
 					The filter applied to raw records before applying
 					Wood-Anderson simulation. Default: no pre-filtering.
+					</description>
+				</parameter>
+				<parameter name="applyWoodAnderson" type="boolean" default="true">
+					<description>
+					Applying Wood-Anderson simulation. To achieve displacement
+					records without WA simulation, an integration filter can
+					be applied with the pre-filter.
 					</description>
 				</parameter>
 				<parameter name="measureType" type="string" default="AbsMax">
