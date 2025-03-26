@@ -1728,10 +1728,9 @@ bool Canvas::filterMouseDoubleClickEvent(QMouseEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::filterMousePressEvent(QMouseEvent *e) {
 	if ( _isDrawLegendsEnabled ) {
-		for ( LegendAreas::iterator it = _legendAreas.begin();
-		      it != _legendAreas.end(); ++it ) {
+		for ( auto it = _legendAreas.begin(); it != _legendAreas.end(); ++it ) {
 			if ( it->mousePressEvent(e) ) {
-				updateRequested();
+				emit updateRequested();
 				return true;
 			}
 		}
@@ -1739,8 +1738,9 @@ bool Canvas::filterMousePressEvent(QMouseEvent *e) {
 
 	if ( _hoverLayer ) {
 		QPointF geoPos;
-		if ( _projection->unproject(geoPos, e->pos()) )
+		if ( _projection->unproject(geoPos, e->pos()) ) {
 			return _hoverLayer->filterMousePressEvent(e, geoPos);
+		}
 	}
 
 	return false;

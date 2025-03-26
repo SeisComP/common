@@ -63,8 +63,9 @@ class SC_GUI_API MapWidget : public QWidget {
 		MapWidget(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		MapWidget(const MapsDesc &meta, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		MapWidget(Map::ImageTree *mapTree, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
-		virtual ~MapWidget();
 
+
+	public:
 		Map::Canvas &canvas() { return _canvas; }
 		const Map::Canvas &canvas() const { return _canvas; }
 
@@ -134,15 +135,17 @@ class SC_GUI_API MapWidget : public QWidget {
 
 		std::string _currentProjection;
 
-		bool     _firstDrag;
-		bool     _isDragging;
-		bool     _isMeasuring;
-		bool     _filterMap;
-		bool     _forceGrayScale;
+		bool     _firstDrag{false};
+		bool     _isDragging{false};
+		bool     _isZooming{false};
+		bool     _isMeasuring{false};
+		bool     _filterMap{false};
+		bool     _forceGrayScale{false};
 
 		QVector<QPointF> _measurePoints;
 		QString          _measureText;
 		SaveBNADialog   *_measureBNADialog;
+		QPoint   _firstDraggingPosition;
 		QPoint   _lastDraggingPosition;
 
 		QMenu   *_contextProjectionMenu;

@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT Gui::MapWidget
 
 #include <seiscomp/geo/featureset.h>
@@ -45,11 +46,18 @@
 #undef max
 #endif
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Gui {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+
 
 const static char *cmStrMeasure = "Measurements";
 const static char *cmStrMeasureClipboard = "Copy to Clipboard";
@@ -63,18 +71,24 @@ const static char *cmStrScreenshot = "Save image";
 
 inline QString lat2String(double lat, int precision) {
 	return QString("%1%2")
-	        .arg(fabs(lat), 3+precision, 'f', precision)
-	        .arg(lat < 0?" S":lat > 0?" N":"");
+	       .arg(fabs(lat), precision + 3, 'f', precision)
+	       .arg(lat < 0 ? " S" : (lat > 0 ? " N" : ""));
 }
 
 inline QString lon2String(double lon, int precision) {
 	lon = fmod(lon, 360.0);
-	if ( lon < 0 ) lon += 360.0;
-	if ( lon > 180.0 ) lon -= 360.0;
+
+	if ( lon < 0 ) {
+		lon += 360.0;
+	}
+
+	if ( lon > 180.0 ) {
+		lon -= 360.0;
+	}
 
 	return QString("%1%2")
-	        .arg(fabs(lon), 4+precision, 'f', precision)
-	        .arg(lon < 0?" W":lon > 0?" E":"");
+	        .arg(fabs(lon), precision + 4, 'f', precision)
+	        .arg(lon < 0 ? " W" : (lon > 0 ? " E" : ""));
 }
 
 
@@ -93,8 +107,9 @@ double polyArea(const QVector<QPointF> &coords) {
 		lat2 = coords[(i + 1) % coords.size()].y() * M_PI / 180.0;
 		lon2 = coords[(i + 1) % coords.size()].x() * M_PI / 180.0;
 
-		if ( lon1 == lon2 )
+		if ( lon1 == lon2 ) {
 			continue;
+		}
 
 		double h = hav(lat2 - lat1) + cos(lat1) * cos(lat2) * hav(lon2 - lon1);
 
@@ -106,8 +121,9 @@ double polyArea(const QVector<QPointF> &coords) {
 		           tan((s - b) / 2.0) * tan((s - c) / 2);
 
 		e = fabs(4.0 * atan(sqrt(fabs(t))));
-		if ( lon2 < lon1 )
+		if ( lon2 < lon1 ) {
 			e = -e;
+		}
 		if ( fabs(lon2 - lon1) > M_PI ) {
 			e = -e;
 		}
@@ -117,8 +133,14 @@ double polyArea(const QVector<QPointF> &coords) {
 	return fabs(sum) * 6378.137 * 6378.137;
 }
 
-} // ns anonymous
 
+} // ns anonymous
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SaveBNADialog::SaveBNADialog(QWidget *parent, Qt::WindowFlags f)
   : QDialog(parent, f) {
 	this->setWindowTitle(cmStrMeasureSaveBNA);
@@ -193,30 +215,42 @@ SaveBNADialog::SaveBNADialog(QWidget *parent, Qt::WindowFlags f)
 	this->setLayout(layout);
 	this->setMinimumSize(450,0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MapWidget::MapWidget(QWidget *parent, Qt::WindowFlags f)
  : QWidget(parent, f), _canvas(nullptr) {
 	init();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MapWidget::MapWidget(const MapsDesc &meta, QWidget *parent, Qt::WindowFlags f)
  : QWidget(parent, f), _canvas(meta) {
 	init();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MapWidget::MapWidget(Map::ImageTree *mapTree, QWidget *parent, Qt::WindowFlags f)
  : QWidget(parent, f), _canvas(mapTree) {
 	init();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-MapWidget::~MapWidget() {}
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::init() {
 	_canvas.setBackgroundColor(palette().color(QPalette::Window));
 	connect(&_canvas, SIGNAL(bufferUpdated()), this, SLOT(bufferUpdated()));
@@ -227,6 +261,7 @@ void MapWidget::init() {
 	connect(&_canvas, SIGNAL(updateRequested()), this, SLOT(update()));
 
 	_isDragging = false;
+	_isZooming = false;
 	_isMeasuring = false;
 	_filterMap = SCScheme.map.bilinearFilter;
 	_canvas.setBilinearFilter(_filterMap);
@@ -258,64 +293,104 @@ void MapWidget::init() {
 	_measureBNADialog = nullptr;
 	_forceGrayScale = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::projectionChanged(Seiscomp::Gui::Map::Projection *p) {
 	if ( p == nullptr )
 		setAttribute(Qt::WA_OpaquePaintEvent, false);
 	else
 		setAttribute(Qt::WA_OpaquePaintEvent, p->isRectangular());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::zoomIn() {
 	_canvas.setZoomLevel(_canvas.zoomLevel() * pow(2.0, _zoomSensitivity));
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::zoomOut() {
 	_canvas.setZoomLevel(_canvas.zoomLevel() / pow(2.0, _zoomSensitivity));
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::setDrawGrid(bool e) {
 	_canvas.setDrawGrid(e);
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::setDrawLayers(bool e) {
 	_canvas.setDrawLayers(e);
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::setDrawCities(bool e) {
 	_canvas.setDrawCities(e);
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::setDrawLegends(bool e) {
 	_canvas.setDrawLegends(e);
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::setGrayScale(bool f) {
 	if ( _forceGrayScale == f ) return;
 	_forceGrayScale = f;
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MapWidget::isGrayScale() const {
 	return _forceGrayScale;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MapWidget::saveScreenshot() {
 	QString filename = QFileDialog::getSaveFileName(
 		this,
@@ -342,12 +417,25 @@ bool MapWidget::saveScreenshot() {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::draw(QPainter &painter) {
 	_canvas.setPreviewMode(_isDragging);
 	_canvas.setGrayScale(!isEnabled() || _forceGrayScale);
 	_canvas.draw(painter);
+
+	if ( _isZooming ) {
+		if ( _firstDraggingPosition != _lastDraggingPosition ) {
+			painter.setRenderHint(QPainter::Antialiasing, false);
+			painter.setPen(Qt::white);
+			painter.setBrush(QColor(255,255,255,128));
+			painter.drawRect(QRect(_firstDraggingPosition, _lastDraggingPosition));
+		}
+	}
 
 	if ( _isMeasuring ) {
 		painter.save();
@@ -416,12 +504,11 @@ void MapWidget::draw(QPainter &painter) {
 		                       "End     : %3 / %4\n"
 		                       "%5\n"
 		                       "%6")
-		               .arg(lat2String(_measurePoints.first().y(), precision))
-		               .arg(lon2String(_measurePoints.first().x(), precision))
-		               .arg(lat2String(_measurePoints.last().y(), precision))
-		               .arg(lon2String(_measurePoints.last().x(), precision))
-		               .arg(distStr)
-		               .arg(aziArea);
+		               .arg(lat2String(_measurePoints.first().y(), precision),
+		                    lon2String(_measurePoints.first().x(), precision),
+		                    lat2String(_measurePoints.last().y(), precision),
+		                    lon2String(_measurePoints.last().x(), precision),
+		                    distStr, aziArea);
 
 		painter.drawText(r, Qt::AlignLeft, _measureText);
 
@@ -432,20 +519,32 @@ void MapWidget::draw(QPainter &painter) {
 		painter.restore();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::paintEvent(QPaintEvent* e) {
 	QPainter painter(this);
 	draw(painter);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::resizeEvent(QResizeEvent* event) {
 	_canvas.setSize(event->size().width(), event->size().height());
 	_zoomControls->resize(_zoomControls->sizeHint());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::updateContextMenu(QMenu *menu) {
 	QAction *action;
 
@@ -487,8 +586,12 @@ void MapWidget::updateContextMenu(QMenu *menu) {
 
 	_canvas.menu(menu);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::executeContextMenuAction(QAction *action) {
 	if ( action == nullptr ) {
 		_contextProjectionMenu = nullptr;
@@ -651,8 +754,12 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::contextMenuEvent(QContextMenuEvent *event) {
 	if ( _canvas.filterContextMenuEvent(event, this) ) return;
 
@@ -663,14 +770,24 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event) {
 	// Evaluation action performed
 	executeContextMenuAction(menu.exec(event->globalPos()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::mousePressEvent(QMouseEvent* event) {
 	if ( event->button() == Qt::LeftButton ) {
-		_lastDraggingPosition = event->pos();
+		_firstDraggingPosition = event->pos();
+		_lastDraggingPosition = _firstDraggingPosition;
 		_firstDrag = true;
 
-		if ( event->modifiers() == Qt::ControlModifier ) {
+		if ( event->modifiers() == Qt::ShiftModifier ) {
+			_isZooming = true;
+			setToolTip(QString());
+			update();
+		}
+		else if ( event->modifiers() == Qt::ControlModifier ) {
 			QPointF p;
 			_canvas.projection()->unproject(p, _lastDraggingPosition);
 			if ( !_isMeasuring ) {
@@ -697,27 +814,53 @@ void MapWidget::mousePressEvent(QMouseEvent* event) {
 
 	_canvas.filterMousePressEvent(event);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::mouseReleaseEvent(QMouseEvent* event) {
-	if ( _isDragging && (event->button() == Qt::LeftButton) ) {
-		_isDragging = false;
-		update();
+	if ( event->button() == Qt::LeftButton ) {
+		if ( _isDragging ) {
+			_isDragging = false;
+			update();
+		}
+		else if ( _isZooming ) {
+			_isZooming = false;
+			if ( _firstDraggingPosition != _lastDraggingPosition ) {
+				QPointF p0, p1;
+				_canvas.projection()->unproject(p0, _firstDraggingPosition);
+				_canvas.projection()->unproject(p1, _lastDraggingPosition);
+				canvas().displayRect(QRectF(p0, p1).normalized());
+				update();
+			}
+		}
 	}
 
 	_canvas.filterMouseReleaseEvent(event);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::mouseMoveEvent(QMouseEvent* event) {
 	if ( _isDragging ) {
-		if ( _firstDrag ) _firstDrag = false;
+		if ( _firstDrag ) {
+			_firstDrag = false;
+		}
 
 		QPoint delta = event->pos() - _lastDraggingPosition;
 		_lastDraggingPosition = event->pos();
 
 		_canvas.translate(delta);
 
+		update();
+	}
+	else if ( _isZooming ) {
+		_lastDraggingPosition = event->pos();
 		update();
 	}
 	else if ( _isMeasuring ) {
@@ -756,8 +899,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent* event) {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 	if ( event->button() == Qt::LeftButton &&
 	     !_canvas.filterMouseDoubleClickEvent(event) ) {
@@ -765,8 +912,12 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 		update();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::keyPressEvent(QKeyEvent* e) {
 	if ( _canvas.filterKeyPressEvent(e) ) {
 		bool hasLayerCursor = false;
@@ -829,8 +980,12 @@ void MapWidget::keyPressEvent(QKeyEvent* e) {
 			break;
 	};
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::keyReleaseEvent(QKeyEvent *e) {
 	if ( _canvas.filterKeyReleaseEvent(e) ) {
 		bool hasLayerCursor = false;
@@ -850,28 +1005,49 @@ void MapWidget::keyReleaseEvent(QKeyEvent *e) {
 		return;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::wheelEvent(QWheelEvent *e) {
 	double zoomDelta = static_cast<double>(QT_WE_DELTA(e)) * (1.0/120.0);
 	if ( _canvas.setZoomLevel(_canvas.zoomLevel() * pow(2.0, zoomDelta*_zoomSensitivity)) )
 		update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::leaveEvent(QEvent *e) {
 	QWidget::leaveEvent(e);
 	_zoomControls->hide();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int MapWidget::heightForWidth(int w) const {
 	return w;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MapWidget::bufferUpdated() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
