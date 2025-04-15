@@ -303,6 +303,22 @@ class DatabaseInterface(seiscomp.core.BaseObject):
         ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> DatabaseInterface
         """
         return _io.DatabaseInterface_ConstCast(*args)
+    MySQL = _io.DatabaseInterface_MySQL
+    
+    PostgreSQL = _io.DatabaseInterface_PostgreSQL
+    
+    SQLite3 = _io.DatabaseInterface_SQLite3
+    
+    MSSQL = _io.DatabaseInterface_MSSQL
+    
+    Oracle = _io.DatabaseInterface_Oracle
+    
+    ODBC = _io.DatabaseInterface_ODBC
+    
+    Unknown = _io.DatabaseInterface_Unknown
+    
+    EBackendQuantity = _io.DatabaseInterface_EBackendQuantity
+    
     __swig_destroy__ = _io.delete_DatabaseInterface
 
     @staticmethod
@@ -314,6 +330,10 @@ class DatabaseInterface(seiscomp.core.BaseObject):
     def Open(uri):
         r"""Open(char const * uri) -> DatabaseInterface"""
         return _io.DatabaseInterface_Open(uri)
+
+    def backend(self):
+        r"""backend(DatabaseInterface self) -> Seiscomp::IO::DatabaseInterface::Backend"""
+        return _io.DatabaseInterface_backend(self)
 
     def connect(self, connection):
         r"""connect(DatabaseInterface self, char const * connection) -> bool"""
@@ -851,6 +871,61 @@ class RecordDemuxFilter(RecordFilterInterface):
 
 # Register RecordDemuxFilter in _io:
 _io.RecordDemuxFilter_swigregister(RecordDemuxFilter)
+class MSeedEncoder(RecordFilterInterface):
+    r"""Proxy of C++ Seiscomp::IO::MSeedEncoder class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self):
+        r"""__init__(MSeedEncoder self) -> MSeedEncoder"""
+        _io.MSeedEncoder_swiginit(self, _io.new_MSeedEncoder())
+
+    def setRecordSize(self, size):
+        r"""setRecordSize(MSeedEncoder self, int size) -> bool"""
+        return _io.MSeedEncoder_setRecordSize(self, size)
+
+    def setIdentity(self):
+        r"""setIdentity(MSeedEncoder self)"""
+        return _io.MSeedEncoder_setIdentity(self)
+
+    def setSteim1(self):
+        r"""setSteim1(MSeedEncoder self)"""
+        return _io.MSeedEncoder_setSteim1(self)
+
+    def setSteim2(self):
+        r"""setSteim2(MSeedEncoder self)"""
+        return _io.MSeedEncoder_setSteim2(self)
+
+    def allowFloatingPointCompression(self, f):
+        r"""allowFloatingPointCompression(MSeedEncoder self, bool f)"""
+        return _io.MSeedEncoder_allowFloatingPointCompression(self, f)
+
+    def feed(self, rec):
+        r"""feed(MSeedEncoder self, Record rec) -> Record"""
+        return _io.MSeedEncoder_feed(self, rec)
+
+    def flush(self):
+        r"""flush(MSeedEncoder self) -> Record"""
+        return _io.MSeedEncoder_flush(self)
+
+    def reset(self):
+        r"""reset(MSeedEncoder self)"""
+        return _io.MSeedEncoder_reset(self)
+
+    def clone(self):
+        r"""clone(MSeedEncoder self) -> RecordFilterInterface"""
+        return _io.MSeedEncoder_clone(self)
+    Identity = _io.MSeedEncoder_Identity
+    
+    Steim1 = _io.MSeedEncoder_Steim1
+    
+    Steim2 = _io.MSeedEncoder_Steim2
+    
+    __swig_destroy__ = _io.delete_MSeedEncoder
+
+# Register MSeedEncoder in _io:
+_io.MSeedEncoder_swigregister(MSeedEncoder)
 class RecordResamplerBase(RecordFilterInterface):
     r"""Proxy of C++ Seiscomp::IO::RecordResamplerBase class."""
 

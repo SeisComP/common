@@ -315,6 +315,10 @@ class Protocol(object):
         r"""schemaVersion(Protocol self) -> Version"""
         return _client.Protocol_schemaVersion(self)
 
+    def isDeleteTreeSupported(self):
+        r"""isDeleteTreeSupported(Protocol self) -> bool"""
+        return _client.Protocol_isDeleteTreeSupported(self)
+
     def extendedParameters(self):
         r"""extendedParameters(Protocol self) -> Seiscomp::Client::Protocol::KeyValueStore const &"""
         return _client.Protocol_extendedParameters(self)
@@ -552,6 +556,10 @@ class Connection(seiscomp.core.BaseObject):
     def schemaVersion(self):
         r"""schemaVersion(Connection self) -> Version"""
         return _client.Connection_schemaVersion(self)
+
+    def isDeleteTreeSupported(self):
+        r"""isDeleteTreeSupported(Connection self) -> bool"""
+        return _client.Connection_isDeleteTreeSupported(self)
 
     def extendedParameters(self):
         r"""extendedParameters(Connection self) -> Seiscomp::Client::Protocol::KeyValueStore const *"""

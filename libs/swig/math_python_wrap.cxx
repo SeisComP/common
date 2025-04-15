@@ -46541,6 +46541,62 @@ fail:
 }
 
 
+SWIGINTERN int Swig_var_WGS84_MEAN_RADIUS_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable WGS84_MEAN_RADIUS is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_WGS84_MEAN_RADIUS_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Math::Geo::WGS84_MEAN_RADIUS));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_WGS84_KM_OF_DEGREE_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable WGS84_KM_OF_DEGREE is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_WGS84_KM_OF_DEGREE_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Math::Geo::WGS84_KM_OF_DEGREE));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_WGS84_SEMI_MAJOR_AXIS_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable WGS84_SEMI_MAJOR_AXIS is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_WGS84_SEMI_MAJOR_AXIS_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Math::Geo::WGS84_SEMI_MAJOR_AXIS));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_WGS84_FLATTENING_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable WGS84_FLATTENING is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_WGS84_FLATTENING_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(Seiscomp::Math::Geo::WGS84_FLATTENING));
+  return pyobj;
+}
+
+
 SWIGINTERN PyObject *_wrap_xyz2ltp(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
@@ -54576,7 +54632,20 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "Displacement",SWIG_From_int(static_cast< int >(Seiscomp::Math::Displacement)));
   SWIG_Python_SetConstant(d, "Velocity",SWIG_From_int(static_cast< int >(Seiscomp::Math::Velocity)));
   SWIG_Python_SetConstant(d, "Acceleration",SWIG_From_int(static_cast< int >(Seiscomp::Math::Acceleration)));
-  SWIG_Python_SetConstant(d, "KM_OF_DEGREE",SWIG_From_double(static_cast< double >(111.195079734632)));
+  globals = SWIG_globals();
+  if (!globals) {
+    PyErr_SetString(PyExc_TypeError, "Failure to create SWIG globals.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  PyDict_SetItemString(md, "cvar", globals);
+  SWIG_addvarlink(globals, "WGS84_MEAN_RADIUS", Swig_var_WGS84_MEAN_RADIUS_get, Swig_var_WGS84_MEAN_RADIUS_set);
+  SWIG_addvarlink(globals, "WGS84_KM_OF_DEGREE", Swig_var_WGS84_KM_OF_DEGREE_get, Swig_var_WGS84_KM_OF_DEGREE_set);
+  SWIG_addvarlink(globals, "WGS84_SEMI_MAJOR_AXIS", Swig_var_WGS84_SEMI_MAJOR_AXIS_get, Swig_var_WGS84_SEMI_MAJOR_AXIS_set);
+  SWIG_addvarlink(globals, "WGS84_FLATTENING", Swig_var_WGS84_FLATTENING_get, Swig_var_WGS84_FLATTENING_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

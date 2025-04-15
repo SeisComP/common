@@ -2739,8 +2739,6 @@ def scxsc(lat1, lon1, r1, lat2, lon2, r2, latx1, lonx1, latx2, lonx2, epsilon=0)
 def scdraw(lat0, lon0, radius, n, lat, lon):
     r"""scdraw(double lat0, double lon0, double radius, int n, double * lat, double * lon) -> int"""
     return _math.scdraw(lat0, lon0, radius, n, lat, lon)
-KM_OF_DEGREE = _math.KM_OF_DEGREE
-
 
 def xyz2ltp(x, y, z, lat, lon, alt):
     r"""xyz2ltp(double const x, double const y, double const z, double * lat, double * lon, double * alt)"""
@@ -2804,6 +2802,12 @@ class PositionInterpolator(object):
 
 # Register PositionInterpolator in _math:
 _math.PositionInterpolator_swigregister(PositionInterpolator)
+cvar = _math.cvar
+WGS84_MEAN_RADIUS = cvar.WGS84_MEAN_RADIUS
+WGS84_KM_OF_DEGREE = cvar.WGS84_KM_OF_DEGREE
+WGS84_SEMI_MAJOR_AXIS = cvar.WGS84_SEMI_MAJOR_AXIS
+WGS84_FLATTENING = cvar.WGS84_FLATTENING
+
 
 def deg2km(deg):
     r"""deg2km(double deg) -> double"""
