@@ -120,6 +120,15 @@ bool PostgreSQLDatabase::open() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+PostgreSQLDatabase::Backend PostgreSQLDatabase::backend() const {
+	return PostgreSQL;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::connect(const char *con) {
 	_host = "localhost";
 	_user = "sysop";

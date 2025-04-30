@@ -24,8 +24,10 @@
 
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/interfacefactory.h>
+#include <seiscomp/core/enumeration.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core.h>
+
 #include <vector>
 #include <string>
 #include <stdint.h>
@@ -78,12 +80,33 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 	//  Public types
 	// ------------------------------------------------------------------
 	public:
-		typedef uint64_t OID;
+		using OID = uint64_t;
 		static const OID INVALID_OID;
+
+		MAKEENUM(Backend,
+			EVALUES(
+				MySQL,
+				PostgreSQL,
+				SQLite3,
+				MSSQL,
+				Oracle,
+				ODBC,
+				Unknown
+			),
+			ENAMES(
+				"mysql",
+				"postgresql",
+				"sqlite3",
+				"mssql",
+				"orcale",
+				"odbc",
+				"unknown"
+			)
+		);
 
 
 	// ------------------------------------------------------------------
-	//  Xstruction
+	//  X'truction
 	// ------------------------------------------------------------------
 	protected:
 		//! Protected constructor
@@ -111,6 +134,14 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		//!         NOTE: The returned pointer has to be deleted by the
 		//!               caller!
 		static DatabaseInterface *Open(const char* uri);
+
+		/**
+		 * @brief Returns the implemented backend from one of the supported
+		 *        enumerations.
+		 * If an yet unknown backend is implemented, return Unknown.
+		 * @return
+		 */
+		virtual Backend backend() const = 0;
 
 		/** Opens a connection to the database server
 		    @param connection The string containing the connection
@@ -311,13 +342,14 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 	//  Protected members
 	// ------------------------------------------------------------------
 	protected:
-		std::string  _user;
-		std::string  _password;
-		std::string  _host;
-		int          _port;
-		unsigned int _timeout;
-		std::string  _database;
-		std::string  _columnPrefix;
+		std::string         _user;
+		std::string         _password;
+		std::string         _host;
+		int                 _port;
+		unsigned int        _timeout;
+		std::string         _database;
+		mutable std::string _columnPrefix;
+		mutable Backend     _backend = Unknown;
 };
 
 
