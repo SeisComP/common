@@ -1780,9 +1780,9 @@ void LOCSAT::addArrival(long arrival_id, const char *station, const char *phase,
 
 	_arrivals.back().arid = arrival_id;
 	_assocs.back().arid = arrival_id;
-	strncpy(_arrivals.back().sta, station, sizeof(arrival::sta));
+	strncpy(_arrivals.back().sta, station, sizeof(arrival::sta) - 1);
 	_arrivals.back().sta[sizeof(arrival::sta) - 1] = '\0';
-	strncpy(_assocs.back().phase, phase, sizeof(assoc::phase));
+	strncpy(_assocs.back().phase, phase, sizeof(assoc::phase) - 1);
 	_assocs.back().phase[sizeof(assoc::phase) - 1] = '\0';
 
 	_errors.back().arid = 0;

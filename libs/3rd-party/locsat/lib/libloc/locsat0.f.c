@@ -41,8 +41,8 @@ int hypinv0_(char *dstaid, char *dwavid, char *dtype, char *atype,
 
 static int c__1 = 1;
 static int c__9 = 9;
-static float c_b80 = (float)6371.;
-static float c_b183 = (float)0.;
+static float c_b80 = 6371.00877141506f;
+static float c_b183 = 0.f;
 static doublereal c_b322 = .5;
 
 /* NAME */

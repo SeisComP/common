@@ -44,7 +44,7 @@ double takeoff_angle(double dtdd, double dtdh, double depth) {
 		return 0;
 	}
 
-	static const double earthMeanRadius = 6371.; // km
+	static constexpr double earthMeanRadius = Seiscomp::Math::Geo::WGS84_MEAN_RADIUS * 0.001; // km
 
 	// We want dtdd and dtdh to use the same units:
 	// So transform dtdd [s/rad] -> [s/km]

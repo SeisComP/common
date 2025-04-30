@@ -2152,8 +2152,8 @@ void StdLoc::locateLeastSquares(
 			eq.r[i] = residuals[i];
 
 			const double bazi = deg2rad(backazis[i]);
-			eq.G[i][0] = dtdds[i] / KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
-			eq.G[i][1] = dtdds[i] / KM_OF_DEGREE * cos(bazi); // dy [sec/deg-> sec/km]
+			eq.G[i][0] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
+			eq.G[i][1] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * cos(bazi); // dy [sec/deg-> sec/km]
 			eq.G[i][2] = dtdhs[i];                            // dz [sec/km]
 			eq.G[i][3] = 1.;                                  // dtime [sec]
 
