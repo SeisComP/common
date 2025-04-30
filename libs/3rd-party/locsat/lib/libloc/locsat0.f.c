@@ -202,13 +202,13 @@ static doublereal c_b322 = .5;
 /* 	Steve Bratt, December 1988. */
 /* 	Walter Nagy, November 1990. */
 /* Subroutine */ int locsat0_(dstaid, dwavid, dtype, atype, dobs, dsd, idarid,
-	 ndata, staid, stalat, stalon, stelev, stacor, nsta, wavid, nwav, 
+	 ndata, staid, stalat, stalon, stelev, stacor, nsta, wavid, nwav,
 	maxtbd, maxtbz, ntbd, ntbz, tbd, tbz, tbtt, alat0, alon0, zfoc0, sig0,
 	 ndf0, pconf, azwt, damp, maxit, prtflg, fxdflg, outfile, luout, alat,
-	 alon, zfoc, torg, sighat, snssd, ndf, epmaj, epmin, epstr, zfint, 
-	toint, sxx, syy, szz, stt, sxy, sxz, syz, stx, sty, stz, stadel, 
-	staazi, stabaz, epimp, zfimp, resid, ipsta, iderr, niter, ierr, 
-	dstaid_len, dwavid_len, dtype_len, atype_len, staid_len, wavid_len, 
+	 alon, zfoc, torg, sighat, snssd, ndf, epmaj, epmin, epstr, zfint,
+	toint, sxx, syy, szz, stt, sxy, sxz, syz, stx, sty, stz, stadel,
+	staazi, stabaz, epimp, zfimp, resid, ipsta, iderr, niter, ierr,
+	dstaid_len, dwavid_len, dtype_len, atype_len, staid_len, wavid_len,
 	prtflg_len, fxdflg_len, outfile_len)
 char *dstaid, *dwavid, *dtype, *atype;
 float *dobs, *dsd;
@@ -308,7 +308,7 @@ ftnlen outfile_len;
     static cilist io___43 = { 0, 0, 0, "(9x,a,f9.3,a,f9.3,a)", 0 };
     static cilist io___44 = { 0, 0, 0, "(a,f9.3,a,f9.3,a)", 0 };
     static cilist io___45 = { 0, 0, 0, "(a,f9.3,a/a,f9.3,a)", 0 };
-    static cilist io___46 = { 0, 0, 0, "(a,f9.3,a,f9.3,a/a,f9.3,a,f9.3,a)", 0 
+    static cilist io___46 = { 0, 0, 0, "(a,f9.3,a,f9.3,a/a,f9.3,a,f9.3,a)", 0
 	    };
     static cilist io___47 = { 0, 0, 0, "(/a,f4.2,a,2(/a,f8.1,a,f6.2,a))", 0 };
     static cilist io___48 = { 0, 0, 0, "(a,f8.1,a)", 0 };
@@ -387,7 +387,7 @@ f9.3,                          f8.2,f8.3,i4)", 0 };
 
     /* Function Body */
     if (*ndata < 3) {
-// do not output error message which as it is described by error code        
+// do not output error message which as it is described by error code
 //	s_wsfe(&io___1);
 //	do_fio(&c__1, " Insufficient data for a solution: # of Data = ", (
 //		ftnlen)47);
@@ -402,9 +402,9 @@ f9.3,                          f8.2,f8.3,i4)", 0 };
 /*     Check for valid data and load station, wave and data type pointers */
     len_sta__ = i_len(staid + staid_len, staid_len);
     len_phase__ = i_len(wavid + wavid_len, wavid_len);
-    check_data__(dstaid + dstaid_len, dwavid + dwavid_len, dtype + dtype_len, 
-	    &dsd[1], ndata, staid + staid_len, nsta, wavid + wavid_len, nwav, 
-	    &len_sta__, &len_phase__, &ipsta[1], ipwav, idtyp, &iderr[1], 
+    check_data__(dstaid + dstaid_len, dwavid + dwavid_len, dtype + dtype_len,
+	    &dsd[1], ndata, staid + staid_len, nsta, wavid + wavid_len, nwav,
+	    &len_sta__, &len_phase__, &ipsta[1], ipwav, idtyp, &iderr[1],
 	    dstaid_len, dwavid_len, dtype_len, staid_len, wavid_len);
 /*     Check that each travel-time curve contains valid data.  For arrival */
 /*     time or slowness data with empty curves, set iderr = 2 */
@@ -446,7 +446,7 @@ f9.3,                          f8.2,f8.3,i4)", 0 };
 /*     Print stations and observations */
     if (s_cmp(prtflg, "y", prtflg_len, (ftnlen)1) == 0) {
 	y1970 = 1970;
-	etoh_(&timeref, &y1970, &iyr, &imo, mname, &iday, &idoy, &ihr, &imin, 
+	etoh_(&timeref, &y1970, &iyr, &imo, mname, &iday, &idoy, &ihr, &imin,
 		&sec, (ftnlen)3);
 	io___22.ciunit = *luout;
 	s_wsfe(&io___22);
@@ -508,16 +508,15 @@ f9.3,                          f8.2,f8.3,i4)", 0 };
 /*     Compute initial first-cut guess location */
     if (dabs(*alat0) > (float)90. || dabs(*alon0) > (float)180.) {
 	hypcut0_(staid + staid_len, &stalat[1], &stalon[1], nsta, &dobs[1], &
-		dsd[1], dwavid + dwavid_len, &ipsta[1], ipwav, nwav, maxtbd, 
+		dsd[1], dwavid + dwavid_len, &ipsta[1], ipwav, nwav, maxtbd,
 		maxtbz, &ntbd[1], &tbd[tbd_offset], &tbtt[tbtt_offset], idtyp,
-		 &iderr[1], atype + atype_len, ndata, luout, prtflg, alat0, 
+		 &iderr[1], atype + atype_len, ndata, luout, prtflg, alat0,
 		alon0, ierr, staid_len, dwavid_len, atype_len, prtflg_len);
 	if (*ierr > 0) {
 	    if (s_cmp(prtflg, "y", prtflg_len, (ftnlen)1) == 0) {
 		io___28.ciunit = *luout;
 		s_wsle(&io___28);
-		do_lio(&c__9, &c__1, "? LocSAT: Too few data to get an initi\
-al location", (ftnlen)49);
+		do_lio(&c__9, &c__1, "? LocSAT: Too few data to get an initial location", (ftnlen)49);
 		e_wsle();
 	    }
 	    goto L1040;
@@ -532,16 +531,16 @@ al location", (ftnlen)49);
 	zfimp[i__] = (float)-1.;
 /* L1030: */
     }
-    hypinv0_(dstaid + dstaid_len, dwavid + dwavid_len, dtype + dtype_len, 
+    hypinv0_(dstaid + dstaid_len, dwavid + dwavid_len, dtype + dtype_len,
 	    atype + atype_len, &dobs[1], &dsd[1], ndata, &stalat[1], &stalon[
 	    1], nsta, maxtbd, maxtbz, &ntbd[1], &ntbz[1], &tbd[tbd_offset], &
 	    tbz[tbz_offset], &tbtt[tbtt_offset], &ipsta[1], ipwav, idtyp, &
-	    iderr[1], alat0, alon0, zfoc0, sig0, ndf0, pconf, &c_b80, azwt, 
-	    damp, maxit, prtflg, fxdflg, luout, alat, alon, zfoc, torg, 
-	    sighat, snssd, ndf, epmaj, epmin, epstr, zfint, toint, sxx, syy, 
+	    iderr[1], alat0, alon0, zfoc0, sig0, ndf0, pconf, &c_b80, azwt,
+	    damp, maxit, prtflg, fxdflg, luout, alat, alon, zfoc, torg,
+	    sighat, snssd, ndf, epmaj, epmin, epstr, zfint, toint, sxx, syy,
 	    szz, stt, sxy, sxz, syz, stx, sty, stz, &stadel[1], &staazi[1], &
-	    stabaz[1], &epimp[1], &rank, &resid[1], &igap, niter, &nd, ierr, 
-	    dstaid_len, dwavid_len, dtype_len, atype_len, prtflg_len, 
+	    stabaz[1], &epimp[1], &rank, &resid[1], &igap, niter, &nd, ierr,
+	    dstaid_len, dwavid_len, dtype_len, atype_len, prtflg_len,
 	    fxdflg_len);
     torgd = timeref + *torg;
 /*     Print location results, if requested */

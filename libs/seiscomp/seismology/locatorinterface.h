@@ -70,6 +70,60 @@ class SC_SYSTEM_CORE_API SensorLocationDelegate : public Core::BaseObject {
 
 DEFINE_SMARTPOINTER(LocatorInterface);
 
+
+/**
+ * @brief The LocatorInterface class defines an abstract interface to
+ *        various locators such as LOCSAT, Hypo71 or NonLinLoc.
+ *
+ * An instance of an implementation of this class must be reentrant, meaning
+ * that two instances are not interfering with each other when either used
+ * from within different threads or interleaved. The requirement is illustrated
+ * in the following code:
+ *
+ * @code
+ * // Run two instances in one thread
+ * Locator l1, l2;
+ * l1.init(cfg);
+ * l2.init(cfg);
+ * l1.setProfile("profile1");
+ * l2.setProfile("profile2");
+ * org1 = l1.locate(org1);
+ * org2 = l2.locate(org2);
+ @ @endcode
+ *
+ * This code must produce the exactly same output as
+ *
+ * @code
+ * Locator l1, l2;
+ * l1.init(cfg);
+ * l1.setProfile("profile1");
+ * org1 = l1.locate(org1);
+ *
+ * l2.init(cfg);
+ * l2.setProfile("profile2");
+ * org2 = l2.locate(org2);
+ * @endcode
+ *
+ * Involving threads looks like this
+ *
+ * @code
+ * void locate() {
+ *     Locator l;
+ *     l.init(cfg);
+ *     l.setProfile("someProfile");
+ *     org = l.locate(org);
+ * }
+ *
+ * thread1 = thread(locate);
+ * thread2 = thread(locate);
+ * thread1.join();
+ * thread2.join();
+ * @endcode
+ *
+ * Note that this does not require the code to be thread-safe. Calling
+ * locate() on the same instance from within two different threads is not
+ * required to work.
+ */
 class SC_SYSTEM_CORE_API LocatorInterface : public Core::BaseObject {
 	public:
 		MAKEENUM(
