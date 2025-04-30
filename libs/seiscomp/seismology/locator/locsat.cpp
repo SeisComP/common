@@ -203,12 +203,11 @@ LOCSAT::LOCSAT() {
 	_params.outfile_name[1023] = '\0';
 	_params.prefix = new char[1024];
 	_params.prefix[1023] = '\0';
-	_origin = Na_Origin_Init;
-	_origerr = Na_Origerr_Init;
 	_computeConfidenceEllipsoid = false;
 	_enableDebugOutput = false;
 	_profiles.push_back("iasp91");
 	_profiles.push_back("tab");
+	reset();
 	LOCSAT::setProfile(_defaultTablePrefix);
 	setDefaultLocatorParams();
 }
@@ -1171,12 +1170,15 @@ std::ostream &operator<<(std::ostream &os, const LocatorParams &params) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LOCSAT::reset() {
+	static const Origin Na_Origin = Na_Origin_Init;
+	static const Origerr Na_Origerr = Na_Origerr_Init;
+
 	_sites.clear();
 	_arrivals.clear();
 	_assocs.clear();
 	_errors.clear();
-	_origin = Na_Origin_Init;
-	_origerr = Na_Origerr_Init;
+	_origin = Na_Origin;
+	_origerr = Na_Origerr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1761,8 +1763,8 @@ void LOCSAT::addSite(const char *station, float lat, float lon, float elev) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LOCSAT::addArrival(long arrival_id, const char *station, const char *phase,
                         double time, float deltim, int defining) {
-	static Arrival Na_Arrival = Na_Arrival_Init;
-	static Assoc Na_Assoc = Na_Assoc_Init;
+	static const Arrival Na_Arrival = Na_Arrival_Init;
+	static const Assoc Na_Assoc = Na_Assoc_Init;
 
 	_arrivals.push_back(Na_Arrival);
 	_assocs.push_back(Na_Assoc);
