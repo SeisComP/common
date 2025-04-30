@@ -85,6 +85,9 @@ DBHandler::~DBHandler() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DBHandler::addUpgradeHeader() {
+	_session->send("X-DB-Backend: ");
+	_session->send(_db->backend().toString());
+	_session->send("\r\n");
 	_session->send("X-DB-Prefix: ");
 	_session->send(_db->columnPrefix().c_str(), _db->columnPrefix().size());
 	_session->send("\r\n");

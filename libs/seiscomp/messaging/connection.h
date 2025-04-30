@@ -264,6 +264,8 @@ class SC_SYSTEM_CLIENT_API Connection : public Core::BaseObject {
 		 */
 		Core::Version schemaVersion() const;
 
+		bool isDeleteTreeSupported() const;
+
 		// See Protocoll::configurationParameters
 		const Protocol::KeyValueStore *extendedParameters() const;
 
