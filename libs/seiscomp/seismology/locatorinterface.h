@@ -48,8 +48,8 @@
      weight but flags to enable/disable the time, backazimuth and/or slowness
  */
 
-namespace Seiscomp{
-namespace Seismology{
+namespace Seiscomp {
+namespace Seismology {
 
 
 class PickNotFoundException;
