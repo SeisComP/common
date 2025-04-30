@@ -189,6 +189,15 @@
 									consequences are.
 									</description>
 								</parameter>
+								<parameter name="deleteTree" type="boolean" default="true">
+									<description>
+									Enables removing the entire object tree from
+									the database if a parent object is being deleted.
+									This will also decrease the numbers of notifiers
+									sent to scmaster. Depending on the database
+									backend, it can improve the performance.
+									</description>
+								</parameter>
 							</group>
 						</group>
 					</group>

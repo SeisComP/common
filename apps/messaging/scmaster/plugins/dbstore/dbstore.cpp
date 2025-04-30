@@ -58,34 +58,68 @@ bool deletePath(IO::DatabaseInterface *db, const vector<string> &path,
 		   << " WHERE " << path[1] << "._parent_oid=" << oid;
 	}
 	else {
-		ss << "DELETE FROM " << table << " WHERE _oid IN (" << endl;
-		ss << "  SELECT " << path.back() << "._oid" << endl
-		    << "  FROM ";
-		for ( size_t i = 1; i < path.size(); ++i ) {
-			if ( i > 1 ) {
-				ss << ", ";
-			}
-			ss << path[i];
-		}
-		ss << endl;
-
-		ss << "  WHERE ";
-
-		for ( size_t i = 1; i < path.size(); ++i ) {
-			if ( i > 1 ) {
-				ss << "    AND ";
-			}
-			ss << path[i] << "._parent_oid=";
-			if ( i > 1 ) {
-				ss << path[i-1] << "._oid";
-			}
-			else {
-				ss << oid;
+		if ( db->backend() != IO::DatabaseInterface::MySQL ) {
+			ss << "DELETE FROM " << table << " WHERE _oid IN (" << endl;
+			ss << "  SELECT " << path.back() << "._oid" << endl
+			    << "  FROM ";
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << ", ";
+				}
+				ss << path[i];
 			}
 			ss << endl;
-		}
 
-		ss << ")";
+			ss << "  WHERE ";
+
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << "    AND ";
+				}
+				ss << path[i] << "._parent_oid=";
+				if ( i > 1 ) {
+					ss << path[i-1] << "._oid";
+				}
+				else {
+					ss << oid;
+				}
+				ss << endl;
+			}
+
+			ss << ")";
+		}
+		else {
+			// Optimized MySQL version
+			auto tables = path.size();
+			ss << "DELETE " << table << " FROM ";
+			if ( !tableOverride.empty() ) {
+				ss << table << ", ";
+			}
+			for ( size_t i = 1; i < tables; ++i ) {
+				if ( i > 1 ) {
+					ss << ", ";
+				}
+				ss << path[i];
+			}
+			ss << " WHERE ";
+
+			if ( !tableOverride.empty() ) {
+				ss << table << "._oid=" << path.back() << "._oid AND ";
+			}
+
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << " AND ";
+				}
+				ss << path[i] << "._parent_oid=";
+				if ( i > 1 ) {
+					ss << path[i-1] << "._oid";
+				}
+				else {
+					ss << oid;
+				}
+			}
+		}
 	}
 
 	return db->execute(ss.str().c_str());
@@ -145,17 +179,19 @@ bool deleteObject(IO::DatabaseInterface *db, const string &type,
 
 	SEISCOMP_DEBUG("deleting object with id %d", oid);
 
-	ss << "DELETE FROM Object WHERE _oid=" << oid;
+	ss << "DELETE FROM " << type << " WHERE _oid=" << oid;
 	if ( !db->execute(ss.str().c_str()) ) {
 		return false;
 	}
+
 	ss.str(string());
 	ss << "DELETE FROM PublicObject WHERE _oid=" << oid;
 	if ( !db->execute(ss.str().c_str()) ) {
 		return false;
 	}
+
 	ss.str(string());
-	ss << "DELETE FROM " << type << " WHERE _oid=" << oid;
+	ss << "DELETE FROM Object WHERE _oid=" << oid;
 	if ( !db->execute(ss.str().c_str()) ) {
 		return false;
 	}
@@ -287,6 +323,9 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		                      const KeyCStrValues, int,
 		                      KeyValues &outParams) override {
 			outParams.push_back(KeyValuePair("DB-Schema-Version", SchemaVersion));
+			if ( _settings.deleteTree ) {
+				outParams.push_back(KeyValuePair("DB-Delete-Tree", "1"));
+			}
 			if ( !_settings.read.empty() ) {
 				if ( _settings.proxy ) {
 					outParams.push_back(KeyValuePair("DB-Access", "proxy://"));
@@ -339,12 +378,17 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 								break;
 							case DataModel::OP_REMOVE:
 							{
-								DataModel::PublicObject *po = DataModel::PublicObject::Cast(notifier->object());
-								if ( !po ) {
-									result = _dbArchive->remove(notifier->object(), notifier->parentID());
+								if ( _settings.deleteTree ) {
+									DataModel::PublicObject *po = DataModel::PublicObject::Cast(notifier->object());
+									if ( !po ) {
+										result = _dbArchive->remove(notifier->object(), notifier->parentID());
+									}
+									else {
+										result = deleteTree(_dbArchive->driver(), po);
+									}
 								}
 								else {
-									result = deleteTree(_dbArchive->driver(), po);
+									result = _dbArchive->remove(notifier->object(), notifier->parentID());
 								}
 								++_statistics.removedObjects;
 								break;
@@ -486,6 +530,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			string read;
 			bool   proxy{false};
 			bool   strictVersionMatch{true};
+			bool   deleteTree{true};
 
 			void accept(ConfigSettingsLinker &linker) {
 				linker
@@ -493,7 +538,8 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 				& ConfigSettingsLinker::cfg(write, "write")
 				& ConfigSettingsLinker::cfg(read, "read")
 				& ConfigSettingsLinker::cfg(proxy, "proxy")
-				& ConfigSettingsLinker::cfg(strictVersionMatch, "strictVersionMatch");
+				& ConfigSettingsLinker::cfg(strictVersionMatch, "strictVersionMatch")
+				& ConfigSettingsLinker::cfg(deleteTree, "deleteTree");
 			}
 		};
 
