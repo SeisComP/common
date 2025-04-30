@@ -3,7 +3,6 @@ INCLUDE_DIRECTORIES(THIRD_PARTY_LIB_DIR)
 
 SET(
 	LOCATOR_HEADERS
-		fixed-hypocenter.h
 		utils.h
 )
 

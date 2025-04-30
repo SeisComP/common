@@ -35,8 +35,11 @@
 #include <vector>
 
 
-namespace Seiscomp{
-namespace Seismology {
+namespace {
+
+
+using namespace Seiscomp;
+using namespace Seiscomp::Seismology;
 
 
 class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
@@ -51,27 +54,27 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 	//  Locator interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool init(const Config::Config &config) override;
+		bool init(const Config::Config &config) override;
 
 		//! Returns supported parameters to be changed.
-		virtual IDList parameters() const override;
+		IDList parameters() const override;
 
 		//! Returns the value of a parameter.
-		virtual std::string parameter(const std::string &name) const override;
+		std::string parameter(const std::string &name) const override;
 
 		//! Sets the value of a parameter.
-		virtual bool setParameter(const std::string &name,
-		                          const std::string &value) override;
+		bool setParameter(const std::string &name,
+		                  const std::string &value) override;
 
-		virtual IDList profiles() const override;
-		virtual void setProfile(const std::string &name) override;
+		IDList profiles() const override;
+		void setProfile(const std::string &name) override;
 
-		virtual int capabilities() const override;
+		int capabilities() const override;
 
-		virtual DataModel::Origin *locate(PickList& pickList) override;
-		virtual DataModel::Origin *locate(PickList& pickList,
-		                                  double initLat, double initLon, double initDepth,
-		                                  const Seiscomp::Core::Time& initTime) override;
+		DataModel::Origin *locate(PickList& pickList) override;
+		DataModel::Origin *locate(PickList& pickList,
+		                          double initLat, double initLon, double initDepth,
+		                          const Seiscomp::Core::Time& initTime) override;
 
 		virtual DataModel::Origin *relocate(const DataModel::Origin* origin) override;
 
@@ -102,7 +105,6 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 };
 
 
-}
 }
 
 

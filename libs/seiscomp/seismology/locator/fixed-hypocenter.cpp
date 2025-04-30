@@ -49,7 +49,7 @@ namespace {
 #include <seiscomp/seismology/locator/utils.h>
 #include <iostream>
 
-#include "fixed-hypocenter.h"
+#include "fixed-hypocenter_private.h"
 
 
 using namespace std;
@@ -57,9 +57,14 @@ using namespace Seiscomp;
 using namespace Seiscomp::DataModel;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double getTimeError(const Pick *pick, double defaultTimeError,
                     bool useUncertainties) {
 	if ( useUncertainties ) {
@@ -76,8 +81,12 @@ double getTimeError(const Pick *pick, double defaultTimeError,
 
 	return defaultTimeError;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 /**
  * @brief Compute confidence coefficient as per Jordan & Sverdrup (1981).
  * @param label Output label
@@ -99,13 +108,6 @@ double confidenceCoefficient(string &label,
 
 	return m * (k*sk2 + rw2) / (k + n - m) * fdtri(m, k + n - m, p);
 }
-
-
-}
-
-
-namespace Seiscomp {
-namespace Seismology {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -155,7 +157,7 @@ bool FixedHypocenter::init(const Config::Config &config) {
 
 	try {
 		_confidenceLevel = config.getDouble("FixedHypocenter.confLevel");
-		if ( _confidenceLevel < 0.5 || _confidenceLevel > 1 ) {
+		if ( (_confidenceLevel < 0.5) || (_confidenceLevel > 1) ) {
 			SEISCOMP_ERROR("FixedHypocenter.confLevel: must be >= 0.5 and <= 1");
 			return false;
 		}
@@ -659,5 +661,4 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
 }
