@@ -46,6 +46,7 @@
 #include <seiscomp/io/recordfilter/crop.h>
 #include <seiscomp/io/recordfilter/demux.h>
 #include <seiscomp/io/recordfilter/iirfilter.h>
+#include <seiscomp/io/recordfilter/mseedencoder.h>
 #include <seiscomp/io/recordfilter/resample.h>
 #include <seiscomp/io/recordstreamexceptions.h>
 #include <seiscomp/io/importer.h>
@@ -116,6 +117,7 @@
 %include "seiscomp/io/recordfilter/crop.h"
 %include "seiscomp/io/recordfilter/demux.h"
 %include "seiscomp/io/recordfilter/iirfilter.h"
+%include "seiscomp/io/recordfilter/mseedencoder.h"
 %include "seiscomp/io/recordfilter/resample.h"
 %include "seiscomp/io/recordstreamexceptions.h"
 %include "seiscomp/io/importer.h"

@@ -2185,6 +2185,15 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0");
 	settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h");
 
+	int safetyMargin = -1;
+	if ( !settings.getValue(safetyMargin, "amplitudes." + _type + ".safetyMargin") ) {
+		settings.getValue(safetyMargin, "amplitudes.safetyMargin");
+	}
+
+	if ( safetyMargin >= 0 ) {
+		setMargin(Core::TimeSpan(safetyMargin, 0));
+	}
+
 	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") ) {
 		return false;
 	}

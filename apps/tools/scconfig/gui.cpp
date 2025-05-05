@@ -407,6 +407,9 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 
 	QStandardItem *value = new QStandardItem(valueText);
 	QStandardItem *locked = new QStandardItem();
+	QStandardItem *values = new QStandardItem(param->definition->values.c_str());
+	QStandardItem *range = new QStandardItem(param->definition->range.c_str());
+	QStandardItem *options = new QStandardItem(param->definition->options.c_str());
 
 	SymbolMapItem *symbol = param->symbols[targetStage].get();
 	bool paramLocked = symbol?symbol->symbol.stage == Environment::CS_UNDEFINED:true;
@@ -418,12 +421,20 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 
 	name->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	type->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	options->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable);
 	locked->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 
 	std::string descText;
 	if ( !param->definition->description.empty() ) {
 		descText = param->definition->description;
+	}
+
+	if ( !param->definition->type.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Type: " + param->definition->type;
 	}
 	if ( !param->definition->values.empty() ) {
 		if ( !descText.empty() ) {
@@ -437,12 +448,18 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 		}
 		descText = descText + "Range: " + param->definition->range;
 	}
+	if ( !param->definition->options.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Options: " + param->definition->options;
+	}
 	name->setToolTip(descText.c_str());
 	type->setToolTip(name->toolTip());
 	value->setToolTip(name->toolTip());
 	locked->setToolTip(param->symbol.uri.c_str());
 
-	item->appendRow(QStandardItemList() << name << type << value << locked);
+	item->appendRow(QStandardItemList() << name << type << value << locked << values << range << options);
 
 	//for ( size_t i = 0; i < param->childs.size(); ++i )
 	//	addParameters(name, param->childs[i].get(), level+1);

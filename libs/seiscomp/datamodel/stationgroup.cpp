@@ -618,8 +618,9 @@ bool StationGroup::add(StationReference *stationReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::remove(StationReference *stationReference) {
-	if ( !stationReference )
+	if ( !stationReference ) {
 		return false;
+	}
 
 	if ( stationReference->parent() != this ) {
 		SEISCOMP_ERROR("StationGroup::remove(StationReference*) -> element has another parent");
@@ -635,8 +636,7 @@ bool StationGroup::remove(StationReference *stationReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -659,8 +659,7 @@ bool StationGroup::removeStationReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_stationReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _stationReferences[i].get());
 	}
 
 	_stationReferences[i]->setParent(nullptr);

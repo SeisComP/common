@@ -74,19 +74,19 @@
 %include "seiscomp/core/version.h"
 
 /* Optional<bool> typemaps */
-%typemap(in) const Seiscomp::Core::Optional<bool>::Impl& (Seiscomp::Core::Optional<bool>::Impl tmp) {
+%typemap(in) const Seiscomp::Core::Optional<bool>& (Seiscomp::Core::Optional<bool> tmp) {
   if ( $input != Py_None ) {
     if ( !PyBool_Check($input) ) {
       SWIG_exception(SWIG_TypeError, "a 'bool' is expected");
       SWIG_fail;
     }
     int v = PyInt_AsLong($input);
-    tmp = Seiscomp::Core::Optional<bool>::Impl(static_cast<bool>(v));
+    tmp = Seiscomp::Core::Optional<bool>(static_cast<bool>(v));
   }
   $1 = &tmp;
 }
 
-%typemap(out) const Seiscomp::Core::Optional<bool>::Impl& {
+%typemap(out) const Seiscomp::Core::Optional<bool>& {
   if ( *$1 == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -95,7 +95,7 @@
   }
 }
 
-%typemap(out) Seiscomp::Core::Optional<bool>::Impl {
+%typemap(out) Seiscomp::Core::Optional<bool> {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -104,15 +104,15 @@
   }
 }
 
-%typemap(typecheck) Seiscomp::Core::Optional<bool>::Impl {
+%typemap(typecheck) Seiscomp::Core::Optional<bool> {
   $1 = $input == Py_None || PyBool_Check($input) ? 1 : 0;
 }
 
-%typemap(typecheck) const Seiscomp::Core::Optional<bool>::Impl& = Seiscomp::Core::Optional<bool>::Impl;
+%typemap(typecheck) const Seiscomp::Core::Optional<bool>& = Seiscomp::Core::Optional<bool>;
 
 
 /* Optional<int> typemaps */
-%typemap(in) const Seiscomp::Core::Optional<int>::Impl& (Seiscomp::Core::Optional<int>::Impl tmp) {
+%typemap(in) const Seiscomp::Core::Optional<int>& (Seiscomp::Core::Optional<int> tmp) {
   if ( $input != Py_None ) {
     if ( !PyFloat_Check($input) &&
          !PyInt_Check($input) &&
@@ -121,12 +121,12 @@
       SWIG_fail;
     }
     long v = PyInt_AsLong($input);
-    tmp = Seiscomp::Core::Optional<int>::Impl(static_cast<int>(v));
+    tmp = Seiscomp::Core::Optional<int>(static_cast<int>(v));
   }
   $1 = &tmp;
 }
 
-%typemap(out) const Seiscomp::Core::Optional<int>::Impl& {
+%typemap(out) const Seiscomp::Core::Optional<int>& {
   if ( *$1 == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -136,7 +136,7 @@
   }
 }
 
-%typemap(out) Seiscomp::Core::Optional<int>::Impl {
+%typemap(out) Seiscomp::Core::Optional<int> {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -146,18 +146,18 @@
   }
 }
 
-%typemap(typecheck) Seiscomp::Core::Optional<int>::Impl {
+%typemap(typecheck) Seiscomp::Core::Optional<int> {
   $1 = $input == Py_None ||
        PyFloat_Check($input) ||
        PyInt_Check($input) ||
        PyLong_Check($input) ? 1 : 0;
 }
 
-%typemap(typecheck) const Seiscomp::Core::Optional<int>::Impl& = Seiscomp::Core::Optional<int>::Impl;
+%typemap(typecheck) const Seiscomp::Core::Optional<int>& = Seiscomp::Core::Optional<int>;
 
 
 /* Optional<double> typemaps */
-%typemap(in) const Seiscomp::Core::Optional<double>::Impl& (Seiscomp::Core::Optional<double>::Impl tmp) {
+%typemap(in) const Seiscomp::Core::Optional<double>& (Seiscomp::Core::Optional<double> tmp) {
   if ( $input != Py_None ) {
     if ( !PyFloat_Check($input) &&
          !PyInt_Check($input) &&
@@ -166,12 +166,12 @@
       SWIG_fail;
     }
     double v = PyFloat_AsDouble($input);
-    tmp = Seiscomp::Core::Optional<double>::Impl(static_cast<double>(v));
+    tmp = Seiscomp::Core::Optional<double>(static_cast<double>(v));
   }
   $1 = &tmp;
 }
 
-%typemap(out) const Seiscomp::Core::Optional<double>::Impl& {
+%typemap(out) const Seiscomp::Core::Optional<double>& {
   if ( *$1 == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -181,7 +181,7 @@
   }
 }
 
-%typemap(out) Seiscomp::Core::Optional<double>::Impl {
+%typemap(out) Seiscomp::Core::Optional<double> {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -191,20 +191,20 @@
   }
 }
 
-%typemap(typecheck) Seiscomp::Core::Optional<double>::Impl {
+%typemap(typecheck) Seiscomp::Core::Optional<double> {
   $1 = $input == Py_None ||
        PyFloat_Check($input) ||
        PyInt_Check($input) ||
        PyLong_Check($input) ? 1 : 0;
 }
 
-%typemap(typecheck) const Seiscomp::Core::Optional<double>::Impl& = Seiscomp::Core::Optional<double>::Impl;
+%typemap(typecheck) const Seiscomp::Core::Optional<double>& = Seiscomp::Core::Optional<double>;
 
 
 /* Optional<ClassType> typemaps */
 %define optional(_class)
 
-%typemap(in) const Seiscomp::Core::Optional<_class>::Impl& (Seiscomp::Core::Optional<_class>::Impl tmp) {
+%typemap(in) const Seiscomp::Core::Optional<_class>& (Seiscomp::Core::Optional<_class> tmp) {
   if ( $input != Py_None ) {
     _class* value;
     if ( SWIG_ConvertPtr($input, (void **) &value, $descriptor(_class*), SWIG_POINTER_EXCEPTION | 0) == -1 ) {
@@ -216,7 +216,7 @@
   $1 = &tmp;
 }
 
-%typemap(in) Seiscomp::Core::Optional<_class>::Impl (Seiscomp::Core::Optional<_class>::Impl tmp) {
+%typemap(in) Seiscomp::Core::Optional<_class> (Seiscomp::Core::Optional<_class> tmp) {
   if ( $input != Py_None ) {
     _class* value;
     if ( SWIG_ConvertPtr($input, (void **) &value, $descriptor(_class*), SWIG_POINTER_EXCEPTION | 0) == -1 ) {
@@ -228,9 +228,9 @@
   $1 = &tmp;
 }
 
-/*%typemap(in) Seiscomp::Core::Optional<_class>::Impl = const Seiscomp::Core::Optional<_class>::Impl&;*/
+/*%typemap(in) Seiscomp::Core::Optional<_class> = const Seiscomp::Core::Optional<_class>&;*/
 
-%typemap(out) const Seiscomp::Core::Optional<_class>::Impl& {
+%typemap(out) const Seiscomp::Core::Optional<_class>& {
   if ( *$1 == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -240,7 +240,7 @@
   }
 }
 
-%typemap(out) Seiscomp::Core::Optional<_class>::Impl {
+%typemap(out) Seiscomp::Core::Optional<_class> {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -250,7 +250,7 @@
   }
 }
 
-%typemap(typecheck) const Seiscomp::Core::Optional<_class>::Impl& {
+%typemap(typecheck) const Seiscomp::Core::Optional<_class>& {
    if ( $input == Py_None )
      $1 = 1;
    else {
@@ -259,7 +259,7 @@
    }
 }
 
-%typemap(typecheck) Seiscomp::Core::Optional<_class>::Impl {
+%typemap(typecheck) Seiscomp::Core::Optional<_class> {
    if ( $input == Py_None )
      $1 = 1;
    else {
@@ -268,7 +268,7 @@
    }
 }
 
-/*%typemap(typecheck) Seiscomp::Core::Optional<_class>::Impl = const Seiscomp::Core::Optional<_class>::Impl&;*/
+/*%typemap(typecheck) Seiscomp::Core::Optional<_class> = const Seiscomp::Core::Optional<_class>&;*/
 
 %enddef
 
@@ -299,7 +299,7 @@
 /* Optional Enum<Name, ...> typemaps */
 %define optional_enum(_class)
 
-%typemap(in) const Seiscomp::Core::Optional<_class>::Impl& (Seiscomp::Core::Optional<_class>::Impl tmp) {
+%typemap(in) const Seiscomp::Core::Optional<_class>& (Seiscomp::Core::Optional<_class> tmp) {
   if ( $input != Py_None ) {
     _class::Type value = (_class::Type)PyInt_AsLong($input);
     if ( value < _class::First || value > _class::End ) {
@@ -313,7 +313,7 @@
   $1 = &tmp;
 }
 
-%typemap(in) Seiscomp::Core::Optional<_class>::Impl (Seiscomp::Core::Optional<_class>::Impl tmp) {
+%typemap(in) Seiscomp::Core::Optional<_class> (Seiscomp::Core::Optional<_class> tmp) {
   if ( $input != Py_None ) {
     _class::Type value = (_class::Type)PyInt_AsLong($input);
     if ( value < _class::First || value > _class::End ) {
@@ -327,9 +327,9 @@
   $1 = &tmp;
 }
 
-/* %typemap(in) Seiscomp::Core::Optional<_class>::Impl = const Seiscomp::Core::Optional<_class>::Impl&; */
+/* %typemap(in) Seiscomp::Core::Optional<_class> = const Seiscomp::Core::Optional<_class>&; */
 
-%typemap(out) const Seiscomp::Core::Optional<_class>::Impl& {
+%typemap(out) const Seiscomp::Core::Optional<_class>& {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -339,7 +339,7 @@
   }
 }
 
-%typemap(out) Seiscomp::Core::Optional<_class>::Impl {
+%typemap(out) Seiscomp::Core::Optional<_class> {
   if ( *(&$1) == Seiscomp::Core::None ) {
     $result = Py_None;
   }
@@ -374,12 +374,12 @@ optional(Seiscomp::Core::Time);
   }
 };
 
-%apply const Seiscomp::Core::Optional<double>::Impl& {
-	const Seiscomp::Core::Optional<float>::Impl&
+%apply const Seiscomp::Core::Optional<double>& {
+	const Seiscomp::Core::Optional<float>&
 };
 
-%apply Seiscomp::Core::Optional<double>::Impl {
-	Seiscomp::Core::Optional<float>::Impl
+%apply Seiscomp::Core::Optional<double> {
+	Seiscomp::Core::Optional<float>
 };
 
 %ignore Seiscomp::Core::None;

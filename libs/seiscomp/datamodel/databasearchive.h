@@ -262,6 +262,22 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		void benchmarkQueries(int count);
 
 		/**
+		 * @brief Returns the query to fetch objects of a particular type.
+		 * @param parentID The publicID of the parent object. When empty then
+		 *                 it won't be included in the query.
+		 * @param classType The type of the object to be read.
+		 * @param ignorePublicObject If true then the PublicObject table will
+		 *                           not be joined. That might be important if
+		 *                           during a schema evolution an objectsturned
+		 *                           into a PublicObject but an old version
+		 *                           should be read.
+		 * @return The query and a flag if a where clause is present.
+		 */
+		std::pair<std::string,bool> getObjectsQuery(const std::string &parentID,
+		                                            const Seiscomp::Core::RTTI &classType,
+		                                            bool ignorePublicObject = false);
+
+		/**
 		 * Reads a public object from the database.
 		 * @param classType The type of the object to be read. The type has
 		 *                  to be derived from PublicObject
@@ -269,8 +285,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @return An unmanaged object pointer. The ownership goes over
 		 *         to the caller.
 		 */
-		PublicObject* getObject(const Seiscomp::Core::RTTI& classType,
-		                        const std::string& publicID);
+		PublicObject* getObject(const Seiscomp::Core::RTTI &classType,
+		                        const std::string &publicID);
 
 		/**
 		 * Returns an iterator over all objects of a given type.
@@ -285,8 +301,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                           should be read.
 		 * @return The database iterator
 		 */
-		DatabaseIterator getObjects(const std::string& parentID,
-		                            const Seiscomp::Core::RTTI& classType,
+		DatabaseIterator getObjects(const std::string &parentID,
+		                            const Seiscomp::Core::RTTI &classType,
 		                            bool ignorePublicObject = false);
 
 		/**
@@ -302,8 +318,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                           should be read.
 		 * @return The database iterator
 		 */
-		DatabaseIterator getObjects(const PublicObject* parent,
-		                            const Seiscomp::Core::RTTI& classType,
+		DatabaseIterator getObjects(const PublicObject *parent,
+		                            const Seiscomp::Core::RTTI &classType,
 		                            bool ignorePublicObject = false);
 
 		/**
@@ -314,8 +330,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param classType The type of the objects to iterate over.
 		 * @return The object count
 		 */
-		size_t getObjectCount(const std::string& parentID,
-		                      const Seiscomp::Core::RTTI& classType);
+		size_t getObjectCount(const std::string &parentID,
+		                      const Seiscomp::Core::RTTI &classType);
 
 		/**
 		 * Returns the number of objects of a given type for a parent
@@ -325,7 +341,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param classType The type of the objects to iterate over.
 		 * @return The object count
 		 */
-		size_t getObjectCount(const PublicObject* parent,
+		size_t getObjectCount(const PublicObject *parent,
 		                      const Seiscomp::Core::RTTI &classType);
 
 
@@ -338,7 +354,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param object The PublicObject whose parent is queried.
 		 * @return The publicID of the parent or an empty string.
 		 */
-		std::string parentPublicID(const PublicObject* object);
+		std::string parentPublicID(const PublicObject *object);
 
 		/**
 		 * Inserts an object into the database.
@@ -546,7 +562,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		//! Removes an objects from the id cache
 		void removeId(Object*);
-		
+
 		//! Returns the current field content
 		const char* cfield() const { return _field; }
 

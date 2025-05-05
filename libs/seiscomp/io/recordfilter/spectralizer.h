@@ -145,7 +145,7 @@ class SC_SYSTEM_CORE_API Spectralizer : public Core::BaseObject {
 	//  Implementation
 	// ----------------------------------------------------------------------
 	private:
-		typedef Core::SmartPointer< Math::Filtering::InPlaceFilter<double> >::Impl FilterPtr;
+		using FilterPtr = Core::SmartPointer<Math::Filtering::InPlaceFilter<double>>;
 		struct SpecBuffer {
 			SpecBuffer() {}
 			~SpecBuffer() {}

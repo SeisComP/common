@@ -1083,8 +1083,9 @@ bool ThreeComponentTrace::setProcessedData(int comp,
 
 	traces[comp].processed->feed(prec.get());
 
-	if ( widget && showProcessed )
+	if ( widget && showProcessed ) {
 		widget->setRecords(traces[comp].recordSlot, traces[comp].processed, false);
+	}
 
 	return true;
 }
@@ -1433,7 +1434,9 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 void ThreeComponentTrace::transformedRecord(int comp, const Record *rec) {
 	traces[comp].transformed->feed(rec);
-	if ( widget && !showProcessed ) widget->fed(traces[comp].recordSlot, rec);
+	if ( widget && !showProcessed ) {
+		widget->fed(traces[comp].recordSlot, rec);
+	}
 
 	if ( label->processor ) {
 		Processing::WaveformProcessor::StreamComponent c = label->processor->usedComponent();

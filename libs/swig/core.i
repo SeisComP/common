@@ -57,7 +57,7 @@ import datetime
 %newobject *::clone;
 %newobject Seiscomp::Core::DataMessage::get;
 %ignore Seiscomp::Core::InterruptibleObject;
-%ignore Seiscomp::Core::Smartpointer<Seiscomp::Core::BaseObject>::Impl;
+%ignore Seiscomp::Core::Smartpointer<Seiscomp::Core::BaseObject>;
 %ignore Seiscomp::Core::GreensFunction::setData(int,Seiscomp::Array*);
 %ignore Seiscomp::Core::GreensFunction::data(int) const;
 

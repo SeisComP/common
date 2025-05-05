@@ -719,8 +719,9 @@ bool Datalogger::add(DataloggerCalibration *dataloggerCalibration) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::remove(DataloggerCalibration *dataloggerCalibration) {
-	if ( !dataloggerCalibration )
+	if ( !dataloggerCalibration ) {
 		return false;
+	}
 
 	if ( dataloggerCalibration->parent() != this ) {
 		SEISCOMP_ERROR("Datalogger::remove(DataloggerCalibration*) -> element has another parent");
@@ -736,8 +737,7 @@ bool Datalogger::remove(DataloggerCalibration *dataloggerCalibration) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -760,8 +760,7 @@ bool Datalogger::removeDataloggerCalibration(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataloggerCalibrations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataloggerCalibrations[i].get());
 	}
 
 	_dataloggerCalibrations[i]->setParent(nullptr);
@@ -865,8 +864,9 @@ bool Datalogger::add(Decimation *decimation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Datalogger::remove(Decimation *decimation) {
-	if ( !decimation )
+	if ( !decimation ) {
 		return false;
+	}
 
 	if ( decimation->parent() != this ) {
 		SEISCOMP_ERROR("Datalogger::remove(Decimation*) -> element has another parent");
@@ -882,8 +882,7 @@ bool Datalogger::remove(Decimation *decimation) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -906,8 +905,7 @@ bool Datalogger::removeDecimation(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_decimations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _decimations[i].get());
 	}
 
 	_decimations[i]->setParent(nullptr);

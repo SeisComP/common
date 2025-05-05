@@ -3,15 +3,12 @@ INCLUDE_DIRECTORIES(THIRD_PARTY_LIB_DIR)
 
 SET(
 	LOCATOR_HEADERS
-		locsat.h
-		fixed-hypocenter.h
 		utils.h
 )
 
 SET(
 	LOCATOR_SOURCES
 		locsat.cpp
-		locsat_internal.cpp
 		fixed-hypocenter.cpp
 		chi2.cpp
 		eigv.cpp

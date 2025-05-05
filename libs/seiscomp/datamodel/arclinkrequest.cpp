@@ -719,8 +719,9 @@ bool ArclinkRequest::add(ArclinkStatusLine *arclinkStatusLine) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequest::remove(ArclinkStatusLine *arclinkStatusLine) {
-	if ( !arclinkStatusLine )
+	if ( !arclinkStatusLine ) {
 		return false;
+	}
 
 	if ( arclinkStatusLine->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkRequest::remove(ArclinkStatusLine*) -> element has another parent");
@@ -736,8 +737,7 @@ bool ArclinkRequest::remove(ArclinkStatusLine *arclinkStatusLine) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -760,8 +760,7 @@ bool ArclinkRequest::removeArclinkStatusLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkStatusLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkStatusLines[i].get());
 	}
 
 	_arclinkStatusLines[i]->setParent(nullptr);
@@ -865,8 +864,9 @@ bool ArclinkRequest::add(ArclinkRequestLine *arclinkRequestLine) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequest::remove(ArclinkRequestLine *arclinkRequestLine) {
-	if ( !arclinkRequestLine )
+	if ( !arclinkRequestLine ) {
 		return false;
+	}
 
 	if ( arclinkRequestLine->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkRequest::remove(ArclinkRequestLine*) -> element has another parent");
@@ -882,8 +882,7 @@ bool ArclinkRequest::remove(ArclinkRequestLine *arclinkRequestLine) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -906,8 +905,7 @@ bool ArclinkRequest::removeArclinkRequestLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkRequestLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkRequestLines[i].get());
 	}
 
 	_arclinkRequestLines[i]->setParent(nullptr);

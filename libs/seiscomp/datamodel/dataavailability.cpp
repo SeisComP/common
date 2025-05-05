@@ -291,8 +291,9 @@ bool DataAvailability::add(DataExtent *dataExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataAvailability::remove(DataExtent *dataExtent) {
-	if ( !dataExtent )
+	if ( !dataExtent ) {
 		return false;
+	}
 
 	if ( dataExtent->parent() != this ) {
 		SEISCOMP_ERROR("DataAvailability::remove(DataExtent*) -> element has another parent");
@@ -308,8 +309,7 @@ bool DataAvailability::remove(DataExtent *dataExtent) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -332,8 +332,7 @@ bool DataAvailability::removeDataExtent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataExtents[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataExtents[i].get());
 	}
 
 	_dataExtents[i]->setParent(nullptr);

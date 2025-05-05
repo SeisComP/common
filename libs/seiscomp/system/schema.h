@@ -63,6 +63,7 @@ class SC_SYSTEM_CORE_API SchemaParameter : public Core::BaseObject {
 		std::string unit;
 		std::string range;
 		std::string values;
+		std::string options;
 		std::string defaultValue;
 		std::string description;
 		OPT(bool) readOnly;

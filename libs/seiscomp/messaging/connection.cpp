@@ -485,6 +485,16 @@ const string &Connection::clientName() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Connection::isDeleteTreeSupported() const {
+	if ( !_protocol ) return false;
+	return _protocol->isDeleteTreeSupported();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::Version Connection::schemaVersion() const {
 	if ( !_protocol ) return Core::Version();
 	return _protocol->schemaVersion();

@@ -77,6 +77,16 @@ namespace Core {
      to Seiscomp::Core::TimeSpan
    - Changed Seiscomp::Core::TimeWindow::contiguous tolerance argument from double
      to Seiscomp::Core::TimeSpan
+   - Added Seiscomp::Core::metaValueCast
+   - Removed typedef Seiscomp::Core::SmartPointer::Impl
+   - Added Seiscomp::Core::SmartPointer as typedef for boost::instrusive_ptr
+   - Removed typedef Seiscomp::Core::Optional::Impl
+   - Added Seiscomp::Core::Optional as typedef for boost::optional
+   - Added Seiscomp::Math::Geo::WGS84_MEAN_RADIUS
+   - Added Seiscomp::Math::Geo::WGS84_KM_OF_DEGREE
+   - Added Seiscomp::Math::Geo::WGS84_SEMI_MAJOR_AXIS
+   - Added Seiscomp::Math::Geo::WGS84_FLATTENING
+   - Removed defined KM_OF_DEGREE
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator

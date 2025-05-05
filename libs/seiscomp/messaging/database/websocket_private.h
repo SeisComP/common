@@ -41,6 +41,7 @@ class WebsocketProxy : public Seiscomp::IO::DatabaseInterface,
 	//  DatabaseInterface interface
 	// ----------------------------------------------------------------------
 	public:
+		Backend backend() const override;
 		bool connect(const char* connection) override;
 		void disconnect() override;
 		bool isConnected() const override;

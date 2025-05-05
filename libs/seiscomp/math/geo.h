@@ -112,7 +112,7 @@ int scdraw(double lat0, double lon0, double radius,
  *
  *   - Semi-major Axis (Equatorial Radius of the Earth) [a] : 6378137.0m
  *   - Flattening Factor of the Earth                 [1/f] : 298.257223563
- *   - Semi-major Axis (Polar Radius of the Earth)      [b] : 6356752.314245179m
+ *   - Semi-minor Axis (Polar Radius of the Earth)      [b] : 6356752.314245179m
  *       b = a * (1 - f)
  *   - Mean Radius of the Three Semi-Axes             [r_1] : 6371008.77141506m
  *       r_1 = a * (1 - f/3) = (2a + b) / 3
@@ -123,14 +123,17 @@ int scdraw(double lat0, double lon0, double radius,
  *    Prior to SeisComP 6 (API 16.0.0) this constant was set to
  *    111.1329149013519096
  */
-#define KM_OF_DEGREE 111.195079734632
+constexpr double WGS84_MEAN_RADIUS = 6371008.77141506;
+constexpr double WGS84_KM_OF_DEGREE = 111.195079734632;
+constexpr double WGS84_SEMI_MAJOR_AXIS = 6378137.0;
+constexpr double WGS84_FLATTENING = (1.0/298.2572235630);
 
 
 template<typename T>
-T deg2km(T deg) { return deg * (T)KM_OF_DEGREE; }
+T deg2km(T deg) { return deg * static_cast<T>(WGS84_KM_OF_DEGREE); }
 
 template<typename T>
-T km2deg(T km)  { return km / (T)KM_OF_DEGREE; }
+T km2deg(T km)  { return km / static_cast<T>(WGS84_KM_OF_DEGREE); }
 
 /**
  * Converts X, Y, Z coordinates to LTP coordinates using WGS-84 constants for

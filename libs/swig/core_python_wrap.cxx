@@ -3258,39 +3258,39 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[49]
 #define SWIGTYPE_p_Seiscomp__Core__PropertyNotFoundException swig_types[50]
 #define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[51]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl swig_types[53]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl swig_types[54]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl swig_types[55]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl swig_types[56]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl swig_types[57]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl swig_types[58]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl swig_types[59]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl swig_types[60]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl swig_types[61]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl swig_types[62]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl swig_types[63]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl swig_types[64]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl swig_types[65]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl swig_types[66]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl swig_types[67]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl swig_types[68]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl swig_types[69]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl swig_types[70]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl swig_types[71]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl swig_types[72]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl swig_types[73]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl swig_types[74]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl swig_types[75]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl swig_types[76]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl swig_types[77]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl swig_types[78]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl swig_types[79]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl swig_types[80]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl swig_types[81]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl swig_types[83]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[52]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t swig_types[54]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t swig_types[55]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t swig_types[56]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t swig_types[57]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t swig_types[58]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t swig_types[59]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t swig_types[60]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t swig_types[61]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t swig_types[62]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t swig_types[63]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t swig_types[64]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t swig_types[65]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t swig_types[66]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t swig_types[67]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t swig_types[68]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t swig_types[69]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t swig_types[70]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t swig_types[71]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t swig_types[72]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t swig_types[73]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t swig_types[74]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t swig_types[75]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t swig_types[76]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t swig_types[77]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t swig_types[78]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t swig_types[79]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t swig_types[80]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t swig_types[81]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t swig_types[84]
 #define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[85]
 #define SWIGTYPE_p_Seiscomp__Core__Time swig_types[86]
 #define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[87]
@@ -3321,64 +3321,65 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_Weeks swig_types[112]
 #define SWIGTYPE_p_bool swig_types[113]
 #define SWIGTYPE_p_boost__any swig_types[114]
-#define SWIGTYPE_p_boost__dynamic_bitsetT_t swig_types[115]
-#define SWIGTYPE_p_boost__none_t swig_types[116]
-#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[117]
-#define SWIGTYPE_p_char swig_types[118]
-#define SWIGTYPE_p_const_iterator swig_types[119]
-#define SWIGTYPE_p_double swig_types[120]
-#define SWIGTYPE_p_float swig_types[121]
-#define SWIGTYPE_p_int swig_types[122]
-#define SWIGTYPE_p_iterator swig_types[123]
-#define SWIGTYPE_p_long_long swig_types[124]
-#define SWIGTYPE_p_short swig_types[125]
-#define SWIGTYPE_p_signed_char swig_types[126]
-#define SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t swig_types[127]
-#define SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t swig_types[128]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[129]
-#define SWIGTYPE_p_std__complexT_float_t swig_types[130]
-#define SWIGTYPE_p_std__exception swig_types[131]
-#define SWIGTYPE_p_std__istream swig_types[132]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator swig_types[133]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator swig_types[134]
-#define SWIGTYPE_p_std__ostream swig_types[135]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[136]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[137]
-#define SWIGTYPE_p_std__string swig_types[138]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[139]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[140]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[141]
-#define SWIGTYPE_p_std__vectorT_char_t swig_types[142]
-#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[143]
-#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[144]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[145]
-#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[146]
-#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[147]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[148]
-#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[149]
-#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[150]
-#define SWIGTYPE_p_std__vectorT_int_t swig_types[151]
-#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[152]
-#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[153]
-#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[154]
-#define SWIGTYPE_p_std__vectorT_short_t swig_types[155]
-#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[156]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[157]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[158]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[159]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[160]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[161]
-#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[162]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[163]
-#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[164]
-#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[165]
-#define SWIGTYPE_p_unsigned_char swig_types[166]
-#define SWIGTYPE_p_unsigned_int swig_types[167]
-#define SWIGTYPE_p_unsigned_long_long swig_types[168]
-#define SWIGTYPE_p_unsigned_short swig_types[169]
-#define SWIGTYPE_p_void swig_types[170]
-static swig_type_info *swig_types[172];
-static swig_module_info swig_module = {swig_types, 171, 0, 0, 0, 0};
+#define SWIGTYPE_p_boost__bad_any_cast swig_types[115]
+#define SWIGTYPE_p_boost__dynamic_bitsetT_t swig_types[116]
+#define SWIGTYPE_p_boost__none_t swig_types[117]
+#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[118]
+#define SWIGTYPE_p_char swig_types[119]
+#define SWIGTYPE_p_const_iterator swig_types[120]
+#define SWIGTYPE_p_double swig_types[121]
+#define SWIGTYPE_p_float swig_types[122]
+#define SWIGTYPE_p_int swig_types[123]
+#define SWIGTYPE_p_iterator swig_types[124]
+#define SWIGTYPE_p_long_long swig_types[125]
+#define SWIGTYPE_p_short swig_types[126]
+#define SWIGTYPE_p_signed_char swig_types[127]
+#define SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t swig_types[128]
+#define SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t swig_types[129]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[130]
+#define SWIGTYPE_p_std__complexT_float_t swig_types[131]
+#define SWIGTYPE_p_std__exception swig_types[132]
+#define SWIGTYPE_p_std__istream swig_types[133]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator swig_types[134]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator swig_types[135]
+#define SWIGTYPE_p_std__ostream swig_types[136]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[137]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[138]
+#define SWIGTYPE_p_std__string swig_types[139]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t swig_types[140]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__const_iterator swig_types[141]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_t__iterator swig_types[142]
+#define SWIGTYPE_p_std__vectorT_char_t swig_types[143]
+#define SWIGTYPE_p_std__vectorT_char_t__const_iterator swig_types[144]
+#define SWIGTYPE_p_std__vectorT_char_t__iterator swig_types[145]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[146]
+#define SWIGTYPE_p_std__vectorT_double_t__const_iterator swig_types[147]
+#define SWIGTYPE_p_std__vectorT_double_t__iterator swig_types[148]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[149]
+#define SWIGTYPE_p_std__vectorT_float_t__const_iterator swig_types[150]
+#define SWIGTYPE_p_std__vectorT_float_t__iterator swig_types[151]
+#define SWIGTYPE_p_std__vectorT_int_t swig_types[152]
+#define SWIGTYPE_p_std__vectorT_int_t__const_iterator swig_types[153]
+#define SWIGTYPE_p_std__vectorT_int_t__iterator swig_types[154]
+#define SWIGTYPE_p_std__vectorT_long_long_t swig_types[155]
+#define SWIGTYPE_p_std__vectorT_short_t swig_types[156]
+#define SWIGTYPE_p_std__vectorT_signed_char_t swig_types[157]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[158]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__const_iterator swig_types[159]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t__iterator swig_types[160]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t swig_types[161]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__const_iterator swig_types[162]
+#define SWIGTYPE_p_std__vectorT_std__complexT_float_t_t__iterator swig_types[163]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[164]
+#define SWIGTYPE_p_std__vectorT_std__string_t__const_iterator swig_types[165]
+#define SWIGTYPE_p_std__vectorT_std__string_t__iterator swig_types[166]
+#define SWIGTYPE_p_unsigned_char swig_types[167]
+#define SWIGTYPE_p_unsigned_int swig_types[168]
+#define SWIGTYPE_p_unsigned_long_long swig_types[169]
+#define SWIGTYPE_p_unsigned_short swig_types[170]
+#define SWIGTYPE_p_void swig_types[171]
+static swig_type_info *swig_types[173];
+static swig_module_info swig_module = {swig_types, 172, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -8644,7 +8645,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_BaseObject_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::BaseObject *result = 0 ;
@@ -8652,7 +8653,7 @@ SWIGINTERN PyObject *_wrap_BaseObject_Cast__SWIG_1(PyObject *self, Py_ssize_t no
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BaseObject_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -8705,7 +8706,7 @@ SWIGINTERN PyObject *_wrap_BaseObject_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_BaseObject_Cast__SWIG_1(self, argc, argv);
@@ -8723,7 +8724,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_BaseObject_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::BaseObject *result = 0 ;
@@ -8731,7 +8732,7 @@ SWIGINTERN PyObject *_wrap_BaseObject_ConstCast__SWIG_1(PyObject *self, Py_ssize
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BaseObject_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -8783,7 +8784,7 @@ SWIGINTERN PyObject *_wrap_BaseObject_ConstCast(PyObject *self, PyObject *args) 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_BaseObject_ConstCast__SWIG_1(self, argc, argv);
@@ -21789,7 +21790,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Array_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Array *result = 0 ;
@@ -21797,7 +21798,7 @@ SWIGINTERN PyObject *_wrap_Array_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Array_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -21850,7 +21851,7 @@ SWIGINTERN PyObject *_wrap_Array_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Array_Cast__SWIG_1(self, argc, argv);
@@ -21868,7 +21869,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Array_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Array *result = 0 ;
@@ -21876,7 +21877,7 @@ SWIGINTERN PyObject *_wrap_Array_ConstCast__SWIG_1(PyObject *self, Py_ssize_t no
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Array_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -21928,7 +21929,7 @@ SWIGINTERN PyObject *_wrap_Array_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Array_ConstCast__SWIG_1(self, argc, argv);
@@ -22742,7 +22743,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_BitSet_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::BitSet *result = 0 ;
@@ -22750,7 +22751,7 @@ SWIGINTERN PyObject *_wrap_BitSet_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs,
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BitSet_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -22803,7 +22804,7 @@ SWIGINTERN PyObject *_wrap_BitSet_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_BitSet_Cast__SWIG_1(self, argc, argv);
@@ -22821,7 +22822,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_BitSet_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::BitSet *result = 0 ;
@@ -22829,7 +22830,7 @@ SWIGINTERN PyObject *_wrap_BitSet_ConstCast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BitSet_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -22881,7 +22882,7 @@ SWIGINTERN PyObject *_wrap_BitSet_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_BitSet_ConstCast__SWIG_1(self, argc, argv);
@@ -24938,7 +24939,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Record_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Record *result = 0 ;
@@ -24946,7 +24947,7 @@ SWIGINTERN PyObject *_wrap_Record_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs,
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Record_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -24999,7 +25000,7 @@ SWIGINTERN PyObject *_wrap_Record_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Record_Cast__SWIG_1(self, argc, argv);
@@ -25017,7 +25018,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Record_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Record *result = 0 ;
@@ -25025,7 +25026,7 @@ SWIGINTERN PyObject *_wrap_Record_ConstCast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Record_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -25077,7 +25078,7 @@ SWIGINTERN PyObject *_wrap_Record_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Record_ConstCast__SWIG_1(self, argc, argv);
@@ -26737,7 +26738,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GreensFunction_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::GreensFunction *result = 0 ;
@@ -26745,7 +26746,7 @@ SWIGINTERN PyObject *_wrap_GreensFunction_Cast__SWIG_1(PyObject *self, Py_ssize_
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GreensFunction_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -26798,7 +26799,7 @@ SWIGINTERN PyObject *_wrap_GreensFunction_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GreensFunction_Cast__SWIG_1(self, argc, argv);
@@ -26816,7 +26817,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GreensFunction_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::GreensFunction *result = 0 ;
@@ -26824,7 +26825,7 @@ SWIGINTERN PyObject *_wrap_GreensFunction_ConstCast__SWIG_1(PyObject *self, Py_s
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GreensFunction_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -26876,7 +26877,7 @@ SWIGINTERN PyObject *_wrap_GreensFunction_ConstCast(PyObject *self, PyObject *ar
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GreensFunction_ConstCast__SWIG_1(self, argc, argv);
@@ -28088,7 +28089,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GenericRecord_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::GenericRecord *result = 0 ;
@@ -28096,7 +28097,7 @@ SWIGINTERN PyObject *_wrap_GenericRecord_Cast__SWIG_1(PyObject *self, Py_ssize_t
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericRecord_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -28149,7 +28150,7 @@ SWIGINTERN PyObject *_wrap_GenericRecord_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GenericRecord_Cast__SWIG_1(self, argc, argv);
@@ -28167,7 +28168,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_GenericRecord_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::GenericRecord *result = 0 ;
@@ -28175,7 +28176,7 @@ SWIGINTERN PyObject *_wrap_GenericRecord_ConstCast__SWIG_1(PyObject *self, Py_ss
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GenericRecord_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -28227,7 +28228,7 @@ SWIGINTERN PyObject *_wrap_GenericRecord_ConstCast(PyObject *self, PyObject *arg
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_GenericRecord_ConstCast__SWIG_1(self, argc, argv);
@@ -30245,7 +30246,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Message_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::Message *result = 0 ;
@@ -30253,7 +30254,7 @@ SWIGINTERN PyObject *_wrap_Message_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Message_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -30306,7 +30307,7 @@ SWIGINTERN PyObject *_wrap_Message_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Message_Cast__SWIG_1(self, argc, argv);
@@ -30324,7 +30325,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_Message_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::Message *result = 0 ;
@@ -30332,7 +30333,7 @@ SWIGINTERN PyObject *_wrap_Message_ConstCast__SWIG_1(PyObject *self, Py_ssize_t 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Message_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -30384,7 +30385,7 @@ SWIGINTERN PyObject *_wrap_Message_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_Message_ConstCast__SWIG_1(self, argc, argv);
@@ -30792,7 +30793,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *arg2 = 0 ;
+  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -30806,14 +30807,14 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_attach__SWIG_1(PyObject *self, Py_ssi
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataMessageBase_attach" "', argument " "1"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DataMessageBase_attach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > * >(argp2);
   {
     try {
       result = (bool)(arg1)->attach(*arg2);
@@ -30864,7 +30865,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_attach(PyObject *self, PyObject *args
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_DataMessageBase_attach__SWIG_1(self, argc, argv);
@@ -30876,7 +30877,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'DataMessageBase_attach'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *)\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &)\n");
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::attach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &)\n");
   return 0;
 }
 
@@ -30927,7 +30928,7 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *arg2 = 0 ;
+  Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -30941,14 +30942,14 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_1(PyObject *self, Py_ssi
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataMessageBase_detach" "', argument " "1"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &""'"); 
   }
   if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &""'"); 
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &""'"); 
   }
-  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl * >(argp2);
+  arg2 = reinterpret_cast< Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > * >(argp2);
   {
     try {
       result = (bool)(arg1)->detach(*arg2);
@@ -30973,12 +30974,12 @@ fail:
 SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_2(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::iterator > arg2 ;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator > arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 ;
   int res2 = 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::iterator > result;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator > result;
   
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -30988,7 +30989,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_2(PyObject *self, Py_ssi
   }
   arg1 = reinterpret_cast< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > * >(argp1);
   {
-    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator,  0  | 0);
+    res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator,  0  | 0);
     if (!SWIG_IsOK(res2)) {
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DataMessageBase_detach" "', argument " "2"" of type '" "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator""'"); 
     }  
@@ -31014,7 +31015,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach__SWIG_2(PyObject *self, Py_ssi
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31050,7 +31051,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach(PyObject *self, PyObject *args
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_DataMessageBase_detach__SWIG_1(self, argc, argv);
@@ -31063,7 +31064,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_detach(PyObject *self, PyObject *args
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator, SWIG_POINTER_NO_NULL | 0);
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, SWIG_POINTER_NO_NULL | 0);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_DataMessageBase_detach__SWIG_2(self, argc, argv);
@@ -31075,7 +31076,7 @@ fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'DataMessageBase_detach'.\n"
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType *)\n"
-    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl &)\n"
+    "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > &)\n"
     "    Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::detach(Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator)\n");
   return 0;
 }
@@ -31122,7 +31123,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_begin__SWIG_0(PyObject *self, Py_ssiz
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::iterator > result;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator > result;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31145,7 +31146,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_begin__SWIG_0(PyObject *self, Py_ssiz
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31157,7 +31158,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_begin__SWIG_1(PyObject *self, Py_ssiz
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::const_iterator > result;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::const_iterator > result;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31180,7 +31181,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_begin__SWIG_1(PyObject *self, Py_ssiz
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31228,7 +31229,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_end__SWIG_0(PyObject *self, Py_ssize_
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::iterator > result;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator > result;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31251,7 +31252,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_end__SWIG_0(PyObject *self, Py_ssize_
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31263,7 +31264,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_end__SWIG_1(PyObject *self, Py_ssize_
   Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *arg1 = (Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::const_iterator > result;
+  SwigValueWrapper< std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::const_iterator > result;
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
@@ -31286,7 +31287,7 @@ SWIGINTERN PyObject *_wrap_DataMessageBase_end__SWIG_1(PyObject *self, Py_ssize_
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator(result)), SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -31615,7 +31616,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DataMessage_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::DataMessage *result = 0 ;
@@ -31623,7 +31624,7 @@ SWIGINTERN PyObject *_wrap_DataMessage_Cast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataMessage_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -31676,7 +31677,7 @@ SWIGINTERN PyObject *_wrap_DataMessage_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DataMessage_Cast__SWIG_1(self, argc, argv);
@@ -31694,7 +31695,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DataMessage_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::Core::DataMessage *result = 0 ;
@@ -31702,7 +31703,7 @@ SWIGINTERN PyObject *_wrap_DataMessage_ConstCast__SWIG_1(PyObject *self, Py_ssiz
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DataMessage_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -31754,7 +31755,7 @@ SWIGINTERN PyObject *_wrap_DataMessage_ConstCast(PyObject *self, PyObject *args)
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DataMessage_ConstCast__SWIG_1(self, argc, argv);
@@ -32046,7 +32047,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_CharArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< char > *result = 0 ;
@@ -32054,7 +32055,7 @@ SWIGINTERN PyObject *_wrap_CharArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t no
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CharArrayT_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -32107,7 +32108,7 @@ SWIGINTERN PyObject *_wrap_CharArrayT_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_CharArrayT_Cast__SWIG_1(self, argc, argv);
@@ -32125,7 +32126,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_CharArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< char > *result = 0 ;
@@ -32133,7 +32134,7 @@ SWIGINTERN PyObject *_wrap_CharArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CharArrayT_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -32185,7 +32186,7 @@ SWIGINTERN PyObject *_wrap_CharArrayT_ConstCast(PyObject *self, PyObject *args) 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_CharArrayT_ConstCast__SWIG_1(self, argc, argv);
@@ -34077,7 +34078,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_IntArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< int > *result = 0 ;
@@ -34085,7 +34086,7 @@ SWIGINTERN PyObject *_wrap_IntArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t nob
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntArrayT_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -34138,7 +34139,7 @@ SWIGINTERN PyObject *_wrap_IntArrayT_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_IntArrayT_Cast__SWIG_1(self, argc, argv);
@@ -34156,7 +34157,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_IntArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< int > *result = 0 ;
@@ -34164,7 +34165,7 @@ SWIGINTERN PyObject *_wrap_IntArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize_
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntArrayT_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -34216,7 +34217,7 @@ SWIGINTERN PyObject *_wrap_IntArrayT_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_IntArrayT_ConstCast__SWIG_1(self, argc, argv);
@@ -36099,7 +36100,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_FloatArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< float > *result = 0 ;
@@ -36107,7 +36108,7 @@ SWIGINTERN PyObject *_wrap_FloatArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FloatArrayT_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -36160,7 +36161,7 @@ SWIGINTERN PyObject *_wrap_FloatArrayT_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_FloatArrayT_Cast__SWIG_1(self, argc, argv);
@@ -36178,7 +36179,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_FloatArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< float > *result = 0 ;
@@ -36186,7 +36187,7 @@ SWIGINTERN PyObject *_wrap_FloatArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssiz
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FloatArrayT_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -36238,7 +36239,7 @@ SWIGINTERN PyObject *_wrap_FloatArrayT_ConstCast(PyObject *self, PyObject *args)
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_FloatArrayT_ConstCast__SWIG_1(self, argc, argv);
@@ -38121,7 +38122,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DoubleArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< double > *result = 0 ;
@@ -38129,7 +38130,7 @@ SWIGINTERN PyObject *_wrap_DoubleArrayT_Cast__SWIG_1(PyObject *self, Py_ssize_t 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleArrayT_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -38182,7 +38183,7 @@ SWIGINTERN PyObject *_wrap_DoubleArrayT_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DoubleArrayT_Cast__SWIG_1(self, argc, argv);
@@ -38200,7 +38201,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DoubleArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< double > *result = 0 ;
@@ -38208,7 +38209,7 @@ SWIGINTERN PyObject *_wrap_DoubleArrayT_ConstCast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleArrayT_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -38260,7 +38261,7 @@ SWIGINTERN PyObject *_wrap_DoubleArrayT_ConstCast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DoubleArrayT_ConstCast__SWIG_1(self, argc, argv);
@@ -40143,7 +40144,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ComplexFloatArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::complex< float > > *result = 0 ;
@@ -40151,7 +40152,7 @@ SWIGINTERN PyObject *_wrap_ComplexFloatArray_Cast__SWIG_1(PyObject *self, Py_ssi
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ComplexFloatArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -40204,7 +40205,7 @@ SWIGINTERN PyObject *_wrap_ComplexFloatArray_Cast(PyObject *self, PyObject *args
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ComplexFloatArray_Cast__SWIG_1(self, argc, argv);
@@ -40222,7 +40223,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ComplexFloatArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::complex< float > > *result = 0 ;
@@ -40230,7 +40231,7 @@ SWIGINTERN PyObject *_wrap_ComplexFloatArray_ConstCast__SWIG_1(PyObject *self, P
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ComplexFloatArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -40282,7 +40283,7 @@ SWIGINTERN PyObject *_wrap_ComplexFloatArray_ConstCast(PyObject *self, PyObject 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ComplexFloatArray_ConstCast__SWIG_1(self, argc, argv);
@@ -42165,7 +42166,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ComplexDoubleArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::complex< double > > *result = 0 ;
@@ -42173,7 +42174,7 @@ SWIGINTERN PyObject *_wrap_ComplexDoubleArray_Cast__SWIG_1(PyObject *self, Py_ss
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ComplexDoubleArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -42226,7 +42227,7 @@ SWIGINTERN PyObject *_wrap_ComplexDoubleArray_Cast(PyObject *self, PyObject *arg
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ComplexDoubleArray_Cast__SWIG_1(self, argc, argv);
@@ -42244,7 +42245,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_ComplexDoubleArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::complex< double > > *result = 0 ;
@@ -42252,7 +42253,7 @@ SWIGINTERN PyObject *_wrap_ComplexDoubleArray_ConstCast__SWIG_1(PyObject *self, 
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ComplexDoubleArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -42304,7 +42305,7 @@ SWIGINTERN PyObject *_wrap_ComplexDoubleArray_ConstCast(PyObject *self, PyObject
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_ComplexDoubleArray_ConstCast__SWIG_1(self, argc, argv);
@@ -44187,7 +44188,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DateTimeArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< Seiscomp::Core::Time > *result = 0 ;
@@ -44195,7 +44196,7 @@ SWIGINTERN PyObject *_wrap_DateTimeArray_Cast__SWIG_1(PyObject *self, Py_ssize_t
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DateTimeArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -44248,7 +44249,7 @@ SWIGINTERN PyObject *_wrap_DateTimeArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DateTimeArray_Cast__SWIG_1(self, argc, argv);
@@ -44266,7 +44267,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DateTimeArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< Seiscomp::Core::Time > *result = 0 ;
@@ -44274,7 +44275,7 @@ SWIGINTERN PyObject *_wrap_DateTimeArray_ConstCast__SWIG_1(PyObject *self, Py_ss
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DateTimeArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -44326,7 +44327,7 @@ SWIGINTERN PyObject *_wrap_DateTimeArray_ConstCast(PyObject *self, PyObject *arg
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DateTimeArray_ConstCast__SWIG_1(self, argc, argv);
@@ -46230,7 +46231,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_StringArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::string > *result = 0 ;
@@ -46238,7 +46239,7 @@ SWIGINTERN PyObject *_wrap_StringArray_Cast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -46291,7 +46292,7 @@ SWIGINTERN PyObject *_wrap_StringArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_StringArray_Cast__SWIG_1(self, argc, argv);
@@ -46309,7 +46310,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_StringArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::TypedArray< std::string > *result = 0 ;
@@ -46317,7 +46318,7 @@ SWIGINTERN PyObject *_wrap_StringArray_ConstCast__SWIG_1(PyObject *self, Py_ssiz
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -46369,7 +46370,7 @@ SWIGINTERN PyObject *_wrap_StringArray_ConstCast(PyObject *self, PyObject *args)
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_StringArray_ConstCast__SWIG_1(self, argc, argv);
@@ -48256,7 +48257,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_CharArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< char > *result = 0 ;
@@ -48264,7 +48265,7 @@ SWIGINTERN PyObject *_wrap_CharArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nob
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CharArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -48317,7 +48318,7 @@ SWIGINTERN PyObject *_wrap_CharArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_CharArray_Cast__SWIG_1(self, argc, argv);
@@ -48335,7 +48336,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_CharArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< char > *result = 0 ;
@@ -48343,7 +48344,7 @@ SWIGINTERN PyObject *_wrap_CharArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CharArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -48395,7 +48396,7 @@ SWIGINTERN PyObject *_wrap_CharArray_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_CharArray_ConstCast__SWIG_1(self, argc, argv);
@@ -49438,7 +49439,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_IntArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< int > *result = 0 ;
@@ -49446,7 +49447,7 @@ SWIGINTERN PyObject *_wrap_IntArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobj
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -49499,7 +49500,7 @@ SWIGINTERN PyObject *_wrap_IntArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_IntArray_Cast__SWIG_1(self, argc, argv);
@@ -49517,7 +49518,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_IntArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< int > *result = 0 ;
@@ -49525,7 +49526,7 @@ SWIGINTERN PyObject *_wrap_IntArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -49577,7 +49578,7 @@ SWIGINTERN PyObject *_wrap_IntArray_ConstCast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_IntArray_ConstCast__SWIG_1(self, argc, argv);
@@ -50618,7 +50619,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_FloatArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< float > *result = 0 ;
@@ -50626,7 +50627,7 @@ SWIGINTERN PyObject *_wrap_FloatArray_Cast__SWIG_1(PyObject *self, Py_ssize_t no
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FloatArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -50679,7 +50680,7 @@ SWIGINTERN PyObject *_wrap_FloatArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_FloatArray_Cast__SWIG_1(self, argc, argv);
@@ -50697,7 +50698,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_FloatArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< float > *result = 0 ;
@@ -50705,7 +50706,7 @@ SWIGINTERN PyObject *_wrap_FloatArray_ConstCast__SWIG_1(PyObject *self, Py_ssize
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FloatArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -50757,7 +50758,7 @@ SWIGINTERN PyObject *_wrap_FloatArray_ConstCast(PyObject *self, PyObject *args) 
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_FloatArray_ConstCast__SWIG_1(self, argc, argv);
@@ -51798,7 +51799,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DoubleArray_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< double > *result = 0 ;
@@ -51806,7 +51807,7 @@ SWIGINTERN PyObject *_wrap_DoubleArray_Cast__SWIG_1(PyObject *self, Py_ssize_t n
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleArray_Cast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectPtr""'"); 
     }  
@@ -51859,7 +51860,7 @@ SWIGINTERN PyObject *_wrap_DoubleArray_Cast(PyObject *self, PyObject *args) {
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DoubleArray_Cast__SWIG_1(self, argc, argv);
@@ -51877,7 +51878,7 @@ fail:
 
 SWIGINTERN PyObject *_wrap_DoubleArray_ConstCast__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl > arg1 ;
+  SwigValueWrapper< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > > arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   Seiscomp::NumericArray< double > *result = 0 ;
@@ -51885,7 +51886,7 @@ SWIGINTERN PyObject *_wrap_DoubleArray_ConstCast__SWIG_1(PyObject *self, Py_ssiz
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,  0  | 0);
+    res1 = SWIG_ConvertPtr(swig_obj[0], &argp1, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleArray_ConstCast" "', argument " "1"" of type '" "Seiscomp::Core::BaseObjectCPtr""'"); 
     }  
@@ -51937,7 +51938,7 @@ SWIGINTERN PyObject *_wrap_DoubleArray_ConstCast(PyObject *self, PyObject *args)
   }
   if (argc == 1) {
     int _v = 0;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, SWIG_POINTER_NO_NULL | 0);
+    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_DoubleArray_ConstCast__SWIG_1(self, argc, argv);
@@ -53822,39 +53823,39 @@ static swig_type_info _swigt__p_Seiscomp__Core__OperationInterrupted = {"_p_Seis
 static swig_type_info _swigt__p_Seiscomp__Core__OverflowException = {"_p_Seiscomp__Core__OverflowException", "Seiscomp::Core::OverflowException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__PropertyNotFoundException = {"_p_Seiscomp__Core__PropertyNotFoundException", "Seiscomp::Core::PropertyNotFoundException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__RTTI = {"_p_Seiscomp__Core__RTTI", "Seiscomp::Core::RTTI *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl", "Seiscomp::BitSetPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl", "Seiscomp::Core::BaseObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl", "Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType >::Impl *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl", "Seiscomp::Core::DataMessagePtr *|::Seiscomp::Core::SmartPointer< Seiscomp::Core::DataMessage >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl", "Seiscomp::Core::GreensFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl", "Seiscomp::Core::GreensFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl", "Seiscomp::Core::InterruptibleObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl", "Seiscomp::Core::InterruptibleObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl", "Seiscomp::Core::MessageCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl", "Seiscomp::Core::MessagePtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl", "Seiscomp::GenericRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl", "Seiscomp::GenericRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl", "Seiscomp::CharArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl", "Seiscomp::CharArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl", "Seiscomp::DoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl", "Seiscomp::DoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl", "Seiscomp::FloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl", "Seiscomp::FloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl", "Seiscomp::Int32ArrayCPtr *|Seiscomp::IntArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl", "Seiscomp::Int32ArrayPtr *|Seiscomp::IntArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl", "Seiscomp::RecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl", "Seiscomp::RecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl", "Seiscomp::DateTimeArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl", "Seiscomp::DateTimeArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl", "Seiscomp::ComplexDoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl", "Seiscomp::ComplexDoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl", "Seiscomp::ComplexFloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl", "Seiscomp::ComplexFloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl", "Seiscomp::StringArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > const >::Impl *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl", "Seiscomp::StringArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > >::Impl *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t", "Seiscomp::ArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t", "Seiscomp::ArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Array > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t", "Seiscomp::BitSetCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t", "Seiscomp::BitSetPtr *|Seiscomp::Core::SmartPointer< Seiscomp::BitSet > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t", "Seiscomp::Core::BaseObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t", "Seiscomp::Core::BaseObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::AttachmentType > *|Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t", "Seiscomp::Core::DataMessagePtr *|::Seiscomp::Core::SmartPointer< Seiscomp::Core::DataMessage > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t", "Seiscomp::Core::GreensFunctionCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t", "Seiscomp::Core::GreensFunctionPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::GreensFunction > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t", "Seiscomp::Core::InterruptibleObjectCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t", "Seiscomp::Core::InterruptibleObjectPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::InterruptibleObject > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t", "Seiscomp::Core::MessageCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t", "Seiscomp::Core::MessagePtr *|Seiscomp::Core::SmartPointer< Seiscomp::Core::Message > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t", "Seiscomp::GenericRecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t", "Seiscomp::GenericRecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::GenericRecord > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t", "Seiscomp::CharArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t", "Seiscomp::CharArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< char > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t", "Seiscomp::DoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t", "Seiscomp::DoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< double > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t", "Seiscomp::FloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t", "Seiscomp::FloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< float > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t", "Seiscomp::Int32ArrayCPtr *|Seiscomp::IntArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t", "Seiscomp::Int32ArrayPtr *|Seiscomp::IntArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::NumericArray< int > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t", "Seiscomp::RecordCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t", "Seiscomp::RecordPtr *|Seiscomp::Core::SmartPointer< Seiscomp::Record > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t", "Seiscomp::DateTimeArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t", "Seiscomp::DateTimeArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< Seiscomp::Core::Time > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t", "Seiscomp::ComplexDoubleArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t", "Seiscomp::ComplexDoubleArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< double > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t", "Seiscomp::ComplexFloatArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t", "Seiscomp::ComplexFloatArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::complex< float > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t", "Seiscomp::StringArrayCPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > const > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t = {"_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t", "Seiscomp::StringArrayPtr *|Seiscomp::Core::SmartPointer< Seiscomp::TypedArray< std::string > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__StreamException = {"_p_Seiscomp__Core__StreamException", "Seiscomp::Core::StreamException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__Time = {"_p_Seiscomp__Core__Time", "Seiscomp::Core::Time *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__TimeSpan = {"_p_Seiscomp__Core__TimeSpan", "Seiscomp::Core::TimeSpan *", 0, 0, (void*)0, 0};
@@ -53885,6 +53886,7 @@ static swig_type_info _swigt__p_Type = {"_p_Type", "Type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Weeks = {"_p_Weeks", "Weeks *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_bool = {"_p_bool", "bool *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_boost__bad_any_cast = {"_p_boost__bad_any_cast", "Seiscomp::Core::BadMetaValueCast *|boost::bad_any_cast *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__dynamic_bitsetT_t = {"_p_boost__dynamic_bitsetT_t", "Seiscomp::BitSet::ImplType *|boost::dynamic_bitset< > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__none_t = {"_p_boost__none_t", "::boost::none_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__variantT_int_double_std__string_t = {"_p_boost__variantT_int_double_std__string_t", "Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::PropertyValue *|boost::variant< int,double,std::string > *", 0, 0, (void*)0, 0};
@@ -53903,8 +53905,8 @@ static swig_type_info _swigt__p_std__complexT_double_t = {"_p_std__complexT_doub
 static swig_type_info _swigt__p_std__complexT_float_t = {"_p_std__complexT_float_t", "std::complex< float > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__exception = {"_p_std__exception", "std::exception *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__istream = {"_p_std__istream", "std::istream *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::const_iterator *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject >::Impl >::iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::const_iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t", "Seiscomp::Core::MetaObjectHandle *|std::shared_ptr< Seiscomp::Core::MetaObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t", "Seiscomp::Core::MetaPropertyHandle *|std::shared_ptr< Seiscomp::Core::MetaProperty > *", 0, 0, (void*)0, 0};
@@ -53995,39 +53997,39 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__Core__OverflowException,
   &_swigt__p_Seiscomp__Core__PropertyNotFoundException,
   &_swigt__p_Seiscomp__Core__RTTI,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl,
-  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t,
+  &_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t,
   &_swigt__p_Seiscomp__Core__StreamException,
   &_swigt__p_Seiscomp__Core__Time,
   &_swigt__p_Seiscomp__Core__TimeSpan,
@@ -54058,6 +54060,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Weeks,
   &_swigt__p_bool,
   &_swigt__p_boost__any,
+  &_swigt__p_boost__bad_any_cast,
   &_swigt__p_boost__dynamic_bitsetT_t,
   &_swigt__p_boost__none_t,
   &_swigt__p_boost__variantT_int_double_std__string_t,
@@ -54076,8 +54079,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__complexT_float_t,
   &_swigt__p_std__exception,
   &_swigt__p_std__istream,
-  &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator,
-  &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator,
+  &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator,
+  &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator,
   &_swigt__p_std__ostream,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
@@ -54168,39 +54171,39 @@ static swig_cast_info _swigc__p_Seiscomp__Core__OperationInterrupted[] = {  {&_s
 static swig_cast_info _swigc__p_Seiscomp__Core__OverflowException[] = {  {&_swigt__p_Seiscomp__Core__OverflowException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__PropertyNotFoundException[] = {  {&_swigt__p_Seiscomp__Core__PropertyNotFoundException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__RTTI[] = {  {&_swigt__p_Seiscomp__Core__RTTI, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t[] = {  {&_swigt__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__StreamException[] = {  {&_swigt__p_Seiscomp__Core__StreamException, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_Seiscomp__Core__StreamException, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__Time[] = {  {&_swigt__p_Seiscomp__Core__Time, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Core__TimeSpan[] = {  {&_swigt__p_Seiscomp__Core__TimeSpan, 0, 0, 0},{0, 0, 0, 0}};
@@ -54231,6 +54234,7 @@ static swig_cast_info _swigc__p_Type[] = {  {&_swigt__p_Type, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_Weeks[] = {  {&_swigt__p_Weeks, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_bool[] = {  {&_swigt__p_bool, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_boost__bad_any_cast[] = {  {&_swigt__p_boost__bad_any_cast, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__dynamic_bitsetT_t[] = {  {&_swigt__p_boost__dynamic_bitsetT_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__none_t[] = {  {&_swigt__p_boost__none_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__variantT_int_double_std__string_t[] = {  {&_swigt__p_boost__variantT_int_double_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -54249,8 +54253,8 @@ static swig_cast_info _swigc__p_std__complexT_double_t[] = {  {&_swigt__p_std__c
 static swig_cast_info _swigc__p_std__complexT_float_t[] = {  {&_swigt__p_std__complexT_float_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__GeneralException, _p_Seiscomp__Core__GeneralExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueError, _p_Seiscomp__Core__ValueErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__istream[] = {  {&_swigt__p_std__istream, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ostream[] = {  {&_swigt__p_std__ostream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -54341,39 +54345,39 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__Core__OverflowException,
   _swigc__p_Seiscomp__Core__PropertyNotFoundException,
   _swigc__p_Seiscomp__Core__RTTI,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t__Impl,
-  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t__Impl,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t,
+  _swigc__p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t,
   _swigc__p_Seiscomp__Core__StreamException,
   _swigc__p_Seiscomp__Core__Time,
   _swigc__p_Seiscomp__Core__TimeSpan,
@@ -54404,6 +54408,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Weeks,
   _swigc__p_bool,
   _swigc__p_boost__any,
+  _swigc__p_boost__bad_any_cast,
   _swigc__p_boost__dynamic_bitsetT_t,
   _swigc__p_boost__none_t,
   _swigc__p_boost__variantT_int_double_std__string_t,
@@ -54422,8 +54427,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__complexT_float_t,
   _swigc__p_std__exception,
   _swigc__p_std__istream,
-  _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__const_iterator,
-  _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t__Impl_t__iterator,
+  _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator,
+  _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator,
   _swigc__p_std__ostream,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,

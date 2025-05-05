@@ -674,8 +674,9 @@ bool FocalMechanism::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanism::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("FocalMechanism::remove(Comment*) -> element has another parent");
@@ -691,8 +692,7 @@ bool FocalMechanism::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -715,8 +715,7 @@ bool FocalMechanism::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -830,8 +829,9 @@ bool FocalMechanism::add(MomentTensor *momentTensor) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanism::remove(MomentTensor *momentTensor) {
-	if ( !momentTensor )
+	if ( !momentTensor ) {
 		return false;
+	}
 
 	if ( momentTensor->parent() != this ) {
 		SEISCOMP_ERROR("FocalMechanism::remove(MomentTensor*) -> element has another parent");
@@ -847,8 +847,7 @@ bool FocalMechanism::remove(MomentTensor *momentTensor) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -871,8 +870,7 @@ bool FocalMechanism::removeMomentTensor(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensors[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensors[i].get());
 	}
 
 	_momentTensors[i]->setParent(nullptr);

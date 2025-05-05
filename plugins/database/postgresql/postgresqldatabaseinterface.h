@@ -50,6 +50,8 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
+		virtual Backend backend() const override;
+
 		virtual bool connect(const char *con) override;
 		virtual void disconnect() override;
 

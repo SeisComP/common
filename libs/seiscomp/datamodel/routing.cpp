@@ -308,8 +308,9 @@ bool Routing::add(Route *route) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Routing::remove(Route *route) {
-	if ( !route )
+	if ( !route ) {
 		return false;
+	}
 
 	if ( route->parent() != this ) {
 		SEISCOMP_ERROR("Routing::remove(Route*) -> element has another parent");
@@ -325,8 +326,7 @@ bool Routing::remove(Route *route) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -349,8 +349,7 @@ bool Routing::removeRoute(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routes[i].get());
 	}
 
 	_routes[i]->setParent(nullptr);
@@ -454,8 +453,9 @@ bool Routing::add(Access *access) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Routing::remove(Access *access) {
-	if ( !access )
+	if ( !access ) {
 		return false;
+	}
 
 	if ( access->parent() != this ) {
 		SEISCOMP_ERROR("Routing::remove(Access*) -> element has another parent");
@@ -471,8 +471,7 @@ bool Routing::remove(Access *access) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -495,8 +494,7 @@ bool Routing::removeAccess(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_accesss[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _accesss[i].get());
 	}
 
 	_accesss[i]->setParent(nullptr);

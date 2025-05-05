@@ -814,8 +814,9 @@ bool Station::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Station::remove(Comment*) -> element has another parent");
@@ -831,8 +832,7 @@ bool Station::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -855,8 +855,7 @@ bool Station::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -985,8 +984,9 @@ bool Station::add(SensorLocation *sensorLocation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::remove(SensorLocation *sensorLocation) {
-	if ( !sensorLocation )
+	if ( !sensorLocation ) {
 		return false;
+	}
 
 	if ( sensorLocation->parent() != this ) {
 		SEISCOMP_ERROR("Station::remove(SensorLocation*) -> element has another parent");
@@ -1002,8 +1002,7 @@ bool Station::remove(SensorLocation *sensorLocation) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1026,8 +1025,7 @@ bool Station::removeSensorLocation(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensorLocations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensorLocations[i].get());
 	}
 
 	_sensorLocations[i]->setParent(nullptr);

@@ -269,7 +269,7 @@ int hypinv0_(char *dstaid, char *dwavid, char *dtype, char *atype,
     static int ndftemp;
     static float correct;
     static logical ldenuis;
-    static doublereal dsd2[9999], cnvgtst, sta1, sta2, sta3, sta4, sta5, 
+    static doublereal dsd2[9999], cnvgtst, sta1, sta2, sta3, sta4, sta5,
 	    unwtrms;
 
     /* Fortran I/O blocks */
@@ -475,9 +475,9 @@ L1020:
 	    if (idtyp[n] == 1) {
 /*              call ttime_calc (k-1, atx, staazi(i), stadel(i), radius, */
 /*    &                          zfoc, dcalx, iterr) */
-		ttcal0_(&k, zfoc, radius, &stadel[i__], &staazi[i__], maxtbd, 
+		ttcal0_(&k, zfoc, radius, &stadel[i__], &staazi[i__], maxtbd,
 			maxtbz, &ntbd[k], &ntbz[k], &tbd[k * tbd_dim1 + 1], &
-			tbz[k * tbz_dim1 + 1], &tbtt[(k * tbtt_dim2 + 1) * 
+			tbz[k * tbz_dim1 + 1], &tbtt[(k * tbtt_dim2 + 1) *
 			tbtt_dim1 + 1], &dcalx, atx, &iterr);
 
 /*      ellipticity corrections for travel times included with routine */
@@ -510,7 +510,7 @@ L1020:
 /*    &                         zfoc, dcalx, iterr) */
 		slocal0_(&k, zfoc, radius, &stadel[i__], &staazi[i__], maxtbd,
 			 maxtbz, &ntbd[k], &ntbz[k], &tbd[k * tbd_dim1 + 1], &
-			tbz[k * tbz_dim1 + 1], &tbtt[(k * tbtt_dim2 + 1) * 
+			tbz[k * tbz_dim1 + 1], &tbtt[(k * tbtt_dim2 + 1) *
 			tbtt_dim1 + 1], &dcalx, atx, &iterr);
 /*              Same rules as for travel-time calculations. */
 		if (*niter < 4 || iterr == 15) {
@@ -532,7 +532,7 @@ L1020:
 	    }
 /*           If the azimuth residual is > +/- 180.0 deg., change it to the */
 /*           corresponding difference that is < +/- 180.0 deg. */
-	    if (idtyp[n] == 2 && (r__1 = resid[n], dabs(r__1)) > (float)180.) 
+	    if (idtyp[n] == 2 && (r__1 = resid[n], dabs(r__1)) > (float)180.)
 		    {
 		r__3 = (float)360. - (r__2 = resid[n], dabs(r__2));
 		resid[n] = -r_sign(&r__3, &resid[n]);
@@ -540,7 +540,7 @@ L1020:
 /*           Load valid data and partials for defining detections into */
 /*           arrays.  Note that parameters are ordered: origin-time; */
 /*           longitude; latitude; depth.  If depth is fixed, np = 3. */
-	    if (iderr[n] < 1 && *(unsigned char *)&atype[n * atype_len] == 
+	    if (iderr[n] < 1 && *(unsigned char *)&atype[n * atype_len] ==
 		    'd') {
 		++(*nd);
 		i__2 = np;
@@ -623,10 +623,10 @@ data", (ftnlen)50);
 	    if (idtyp2[n - 1] == 1) {
 		at[m + (n << 2) - 5] /= dsd2[n - 1];
 	    } else if (idtyp2[n - 1] == 2) {
-		at[m + (n << 2) - 5] = *azwt * at[m + (n << 2) - 5] / dsd2[n 
+		at[m + (n << 2) - 5] = *azwt * at[m + (n << 2) - 5] / dsd2[n
 			- 1];
 	    } else if (idtyp2[n - 1] == 3) {
-		at[m + (n << 2) - 5] = slwt * at[m + (n << 2) - 5] / dsd2[n - 
+		at[m + (n << 2) - 5] = slwt * at[m + (n << 2) - 5] / dsd2[n -
 			1];
 	    }
 /*           deriv_array(ilat,ilon,n,m) = at(m,n) */
@@ -928,7 +928,7 @@ data", (ftnlen)50);
 	    dxn12 = dxnrms[0] / dxnrms[1];
 	    dxn23 = dxnrms[1] / dxnrms[2];
 	    divrg = ((sgh23 > (float)1.1 && sgh12 > sgh23) || (dxn23 > (float)1.1 && dxn12 > dxn23 && *niter > 6 && dxnorm > (float)1e3));
-	    cnvrg = nds[0] == nds[1] && ! divrg && (sgh12 > (float).99 && 
+	    cnvrg = nds[0] == nds[1] && ! divrg && (sgh12 > (float).99 &&
 		    sgh12 < (float)1.001) && (cnvgtst < 1e-8 || dxnorm < (
 		    float).5);
 	    if ( (cnvgtst < cnvgold * (float)1.01 && cnvgtst < 1e-8) ||
@@ -938,7 +938,7 @@ data", (ftnlen)50);
 	          (d__2 = cnvghats[0] - cnvghats[2], abs(d__2)) < (float)1e-5)) ) {
 		cnvrg = TRUE_;
 	    }
-	    if ((wtrms < (float).001 || dxnrms[0] < (float).001) && *niter > 
+	    if ((wtrms < (float).001 || dxnrms[0] < (float).001) && *niter >
 		    6) {
 		cnvrg = TRUE_;
 	    }
@@ -1017,7 +1017,7 @@ L1200:
     }
 /*     Compute location confidence bounds */
     ellips_(&np, covar, &hymaj0, &hymid0, &hymin0, &hystr, &hyplu, &hyrak, &
-	    epmaj0, &epmin0, epstr, &zfint0, stt, stx, sty, sxx, sxy, syy, 
+	    epmaj0, &epmin0, epstr, &zfint0, stt, stx, sty, sxx, sxy, syy,
 	    stz, sxz, syz, szz);
 /*     Not currently used, so commented out (WCN) */
 /*     call fstatx (3, ndf, pconf, fs) */
@@ -1101,7 +1101,7 @@ L1210:
 	    resid[n] = (float)-999.;
 	    epimp[n] = (float)-1.;
 	    s_copy(atype + n * atype_len, "n", atype_len, (ftnlen)1);
-	} else if (idtyp[n] == 1 && (*(unsigned char *)&atype[n * atype_len] 
+	} else if (idtyp[n] == 1 && (*(unsigned char *)&atype[n * atype_len]
 		!= 'd' || iderr[n] > 0)) {
 	    epimp[n] = (float)-1.;
 	    s_copy(atype + n * atype_len, "n", atype_len, (ftnlen)1);

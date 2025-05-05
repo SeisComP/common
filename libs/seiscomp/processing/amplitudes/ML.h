@@ -45,7 +45,7 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 
 
 	protected:
-		void setDefaultConfiguration();
+		virtual void setDefaultConfiguration();
 
 		bool deconvolveData(Response *resp, DoubleArray &data, int numberOfIntegrations) override;
 

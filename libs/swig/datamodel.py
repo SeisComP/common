@@ -142,14 +142,14 @@ class NotifierMessageBase(seiscomp.core.Message):
     def attach(self, *args):
         r"""
         attach(NotifierMessageBase self, Notifier attachment) -> bool
-        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
+        attach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType > & attachment) -> bool
         """
         return _datamodel.NotifierMessageBase_attach(self, *args)
 
     def detach(self, *args):
         r"""
         detach(NotifierMessageBase self, Notifier attachment) -> bool
-        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType >::Impl & attachment) -> bool
+        detach(NotifierMessageBase self, Seiscomp::Core::SmartPointer< Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::AttachmentType > & attachment) -> bool
         detach(NotifierMessageBase self, Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator it) -> Seiscomp::Core::GenericMessage< Seiscomp::DataModel::Notifier >::iterator
         """
         return _datamodel.NotifierMessageBase_detach(self, *args)
@@ -699,6 +699,10 @@ class DatabaseArchive(Observer):
     def benchmarkQueries(self, count):
         r"""benchmarkQueries(DatabaseArchive self, int count)"""
         return _datamodel.DatabaseArchive_benchmarkQueries(self, count)
+
+    def getObjectsQuery(self, parentID, classType, ignorePublicObject=False):
+        r"""getObjectsQuery(DatabaseArchive self, std::string const & parentID, RTTI classType, bool ignorePublicObject=False) -> std::pair< std::string,bool >"""
+        return _datamodel.DatabaseArchive_getObjectsQuery(self, parentID, classType, ignorePublicObject)
 
     def getObject(self, classType, publicID):
         r"""getObject(DatabaseArchive self, RTTI classType, std::string const & publicID) -> PublicObject"""
@@ -2271,7 +2275,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         r"""
         __init__(TimeQuantity self) -> TimeQuantity
         __init__(TimeQuantity self, TimeQuantity other) -> TimeQuantity
-        __init__(TimeQuantity self, Time value, Seiscomp::Core::Optional< double >::Impl const & uncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::TimePDF1D >::Impl const & pdf=Unset) -> TimeQuantity
+        __init__(TimeQuantity self, Time value, Seiscomp::Core::Optional< double > const & uncertainty=Unset, Seiscomp::Core::Optional< double > const & lowerUncertainty=Unset, Seiscomp::Core::Optional< double > const & upperUncertainty=Unset, Seiscomp::Core::Optional< double > const & confidenceLevel=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::TimePDF1D > const & pdf=Unset) -> TimeQuantity
         """
         _datamodel.TimeQuantity_swiginit(self, _datamodel.new_TimeQuantity(*args))
     __swig_destroy__ = _datamodel.delete_TimeQuantity
@@ -2297,7 +2301,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         return _datamodel.TimeQuantity_value(self)
 
     def setUncertainty(self, uncertainty):
-        r"""setUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double >::Impl const & uncertainty)"""
+        r"""setUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double > const & uncertainty)"""
         return _datamodel.TimeQuantity_setUncertainty(self, uncertainty)
 
     def uncertainty(self):
@@ -2305,7 +2309,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         return _datamodel.TimeQuantity_uncertainty(self)
 
     def setLowerUncertainty(self, lowerUncertainty):
-        r"""setLowerUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty)"""
+        r"""setLowerUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double > const & lowerUncertainty)"""
         return _datamodel.TimeQuantity_setLowerUncertainty(self, lowerUncertainty)
 
     def lowerUncertainty(self):
@@ -2313,7 +2317,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         return _datamodel.TimeQuantity_lowerUncertainty(self)
 
     def setUpperUncertainty(self, upperUncertainty):
-        r"""setUpperUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty)"""
+        r"""setUpperUncertainty(TimeQuantity self, Seiscomp::Core::Optional< double > const & upperUncertainty)"""
         return _datamodel.TimeQuantity_setUpperUncertainty(self, upperUncertainty)
 
     def upperUncertainty(self):
@@ -2321,7 +2325,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         return _datamodel.TimeQuantity_upperUncertainty(self)
 
     def setConfidenceLevel(self, confidenceLevel):
-        r"""setConfidenceLevel(TimeQuantity self, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel)"""
+        r"""setConfidenceLevel(TimeQuantity self, Seiscomp::Core::Optional< double > const & confidenceLevel)"""
         return _datamodel.TimeQuantity_setConfidenceLevel(self, confidenceLevel)
 
     def confidenceLevel(self):
@@ -2329,7 +2333,7 @@ class TimeQuantity(seiscomp.core.BaseObject):
         return _datamodel.TimeQuantity_confidenceLevel(self)
 
     def setPdf(self, pdf):
-        r"""setPdf(TimeQuantity self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimePDF1D >::Impl const & pdf)"""
+        r"""setPdf(TimeQuantity self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimePDF1D > const & pdf)"""
         return _datamodel.TimeQuantity_setPdf(self, pdf)
 
     def pdf(self, *args):
@@ -2447,7 +2451,7 @@ class CreationInfo(seiscomp.core.BaseObject):
         return _datamodel.CreationInfo_authorURI(self)
 
     def setCreationTime(self, creationTime):
-        r"""setCreationTime(CreationInfo self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & creationTime)"""
+        r"""setCreationTime(CreationInfo self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & creationTime)"""
         return _datamodel.CreationInfo_setCreationTime(self, creationTime)
 
     def creationTime(self):
@@ -2455,7 +2459,7 @@ class CreationInfo(seiscomp.core.BaseObject):
         return _datamodel.CreationInfo_creationTime(self)
 
     def setModificationTime(self, modificationTime):
-        r"""setModificationTime(CreationInfo self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & modificationTime)"""
+        r"""setModificationTime(CreationInfo self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & modificationTime)"""
         return _datamodel.CreationInfo_setModificationTime(self, modificationTime)
 
     def modificationTime(self):
@@ -2672,7 +2676,7 @@ class Comment(Object):
         return _datamodel.Comment_id(self)
 
     def setStart(self, start):
-        r"""setStart(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & start)"""
+        r"""setStart(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & start)"""
         return _datamodel.Comment_setStart(self, start)
 
     def start(self):
@@ -2680,7 +2684,7 @@ class Comment(Object):
         return _datamodel.Comment_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Comment_setEnd(self, end)
 
     def end(self):
@@ -2688,7 +2692,7 @@ class Comment(Object):
         return _datamodel.Comment_end(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Comment self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Comment self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Comment_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -3028,7 +3032,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         r"""
         __init__(RealQuantity self) -> RealQuantity
         __init__(RealQuantity self, RealQuantity other) -> RealQuantity
-        __init__(RealQuantity self, double value, Seiscomp::Core::Optional< double >::Impl const & uncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::RealPDF1D >::Impl const & pdf=Unset) -> RealQuantity
+        __init__(RealQuantity self, double value, Seiscomp::Core::Optional< double > const & uncertainty=Unset, Seiscomp::Core::Optional< double > const & lowerUncertainty=Unset, Seiscomp::Core::Optional< double > const & upperUncertainty=Unset, Seiscomp::Core::Optional< double > const & confidenceLevel=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::RealPDF1D > const & pdf=Unset) -> RealQuantity
         """
         _datamodel.RealQuantity_swiginit(self, _datamodel.new_RealQuantity(*args))
     __swig_destroy__ = _datamodel.delete_RealQuantity
@@ -3054,7 +3058,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         return _datamodel.RealQuantity_value(self)
 
     def setUncertainty(self, uncertainty):
-        r"""setUncertainty(RealQuantity self, Seiscomp::Core::Optional< double >::Impl const & uncertainty)"""
+        r"""setUncertainty(RealQuantity self, Seiscomp::Core::Optional< double > const & uncertainty)"""
         return _datamodel.RealQuantity_setUncertainty(self, uncertainty)
 
     def uncertainty(self):
@@ -3062,7 +3066,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         return _datamodel.RealQuantity_uncertainty(self)
 
     def setLowerUncertainty(self, lowerUncertainty):
-        r"""setLowerUncertainty(RealQuantity self, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty)"""
+        r"""setLowerUncertainty(RealQuantity self, Seiscomp::Core::Optional< double > const & lowerUncertainty)"""
         return _datamodel.RealQuantity_setLowerUncertainty(self, lowerUncertainty)
 
     def lowerUncertainty(self):
@@ -3070,7 +3074,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         return _datamodel.RealQuantity_lowerUncertainty(self)
 
     def setUpperUncertainty(self, upperUncertainty):
-        r"""setUpperUncertainty(RealQuantity self, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty)"""
+        r"""setUpperUncertainty(RealQuantity self, Seiscomp::Core::Optional< double > const & upperUncertainty)"""
         return _datamodel.RealQuantity_setUpperUncertainty(self, upperUncertainty)
 
     def upperUncertainty(self):
@@ -3078,7 +3082,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         return _datamodel.RealQuantity_upperUncertainty(self)
 
     def setConfidenceLevel(self, confidenceLevel):
-        r"""setConfidenceLevel(RealQuantity self, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel)"""
+        r"""setConfidenceLevel(RealQuantity self, Seiscomp::Core::Optional< double > const & confidenceLevel)"""
         return _datamodel.RealQuantity_setConfidenceLevel(self, confidenceLevel)
 
     def confidenceLevel(self):
@@ -3086,7 +3090,7 @@ class RealQuantity(seiscomp.core.BaseObject):
         return _datamodel.RealQuantity_confidenceLevel(self)
 
     def setPdf(self, pdf):
-        r"""setPdf(RealQuantity self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealPDF1D >::Impl const & pdf)"""
+        r"""setPdf(RealQuantity self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealPDF1D > const & pdf)"""
         return _datamodel.RealQuantity_setPdf(self, pdf)
 
     def pdf(self, *args):
@@ -3155,7 +3159,7 @@ class IntegerQuantity(seiscomp.core.BaseObject):
         r"""
         __init__(IntegerQuantity self) -> IntegerQuantity
         __init__(IntegerQuantity self, IntegerQuantity other) -> IntegerQuantity
-        __init__(IntegerQuantity self, int value, Seiscomp::Core::Optional< int >::Impl const & uncertainty=Unset, Seiscomp::Core::Optional< int >::Impl const & lowerUncertainty=Unset, Seiscomp::Core::Optional< int >::Impl const & upperUncertainty=Unset, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel=Unset) -> IntegerQuantity
+        __init__(IntegerQuantity self, int value, Seiscomp::Core::Optional< int > const & uncertainty=Unset, Seiscomp::Core::Optional< int > const & lowerUncertainty=Unset, Seiscomp::Core::Optional< int > const & upperUncertainty=Unset, Seiscomp::Core::Optional< double > const & confidenceLevel=Unset) -> IntegerQuantity
         """
         _datamodel.IntegerQuantity_swiginit(self, _datamodel.new_IntegerQuantity(*args))
     __swig_destroy__ = _datamodel.delete_IntegerQuantity
@@ -3181,7 +3185,7 @@ class IntegerQuantity(seiscomp.core.BaseObject):
         return _datamodel.IntegerQuantity_value(self)
 
     def setUncertainty(self, uncertainty):
-        r"""setUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int >::Impl const & uncertainty)"""
+        r"""setUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int > const & uncertainty)"""
         return _datamodel.IntegerQuantity_setUncertainty(self, uncertainty)
 
     def uncertainty(self):
@@ -3189,7 +3193,7 @@ class IntegerQuantity(seiscomp.core.BaseObject):
         return _datamodel.IntegerQuantity_uncertainty(self)
 
     def setLowerUncertainty(self, lowerUncertainty):
-        r"""setLowerUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int >::Impl const & lowerUncertainty)"""
+        r"""setLowerUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int > const & lowerUncertainty)"""
         return _datamodel.IntegerQuantity_setLowerUncertainty(self, lowerUncertainty)
 
     def lowerUncertainty(self):
@@ -3197,7 +3201,7 @@ class IntegerQuantity(seiscomp.core.BaseObject):
         return _datamodel.IntegerQuantity_lowerUncertainty(self)
 
     def setUpperUncertainty(self, upperUncertainty):
-        r"""setUpperUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int >::Impl const & upperUncertainty)"""
+        r"""setUpperUncertainty(IntegerQuantity self, Seiscomp::Core::Optional< int > const & upperUncertainty)"""
         return _datamodel.IntegerQuantity_setUpperUncertainty(self, upperUncertainty)
 
     def upperUncertainty(self):
@@ -3205,7 +3209,7 @@ class IntegerQuantity(seiscomp.core.BaseObject):
         return _datamodel.IntegerQuantity_upperUncertainty(self)
 
     def setConfidenceLevel(self, confidenceLevel):
-        r"""setConfidenceLevel(IntegerQuantity self, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel)"""
+        r"""setConfidenceLevel(IntegerQuantity self, Seiscomp::Core::Optional< double > const & confidenceLevel)"""
         return _datamodel.IntegerQuantity_setConfidenceLevel(self, confidenceLevel)
 
     def confidenceLevel(self):
@@ -3418,7 +3422,7 @@ class PrincipalAxes(seiscomp.core.BaseObject):
         return _datamodel.PrincipalAxes_pAxis(self, *args)
 
     def setNAxis(self, nAxis):
-        r"""setNAxis(PrincipalAxes self, Seiscomp::Core::Optional< Seiscomp::DataModel::Axis >::Impl const & nAxis)"""
+        r"""setNAxis(PrincipalAxes self, Seiscomp::Core::Optional< Seiscomp::DataModel::Axis > const & nAxis)"""
         return _datamodel.PrincipalAxes_setNAxis(self, nAxis)
 
     def nAxis(self, *args):
@@ -3645,7 +3649,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_equal(self, other)
 
     def setAssociatedPhaseCount(self, associatedPhaseCount):
-        r"""setAssociatedPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int >::Impl const & associatedPhaseCount)"""
+        r"""setAssociatedPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int > const & associatedPhaseCount)"""
         return _datamodel.OriginQuality_setAssociatedPhaseCount(self, associatedPhaseCount)
 
     def associatedPhaseCount(self):
@@ -3653,7 +3657,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_associatedPhaseCount(self)
 
     def setUsedPhaseCount(self, usedPhaseCount):
-        r"""setUsedPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int >::Impl const & usedPhaseCount)"""
+        r"""setUsedPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int > const & usedPhaseCount)"""
         return _datamodel.OriginQuality_setUsedPhaseCount(self, usedPhaseCount)
 
     def usedPhaseCount(self):
@@ -3661,7 +3665,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_usedPhaseCount(self)
 
     def setAssociatedStationCount(self, associatedStationCount):
-        r"""setAssociatedStationCount(OriginQuality self, Seiscomp::Core::Optional< int >::Impl const & associatedStationCount)"""
+        r"""setAssociatedStationCount(OriginQuality self, Seiscomp::Core::Optional< int > const & associatedStationCount)"""
         return _datamodel.OriginQuality_setAssociatedStationCount(self, associatedStationCount)
 
     def associatedStationCount(self):
@@ -3669,7 +3673,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_associatedStationCount(self)
 
     def setUsedStationCount(self, usedStationCount):
-        r"""setUsedStationCount(OriginQuality self, Seiscomp::Core::Optional< int >::Impl const & usedStationCount)"""
+        r"""setUsedStationCount(OriginQuality self, Seiscomp::Core::Optional< int > const & usedStationCount)"""
         return _datamodel.OriginQuality_setUsedStationCount(self, usedStationCount)
 
     def usedStationCount(self):
@@ -3677,7 +3681,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_usedStationCount(self)
 
     def setDepthPhaseCount(self, depthPhaseCount):
-        r"""setDepthPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int >::Impl const & depthPhaseCount)"""
+        r"""setDepthPhaseCount(OriginQuality self, Seiscomp::Core::Optional< int > const & depthPhaseCount)"""
         return _datamodel.OriginQuality_setDepthPhaseCount(self, depthPhaseCount)
 
     def depthPhaseCount(self):
@@ -3685,7 +3689,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_depthPhaseCount(self)
 
     def setStandardError(self, standardError):
-        r"""setStandardError(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & standardError)"""
+        r"""setStandardError(OriginQuality self, Seiscomp::Core::Optional< double > const & standardError)"""
         return _datamodel.OriginQuality_setStandardError(self, standardError)
 
     def standardError(self):
@@ -3693,7 +3697,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_standardError(self)
 
     def setAzimuthalGap(self, azimuthalGap):
-        r"""setAzimuthalGap(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & azimuthalGap)"""
+        r"""setAzimuthalGap(OriginQuality self, Seiscomp::Core::Optional< double > const & azimuthalGap)"""
         return _datamodel.OriginQuality_setAzimuthalGap(self, azimuthalGap)
 
     def azimuthalGap(self):
@@ -3701,7 +3705,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_azimuthalGap(self)
 
     def setSecondaryAzimuthalGap(self, secondaryAzimuthalGap):
-        r"""setSecondaryAzimuthalGap(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & secondaryAzimuthalGap)"""
+        r"""setSecondaryAzimuthalGap(OriginQuality self, Seiscomp::Core::Optional< double > const & secondaryAzimuthalGap)"""
         return _datamodel.OriginQuality_setSecondaryAzimuthalGap(self, secondaryAzimuthalGap)
 
     def secondaryAzimuthalGap(self):
@@ -3717,7 +3721,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_groundTruthLevel(self)
 
     def setMaximumDistance(self, maximumDistance):
-        r"""setMaximumDistance(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & maximumDistance)"""
+        r"""setMaximumDistance(OriginQuality self, Seiscomp::Core::Optional< double > const & maximumDistance)"""
         return _datamodel.OriginQuality_setMaximumDistance(self, maximumDistance)
 
     def maximumDistance(self):
@@ -3725,7 +3729,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_maximumDistance(self)
 
     def setMinimumDistance(self, minimumDistance):
-        r"""setMinimumDistance(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & minimumDistance)"""
+        r"""setMinimumDistance(OriginQuality self, Seiscomp::Core::Optional< double > const & minimumDistance)"""
         return _datamodel.OriginQuality_setMinimumDistance(self, minimumDistance)
 
     def minimumDistance(self):
@@ -3733,7 +3737,7 @@ class OriginQuality(seiscomp.core.BaseObject):
         return _datamodel.OriginQuality_minimumDistance(self)
 
     def setMedianDistance(self, medianDistance):
-        r"""setMedianDistance(OriginQuality self, Seiscomp::Core::Optional< double >::Impl const & medianDistance)"""
+        r"""setMedianDistance(OriginQuality self, Seiscomp::Core::Optional< double > const & medianDistance)"""
         return _datamodel.OriginQuality_setMedianDistance(self, medianDistance)
 
     def medianDistance(self):
@@ -4158,7 +4162,7 @@ class SourceTimeFunction(seiscomp.core.BaseObject):
         return _datamodel.SourceTimeFunction_duration(self)
 
     def setRiseTime(self, riseTime):
-        r"""setRiseTime(SourceTimeFunction self, Seiscomp::Core::Optional< double >::Impl const & riseTime)"""
+        r"""setRiseTime(SourceTimeFunction self, Seiscomp::Core::Optional< double > const & riseTime)"""
         return _datamodel.SourceTimeFunction_setRiseTime(self, riseTime)
 
     def riseTime(self):
@@ -4166,7 +4170,7 @@ class SourceTimeFunction(seiscomp.core.BaseObject):
         return _datamodel.SourceTimeFunction_riseTime(self)
 
     def setDecayTime(self, decayTime):
-        r"""setDecayTime(SourceTimeFunction self, Seiscomp::Core::Optional< double >::Impl const & decayTime)"""
+        r"""setDecayTime(SourceTimeFunction self, Seiscomp::Core::Optional< double > const & decayTime)"""
         return _datamodel.SourceTimeFunction_setDecayTime(self, decayTime)
 
     def decayTime(self):
@@ -4249,7 +4253,7 @@ class NodalPlanes(seiscomp.core.BaseObject):
         return _datamodel.NodalPlanes_equal(self, other)
 
     def setNodalPlane1(self, nodalPlane1):
-        r"""setNodalPlane1(NodalPlanes self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlane >::Impl const & nodalPlane1)"""
+        r"""setNodalPlane1(NodalPlanes self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlane > const & nodalPlane1)"""
         return _datamodel.NodalPlanes_setNodalPlane1(self, nodalPlane1)
 
     def nodalPlane1(self, *args):
@@ -4260,7 +4264,7 @@ class NodalPlanes(seiscomp.core.BaseObject):
         return _datamodel.NodalPlanes_nodalPlane1(self, *args)
 
     def setNodalPlane2(self, nodalPlane2):
-        r"""setNodalPlane2(NodalPlanes self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlane >::Impl const & nodalPlane2)"""
+        r"""setNodalPlane2(NodalPlanes self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlane > const & nodalPlane2)"""
         return _datamodel.NodalPlanes_setNodalPlane2(self, nodalPlane2)
 
     def nodalPlane2(self, *args):
@@ -4271,7 +4275,7 @@ class NodalPlanes(seiscomp.core.BaseObject):
         return _datamodel.NodalPlanes_nodalPlane2(self, *args)
 
     def setPreferredPlane(self, preferredPlane):
-        r"""setPreferredPlane(NodalPlanes self, Seiscomp::Core::Optional< int >::Impl const & preferredPlane)"""
+        r"""setPreferredPlane(NodalPlanes self, Seiscomp::Core::Optional< int > const & preferredPlane)"""
         return _datamodel.NodalPlanes_setPreferredPlane(self, preferredPlane)
 
     def preferredPlane(self):
@@ -4477,7 +4481,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_equal(self, other)
 
     def setHorizontalUncertainty(self, horizontalUncertainty):
-        r"""setHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & horizontalUncertainty)"""
+        r"""setHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double > const & horizontalUncertainty)"""
         return _datamodel.OriginUncertainty_setHorizontalUncertainty(self, horizontalUncertainty)
 
     def horizontalUncertainty(self):
@@ -4485,7 +4489,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_horizontalUncertainty(self)
 
     def setMinHorizontalUncertainty(self, minHorizontalUncertainty):
-        r"""setMinHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & minHorizontalUncertainty)"""
+        r"""setMinHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double > const & minHorizontalUncertainty)"""
         return _datamodel.OriginUncertainty_setMinHorizontalUncertainty(self, minHorizontalUncertainty)
 
     def minHorizontalUncertainty(self):
@@ -4493,7 +4497,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_minHorizontalUncertainty(self)
 
     def setMaxHorizontalUncertainty(self, maxHorizontalUncertainty):
-        r"""setMaxHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & maxHorizontalUncertainty)"""
+        r"""setMaxHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double > const & maxHorizontalUncertainty)"""
         return _datamodel.OriginUncertainty_setMaxHorizontalUncertainty(self, maxHorizontalUncertainty)
 
     def maxHorizontalUncertainty(self):
@@ -4501,7 +4505,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_maxHorizontalUncertainty(self)
 
     def setAzimuthMaxHorizontalUncertainty(self, azimuthMaxHorizontalUncertainty):
-        r"""setAzimuthMaxHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & azimuthMaxHorizontalUncertainty)"""
+        r"""setAzimuthMaxHorizontalUncertainty(OriginUncertainty self, Seiscomp::Core::Optional< double > const & azimuthMaxHorizontalUncertainty)"""
         return _datamodel.OriginUncertainty_setAzimuthMaxHorizontalUncertainty(self, azimuthMaxHorizontalUncertainty)
 
     def azimuthMaxHorizontalUncertainty(self):
@@ -4509,7 +4513,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_azimuthMaxHorizontalUncertainty(self)
 
     def setConfidenceEllipsoid(self, confidenceEllipsoid):
-        r"""setConfidenceEllipsoid(OriginUncertainty self, Seiscomp::Core::Optional< Seiscomp::DataModel::ConfidenceEllipsoid >::Impl const & confidenceEllipsoid)"""
+        r"""setConfidenceEllipsoid(OriginUncertainty self, Seiscomp::Core::Optional< Seiscomp::DataModel::ConfidenceEllipsoid > const & confidenceEllipsoid)"""
         return _datamodel.OriginUncertainty_setConfidenceEllipsoid(self, confidenceEllipsoid)
 
     def confidenceEllipsoid(self, *args):
@@ -4520,7 +4524,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_confidenceEllipsoid(self, *args)
 
     def setPreferredDescription(self, preferredDescription):
-        r"""setPreferredDescription(OriginUncertainty self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginUncertaintyDescription >::Impl const & preferredDescription)"""
+        r"""setPreferredDescription(OriginUncertainty self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginUncertaintyDescription > const & preferredDescription)"""
         return _datamodel.OriginUncertainty_setPreferredDescription(self, preferredDescription)
 
     def preferredDescription(self):
@@ -4528,7 +4532,7 @@ class OriginUncertainty(seiscomp.core.BaseObject):
         return _datamodel.OriginUncertainty_preferredDescription(self)
 
     def setConfidenceLevel(self, confidenceLevel):
-        r"""setConfidenceLevel(OriginUncertainty self, Seiscomp::Core::Optional< double >::Impl const & confidenceLevel)"""
+        r"""setConfidenceLevel(OriginUncertainty self, Seiscomp::Core::Optional< double > const & confidenceLevel)"""
         return _datamodel.OriginUncertainty_setConfidenceLevel(self, confidenceLevel)
 
     def confidenceLevel(self):
@@ -4972,7 +4976,7 @@ class DataUsed(Object):
         return _datamodel.DataUsed_componentCount(self)
 
     def setShortestPeriod(self, shortestPeriod):
-        r"""setShortestPeriod(DataUsed self, Seiscomp::Core::Optional< double >::Impl const & shortestPeriod)"""
+        r"""setShortestPeriod(DataUsed self, Seiscomp::Core::Optional< double > const & shortestPeriod)"""
         return _datamodel.DataUsed_setShortestPeriod(self, shortestPeriod)
 
     def shortestPeriod(self):
@@ -5083,7 +5087,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_equal(self, other)
 
     def setYear(self, year):
-        r"""setYear(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity >::Impl const & year)"""
+        r"""setYear(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity > const & year)"""
         return _datamodel.CompositeTime_setYear(self, year)
 
     def year(self, *args):
@@ -5094,7 +5098,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_year(self, *args)
 
     def setMonth(self, month):
-        r"""setMonth(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity >::Impl const & month)"""
+        r"""setMonth(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity > const & month)"""
         return _datamodel.CompositeTime_setMonth(self, month)
 
     def month(self, *args):
@@ -5105,7 +5109,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_month(self, *args)
 
     def setDay(self, day):
-        r"""setDay(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity >::Impl const & day)"""
+        r"""setDay(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity > const & day)"""
         return _datamodel.CompositeTime_setDay(self, day)
 
     def day(self, *args):
@@ -5116,7 +5120,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_day(self, *args)
 
     def setHour(self, hour):
-        r"""setHour(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity >::Impl const & hour)"""
+        r"""setHour(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity > const & hour)"""
         return _datamodel.CompositeTime_setHour(self, hour)
 
     def hour(self, *args):
@@ -5127,7 +5131,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_hour(self, *args)
 
     def setMinute(self, minute):
-        r"""setMinute(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity >::Impl const & minute)"""
+        r"""setMinute(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::IntegerQuantity > const & minute)"""
         return _datamodel.CompositeTime_setMinute(self, minute)
 
     def minute(self, *args):
@@ -5138,7 +5142,7 @@ class CompositeTime(Object):
         return _datamodel.CompositeTime_minute(self, *args)
 
     def setSecond(self, second):
-        r"""setSecond(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & second)"""
+        r"""setSecond(CompositeTime self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & second)"""
         return _datamodel.CompositeTime_setSecond(self, second)
 
     def second(self, *args):
@@ -5725,7 +5729,7 @@ class MomentTensorComponentContribution(Object):
         __init__(MomentTensorComponentContribution self) -> MomentTensorComponentContribution
         __init__(MomentTensorComponentContribution self, MomentTensorComponentContribution other) -> MomentTensorComponentContribution
         __init__(MomentTensorComponentContribution self, std::string const & phaseCode) -> MomentTensorComponentContribution
-        __init__(MomentTensorComponentContribution self, std::string const & phaseCode, int component, bool active, double weight, double timeShift, double dataTimeWindow, Seiscomp::Core::Optional< double >::Impl const & misfit=Unset, Seiscomp::Core::Optional< double >::Impl const & snr=Unset) -> MomentTensorComponentContribution
+        __init__(MomentTensorComponentContribution self, std::string const & phaseCode, int component, bool active, double weight, double timeShift, double dataTimeWindow, Seiscomp::Core::Optional< double > const & misfit=Unset, Seiscomp::Core::Optional< double > const & snr=Unset) -> MomentTensorComponentContribution
         """
         _datamodel.MomentTensorComponentContribution_swiginit(self, _datamodel.new_MomentTensorComponentContribution(*args))
     __swig_destroy__ = _datamodel.delete_MomentTensorComponentContribution
@@ -5794,7 +5798,7 @@ class MomentTensorComponentContribution(Object):
         return _datamodel.MomentTensorComponentContribution_dataTimeWindow(self, *args)
 
     def setMisfit(self, misfit):
-        r"""setMisfit(MomentTensorComponentContribution self, Seiscomp::Core::Optional< double >::Impl const & misfit)"""
+        r"""setMisfit(MomentTensorComponentContribution self, Seiscomp::Core::Optional< double > const & misfit)"""
         return _datamodel.MomentTensorComponentContribution_setMisfit(self, misfit)
 
     def misfit(self):
@@ -5802,7 +5806,7 @@ class MomentTensorComponentContribution(Object):
         return _datamodel.MomentTensorComponentContribution_misfit(self)
 
     def setSnr(self, snr):
-        r"""setSnr(MomentTensorComponentContribution self, Seiscomp::Core::Optional< double >::Impl const & snr)"""
+        r"""setSnr(MomentTensorComponentContribution self, Seiscomp::Core::Optional< double > const & snr)"""
         return _datamodel.MomentTensorComponentContribution_setSnr(self, snr)
 
     def snr(self):
@@ -5942,7 +5946,7 @@ class MomentTensorStationContribution(PublicObject):
         return _datamodel.MomentTensorStationContribution_active(self)
 
     def setWaveformID(self, waveformID):
-        r"""setWaveformID(MomentTensorStationContribution self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID >::Impl const & waveformID)"""
+        r"""setWaveformID(MomentTensorStationContribution self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID > const & waveformID)"""
         return _datamodel.MomentTensorStationContribution_setWaveformID(self, waveformID)
 
     def waveformID(self, *args):
@@ -5953,7 +5957,7 @@ class MomentTensorStationContribution(PublicObject):
         return _datamodel.MomentTensorStationContribution_waveformID(self, *args)
 
     def setWeight(self, weight):
-        r"""setWeight(MomentTensorStationContribution self, Seiscomp::Core::Optional< double >::Impl const & weight)"""
+        r"""setWeight(MomentTensorStationContribution self, Seiscomp::Core::Optional< double > const & weight)"""
         return _datamodel.MomentTensorStationContribution_setWeight(self, weight)
 
     def weight(self):
@@ -5961,7 +5965,7 @@ class MomentTensorStationContribution(PublicObject):
         return _datamodel.MomentTensorStationContribution_weight(self)
 
     def setTimeShift(self, timeShift):
-        r"""setTimeShift(MomentTensorStationContribution self, Seiscomp::Core::Optional< double >::Impl const & timeShift)"""
+        r"""setTimeShift(MomentTensorStationContribution self, Seiscomp::Core::Optional< double > const & timeShift)"""
         return _datamodel.MomentTensorStationContribution_setTimeShift(self, timeShift)
 
     def timeShift(self):
@@ -6112,7 +6116,7 @@ class MomentTensorPhaseSetting(Object):
         __init__(MomentTensorPhaseSetting self) -> MomentTensorPhaseSetting
         __init__(MomentTensorPhaseSetting self, MomentTensorPhaseSetting other) -> MomentTensorPhaseSetting
         __init__(MomentTensorPhaseSetting self, std::string const & code) -> MomentTensorPhaseSetting
-        __init__(MomentTensorPhaseSetting self, std::string const & code, double lowerPeriod, double upperPeriod, Seiscomp::Core::Optional< double >::Impl const & minimumSNR=Unset, Seiscomp::Core::Optional< double >::Impl const & maximumTimeShift=Unset) -> MomentTensorPhaseSetting
+        __init__(MomentTensorPhaseSetting self, std::string const & code, double lowerPeriod, double upperPeriod, Seiscomp::Core::Optional< double > const & minimumSNR=Unset, Seiscomp::Core::Optional< double > const & maximumTimeShift=Unset) -> MomentTensorPhaseSetting
         """
         _datamodel.MomentTensorPhaseSetting_swiginit(self, _datamodel.new_MomentTensorPhaseSetting(*args))
     __swig_destroy__ = _datamodel.delete_MomentTensorPhaseSetting
@@ -6154,7 +6158,7 @@ class MomentTensorPhaseSetting(Object):
         return _datamodel.MomentTensorPhaseSetting_upperPeriod(self)
 
     def setMinimumSNR(self, minimumSNR):
-        r"""setMinimumSNR(MomentTensorPhaseSetting self, Seiscomp::Core::Optional< double >::Impl const & minimumSNR)"""
+        r"""setMinimumSNR(MomentTensorPhaseSetting self, Seiscomp::Core::Optional< double > const & minimumSNR)"""
         return _datamodel.MomentTensorPhaseSetting_setMinimumSNR(self, minimumSNR)
 
     def minimumSNR(self):
@@ -6162,7 +6166,7 @@ class MomentTensorPhaseSetting(Object):
         return _datamodel.MomentTensorPhaseSetting_minimumSNR(self)
 
     def setMaximumTimeShift(self, maximumTimeShift):
-        r"""setMaximumTimeShift(MomentTensorPhaseSetting self, Seiscomp::Core::Optional< double >::Impl const & maximumTimeShift)"""
+        r"""setMaximumTimeShift(MomentTensorPhaseSetting self, Seiscomp::Core::Optional< double > const & maximumTimeShift)"""
         return _datamodel.MomentTensorPhaseSetting_setMaximumTimeShift(self, maximumTimeShift)
 
     def maximumTimeShift(self):
@@ -6310,7 +6314,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_momentMagnitudeID(self)
 
     def setScalarMoment(self, scalarMoment):
-        r"""setScalarMoment(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & scalarMoment)"""
+        r"""setScalarMoment(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & scalarMoment)"""
         return _datamodel.MomentTensor_setScalarMoment(self, scalarMoment)
 
     def scalarMoment(self, *args):
@@ -6321,7 +6325,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_scalarMoment(self, *args)
 
     def setTensor(self, tensor):
-        r"""setTensor(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Tensor >::Impl const & tensor)"""
+        r"""setTensor(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Tensor > const & tensor)"""
         return _datamodel.MomentTensor_setTensor(self, tensor)
 
     def tensor(self, *args):
@@ -6332,7 +6336,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_tensor(self, *args)
 
     def setVariance(self, variance):
-        r"""setVariance(MomentTensor self, Seiscomp::Core::Optional< double >::Impl const & variance)"""
+        r"""setVariance(MomentTensor self, Seiscomp::Core::Optional< double > const & variance)"""
         return _datamodel.MomentTensor_setVariance(self, variance)
 
     def variance(self):
@@ -6340,7 +6344,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_variance(self)
 
     def setVarianceReduction(self, varianceReduction):
-        r"""setVarianceReduction(MomentTensor self, Seiscomp::Core::Optional< double >::Impl const & varianceReduction)"""
+        r"""setVarianceReduction(MomentTensor self, Seiscomp::Core::Optional< double > const & varianceReduction)"""
         return _datamodel.MomentTensor_setVarianceReduction(self, varianceReduction)
 
     def varianceReduction(self):
@@ -6348,7 +6352,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_varianceReduction(self)
 
     def setDoubleCouple(self, doubleCouple):
-        r"""setDoubleCouple(MomentTensor self, Seiscomp::Core::Optional< double >::Impl const & doubleCouple)"""
+        r"""setDoubleCouple(MomentTensor self, Seiscomp::Core::Optional< double > const & doubleCouple)"""
         return _datamodel.MomentTensor_setDoubleCouple(self, doubleCouple)
 
     def doubleCouple(self):
@@ -6356,7 +6360,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_doubleCouple(self)
 
     def setClvd(self, clvd):
-        r"""setClvd(MomentTensor self, Seiscomp::Core::Optional< double >::Impl const & clvd)"""
+        r"""setClvd(MomentTensor self, Seiscomp::Core::Optional< double > const & clvd)"""
         return _datamodel.MomentTensor_setClvd(self, clvd)
 
     def clvd(self):
@@ -6364,7 +6368,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_clvd(self)
 
     def setIso(self, iso):
-        r"""setIso(MomentTensor self, Seiscomp::Core::Optional< double >::Impl const & iso)"""
+        r"""setIso(MomentTensor self, Seiscomp::Core::Optional< double > const & iso)"""
         return _datamodel.MomentTensor_setIso(self, iso)
 
     def iso(self):
@@ -6388,7 +6392,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_filterID(self)
 
     def setSourceTimeFunction(self, sourceTimeFunction):
-        r"""setSourceTimeFunction(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::SourceTimeFunction >::Impl const & sourceTimeFunction)"""
+        r"""setSourceTimeFunction(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::SourceTimeFunction > const & sourceTimeFunction)"""
         return _datamodel.MomentTensor_setSourceTimeFunction(self, sourceTimeFunction)
 
     def sourceTimeFunction(self, *args):
@@ -6407,7 +6411,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_methodID(self)
 
     def setMethod(self, method):
-        r"""setMethod(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::MomentTensorMethod >::Impl const & method)"""
+        r"""setMethod(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::MomentTensorMethod > const & method)"""
         return _datamodel.MomentTensor_setMethod(self, method)
 
     def method(self):
@@ -6415,7 +6419,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_method(self)
 
     def setStatus(self, status):
-        r"""setStatus(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::MomentTensorStatus >::Impl const & status)"""
+        r"""setStatus(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::MomentTensorStatus > const & status)"""
         return _datamodel.MomentTensor_setStatus(self, status)
 
     def status(self):
@@ -6439,7 +6443,7 @@ class MomentTensor(PublicObject):
         return _datamodel.MomentTensor_cmtVersion(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(MomentTensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.MomentTensor_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -6664,7 +6668,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_triggeringOriginID(self)
 
     def setNodalPlanes(self, nodalPlanes):
-        r"""setNodalPlanes(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlanes >::Impl const & nodalPlanes)"""
+        r"""setNodalPlanes(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::NodalPlanes > const & nodalPlanes)"""
         return _datamodel.FocalMechanism_setNodalPlanes(self, nodalPlanes)
 
     def nodalPlanes(self, *args):
@@ -6675,7 +6679,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_nodalPlanes(self, *args)
 
     def setPrincipalAxes(self, principalAxes):
-        r"""setPrincipalAxes(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::PrincipalAxes >::Impl const & principalAxes)"""
+        r"""setPrincipalAxes(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::PrincipalAxes > const & principalAxes)"""
         return _datamodel.FocalMechanism_setPrincipalAxes(self, principalAxes)
 
     def principalAxes(self, *args):
@@ -6686,7 +6690,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_principalAxes(self, *args)
 
     def setAzimuthalGap(self, azimuthalGap):
-        r"""setAzimuthalGap(FocalMechanism self, Seiscomp::Core::Optional< double >::Impl const & azimuthalGap)"""
+        r"""setAzimuthalGap(FocalMechanism self, Seiscomp::Core::Optional< double > const & azimuthalGap)"""
         return _datamodel.FocalMechanism_setAzimuthalGap(self, azimuthalGap)
 
     def azimuthalGap(self):
@@ -6694,7 +6698,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_azimuthalGap(self)
 
     def setStationPolarityCount(self, stationPolarityCount):
-        r"""setStationPolarityCount(FocalMechanism self, Seiscomp::Core::Optional< int >::Impl const & stationPolarityCount)"""
+        r"""setStationPolarityCount(FocalMechanism self, Seiscomp::Core::Optional< int > const & stationPolarityCount)"""
         return _datamodel.FocalMechanism_setStationPolarityCount(self, stationPolarityCount)
 
     def stationPolarityCount(self):
@@ -6702,7 +6706,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_stationPolarityCount(self)
 
     def setMisfit(self, misfit):
-        r"""setMisfit(FocalMechanism self, Seiscomp::Core::Optional< double >::Impl const & misfit)"""
+        r"""setMisfit(FocalMechanism self, Seiscomp::Core::Optional< double > const & misfit)"""
         return _datamodel.FocalMechanism_setMisfit(self, misfit)
 
     def misfit(self):
@@ -6710,7 +6714,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_misfit(self)
 
     def setStationDistributionRatio(self, stationDistributionRatio):
-        r"""setStationDistributionRatio(FocalMechanism self, Seiscomp::Core::Optional< double >::Impl const & stationDistributionRatio)"""
+        r"""setStationDistributionRatio(FocalMechanism self, Seiscomp::Core::Optional< double > const & stationDistributionRatio)"""
         return _datamodel.FocalMechanism_setStationDistributionRatio(self, stationDistributionRatio)
 
     def stationDistributionRatio(self):
@@ -6726,7 +6730,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_methodID(self)
 
     def setEvaluationMode(self, evaluationMode):
-        r"""setEvaluationMode(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode >::Impl const & evaluationMode)"""
+        r"""setEvaluationMode(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode > const & evaluationMode)"""
         return _datamodel.FocalMechanism_setEvaluationMode(self, evaluationMode)
 
     def evaluationMode(self):
@@ -6734,7 +6738,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_evaluationMode(self)
 
     def setEvaluationStatus(self, evaluationStatus):
-        r"""setEvaluationStatus(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus >::Impl const & evaluationStatus)"""
+        r"""setEvaluationStatus(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus > const & evaluationStatus)"""
         return _datamodel.FocalMechanism_setEvaluationStatus(self, evaluationStatus)
 
     def evaluationStatus(self):
@@ -6742,7 +6746,7 @@ class FocalMechanism(PublicObject):
         return _datamodel.FocalMechanism_evaluationStatus(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(FocalMechanism self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.FocalMechanism_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -6929,7 +6933,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_type(self)
 
     def setAmplitude(self, amplitude):
-        r"""setAmplitude(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & amplitude)"""
+        r"""setAmplitude(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & amplitude)"""
         return _datamodel.Amplitude_setAmplitude(self, amplitude)
 
     def amplitude(self, *args):
@@ -6940,7 +6944,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_amplitude(self, *args)
 
     def setTimeWindow(self, timeWindow):
-        r"""setTimeWindow(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimeWindow >::Impl const & timeWindow)"""
+        r"""setTimeWindow(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimeWindow > const & timeWindow)"""
         return _datamodel.Amplitude_setTimeWindow(self, timeWindow)
 
     def timeWindow(self, *args):
@@ -6951,7 +6955,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_timeWindow(self, *args)
 
     def setPeriod(self, period):
-        r"""setPeriod(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & period)"""
+        r"""setPeriod(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & period)"""
         return _datamodel.Amplitude_setPeriod(self, period)
 
     def period(self, *args):
@@ -6962,7 +6966,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_period(self, *args)
 
     def setSnr(self, snr):
-        r"""setSnr(Amplitude self, Seiscomp::Core::Optional< double >::Impl const & snr)"""
+        r"""setSnr(Amplitude self, Seiscomp::Core::Optional< double > const & snr)"""
         return _datamodel.Amplitude_setSnr(self, snr)
 
     def snr(self):
@@ -6986,7 +6990,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_pickID(self)
 
     def setWaveformID(self, waveformID):
-        r"""setWaveformID(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID >::Impl const & waveformID)"""
+        r"""setWaveformID(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID > const & waveformID)"""
         return _datamodel.Amplitude_setWaveformID(self, waveformID)
 
     def waveformID(self, *args):
@@ -7013,7 +7017,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_methodID(self)
 
     def setScalingTime(self, scalingTime):
-        r"""setScalingTime(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimeQuantity >::Impl const & scalingTime)"""
+        r"""setScalingTime(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::TimeQuantity > const & scalingTime)"""
         return _datamodel.Amplitude_setScalingTime(self, scalingTime)
 
     def scalingTime(self, *args):
@@ -7032,7 +7036,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_magnitudeHint(self)
 
     def setEvaluationMode(self, evaluationMode):
-        r"""setEvaluationMode(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode >::Impl const & evaluationMode)"""
+        r"""setEvaluationMode(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode > const & evaluationMode)"""
         return _datamodel.Amplitude_setEvaluationMode(self, evaluationMode)
 
     def evaluationMode(self):
@@ -7040,7 +7044,7 @@ class Amplitude(PublicObject):
         return _datamodel.Amplitude_evaluationMode(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Amplitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Amplitude_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -7193,7 +7197,7 @@ class StationMagnitudeContribution(Object):
         r"""
         __init__(StationMagnitudeContribution self) -> StationMagnitudeContribution
         __init__(StationMagnitudeContribution self, StationMagnitudeContribution other) -> StationMagnitudeContribution
-        __init__(StationMagnitudeContribution self, std::string const & stationMagnitudeID, Seiscomp::Core::Optional< double >::Impl const & residual=Unset, Seiscomp::Core::Optional< double >::Impl const & weight=Unset) -> StationMagnitudeContribution
+        __init__(StationMagnitudeContribution self, std::string const & stationMagnitudeID, Seiscomp::Core::Optional< double > const & residual=Unset, Seiscomp::Core::Optional< double > const & weight=Unset) -> StationMagnitudeContribution
         """
         _datamodel.StationMagnitudeContribution_swiginit(self, _datamodel.new_StationMagnitudeContribution(*args))
     __swig_destroy__ = _datamodel.delete_StationMagnitudeContribution
@@ -7219,7 +7223,7 @@ class StationMagnitudeContribution(Object):
         return _datamodel.StationMagnitudeContribution_stationMagnitudeID(self)
 
     def setResidual(self, residual):
-        r"""setResidual(StationMagnitudeContribution self, Seiscomp::Core::Optional< double >::Impl const & residual)"""
+        r"""setResidual(StationMagnitudeContribution self, Seiscomp::Core::Optional< double > const & residual)"""
         return _datamodel.StationMagnitudeContribution_setResidual(self, residual)
 
     def residual(self):
@@ -7227,7 +7231,7 @@ class StationMagnitudeContribution(Object):
         return _datamodel.StationMagnitudeContribution_residual(self)
 
     def setWeight(self, weight):
-        r"""setWeight(StationMagnitudeContribution self, Seiscomp::Core::Optional< double >::Impl const & weight)"""
+        r"""setWeight(StationMagnitudeContribution self, Seiscomp::Core::Optional< double > const & weight)"""
         return _datamodel.StationMagnitudeContribution_setWeight(self, weight)
 
     def weight(self):
@@ -7394,7 +7398,7 @@ class Magnitude(PublicObject):
         return _datamodel.Magnitude_methodID(self)
 
     def setStationCount(self, stationCount):
-        r"""setStationCount(Magnitude self, Seiscomp::Core::Optional< int >::Impl const & stationCount)"""
+        r"""setStationCount(Magnitude self, Seiscomp::Core::Optional< int > const & stationCount)"""
         return _datamodel.Magnitude_setStationCount(self, stationCount)
 
     def stationCount(self):
@@ -7402,7 +7406,7 @@ class Magnitude(PublicObject):
         return _datamodel.Magnitude_stationCount(self)
 
     def setAzimuthalGap(self, azimuthalGap):
-        r"""setAzimuthalGap(Magnitude self, Seiscomp::Core::Optional< double >::Impl const & azimuthalGap)"""
+        r"""setAzimuthalGap(Magnitude self, Seiscomp::Core::Optional< double > const & azimuthalGap)"""
         return _datamodel.Magnitude_setAzimuthalGap(self, azimuthalGap)
 
     def azimuthalGap(self):
@@ -7410,7 +7414,7 @@ class Magnitude(PublicObject):
         return _datamodel.Magnitude_azimuthalGap(self)
 
     def setEvaluationStatus(self, evaluationStatus):
-        r"""setEvaluationStatus(Magnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus >::Impl const & evaluationStatus)"""
+        r"""setEvaluationStatus(Magnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus > const & evaluationStatus)"""
         return _datamodel.Magnitude_setEvaluationStatus(self, evaluationStatus)
 
     def evaluationStatus(self):
@@ -7418,7 +7422,7 @@ class Magnitude(PublicObject):
         return _datamodel.Magnitude_evaluationStatus(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Magnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Magnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Magnitude_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -7642,7 +7646,7 @@ class StationMagnitude(PublicObject):
         return _datamodel.StationMagnitude_methodID(self)
 
     def setWaveformID(self, waveformID):
-        r"""setWaveformID(StationMagnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID >::Impl const & waveformID)"""
+        r"""setWaveformID(StationMagnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::WaveformStreamID > const & waveformID)"""
         return _datamodel.StationMagnitude_setWaveformID(self, waveformID)
 
     def waveformID(self, *args):
@@ -7653,7 +7657,7 @@ class StationMagnitude(PublicObject):
         return _datamodel.StationMagnitude_waveformID(self, *args)
 
     def setPassedQC(self, passedQC):
-        r"""setPassedQC(StationMagnitude self, Seiscomp::Core::Optional< bool >::Impl const & passedQC)"""
+        r"""setPassedQC(StationMagnitude self, Seiscomp::Core::Optional< bool > const & passedQC)"""
         return _datamodel.StationMagnitude_setPassedQC(self, passedQC)
 
     def passedQC(self):
@@ -7661,7 +7665,7 @@ class StationMagnitude(PublicObject):
         return _datamodel.StationMagnitude_passedQC(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(StationMagnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(StationMagnitude self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.StationMagnitude_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -7856,7 +7860,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_methodID(self)
 
     def setHorizontalSlowness(self, horizontalSlowness):
-        r"""setHorizontalSlowness(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & horizontalSlowness)"""
+        r"""setHorizontalSlowness(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & horizontalSlowness)"""
         return _datamodel.Pick_setHorizontalSlowness(self, horizontalSlowness)
 
     def horizontalSlowness(self, *args):
@@ -7867,7 +7871,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_horizontalSlowness(self, *args)
 
     def setBackazimuth(self, backazimuth):
-        r"""setBackazimuth(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & backazimuth)"""
+        r"""setBackazimuth(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & backazimuth)"""
         return _datamodel.Pick_setBackazimuth(self, backazimuth)
 
     def backazimuth(self, *args):
@@ -7886,7 +7890,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_slownessMethodID(self)
 
     def setOnset(self, onset):
-        r"""setOnset(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::PickOnset >::Impl const & onset)"""
+        r"""setOnset(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::PickOnset > const & onset)"""
         return _datamodel.Pick_setOnset(self, onset)
 
     def onset(self):
@@ -7894,7 +7898,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_onset(self)
 
     def setPhaseHint(self, phaseHint):
-        r"""setPhaseHint(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::Phase >::Impl const & phaseHint)"""
+        r"""setPhaseHint(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::Phase > const & phaseHint)"""
         return _datamodel.Pick_setPhaseHint(self, phaseHint)
 
     def phaseHint(self, *args):
@@ -7905,7 +7909,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_phaseHint(self, *args)
 
     def setPolarity(self, polarity):
-        r"""setPolarity(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::PickPolarity >::Impl const & polarity)"""
+        r"""setPolarity(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::PickPolarity > const & polarity)"""
         return _datamodel.Pick_setPolarity(self, polarity)
 
     def polarity(self):
@@ -7913,7 +7917,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_polarity(self)
 
     def setEvaluationMode(self, evaluationMode):
-        r"""setEvaluationMode(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode >::Impl const & evaluationMode)"""
+        r"""setEvaluationMode(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode > const & evaluationMode)"""
         return _datamodel.Pick_setEvaluationMode(self, evaluationMode)
 
     def evaluationMode(self):
@@ -7921,7 +7925,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_evaluationMode(self)
 
     def setEvaluationStatus(self, evaluationStatus):
-        r"""setEvaluationStatus(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus >::Impl const & evaluationStatus)"""
+        r"""setEvaluationStatus(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus > const & evaluationStatus)"""
         return _datamodel.Pick_setEvaluationStatus(self, evaluationStatus)
 
     def evaluationStatus(self):
@@ -7929,7 +7933,7 @@ class Pick(PublicObject):
         return _datamodel.Pick_evaluationStatus(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Pick self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Pick_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -8402,7 +8406,7 @@ class Event(PublicObject):
         return _datamodel.Event_preferredFocalMechanismID(self)
 
     def setType(self, type):
-        r"""setType(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::EventType >::Impl const & type)"""
+        r"""setType(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::EventType > const & type)"""
         return _datamodel.Event_setType(self, type)
 
     def type(self):
@@ -8410,7 +8414,7 @@ class Event(PublicObject):
         return _datamodel.Event_type(self)
 
     def setTypeCertainty(self, typeCertainty):
-        r"""setTypeCertainty(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::EventTypeCertainty >::Impl const & typeCertainty)"""
+        r"""setTypeCertainty(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::EventTypeCertainty > const & typeCertainty)"""
         return _datamodel.Event_setTypeCertainty(self, typeCertainty)
 
     def typeCertainty(self):
@@ -8418,7 +8422,7 @@ class Event(PublicObject):
         return _datamodel.Event_typeCertainty(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Event self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Event_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -8671,7 +8675,7 @@ class Arrival(Object):
         return _datamodel.Arrival_phase(self, *args)
 
     def setTimeCorrection(self, timeCorrection):
-        r"""setTimeCorrection(Arrival self, Seiscomp::Core::Optional< double >::Impl const & timeCorrection)"""
+        r"""setTimeCorrection(Arrival self, Seiscomp::Core::Optional< double > const & timeCorrection)"""
         return _datamodel.Arrival_setTimeCorrection(self, timeCorrection)
 
     def timeCorrection(self):
@@ -8679,7 +8683,7 @@ class Arrival(Object):
         return _datamodel.Arrival_timeCorrection(self)
 
     def setAzimuth(self, azimuth):
-        r"""setAzimuth(Arrival self, Seiscomp::Core::Optional< double >::Impl const & azimuth)"""
+        r"""setAzimuth(Arrival self, Seiscomp::Core::Optional< double > const & azimuth)"""
         return _datamodel.Arrival_setAzimuth(self, azimuth)
 
     def azimuth(self):
@@ -8687,7 +8691,7 @@ class Arrival(Object):
         return _datamodel.Arrival_azimuth(self)
 
     def setDistance(self, distance):
-        r"""setDistance(Arrival self, Seiscomp::Core::Optional< double >::Impl const & distance)"""
+        r"""setDistance(Arrival self, Seiscomp::Core::Optional< double > const & distance)"""
         return _datamodel.Arrival_setDistance(self, distance)
 
     def distance(self):
@@ -8695,7 +8699,7 @@ class Arrival(Object):
         return _datamodel.Arrival_distance(self)
 
     def setTakeOffAngle(self, takeOffAngle):
-        r"""setTakeOffAngle(Arrival self, Seiscomp::Core::Optional< double >::Impl const & takeOffAngle)"""
+        r"""setTakeOffAngle(Arrival self, Seiscomp::Core::Optional< double > const & takeOffAngle)"""
         return _datamodel.Arrival_setTakeOffAngle(self, takeOffAngle)
 
     def takeOffAngle(self):
@@ -8703,7 +8707,7 @@ class Arrival(Object):
         return _datamodel.Arrival_takeOffAngle(self)
 
     def setTimeResidual(self, timeResidual):
-        r"""setTimeResidual(Arrival self, Seiscomp::Core::Optional< double >::Impl const & timeResidual)"""
+        r"""setTimeResidual(Arrival self, Seiscomp::Core::Optional< double > const & timeResidual)"""
         return _datamodel.Arrival_setTimeResidual(self, timeResidual)
 
     def timeResidual(self):
@@ -8711,7 +8715,7 @@ class Arrival(Object):
         return _datamodel.Arrival_timeResidual(self)
 
     def setHorizontalSlownessResidual(self, horizontalSlownessResidual):
-        r"""setHorizontalSlownessResidual(Arrival self, Seiscomp::Core::Optional< double >::Impl const & horizontalSlownessResidual)"""
+        r"""setHorizontalSlownessResidual(Arrival self, Seiscomp::Core::Optional< double > const & horizontalSlownessResidual)"""
         return _datamodel.Arrival_setHorizontalSlownessResidual(self, horizontalSlownessResidual)
 
     def horizontalSlownessResidual(self):
@@ -8719,7 +8723,7 @@ class Arrival(Object):
         return _datamodel.Arrival_horizontalSlownessResidual(self)
 
     def setBackazimuthResidual(self, backazimuthResidual):
-        r"""setBackazimuthResidual(Arrival self, Seiscomp::Core::Optional< double >::Impl const & backazimuthResidual)"""
+        r"""setBackazimuthResidual(Arrival self, Seiscomp::Core::Optional< double > const & backazimuthResidual)"""
         return _datamodel.Arrival_setBackazimuthResidual(self, backazimuthResidual)
 
     def backazimuthResidual(self):
@@ -8727,7 +8731,7 @@ class Arrival(Object):
         return _datamodel.Arrival_backazimuthResidual(self)
 
     def setTimeUsed(self, timeUsed):
-        r"""setTimeUsed(Arrival self, Seiscomp::Core::Optional< bool >::Impl const & timeUsed)"""
+        r"""setTimeUsed(Arrival self, Seiscomp::Core::Optional< bool > const & timeUsed)"""
         return _datamodel.Arrival_setTimeUsed(self, timeUsed)
 
     def timeUsed(self):
@@ -8735,7 +8739,7 @@ class Arrival(Object):
         return _datamodel.Arrival_timeUsed(self)
 
     def setHorizontalSlownessUsed(self, horizontalSlownessUsed):
-        r"""setHorizontalSlownessUsed(Arrival self, Seiscomp::Core::Optional< bool >::Impl const & horizontalSlownessUsed)"""
+        r"""setHorizontalSlownessUsed(Arrival self, Seiscomp::Core::Optional< bool > const & horizontalSlownessUsed)"""
         return _datamodel.Arrival_setHorizontalSlownessUsed(self, horizontalSlownessUsed)
 
     def horizontalSlownessUsed(self):
@@ -8743,7 +8747,7 @@ class Arrival(Object):
         return _datamodel.Arrival_horizontalSlownessUsed(self)
 
     def setBackazimuthUsed(self, backazimuthUsed):
-        r"""setBackazimuthUsed(Arrival self, Seiscomp::Core::Optional< bool >::Impl const & backazimuthUsed)"""
+        r"""setBackazimuthUsed(Arrival self, Seiscomp::Core::Optional< bool > const & backazimuthUsed)"""
         return _datamodel.Arrival_setBackazimuthUsed(self, backazimuthUsed)
 
     def backazimuthUsed(self):
@@ -8751,7 +8755,7 @@ class Arrival(Object):
         return _datamodel.Arrival_backazimuthUsed(self)
 
     def setWeight(self, weight):
-        r"""setWeight(Arrival self, Seiscomp::Core::Optional< double >::Impl const & weight)"""
+        r"""setWeight(Arrival self, Seiscomp::Core::Optional< double > const & weight)"""
         return _datamodel.Arrival_setWeight(self, weight)
 
     def weight(self):
@@ -8767,7 +8771,7 @@ class Arrival(Object):
         return _datamodel.Arrival_earthModelID(self)
 
     def setPreliminary(self, preliminary):
-        r"""setPreliminary(Arrival self, Seiscomp::Core::Optional< bool >::Impl const & preliminary)"""
+        r"""setPreliminary(Arrival self, Seiscomp::Core::Optional< bool > const & preliminary)"""
         return _datamodel.Arrival_setPreliminary(self, preliminary)
 
     def preliminary(self):
@@ -8775,7 +8779,7 @@ class Arrival(Object):
         return _datamodel.Arrival_preliminary(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Arrival self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Arrival self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Arrival_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -8943,7 +8947,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_longitude(self, *args)
 
     def setDepth(self, depth):
-        r"""setDepth(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity >::Impl const & depth)"""
+        r"""setDepth(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealQuantity > const & depth)"""
         return _datamodel.Origin_setDepth(self, depth)
 
     def depth(self, *args):
@@ -8954,7 +8958,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_depth(self, *args)
 
     def setDepthType(self, depthType):
-        r"""setDepthType(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginDepthType >::Impl const & depthType)"""
+        r"""setDepthType(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginDepthType > const & depthType)"""
         return _datamodel.Origin_setDepthType(self, depthType)
 
     def depthType(self):
@@ -8962,7 +8966,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_depthType(self)
 
     def setTimeFixed(self, timeFixed):
-        r"""setTimeFixed(Origin self, Seiscomp::Core::Optional< bool >::Impl const & timeFixed)"""
+        r"""setTimeFixed(Origin self, Seiscomp::Core::Optional< bool > const & timeFixed)"""
         return _datamodel.Origin_setTimeFixed(self, timeFixed)
 
     def timeFixed(self):
@@ -8970,7 +8974,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_timeFixed(self)
 
     def setEpicenterFixed(self, epicenterFixed):
-        r"""setEpicenterFixed(Origin self, Seiscomp::Core::Optional< bool >::Impl const & epicenterFixed)"""
+        r"""setEpicenterFixed(Origin self, Seiscomp::Core::Optional< bool > const & epicenterFixed)"""
         return _datamodel.Origin_setEpicenterFixed(self, epicenterFixed)
 
     def epicenterFixed(self):
@@ -9002,7 +9006,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_earthModelID(self)
 
     def setQuality(self, quality):
-        r"""setQuality(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginQuality >::Impl const & quality)"""
+        r"""setQuality(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginQuality > const & quality)"""
         return _datamodel.Origin_setQuality(self, quality)
 
     def quality(self, *args):
@@ -9013,7 +9017,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_quality(self, *args)
 
     def setUncertainty(self, uncertainty):
-        r"""setUncertainty(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginUncertainty >::Impl const & uncertainty)"""
+        r"""setUncertainty(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginUncertainty > const & uncertainty)"""
         return _datamodel.Origin_setUncertainty(self, uncertainty)
 
     def uncertainty(self, *args):
@@ -9024,7 +9028,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_uncertainty(self, *args)
 
     def setType(self, type):
-        r"""setType(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginType >::Impl const & type)"""
+        r"""setType(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::OriginType > const & type)"""
         return _datamodel.Origin_setType(self, type)
 
     def type(self):
@@ -9032,7 +9036,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_type(self)
 
     def setEvaluationMode(self, evaluationMode):
-        r"""setEvaluationMode(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode >::Impl const & evaluationMode)"""
+        r"""setEvaluationMode(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationMode > const & evaluationMode)"""
         return _datamodel.Origin_setEvaluationMode(self, evaluationMode)
 
     def evaluationMode(self):
@@ -9040,7 +9044,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_evaluationMode(self)
 
     def setEvaluationStatus(self, evaluationStatus):
-        r"""setEvaluationStatus(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus >::Impl const & evaluationStatus)"""
+        r"""setEvaluationStatus(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::EvaluationStatus > const & evaluationStatus)"""
         return _datamodel.Origin_setEvaluationStatus(self, evaluationStatus)
 
     def evaluationStatus(self):
@@ -9048,7 +9052,7 @@ class Origin(PublicObject):
         return _datamodel.Origin_evaluationStatus(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(Origin self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.Origin_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -9682,7 +9686,7 @@ class ParameterSet(PublicObject):
         return _datamodel.ParameterSet_moduleID(self)
 
     def setCreated(self, created):
-        r"""setCreated(ParameterSet self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & created)"""
+        r"""setCreated(ParameterSet self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & created)"""
         return _datamodel.ParameterSet_setCreated(self, created)
 
     def created(self):
@@ -10070,7 +10074,7 @@ class ConfigStation(PublicObject):
         return _datamodel.ConfigStation_enabled(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(ConfigStation self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(ConfigStation self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.ConfigStation_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -10815,7 +10819,7 @@ class WaveformQuality(Object):
         return _datamodel.WaveformQuality_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(WaveformQuality self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(WaveformQuality self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.WaveformQuality_setEnd(self, end)
 
     def end(self):
@@ -10847,7 +10851,7 @@ class WaveformQuality(Object):
         return _datamodel.WaveformQuality_value(self)
 
     def setLowerUncertainty(self, lowerUncertainty):
-        r"""setLowerUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & lowerUncertainty)"""
+        r"""setLowerUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double > const & lowerUncertainty)"""
         return _datamodel.WaveformQuality_setLowerUncertainty(self, lowerUncertainty)
 
     def lowerUncertainty(self):
@@ -10855,7 +10859,7 @@ class WaveformQuality(Object):
         return _datamodel.WaveformQuality_lowerUncertainty(self)
 
     def setUpperUncertainty(self, upperUncertainty):
-        r"""setUpperUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & upperUncertainty)"""
+        r"""setUpperUncertainty(WaveformQuality self, Seiscomp::Core::Optional< double > const & upperUncertainty)"""
         return _datamodel.WaveformQuality_setUpperUncertainty(self, upperUncertainty)
 
     def upperUncertainty(self):
@@ -10863,7 +10867,7 @@ class WaveformQuality(Object):
         return _datamodel.WaveformQuality_upperUncertainty(self)
 
     def setWindowLength(self, windowLength):
-        r"""setWindowLength(WaveformQuality self, Seiscomp::Core::Optional< double >::Impl const & windowLength)"""
+        r"""setWindowLength(WaveformQuality self, Seiscomp::Core::Optional< double > const & windowLength)"""
         return _datamodel.WaveformQuality_setWindowLength(self, windowLength)
 
     def windowLength(self):
@@ -11044,7 +11048,7 @@ class Outage(Object):
         return _datamodel.Outage_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Outage self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Outage self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Outage_setEnd(self, end)
 
     def end(self):
@@ -11525,7 +11529,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_equal(self, other)
 
     def setType(self, type):
-        r"""setType(StationGroup self, Seiscomp::Core::Optional< Seiscomp::DataModel::StationGroupType >::Impl const & type)"""
+        r"""setType(StationGroup self, Seiscomp::Core::Optional< Seiscomp::DataModel::StationGroupType > const & type)"""
         return _datamodel.StationGroup_setType(self, type)
 
     def type(self):
@@ -11541,7 +11545,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_code(self)
 
     def setStart(self, start):
-        r"""setStart(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & start)"""
+        r"""setStart(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & start)"""
         return _datamodel.StationGroup_setStart(self, start)
 
     def start(self):
@@ -11549,7 +11553,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(StationGroup self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.StationGroup_setEnd(self, end)
 
     def end(self):
@@ -11565,7 +11569,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_description(self)
 
     def setLatitude(self, latitude):
-        r"""setLatitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        r"""setLatitude(StationGroup self, Seiscomp::Core::Optional< double > const & latitude)"""
         return _datamodel.StationGroup_setLatitude(self, latitude)
 
     def latitude(self):
@@ -11573,7 +11577,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_latitude(self)
 
     def setLongitude(self, longitude):
-        r"""setLongitude(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        r"""setLongitude(StationGroup self, Seiscomp::Core::Optional< double > const & longitude)"""
         return _datamodel.StationGroup_setLongitude(self, longitude)
 
     def longitude(self):
@@ -11581,7 +11585,7 @@ class StationGroup(PublicObject):
         return _datamodel.StationGroup_longitude(self)
 
     def setElevation(self, elevation):
-        r"""setElevation(StationGroup self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        r"""setElevation(StationGroup self, Seiscomp::Core::Optional< double > const & elevation)"""
         return _datamodel.StationGroup_setElevation(self, elevation)
 
     def elevation(self):
@@ -11740,7 +11744,7 @@ class AuxSource(Object):
         __init__(AuxSource self) -> AuxSource
         __init__(AuxSource self, AuxSource other) -> AuxSource
         __init__(AuxSource self, std::string const & name) -> AuxSource
-        __init__(AuxSource self, std::string const & name, std::string const & description, std::string const & unit, std::string const & conversion, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator=Unset, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark=Unset) -> AuxSource
+        __init__(AuxSource self, std::string const & name, std::string const & description, std::string const & unit, std::string const & conversion, Seiscomp::Core::Optional< int > const & sampleRateNumerator=Unset, Seiscomp::Core::Optional< int > const & sampleRateDenominator=Unset, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark=Unset) -> AuxSource
         """
         _datamodel.AuxSource_swiginit(self, _datamodel.new_AuxSource(*args))
     __swig_destroy__ = _datamodel.delete_AuxSource
@@ -11790,7 +11794,7 @@ class AuxSource(Object):
         return _datamodel.AuxSource_conversion(self)
 
     def setSampleRateNumerator(self, sampleRateNumerator):
-        r"""setSampleRateNumerator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
+        r"""setSampleRateNumerator(AuxSource self, Seiscomp::Core::Optional< int > const & sampleRateNumerator)"""
         return _datamodel.AuxSource_setSampleRateNumerator(self, sampleRateNumerator)
 
     def sampleRateNumerator(self):
@@ -11798,7 +11802,7 @@ class AuxSource(Object):
         return _datamodel.AuxSource_sampleRateNumerator(self)
 
     def setSampleRateDenominator(self, sampleRateDenominator):
-        r"""setSampleRateDenominator(AuxSource self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
+        r"""setSampleRateDenominator(AuxSource self, Seiscomp::Core::Optional< int > const & sampleRateDenominator)"""
         return _datamodel.AuxSource_setSampleRateDenominator(self, sampleRateDenominator)
 
     def sampleRateDenominator(self):
@@ -11806,7 +11810,7 @@ class AuxSource(Object):
         return _datamodel.AuxSource_sampleRateDenominator(self)
 
     def setRemark(self, remark):
-        r"""setRemark(AuxSource self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(AuxSource self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.AuxSource_setRemark(self, remark)
 
     def remark(self, *args):
@@ -11999,7 +12003,7 @@ class AuxDevice(PublicObject):
         return _datamodel.AuxDevice_manufacturer(self)
 
     def setRemark(self, remark):
-        r"""setRemark(AuxDevice self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(AuxDevice self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.AuxDevice_setRemark(self, remark)
 
     def remark(self, *args):
@@ -12203,7 +12207,7 @@ class SensorCalibration(Object):
         return _datamodel.SensorCalibration_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.SensorCalibration_setEnd(self, end)
 
     def end(self):
@@ -12211,7 +12215,7 @@ class SensorCalibration(Object):
         return _datamodel.SensorCalibration_end(self)
 
     def setGain(self, gain):
-        r"""setGain(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(SensorCalibration self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.SensorCalibration_setGain(self, gain)
 
     def gain(self):
@@ -12219,7 +12223,7 @@ class SensorCalibration(Object):
         return _datamodel.SensorCalibration_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(SensorCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(SensorCalibration self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.SensorCalibration_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -12227,7 +12231,7 @@ class SensorCalibration(Object):
         return _datamodel.SensorCalibration_gainFrequency(self)
 
     def setRemark(self, remark):
-        r"""setRemark(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(SensorCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.SensorCalibration_setRemark(self, remark)
 
     def remark(self, *args):
@@ -12436,7 +12440,7 @@ class Sensor(PublicObject):
         return _datamodel.Sensor_unit(self)
 
     def setLowFrequency(self, lowFrequency):
-        r"""setLowFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & lowFrequency)"""
+        r"""setLowFrequency(Sensor self, Seiscomp::Core::Optional< double > const & lowFrequency)"""
         return _datamodel.Sensor_setLowFrequency(self, lowFrequency)
 
     def lowFrequency(self):
@@ -12444,7 +12448,7 @@ class Sensor(PublicObject):
         return _datamodel.Sensor_lowFrequency(self)
 
     def setHighFrequency(self, highFrequency):
-        r"""setHighFrequency(Sensor self, Seiscomp::Core::Optional< double >::Impl const & highFrequency)"""
+        r"""setHighFrequency(Sensor self, Seiscomp::Core::Optional< double > const & highFrequency)"""
         return _datamodel.Sensor_setHighFrequency(self, highFrequency)
 
     def highFrequency(self):
@@ -12460,7 +12464,7 @@ class Sensor(PublicObject):
         return _datamodel.Sensor_response(self)
 
     def setRemark(self, remark):
-        r"""setRemark(Sensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(Sensor self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.Sensor_setRemark(self, remark)
 
     def remark(self, *args):
@@ -12667,7 +12671,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_type(self)
 
     def setGain(self, gain):
-        r"""setGain(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(ResponsePAZ self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.ResponsePAZ_setGain(self, gain)
 
     def gain(self):
@@ -12675,7 +12679,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.ResponsePAZ_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -12683,7 +12687,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_gainFrequency(self)
 
     def setNormalizationFactor(self, normalizationFactor):
-        r"""setNormalizationFactor(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFactor)"""
+        r"""setNormalizationFactor(ResponsePAZ self, Seiscomp::Core::Optional< double > const & normalizationFactor)"""
         return _datamodel.ResponsePAZ_setNormalizationFactor(self, normalizationFactor)
 
     def normalizationFactor(self):
@@ -12691,7 +12695,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_normalizationFactor(self)
 
     def setNormalizationFrequency(self, normalizationFrequency):
-        r"""setNormalizationFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & normalizationFrequency)"""
+        r"""setNormalizationFrequency(ResponsePAZ self, Seiscomp::Core::Optional< double > const & normalizationFrequency)"""
         return _datamodel.ResponsePAZ_setNormalizationFrequency(self, normalizationFrequency)
 
     def normalizationFrequency(self):
@@ -12699,7 +12703,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_normalizationFrequency(self)
 
     def setNumberOfZeros(self, numberOfZeros):
-        r"""setNumberOfZeros(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfZeros)"""
+        r"""setNumberOfZeros(ResponsePAZ self, Seiscomp::Core::Optional< int > const & numberOfZeros)"""
         return _datamodel.ResponsePAZ_setNumberOfZeros(self, numberOfZeros)
 
     def numberOfZeros(self):
@@ -12707,7 +12711,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_numberOfZeros(self)
 
     def setNumberOfPoles(self, numberOfPoles):
-        r"""setNumberOfPoles(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & numberOfPoles)"""
+        r"""setNumberOfPoles(ResponsePAZ self, Seiscomp::Core::Optional< int > const & numberOfPoles)"""
         return _datamodel.ResponsePAZ_setNumberOfPoles(self, numberOfPoles)
 
     def numberOfPoles(self):
@@ -12715,7 +12719,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_numberOfPoles(self)
 
     def setZeros(self, zeros):
-        r"""setZeros(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & zeros)"""
+        r"""setZeros(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray > const & zeros)"""
         return _datamodel.ResponsePAZ_setZeros(self, zeros)
 
     def zeros(self, *args):
@@ -12726,7 +12730,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_zeros(self, *args)
 
     def setPoles(self, poles):
-        r"""setPoles(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray >::Impl const & poles)"""
+        r"""setPoles(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::ComplexArray > const & poles)"""
         return _datamodel.ResponsePAZ_setPoles(self, poles)
 
     def poles(self, *args):
@@ -12737,7 +12741,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_poles(self, *args)
 
     def setRemark(self, remark):
-        r"""setRemark(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(ResponsePAZ self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.ResponsePAZ_setRemark(self, remark)
 
     def remark(self, *args):
@@ -12748,7 +12752,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_remark(self, *args)
 
     def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponsePAZ self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        r"""setDecimationFactor(ResponsePAZ self, Seiscomp::Core::Optional< int > const & decimationFactor)"""
         return _datamodel.ResponsePAZ_setDecimationFactor(self, decimationFactor)
 
     def decimationFactor(self):
@@ -12756,7 +12760,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_decimationFactor(self)
 
     def setDelay(self, delay):
-        r"""setDelay(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        r"""setDelay(ResponsePAZ self, Seiscomp::Core::Optional< double > const & delay)"""
         return _datamodel.ResponsePAZ_setDelay(self, delay)
 
     def delay(self):
@@ -12764,7 +12768,7 @@ class ResponsePAZ(PublicObject):
         return _datamodel.ResponsePAZ_delay(self)
 
     def setCorrection(self, correction):
-        r"""setCorrection(ResponsePAZ self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        r"""setCorrection(ResponsePAZ self, Seiscomp::Core::Optional< double > const & correction)"""
         return _datamodel.ResponsePAZ_setCorrection(self, correction)
 
     def correction(self):
@@ -12934,7 +12938,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_name(self)
 
     def setGain(self, gain):
-        r"""setGain(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(ResponsePolynomial self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.ResponsePolynomial_setGain(self, gain)
 
     def gain(self):
@@ -12942,7 +12946,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(ResponsePolynomial self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.ResponsePolynomial_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -12966,7 +12970,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_approximationType(self)
 
     def setApproximationLowerBound(self, approximationLowerBound):
-        r"""setApproximationLowerBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationLowerBound)"""
+        r"""setApproximationLowerBound(ResponsePolynomial self, Seiscomp::Core::Optional< double > const & approximationLowerBound)"""
         return _datamodel.ResponsePolynomial_setApproximationLowerBound(self, approximationLowerBound)
 
     def approximationLowerBound(self):
@@ -12974,7 +12978,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_approximationLowerBound(self)
 
     def setApproximationUpperBound(self, approximationUpperBound):
-        r"""setApproximationUpperBound(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationUpperBound)"""
+        r"""setApproximationUpperBound(ResponsePolynomial self, Seiscomp::Core::Optional< double > const & approximationUpperBound)"""
         return _datamodel.ResponsePolynomial_setApproximationUpperBound(self, approximationUpperBound)
 
     def approximationUpperBound(self):
@@ -12982,7 +12986,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_approximationUpperBound(self)
 
     def setApproximationError(self, approximationError):
-        r"""setApproximationError(ResponsePolynomial self, Seiscomp::Core::Optional< double >::Impl const & approximationError)"""
+        r"""setApproximationError(ResponsePolynomial self, Seiscomp::Core::Optional< double > const & approximationError)"""
         return _datamodel.ResponsePolynomial_setApproximationError(self, approximationError)
 
     def approximationError(self):
@@ -12990,7 +12994,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_approximationError(self)
 
     def setNumberOfCoefficients(self, numberOfCoefficients):
-        r"""setNumberOfCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
+        r"""setNumberOfCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< int > const & numberOfCoefficients)"""
         return _datamodel.ResponsePolynomial_setNumberOfCoefficients(self, numberOfCoefficients)
 
     def numberOfCoefficients(self):
@@ -12998,7 +13002,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_numberOfCoefficients(self)
 
     def setCoefficients(self, coefficients):
-        r"""setCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
+        r"""setCoefficients(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray > const & coefficients)"""
         return _datamodel.ResponsePolynomial_setCoefficients(self, coefficients)
 
     def coefficients(self, *args):
@@ -13009,7 +13013,7 @@ class ResponsePolynomial(PublicObject):
         return _datamodel.ResponsePolynomial_coefficients(self, *args)
 
     def setRemark(self, remark):
-        r"""setRemark(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(ResponsePolynomial self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.ResponsePolynomial_setRemark(self, remark)
 
     def remark(self, *args):
@@ -13182,7 +13186,7 @@ class ResponseFAP(PublicObject):
         return _datamodel.ResponseFAP_name(self)
 
     def setGain(self, gain):
-        r"""setGain(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(ResponseFAP self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.ResponseFAP_setGain(self, gain)
 
     def gain(self):
@@ -13190,7 +13194,7 @@ class ResponseFAP(PublicObject):
         return _datamodel.ResponseFAP_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseFAP self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(ResponseFAP self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.ResponseFAP_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -13198,7 +13202,7 @@ class ResponseFAP(PublicObject):
         return _datamodel.ResponseFAP_gainFrequency(self)
 
     def setNumberOfTuples(self, numberOfTuples):
-        r"""setNumberOfTuples(ResponseFAP self, Seiscomp::Core::Optional< int >::Impl const & numberOfTuples)"""
+        r"""setNumberOfTuples(ResponseFAP self, Seiscomp::Core::Optional< int > const & numberOfTuples)"""
         return _datamodel.ResponseFAP_setNumberOfTuples(self, numberOfTuples)
 
     def numberOfTuples(self):
@@ -13206,7 +13210,7 @@ class ResponseFAP(PublicObject):
         return _datamodel.ResponseFAP_numberOfTuples(self)
 
     def setTuples(self, tuples):
-        r"""setTuples(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & tuples)"""
+        r"""setTuples(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray > const & tuples)"""
         return _datamodel.ResponseFAP_setTuples(self, tuples)
 
     def tuples(self, *args):
@@ -13217,7 +13221,7 @@ class ResponseFAP(PublicObject):
         return _datamodel.ResponseFAP_tuples(self, *args)
 
     def setRemark(self, remark):
-        r"""setRemark(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(ResponseFAP self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.ResponseFAP_setRemark(self, remark)
 
     def remark(self, *args):
@@ -13390,7 +13394,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_name(self)
 
     def setGain(self, gain):
-        r"""setGain(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(ResponseFIR self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.ResponseFIR_setGain(self, gain)
 
     def gain(self):
@@ -13398,7 +13402,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(ResponseFIR self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.ResponseFIR_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -13406,7 +13410,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_gainFrequency(self)
 
     def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        r"""setDecimationFactor(ResponseFIR self, Seiscomp::Core::Optional< int > const & decimationFactor)"""
         return _datamodel.ResponseFIR_setDecimationFactor(self, decimationFactor)
 
     def decimationFactor(self):
@@ -13414,7 +13418,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_decimationFactor(self)
 
     def setDelay(self, delay):
-        r"""setDelay(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        r"""setDelay(ResponseFIR self, Seiscomp::Core::Optional< double > const & delay)"""
         return _datamodel.ResponseFIR_setDelay(self, delay)
 
     def delay(self):
@@ -13422,7 +13426,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_delay(self)
 
     def setCorrection(self, correction):
-        r"""setCorrection(ResponseFIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        r"""setCorrection(ResponseFIR self, Seiscomp::Core::Optional< double > const & correction)"""
         return _datamodel.ResponseFIR_setCorrection(self, correction)
 
     def correction(self):
@@ -13430,7 +13434,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_correction(self)
 
     def setNumberOfCoefficients(self, numberOfCoefficients):
-        r"""setNumberOfCoefficients(ResponseFIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfCoefficients)"""
+        r"""setNumberOfCoefficients(ResponseFIR self, Seiscomp::Core::Optional< int > const & numberOfCoefficients)"""
         return _datamodel.ResponseFIR_setNumberOfCoefficients(self, numberOfCoefficients)
 
     def numberOfCoefficients(self):
@@ -13446,7 +13450,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_symmetry(self)
 
     def setCoefficients(self, coefficients):
-        r"""setCoefficients(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & coefficients)"""
+        r"""setCoefficients(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray > const & coefficients)"""
         return _datamodel.ResponseFIR_setCoefficients(self, coefficients)
 
     def coefficients(self, *args):
@@ -13457,7 +13461,7 @@ class ResponseFIR(PublicObject):
         return _datamodel.ResponseFIR_coefficients(self, *args)
 
     def setRemark(self, remark):
-        r"""setRemark(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(ResponseFIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.ResponseFIR_setRemark(self, remark)
 
     def remark(self, *args):
@@ -13638,7 +13642,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_type(self)
 
     def setGain(self, gain):
-        r"""setGain(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(ResponseIIR self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.ResponseIIR_setGain(self, gain)
 
     def gain(self):
@@ -13646,7 +13650,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(ResponseIIR self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.ResponseIIR_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -13654,7 +13658,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_gainFrequency(self)
 
     def setDecimationFactor(self, decimationFactor):
-        r"""setDecimationFactor(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & decimationFactor)"""
+        r"""setDecimationFactor(ResponseIIR self, Seiscomp::Core::Optional< int > const & decimationFactor)"""
         return _datamodel.ResponseIIR_setDecimationFactor(self, decimationFactor)
 
     def decimationFactor(self):
@@ -13662,7 +13666,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_decimationFactor(self)
 
     def setDelay(self, delay):
-        r"""setDelay(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & delay)"""
+        r"""setDelay(ResponseIIR self, Seiscomp::Core::Optional< double > const & delay)"""
         return _datamodel.ResponseIIR_setDelay(self, delay)
 
     def delay(self):
@@ -13670,7 +13674,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_delay(self)
 
     def setCorrection(self, correction):
-        r"""setCorrection(ResponseIIR self, Seiscomp::Core::Optional< double >::Impl const & correction)"""
+        r"""setCorrection(ResponseIIR self, Seiscomp::Core::Optional< double > const & correction)"""
         return _datamodel.ResponseIIR_setCorrection(self, correction)
 
     def correction(self):
@@ -13678,7 +13682,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_correction(self)
 
     def setNumberOfNumerators(self, numberOfNumerators):
-        r"""setNumberOfNumerators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfNumerators)"""
+        r"""setNumberOfNumerators(ResponseIIR self, Seiscomp::Core::Optional< int > const & numberOfNumerators)"""
         return _datamodel.ResponseIIR_setNumberOfNumerators(self, numberOfNumerators)
 
     def numberOfNumerators(self):
@@ -13686,7 +13690,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_numberOfNumerators(self)
 
     def setNumberOfDenominators(self, numberOfDenominators):
-        r"""setNumberOfDenominators(ResponseIIR self, Seiscomp::Core::Optional< int >::Impl const & numberOfDenominators)"""
+        r"""setNumberOfDenominators(ResponseIIR self, Seiscomp::Core::Optional< int > const & numberOfDenominators)"""
         return _datamodel.ResponseIIR_setNumberOfDenominators(self, numberOfDenominators)
 
     def numberOfDenominators(self):
@@ -13694,7 +13698,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_numberOfDenominators(self)
 
     def setNumerators(self, numerators):
-        r"""setNumerators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & numerators)"""
+        r"""setNumerators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray > const & numerators)"""
         return _datamodel.ResponseIIR_setNumerators(self, numerators)
 
     def numerators(self, *args):
@@ -13705,7 +13709,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_numerators(self, *args)
 
     def setDenominators(self, denominators):
-        r"""setDenominators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray >::Impl const & denominators)"""
+        r"""setDenominators(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::RealArray > const & denominators)"""
         return _datamodel.ResponseIIR_setDenominators(self, denominators)
 
     def denominators(self, *args):
@@ -13716,7 +13720,7 @@ class ResponseIIR(PublicObject):
         return _datamodel.ResponseIIR_denominators(self, *args)
 
     def setRemark(self, remark):
-        r"""setRemark(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(ResponseIIR self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.ResponseIIR_setRemark(self, remark)
 
     def remark(self, *args):
@@ -13894,7 +13898,7 @@ class DataloggerCalibration(Object):
         return _datamodel.DataloggerCalibration_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.DataloggerCalibration_setEnd(self, end)
 
     def end(self):
@@ -13902,7 +13906,7 @@ class DataloggerCalibration(Object):
         return _datamodel.DataloggerCalibration_end(self)
 
     def setGain(self, gain):
-        r"""setGain(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(DataloggerCalibration self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.DataloggerCalibration_setGain(self, gain)
 
     def gain(self):
@@ -13910,7 +13914,7 @@ class DataloggerCalibration(Object):
         return _datamodel.DataloggerCalibration_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(DataloggerCalibration self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(DataloggerCalibration self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.DataloggerCalibration_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -13918,7 +13922,7 @@ class DataloggerCalibration(Object):
         return _datamodel.DataloggerCalibration_gainFrequency(self)
 
     def setRemark(self, remark):
-        r"""setRemark(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(DataloggerCalibration self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.DataloggerCalibration_setRemark(self, remark)
 
     def remark(self, *args):
@@ -14083,7 +14087,7 @@ class Decimation(Object):
         return _datamodel.Decimation_sampleRateDenominator(self)
 
     def setAnalogueFilterChain(self, analogueFilterChain):
-        r"""setAnalogueFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & analogueFilterChain)"""
+        r"""setAnalogueFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & analogueFilterChain)"""
         return _datamodel.Decimation_setAnalogueFilterChain(self, analogueFilterChain)
 
     def analogueFilterChain(self, *args):
@@ -14094,7 +14098,7 @@ class Decimation(Object):
         return _datamodel.Decimation_analogueFilterChain(self, *args)
 
     def setDigitalFilterChain(self, digitalFilterChain):
-        r"""setDigitalFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & digitalFilterChain)"""
+        r"""setDigitalFilterChain(Decimation self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & digitalFilterChain)"""
         return _datamodel.Decimation_setDigitalFilterChain(self, digitalFilterChain)
 
     def digitalFilterChain(self, *args):
@@ -14327,7 +14331,7 @@ class Datalogger(PublicObject):
         return _datamodel.Datalogger_clockType(self)
 
     def setGain(self, gain):
-        r"""setGain(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(Datalogger self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.Datalogger_setGain(self, gain)
 
     def gain(self):
@@ -14335,7 +14339,7 @@ class Datalogger(PublicObject):
         return _datamodel.Datalogger_gain(self)
 
     def setMaxClockDrift(self, maxClockDrift):
-        r"""setMaxClockDrift(Datalogger self, Seiscomp::Core::Optional< double >::Impl const & maxClockDrift)"""
+        r"""setMaxClockDrift(Datalogger self, Seiscomp::Core::Optional< double > const & maxClockDrift)"""
         return _datamodel.Datalogger_setMaxClockDrift(self, maxClockDrift)
 
     def maxClockDrift(self):
@@ -14343,7 +14347,7 @@ class Datalogger(PublicObject):
         return _datamodel.Datalogger_maxClockDrift(self)
 
     def setRemark(self, remark):
-        r"""setRemark(Datalogger self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(Datalogger self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.Datalogger_setRemark(self, remark)
 
     def remark(self, *args):
@@ -14562,7 +14566,7 @@ class AuxStream(Object):
         return _datamodel.AuxStream_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(AuxStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(AuxStream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.AuxStream_setEnd(self, end)
 
     def end(self):
@@ -14610,7 +14614,7 @@ class AuxStream(Object):
         return _datamodel.AuxStream_flags(self)
 
     def setRestricted(self, restricted):
-        r"""setRestricted(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        r"""setRestricted(AuxStream self, Seiscomp::Core::Optional< bool > const & restricted)"""
         return _datamodel.AuxStream_setRestricted(self, restricted)
 
     def restricted(self):
@@ -14618,7 +14622,7 @@ class AuxStream(Object):
         return _datamodel.AuxStream_restricted(self)
 
     def setShared(self, shared):
-        r"""setShared(AuxStream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        r"""setShared(AuxStream self, Seiscomp::Core::Optional< bool > const & shared)"""
         return _datamodel.AuxStream_setShared(self, shared)
 
     def shared(self):
@@ -14793,7 +14797,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Stream self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Stream self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Stream_setEnd(self, end)
 
     def end(self):
@@ -14817,7 +14821,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_dataloggerSerialNumber(self)
 
     def setDataloggerChannel(self, dataloggerChannel):
-        r"""setDataloggerChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & dataloggerChannel)"""
+        r"""setDataloggerChannel(Stream self, Seiscomp::Core::Optional< int > const & dataloggerChannel)"""
         return _datamodel.Stream_setDataloggerChannel(self, dataloggerChannel)
 
     def dataloggerChannel(self):
@@ -14841,7 +14845,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_sensorSerialNumber(self)
 
     def setSensorChannel(self, sensorChannel):
-        r"""setSensorChannel(Stream self, Seiscomp::Core::Optional< int >::Impl const & sensorChannel)"""
+        r"""setSensorChannel(Stream self, Seiscomp::Core::Optional< int > const & sensorChannel)"""
         return _datamodel.Stream_setSensorChannel(self, sensorChannel)
 
     def sensorChannel(self):
@@ -14857,7 +14861,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_clockSerialNumber(self)
 
     def setSampleRateNumerator(self, sampleRateNumerator):
-        r"""setSampleRateNumerator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateNumerator)"""
+        r"""setSampleRateNumerator(Stream self, Seiscomp::Core::Optional< int > const & sampleRateNumerator)"""
         return _datamodel.Stream_setSampleRateNumerator(self, sampleRateNumerator)
 
     def sampleRateNumerator(self):
@@ -14865,7 +14869,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_sampleRateNumerator(self)
 
     def setSampleRateDenominator(self, sampleRateDenominator):
-        r"""setSampleRateDenominator(Stream self, Seiscomp::Core::Optional< int >::Impl const & sampleRateDenominator)"""
+        r"""setSampleRateDenominator(Stream self, Seiscomp::Core::Optional< int > const & sampleRateDenominator)"""
         return _datamodel.Stream_setSampleRateDenominator(self, sampleRateDenominator)
 
     def sampleRateDenominator(self):
@@ -14873,7 +14877,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_sampleRateDenominator(self)
 
     def setDepth(self, depth):
-        r"""setDepth(Stream self, Seiscomp::Core::Optional< double >::Impl const & depth)"""
+        r"""setDepth(Stream self, Seiscomp::Core::Optional< double > const & depth)"""
         return _datamodel.Stream_setDepth(self, depth)
 
     def depth(self):
@@ -14881,7 +14885,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_depth(self)
 
     def setAzimuth(self, azimuth):
-        r"""setAzimuth(Stream self, Seiscomp::Core::Optional< double >::Impl const & azimuth)"""
+        r"""setAzimuth(Stream self, Seiscomp::Core::Optional< double > const & azimuth)"""
         return _datamodel.Stream_setAzimuth(self, azimuth)
 
     def azimuth(self):
@@ -14889,7 +14893,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_azimuth(self)
 
     def setDip(self, dip):
-        r"""setDip(Stream self, Seiscomp::Core::Optional< double >::Impl const & dip)"""
+        r"""setDip(Stream self, Seiscomp::Core::Optional< double > const & dip)"""
         return _datamodel.Stream_setDip(self, dip)
 
     def dip(self):
@@ -14897,7 +14901,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_dip(self)
 
     def setGain(self, gain):
-        r"""setGain(Stream self, Seiscomp::Core::Optional< double >::Impl const & gain)"""
+        r"""setGain(Stream self, Seiscomp::Core::Optional< double > const & gain)"""
         return _datamodel.Stream_setGain(self, gain)
 
     def gain(self):
@@ -14905,7 +14909,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_gain(self)
 
     def setGainFrequency(self, gainFrequency):
-        r"""setGainFrequency(Stream self, Seiscomp::Core::Optional< double >::Impl const & gainFrequency)"""
+        r"""setGainFrequency(Stream self, Seiscomp::Core::Optional< double > const & gainFrequency)"""
         return _datamodel.Stream_setGainFrequency(self, gainFrequency)
 
     def gainFrequency(self):
@@ -14937,7 +14941,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_flags(self)
 
     def setRestricted(self, restricted):
-        r"""setRestricted(Stream self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        r"""setRestricted(Stream self, Seiscomp::Core::Optional< bool > const & restricted)"""
         return _datamodel.Stream_setRestricted(self, restricted)
 
     def restricted(self):
@@ -14945,7 +14949,7 @@ class Stream(PublicObject):
         return _datamodel.Stream_restricted(self)
 
     def setShared(self, shared):
-        r"""setShared(Stream self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        r"""setShared(Stream self, Seiscomp::Core::Optional< bool > const & shared)"""
         return _datamodel.Stream_setShared(self, shared)
 
     def shared(self):
@@ -15150,7 +15154,7 @@ class SensorLocation(PublicObject):
         return _datamodel.SensorLocation_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(SensorLocation self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(SensorLocation self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.SensorLocation_setEnd(self, end)
 
     def end(self):
@@ -15158,7 +15162,7 @@ class SensorLocation(PublicObject):
         return _datamodel.SensorLocation_end(self)
 
     def setLatitude(self, latitude):
-        r"""setLatitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        r"""setLatitude(SensorLocation self, Seiscomp::Core::Optional< double > const & latitude)"""
         return _datamodel.SensorLocation_setLatitude(self, latitude)
 
     def latitude(self):
@@ -15166,7 +15170,7 @@ class SensorLocation(PublicObject):
         return _datamodel.SensorLocation_latitude(self)
 
     def setLongitude(self, longitude):
-        r"""setLongitude(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        r"""setLongitude(SensorLocation self, Seiscomp::Core::Optional< double > const & longitude)"""
         return _datamodel.SensorLocation_setLongitude(self, longitude)
 
     def longitude(self):
@@ -15174,7 +15178,7 @@ class SensorLocation(PublicObject):
         return _datamodel.SensorLocation_longitude(self)
 
     def setElevation(self, elevation):
-        r"""setElevation(SensorLocation self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        r"""setElevation(SensorLocation self, Seiscomp::Core::Optional< double > const & elevation)"""
         return _datamodel.SensorLocation_setElevation(self, elevation)
 
     def elevation(self):
@@ -15427,7 +15431,7 @@ class Station(PublicObject):
         return _datamodel.Station_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Station self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Station self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Station_setEnd(self, end)
 
     def end(self):
@@ -15443,7 +15447,7 @@ class Station(PublicObject):
         return _datamodel.Station_description(self)
 
     def setLatitude(self, latitude):
-        r"""setLatitude(Station self, Seiscomp::Core::Optional< double >::Impl const & latitude)"""
+        r"""setLatitude(Station self, Seiscomp::Core::Optional< double > const & latitude)"""
         return _datamodel.Station_setLatitude(self, latitude)
 
     def latitude(self):
@@ -15451,7 +15455,7 @@ class Station(PublicObject):
         return _datamodel.Station_latitude(self)
 
     def setLongitude(self, longitude):
-        r"""setLongitude(Station self, Seiscomp::Core::Optional< double >::Impl const & longitude)"""
+        r"""setLongitude(Station self, Seiscomp::Core::Optional< double > const & longitude)"""
         return _datamodel.Station_setLongitude(self, longitude)
 
     def longitude(self):
@@ -15459,7 +15463,7 @@ class Station(PublicObject):
         return _datamodel.Station_longitude(self)
 
     def setElevation(self, elevation):
-        r"""setElevation(Station self, Seiscomp::Core::Optional< double >::Impl const & elevation)"""
+        r"""setElevation(Station self, Seiscomp::Core::Optional< double > const & elevation)"""
         return _datamodel.Station_setElevation(self, elevation)
 
     def elevation(self):
@@ -15515,7 +15519,7 @@ class Station(PublicObject):
         return _datamodel.Station_archiveNetworkCode(self)
 
     def setRestricted(self, restricted):
-        r"""setRestricted(Station self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        r"""setRestricted(Station self, Seiscomp::Core::Optional< bool > const & restricted)"""
         return _datamodel.Station_setRestricted(self, restricted)
 
     def restricted(self):
@@ -15523,7 +15527,7 @@ class Station(PublicObject):
         return _datamodel.Station_restricted(self)
 
     def setShared(self, shared):
-        r"""setShared(Station self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        r"""setShared(Station self, Seiscomp::Core::Optional< bool > const & shared)"""
         return _datamodel.Station_setShared(self, shared)
 
     def shared(self):
@@ -15531,7 +15535,7 @@ class Station(PublicObject):
         return _datamodel.Station_shared(self)
 
     def setRemark(self, remark):
-        r"""setRemark(Station self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(Station self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.Station_setRemark(self, remark)
 
     def remark(self, *args):
@@ -15767,7 +15771,7 @@ class Network(PublicObject):
         return _datamodel.Network_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Network self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Network self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Network_setEnd(self, end)
 
     def end(self):
@@ -15823,7 +15827,7 @@ class Network(PublicObject):
         return _datamodel.Network_archive(self)
 
     def setRestricted(self, restricted):
-        r"""setRestricted(Network self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        r"""setRestricted(Network self, Seiscomp::Core::Optional< bool > const & restricted)"""
         return _datamodel.Network_setRestricted(self, restricted)
 
     def restricted(self):
@@ -15831,7 +15835,7 @@ class Network(PublicObject):
         return _datamodel.Network_restricted(self)
 
     def setShared(self, shared):
-        r"""setShared(Network self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        r"""setShared(Network self, Seiscomp::Core::Optional< bool > const & shared)"""
         return _datamodel.Network_setShared(self, shared)
 
     def shared(self):
@@ -15839,7 +15843,7 @@ class Network(PublicObject):
         return _datamodel.Network_shared(self)
 
     def setRemark(self, remark):
-        r"""setRemark(Network self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob >::Impl const & remark)"""
+        r"""setRemark(Network self, Seiscomp::Core::Optional< Seiscomp::DataModel::Blob > const & remark)"""
         return _datamodel.Network_setRemark(self, remark)
 
     def remark(self, *args):
@@ -16415,7 +16419,7 @@ class RouteArclink(Object):
         return _datamodel.RouteArclink_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(RouteArclink self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(RouteArclink self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.RouteArclink_setEnd(self, end)
 
     def end(self):
@@ -16423,7 +16427,7 @@ class RouteArclink(Object):
         return _datamodel.RouteArclink_end(self)
 
     def setPriority(self, priority):
-        r"""setPriority(RouteArclink self, Seiscomp::Core::Optional< int >::Impl const & priority)"""
+        r"""setPriority(RouteArclink self, Seiscomp::Core::Optional< int > const & priority)"""
         return _datamodel.RouteArclink_setPriority(self, priority)
 
     def priority(self):
@@ -16576,7 +16580,7 @@ class RouteSeedlink(Object):
         return _datamodel.RouteSeedlink_address(self)
 
     def setPriority(self, priority):
-        r"""setPriority(RouteSeedlink self, Seiscomp::Core::Optional< int >::Impl const & priority)"""
+        r"""setPriority(RouteSeedlink self, Seiscomp::Core::Optional< int > const & priority)"""
         return _datamodel.RouteSeedlink_setPriority(self, priority)
 
     def priority(self):
@@ -17013,7 +17017,7 @@ class Access(Object):
         return _datamodel.Access_start(self)
 
     def setEnd(self, end):
-        r"""setEnd(Access self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & end)"""
+        r"""setEnd(Access self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
         return _datamodel.Access_setEnd(self, end)
 
     def end(self):
@@ -17289,7 +17293,7 @@ class JournalEntry(Object):
         return _datamodel.JournalEntry_equal(self, other)
 
     def setCreated(self, created):
-        r"""setCreated(JournalEntry self, Seiscomp::Core::Optional< Seiscomp::Core::Time >::Impl const & created)"""
+        r"""setCreated(JournalEntry self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & created)"""
         return _datamodel.JournalEntry_setCreated(self, created)
 
     def created(self):
@@ -17782,7 +17786,7 @@ class ArclinkStatusLine(Object):
         return _datamodel.ArclinkStatusLine_status(self)
 
     def setSize(self, size):
-        r"""setSize(ArclinkStatusLine self, Seiscomp::Core::Optional< int >::Impl const & size)"""
+        r"""setSize(ArclinkStatusLine self, Seiscomp::Core::Optional< int > const & size)"""
         return _datamodel.ArclinkStatusLine_setSize(self, size)
 
     def size(self):
@@ -17972,7 +17976,7 @@ class ArclinkRequestLine(Object):
         return _datamodel.ArclinkRequestLine_streamID(self, *args)
 
     def setRestricted(self, restricted):
-        r"""setRestricted(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & restricted)"""
+        r"""setRestricted(ArclinkRequestLine self, Seiscomp::Core::Optional< bool > const & restricted)"""
         return _datamodel.ArclinkRequestLine_setRestricted(self, restricted)
 
     def restricted(self):
@@ -17980,7 +17984,7 @@ class ArclinkRequestLine(Object):
         return _datamodel.ArclinkRequestLine_restricted(self)
 
     def setShared(self, shared):
-        r"""setShared(ArclinkRequestLine self, Seiscomp::Core::Optional< bool >::Impl const & shared)"""
+        r"""setShared(ArclinkRequestLine self, Seiscomp::Core::Optional< bool > const & shared)"""
         return _datamodel.ArclinkRequestLine_setShared(self, shared)
 
     def shared(self):
@@ -18255,7 +18259,7 @@ class ArclinkRequest(PublicObject):
         return _datamodel.ArclinkRequest_header(self)
 
     def setSummary(self, summary):
-        r"""setSummary(ArclinkRequest self, Seiscomp::Core::Optional< Seiscomp::DataModel::ArclinkRequestSummary >::Impl const & summary)"""
+        r"""setSummary(ArclinkRequest self, Seiscomp::Core::Optional< Seiscomp::DataModel::ArclinkRequestSummary > const & summary)"""
         return _datamodel.ArclinkRequest_setSummary(self, summary)
 
     def summary(self, *args):
@@ -19849,7 +19853,7 @@ class ConfigSyncMessage(seiscomp.core.Message):
         return _datamodel.ConfigSyncMessage_empty(self)
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(ConfigSyncMessage self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(ConfigSyncMessage self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.ConfigSyncMessage_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):
@@ -19915,7 +19919,7 @@ class InventorySyncMessage(seiscomp.core.Message):
         _datamodel.InventorySyncMessage_swiginit(self, _datamodel.new_InventorySyncMessage(*args))
 
     def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(InventorySyncMessage self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo >::Impl const & creationInfo)"""
+        r"""setCreationInfo(InventorySyncMessage self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
         return _datamodel.InventorySyncMessage_setCreationInfo(self, creationInfo)
 
     def creationInfo(self, *args):

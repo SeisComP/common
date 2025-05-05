@@ -274,6 +274,8 @@ Result WebsocketConnection::connect(const char *address,
 	{
 		lock_guard<mutex> lread(_readMutex);
 
+		_schemaVersion = 0;
+		_supportsDeleteTree = false;
 		_extendedParameters = KeyValueStore();
 		_state = State();
 		_select.clear();
@@ -578,6 +580,20 @@ Result WebsocketConnection::connect(const char *address,
 					packet->sender = "MASTER";
 					Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1);
 					queuePacket(packet);
+				}
+			}
+			else if ( headers.nameEquals("DB-Delete-Tree") ) {
+				string option(headers.val_start, headers.val_len);
+				if ( option == "1" ) {
+					_supportsDeleteTree = true;
+				}
+				else if ( option == "0" ) {
+					_supportsDeleteTree = false;
+				}
+				else {
+					_errorMessage = "Invalid DB-Delete-Tree option: " + option;
+					_socket = nullptr;
+					return NetworkProtocolError;
 				}
 			}
 			else if ( headers.nameStartsWith("X-") ) {
@@ -1214,6 +1230,7 @@ Result WebsocketConnection::disconnect() {
 	_registeredClientName = string();
 	_state.sequenceNumber = Core::None;
 	_schemaVersion = 0;
+	_supportsDeleteTree = false;
 	_extendedParameters = KeyValueStore();
 	// Remove all un-ack'ed messages as we have actively disconnected
 	// the session

@@ -25,6 +25,7 @@
 #include "seiscomp/core/exceptions.h"
 #include "seiscomp/core/datamessage.h"
 #include "seiscomp/core/greensfunction.h"
+#include "seiscomp/config/exceptions.h"
 #include "seiscomp/math/geo.h"
 #include "seiscomp/math/coord.h"
 #include "seiscomp/math/math.h"
@@ -48,6 +49,7 @@
 #include "seiscomp/io/recordfilter/crop.h"
 #include "seiscomp/io/recordfilter/demux.h"
 #include "seiscomp/io/recordfilter/iirfilter.h"
+#include "seiscomp/io/recordfilter/mseedencoder.h"
 #include "seiscomp/io/recordfilter/resample.h"
 #include "seiscomp/io/importer.h"
 #include "seiscomp/io/exporter.h"
@@ -68,9 +70,9 @@
 #include "seiscomp/datamodel/config_package.h"
 #include "seiscomp/datamodel/routing_package.h"
 
+#include "seiscomp/seismology/locatorinterface.h"
 #include "seiscomp/seismology/regions.h"
 #include "seiscomp/seismology/ttt.h"
-#include "seiscomp/seismology/locator/locsat.h"
 %}
 
 %include "std_string.i"
@@ -108,4 +110,3 @@
 %include "seiscomp/seismology/regions.h"
 %include "seiscomp/seismology/locatorinterface.h"
 %include "seiscomp/seismology/ttt.h"
-%include "seiscomp/seismology/locator/locsat.h"

@@ -2439,6 +2439,7 @@ PickerView::Config::Config() {
 
 	onlyApplyIntegrationFilterOnce = true;
 	ignoreDisabledStations = true;
+	showDataInSensorUnit = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2564,6 +2565,7 @@ void PickerView::init() {
 #endif
 
 	SC_D.ui.setupUi(this);
+	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
 
 	QFont f(font());
 	f.setBold(true);
@@ -3653,7 +3655,9 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 	}
 
 	SC_D.ui.actionShowUnassociatedPicks->setChecked(SC_D.config.loadAllPicks);
+	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
 
+	showTraceScaleToggled(SC_D.config.showDataInSensorUnit);
 	initPhases();
 	acquireStreams();
 

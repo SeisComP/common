@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_CORE_OPTIONAL_H
 #define SEISCOMP_CORE_OPTIONAL_H
 
+
 #include <seiscomp/core.h>
 
 #include <exception>
@@ -38,23 +39,21 @@ namespace Core {
 /** \brief Redefines boost::optional<T>
   * Optional values can be set or unset.
   * \code
-  *   void print(const Optional<int>::Impl& v) {
+  *   void print(const Optional<int> &v) {
   *     if ( !v )
   *       cout << "value of v is not set" << endl;
   *     else
   *       cout << *v << endl;
   *   }
   *
-  *   Optional<int>::Impl a = 5;
+  *   Optional<int> a = 5;
   *   print(a);  // output: "5"
   *   a = None;
   *   print(a);  // output: "value of v is not set"
   * \endcode
   */
 template <typename T>
-struct Optional {
-	typedef ::boost::optional<T> Impl;
-};
+using Optional = ::boost::optional<T>;
 
 /** Defines None */
 SC_SYSTEM_CORE_API extern ::boost::none_t const None;
@@ -84,7 +83,7 @@ struct isOptional<U<Args...>>
 
 
 template <typename T>
-T value(const boost::optional<T>&);
+T value(const Optional<T>&);
 
 class SC_SYSTEM_CORE_API ValueError : public std::exception {
 	public:
@@ -96,11 +95,14 @@ class SC_SYSTEM_CORE_API ValueError : public std::exception {
 };
 
 /** Macro to use optional values easily */
-#define OPT(T) Seiscomp::Core::Optional<T>::Impl
+#define OPT(T) Seiscomp::Core::Optional<T>
 /** Macro to use optional values as const reference */
-#define OPT_CR(T) const Seiscomp::Core::Optional<T>::Impl&
+#define OPT_CR(T) const Seiscomp::Core::Optional<T>&
+
 
 #include <seiscomp/core/optional.inl>
+
+
 
 }
 }

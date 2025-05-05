@@ -239,6 +239,15 @@ WebsocketProxy::WebsocketProxy() {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+WebsocketProxy::Backend WebsocketProxy::backend() const {
+	return _backend;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WebsocketProxy::connect(const char* connection) {
 	setDefaults();
 	return DatabaseInterface::connect(connection);
@@ -663,6 +672,7 @@ void WebsocketProxy::handleInterrupt(int) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WebsocketProxy::establishConnection() const {
+	_backend = Unknown;
 	_socket = createSocket();
 	_socket->setNoDelay(true);
 	auto r = _socket->connect(_host, _port);
@@ -741,15 +751,23 @@ bool WebsocketProxy::establishConnection() const {
 
 	const_cast<string&>(_columnPrefix) = "";
 	for ( const auto &header : resp.headers ) {
-		if ( header.first == "X-DB-Prefix" ) {
+		if ( header.first == "X-DB-Backend" ) {
+			if ( !_backend.fromString(header.second) ) {
+				SEISCOMP_ERROR("Invalid or unknown backend: %s", header.second);
+				_socket = nullptr;
+				return false;
+			}
+			SEISCOMP_DEBUG("Set backend to '%s'", _backend.toString());
+		}
+		else if ( header.first == "X-DB-Prefix" ) {
 			const_cast<string&>(_columnPrefix) = header.second;
-			SEISCOMP_DEBUG("Set column prefix to '%s'", _columnPrefix.c_str());
+			SEISCOMP_DEBUG("Set column prefix to '%s'", _columnPrefix);
 			break;
 		}
 	}
 
 	if ( resp.statusCode != 101 ) {
-		SEISCOMP_ERROR("Connection error %d: %s", resp.statusCode, resp.body.c_str());
+		SEISCOMP_ERROR("Connection error %d: %s", resp.statusCode, resp.body);
 		_socket = nullptr;
 		return false;
 	}

@@ -384,8 +384,9 @@ bool Reading::add(PickReference *pickReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::remove(PickReference *pickReference) {
-	if ( !pickReference )
+	if ( !pickReference ) {
 		return false;
+	}
 
 	if ( pickReference->parent() != this ) {
 		SEISCOMP_ERROR("Reading::remove(PickReference*) -> element has another parent");
@@ -401,8 +402,7 @@ bool Reading::remove(PickReference *pickReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -425,8 +425,7 @@ bool Reading::removePickReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_pickReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _pickReferences[i].get());
 	}
 
 	_pickReferences[i]->setParent(nullptr);
@@ -530,8 +529,9 @@ bool Reading::add(AmplitudeReference *amplitudeReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::remove(AmplitudeReference *amplitudeReference) {
-	if ( !amplitudeReference )
+	if ( !amplitudeReference ) {
 		return false;
+	}
 
 	if ( amplitudeReference->parent() != this ) {
 		SEISCOMP_ERROR("Reading::remove(AmplitudeReference*) -> element has another parent");
@@ -547,8 +547,7 @@ bool Reading::remove(AmplitudeReference *amplitudeReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -571,8 +570,7 @@ bool Reading::removeAmplitudeReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudeReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudeReferences[i].get());
 	}
 
 	_amplitudeReferences[i]->setParent(nullptr);

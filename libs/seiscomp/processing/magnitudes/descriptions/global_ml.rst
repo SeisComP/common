@@ -7,7 +7,7 @@ General (default) conditions apply:
 * Time window, configurable: 150 s by :ref:`scautopick` or distance dependent, configurable.
 * Distance type: epicentral distance.
 * Distance range: 0 - 8 deg,  maximum is configurable:
-  :confval:`magnitudes.ML.maxDistanceKm`,
+  :confval:`magnitudes.ML.maxDist`,
   measurements beyond 8 deg will be strictly ignored.
 * Depth range: 0 - 80 km, configurable for amplitude measurements.
 
@@ -41,7 +41,7 @@ module.trunk.global.magnitudes.ML.logA0 in :file:`global.cfg`, e.g.
 .. code-block:: properties
 
    module.trunk.global.magnitudes.ML.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
-   module.trunk.global.magnitudes.ML.maxDistanceKm = "-1"
+   module.trunk.global.magnitudes.ML.maxDist = 1000km
 
 The *logA0* configuration string consists of an arbitrary number of
 distance-value pairs separated by comma. Within the pairs, the values are

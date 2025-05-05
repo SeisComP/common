@@ -1188,6 +1188,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 
 	changedRecords(slot, s);
 
+	stream->axisDirty = true;
 	stream->traces[Stream::Raw].dirtyData = true;
 	stream->traces[Stream::Filtered].dirtyData = true;
 
@@ -4142,9 +4143,9 @@ bool RecordWidget::isRecordFilteringEnabled(int slot) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setGridSpacing(double large, double _small, double ofs) {
+void RecordWidget::setGridSpacing(double large, double small, double ofs) {
 	_gridHSpacing[0] = large;
-	_gridHSpacing[1] = _small;
+	_gridHSpacing[1] = small;
 	_gridHOffset = ofs;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4153,9 +4154,9 @@ void RecordWidget::setGridSpacing(double large, double _small, double ofs) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setGridVSpacing(double large, double _small, double ofs) {
+void RecordWidget::setGridVSpacing(double large, double small, double ofs) {
 	_gridVSpacing[0] = large;
-	_gridVSpacing[1] = _small;
+	_gridVSpacing[1] = small;
 	_gridVOffset = ofs;
 	update();
 }

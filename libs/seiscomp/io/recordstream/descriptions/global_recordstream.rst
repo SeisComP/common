@@ -66,7 +66,7 @@ Examples
 ^^^^^^^^
 
 - ``slink://``
-- ``slink://geofon.gfz-potsdam.de?timeout=60&retries=5``
+- ``slink://geofon.gfz.de?timeout=60&retries=5``
 - ``slink://localhost:18000``
 
 .. _rs-arclink:
@@ -95,7 +95,7 @@ Examples
 ^^^^^^^^
 
 - ``arclink://``
-- ``arclink://geofon.gfz-potsdam.de?user=foo&pwd=secret``
+- ``arclink://geofon.gfz.de?user=foo&pwd=secret``
 - ``arclink://localhost:18042``
 - ``arclink://localhost?dump=test.mseed``
 
@@ -130,7 +130,7 @@ Examples
 
 - ``fdsnws://service.iris.edu``
 - ``fdsnws://service.iris.edu:80/fdsnws/dataselect/1/query``
-- ``fdsnwss://geofon.gfz-potsdam.de``
+- ``fdsnwss://geofon.gfz.de``
 
 .. _rs-file:
 

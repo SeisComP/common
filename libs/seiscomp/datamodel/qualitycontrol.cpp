@@ -325,8 +325,9 @@ bool QualityControl::add(QCLog *qCLog) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QualityControl::remove(QCLog *qCLog) {
-	if ( !qCLog )
+	if ( !qCLog ) {
 		return false;
+	}
 
 	if ( qCLog->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(QCLog*) -> element has another parent");
@@ -342,8 +343,7 @@ bool QualityControl::remove(QCLog *qCLog) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -366,8 +366,7 @@ bool QualityControl::removeQCLog(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_qCLogs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _qCLogs[i].get());
 	}
 
 	_qCLogs[i]->setParent(nullptr);
@@ -471,8 +470,9 @@ bool QualityControl::add(WaveformQuality *waveformQuality) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QualityControl::remove(WaveformQuality *waveformQuality) {
-	if ( !waveformQuality )
+	if ( !waveformQuality ) {
 		return false;
+	}
 
 	if ( waveformQuality->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(WaveformQuality*) -> element has another parent");
@@ -488,8 +488,7 @@ bool QualityControl::remove(WaveformQuality *waveformQuality) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -512,8 +511,7 @@ bool QualityControl::removeWaveformQuality(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_waveformQualitys[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _waveformQualitys[i].get());
 	}
 
 	_waveformQualitys[i]->setParent(nullptr);
@@ -617,8 +615,9 @@ bool QualityControl::add(Outage *outage) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QualityControl::remove(Outage *outage) {
-	if ( !outage )
+	if ( !outage ) {
 		return false;
+	}
 
 	if ( outage->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(Outage*) -> element has another parent");
@@ -634,8 +633,7 @@ bool QualityControl::remove(Outage *outage) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -658,8 +656,7 @@ bool QualityControl::removeOutage(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_outages[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _outages[i].get());
 	}
 
 	_outages[i]->setParent(nullptr);

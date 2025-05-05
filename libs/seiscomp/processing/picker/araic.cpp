@@ -190,8 +190,8 @@ bool ARAICPicker::setup(const Settings &settings) {
 
 	if ( !_filter.empty() ) {
 		string error;
-		Core::SmartPointer<Filter>::Impl tmp = Filter::Create(_filter, &error);
-		if ( tmp == nullptr ) {
+		Core::SmartPointer<Filter> tmp = Filter::Create(_filter, &error);
+		if ( !tmp ) {
 			SEISCOMP_ERROR("failed to create filter '%s': %s",
 			               _filter.c_str(), error.c_str());
 			return false;
@@ -230,7 +230,7 @@ bool ARAICPicker::calculatePick(int n, const double *data,
                                 int &triggerIdx, int &lowerUncertainty,
                                 int &upperUncertainty, double &snr,
                                 OPT(Polarity) &polarity) {
-	Core::SmartPointer<Filter>::Impl filter = _filter.empty()?nullptr:Filter::Create(_filter);
+	Core::SmartPointer<Filter> filter = _filter.empty()?nullptr:Filter::Create(_filter);
 	if ( filter ) {
 		SEISCOMP_DEBUG("AIC: created filter %s", _filter.c_str());
 		try {

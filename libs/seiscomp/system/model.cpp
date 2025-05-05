@@ -353,6 +353,9 @@ void populate(Container *container, SchemaParameters *params, const string &pref
 
 		auto existingParam = container->findParameter(paramName);
 		if ( existingParam ) {
+			if ( pdef->description.empty() && existingParam->definition ) {
+				pdef->description = existingParam->definition->description;
+			}
 			existingParam->definition = pdef;
 			existingParam->variableName = paramName;
 		}

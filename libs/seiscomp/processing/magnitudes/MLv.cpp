@@ -70,7 +70,7 @@ MagnitudeProcessor_MLv::MagnitudeProcessor_MLv()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeProcessor_MLv::setDefaults() {
 	_maximumDistanceDeg = 8.0;
-	_maximumDepthKm = 80.0;
+	_maximumDepthKm = 1000.0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -81,15 +81,6 @@ void MagnitudeProcessor_MLv::setDefaults() {
 bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 	if ( !MagnitudeProcessor::setup(settings) ) {
 		return false;
-	}
-
-	// Set defaults if a value is unset
-	if ( !_maximumDistanceDeg ) {
-		_maximumDistanceDeg = 8.0;
-	}
-
-	if ( !_maximumDepthKm ) {
-		_maximumDepthKm = 80.0;
 	}
 
 	std::string defLogA0;

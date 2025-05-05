@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT Wire
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/baseobject.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/wired/server.h>
 #include <seiscomp/wired/clientsession.h>
 #include <openssl/err.h>
@@ -34,6 +35,78 @@ using namespace std;
 
 namespace Seiscomp {
 namespace Wired {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string toString(const BindAddress &bind) {
+	char buf[Socket::IPAddress::MAX_IP_STRING_LEN];
+	if ( bind.address.zero() || bind.address.toString(buf) < 0 ) {
+		return Core::toString(bind.port);
+	}
+	else {
+		if ( bind.address.isV4() ) {
+			return string(buf) + ':' + Core::toString(bind.port);
+		}
+		else {
+			return "[" + string(buf) + "]:" + Core::toString(bind.port);
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool fromString(BindAddress &bind, string_view sv) {
+	size_t p;
+
+	if ( sv.empty() ) {
+		return false;
+	}
+
+	if ( sv[0] == '[' ) {
+		// IPv6 notion
+		p = sv.find(']');
+		if ( p == string::npos ) {
+			// Closing square bracket is required
+			return false;
+		}
+
+		string ip(sv.substr(1, p - 2));
+
+		p = sv.find(':', p + 1);
+		if ( p == string::npos ) {
+			// Bind without port does not make sense
+			return false;
+		}
+
+
+		if ( !bind.address.fromString(ip.data()) ) {
+			return false;
+		}
+
+		return Core::fromString(bind.port, sv.substr(p + 1));
+	}
+
+	// IPv4 notion
+	p = sv.find(':');
+
+	if ( p == string::npos ) {
+		// It is just a port. Keep the address as it is.
+		return Core::fromString(bind.port, sv) && bind.port < 65536;
+	}
+	else {
+		string tmp(sv.substr(0, p));
+		if ( !bind.address.fromString(tmp.data()) ) {
+			return false;
+		}
+		return Core::fromString(bind.port, sv.substr(p + 1)) && bind.port < 65536;
+	}
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

@@ -567,8 +567,9 @@ bool Event::add(EventDescription *eventDescription) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Event::remove(EventDescription *eventDescription) {
-	if ( !eventDescription )
+	if ( !eventDescription ) {
 		return false;
+	}
 
 	if ( eventDescription->parent() != this ) {
 		SEISCOMP_ERROR("Event::remove(EventDescription*) -> element has another parent");
@@ -584,8 +585,7 @@ bool Event::remove(EventDescription *eventDescription) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -608,8 +608,7 @@ bool Event::removeEventDescription(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_eventDescriptions[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _eventDescriptions[i].get());
 	}
 
 	_eventDescriptions[i]->setParent(nullptr);
@@ -713,8 +712,9 @@ bool Event::add(Comment *comment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Event::remove(Comment *comment) {
-	if ( !comment )
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Event::remove(Comment*) -> element has another parent");
@@ -730,8 +730,7 @@ bool Event::remove(Comment *comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -754,8 +753,7 @@ bool Event::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -859,8 +857,9 @@ bool Event::add(OriginReference *originReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Event::remove(OriginReference *originReference) {
-	if ( !originReference )
+	if ( !originReference ) {
 		return false;
+	}
 
 	if ( originReference->parent() != this ) {
 		SEISCOMP_ERROR("Event::remove(OriginReference*) -> element has another parent");
@@ -876,8 +875,7 @@ bool Event::remove(OriginReference *originReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -900,8 +898,7 @@ bool Event::removeOriginReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_originReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _originReferences[i].get());
 	}
 
 	_originReferences[i]->setParent(nullptr);
@@ -1005,8 +1002,9 @@ bool Event::add(FocalMechanismReference *focalMechanismReference) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Event::remove(FocalMechanismReference *focalMechanismReference) {
-	if ( !focalMechanismReference )
+	if ( !focalMechanismReference ) {
 		return false;
+	}
 
 	if ( focalMechanismReference->parent() != this ) {
 		SEISCOMP_ERROR("Event::remove(FocalMechanismReference*) -> element has another parent");
@@ -1022,8 +1020,7 @@ bool Event::remove(FocalMechanismReference *focalMechanismReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1046,8 +1043,7 @@ bool Event::removeFocalMechanismReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_focalMechanismReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _focalMechanismReferences[i].get());
 	}
 
 	_focalMechanismReferences[i]->setParent(nullptr);

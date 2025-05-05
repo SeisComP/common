@@ -238,7 +238,7 @@ class SimplePropertyHelper<T,U,F1,F2,0> : public MetaProperty {
 		bool write(BaseObject *object, MetaValue value) const {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
-			(target->*_setter)(boost::any_cast<U>(value));
+			(target->*_setter)(metaValueCast<U>(value));
 			return true;
 		}
 
@@ -284,7 +284,7 @@ class SimplePropertyHelper<T,U,F1,F2,1> : public MetaProperty {
 			if ( value.empty() )
 				(target->*_setter)(Core::None);
 			else
-				(target->*_setter)(boost::any_cast<U>(value));
+				(target->*_setter)(metaValueCast<U>(value));
 			return true;
 		}
 

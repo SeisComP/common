@@ -364,8 +364,8 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 
 	double samplingFrequency = 0;
 
-	typedef NumericArray<T> TArray;
-	typedef typename Core::SmartPointer<TArray>::Impl TArrayPtr;
+	using TArray = NumericArray<T>;
+	using TArrayPtr = Core::SmartPointer<TArray>;
 
 	TArrayPtr rawData = new TArray;
 	GenericRecord *rawRecord = nullptr;

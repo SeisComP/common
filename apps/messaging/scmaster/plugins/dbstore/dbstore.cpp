@@ -58,34 +58,68 @@ bool deletePath(IO::DatabaseInterface *db, const vector<string> &path,
 		   << " WHERE " << path[1] << "._parent_oid=" << oid;
 	}
 	else {
-		ss << "DELETE FROM " << table << " WHERE _oid IN (" << endl;
-		ss << "  SELECT " << path.back() << "._oid" << endl
-		    << "  FROM ";
-		for ( size_t i = 1; i < path.size(); ++i ) {
-			if ( i > 1 ) {
-				ss << ", ";
-			}
-			ss << path[i];
-		}
-		ss << endl;
-
-		ss << "  WHERE ";
-
-		for ( size_t i = 1; i < path.size(); ++i ) {
-			if ( i > 1 ) {
-				ss << "    AND ";
-			}
-			ss << path[i] << "._parent_oid=";
-			if ( i > 1 ) {
-				ss << path[i-1] << "._oid";
-			}
-			else {
-				ss << oid;
+		if ( db->backend() != IO::DatabaseInterface::MySQL ) {
+			ss << "DELETE FROM " << table << " WHERE _oid IN (" << endl;
+			ss << "  SELECT " << path.back() << "._oid" << endl
+			    << "  FROM ";
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << ", ";
+				}
+				ss << path[i];
 			}
 			ss << endl;
-		}
 
-		ss << ")";
+			ss << "  WHERE ";
+
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << "    AND ";
+				}
+				ss << path[i] << "._parent_oid=";
+				if ( i > 1 ) {
+					ss << path[i-1] << "._oid";
+				}
+				else {
+					ss << oid;
+				}
+				ss << endl;
+			}
+
+			ss << ")";
+		}
+		else {
+			// Optimized MySQL version
+			auto tables = path.size();
+			ss << "DELETE " << table << " FROM ";
+			if ( !tableOverride.empty() ) {
+				ss << table << ", ";
+			}
+			for ( size_t i = 1; i < tables; ++i ) {
+				if ( i > 1 ) {
+					ss << ", ";
+				}
+				ss << path[i];
+			}
+			ss << " WHERE ";
+
+			if ( !tableOverride.empty() ) {
+				ss << table << "._oid=" << path.back() << "._oid AND ";
+			}
+
+			for ( size_t i = 1; i < path.size(); ++i ) {
+				if ( i > 1 ) {
+					ss << " AND ";
+				}
+				ss << path[i] << "._parent_oid=";
+				if ( i > 1 ) {
+					ss << path[i-1] << "._oid";
+				}
+				else {
+					ss << oid;
+				}
+			}
+		}
 	}
 
 	return db->execute(ss.str().c_str());
@@ -139,6 +173,32 @@ bool dumpPath(IO::DatabaseInterface *db, vector<string> &path,
 }
 
 
+bool deleteObject(IO::DatabaseInterface *db, const string &type,
+                  IO::DatabaseInterface::OID oid) {
+	stringstream ss;
+
+	SEISCOMP_DEBUG("deleting object with id %d", oid);
+
+	ss << "DELETE FROM " << type << " WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+
+	ss.str(string());
+	ss << "DELETE FROM PublicObject WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+
+	ss.str(string());
+	ss << "DELETE FROM Object WHERE _oid=" << oid;
+	if ( !db->execute(ss.str().c_str()) ) {
+		return false;
+	}
+
+	return true;
+}
+
 bool deleteTree(IO::DatabaseInterface *db,
                 const string &type,
                 IO::DatabaseInterface::OID oid) {
@@ -170,19 +230,14 @@ bool deleteTree(IO::DatabaseInterface *db,
 	return true;
 }
 
-bool deleteTree(IO::DatabaseInterface *db, DataModel::Object *object) {
-	if ( !db || !object ) {
+bool deleteTree(IO::DatabaseInterface *db, DataModel::PublicObject *po) {
+	if ( !db || !po ) {
 		return false;
 	}
 
 	IO::DatabaseInterface::OID oid = IO::DatabaseInterface::INVALID_OID;
 	stringstream ss;
 	string escapedPublicID;
-
-	DataModel::PublicObject *po = DataModel::PublicObject::Cast(object);
-	if ( !po ) {
-		return false;
-	}
 
 	bool status = true;
 	if ( db->escape(escapedPublicID, po->publicID()) ) {
@@ -204,7 +259,8 @@ bool deleteTree(IO::DatabaseInterface *db, DataModel::Object *object) {
 			db->endQuery();
 
 			if ( status ) {
-				return deleteTree(db, object->className(), oid);
+				deleteTree(db, po->className(), oid);
+				status = deleteObject(db, po->className(), oid);
 			}
 		}
 	}
@@ -247,7 +303,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			SEISCOMP_DEBUG("Checking database '%s' and trying to connect", _settings.driver.c_str());
 
 			_db = IO::DatabaseInterface::Create(_settings.driver.c_str());
-			if ( _db == NULL ) {
+			if ( !_db ) {
 				SEISCOMP_ERROR("Could not get database driver '%s'", _settings.driver.c_str());
 				return false;
 			}
@@ -267,6 +323,9 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 		                      const KeyCStrValues, int,
 		                      KeyValues &outParams) override {
 			outParams.push_back(KeyValuePair("DB-Schema-Version", SchemaVersion));
+			if ( _settings.deleteTree ) {
+				outParams.push_back(KeyValuePair("DB-Delete-Tree", "1"));
+			}
 			if ( !_settings.read.empty() ) {
 				if ( _settings.proxy ) {
 					outParams.push_back(KeyValuePair("DB-Access", "proxy://"));
@@ -318,10 +377,22 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 							}
 								break;
 							case DataModel::OP_REMOVE:
-								deleteTree(_dbArchive->driver(), notifier->object());
+							{
+								if ( _settings.deleteTree ) {
+									DataModel::PublicObject *po = DataModel::PublicObject::Cast(notifier->object());
+									if ( !po ) {
+										result = _dbArchive->remove(notifier->object(), notifier->parentID());
+									}
+									else {
+										result = deleteTree(_dbArchive->driver(), po);
+									}
+								}
+								else {
+									result = _dbArchive->remove(notifier->object(), notifier->parentID());
+								}
 								++_statistics.removedObjects;
-								result = _dbArchive->remove(notifier->object(), notifier->parentID());
 								break;
+							}
 							case DataModel::OP_UPDATE:
 								++_statistics.updatedObjects;
 								result = _dbArchive->update(notifier->object(), notifier->parentID());
@@ -459,6 +530,7 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 			string read;
 			bool   proxy{false};
 			bool   strictVersionMatch{true};
+			bool   deleteTree{true};
 
 			void accept(ConfigSettingsLinker &linker) {
 				linker
@@ -466,7 +538,8 @@ class DBStore : public Messaging::Broker::MessageProcessor {
 				& ConfigSettingsLinker::cfg(write, "write")
 				& ConfigSettingsLinker::cfg(read, "read")
 				& ConfigSettingsLinker::cfg(proxy, "proxy")
-				& ConfigSettingsLinker::cfg(strictVersionMatch, "strictVersionMatch");
+				& ConfigSettingsLinker::cfg(strictVersionMatch, "strictVersionMatch")
+				& ConfigSettingsLinker::cfg(deleteTree, "deleteTree");
 			}
 		};
 

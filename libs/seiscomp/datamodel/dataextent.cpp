@@ -587,8 +587,9 @@ bool DataExtent::add(DataSegment *dataSegment) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::remove(DataSegment *dataSegment) {
-	if ( !dataSegment )
+	if ( !dataSegment ) {
 		return false;
+	}
 
 	if ( dataSegment->parent() != this ) {
 		SEISCOMP_ERROR("DataExtent::remove(DataSegment*) -> element has another parent");
@@ -604,8 +605,7 @@ bool DataExtent::remove(DataSegment *dataSegment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -628,8 +628,7 @@ bool DataExtent::removeDataSegment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataSegments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataSegments[i].get());
 	}
 
 	_dataSegments[i]->setParent(nullptr);
@@ -733,8 +732,9 @@ bool DataExtent::add(DataAttributeExtent *dataAttributeExtent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataExtent::remove(DataAttributeExtent *dataAttributeExtent) {
-	if ( !dataAttributeExtent )
+	if ( !dataAttributeExtent ) {
 		return false;
+	}
 
 	if ( dataAttributeExtent->parent() != this ) {
 		SEISCOMP_ERROR("DataExtent::remove(DataAttributeExtent*) -> element has another parent");
@@ -750,8 +750,7 @@ bool DataExtent::remove(DataAttributeExtent *dataAttributeExtent) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -774,8 +773,7 @@ bool DataExtent::removeDataAttributeExtent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataAttributeExtents[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataAttributeExtents[i].get());
 	}
 
 	_dataAttributeExtents[i]->setParent(nullptr);

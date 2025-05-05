@@ -551,8 +551,9 @@ bool AuxDevice::add(AuxSource *auxSource) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AuxDevice::remove(AuxSource *auxSource) {
-	if ( !auxSource )
+	if ( !auxSource ) {
 		return false;
+	}
 
 	if ( auxSource->parent() != this ) {
 		SEISCOMP_ERROR("AuxDevice::remove(AuxSource*) -> element has another parent");
@@ -568,8 +569,7 @@ bool AuxDevice::remove(AuxSource *auxSource) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -592,8 +592,7 @@ bool AuxDevice::removeAuxSource(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_auxSources[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _auxSources[i].get());
 	}
 
 	_auxSources[i]->setParent(nullptr);

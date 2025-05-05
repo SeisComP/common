@@ -678,11 +678,13 @@ QColor Application::configGetColor(const std::string& query,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Gradient Application::configGetColorGradient(const std::string& query,
                                              const Gradient& base) const {
-	const Seiscomp::Config::Config &config = configuration();
-	bool error = false;
-
-	std::vector<std::string> colors = config.getStrings(query, &error);
-	if ( error ) return base;
+	decltype(configGetStrings(query)) colors;
+	try {
+		colors = configGetStrings(query);
+	}
+	catch ( ... ) {
+		return base;
+	}
 
 	Gradient grad;
 	for ( size_t i = 0; i < colors.size(); ++i ) {
@@ -691,24 +693,28 @@ Gradient Application::configGetColorGradient(const std::string& query,
 
 		std::vector<std::string> toks;
 		size_t size = Core::split(toks, colors[i].c_str(), ":");
-		if ( size < 2 || size > 3 ) {
+		if ( (size < 2) || (size > 3) ) {
 			SEISCOMP_ERROR("Wrong format of color entry %lu in '%s'",
-			               (unsigned long)i, query.c_str());
+			               i, query.c_str());
 			return base;
 		}
 
 		if ( !Core::fromString(value, toks[0]) ) {
 			SEISCOMP_ERROR("Wrong value format of color entry %lu in '%s'",
-			               (unsigned long)i, query.c_str());
+			               i, query.c_str());
 			return base;
 		}
 
 		bool ok;
 		color = readColor("", toks[1], color, &ok);
-		if ( !ok ) return base;
+		if ( !ok ) {
+			return base;
+		}
 
 		QString text;
-		if ( size == 3 ) text = QString::fromStdString(toks[2]);
+		if ( size == 3 ) {
+			text = QString::fromStdString(toks[2]);
+		}
 
 		grad.setColorAt(value, color, text);
 	}

@@ -186,9 +186,17 @@ bool HttpSession::handleGETRequest(Wired::HttpRequest &req) {
 		return true;
 	}
 
+	while ( path.next() ) {
+		if ( path == ".." ) {
+			sendStatus(HTTP_403);
+			return true;
+		}
+	}
+
 	// Not more than 1kb as buffer
 	FileBufferPtr file = new FileBuffer(1024);
 	string fn = global.http.filebase + filename;
+
 	if ( fn.empty() ) {
 		sendResponse(HTTP_404);
 		return true;
@@ -202,14 +210,17 @@ bool HttpSession::handleGETRequest(Wired::HttpRequest &req) {
 	}
 	else {
 		size_t pdot = fn.rfind('.');
-		if ( pdot != string::npos )
+		if ( pdot != string::npos ) {
 			mimeType = FileBuffer::mimeType(&fn[pdot+1]);
+		}
 	}
 
-	if ( !file->open(fn, "r") )
+	if ( !file->open(fn, "r") ) {
 		sendStatus(HTTP_404);
-	else
+	}
+	else {
 		sendResponse(file.get(), HTTP_200, mimeType);
+	}
 
 	return true;
 }

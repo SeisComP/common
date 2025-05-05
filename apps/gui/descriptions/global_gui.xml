@@ -1515,10 +1515,10 @@
 					Custom columns showing parameters extracted by scripts e.g.
 					from origins or events.
 					</description>
-					<parameter name="export" type="path">
+					<parameter name="export" type="file" options="read">
 						<description>
 						Defines the export script to be called with the selected
-						event ids in stdin when the corresponding action is triggered
+						event IDs in stdin when the corresponding action is triggered
 						from the context menu of the list of events.
 						</description>
 					</parameter>
@@ -1535,7 +1535,7 @@
 						The scolv documentation provides an example script.
 						</description>
 						<struct type="custom column profile" link="eventlist.scripts.profiles">
-							<parameter name="script" type="path">
+							<parameter name="script" type="file" options="read">
 								<description>
 								External script to invoke for each event list entry. The object represented by the
 								list entry is serialized to XML and passed to the script on stdin. If the return
@@ -1735,7 +1735,7 @@
 						</description>
 					</parameter>
 					<group name="background">
-						<parameter name="gradient" type="list:string" unit="s:color">
+						<parameter name="gradient" type="gradient" unit="s:color">
 							<description>
 							Mapping of time values in seconds to colors used as
 							cell backgroud color. E.g., a mapping from green

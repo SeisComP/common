@@ -7,7 +7,7 @@ General (default) conditions apply:
   :term:`Wood-Anderson seismometer`.
 * Time window: 150 s by :ref:`scautopick` or distance dependent, configurable.
 * Default distance range: 0 - 8 deg,  maximum is configurable
-  :confval:`magnitudes.MLv.maxDistanceKm`, measurements beyond 8 deg will be
+  :confval:`magnitudes.MLv.maxDist`, measurements beyond 8 deg will be
   strictly ignored.
 * Depth range: no limitation.
 
@@ -24,7 +24,7 @@ Station Magnitudes
 ------------------
 
 The individual station MLv is calculated up to the epicentral distance
-:confval:`magnitudes.MLv.maxDistanceKm` using the following formula:
+:confval:`magnitudes.MLv.maxDist` using the following formula:
 
 .. math::
 
@@ -38,7 +38,7 @@ bindings or the global module configuration variable
 module.trunk.global.magnitudes.MLv.logA0 in :file:`global.cfg`, e.g. ::
 
    module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
-   module.trunk.global.magnitudes.MLv.maxDistanceKm = "-1"
+   module.trunk.global.magnitudes.MLv.maxDist = 1000km
 
 The logA0 configuration string consists of an arbitrary number of
 distance-value pairs separated by semicolons. The distance is in km
@@ -87,21 +87,21 @@ global:
 .. code-block:: properties
 
    module.trunk.global.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
-   module.trunk.global.magnitudes.MLv.maxDistanceKm = -1
+   module.trunk.global.magnitudes.MLv.maxDist = 1000km
 
 or per network:
 
 .. code-block:: properties
 
    module.trunk.GR.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
-   module.trunk.GR.magnitudes.MLv.maxDistanceKm = -1
+   module.trunk.GR.magnitudes.MLv.maxDist = 1000km
 
 or per station:
 
 .. code-block:: properties
 
    module.trunk.GR.MOX.magnitudes.MLv.logA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85"
-   module.trunk.GR.MOX.magnitudes.MLv.maxDistanceKm = -1
+   module.trunk.GR.MOX.magnitudes.MLv.maxDist = 1000km
 
 Set the configuration and calibration parameters in the global bindings. By
 default MLv is computed by :ref:`scautopick` and is visible in GUIs.

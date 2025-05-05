@@ -296,8 +296,9 @@ bool Config::add(ParameterSet *parameterSet) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::remove(ParameterSet *parameterSet) {
-	if ( !parameterSet )
+	if ( !parameterSet ) {
 		return false;
+	}
 
 	if ( parameterSet->parent() != this ) {
 		SEISCOMP_ERROR("Config::remove(ParameterSet*) -> element has another parent");
@@ -313,8 +314,7 @@ bool Config::remove(ParameterSet *parameterSet) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -337,8 +337,7 @@ bool Config::removeParameterSet(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_parameterSets[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _parameterSets[i].get());
 	}
 
 	_parameterSets[i]->setParent(nullptr);
@@ -438,8 +437,9 @@ bool Config::add(ConfigModule *configModule) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Config::remove(ConfigModule *configModule) {
-	if ( !configModule )
+	if ( !configModule ) {
 		return false;
+	}
 
 	if ( configModule->parent() != this ) {
 		SEISCOMP_ERROR("Config::remove(ConfigModule*) -> element has another parent");
@@ -455,8 +455,7 @@ bool Config::remove(ConfigModule *configModule) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -479,8 +478,7 @@ bool Config::removeConfigModule(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_configModules[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _configModules[i].get());
 	}
 
 	_configModules[i]->setParent(nullptr);

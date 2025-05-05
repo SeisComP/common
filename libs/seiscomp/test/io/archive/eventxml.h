@@ -22,7 +22,7 @@
 
 #include <string>
 
-std::string gempa2021ijvk = R"EVENTXML(<?xml version="1.0" encoding="UTF-8"?>
+std::string XML_gempa2021ijvk = R"EVENTXML(<?xml version="1.0" encoding="UTF-8"?>
 <seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">
   <EventParameters>
     <pick publicID="20210430.051926.35-AIC-G.SANVU.00.BHZ">
@@ -20009,5 +20009,23 @@ std::string gempa2021ijvk = R"EVENTXML(<?xml version="1.0" encoding="UTF-8"?>
   </EventParameters>
 </seiscomp>
 )EVENTXML";
+
+
+std::string XML_ep = R"MIXEDXML(<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">
+  <EventParameters>
+  </EventParameters>
+</seiscomp>
+)MIXEDXML";
+
+
+std::string XML_mixed = R"MIXEDXML(<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">
+  <EventParameters>
+  </EventParameters>
+  <Journaling>
+  </Journaling>
+</seiscomp>
+)MIXEDXML";
 
 #endif

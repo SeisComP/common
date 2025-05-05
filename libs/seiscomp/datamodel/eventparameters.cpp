@@ -372,8 +372,9 @@ bool EventParameters::add(Pick *pick) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Pick *pick) {
-	if ( !pick )
+	if ( !pick ) {
 		return false;
+	}
 
 	if ( pick->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Pick*) -> element has another parent");
@@ -389,8 +390,7 @@ bool EventParameters::remove(Pick *pick) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -413,8 +413,7 @@ bool EventParameters::removePick(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_picks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _picks[i].get());
 	}
 
 	_picks[i]->setParent(nullptr);
@@ -514,8 +513,9 @@ bool EventParameters::add(Amplitude *amplitude) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Amplitude *amplitude) {
-	if ( !amplitude )
+	if ( !amplitude ) {
 		return false;
+	}
 
 	if ( amplitude->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Amplitude*) -> element has another parent");
@@ -531,8 +531,7 @@ bool EventParameters::remove(Amplitude *amplitude) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -555,8 +554,7 @@ bool EventParameters::removeAmplitude(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudes[i].get());
 	}
 
 	_amplitudes[i]->setParent(nullptr);
@@ -656,8 +654,9 @@ bool EventParameters::add(Reading *reading) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Reading *reading) {
-	if ( !reading )
+	if ( !reading ) {
 		return false;
+	}
 
 	if ( reading->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Reading*) -> element has another parent");
@@ -673,8 +672,7 @@ bool EventParameters::remove(Reading *reading) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -697,8 +695,7 @@ bool EventParameters::removeReading(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_readings[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _readings[i].get());
 	}
 
 	_readings[i]->setParent(nullptr);
@@ -798,8 +795,9 @@ bool EventParameters::add(Origin *origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Origin *origin) {
-	if ( !origin )
+	if ( !origin ) {
 		return false;
+	}
 
 	if ( origin->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Origin*) -> element has another parent");
@@ -815,8 +813,7 @@ bool EventParameters::remove(Origin *origin) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -839,8 +836,7 @@ bool EventParameters::removeOrigin(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_origins[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _origins[i].get());
 	}
 
 	_origins[i]->setParent(nullptr);
@@ -940,8 +936,9 @@ bool EventParameters::add(FocalMechanism *focalMechanism) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(FocalMechanism *focalMechanism) {
-	if ( !focalMechanism )
+	if ( !focalMechanism ) {
 		return false;
+	}
 
 	if ( focalMechanism->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(FocalMechanism*) -> element has another parent");
@@ -957,8 +954,7 @@ bool EventParameters::remove(FocalMechanism *focalMechanism) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -981,8 +977,7 @@ bool EventParameters::removeFocalMechanism(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_focalMechanisms[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _focalMechanisms[i].get());
 	}
 
 	_focalMechanisms[i]->setParent(nullptr);
@@ -1082,8 +1077,9 @@ bool EventParameters::add(Event *event) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool EventParameters::remove(Event *event) {
-	if ( !event )
+	if ( !event ) {
 		return false;
+	}
 
 	if ( event->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Event*) -> element has another parent");
@@ -1099,8 +1095,7 @@ bool EventParameters::remove(Event *event) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1123,8 +1118,7 @@ bool EventParameters::removeEvent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_events[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _events[i].get());
 	}
 
 	_events[i]->setParent(nullptr);

@@ -30,6 +30,22 @@ namespace Seiscomp {
 namespace Wired {
 
 
+struct BindAddress {
+	BindAddress() = default;
+	BindAddress(const Seiscomp::Wired::Socket::IPAddress &addr, int port)
+	: address(addr), port(port) {}
+
+	bool valid() const { return port > 0; }
+
+	Seiscomp::Wired::Socket::IPAddress address;
+	int                                port{-1};
+};
+
+
+std::string toString(const BindAddress &bind);
+bool fromString(BindAddress &bind, std::string_view sv);
+
+
 DEFINE_SMARTPOINTER(Server);
 
 class SC_SYSTEM_CORE_API Server : public Reactor {
