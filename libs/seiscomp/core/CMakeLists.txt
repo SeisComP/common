@@ -23,6 +23,7 @@ SET(CORE_SOURCES
 	system.cpp
 	baseobject.cpp
 	version.cpp
+	backports/charconv/floating_from_chars.cpp
 )
 
 SET(CORE_HEADERS
@@ -75,14 +76,6 @@ IF(WIN32)
 	SET(CORE_SOURCES ${CORE_SOURCES} strptime.c)
 	SET(CORE_HEADERS ${CORE_HEADERS} strptime.h)
 ENDIF(WIN32)
-
-IF(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION LESS 11)
-	MESSAGE(STATUS "Using backported from_chars for floating point values")
-	SET(CORE_SOURCES
-		${CORE_SOURCES}
-		backports/charconv/floating_from_chars.cpp
-	)
-ENDIF()
 
 SC_ADD_SUBDIR_SOURCES(CORE platform)
 SC_SETUP_LIB_SUBDIR(CORE)
