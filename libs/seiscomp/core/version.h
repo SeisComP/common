@@ -68,6 +68,15 @@ namespace Core {
      remove virtual declaration
    - Added abstract virtual function MagnitudeProcessor::setDefaults() which must
      be implemented by all derived classes.
+   - Changed Seiscomp::Core::TimeWindow cast to bool semantic
+   - Changed Seiscomp::Core::TimeWindow::length return type, from double to
+     Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::setLength length argument from double
+     to Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::equals tolerance argument from double
+     to Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::contiguous tolerance argument from double
+     to Seiscomp::Core::TimeSpan
    - Added Seiscomp::Core::metaValueCast
    - Removed typedef Seiscomp::Core::SmartPointer::Impl
    - Added Seiscomp::Core::SmartPointer as typedef for boost::instrusive_ptr
