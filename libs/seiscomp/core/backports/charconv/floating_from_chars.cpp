@@ -28,9 +28,6 @@
 //
 
 
-#if defined __GLIBCXX__ && _GLIBCXX_RELEASE < 11 && __cplusplus >= 201703L
-
-
 // Prefer to use std::pmr::string if possible, which requires the cxx11 ABI.
 #define _GLIBCXX_USE_CXX11_ABI 1
 
@@ -45,6 +42,10 @@
 #include <cctype>
 #include <locale.h>
 #include <bits/functexcept.h>
+
+
+#if defined __GLIBCXX__ && _GLIBCXX_RELEASE < 11 && __cplusplus >= 201703L
+
 
 #ifdef _GLIBCXX_LONG_DOUBLE_ALT128_COMPAT
 #ifndef __LONG_DOUBLE_IBM128__
