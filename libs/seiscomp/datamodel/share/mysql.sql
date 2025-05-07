@@ -80,10 +80,7 @@ CREATE TABLE PublicObject (
 	_oid BIGINT(20) NOT NULL,
 	publicID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	UNIQUE(publicID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	UNIQUE(publicID)
 ) ENGINE=INNODB;
 
 INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
@@ -114,9 +111,6 @@ CREATE TABLE EventDescription (
 	type VARCHAR(64) NOT NULL,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,type)
 ) ENGINE=INNODB;
 
@@ -142,9 +136,6 @@ CREATE TABLE Comment (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,id)
 ) ENGINE=INNODB;
 
@@ -157,10 +148,7 @@ CREATE TABLE DataUsed (
 	componentCount INT UNSIGNED NOT NULL,
 	shortestPeriod DOUBLE,
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE CompositeTime (
@@ -207,10 +195,7 @@ CREATE TABLE CompositeTime (
 	second_pdf_used TINYINT(1) NOT NULL DEFAULT '0',
 	second_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE PickReference (
@@ -221,9 +206,6 @@ CREATE TABLE PickReference (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(pickID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,pickID)
 ) ENGINE=INNODB;
 
@@ -235,9 +217,6 @@ CREATE TABLE AmplitudeReference (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(amplitudeID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,amplitudeID)
 ) ENGINE=INNODB;
 
@@ -245,10 +224,7 @@ CREATE TABLE Reading (
 	_oid BIGINT(20) NOT NULL,
 	_parent_oid BIGINT(20) NOT NULL,
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE MomentTensorComponentContribution (
@@ -265,9 +241,6 @@ CREATE TABLE MomentTensorComponentContribution (
 	snr DOUBLE,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,phaseCode,component)
 ) ENGINE=INNODB;
 
@@ -285,10 +258,7 @@ CREATE TABLE MomentTensorStationContribution (
 	weight DOUBLE,
 	timeShift DOUBLE,
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE MomentTensorPhaseSetting (
@@ -302,9 +272,6 @@ CREATE TABLE MomentTensorPhaseSetting (
 	maximumTimeShift DOUBLE,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code)
 ) ENGINE=INNODB;
 
@@ -401,10 +368,7 @@ CREATE TABLE MomentTensor (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(derivedOriginID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(derivedOriginID)
 ) ENGINE=INNODB;
 
 CREATE TABLE FocalMechanism (
@@ -557,10 +521,7 @@ CREATE TABLE FocalMechanism (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(triggeringOriginID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(triggeringOriginID)
 ) ENGINE=INNODB;
 
 CREATE TABLE Amplitude (
@@ -626,10 +587,7 @@ CREATE TABLE Amplitude (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(pickID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(pickID)
 ) ENGINE=INNODB;
 
 CREATE INDEX Amplitude_timeWindow_reference ON Amplitude(timeWindow_reference,timeWindow_reference_ms);
@@ -645,9 +603,6 @@ CREATE TABLE StationMagnitudeContribution (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(stationMagnitudeID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,stationMagnitudeID)
 ) ENGINE=INNODB;
 
@@ -680,10 +635,7 @@ CREATE TABLE Magnitude (
 	creationInfo_version VARCHAR(64),
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE StationMagnitude (
@@ -721,10 +673,7 @@ CREATE TABLE StationMagnitude (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(amplitudeID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(amplitudeID)
 ) ENGINE=INNODB;
 
 CREATE TABLE Pick (
@@ -784,10 +733,7 @@ CREATE TABLE Pick (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(time_value,time_value_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(time_value,time_value_ms)
 ) ENGINE=INNODB;
 
 CREATE TABLE OriginReference (
@@ -798,9 +744,6 @@ CREATE TABLE OriginReference (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(originID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,originID)
 ) ENGINE=INNODB;
 
@@ -812,9 +755,6 @@ CREATE TABLE FocalMechanismReference (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(focalMechanismID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,focalMechanismID)
 ) ENGINE=INNODB;
 
@@ -841,10 +781,7 @@ CREATE TABLE Event (
 	INDEX(_parent_oid),
 	INDEX(preferredOriginID),
 	INDEX(preferredMagnitudeID),
-	INDEX(preferredFocalMechanismID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(preferredFocalMechanismID)
 ) ENGINE=INNODB;
 
 CREATE TABLE Catalog (
@@ -904,9 +841,6 @@ CREATE TABLE Arrival (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(pickID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,pickID)
 ) ENGINE=INNODB;
 
@@ -996,10 +930,7 @@ CREATE TABLE Origin (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(time_value,time_value_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(time_value,time_value_ms)
 ) ENGINE=INNODB;
 
 CREATE TABLE Parameter (
@@ -1009,10 +940,7 @@ CREATE TABLE Parameter (
 	name VARCHAR(255) NOT NULL,
 	value BLOB,
 	PRIMARY KEY(_oid),
-	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE ParameterSet (
@@ -1025,10 +953,7 @@ CREATE TABLE ParameterSet (
 	created_ms INTEGER,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(baseID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(baseID)
 ) ENGINE=INNODB;
 
 CREATE TABLE Setup (
@@ -1041,9 +966,6 @@ CREATE TABLE Setup (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(parameterSetID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1066,9 +988,6 @@ CREATE TABLE ConfigStation (
 	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,networkCode,stationCode)
 ) ENGINE=INNODB;
 
@@ -1081,10 +1000,7 @@ CREATE TABLE ConfigModule (
 	enabled TINYINT(1) NOT NULL,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(parameterSetID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(parameterSetID)
 ) ENGINE=INNODB;
 
 CREATE TABLE QCLog (
@@ -1106,9 +1022,6 @@ CREATE TABLE QCLog (
 	message BLOB NOT NULL,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
 ) ENGINE=INNODB;
 
@@ -1138,9 +1051,6 @@ CREATE TABLE WaveformQuality (
 	INDEX(_parent_oid),
 	INDEX(start,start_ms),
 	INDEX(end,end_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,type,parameter)
 ) ENGINE=INNODB;
 
@@ -1162,9 +1072,6 @@ CREATE TABLE Outage (
 	end_ms INTEGER,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1176,9 +1083,6 @@ CREATE TABLE StationReference (
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
 	INDEX(stationID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,stationID)
 ) ENGINE=INNODB;
 
@@ -1198,9 +1102,6 @@ CREATE TABLE StationGroup (
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code)
 ) ENGINE=INNODB;
 
@@ -1218,9 +1119,6 @@ CREATE TABLE AuxSource (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1236,9 +1134,6 @@ CREATE TABLE AuxDevice (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1258,9 +1153,6 @@ CREATE TABLE SensorCalibration (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,serialNumber,channel,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1281,9 +1173,6 @@ CREATE TABLE Sensor (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1310,9 +1199,6 @@ CREATE TABLE ResponsePAZ (
 	correction DOUBLE,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1335,9 +1221,6 @@ CREATE TABLE ResponsePolynomial (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1355,9 +1238,6 @@ CREATE TABLE ResponseFAP (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1379,9 +1259,6 @@ CREATE TABLE ResponseFIR (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1406,9 +1283,6 @@ CREATE TABLE ResponseIIR (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1428,9 +1302,6 @@ CREATE TABLE DataloggerCalibration (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,serialNumber,channel,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1446,9 +1317,6 @@ CREATE TABLE Decimation (
 	digitalFilterChain_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,sampleRateNumerator,sampleRateDenominator)
 ) ENGINE=INNODB;
 
@@ -1471,9 +1339,6 @@ CREATE TABLE Datalogger (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name)
 ) ENGINE=INNODB;
 
@@ -1495,9 +1360,6 @@ CREATE TABLE AuxStream (
 	shared TINYINT(1),
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1531,9 +1393,6 @@ CREATE TABLE Stream (
 	shared TINYINT(1),
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1551,9 +1410,6 @@ CREATE TABLE SensorLocation (
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1582,9 +1438,6 @@ CREATE TABLE Station (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1609,9 +1462,6 @@ CREATE TABLE Network (
 	remark_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,code,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1625,9 +1475,6 @@ CREATE TABLE RouteArclink (
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,address,start)
 ) ENGINE=INNODB;
 
@@ -1639,9 +1486,6 @@ CREATE TABLE RouteSeedlink (
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,address)
 ) ENGINE=INNODB;
 
@@ -1655,9 +1499,6 @@ CREATE TABLE Route (
 	streamCode CHAR(8) NOT NULL,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,networkCode,stationCode,locationCode,streamCode)
 ) ENGINE=INNODB;
 
@@ -1674,9 +1515,6 @@ CREATE TABLE Access (
 	end DATETIME,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,networkCode,stationCode,locationCode,streamCode,user,start)
 ) ENGINE=INNODB;
 
@@ -1692,10 +1530,7 @@ CREATE TABLE JournalEntry (
 	parameters LONGTEXT,
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	INDEX(objectID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	INDEX(objectID)
 ) ENGINE=INNODB;
 
 CREATE TABLE ArclinkUser (
@@ -1707,9 +1542,6 @@ CREATE TABLE ArclinkUser (
 	password VARCHAR(80),
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,name,email)
 ) ENGINE=INNODB;
 
@@ -1724,9 +1556,6 @@ CREATE TABLE ArclinkStatusLine (
 	volumeID VARCHAR(80),
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,volumeID,type,status)
 ) ENGINE=INNODB;
 
@@ -1754,9 +1583,6 @@ CREATE TABLE ArclinkRequestLine (
 	status_volumeID VARCHAR(80),
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,start,start_ms,end,end_ms,streamID_networkCode,streamID_stationCode,streamID_locationCode,streamID_channelCode,streamID_resourceURI)
 ) ENGINE=INNODB;
 
@@ -1782,9 +1608,6 @@ CREATE TABLE ArclinkRequest (
 	summary_used TINYINT(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
 	INDEX(_parent_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,created,created_ms,requestID,userID)
 ) ENGINE=INNODB;
 
@@ -1806,9 +1629,6 @@ CREATE TABLE DataSegment (
 	INDEX(start,start_ms),
 	INDEX(end,end_ms),
 	INDEX(updated,updated_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,start,start_ms)
 ) ENGINE=INNODB;
 
@@ -1830,9 +1650,6 @@ CREATE TABLE DataAttributeExtent (
 	INDEX(start,start_ms),
 	INDEX(end,end_ms),
 	INDEX(updated,updated_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,sampleRate,quality)
 ) ENGINE=INNODB;
 
@@ -1861,8 +1678,5 @@ CREATE TABLE DataExtent (
 	INDEX(end,end_ms),
 	INDEX(updated,updated_ms),
 	INDEX(lastScan,lastScan_ms),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE KEY composite_index (_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
 ) ENGINE=INNODB;

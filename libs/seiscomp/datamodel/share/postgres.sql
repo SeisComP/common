@@ -86,10 +86,7 @@ CREATE TABLE PublicObject (
 	_oid BIGINT NOT NULL,
 	m_publicID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	UNIQUE(m_publicID),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	UNIQUE(m_publicID)
 );
 
 INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
@@ -119,9 +116,6 @@ CREATE TABLE EventDescription (
 	m_text VARCHAR(128) NOT NULL,
 	m_type VARCHAR(64) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT eventdescription_composite_index UNIQUE(_parent_oid,m_type)
 );
 
@@ -151,9 +145,6 @@ CREATE TABLE Comment (
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT comment_composite_index UNIQUE(_parent_oid,m_id)
 );
 
@@ -170,10 +161,7 @@ CREATE TABLE DataUsed (
 	m_stationCount INT NOT NULL,
 	m_componentCount INT NOT NULL,
 	m_shortestPeriod DOUBLE PRECISION,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX DataUsed__parent_oid ON DataUsed(_parent_oid);
@@ -224,10 +212,7 @@ CREATE TABLE CompositeTime (
 	m_second_pdf_probability_content BYTEA,
 	m_second_pdf_used BOOLEAN NOT NULL DEFAULT '0',
 	m_second_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX CompositeTime__parent_oid ON CompositeTime(_parent_oid);
@@ -241,9 +226,6 @@ CREATE TABLE PickReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_pickID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT pickreference_composite_index UNIQUE(_parent_oid,m_pickID)
 );
 
@@ -259,9 +241,6 @@ CREATE TABLE AmplitudeReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_amplitudeID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT amplitudereference_composite_index UNIQUE(_parent_oid,m_amplitudeID)
 );
 
@@ -274,10 +253,7 @@ CREATE TRIGGER AmplitudeReference_update BEFORE UPDATE ON AmplitudeReference FOR
 CREATE TABLE Reading (
 	_oid BIGINT NOT NULL,
 	_parent_oid BIGINT NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Reading__parent_oid ON Reading(_parent_oid);
@@ -297,9 +273,6 @@ CREATE TABLE MomentTensorComponentContribution (
 	m_misfit DOUBLE PRECISION,
 	m_snr DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT momenttensorcomponentcontribution_composite_index UNIQUE(_parent_oid,m_phaseCode,m_component)
 );
 
@@ -321,10 +294,7 @@ CREATE TABLE MomentTensorStationContribution (
 	m_waveformID_used BOOLEAN NOT NULL DEFAULT '0',
 	m_weight DOUBLE PRECISION,
 	m_timeShift DOUBLE PRECISION,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensorStationContribution__parent_oid ON MomentTensorStationContribution(_parent_oid);
@@ -342,9 +312,6 @@ CREATE TABLE MomentTensorPhaseSetting (
 	m_minimumSNR DOUBLE PRECISION,
 	m_maximumTimeShift DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT momenttensorphasesetting_composite_index UNIQUE(_parent_oid,m_code)
 );
 
@@ -444,10 +411,7 @@ CREATE TABLE MomentTensor (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensor__parent_oid ON MomentTensor(_parent_oid);
@@ -604,10 +568,7 @@ CREATE TABLE FocalMechanism (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX FocalMechanism__parent_oid ON FocalMechanism(_parent_oid);
@@ -677,10 +638,7 @@ CREATE TABLE Amplitude (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Amplitude__parent_oid ON Amplitude(_parent_oid);
@@ -698,9 +656,6 @@ CREATE TABLE StationMagnitudeContribution (
 	m_residual DOUBLE PRECISION,
 	m_weight DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT stationmagnitudecontribution_composite_index UNIQUE(_parent_oid,m_stationMagnitudeID)
 );
 
@@ -738,10 +693,7 @@ CREATE TABLE Magnitude (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Magnitude__parent_oid ON Magnitude(_parent_oid);
@@ -782,10 +734,7 @@ CREATE TABLE StationMagnitude (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX StationMagnitude__parent_oid ON StationMagnitude(_parent_oid);
@@ -849,10 +798,7 @@ CREATE TABLE Pick (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Pick__parent_oid ON Pick(_parent_oid);
@@ -867,9 +813,6 @@ CREATE TABLE OriginReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_originID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT originreference_composite_index UNIQUE(_parent_oid,m_originID)
 );
 
@@ -885,9 +828,6 @@ CREATE TABLE FocalMechanismReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_focalMechanismID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT focalmechanismreference_composite_index UNIQUE(_parent_oid,m_focalMechanismID)
 );
 
@@ -916,10 +856,7 @@ CREATE TABLE Event (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Event__parent_oid ON Event(_parent_oid);
@@ -989,9 +926,6 @@ CREATE TABLE Arrival (
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT arrival_composite_index UNIQUE(_parent_oid,m_pickID)
 );
 
@@ -1085,10 +1019,7 @@ CREATE TABLE Origin (
 	m_creationInfo_modificationTime_ms INTEGER,
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Origin__parent_oid ON Origin(_parent_oid);
@@ -1103,10 +1034,7 @@ CREATE TABLE Parameter (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_name VARCHAR(255) NOT NULL,
 	m_value BYTEA,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Parameter__parent_oid ON Parameter(_parent_oid);
@@ -1122,10 +1050,7 @@ CREATE TABLE ParameterSet (
 	m_moduleID VARCHAR(255),
 	m_created TIMESTAMP,
 	m_created_ms INTEGER,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ParameterSet__parent_oid ON ParameterSet(_parent_oid);
@@ -1142,9 +1067,6 @@ CREATE TABLE Setup (
 	m_parameterSetID VARCHAR(255),
 	m_enabled BOOLEAN NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT setup_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1172,9 +1094,6 @@ CREATE TABLE ConfigStation (
 	m_creationInfo_version VARCHAR(64),
 	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT configstation_composite_index UNIQUE(_parent_oid,m_networkCode,m_stationCode)
 );
 
@@ -1190,10 +1109,7 @@ CREATE TABLE ConfigModule (
 	m_name VARCHAR(20) NOT NULL,
 	m_parameterSetID VARCHAR(255),
 	m_enabled BOOLEAN NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ConfigModule__parent_oid ON ConfigModule(_parent_oid);
@@ -1220,9 +1136,6 @@ CREATE TABLE QCLog (
 	m_end_ms INTEGER NOT NULL,
 	m_message BYTEA NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT qclog_composite_index UNIQUE(_parent_oid,m_start,m_start_ms,m_waveformID_networkCode,m_waveformID_stationCode,m_waveformID_locationCode,m_waveformID_channelCode,m_waveformID_resourceURI)
 );
 
@@ -1254,9 +1167,6 @@ CREATE TABLE WaveformQuality (
 	m_upperUncertainty DOUBLE PRECISION,
 	m_windowLength DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT waveformquality_composite_index UNIQUE(_parent_oid,m_start,m_start_ms,m_waveformID_networkCode,m_waveformID_stationCode,m_waveformID_locationCode,m_waveformID_channelCode,m_waveformID_resourceURI,m_type,m_parameter)
 );
 
@@ -1284,9 +1194,6 @@ CREATE TABLE Outage (
 	m_end TIMESTAMP,
 	m_end_ms INTEGER,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT outage_composite_index UNIQUE(_parent_oid,m_waveformID_networkCode,m_waveformID_stationCode,m_waveformID_locationCode,m_waveformID_channelCode,m_waveformID_resourceURI,m_start,m_start_ms)
 );
 
@@ -1301,9 +1208,6 @@ CREATE TABLE StationReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	m_stationID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT stationreference_composite_index UNIQUE(_parent_oid,m_stationID)
 );
 
@@ -1328,9 +1232,6 @@ CREATE TABLE StationGroup (
 	m_longitude DOUBLE PRECISION,
 	m_elevation DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT stationgroup_composite_index UNIQUE(_parent_oid,m_code)
 );
 
@@ -1352,9 +1253,6 @@ CREATE TABLE AuxSource (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT auxsource_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1374,9 +1272,6 @@ CREATE TABLE AuxDevice (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT auxdevice_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1400,9 +1295,6 @@ CREATE TABLE SensorCalibration (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT sensorcalibration_composite_index UNIQUE(_parent_oid,m_serialNumber,m_channel,m_start,m_start_ms)
 );
 
@@ -1427,9 +1319,6 @@ CREATE TABLE Sensor (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT sensor_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1460,9 +1349,6 @@ CREATE TABLE ResponsePAZ (
 	m_delay DOUBLE PRECISION,
 	m_correction DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT responsepaz_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1489,9 +1375,6 @@ CREATE TABLE ResponsePolynomial (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT responsepolynomial_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1513,9 +1396,6 @@ CREATE TABLE ResponseFAP (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT responsefap_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1541,9 +1421,6 @@ CREATE TABLE ResponseFIR (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT responsefir_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1572,9 +1449,6 @@ CREATE TABLE ResponseIIR (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT responseiir_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1598,9 +1472,6 @@ CREATE TABLE DataloggerCalibration (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT dataloggercalibration_composite_index UNIQUE(_parent_oid,m_serialNumber,m_channel,m_start,m_start_ms)
 );
 
@@ -1620,9 +1491,6 @@ CREATE TABLE Decimation (
 	m_digitalFilterChain_content BYTEA,
 	m_digitalFilterChain_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT decimation_composite_index UNIQUE(_parent_oid,m_sampleRateNumerator,m_sampleRateDenominator)
 );
 
@@ -1649,9 +1517,6 @@ CREATE TABLE Datalogger (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT datalogger_composite_index UNIQUE(_parent_oid,m_name)
 );
 
@@ -1677,9 +1542,6 @@ CREATE TABLE AuxStream (
 	m_restricted BOOLEAN,
 	m_shared BOOLEAN,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT auxstream_composite_index UNIQUE(_parent_oid,m_code,m_start,m_start_ms)
 );
 
@@ -1717,9 +1579,6 @@ CREATE TABLE Stream (
 	m_restricted BOOLEAN,
 	m_shared BOOLEAN,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT stream_composite_index UNIQUE(_parent_oid,m_code,m_start,m_start_ms)
 );
 
@@ -1741,9 +1600,6 @@ CREATE TABLE SensorLocation (
 	m_longitude DOUBLE PRECISION,
 	m_elevation DOUBLE PRECISION,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT sensorlocation_composite_index UNIQUE(_parent_oid,m_code,m_start,m_start_ms)
 );
 
@@ -1776,9 +1632,6 @@ CREATE TABLE Station (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT station_composite_index UNIQUE(_parent_oid,m_code,m_start,m_start_ms)
 );
 
@@ -1807,9 +1660,6 @@ CREATE TABLE Network (
 	m_remark_content BYTEA,
 	m_remark_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT network_composite_index UNIQUE(_parent_oid,m_code,m_start,m_start_ms)
 );
 
@@ -1827,9 +1677,6 @@ CREATE TABLE RouteArclink (
 	m_end TIMESTAMP,
 	m_priority SMALLINT,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT routearclink_composite_index UNIQUE(_parent_oid,m_address,m_start)
 );
 
@@ -1845,9 +1692,6 @@ CREATE TABLE RouteSeedlink (
 	m_address VARCHAR(50) NOT NULL,
 	m_priority SMALLINT,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT routeseedlink_composite_index UNIQUE(_parent_oid,m_address)
 );
 
@@ -1865,9 +1709,6 @@ CREATE TABLE Route (
 	m_locationCode VARCHAR(8) NOT NULL,
 	m_streamCode VARCHAR(8) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT route_composite_index UNIQUE(_parent_oid,m_networkCode,m_stationCode,m_locationCode,m_streamCode)
 );
 
@@ -1888,9 +1729,6 @@ CREATE TABLE Access (
 	m_start TIMESTAMP NOT NULL,
 	m_end TIMESTAMP,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT access_composite_index UNIQUE(_parent_oid,m_networkCode,m_stationCode,m_locationCode,m_streamCode,m_user,m_start)
 );
 
@@ -1909,10 +1747,7 @@ CREATE TABLE JournalEntry (
 	m_sender VARCHAR(80) NOT NULL,
 	m_action VARCHAR(160) NOT NULL,
 	m_parameters TEXT,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX JournalEntry__parent_oid ON JournalEntry(_parent_oid);
@@ -1929,9 +1764,6 @@ CREATE TABLE ArclinkUser (
 	m_email VARCHAR(80),
 	m_password VARCHAR(80),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT arclinkuser_composite_index UNIQUE(_parent_oid,m_name,m_email)
 );
 
@@ -1950,9 +1782,6 @@ CREATE TABLE ArclinkStatusLine (
 	m_message VARCHAR(160),
 	m_volumeID VARCHAR(80),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT arclinkstatusline_composite_index UNIQUE(_parent_oid,m_volumeID,m_type,m_status)
 );
 
@@ -1984,9 +1813,6 @@ CREATE TABLE ArclinkRequestLine (
 	m_status_message VARCHAR(160),
 	m_status_volumeID VARCHAR(80),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT arclinkrequestline_composite_index UNIQUE(_parent_oid,m_start,m_start_ms,m_end,m_end_ms,m_streamID_networkCode,m_streamID_stationCode,m_streamID_locationCode,m_streamID_channelCode,m_streamID_resourceURI)
 );
 
@@ -2016,9 +1842,6 @@ CREATE TABLE ArclinkRequest (
 	m_summary_averageTimeWindow INT,
 	m_summary_used BOOLEAN NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT arclinkrequest_composite_index UNIQUE(_parent_oid,m_created,m_created_ms,m_requestID,m_userID)
 );
 
@@ -2041,9 +1864,6 @@ CREATE TABLE DataSegment (
 	m_quality VARCHAR(8) NOT NULL,
 	m_outOfOrder BOOLEAN NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT datasegment_composite_index UNIQUE(_parent_oid,m_start,m_start_ms)
 );
 
@@ -2069,9 +1889,6 @@ CREATE TABLE DataAttributeExtent (
 	m_updated_ms INTEGER NOT NULL,
 	m_segmentCount INT NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT dataattributeextent_composite_index UNIQUE(_parent_oid,m_sampleRate,m_quality)
 );
 
@@ -2102,9 +1919,6 @@ CREATE TABLE DataExtent (
 	m_lastScan_ms INTEGER NOT NULL,
 	m_segmentOverflow BOOLEAN NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	CONSTRAINT dataextent_composite_index UNIQUE(_parent_oid,m_waveformID_networkCode,m_waveformID_stationCode,m_waveformID_locationCode,m_waveformID_channelCode,m_waveformID_resourceURI)
 );
 

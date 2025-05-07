@@ -80,10 +80,7 @@ CREATE TABLE PublicObject (
 	_oid INTEGER NOT NULL,
 	publicID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	UNIQUE(publicID),
-	FOREIGN KEY(_oid)
-	  REFERENCES Object(_oid)
-	  ON DELETE CASCADE
+	UNIQUE(publicID)
 );
 
 INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
@@ -113,9 +110,6 @@ CREATE TABLE EventDescription (
 	text VARCHAR NOT NULL,
 	type VARCHAR(64) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,type)
 );
 
@@ -147,9 +141,6 @@ CREATE TABLE Comment (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,id)
 );
 
@@ -168,10 +159,7 @@ CREATE TABLE DataUsed (
 	stationCount INT UNSIGNED NOT NULL,
 	componentCount INT UNSIGNED NOT NULL,
 	shortestPeriod DOUBLE,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX DataUsed__parent_oid ON DataUsed(_parent_oid);
@@ -224,10 +212,7 @@ CREATE TABLE CompositeTime (
 	second_pdf_probability_content BLOB,
 	second_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	second_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX CompositeTime__parent_oid ON CompositeTime(_parent_oid);
@@ -243,9 +228,6 @@ CREATE TABLE PickReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	pickID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,pickID)
 );
 
@@ -263,9 +245,6 @@ CREATE TABLE AmplitudeReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	amplitudeID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,amplitudeID)
 );
 
@@ -280,10 +259,7 @@ END;
 CREATE TABLE Reading (
 	_oid INTEGER NOT NULL,
 	_parent_oid INTEGER NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Reading__parent_oid ON Reading(_parent_oid);
@@ -306,9 +282,6 @@ CREATE TABLE MomentTensorComponentContribution (
 	misfit DOUBLE,
 	snr DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,phaseCode,component)
 );
 
@@ -332,10 +305,7 @@ CREATE TABLE MomentTensorStationContribution (
 	waveformID_used INTEGER(1) NOT NULL DEFAULT '0',
 	weight DOUBLE,
 	timeShift DOUBLE,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensorStationContribution__parent_oid ON MomentTensorStationContribution(_parent_oid);
@@ -355,9 +325,6 @@ CREATE TABLE MomentTensorPhaseSetting (
 	minimumSNR DOUBLE,
 	maximumTimeShift DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code)
 );
 
@@ -459,10 +426,7 @@ CREATE TABLE MomentTensor (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensor__parent_oid ON MomentTensor(_parent_oid);
@@ -621,10 +585,7 @@ CREATE TABLE FocalMechanism (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX FocalMechanism__parent_oid ON FocalMechanism(_parent_oid);
@@ -696,10 +657,7 @@ CREATE TABLE Amplitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Amplitude__parent_oid ON Amplitude(_parent_oid);
@@ -719,9 +677,6 @@ CREATE TABLE StationMagnitudeContribution (
 	residual DOUBLE,
 	weight DOUBLE UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,stationMagnitudeID)
 );
 
@@ -761,10 +716,7 @@ CREATE TABLE Magnitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Magnitude__parent_oid ON Magnitude(_parent_oid);
@@ -807,10 +759,7 @@ CREATE TABLE StationMagnitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX StationMagnitude__parent_oid ON StationMagnitude(_parent_oid);
@@ -876,10 +825,7 @@ CREATE TABLE Pick (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Pick__parent_oid ON Pick(_parent_oid);
@@ -896,9 +842,6 @@ CREATE TABLE OriginReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	originID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,originID)
 );
 
@@ -916,9 +859,6 @@ CREATE TABLE FocalMechanismReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	focalMechanismID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,focalMechanismID)
 );
 
@@ -949,10 +889,7 @@ CREATE TABLE Event (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Event__parent_oid ON Event(_parent_oid);
@@ -1026,9 +963,6 @@ CREATE TABLE Arrival (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,pickID)
 );
 
@@ -1124,10 +1058,7 @@ CREATE TABLE Origin (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Origin__parent_oid ON Origin(_parent_oid);
@@ -1144,10 +1075,7 @@ CREATE TABLE Parameter (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	name VARCHAR NOT NULL,
 	value BLOB,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Parameter__parent_oid ON Parameter(_parent_oid);
@@ -1165,10 +1093,7 @@ CREATE TABLE ParameterSet (
 	moduleID VARCHAR,
 	created DATETIME,
 	created_ms INTEGER,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ParameterSet__parent_oid ON ParameterSet(_parent_oid);
@@ -1187,9 +1112,6 @@ CREATE TABLE Setup (
 	parameterSetID VARCHAR,
 	enabled INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1219,9 +1141,6 @@ CREATE TABLE ConfigStation (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode)
 );
 
@@ -1239,10 +1158,7 @@ CREATE TABLE ConfigModule (
 	name VARCHAR NOT NULL,
 	parameterSetID VARCHAR,
 	enabled INTEGER(1) NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ConfigModule__parent_oid ON ConfigModule(_parent_oid);
@@ -1271,9 +1187,6 @@ CREATE TABLE QCLog (
 	end_ms INTEGER NOT NULL,
 	message BLOB NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
 );
 
@@ -1307,9 +1220,6 @@ CREATE TABLE WaveformQuality (
 	upperUncertainty DOUBLE,
 	windowLength DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,type,parameter)
 );
 
@@ -1339,9 +1249,6 @@ CREATE TABLE Outage (
 	end DATETIME,
 	end_ms INTEGER,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,start,start_ms)
 );
 
@@ -1358,9 +1265,6 @@ CREATE TABLE StationReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stationID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,stationID)
 );
 
@@ -1387,9 +1291,6 @@ CREATE TABLE StationGroup (
 	longitude DOUBLE,
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code)
 );
 
@@ -1413,9 +1314,6 @@ CREATE TABLE AuxSource (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1437,9 +1335,6 @@ CREATE TABLE AuxDevice (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1465,9 +1360,6 @@ CREATE TABLE SensorCalibration (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,serialNumber,channel,start,start_ms)
 );
 
@@ -1494,9 +1386,6 @@ CREATE TABLE Sensor (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1529,9 +1418,6 @@ CREATE TABLE ResponsePAZ (
 	delay DOUBLE UNSIGNED,
 	correction DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1560,9 +1446,6 @@ CREATE TABLE ResponsePolynomial (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1586,9 +1469,6 @@ CREATE TABLE ResponseFAP (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1616,9 +1496,6 @@ CREATE TABLE ResponseFIR (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1649,9 +1526,6 @@ CREATE TABLE ResponseIIR (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1677,9 +1551,6 @@ CREATE TABLE DataloggerCalibration (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,serialNumber,channel,start,start_ms)
 );
 
@@ -1701,9 +1572,6 @@ CREATE TABLE Decimation (
 	digitalFilterChain_content BLOB,
 	digitalFilterChain_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,sampleRateNumerator,sampleRateDenominator)
 );
 
@@ -1732,9 +1600,6 @@ CREATE TABLE Datalogger (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1762,9 +1627,6 @@ CREATE TABLE AuxStream (
 	restricted INTEGER(1),
 	shared INTEGER(1),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1804,9 +1666,6 @@ CREATE TABLE Stream (
 	restricted INTEGER(1),
 	shared INTEGER(1),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1830,9 +1689,6 @@ CREATE TABLE SensorLocation (
 	longitude DOUBLE,
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1867,9 +1723,6 @@ CREATE TABLE Station (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1900,9 +1753,6 @@ CREATE TABLE Network (
 	remark_content BLOB,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1922,9 +1772,6 @@ CREATE TABLE RouteArclink (
 	end DATETIME,
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,address,start)
 );
 
@@ -1942,9 +1789,6 @@ CREATE TABLE RouteSeedlink (
 	address VARCHAR NOT NULL,
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,address)
 );
 
@@ -1964,9 +1808,6 @@ CREATE TABLE Route (
 	locationCode CHAR NOT NULL,
 	streamCode CHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode,locationCode,streamCode)
 );
 
@@ -1989,9 +1830,6 @@ CREATE TABLE Access (
 	start DATETIME NOT NULL,
 	end DATETIME,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode,locationCode,streamCode,user,start)
 );
 
@@ -2012,10 +1850,7 @@ CREATE TABLE JournalEntry (
 	sender VARCHAR NOT NULL,
 	action VARCHAR NOT NULL,
 	parameters TEXT,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX JournalEntry__parent_oid ON JournalEntry(_parent_oid);
@@ -2034,9 +1869,6 @@ CREATE TABLE ArclinkUser (
 	email VARCHAR,
 	password VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name,email)
 );
 
@@ -2057,9 +1889,6 @@ CREATE TABLE ArclinkStatusLine (
 	message VARCHAR,
 	volumeID VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,volumeID,type,status)
 );
 
@@ -2093,9 +1922,6 @@ CREATE TABLE ArclinkRequestLine (
 	status_message VARCHAR,
 	status_volumeID VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms,end,end_ms,streamID_networkCode,streamID_stationCode,streamID_locationCode,streamID_channelCode,streamID_resourceURI)
 );
 
@@ -2127,9 +1953,6 @@ CREATE TABLE ArclinkRequest (
 	summary_averageTimeWindow INT UNSIGNED,
 	summary_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,created,created_ms,requestID,userID)
 );
 
@@ -2154,9 +1977,6 @@ CREATE TABLE DataSegment (
 	quality VARCHAR NOT NULL,
 	outOfOrder INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms)
 );
 
@@ -2184,9 +2004,6 @@ CREATE TABLE DataAttributeExtent (
 	updated_ms INTEGER NOT NULL,
 	segmentCount INT UNSIGNED NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,sampleRate,quality)
 );
 
@@ -2219,9 +2036,6 @@ CREATE TABLE DataExtent (
 	lastScan_ms INTEGER NOT NULL,
 	segmentOverflow INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
 );
 
