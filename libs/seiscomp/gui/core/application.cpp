@@ -415,22 +415,38 @@ QString Application::createCSV(const QAbstractItemView* view,
 	QAbstractItemModel *model = view->model();
 	QModelIndexList items = view->selectionModel()->selectedRows();
 	QString csv;
-	int previousRow = -1;
 	int columns = model->columnCount();
 
-	for ( QModelIndexList::const_iterator it = items.constBegin();
-	      it != items.constEnd(); ++it ) {
-		if ( previousRow >= 0 )
-			csv += '\n';
+	if ( items.empty() ) {
+		return csv;
+	}
 
-		int c = 0;
-		for ( int i = 0; i < columns; ++i ) {
-			if ( header && header->isSectionHidden(i) ) continue;
-			if ( c++ > 0 ) csv += ';';
-			csv += model->data(it->sibling(it->row(), i)).toString();
+	// Add header
+	int c = 0;
+	for ( int i = 0; i < columns; ++i ) {
+		if ( header && header->isSectionHidden(i) ) {
+			continue;
 		}
 
-		previousRow = it->row();
+		csv += c++ == 0 ? "# " : ";";
+		csv += model->headerData(i, Qt::Horizontal).toString();
+	}
+
+	for ( auto it = items.constBegin(); it != items.constEnd(); ++it ) {
+		csv += '\n';
+
+		c = 0;
+		for ( int i = 0; i < columns; ++i ) {
+			if ( header && header->isSectionHidden(i) ) {
+				continue;
+			}
+
+			if ( c++ > 0 ) {
+				csv += ';';
+			}
+
+			csv += model->data(it->sibling(it->row(), i)).toString();
+		}
 	}
 
 	return csv;
