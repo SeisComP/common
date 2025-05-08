@@ -1863,6 +1863,7 @@ void EventEdit::init() {
 	_fixOriginDefaultActionCount = _ui.comboFixOrigin->count();
 
 	_ui.fmTree->setContextMenuPolicy(Qt::CustomContextMenu);
+	_ui.fmTree->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 	header = _ui.fmTree->header();
 	header->setSortIndicatorShown(true);
