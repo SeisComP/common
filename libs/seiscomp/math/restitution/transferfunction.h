@@ -101,9 +101,9 @@ class PolesAndZeros : public TransferFunction {
 		PolesAndZeros(int n_poles, Pole *poles, int n_zeros, Zero *zeros, double k, int addZeros = 0);
 
 	protected:
-		void evaluate_(Complex *out, int n, const double *x) const;
-		void deconvolve_(int n, Complex *spec, double startFreq, double df) const;
-		void convolve_(int n, Complex *spec, double startFreq, double df) const;
+		void evaluate_(Complex *out, int n, const double *x) const override;
+		void deconvolve_(int n, Complex *spec, double startFreq, double df) const override;
+		void convolve_(int n, Complex *spec, double startFreq, double df) const override;
 
 	public:
 		SeismometerResponse::PolesAndZeros paz;
@@ -120,9 +120,9 @@ class ResponseList : public TransferFunction {
 		ResponseList(int n_tuples, const SeismometerResponse::FAP *faps, int addZeros = 0);
 
 	protected:
-		void evaluate_(Complex *out, int n, const double *x) const;
-		void deconvolve_(int n, Complex *spec, double startFreq, double df) const;
-		void convolve_(int n, Complex *spec, double startFreq, double df) const;
+		void evaluate_(Complex *out, int n, const double *x) const override;
+		void deconvolve_(int n, Complex *spec, double startFreq, double df) const override;
+		void convolve_(int n, Complex *spec, double startFreq, double df) const override;
 
 	public:
 		SeismometerResponse::FAPs faps;

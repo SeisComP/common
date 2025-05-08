@@ -1344,7 +1344,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				}
 			} logging;
 
-			virtual void accept(SettingsLinker &linker);
+			virtual void accept(SettingsLinker &linker) override;
 		} _baseSettings;
 };
 

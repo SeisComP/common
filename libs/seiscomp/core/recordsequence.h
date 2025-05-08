@@ -171,9 +171,9 @@ class SC_SYSTEM_CORE_API TimeWindowBuffer : public RecordSequence {
 	//  Public RecordSequence interface overrides
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool feed(const Record*);
-		virtual RecordSequence *copy() const;
-		virtual RecordSequence *clone() const;
+		virtual bool feed(const Record*) override;
+		virtual RecordSequence *copy() const override;
+		virtual RecordSequence *clone() const override;
 
 
 	// ----------------------------------------------------------------------
@@ -223,9 +223,9 @@ class SC_SYSTEM_CORE_API RingBuffer : public RecordSequence {
 	//  Public RecordSequence interface overrides
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool feed(const Record*);
-		virtual RecordSequence *copy() const;
-		virtual RecordSequence *clone() const;
+		virtual bool feed(const Record*) override;
+		virtual RecordSequence *copy() const override;
+		virtual RecordSequence *clone() const override;
 
 
 	// ----------------------------------------------------------------------

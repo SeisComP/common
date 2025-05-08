@@ -122,7 +122,7 @@ class SC_SYSTEM_CORE_API WildcardStringFirewall : public StringFirewall {
 		 * @param s The input string
 		 * @return true if it may pass, false otherwise
 		 */
-		virtual bool isAllowed(const std::string &s) const;
+		virtual bool isAllowed(const std::string &s) const override;
 
 
 	// ----------------------------------------------------------------------

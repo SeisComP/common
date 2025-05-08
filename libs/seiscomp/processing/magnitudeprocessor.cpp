@@ -59,7 +59,7 @@ class MagnitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInt
 		, _source(source)
 		, _ampType(ampType) {}
 
-		MagnitudeProcessor *create() const {
+		MagnitudeProcessor *create() const override {
 			auto proc = _source->create();
 			if ( proc->type() != serviceName() ) {
 				proc->_type = serviceName();

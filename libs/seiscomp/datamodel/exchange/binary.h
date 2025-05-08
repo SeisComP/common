@@ -77,8 +77,8 @@ class ExporterBinary : public IO::XML::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
-		bool put(std::streambuf* buf, const IO::ExportObjectList &objects);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
+		bool put(std::streambuf* buf, const IO::ExportObjectList &objects) override;
 };
 
 
@@ -95,8 +95,8 @@ class ExporterVBinary : public IO::XML::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
-		bool put(std::streambuf* buf, const IO::ExportObjectList &objects);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
+		bool put(std::streambuf* buf, const IO::ExportObjectList &objects) override;
 };
 
 

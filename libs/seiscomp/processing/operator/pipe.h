@@ -36,8 +36,8 @@ class PipeOperator : public WaveformOperator {
 	public:
 		PipeOperator(WaveformOperator *op1, WaveformOperator *op2);
 
-		WaveformProcessor::Status feed(const Record *record);
-		void reset();
+		WaveformProcessor::Status feed(const Record *record) override;
+		void reset() override;
 
 
 	private:

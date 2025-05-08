@@ -37,8 +37,8 @@ class SC_SYSTEM_CORE_API GeneralException : public std::exception {
 		GeneralException( const std::string& str);
 
 		virtual ~GeneralException() throw();
-		
-		virtual const char* what( void ) const throw();
+
+		virtual const char* what( void ) const throw() override;
 
 	private:
 		std::string _descr;

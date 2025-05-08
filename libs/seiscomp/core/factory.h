@@ -173,7 +173,7 @@ class AbstractClassFactory : public ClassFactoryInterface<ROOT_TYPE> {
 
 	protected:
 		//! Always returns nullptr
-		ROOT_TYPE *create() const;
+		ROOT_TYPE *create() const override;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -206,7 +206,7 @@ class ClassFactory : public ClassFactoryInterface<ROOT_TYPE> {
 
  protected:
 		//! The actual creation
-		ROOT_TYPE* create() const;
+		ROOT_TYPE* create() const override;
 };
 
 

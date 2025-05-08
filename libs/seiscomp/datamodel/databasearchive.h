@@ -241,10 +241,10 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		//! Implements derived  method
 		//! @param dataSource user:password@host:port/database
-		bool open(const char* dataSource);
+		bool open(const char* dataSource) override;
 
 		//! Implements derived  method
-		void close();
+		void close() override;
 
 		//! Returns the used database driver
 		Seiscomp::IO::DatabaseInterface* driver() const;
@@ -406,7 +406,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ----------------------------------------------------------------------
 	protected:
 		//! Implements derived  method
-		bool create(const char* dataSource);
+		bool create(const char* dataSource) override;
 
 
 	// ----------------------------------------------------------------------
@@ -414,40 +414,40 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ----------------------------------------------------------------------
 	protected:
 		//! Reads an integer
-		virtual void read(std::int8_t& value);
-		virtual void read(std::int16_t& value);
-		virtual void read(std::int32_t& value);
-		virtual void read(std::int64_t& value);
+		virtual void read(std::int8_t& value) override;
+		virtual void read(std::int16_t& value) override;
+		virtual void read(std::int32_t& value) override;
+		virtual void read(std::int64_t& value) override;
 		//! Reads a float
-		virtual void read(float& value);
+		virtual void read(float& value) override;
 		//! Reads a double
-		virtual void read(double& value);
+		virtual void read(double& value) override;
 		//! Reads a float complex
-		virtual void read(std::complex<float>& value);
+		virtual void read(std::complex<float>& value) override;
 		//! Reads a double complex
-		virtual void read(std::complex<double>& value);
+		virtual void read(std::complex<double>& value) override;
 		//! Reads a boolean
-		virtual void read(bool& value);
+		virtual void read(bool& value) override;
 
 		//! Reads a vector of native types
-		virtual void read(std::vector<char>& value);
-		virtual void read(std::vector<int8_t>& value);
-		virtual void read(std::vector<int16_t>& value);
-		virtual void read(std::vector<int32_t>& value);
-		virtual void read(std::vector<int64_t>& value);
-		virtual void read(std::vector<float>& value);
-		virtual void read(std::vector<double>& value);
-		virtual void read(std::vector<std::string>& value);
-		virtual void read(std::vector<Core::Time>& value);
+		virtual void read(std::vector<char>& value) override;
+		virtual void read(std::vector<int8_t>& value) override;
+		virtual void read(std::vector<int16_t>& value) override;
+		virtual void read(std::vector<int32_t>& value) override;
+		virtual void read(std::vector<int64_t>& value) override;
+		virtual void read(std::vector<float>& value) override;
+		virtual void read(std::vector<double>& value) override;
+		virtual void read(std::vector<std::string>& value) override;
+		virtual void read(std::vector<Core::Time>& value) override;
 
 		//! Reads a vector of complex doubles
-		virtual void read(std::vector<std::complex<double> >& value);
+		virtual void read(std::vector<std::complex<double> >& value) override;
 
 		//! Reads a string
-		virtual void read(std::string& value);
+		virtual void read(std::string& value) override;
 
 		//! Reads a time
-		virtual void read(Seiscomp::Core::Time& value);
+		virtual void read(Seiscomp::Core::Time& value) override;
 
 
 	// ------------------------------------------------------------------
@@ -455,47 +455,47 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ------------------------------------------------------------------
 	protected:
 		//! Writes an integer
-		virtual void write(std::int8_t value);
-		virtual void write(std::int16_t value);
-		virtual void write(std::int32_t value);
-		virtual void write(std::int64_t value);
+		virtual void write(std::int8_t value) override;
+		virtual void write(std::int16_t value) override;
+		virtual void write(std::int32_t value) override;
+		virtual void write(std::int64_t value) override;
 		//! Writes a float
-		virtual void write(float value);
+		virtual void write(float value) override;
 		//! Writes a double
-		virtual void write(double value);
+		virtual void write(double value) override;
 		//! Writes a float complex
-		virtual void write(std::complex<float>& value);
+		virtual void write(std::complex<float>& value) override;
 		//! Writes a double complex
-		virtual void write(std::complex<double>& value);
+		virtual void write(std::complex<double>& value) override;
 		//! Writes a boolean
-		virtual void write(bool value);
+		virtual void write(bool value) override;
 
 		//! Writes a vector of native types
-		virtual void write(std::vector<char>& value);
-		virtual void write(std::vector<int8_t>& value);
-		virtual void write(std::vector<int16_t>& value);
-		virtual void write(std::vector<int32_t>& value);
-		virtual void write(std::vector<int64_t>& value);
-		virtual void write(std::vector<float>& value);
-		virtual void write(std::vector<double>& value);
-		virtual void write(std::vector<std::string>& value);
-		virtual void write(std::vector<Core::Time>& value);
+		virtual void write(std::vector<char>& value) override;
+		virtual void write(std::vector<int8_t>& value) override;
+		virtual void write(std::vector<int16_t>& value) override;
+		virtual void write(std::vector<int32_t>& value) override;
+		virtual void write(std::vector<int64_t>& value) override;
+		virtual void write(std::vector<float>& value) override;
+		virtual void write(std::vector<double>& value) override;
+		virtual void write(std::vector<std::string>& value) override;
+		virtual void write(std::vector<Core::Time>& value) override;
 
 		//! Writes a vector of complex doubles
-		virtual void write(std::vector<std::complex<double> >& value);
+		virtual void write(std::vector<std::complex<double> >& value) override;
 
 		//! Writes a string
-		virtual void write(std::string& value);
+		virtual void write(std::string& value) override;
 
 		//! Writes a time
-		virtual void write(Seiscomp::Core::Time& value);
+		virtual void write(Seiscomp::Core::Time& value) override;
 
 
 	// ------------------------------------------------------------------
 	//  Protected observer interface
 	// ------------------------------------------------------------------
 	protected:
-		virtual void onObjectDestroyed(Object* object);
+		virtual void onObjectDestroyed(Object* object) override;
 
 
 	// ------------------------------------------------------------------
@@ -503,23 +503,23 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ------------------------------------------------------------------
 	protected:
 		//! Implements derived  method
-		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable);
+		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable) override;
 		//! Implements derived  method
-		virtual bool locateNextObjectByName(const char* name, const char* targetClass);
+		virtual bool locateNextObjectByName(const char* name, const char* targetClass) override;
 		//! Implements derived  method
-		virtual void locateNullObjectByName(const char* name, const char* targetClass, bool first);
+		virtual void locateNullObjectByName(const char* name, const char* targetClass, bool first) override;
 
 		//! Implements derived  method
-		virtual std::string determineClassName();
+		virtual std::string determineClassName() override;
 
 		//! Implements derived  method
-		virtual void setClassName(const char*);
+		virtual void setClassName(const char*) override;
 
 		//! Implements derived  method
-		void serialize(RootType* object);
+		void serialize(RootType* object) override;
 
 		//! Implements derived  method
-		void serialize(SerializeDispatcher&);
+		void serialize(SerializeDispatcher&) override;
 
 		std::string buildQuery(const std::string& table,
 		                       const std::string& filter = "");

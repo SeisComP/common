@@ -49,30 +49,30 @@ class SC_SYSTEM_CORE_API Resample : public Seiscomp::IO::RecordStream {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setSource(const std::string &source);
-		virtual bool setRecordType(const char *type);
+		virtual bool setSource(const std::string &source) override;
+		virtual bool setRecordType(const char *type) override;
 
 		virtual bool addStream(const std::string &networkCode,
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		                       const std::string &channelCode) override;
 
 		virtual bool addStream(const std::string &networkCode,
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
 		                       const std::string &channelCode,
 		                       const OPT(Core::Time) &startTime,
-		                       const OPT(Core::Time) &endTime);
+		                       const OPT(Core::Time) &endTime) override;
 
-		virtual bool setStartTime(const OPT(Core::Time) &stime);
-		virtual bool setEndTime(const OPT(Core::Time) &etime);
-		virtual bool setTimeWindow(const Core::TimeWindow &w);
+		virtual bool setStartTime(const OPT(Core::Time) &stime) override;
+		virtual bool setEndTime(const OPT(Core::Time) &etime) override;
+		virtual bool setTimeWindow(const Core::TimeWindow &w) override;
 
-		virtual bool setTimeout(int seconds);
+		virtual bool setTimeout(int seconds) override;
 
-		virtual void close();
+		virtual void close() override;
 
-		virtual Record *next();
+		virtual Record *next() override;
 
 
 	// ----------------------------------------------------------------------

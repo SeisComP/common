@@ -43,7 +43,7 @@ class ImporterBSON : public IO::Importer {
 	//  Importer interface
 	// ------------------------------------------------------------------
 	protected:
-		Core::BaseObject *get(std::streambuf* buf);
+		Core::BaseObject *get(std::streambuf* buf) override;
 };
 
 
@@ -60,7 +60,7 @@ class ExporterBSON : public IO::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
 };
 
 
@@ -77,7 +77,7 @@ class ExporterBSONJSON : public IO::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
 };
 
 

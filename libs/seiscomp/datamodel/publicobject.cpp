@@ -43,7 +43,7 @@ namespace _private {
 struct Resolver : public Util::VariableResolver {
 	Resolver(PublicObject* po) : _po(po) {}
 
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		if ( Util::VariableResolver::resolve(variable) )
 			return true;
 

@@ -91,13 +91,13 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		//! Applies the filter and returns a copy with a record of the
 		//! requested datatype. The returned record instance is a GenericRecord.
 		//! If no IIR filter is set a type converted copy is returned.
-		virtual Record *feed(const Record *rec);
+		virtual Record *feed(const Record *rec) override;
 
-		virtual Record *flush();
+		virtual Record *flush() override;
 
-		virtual void reset();
+		virtual void reset() override;
 
-		RecordFilterInterface *clone() const;
+		RecordFilterInterface *clone() const override;
 
 
 	// ------------------------------------------------------------------

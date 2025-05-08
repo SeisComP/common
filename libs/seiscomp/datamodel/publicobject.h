@@ -227,7 +227,7 @@ class SC_SYSTEM_CORE_API PublicObject : public Object {
 		virtual bool updateChild(Object*) = 0;
 
 		//! Visitor interface
-		virtual void accept(Visitor*) = 0;
+		virtual void accept(Visitor*) override = 0;
 
 
 	// ------------------------------------------------------------------

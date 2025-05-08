@@ -38,7 +38,7 @@ namespace {
 
 class NamespaceCollector : public OutputHandler {
 	public:
-		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = nullptr) {
+		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = nullptr) override {
 			TypeMap::Tag defTag(
 					defaultTag?defaultTag:"",
 					ns?ns:""
@@ -58,20 +58,20 @@ class NamespaceCollector : public OutputHandler {
 				handler->put(obj, tag->name.c_str(), tag->ns.c_str(), this);
 		}
 
-		bool openElement(const char *name, const char *ns) {
+		bool openElement(const char *name, const char *ns) override {
 			if ( ns && *ns != '\0' )
 				namespaces.insert(std::string(ns));
 			return true;
 		}
 
-		void addAttribute(const char *name, const char *ns, const char *value) {
+		void addAttribute(const char *name, const char *ns, const char *value) override {
 			if ( ns && *ns != '\0' )
 				namespaces.insert(std::string(ns));
 		}
 
-		void closeElement(const char *name, const char *ns) {}
+		void closeElement(const char *name, const char *ns) override {}
 
-		void put(const char *content) {}
+		void put(const char *content) override {}
 
 	public:
 		TypeMap *typemap;

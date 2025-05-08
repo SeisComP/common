@@ -80,7 +80,7 @@ class AmplitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInt
 		: Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor>(service.c_str())
 		, _source(source) {}
 
-		AmplitudeProcessor *create() const {
+		AmplitudeProcessor *create() const override {
 			auto proc = _source->create();
 			if ( proc->type() != serviceName() ) {
 				proc->_type = serviceName();

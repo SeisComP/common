@@ -90,11 +90,11 @@ class CaseSensitivityCheck : public ModelVisitor {
 		: _delegate(delegate), _target(target), _stage(stage), _symbol(symbol) {}
 
 	protected:
-		virtual bool visit(Module *m) { return m == _target; }
-		virtual bool visit(Section*) { return true; }
-		virtual bool visit(Group*) { return true; }
-		virtual bool visit(Structure*) { return true; }
-		virtual void visit(Parameter *p, bool unknown) {
+		virtual bool visit(Module *m) override { return m == _target; }
+		virtual bool visit(Section*) override { return true; }
+		virtual bool visit(Group*) override { return true; }
+		virtual bool visit(Structure*) override { return true; }
+		virtual void visit(Parameter *p, bool unknown) override {
 			if ( !unknown && Core::compareNoCase(p->variableName, _symbol->name) == 0 ) {
 				ConfigDelegate::CSConflict csc;
 				csc.module = _target;
@@ -119,27 +119,27 @@ class DuplicateNameCheck : public ModelVisitor {
 		DuplicateNameCheck()
 		: _currentModule(nullptr) {}
 
-		bool visit(Module *mod) {
+		bool visit(Module *mod) override {
 			_currentModule = mod;
 			_currentSection = nullptr;
 			_names.clear();
 			return true;
 		}
 
-		bool visit(Section *sec) {
+		bool visit(Section *sec) override {
 			_currentSection = sec;
 			return true;
 		}
 
-		bool visit(Group*) {
+		bool visit(Group*) override {
 			return true;
 		}
 
-		bool visit(Structure*) {
+		bool visit(Structure*) override {
 			return true;
 		}
 
-		void visit(Parameter *param, bool unknown) {
+		void visit(Parameter *param, bool unknown) override {
 			// Do not touch unknown parameters
 			if ( unknown ) return;
 
@@ -170,23 +170,23 @@ class DuplicateNameCheck : public ModelVisitor {
 struct ParameterCollector : public ModelVisitor {
 	ParameterCollector() {}
 
-	virtual bool visit(Module*) {
+	virtual bool visit(Module*) override {
 		return true;
 	}
 
-	virtual bool visit(Section*) {
+	virtual bool visit(Section*) override {
 		return true;
 	}
 
-	virtual bool visit(Group*) {
+	virtual bool visit(Group*) override {
 		return true;
 	}
 
-	virtual bool visit(Structure*) {
+	virtual bool visit(Structure*) override {
 		return true;
 	}
 
-	virtual void visit(Parameter *param, bool unknown) {
+	virtual void visit(Parameter *param, bool unknown) override {
 		parameters.push_back(param);
 	}
 

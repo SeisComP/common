@@ -43,7 +43,7 @@ class SimpleApp : public Seiscomp::System::Application {
 		: Seiscomp::System::Application(argc, argv) {}
 
 	public:
-		bool run() {
+		bool run() override {
 			return true;
 		}
 };

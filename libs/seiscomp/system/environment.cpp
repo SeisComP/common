@@ -300,7 +300,7 @@ std::string Environment::globalConfigFileName(const std::string& programname) co
 namespace {
 
 struct PathResolver : public Util::VariableResolver {
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		Environment *env = Environment::Instance();
 
 		if ( variable == "LOGDIR" )

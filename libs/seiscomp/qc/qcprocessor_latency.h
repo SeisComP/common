@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorLatency : public QcProcessor {
 	public:
 		QcProcessorLatency();
 		double getLatency();
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 
 	private:
 		Core::Time _lastRecordArrivalTime;

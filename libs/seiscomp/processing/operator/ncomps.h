@@ -55,8 +55,8 @@ class NCompsOperator : public WaveformOperator {
 	public:
 		NCompsOperator(const PROC &proc) : _proc(proc), _processing(false) {}
 
-		WaveformProcessor::Status feed(const Record *record);
-		void reset();
+		WaveformProcessor::Status feed(const Record *record) override;
+		void reset() override;
 
 		// Returns the RingBuffer of each component.
 		const Seiscomp::RingBuffer &buffer(int i) const {

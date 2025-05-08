@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorRms : public QcProcessor {
 	public:
 		QcProcessorRms();
 		double getRms();
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 };
 
 

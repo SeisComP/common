@@ -38,7 +38,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorMean : public QcProcessor {
 		QcProcessorMean();
 
 		double getMean();
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 };
 
 

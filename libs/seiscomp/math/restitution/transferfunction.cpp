@@ -42,7 +42,7 @@ class TransferFunctionProduct : public TransferFunction {
 		: _a(a), _b(b) {}
 
 	protected:
-		void evaluate_(Complex *out, int n, const double *x) const {
+		void evaluate_(Complex *out, int n, const double *x) const override {
 			_a->evaluate(out, n, x);
 			for ( int i = 0; i < n; ++i ) {
 				Complex tmp;
@@ -51,12 +51,12 @@ class TransferFunctionProduct : public TransferFunction {
 			}
 		}
 
-		void deconvolve_(int n, Complex *spec, double startFreq, double df) const {
+		void deconvolve_(int n, Complex *spec, double startFreq, double df) const override {
 			_a->deconvolve(n, spec, startFreq, df);
 			_b->deconvolve(n, spec, startFreq, df);
 		}
 
-		void convolve_(int n, Complex *spec, double startFreq, double df) const {
+		void convolve_(int n, Complex *spec, double startFreq, double df) const override {
 			_a->convolve(n, spec, startFreq, df);
 			_b->convolve(n, spec, startFreq, df);
 		}
@@ -74,7 +74,7 @@ class TransferFunctionRatio : public TransferFunction {
 		: _a(a), _b(b) {}
 
 	protected:
-		void evaluate_(Complex *out, int n, const double *x) const {
+		void evaluate_(Complex *out, int n, const double *x) const override {
 			_a->evaluate(out, n, x);
 			for ( int i = 0; i < n; ++i ) {
 				Complex tmp;
@@ -83,12 +83,12 @@ class TransferFunctionRatio : public TransferFunction {
 			}
 		}
 
-		void deconvolve_(int n, Complex *spec, double startFreq, double df) const {
+		void deconvolve_(int n, Complex *spec, double startFreq, double df) const override {
 			_a->deconvolve(n, spec, startFreq, df);
 			_b->convolve(n, spec, startFreq, df);
 		}
 
-		void convolve_(int n, Complex *spec, double startFreq, double df) const {
+		void convolve_(int n, Complex *spec, double startFreq, double df) const override {
 			_a->convolve(n, spec, startFreq, df);
 			_b->deconvolve(n, spec, startFreq, df);
 		}

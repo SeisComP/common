@@ -37,7 +37,7 @@ namespace Filtering {
 class SC_SYSTEM_CORE_API AlignmentError : public std::exception {
 	public:
 		AlignmentError(const char *txt)  { _txt = txt; }
-		const char* what() const throw() { return _txt; }
+		const char* what() const throw() override { return _txt; }
 	private:
 		const char *_txt;
 };
@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API InPlaceFilter : public Core::BaseObject {
 		//! type as the called instance. The configuration
 		//! parameters will be copied, too but not the internal
 		//! filter state depending on former input data
-		virtual InPlaceFilter<TYPE>* clone() const = 0;
+		virtual InPlaceFilter<TYPE>* clone() const override = 0;
 
 		//! Creates a new filter by name. The user is responsible to
 		//! release the memory
@@ -133,12 +133,12 @@ class SC_SYSTEM_CORE_API SelfFilter : public InPlaceFilter<TYPE> {
 		SelfFilter() {}
 
 	public:
-		virtual void setSamplingFrequency(double fsamp) {}
-		virtual int setParameters(int n, const double *params) { return 0; }
+		virtual void setSamplingFrequency(double fsamp) override {}
+		virtual int setParameters(int n, const double *params) override { return 0; }
 
-		virtual void apply(int n, TYPE *inout) {}
+		virtual void apply(int n, TYPE *inout) override {}
 
-		virtual InPlaceFilter<TYPE>* clone() const { return new SelfFilter(); }
+		virtual InPlaceFilter<TYPE>* clone() const override { return new SelfFilter(); }
 };
 
 

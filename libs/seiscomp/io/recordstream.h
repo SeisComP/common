@@ -247,7 +247,7 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 	// ------------------------------------------------------------------
 	protected:
 		// Does nothing
-		virtual void handleInterrupt(int);
+		virtual void handleInterrupt(int) override;
 
 		/**
 		 * @brief Helper function to set up a created record. Basically

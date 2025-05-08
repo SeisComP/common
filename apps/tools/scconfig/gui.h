@@ -85,8 +85,8 @@ class ConfigurationTreeItemModel : public QStandardItemModel {
 	public:
 		Seiscomp::Environment::ConfigStage configStage() const;
 
-		bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole);
-		Qt::ItemFlags flags(const QModelIndex &index) const;
+		bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole) override;
+		Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
 	public slots:
@@ -163,7 +163,7 @@ class StatusLabel : public QLabel {
 		void setErrorText(const QString &);
 
 	protected:
-		void paintEvent(QPaintEvent *);
+		void paintEvent(QPaintEvent *) override;
 
 	private:
 		QPixmap _icon;
@@ -180,7 +180,7 @@ class ClickFilter : public QObject {
 		void clicked(QObject *);
 
 	protected:
-		bool eventFilter(QObject *obj, QEvent *event);
+		bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 
@@ -196,9 +196,9 @@ class Configurator : public QMainWindow {
 
 
 	protected:
-		void showEvent(QShowEvent *event);
-		void closeEvent(QCloseEvent *event);
-		void paintEvent(QPaintEvent *event);
+		void showEvent(QShowEvent *event) override;
+		void closeEvent(QCloseEvent *event) override;
+		void paintEvent(QPaintEvent *event) override;
 
 	private:
 		void updateModeLabel();

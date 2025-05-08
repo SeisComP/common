@@ -215,24 +215,24 @@ class SC_SYSTEM_CORE_API TravelTimeTable : public TravelTimeTableInterface {
 
 
 	public:
-		bool setModel(const std::string &model);
-		const std::string &model() const;
+		bool setModel(const std::string &model) override;
+		const std::string &model() const override;
 
 		TravelTimeList *
 		compute(double lat1, double lon1, double dep1,
 		        double lat2, double lon2, double elev2 = 0.,
-		        int ellc = 1);
+		        int ellc = 1) override;
 
 		TravelTime
 		compute(const char *phase,
 		        double lat1, double lon1, double dep1,
 		        double lat2, double lon2, double elev2 = 0.,
-		        int ellc = 1);
+		        int ellc = 1) override;
 
 		TravelTime
 		computeFirst(double lat1, double lon1, double dep1,
 		             double lat2, double lon2, double elev2 = 0.,
-		             int ellc = 1);
+		             int ellc = 1) override;
 
 	private:
 		static TravelTimeTableInterfacePtr _interface;

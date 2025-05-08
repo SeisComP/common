@@ -159,7 +159,7 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 
 	private:
 		//! Reads the data stream
-		virtual Record *next();
+		virtual Record *next() override;
 
 		//! Removes all stream list, time window, etc. -entries from the connection description object.
 		bool clear();
@@ -174,7 +174,7 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 		class StreamBuffer : public std::streambuf {
 			public:
 				StreamBuffer();
-				std::streambuf *setbuf(char *s, std::streamsize n);
+				std::streambuf *setbuf(char *s, std::streamsize n) override;
 		};
 
 		StreamBuffer          _streambuf;

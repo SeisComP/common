@@ -33,7 +33,7 @@ using namespace std;
 
 
 struct Logger : Config::Logger {
-	void log(Config::LogLevel level, const char *filename, int line, const char *msg) {
+	void log(Config::LogLevel level, const char *filename, int line, const char *msg) override {
 		switch ( level ) {
 			case Config::ERROR:
 				cerr << filename << ":" << line << ": error: ";

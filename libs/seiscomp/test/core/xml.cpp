@@ -161,7 +161,7 @@ class StringBuf : public std::streambuf {
 			setbuf(const_cast<char*>(s), strlen(s));
 		}
 
-		std::streambuf *setbuf(char *s, std::streamsize n) {
+		std::streambuf *setbuf(char *s, std::streamsize n) override {
 			setp(nullptr, nullptr);
 			setg(s, s, s + n);
 			return this;

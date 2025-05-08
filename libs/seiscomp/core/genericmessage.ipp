@@ -26,15 +26,15 @@ class MessageIteratorImplT : public MessageIterator::Impl {
 		: _it(it), _end(end) {}
 
 	public:
-		MessageIterator::Impl* clone() const {
+		MessageIterator::Impl* clone() const override {
 			return new MessageIteratorImplT<T>(_it, _end);
 		}
 
-		Seiscomp::Core::BaseObject* get() const {
+		Seiscomp::Core::BaseObject* get() const override {
 			return _it == _end?nullptr:(*_it).get();
 		}
 
-		void next() {
+		void next() override {
 			++_it;
 		}
 

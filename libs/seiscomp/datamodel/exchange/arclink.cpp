@@ -68,14 +68,14 @@ class PublicIDSetter : public IO::XML::MemberHandler {
 	public:
 		PublicIDSetter() {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			T *target = T::Cast(obj);
 			if ( !target ) return "";
 
 			return target->publicID();
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 

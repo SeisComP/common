@@ -43,14 +43,14 @@ class SC_SYSTEM_CORE_API FileRotatorOutput : public FileOutput {
 		FileRotatorOutput(const char* filename, int timeSpan = 60*60*24,
 		                  int historySize = 7, int maxFileSize = 100*1024*1024);
 
-		bool open(const char* filename);
+		bool open(const char* filename) override;
 
 	protected:
 		/** Callback method for receiving log messages */
 		void log(const char* channelName,
 		         LogLevel level,
 		         const char* msg,
-		         time_t time);
+		         time_t time) override;
 
 	private:
 		void rotateLogs();

@@ -47,7 +47,7 @@ class SC_SYSTEM_CORE_API SyslogOutput : public Output {
 		void log(const char* channelName,
 		         LogLevel level,
 		         const char* msg,
-		         time_t time);
+		         time_t time) override;
 
 	private:
 		bool _openFlag;

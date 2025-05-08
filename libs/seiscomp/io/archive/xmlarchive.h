@@ -62,7 +62,7 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		bool open(std::streambuf*);
 
 		//! Implements derived virtual method
-		virtual bool open(const char* filename);
+		virtual bool open(const char* filename) override;
 
 		//! Creates an archive writing to a streambuf
 		bool create(std::streambuf* buf, bool writeVersion = true, bool headerNode = true);
@@ -71,7 +71,7 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		virtual bool create(const char* filename, bool writeVersion = true, bool headerNode = true);
 
 		//! Implements derived virtual method
-		virtual void close();
+		virtual void close() override;
 
 		//! Sets the root tagname to define the document entry.
 		//! The default tagname is "seiscomp"
@@ -106,51 +106,51 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 
 		//! Sets the root namespace used when creating new documents
 		void setRootNamespace(const std::string& name, const std::string& uri);
-		
+
 
 	// ----------------------------------------------------------------------
 	//  Read methods
 	// ----------------------------------------------------------------------
 	public:
 		//! Reads an int8
-		virtual void read(std::int8_t& value);
+		virtual void read(std::int8_t& value) override;
 		//! Reads an int16
-		virtual void read(std::int16_t& value);
+		virtual void read(std::int16_t& value) override;
 		//! Reads an int32
-		virtual void read(std::int32_t& value);
+		virtual void read(std::int32_t& value) override;
 		//! Reads an int64
-		virtual void read(std::int64_t& value);
+		virtual void read(std::int64_t& value) override;
 		//! Reads a float
-		virtual void read(float& value);
+		virtual void read(float& value) override;
 		//! Reads a double
-		virtual void read(double& value);
+		virtual void read(double& value) override;
 
 		//! Reads a vector of native types
-		virtual void read(std::vector<char>& value);
-		virtual void read(std::vector<int8_t>& value);
-		virtual void read(std::vector<int16_t>& value);
-		virtual void read(std::vector<int32_t>& value);
-		virtual void read(std::vector<int64_t>& value);
-		virtual void read(std::vector<float>& value);
-		virtual void read(std::vector<double>& value);
-		virtual void read(std::vector<std::string>& value);
-		virtual void read(std::vector<Core::Time>& value);
+		virtual void read(std::vector<char>& value) override;
+		virtual void read(std::vector<int8_t>& value) override;
+		virtual void read(std::vector<int16_t>& value) override;
+		virtual void read(std::vector<int32_t>& value) override;
+		virtual void read(std::vector<int64_t>& value) override;
+		virtual void read(std::vector<float>& value) override;
+		virtual void read(std::vector<double>& value) override;
+		virtual void read(std::vector<std::string>& value) override;
+		virtual void read(std::vector<Core::Time>& value) override;
 
 		//! Reads a complex float
-		virtual void read(std::complex<float>& value);
+		virtual void read(std::complex<float>& value) override;
 		//! Reads a complex double
-		virtual void read(std::complex<double>& value);
+		virtual void read(std::complex<double>& value) override;
 		//! Reads a boolean
-		virtual void read(bool& value);
+		virtual void read(bool& value) override;
 
 		//! Reads a vector of complex doubles
-		virtual void read(std::vector<std::complex<double> >& value);
+		virtual void read(std::vector<std::complex<double> >& value) override;
 
 		//! Reads a string
-		virtual void read(std::string& value);
+		virtual void read(std::string& value) override;
 
 		//! Reads a time
-		virtual void read(Seiscomp::Core::Time& value);
+		virtual void read(Seiscomp::Core::Time& value) override;
 
 
 	// ----------------------------------------------------------------------
@@ -158,44 +158,44 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 	// ----------------------------------------------------------------------
 	public:
 		//! Writes an int8
-		virtual void write(std::int8_t value);
+		virtual void write(std::int8_t value) override;
 		//! Writes an int16
-		virtual void write(std::int16_t value);
+		virtual void write(std::int16_t value) override;
 		//! Writes an int32
-		virtual void write(std::int32_t value);
+		virtual void write(std::int32_t value) override;
 		//! Writes an int64
-		virtual void write(std::int64_t value);
+		virtual void write(std::int64_t value) override;
 		//! Writes a float
-		virtual void write(float value);
+		virtual void write(float value) override;
 		//! Writes a double
-		virtual void write(double value);
+		virtual void write(double value) override;
 
 		//! Writes a vector of native types
-		virtual void write(std::vector<char>& value);
-		virtual void write(std::vector<int8_t>& value);
-		virtual void write(std::vector<int16_t>& value);
-		virtual void write(std::vector<int32_t>& value);
-		virtual void write(std::vector<int64_t>& value);
-		virtual void write(std::vector<float>& value);
-		virtual void write(std::vector<double>& value);
-		virtual void write(std::vector<std::string>& value);
-		virtual void write(std::vector<Core::Time>& value);
+		virtual void write(std::vector<char>& value) override;
+		virtual void write(std::vector<int8_t>& value) override;
+		virtual void write(std::vector<int16_t>& value) override;
+		virtual void write(std::vector<int32_t>& value) override;
+		virtual void write(std::vector<int64_t>& value) override;
+		virtual void write(std::vector<float>& value) override;
+		virtual void write(std::vector<double>& value) override;
+		virtual void write(std::vector<std::string>& value) override;
+		virtual void write(std::vector<Core::Time>& value) override;
 
 		//! Writes a complex float
-		virtual void write(std::complex<float>& value);
+		virtual void write(std::complex<float>& value) override;
 		//! Writes a complex double
-		virtual void write(std::complex<double>& value);
+		virtual void write(std::complex<double>& value) override;
 		//! Writes a boolean
-		virtual void write(bool value);
+		virtual void write(bool value) override;
 
 		//! Writes a vector of complex doubles
-		virtual void write(std::vector<std::complex<double> >& value);
+		virtual void write(std::vector<std::complex<double> >& value) override;
 
 		//! Writes a string
-		virtual void write(std::string& value);
+		virtual void write(std::string& value) override;
 
 		//! Writes a time
-		virtual void write(Seiscomp::Core::Time& value);
+		virtual void write(Seiscomp::Core::Time& value) override;
 
 
 	// ----------------------------------------------------------------------
@@ -205,20 +205,20 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		void setValidity(bool v);
 
 		//! Implements derived virtual method
-		bool locateObjectByName(const char* name, const char* targetClass, bool nullable);
-		bool locateNextObjectByName(const char* name, const char* targetClass);
+		bool locateObjectByName(const char* name, const char* targetClass, bool nullable) override;
+		bool locateNextObjectByName(const char* name, const char* targetClass) override;
 
 		//! Implements derived virtual method
-		std::string determineClassName();
+		std::string determineClassName() override;
 
 		//! Implements derived virtual method
-		virtual void setClassName(const char* className);
+		virtual void setClassName(const char* className) override;
 
 		//! Implements derived virtual method
-		void serialize(RootType* object);
+		void serialize(RootType* object) override;
 
 		//! Implements derived virtual method
-		void serialize(SerializeDispatcher&);
+		void serialize(SerializeDispatcher&) override;
 
 
 	// ----------------------------------------------------------------------

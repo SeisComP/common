@@ -91,7 +91,7 @@ class SC_SYSTEM_CORE_API ValueError : public std::exception {
 		~ValueError() throw();
 
 	public:
-		const char* what() const throw();
+		const char* what() const throw() override;
 };
 
 /** Macro to use optional values easily */

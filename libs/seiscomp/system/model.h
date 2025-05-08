@@ -189,7 +189,7 @@ class SC_SYSTEM_CORE_API Parameter : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	public:
 		Parameter *copy(bool backImport = false);
-		Parameter *clone() const;
+		Parameter *clone() const override;
 
 		void dump(std::ostream &os) const;
 
@@ -229,7 +229,7 @@ class SC_SYSTEM_CORE_API Structure : public Container {
 	// ------------------------------------------------------------------
 	public:
 		Structure *copy(bool backImport = false);
-		Structure *clone() const;
+		Structure *clone() const override;
 		Structure *instantiate(const char *name) const;
 
 		void dump(std::ostream &os) const;
@@ -263,7 +263,7 @@ class SC_SYSTEM_CORE_API Group : public Container {
 	// ------------------------------------------------------------------
 	public:
 		Group *copy(bool backImport = false);
-		Group *clone() const;
+		Group *clone() const override;
 
 		void dump(std::ostream &os) const;
 
@@ -293,7 +293,7 @@ class SC_SYSTEM_CORE_API Section : public Container {
 	// ------------------------------------------------------------------
 	public:
 		Section *copy(bool backImport = false);
-		Section *clone() const;
+		Section *clone() const override;
 
 		void dump(std::ostream &os) const;
 
@@ -321,7 +321,7 @@ class SC_SYSTEM_CORE_API Binding : public Core::BaseObject {
 	// ------------------------------------------------------------------
 	public:
 		Binding(const std::string &n) : parent(nullptr), definition(nullptr), name(n) {}
-		Binding *clone() const;
+		Binding *clone() const override;
 
 		void dump(std::ostream &os) const;
 
@@ -365,7 +365,7 @@ class SC_SYSTEM_CORE_API BindingCategory : public Core::BaseObject {
 	public:
 		// Returns a binding (template) with given name
 		Binding *binding(const std::string &name) const;
-		BindingCategory *clone() const;
+		BindingCategory *clone() const override;
 
 		void dump(std::ostream &os) const;
 
@@ -431,7 +431,7 @@ class SC_SYSTEM_CORE_API ModuleBinding : public Binding {
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		ModuleBinding *clone() const;
+		ModuleBinding *clone() const override;
 
 		void add(BindingCategory *);
 		BindingCategory *category(const std::string &name) const;
@@ -441,13 +441,13 @@ class SC_SYSTEM_CORE_API ModuleBinding : public Binding {
 		void dump(std::ostream &os) const;
 
 		//! Returns a container at path @path@.
-		Container *findContainer(const std::string &path) const;
+		Container *findContainer(const std::string &path) const override;
 
 		//! Returns a parameters in the tree where the fully expanded name
 		//! matches fullName.
-		Parameter *findParameter(const std::string &fullName) const;
+		Parameter *findParameter(const std::string &fullName) const override;
 
-		void accept(ModelVisitor *) const;
+		void accept(ModelVisitor *) const override;
 
 
 	// ------------------------------------------------------------------

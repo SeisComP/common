@@ -64,7 +64,7 @@ class SC_SYSTEM_CORE_API Importer : public IO::Importer {
 		void setRootName(std::string);
 
 		//! Interface method that must be implemented by real importers.
-		virtual Core::BaseObject *get(std::streambuf* buf);
+		virtual Core::BaseObject *get(std::streambuf* buf) override;
 
 
 	// ------------------------------------------------------------------

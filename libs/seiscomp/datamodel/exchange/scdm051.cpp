@@ -76,14 +76,14 @@ class PublicIDSetter : public IO::XML::MemberHandler {
 	public:
 		PublicIDSetter() {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			T *target = T::Cast(obj);
 			if ( !target ) return "";
 
 			return target->publicID();
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -98,7 +98,7 @@ class CreatedSetter : public IO::XML::MemberHandler {
 	public:
 		CreatedSetter() {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			T *target = T::Cast(obj);
 			if ( !target ) return "";
 
@@ -110,7 +110,7 @@ class CreatedSetter : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -137,7 +137,7 @@ class AuthorSetter : public IO::XML::MemberHandler {
 	public:
 		AuthorSetter() {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			T *target = T::Cast(obj);
 			if ( !target ) return "";
 
@@ -149,7 +149,7 @@ class AuthorSetter : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -173,7 +173,7 @@ class AgencyIDSetter : public IO::XML::MemberHandler {
 	public:
 		AgencyIDSetter() {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			T *target = T::Cast(obj);
 			if ( !target ) return "";
 
@@ -185,7 +185,7 @@ class AgencyIDSetter : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -218,7 +218,7 @@ struct NotifierHandler : public IO::XML::TypedClassHandler<Notifier> {
 	}
 
 
-	bool get(Core::BaseObject *obj, void *n) {
+	bool get(Core::BaseObject *obj, void *n) override {
 		isOptional = false;
 		GenericHandler gh;
 		if ( !gh.get(obj, n) )
@@ -228,7 +228,7 @@ struct NotifierHandler : public IO::XML::TypedClassHandler<Notifier> {
 		return true;
 	}
 
-	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) {
+	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) override {
 		for ( IO::XML::ChildList::iterator it = cl->begin(); it != cl->end(); ++it ) {
 			Object *dmo = Object::Cast(*it);
 			if ( dmo ) {
@@ -246,7 +246,7 @@ struct NotifierHandler : public IO::XML::TypedClassHandler<Notifier> {
 struct NotifierMessageHandler : public IO::XML::ClassHandler {
 	NotifierMessageHandler() {}
 
-	bool get(Core::BaseObject *obj, void *n) {
+	bool get(Core::BaseObject *obj, void *n) override {
 		GenericHandler gh;
 		if ( !gh.get(obj, n) )
 			return false;
@@ -255,7 +255,7 @@ struct NotifierMessageHandler : public IO::XML::ClassHandler {
 		return true;
 	}
 
-	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) {
+	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) override {
 		for ( IO::XML::ChildList::iterator it = cl->begin(); it != cl->end(); ++it ) {
 			Notifier *notifier = Notifier::Cast(*it);
 			if ( notifier ) {
@@ -267,7 +267,7 @@ struct NotifierMessageHandler : public IO::XML::ClassHandler {
 		return true;
 	}
 
-	bool put(Core::BaseObject *obj, const char *tag, const char *ns, IO::XML::OutputHandler *output) {
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns, IO::XML::OutputHandler *output) override {
 		output->openElement(tag, ns);
 
 		NotifierMessage *nm = static_cast<NotifierMessage*>(obj);
@@ -286,7 +286,7 @@ struct NotifierMessageHandler : public IO::XML::ClassHandler {
 struct DataMessageHandler : public IO::XML::ClassHandler {
 	DataMessageHandler() {}
 
-	bool get(Core::BaseObject *obj, void *n) {
+	bool get(Core::BaseObject *obj, void *n) override {
 		GenericHandler gh;
 		if ( !gh.get(obj, n) )
 			return false;
@@ -295,7 +295,7 @@ struct DataMessageHandler : public IO::XML::ClassHandler {
 		return true;
 	}
 
-	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) {
+	bool finalize(Core::BaseObject *obj, IO::XML::ChildList *cl) override {
 		for ( IO::XML::ChildList::iterator it = cl->begin(); it != cl->end(); ++it ) {
 			if ( static_cast<Core::DataMessage*>(obj)->attach(*it) )
 				*it = nullptr;
@@ -304,7 +304,7 @@ struct DataMessageHandler : public IO::XML::ClassHandler {
 		return true;
 	}
 
-	bool put(Core::BaseObject *obj, const char *tag, const char *ns, IO::XML::OutputHandler *output) {
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns, IO::XML::OutputHandler *output) override {
 		output->openElement(tag, ns);
 
 		Core::DataMessage *nm = static_cast<Core::DataMessage*>(obj);
@@ -400,7 +400,7 @@ struct StationAmplitudeHandler : public IO::XML::TypedClassHandler<Amplitude> {
 
 class AzimuthConverter : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				return Core::toString(fmod(static_cast<RealQuantity*>(obj)->value() + 180., 360.));
 			}
@@ -409,7 +409,7 @@ class AzimuthConverter : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *n, IO::XML::NodeHandler *h) override {
 			RealQuantity *rq = static_cast<RealQuantity*>(object);
 			std::string v = h->content(n);
 			if ( v.empty() ) return false;
@@ -436,11 +436,11 @@ struct BackazimuthHandler : public IO::XML::TypedClassHandler<RealQuantity> {
 
 class PickAzimuthHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			return "";
 		}
 
-		bool get(Core::BaseObject *object, void *, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *, IO::XML::NodeHandler *h) override {
 			Pick *pick = static_cast<Pick*>(object);
 			pick->setBackazimuth(RealQuantity());
 			h->propagate(&pick->backazimuth(), false, true);
@@ -449,7 +449,7 @@ class PickAzimuthHandler : public IO::XML::MemberHandler {
 		}
 
 		bool put(Core::BaseObject *obj, const char *tag, const char *ns,
-		         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) {
+		         bool opt, IO::XML::OutputHandler *output, IO::XML::NodeHandler *h) override {
 			Pick *pick = static_cast<Pick*>(obj);
 			try {
 				_handler.put(&pick->backazimuth(), tag, ns, output);
@@ -458,7 +458,7 @@ class PickAzimuthHandler : public IO::XML::MemberHandler {
 			return true;
 		}
 
-		bool finalize(Core::BaseObject *parent, Core::BaseObject *member) {
+		bool finalize(Core::BaseObject *parent, Core::BaseObject *member) override {
 			Pick *pick = static_cast<Pick*>(parent);
 			RealQuantity *value = static_cast<RealQuantity*>(member);
 
@@ -475,7 +475,7 @@ class PickAzimuthHandler : public IO::XML::MemberHandler {
 
 class PickStatusHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				return Core::toString(static_cast<Pick*>(obj)->evaluationMode());
 			}
@@ -484,7 +484,7 @@ class PickStatusHandler : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
 			Pick *pick = static_cast<Pick*>(object);
 
 			std::string status = h->content(node);
@@ -502,7 +502,7 @@ class PickStatusHandler : public IO::XML::MemberHandler {
 
 class PickPolarityHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				switch ( static_cast<Pick*>(obj)->polarity() ) {
 					case POSITIVE:
@@ -519,7 +519,7 @@ class PickPolarityHandler : public IO::XML::MemberHandler {
 			return "";
 		}
 
-		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
 			Pick *pick = static_cast<Pick*>(object);
 
 			std::string polarity = h->content(node);
@@ -632,7 +632,7 @@ struct OriginQualityHandler : public IO::XML::TypedClassHandler<OriginQuality> {
 
 class OriginStatusHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				return Core::toString(static_cast<Origin*>(obj)->evaluationMode());
 			}
@@ -641,7 +641,7 @@ class OriginStatusHandler : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
 			Origin *org = static_cast<Origin*>(object);
 
 			std::string status = h->content(node);
@@ -665,7 +665,7 @@ class OriginStatusHandler : public IO::XML::MemberHandler {
 
 class OriginHorizontalUncertaintyHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				return Core::toString(static_cast<Origin*>(obj)->uncertainty().horizontalUncertainty());
 			}
@@ -674,7 +674,7 @@ class OriginHorizontalUncertaintyHandler : public IO::XML::MemberHandler {
 			}
 		}
 
-		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
 			Origin *org = static_cast<Origin*>(object);
 
 			double value;
@@ -735,13 +735,13 @@ struct OriginReferenceHandler : public IO::XML::TypedClassHandler<OriginReferenc
 
 class EventDescriptionHandler : public IO::XML::MemberHandler {
 	public:
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			Event *evt = static_cast<Event*>(obj);
 
 			return eventRegion(evt);
 		}
 
-		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *node, IO::XML::NodeHandler *h) override {
 			Event *evt = static_cast<Event*>(object);
 
 			std::string desc = h->content(node);

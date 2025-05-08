@@ -114,7 +114,7 @@ class InterfaceFactory : public InterfaceFactoryInterface<T> {
 
 	public:
 		//! The actual creation
-		typename InterfaceFactoryInterface<T>::Interface* create() const { return new TYPE; }
+		typename InterfaceFactoryInterface<T>::Interface* create() const override { return new TYPE; }
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

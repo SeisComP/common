@@ -51,7 +51,7 @@ class SC_SYSTEM_CORE_API SchemaParameter : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -110,7 +110,7 @@ class SC_SYSTEM_CORE_API SchemaParameters : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -149,7 +149,7 @@ class SC_SYSTEM_CORE_API SchemaGroup : public SchemaParameters {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -175,7 +175,7 @@ class SC_SYSTEM_CORE_API SchemaStructure : public SchemaParameters {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -205,7 +205,7 @@ class SC_SYSTEM_CORE_API SchemaSetupInputOption : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -232,7 +232,7 @@ class SC_SYSTEM_CORE_API SchemaSetupInput : public SchemaParameter {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -260,7 +260,7 @@ class SC_SYSTEM_CORE_API SchemaSetupGroup : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -288,7 +288,7 @@ class SC_SYSTEM_CORE_API SchemaSetup : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -320,7 +320,7 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -354,7 +354,7 @@ class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -384,7 +384,7 @@ class SC_SYSTEM_CORE_API SchemaBinding : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -458,7 +458,7 @@ class SC_SYSTEM_CORE_API SchemaDefinitions : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------

@@ -51,32 +51,32 @@ class SC_SYSTEM_CORE_API Instaseis : public GFArchive {
 	//  Public interface
 	// ----------------------------------------------------------------------
 	public:
-		bool setSource(std::string);
-		void close();
+		bool setSource(std::string) override;
+		void close() override;
 
-		std::list<std::string> availableModels() const;
-		std::list<double> availableDepths(const std::string &model) const;
+		std::list<std::string> availableModels() const override;
+		std::list<double> availableDepths(const std::string &model) const override;
 
-		bool setTimeSpan(const Core::TimeSpan &span);
+		bool setTimeSpan(const Core::TimeSpan &span) override;
 
 		//! Adds a request for a greensfunction.
 		bool addRequest(const std::string &id,
 		                const std::string &model,
 		                const GFSource &source,
-		                const GFReceiver &receiver);
+		                const GFReceiver &receiver) override;
 
 		bool addRequest(const std::string &id,
 		                const std::string &model,
 		                const GFSource &source,
 		                const GFReceiver &receiver,
-		                const Core::TimeSpan &span);
+		                const Core::TimeSpan &span) override;
 
-		Core::GreensFunction* get();
+		Core::GreensFunction* get() override;
 
 		OPT(double) getTravelTime(const std::string &phase,
 		                          const std::string &model,
 		                          const GFSource &source,
-		                          const GFReceiver &receiver);
+		                          const GFReceiver &receiver) override;
 
 
 	// ----------------------------------------------------------------------

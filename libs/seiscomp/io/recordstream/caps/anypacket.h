@@ -92,7 +92,7 @@ class AnyDataRecord : public DataRecord {
 		 * @brief Returns the packet type
 		 * @return The packet type
 		 */
-		PacketType packetType() const { return ANYPacket; }
+		PacketType packetType() const override { return ANYPacket; }
 
 		/**
 		 * @brief Sets the start time of the record
@@ -117,7 +117,7 @@ class AnyDataRecord : public DataRecord {
 		 * @brief Returns the data vector to be filled by the caller
 		 * @return The pointer to the internal buffer
 		 */
-		Buffer *data() { return &_data; }
+		Buffer *data() override { return &_data; }
 
 		/**
 		 * @brief Initializes the internal data vector from the given buffer

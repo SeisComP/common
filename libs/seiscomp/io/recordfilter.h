@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API RecordFilterInterface : public Seiscomp::Core::BaseObje
 		//! Clones a filter and must preserve currently configured parameters
 		//! but not the states (e.g. last record time). Basically clone must
 		//! result in the same as copying the instance and calling reset.
-		virtual RecordFilterInterface *clone() const = 0;
+		virtual RecordFilterInterface *clone() const override = 0;
 };
 
 

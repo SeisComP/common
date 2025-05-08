@@ -41,10 +41,10 @@ class SC_SYSTEM_CLIENT_API QcProcessorSpike : public QcProcessor {
 		using Spikes = std::map<Core::Time, double>;
 		Spikes getSpikes();
 
-		bool feed(const Record *record);
+		bool feed(const Record *record) override;
 		void _setFilter(double fsamp);
 
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 
 	private:
 		bool _initFilter;

@@ -43,7 +43,7 @@ class ImporterTrunk : public IO::Importer {
 	//  Importer interface
 	// ------------------------------------------------------------------
 	protected:
-		Core::BaseObject *get(std::streambuf* buf);
+		Core::BaseObject *get(std::streambuf* buf) override;
 };
 
 
@@ -60,8 +60,8 @@ class ExporterTrunk : public IO::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
-		bool put(std::streambuf* buf, const IO::ExportObjectList &objects);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
+		bool put(std::streambuf* buf, const IO::ExportObjectList &objects) override;
 };
 
 

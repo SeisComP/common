@@ -97,7 +97,7 @@ struct AppResolver : public Util::VariableResolver {
 	AppResolver(const std::string& name)
 	 : _name(name) {}
 
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		if ( Util::VariableResolver::resolve(variable) )
 			return true;
 

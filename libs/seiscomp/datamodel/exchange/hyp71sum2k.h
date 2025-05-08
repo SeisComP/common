@@ -42,7 +42,7 @@ class ExporterHYP71SUM2K : public IO::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
 };
 
 

@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API Visitor {
 			TM_BOTTOMUP,
 			TM_QUANTITY
 		};
-	
+
 	// ------------------------------------------------------------------
 	//  Xstruction
 	// ------------------------------------------------------------------
@@ -185,7 +185,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 
 		//! Sets the parent element
 		bool setParent(PublicObject* parent);
-		
+
 		static bool RegisterObserver(Observer*);
 		static bool UnregisterObserver(Observer*);
 
@@ -211,7 +211,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 		//! it does not become registered in the global instance
 		//! pool but receives exactly the same publicID like
 		//! 'this'.
-		virtual Object* clone() const = 0;
+		virtual Object* clone() const override = 0;
 
 		//! Adds the object to a parent. If it has already
 		//! a parent, the method returns false.
@@ -244,7 +244,7 @@ class SC_SYSTEM_CORE_API Object : public Core::BaseObject {
 	private:
 		PublicObject *_parent{nullptr};
 		Core::Time    _lastModifiedInArchive;
-	
+
 		typedef std::vector<Observer*> ObserverList;
 		static ObserverList _observers;
 };

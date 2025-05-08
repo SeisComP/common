@@ -72,7 +72,7 @@ class CAPSRecord : public GenericRecord {
 			_nsamp = nsamp;
 		}
 
-		void read(std::istream &in) {
+		void read(std::istream &in) override {
 			ArrayPtr ar;
 			bool res = false;
 
@@ -140,7 +140,7 @@ class MSeedRecord_ : public IO::MSeedRecord {
 		MSeedRecord_() {}
 
 	public:
-		void read(std::istream &is) {
+		void read(std::istream &is) override {
 			int reclen = -1;
 			MSRecord *prec = nullptr;
 			const int LEN = 128;

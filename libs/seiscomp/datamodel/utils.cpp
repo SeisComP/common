@@ -59,18 +59,18 @@ class CloneVisitor : public Visitor {
 			_parents.clear();
 		}
 
-		bool visit(PublicObject *po) {
+		bool visit(PublicObject *po) override {
 			PublicObject *clone = static_cast<PublicObject*>(po->clone());
 			if ( !commit(clone) ) return false;
 			_parents.push_front(clone);
 			return true;
 		}
 
-		void finished() {
+		void finished() override {
 			_parents.pop_front();
 		}
 
-		void visit(Object *o) {
+		void visit(Object *o) override {
 			Object *clone = o->clone();
 			commit(clone);
 		}
@@ -411,7 +411,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 		}
 
 		double azi = 0.0, dip = 0.0;
-		
+
 		try {
 			dip = stream->dip();
 		}
@@ -429,7 +429,7 @@ bool getThreeComponents(ThreeComponents &res, const SensorLocation *loc, const c
 				continue;
 			}
 		}
-		
+
 		try {
 			dip = deg2rad(-dip);
 			azi = deg2rad(azi);
@@ -714,60 +714,60 @@ DiffMerge::LogNode::LogNode(std::string title, int level = 0) {
 void DiffMerge::LogNode::setParent(LogNode *n) {
 	_parent = n;
 	_level = _parent->_level;
-	
+
 	return;
 }
 
 
 std::string DiffMerge::LogNode::o2t(const Object *o) {
 	std::stringstream title;
-	
+
 	title << o->className() << " ";
 	for ( size_t i = 0; i < o->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty* prop = o->meta()->property(i);
-		
+
 		// we do only compare index properties
 		if ( ! prop->isIndex() )
 			continue;
-		
+
 		if ( prop->isClass() )
 			throw Core::TypeException(
 					"Violation of contract: property " +
 					prop->name() +
 					" is of class type and marked as index");
-		
+
 		Core::MetaValue value;
 		bool isSet_o = true;
 		try { value = prop->read(o); } catch ( ... ) { isSet_o = false; }
 		if (!isSet_o) continue;
-		
+
 		if ( prop->isEnum() || prop->type() == "int")
 			title << "[" << boost::any_cast<int>(value) << "]";
-		
+
 		if ( prop->type() == "float" )
 			title << "[" << boost::any_cast<double>(value) << "]";
-		
+
 		if ( prop->type() == "string" )
 			title << "[" << boost::any_cast<std::string>(value) << "]";
-		
+
 		if ( prop->type() == "datetime" )
 			title << "[" << boost::any_cast<Core::Time>(value).iso() << "]";
-		
+
 		if ( prop->type() == "boolean" )
 			title << "[" << boost::any_cast<bool>(value) << "]";
-		
+
 		if ( prop->type() == "ComplexArray") {
 			Core::BaseObject* bo1 = boost::any_cast<Core::BaseObject*>(value);
 			ComplexArray *ca = ComplexArray::Cast(bo1);
 			title << "[ComplexArray of " << ca->content().size() << " elements]";
 		}
-		
+
 		if ( prop->type() == "RealArray") {
 			Core::BaseObject* bo1 = boost::any_cast<Core::BaseObject*>(value);
 			RealArray *ra = RealArray::Cast(bo1);
 			title << "[ComplexArray of " << ra->content().size() << " elements]";
 		}
-		
+
 		if ( prop->type() == "Blob") {
 			Core::BaseObject* bo1 = boost::any_cast<Core::BaseObject*>(value);
 			Blob *ba = Blob::Cast(bo1);
@@ -821,7 +821,7 @@ void DiffMerge::LogNode::add(std::string title, const Object *o1) {
 
 void DiffMerge::LogNode::add(std::string title, bool status, std::string comment){
 	if (_level < 2 && status) return;
-	
+
 	comment.insert(0, ((status)?"== ":"!= "));
 	add(title, comment);
 	return;
@@ -988,7 +988,7 @@ bool DiffMerge::compareNonArrayProperty(const Core::MetaProperty *prop,
 bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
 	LogNodePtr nodeCopy = _currentNode;
 	_currentNode = nullptr;
-	
+
 	// compare className
 	if ( o1->className() != o2->className() ){
 		_currentNode = nodeCopy;
@@ -1000,11 +1000,11 @@ bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
 	// iterate over all properties
 	for ( size_t i = 0; i < o1->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty *metaProp = o1->meta()->property(i);
-		
+
 		// we do only compare index properties
 		if ( !metaProp->isIndex() )
 			continue;
-		
+
 		if ( metaProp->isClass() )
 			throw Core::TypeException(
 				"Violation of contract: property " +
@@ -1044,13 +1044,13 @@ bool DiffMerge::equalsIndex(Object *o1, Object *o2) {
  */
 Object* DiffMerge::find(Object* tree, Object* node) {
 	if ( equalsIndex(tree, node) ) return tree;
-	
+
 	Object* result = nullptr;
 
 	// recursive scan of all class properties
 	for ( size_t i = 0; i < tree->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty* prop = tree->meta()->property(i);
-		
+
 		if ( ! prop->isClass() )
 			continue;
 
@@ -1070,7 +1070,7 @@ Object* DiffMerge::find(Object* tree, Object* node) {
 			result = find(child, node);
 			if ( result != nullptr ) return result;
 		}
-	}	
+	}
 	return nullptr;
 }
 
@@ -1126,7 +1126,7 @@ void DiffMerge::diffRecursive(Object* o1, Object* o2, const std::string& o1Paren
 	// Iterate over all properties
 	for ( size_t i = 0; i < o1->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty* prop = o1->meta()->property(i);
-		
+
 		// Non array property: Compare simple value(s)
 		if ( !prop->isArray() ) {
 			bool status = compareNonArrayProperty(prop, o1, o2);
@@ -1204,7 +1204,7 @@ void DiffMerge::diffRecursive(Object* o1, Object* o2, const std::string& o1Paren
 /**
  * Recursively compares two objects and collects all differences.
  * The root element of one of the objects must be included in the other object
- * tree, @see find(o1, o2) 
+ * tree, @see find(o1, o2)
  * @param o1 first object to compare
  * @param o2 second object to compare
  * @param diffList list to collect differences in
@@ -1219,28 +1219,28 @@ bool DiffMerge::diff(Object* o1, Object* o2, std::vector<NotifierPtr>& diffList)
 	// Find a common node
 	Object* fO1 = find(o1, o2);
 	Object* fO2 = !fO1 ? find(o2, o1) : nullptr;
-	
+
 	// No common node, bye
 	if ( !fO1 && !fO2 ) return false;
-	
+
 	o1 = fO1 ? fO1 : o1;
 	o2 = fO2 ? fO2 : o2;
 	std::string parentID = o1->parent() ? getPublicID(o1->parent()) : "";
-	
+
 	LogNodePtr newNode = nullptr;
 
 	if ( _logLevel >= 0 )
 		newNode = new LogNode(o1, _logLevel);
-	
+
 	// Set the logger
 	_currentNode = newNode;
 
 	// Recursively diff both objects
 	diffRecursive(o1, o2, parentID, diffList);
-	
+
 	// Restore the logger
 	_currentNode = newNode;
-	
+
 	return true;
 }
 
@@ -1273,12 +1273,12 @@ class SC_SYSTEM_CORE_API PublicIDCollector : protected Visitor {
 		}
 
 	private:
-		bool visit(PublicObject* po) {
+		bool visit(PublicObject* po) override {
 			_publicIDs->push_back(po->publicID());
 			return true;
 		}
 
-		void visit(Object* o) {}
+		void visit(Object* o) override {}
 
 	private:
 		std::vector<std::string> *_publicIDs;
@@ -1307,7 +1307,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 			o->accept(this);
 			return _valid;
 		}
-		
+
 		/**
 		 * Repairs references.
 		 * @param o Object to traverse
@@ -1323,12 +1323,12 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 		}
 
 	private:
-		bool visit(PublicObject* po) {
+		bool visit(PublicObject* po) override {
 			processReferences(po);
 			return true;
 		}
 
-		virtual void visit(Object* o) {
+		virtual void visit(Object* o) override {
 			processReferences(o);
 		}
 
@@ -1337,7 +1337,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 			for ( size_t i = 0; i < o->meta()->propertyCount(); ++i ) {
 				const Core::MetaProperty* prop = o->meta()->property(i);
 				if ( !prop->isReference() ) continue;
-				
+
 				if ( prop->type() != "string" && prop->type() != "Blob" ) {
 					SEISCOMP_WARNING("Skipping invalid reference type '%s' in property '%s'",
 					                 prop->type().c_str(), prop->name().c_str());
@@ -1357,7 +1357,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 					repairReference(o, prop, value);
 			}
 		}
-		
+
 		void validateReference(const Core::MetaProperty *prop, const Core::MetaValue &value) {
 			std::string ref;
 			bool found = true;
@@ -1379,7 +1379,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 					if ( !found ) break;
 				}
 			}
-			
+
 			_valid = _valid && found;
 			if (! found) {
 				SEISCOMP_WARNING("Broken reference in property '%s': %s",
@@ -1387,7 +1387,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 			}
 		}
 
-		
+
 		void repairReference(Object *o, const Core::MetaProperty *prop, const Core::MetaValue &value) {
 			std::map<std::string, std::string>::const_iterator it_map;
 			if ( prop->type() == "string" ) {
@@ -1408,7 +1408,7 @@ class SC_SYSTEM_CORE_API ReferenceValidator : public Visitor {
 				bool modified = false;
 				std::vector<std::string> v;
 				Core::fromString(v, refList->content());
-				
+
 				for ( size_t i = 0; i < v.size(); ++i ) {
 					it_map = _mappings->find(v[i]);
 					if ( it_map != _mappings->end() ) {
@@ -1444,7 +1444,7 @@ class DeepCloner : protected Visitor {
 		DeepCloner() : Visitor(TM_TOPDOWN) {};
 
 		~DeepCloner() { reset(); }
-		
+
 		ObjectPtr clone(Object *o) {
 			o->accept(this);
 			ObjectPtr retn = _clone;
@@ -1455,7 +1455,7 @@ class DeepCloner : protected Visitor {
 	private:
 		void reset() { _clone = nullptr; _parents.clear(); }
 
-		bool visit(PublicObject *po) {
+		bool visit(PublicObject *po) override {
 			PublicObjectPtr clone = PublicObject::Cast(po->clone());
 
 			commit(clone.get());
@@ -1464,11 +1464,11 @@ class DeepCloner : protected Visitor {
 			return true;
 		}
 
-		void finished() {
+		void finished() override {
 			_parents.pop_front();
 		}
 
-		void visit(Object *o) {
+		void visit(Object *o) override {
 			ObjectPtr clone = o->clone();
 			commit(clone.get());
 		}
@@ -1519,19 +1519,19 @@ void DiffMerge::mergeRecursive(Object* o1, Object* o2, std::map<std::string, std
 			else
 				idMap[o1PID] = o2PID;
 		}
-		
+
 		// Empty the publicID so that it can be overridden by the
 		// following assign operation
 		PublicObject::Cast(o1)->setPublicID("");
 	}
-	
+
 	// Copy all non class properties
 	o1->assign(o2);
-	
+
 	// Iterate over all properties and merge children
 	for ( size_t i = 0; i < o1->meta()->propertyCount(); ++i ) {
 		const Core::MetaProperty* prop = o1->meta()->property(i);
-		
+
 		// Skip non class array property
 		if ( !prop->isArray() || !prop->isClass() ) continue;
 

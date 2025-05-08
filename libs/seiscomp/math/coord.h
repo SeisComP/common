@@ -70,7 +70,7 @@ class NamedCoord : public Coord<T> {
 		void setName(const std::string& name);
 		const std::string& name() const;
 
-		void serialize(Core::BaseObject::Archive& ar);
+		void serialize(Core::BaseObject::Archive& ar) override;
 
 	private:
 		std::string _name;
@@ -104,7 +104,7 @@ class City : public NamedCoord<T> {
 		void setCategory(std::string &);
 		const std::string &category() const;
 
-		void serialize(Core::BaseObject::Archive& ar);
+		void serialize(Core::BaseObject::Archive& ar) override;
 
 	private:
 		std::string _countryID;

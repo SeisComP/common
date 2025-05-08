@@ -51,7 +51,7 @@ class SC_SYSTEM_CORE_API ConfigSyncMessage : public Seiscomp::Core::Message {
 	//  Message interface
 	// ------------------------------------------------------------------
 	public:
-		bool empty() const;
+		bool empty() const override;
 
 
 	// ------------------------------------------------------------------
@@ -101,7 +101,7 @@ class SC_SYSTEM_CORE_API InventorySyncMessage : public Seiscomp::Core::Message {
 	//  Message interface
 	// ------------------------------------------------------------------
 	public:
-		bool empty() const;
+		bool empty() const override;
 
 
 	// ------------------------------------------------------------------
@@ -130,22 +130,22 @@ class SC_SYSTEM_CORE_API ArtificialOriginMessage : public Seiscomp::Core::Messag
 	public:
 		ArtificialOriginMessage(DataModel::Origin *origin);
 
-		
+
 	// ------------------------------------------------------------------
 	//  Message interface
 	// ------------------------------------------------------------------
 	public:
 		DataModel::Origin *origin() const;
 		void setOrigin(DataModel::Origin *origin);
-		
-		virtual bool empty() const;
+
+		virtual bool empty() const override;
 
 	// ------------------------------------------------------------------
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
 		DataModel::OriginPtr _origin;
-		
+
 		DECLARE_SC_CLASSFACTORY_FRIEND(ArtificialOriginMessage);
 };
 
@@ -173,7 +173,7 @@ class SC_SYSTEM_CORE_API ArtificialEventParametersMessage : public Seiscomp::Cor
 		DataModel::EventParameters *eventParameters() const;
 		void setEventParameters(DataModel::EventParameters *eventParameters);
 
-		virtual bool empty() const;
+		virtual bool empty() const override;
 
 	// ------------------------------------------------------------------
 	//  Implementation

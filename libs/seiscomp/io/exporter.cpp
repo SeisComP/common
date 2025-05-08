@@ -42,7 +42,7 @@ struct SinkBuf : std::streambuf {
 
 	~SinkBuf() { sync(); }
 
-	virtual int overflow(int c) {
+	virtual int overflow(int c) override {
 		if ( traits_type::eq_int_type(traits_type::eof(), c))
 			return traits_type::eof();
 
@@ -55,7 +55,7 @@ struct SinkBuf : std::streambuf {
 		return traits_type::not_eof(c);
 	}
 
-	virtual int sync() {
+	virtual int sync() override {
 		if ( pbase() == pptr() ) return 0;
 
 		int bytes = pptr() - pbase();

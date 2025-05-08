@@ -87,7 +87,7 @@ class SC_SYSTEM_CLIENT_API ApplicationStatusMessage : public Core::Message {
 
 
 	public:
-		virtual bool empty() const;
+		virtual bool empty() const override;
 
 		const std::string &module() const;
 		const std::string &username() const;
@@ -191,7 +191,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		 * Exit the application and set the returnCode.
 		 * @param returnCode The value returned from exec()
 		 */
-		virtual void exit(int returnCode);
+		virtual void exit(int returnCode) override;
 
 		//! Returns the application's messaging connection interface
 		Client::Connection *connection() const;

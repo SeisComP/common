@@ -113,7 +113,7 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 
 		int capabilities() const override;
 
-		DataModel::Origin* locate(PickList& pickList);
+		DataModel::Origin* locate(PickList& pickList) override;
 		DataModel::Origin* locate(PickList& pickList,
 		                          double initLat, double initLon, double initDepth,
 		                          const Seiscomp::Core::Time& initTime) override;

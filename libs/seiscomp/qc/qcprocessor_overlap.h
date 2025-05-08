@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorOverlap : public QcProcessor {
 	public:
 		QcProcessorOverlap();
 		double getOverlap();
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 };
 
 

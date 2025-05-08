@@ -94,7 +94,7 @@ class SC_SYSTEM_CLIENT_API QcProcessor : public WaveformProcessor {
 	protected:
 		//! Implements the inherited method
 		//! Notifies registered observers
-		virtual void process(const Record* record, const DoubleArray& data);
+		virtual void process(const Record* record, const DoubleArray& data) override;
 
 		QcParameterPtr _qcp;
 

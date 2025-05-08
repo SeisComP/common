@@ -91,7 +91,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		iterator detach(iterator it);
 
 		//! Removes all attachments from the message
-		void clear();
+		virtual void clear() override;
 
 		//! Returns the iterators for begin and end of
 		//! the attachment list
@@ -107,7 +107,7 @@ class GenericMessage : public ::Seiscomp::Core::Message {
 		/**
 		 * @return Returns the number of objects attached to a message
 		 */
-		int size() const;
+		int size() const override;
 
 
 	// ----------------------------------------------------------------------
