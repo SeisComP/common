@@ -134,8 +134,6 @@ class SC_SYSTEM_CORE_API Locsat : public TravelTimeTableInterface {
 		TravelTime computeFirst(double delta, double depth);
 		double computeTime(const char *phase, double delta, double depth);
 
-		bool initTables();
-
 
 	private:
 		std::string _model;

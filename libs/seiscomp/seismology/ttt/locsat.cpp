@@ -21,7 +21,7 @@
 #include <math.h>
 #include <iostream>
 #include <stdexcept>
-#include <string.h>
+#include <cstring>
 
 #include <seiscomp/core/strings.h>
 #include <seiscomp/system/environment.h>
@@ -31,6 +31,9 @@
 
 
 #define EXTRAPOLATE 0
+
+
+using namespace std;
 
 
 namespace {
@@ -53,7 +56,7 @@ double takeoff_angle(double dtdd, double dtdh, double depth) {
 	// So transform dtdd [s/rad] -> [s/km]
 	double dtdd2 = dtdd / ((earthMeanRadius - depth) * M_PI / 180.);
 
-	double takeoff = std::atan2(dtdh, dtdd2) * 180.0 / M_PI; // degress
+	double takeoff = atan2(dtdh, dtdd2) * 180.0 / M_PI; // degress
 	takeoff += 90; // -90(down):+90(up) -> 0(down):180(up)
 
 	return takeoff;
@@ -62,7 +65,7 @@ double takeoff_angle(double dtdd, double dtdh, double depth) {
 
 inline void checkDepth(double depth) {
 	if ( (depth < 0) || (depth > 800) ) {
-		throw std::out_of_range(
+		throw out_of_range(
 			Seiscomp::Core::stringify(
 				"Source depth of %f km is out of range of 0 <= z <= 800",
 				depth
@@ -105,23 +108,33 @@ Locsat::~Locsat() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Locsat::setModel(const std::string &model) {
+bool Locsat::setModel(const string &model) {
 	if ( _model == model ) {
 		return true;
 	}
 
+	_tablePrefix = string();
 	_model = model;
+	sc_locsat_free_ttt(&_ttt);
 
 	if ( _model.empty() ) {
-		_tablePrefix.clear();
 		return true;
 	}
 
-	std::string tablePrefix = Environment::Instance()->shareDir() + "/locsat/tables/" + model;
-	if ( _tablePrefix == tablePrefix ) return true;
+	auto prefix = Environment::Instance()->shareDir() + "/locsat/tables/" + _model;
 
-	_tablePrefix = tablePrefix;
-	return initTables();
+	if ( _tablePrefix == prefix ) {
+		return true;
+	}
+
+	_tablePrefix = move(prefix);
+
+	if ( sc_locsat_setup_tttables(&_ttt, _tablePrefix.c_str(), 0) != 0 ) {
+		return false;
+	}
+
+	_Pindex = sc_locsat_find_phase(&_ttt, "P");
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -129,7 +142,7 @@ bool Locsat::setModel(const std::string &model) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string &Locsat::model() const {
+const string &Locsat::model() const {
 	return _model;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,24 +151,9 @@ const std::string &Locsat::model() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Locsat::initTables() {
-	if ( _tablePrefix.empty()
-	  || (sc_locsat_setup_tttables_dir(&_ttt, _tablePrefix.c_str(), 0) != 0) ) {
-		return false;
-	}
-
-	_Pindex = sc_locsat_find_phase("P");
-	return _Pindex != -1;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TravelTimeList *Locsat::compute(double delta, double depth) {
-	auto nphases = sc_locsat_num_phases();
-	auto phases = sc_locsat_phase_types();
+	auto nphases = _ttt.num_phases;
+	auto phases = _ttt.phases;
 
 	checkDepth(depth);
 
@@ -242,8 +240,7 @@ TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
 	checkDepth(dep1);
-
-	if ( !initTables() ) {
+	if ( !_ttt.num_phases ) {
 		return nullptr;
 	}
 
@@ -278,7 +275,7 @@ TravelTime Locsat::compute(const char *phase,
                            int ellc) {
 	checkDepth(dep1);
 
-	if ( !initTables() ) {
+	if ( !_ttt.num_phases ) {
 		throw NoPhaseError();
 	}
 
@@ -307,7 +304,7 @@ double Locsat::computeTime(const char *phase,
                            int ellc) {
 	checkDepth(dep1);
 
-	if ( !initTables() ) {
+	if ( !_ttt.num_phases ) {
 		throw NoPhaseError();
 	}
 
@@ -330,10 +327,13 @@ double Locsat::computeTime(const char *phase,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TravelTime Locsat::computeFirst(double delta, double depth) {
+	if ( _Pindex < 0 ) {
+		throw NoPhaseError();
+	}
+
 	checkDepth(depth);
 
-	auto phases = sc_locsat_phase_types();
-	auto phase = phases[_Pindex];
+	auto phase = _ttt.phases[_Pindex];
 	int errorflag=0;
 	double dtdd, dtdh;
 	double ttime = sc_locsat_compute_ttime(
@@ -362,7 +362,7 @@ TravelTime Locsat::computeFirst(double lat1, double lon1, double dep1,
                                 int ellc) {
 	checkDepth(dep1);
 
-	if ( !initTables() ) {
+	if ( !_ttt.num_phases ) {
 		throw NoPhaseError();
 	}
 
