@@ -41,11 +41,13 @@ double takeoff_angle(double p, double zs, double vzs) {
 	// vz is the velocity at the source
 	double pv;
 
-	p  = p*180./M_PI;       // make p slowness in sec/rad
-	pv = p*vzs/(6371.-zs);
-	if (pv>1.) pv = 1.;
+	p  = p * 180. / M_PI;       // make p slowness in sec/rad
+	pv = p * vzs / (6371. - zs);
+	if ( pv > 1. ) {
+		pv = 1.;
+	}
 
-	return 180.*asin(pv)/M_PI;
+	return 180. * asin(pv) / M_PI;
 }
 
 
@@ -53,7 +55,9 @@ double takeoff_angle(double p, double zs, double vzs) {
 
 
 extern "C" {
+
 #include "geog.h"
+
 }
 
 
@@ -80,7 +84,9 @@ LibTau &LibTau::operator=(const LibTau &other) {
 
 
 LibTau::~LibTau() {
-	if ( !_initialized ) return;
+	if ( !_initialized ) {
+		return;
+	}
 	tabout(&_handle);
 }
 
@@ -104,7 +110,9 @@ void LibTau::initPath(const std::string &model) {
 			_initialized = false;
 		}
 	}
-	else if ( _initialized ) return;
+	else if ( _initialized ) {
+		return;
+	}
 
 	if ( !model.empty() ) {
 		std::string tablePath = Environment::Instance()->shareDir() +
@@ -155,22 +163,25 @@ TravelTimeList *LibTau::compute(double delta, double depth) {
 
 	setDepth(depth);
 
-	for(int i=0; i<100; i++)
-		phase[i] = &ph[10*i];
+	for ( int i = 0; i < 100; ++i ) {
+		phase[i] = &ph[10 * i];
+	}
 
 	trtm(&_handle, delta, &n, time, p, dtdd, dtdh, dddp, phase);
-	bool has_vel = emdlv(6371-depth, &vp, &vs) == 0;
+	bool has_vel = emdlv(6371 - depth, &vp, &vs) == 0;
 
-	for(int i=0; i<n; i++) {
+	for ( int i = 0; i < n; ++i ) {
 		float takeoff;
-		if(has_vel) {
+		if ( has_vel ) {
 			float v = (phase[i][0]=='s' || phase[i][0]=='S') ? vs : vp;
 			takeoff = takeoff_angle(dtdd[i], depth, v);
-			if (dtdh[i] > 0.)
-				takeoff = 180.-takeoff;
+			if ( dtdh[i] > 0. ) {
+				takeoff = 180. - takeoff;
+			}
 		}
-		else
+		else {
 			takeoff = 0;
+		}
 
 		ttlist->push_back(
 			TravelTime(phase[i], time[i], dtdd[i], dtdh[i], dddp[i], takeoff)
