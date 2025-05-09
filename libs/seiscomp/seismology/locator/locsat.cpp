@@ -26,7 +26,6 @@
 #include <seiscomp/system/environment.h>
 #include <seiscomp/seismology/ttt.h>
 
-
 #include <stdlib.h>
 #include <math.h>
 #include <list>
@@ -39,23 +38,6 @@
 // IGN additions for OriginUncertainty computation
 #include "eigv.h"
 #include "chi2.h"
-
-
-extern "C" {
-	void mdtodate(struct date_time*);
-	void htoe(struct date_time*);
-	void etoh(struct date_time*);
-	int locate_event(char *newnet,
-	                 Site *sites,
-	                 int num_sta,
-	                 Arrival *arrival,
-	                 Assoc *assoc,
-	                 Origin *origin,
-	                 Origerr *origerr,
-	                 LocatorParams *locator_params,
-	                 LocatorError *locator_errors,
-	                 int num_obs);
-}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -199,8 +181,6 @@ REGISTER_LOCATOR(LOCSAT, "LOCSAT");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 LOCSAT::LOCSAT() {
 	_name = "LOCSAT";
-	_params.outfile_name = new char[1024];
-	_params.outfile_name[1023] = '\0';
 	_params.prefix = new char[1024];
 	_params.prefix[1023] = '\0';
 	_computeConfidenceEllipsoid = false;
@@ -210,6 +190,17 @@ LOCSAT::LOCSAT() {
 	reset();
 	LOCSAT::setProfile(_defaultTablePrefix);
 	setDefaultLocatorParams();
+	sc_locsat_init_ttt(&_ttt);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+LOCSAT::~LOCSAT() {
+	sc_locsat_free_ttt(&_ttt);
+	delete[] _params.prefix;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -375,8 +366,8 @@ int LOCSAT::capabilities() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 dm::Origin* LOCSAT::locate(PickList &pickList,
-                                  double initLat, double initLon, double initDepth,
-                                  const Core::Time &initTime) {
+                           double initLat, double initLon, double initDepth,
+                           const Core::Time &initTime) {
 	P(lat_init) = initLat;
 	P(lon_init) = initLon;
 	P(depth_init) = initDepth;
@@ -828,7 +819,6 @@ bool LOCSAT::loadArrivals(const dm::Origin *origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LOCSAT::setDefaultLocatorParams() {
-	P(cor_level)      = 0;
 	P(use_location)   = TRUE;
 	P(fix_depth)      = 'n';
 	P(fixing_depth)   = 20.0;
@@ -845,7 +835,6 @@ void LOCSAT::setDefaultLocatorParams() {
 	_usePickUncertainties   = false;
 	_usePickBackazimuth     = true;
 	_usePickSlowness        = true;
-	strncpy(P(outfile_name), "", 1023);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1170,8 +1159,8 @@ std::ostream &operator<<(std::ostream &os, const LocatorParams &params) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LOCSAT::reset() {
-	static const Origin Na_Origin = Na_Origin_Init;
-	static const Origerr Na_Origerr = Na_Origerr_Init;
+	static const LOCSAT_Origin Na_Origin = Na_Origin_Init;
+	static const LOCSAT_Origerr Na_Origerr = Na_Origerr_Init;
 
 	_sites.clear();
 	_arrivals.clear();
@@ -1226,37 +1215,52 @@ DataModel::Origin *LOCSAT::locate() {
 	std::cerr << _params << std::endl;
 #endif
 
-	int ierr = locate_event(nullptr,
-	                        _sites.data(), static_cast<int>(_sites.size()),
-	                        _arrivals.data(), _assocs.data(),
-	                        &_origin, &_origerr, &_params,
-	                        _errors.data(), static_cast<int>(_arrivals.size()));
+	int ierr = sc_locsat_locate_event(
+		&_ttt, _sites.data(), static_cast<int>(_sites.size()),
+		_arrivals.data(), _assocs.data(),
+		&_origin, &_origerr, &_params,
+		_errors.data(), static_cast<int>(_arrivals.size())
+	);
 
 	//std::cerr << "ierr = locate_event: " <<  ierr << std::endl;
 
 	switch ( ierr ) {
 		case 0:
 			break;
-		case 6:
-			throw LocatorException("error from locator: SVD routine can't decompose matrix");
-		case 5:
-			throw LocatorException("error from locator: Insufficient data for a solution");
-		case 4:
-			throw LocatorException("error from locator: Too few data to constrain O.T.");
-		case 3:
-			throw LocatorException("error from locator: Too few usable data");
-		case 2:
-			throw LocatorException("error from locator: Solution did not converge");
-		case 1:
-			throw LocatorException("error from locator: Exceeded maximum iterations");
-		case 13:
-			throw LocatorException("error from locator: Opening travel time tables");
-		case 14:
-			throw LocatorException("error from locator: Error reading travel time tables, unexpected EOF");
-		case 15:
-			throw LocatorException("error from locator: Error reading travel time tables, too many distance or depth samples");
-		case 16:
-			throw LocatorException("error from locator: Unknown error reading travel time tables");
+		case LOCSAT_GLerror1:
+			throw LocatorException("Exceeded maximum iterations");
+		case LOCSAT_GLerror2:
+			throw LocatorException("Solution did not converge");
+		case LOCSAT_GLerror3:
+			throw LocatorException("Too few usable data");
+		case LOCSAT_GLerror4:
+			throw LocatorException("Too few data to constrain O.T.");
+		case LOCSAT_GLerror5:
+			throw LocatorException("Insufficient data for a solution");
+		case LOCSAT_GLerror6:
+			throw LocatorException("SVD routine can't decompose matrix");
+		case LOCSAT_GLerror7:
+			throw LocatorException("No observations to process");
+		case LOCSAT_GLerror8:
+			throw LocatorException("Bad assoc data");
+		case LOCSAT_GLerror9:
+			throw LocatorException("Bad origin pointer");
+		case LOCSAT_GLerror10:
+			throw LocatorException("Bad origerr pointer");
+		case LOCSAT_GLerror11:
+			throw LocatorException("Mismatch between arrival/assoc");
+		case LOCSAT_TTerror1:
+			throw LocatorException("Null phase_type list");
+		case LOCSAT_TTerror2:
+			throw LocatorException("Opening travel time tables");
+		case LOCSAT_TTerror3:
+			throw LocatorException("Error reading travel time tables, unexpected EOF");
+		case LOCSAT_TTerror4:
+			throw LocatorException("Error reading travel time tables, too many distance or depth samples");
+		case LOCSAT_TTerror5:
+			throw LocatorException("Unknown error reading travel time tables");
+		case LOCSAT_TTerror6:
+			throw LocatorException("Insufficient memory for travel-time tables");
 		default:
 		{
 			std::stringstream ss;
@@ -1319,9 +1323,9 @@ DataModel::Origin *LOCSAT::locate() {
 
 		dm::ArrivalPtr arrival = new dm::Arrival();
 
-		arrival->setTimeUsed(assoc.timedef[0] == 'd' ? true : false);
-		arrival->setBackazimuthUsed(assoc.azdef[0] == 'd' ? true : false);
-		arrival->setHorizontalSlownessUsed(assoc.slodef[0] == 'd' ? true : false);
+		arrival->setTimeUsed(assoc.timedef == 'd' ? true : false);
+		arrival->setBackazimuthUsed(assoc.azdef == 'd' ? true : false);
+		arrival->setHorizontalSlownessUsed(assoc.slodef == 'd' ? true : false);
 
 		bool isUsed = arrival->timeUsed() || arrival->backazimuthUsed() || arrival->horizontalSlownessUsed();
 
@@ -1746,11 +1750,10 @@ void LOCSAT::addSite(const char *station, float lat, float lon, float elev) {
 		}
 	}
 
-	_sites.push_back(Site());
+	_sites.push_back(LOCSAT_Site());
 
-	_sites.back().sta[sizeof(Site::sta) - 1] = '\0';
-	strncpy(_sites.back().sta, station, sizeof(Site::sta) - 1);
-	_sites.back().ondate = _sites.back().offdate = 0.0;
+	_sites.back().sta[sizeof(LOCSAT_Site::sta) - 1] = '\0';
+	strncpy(_sites.back().sta, station, sizeof(LOCSAT_Site::sta) - 1);
 	_sites.back().lat = lat;
 	_sites.back().lon = lon;
 	_sites.back().elev = elev*0.001;
@@ -1763,29 +1766,26 @@ void LOCSAT::addSite(const char *station, float lat, float lon, float elev) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LOCSAT::addArrival(long arrival_id, const char *station, const char *phase,
                         double time, float deltim, int defining) {
-	static const Arrival Na_Arrival = Na_Arrival_Init;
-	static const Assoc Na_Assoc = Na_Assoc_Init;
+	static const LOCSAT_Arrival Na_Arrival = Na_Arrival_Init;
+	static const LOCSAT_Assoc Na_Assoc = Na_Assoc_Init;
 
 	_arrivals.push_back(Na_Arrival);
 	_assocs.push_back(Na_Assoc);
-	_errors.push_back(LocatorError());
+	_errors.push_back(LOCSAT_Errors());
 
 	_arrivals.back().time = time;
 	_arrivals.back().deltim = deltim;
 
-	_assocs.back().timedef[1] = '\0';
-	_assocs.back().timedef[0] = defining > 0 ? 'd' : 'n';
-	_assocs.back().azdef[1] = '\0';
-	_assocs.back().azdef[0] = 'n';
-	_assocs.back().slodef[1] = '\0';
-	_assocs.back().slodef[0] = 'n';
+	_assocs.back().timedef = defining > 0 ? 'd' : 'n';
+	_assocs.back().azdef = 'n';
+	_assocs.back().slodef = 'n';
 
 	_arrivals.back().arid = arrival_id;
 	_assocs.back().arid = arrival_id;
-	strncpy(_arrivals.back().sta, station, sizeof(arrival::sta) - 1);
-	_arrivals.back().sta[sizeof(arrival::sta) - 1] = '\0';
-	strncpy(_assocs.back().phase, phase, sizeof(assoc::phase) - 1);
-	_assocs.back().phase[sizeof(assoc::phase) - 1] = '\0';
+	strncpy(_arrivals.back().sta, station, sizeof(LOCSAT_Arrival::sta) - 1);
+	_arrivals.back().sta[sizeof(LOCSAT_Arrival::sta) - 1] = '\0';
+	strncpy(_assocs.back().phase, phase, sizeof(LOCSAT_Assoc::phase) - 1);
+	_assocs.back().phase[sizeof(LOCSAT_Assoc::phase) - 1] = '\0';
 
 	_errors.back().arid = 0;
 	_errors.back().time = 0;
@@ -1803,10 +1803,10 @@ void LOCSAT::setArrivalAzimuth(float azimuth, float delaz, int defining) {
 	_arrivals.back().delaz = delaz;
 
 	if ( defining > 0 ) {
-		strcpy(_assocs.back().azdef, "d");
+		_assocs.back().azdef = 'd';
 	}
 	else {
-		strcpy(_assocs.back().azdef, "n");
+		_assocs.back().azdef = 'n';
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1820,10 +1820,10 @@ void LOCSAT::setArrivalSlowness(float slow, float delslo, int defining) {
 	_arrivals.back().delslo = delslo;
 
 	if ( defining > 0 ) {
-		strcpy(_assocs.back().slodef, "d");
+		_assocs.back().slodef = 'd';
 	}
 	else {
-		strcpy(_assocs.back().slodef, "n");
+		_assocs.back().slodef = 'n';
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

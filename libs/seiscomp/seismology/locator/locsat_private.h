@@ -30,17 +30,13 @@
 #include <seiscomp/seismology/locatorinterface.h>
 #include <seiscomp/core.h>
 
-#include "db3/db_arrival.h"
-#include "db3/db_assoc.h"
-#include "db3/db_origerr.h"
-#include "db3/db_origin.h"
-#include "db3/db_site.h"
-
-#include <iostream>
 #include <string>
-#include <stdio.h>
 #include <vector>
 #include <map>
+
+extern "C" {
+	#include "loc.h"
+}
 
 
 namespace {
@@ -48,51 +44,10 @@ namespace {
 
 using namespace Seiscomp;
 
-
-struct LocatorParams {
-	LocatorParams() {
-		outfile_name = prefix = nullptr;
-	}
-
-	~LocatorParams() {
-		if ( outfile_name ) {
-			delete [] outfile_name;
-		}
-		if ( prefix ) {
-			delete [] prefix;
-		}
-	}
-
-	/* DEFAULT - DESCRIPTION                     */
-	int     num_dof;         /* 9999    - number of degrees of freedom    */
-	float   est_std_error;   /* 1.0     - estimate of data std error      */
-	float   conf_level;      /* 0.9     - confidence level    	     */
-	float   damp;            /* -1.0    - damping (-1.0 means no damping) */
-	int     max_iterations;  /* 20      - limit iterations to convergence */
-	char    fix_depth;       /* true    - use fixed depth ?               */
-	float   fixing_depth;    /* 0.0     - fixing depth value              */
-	float   lat_init;        /* modifiable - initial latitude             */
-	float   lon_init;        /* modifiable - initial longitude            */
-	float   depth_init;      /* modifiable - initial depth                */
-	int     use_location;    /* true    - use current origin data ?       */
-	char    verbose;         /* true    - verbose output of data ?        */
-	int     cor_level;       /* 0       - correction table level          */
-	char   *outfile_name;    /* nullptr    - name of file to print data      */
-	char   *prefix;          /* nullptr    - dir name & prefix of tt tables  */
-};
-
-
-struct LocatorError {
-	int arid;
-	int time;
-	int az;
-	int slow;
-};
-
-
 class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 	public:
 		LOCSAT();
+		~LOCSAT() override;
 
 
 	public:
@@ -152,29 +107,30 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		using PhaseCorrectionMap = std::map<std::string, double>;
 		using StationCorrectionMap = std::map<std::string, PhaseCorrectionMap>;
 
-		static const std::string   _defaultTablePrefix;
-		static const IDList        _allowedParameters;
+		static const std::string    _defaultTablePrefix;
+		static const IDList         _allowedParameters;
 
-		StationCorrectionMap       _stationCorrection;
-		std::string                _tablePrefix;
-		bool                       _computeConfidenceEllipsoid;
-		double                     _minArrivalWeight{0.5};
-		double                     _defaultPickUncertainty;
-		bool                       _usePickUncertainties{false};
-		bool                       _usePickBackazimuth{true};
-		bool                       _usePickSlowness{true};
+		StationCorrectionMap        _stationCorrection;
+		std::string                 _tablePrefix;
+		bool                        _computeConfidenceEllipsoid;
+		double                      _minArrivalWeight{0.5};
+		double                      _defaultPickUncertainty;
+		bool                        _usePickUncertainties{false};
+		bool                        _usePickBackazimuth{true};
+		bool                        _usePickSlowness{true};
 
-		bool                       _enableDebugOutput;
+		bool                        _enableDebugOutput;
 
-		IDList                     _profiles;
+		IDList                      _profiles;
 
-		std::vector<Arrival>       _arrivals;
-		std::vector<Assoc>         _assocs;
-		std::vector<Site>          _sites;
-		Origerr                    _origerr;
-		Origin                     _origin;
-		LocatorParams              _params;
-		std::vector<LocatorError>  _errors;
+		std::vector<LOCSAT_Arrival> _arrivals;
+		std::vector<LOCSAT_Assoc>   _assocs;
+		std::vector<LOCSAT_Site>    _sites;
+		LOCSAT_Origerr              _origerr;
+		LOCSAT_Origin               _origin;
+		LOCSAT_Params               _params;
+		LOCSAT_TTT                  _ttt;
+		std::vector<LOCSAT_Errors>  _errors;
 };
 
 

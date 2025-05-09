@@ -230,7 +230,6 @@ void process(const std::vector<sd::OriginPtr> &origins, int start, int end,
 		boost::replace_all(publicID, "/", "-");
 		auto it = refData.find(publicID);
 
-		sd::OriginPtr relocatedOrigin;
 		try {
 			//std::scoped_lock lock(m);
 			sd::OriginPtr relocatedOrigin = locator->relocate(origin.get());
