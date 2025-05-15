@@ -202,16 +202,10 @@ bool Url::parse(const std::string &url) {
 	if ( end == string::npos ) {
 		end = url.find('?', start);
 		_host = url.substr(start, (end!=string::npos)?end - start:string::npos);
-		if (_host.empty() )
-			return false;
-
 		_path= "/";
 	}
 	else {
 		_host = url.substr(start, end - start);
-		if (_host.empty() )
-			return false;
-
 		start = end;
 		end = url.find('?', start);
 		_path = url.substr(start, (end!=string::npos)?end - start:string::npos);
