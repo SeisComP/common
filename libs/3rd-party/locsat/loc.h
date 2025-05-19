@@ -113,10 +113,7 @@ int sc_locsat_ttcal(
 	float *dcalx, double *atx, int *iterr
 );
 
-void sc_locsat_elpcor(
-	const char *phid, float del, float z, float azi, float ecolat,
-	float *ecorr
-);
+float sc_locsat_elpcor(const char *phid, float del, float z, float azi, float ecolat);
 
 /**
  * @brief Determine event error ellipsoid and normalized confidence regions.

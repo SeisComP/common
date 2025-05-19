@@ -53,4 +53,7 @@ typedef int32_t boolean;
 #endif
 
 
+#define LOCSAT_EARTH_RADIUS 6371.00877141506f
+
+
 #endif

@@ -34,9 +34,7 @@ void sc_locsat_hypinv(
 	double dmean, scale, delta;
 	float dcalx;
 	double cnvg12;
-	float colat;
 	double cnvg23;
-	float ecorr;
 	double covar[4][4];
 	boolean divrg;
 	double hyrak;
@@ -65,12 +63,6 @@ void sc_locsat_hypinv(
 	float correct;
 	boolean ldenuis;
 	double cnvgtst, sta3, sta4, sta5;
-
-	const int *ntbd = ttt->ntbd;
-	const int *ntbz = ttt->ntbz;
-	const float *tbd = ttt->tbd;
-	const float *tbz = ttt->tbz;
-	const float *tbtt = ttt->tbtt;
 
 	*alat = alat0;
 	*alon = alon0;
@@ -113,6 +105,7 @@ L1020:
 		data[n].at[2] = 0.f;
 		data[n].at[3] = 0.f;
 	}
+
 	// Set fix-depth flag and number of parameters.  Depth is always fixed
 	// during the first 2 iterations.  If depth becomes negative
 	// ("airquake"), then fix the depth at 0.0 during the next iteration.
@@ -123,7 +116,6 @@ L1020:
 
 	// !!!MODIFICATION!!! Mathias, 2008.267 */
 	//  max depth: 650 --> 750 km */
-
 	if ( *niter < 3 ) {
 		fxdsav = 'y';
 	}
@@ -179,63 +171,49 @@ L1020:
 			i = data[n].sta_index;
 			k = data[n].ipwav;
 
-			// Arrival times
 			if ( data[n].idtyp == 1 ) {
+				// Arrival times
 				sc_locsat_ttcal(
 					*zfoc, radius, stations[i].distance, stations[i].azimuth,
-					ttt->lentbd, ttt->lentbz, &ntbd[k], &ntbz[k], &tbd[k * ttt->lentbd],
-					&tbz[k * ttt->lentbz],
-					&tbtt[(k * ttt->lentbz) * ttt->lentbd],
+					ttt->lentbd, ttt->lentbz, &ttt->ntbd[k], &ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
+					&ttt->tbz[k * ttt->lentbz],
+					&ttt->tbtt[(k * ttt->lentbz) * ttt->lentbd],
 					&dcalx, atx, &iterr
 				);
 
-				/*      ellipticity corrections for travel times included with
-				 * routine */
-				/*      elpcor.f including the ellipticity corrections of the
-				 * IASPEI 1991 */
-				/*      Travel Time Tables (Kennet, 1991). The routine was
-				 * received by NEIC. */
-				/*      johannes schweitzer mar 24, 1991 */
-				/*      bochum , geress */
+				// Ellipticity corrections for travel times including the
+				// ellipticity corrections of the IASPEI 1991 Travel Time
+				// Tables (Kennet, 1991).
+				dcalx += sc_locsat_elpcor(data[n].phase_type,
+				                          stations[i].distance, *zfoc, stations[i].azimuth,
+				                          90.f - *alat);
 
-				colat = 90.f - *alat;
-				sc_locsat_elpcor(
-					data[n].phase_type,
-					stations[i].distance, *zfoc, stations[i].azimuth,
-					colat, &ecorr
-				);
-				dcalx += ecorr;
-				/*              Use only those data that have been interpolated
-				 * (iterr = 0) */
-				/*              or have been extrapolated to depths beyond these
-				 * curves */
-				/*              (iterr = 15).  If the number of iterations is
-				 * less than */
-				/*              minit, allow all extrapolated values. */
+				// Use only those data that have been interpolated (iterr = 0)
+				// or have been extrapolated to depths beyond these curves
+				// (iterr = 15). If the number of iterations is less than
+				// minit, allow all extrapolated values.
 				if ( *niter < 4 || iterr == 15 ) {
 					data[n].err_code = 0;
 				}
 				else {
 					data[n].err_code = iterr;
 				}
-				// Azimuths
 			}
 			else if ( data[n].idtyp == 2 ) {
+				// Azimuths
 				sc_locsat_azcal(radius, stations[i].distance, stations[i].azimuth,
 				                stations[i].backazimuth, &dcalx, atx);
-				// Slownesses
 			}
 			else if ( data[n].idtyp == 3 ) {
-				/*              call slow_calc (k-1, atx, staazi(i), stadel(i),
-				 * radius, */
-				/*    &                         zfoc, dcalx, iterr) */
+				// Slownesses
 				sc_locsat_slocal(
 					*zfoc, radius, stations[i].distance, stations[i].azimuth,
-					ttt->lentbd, ttt->lentbz, &ntbd[k], &ntbz[k], &tbd[k * ttt->lentbd],
-					&tbz[k * ttt->lentbz],
-					&tbtt[(k * ttt->lentbz) * ttt->lentbd], &dcalx, atx,
+					ttt->lentbd, ttt->lentbz, &ttt->ntbd[k], &ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
+					&ttt->tbz[k * ttt->lentbz],
+					&ttt->tbtt[(k * ttt->lentbz) * ttt->lentbd], &dcalx, atx,
 					&iterr
 				);
+
 				// Same rules as for travel-time calculations.
 				if ( *niter < 4 || iterr == 15 ) {
 					data[n].err_code = 0;
@@ -290,6 +268,7 @@ L1020:
 			}
 		}
 	}
+
 	// Quick check on array declarations
 	if ( np > 4 || *nd > 9999 ) {
 		return;

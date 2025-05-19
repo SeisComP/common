@@ -53,11 +53,6 @@ void sc_locsat_hypcut(
 	int iusesta;
 	double useazim, res1 = 0.0, res2 = 0.0, sta1, sta2, sta3, sta4, useslow;
 
-	// Travel time table
-	const int *ntbd = ttt->ntbd;
-	const float *tbd = ttt->tbd;
-	const float *tbtt = ttt->tbtt;
-
 	for ( i = 0; i < nsta; ++i ) {
 		stations[i].azimsd = 40.;
 		stations[i].slowsd = 19.16;
@@ -170,9 +165,9 @@ void sc_locsat_hypcut(
 		}
 	}
 
-	// Sort P-wave arrival times in descending order (i.e., earliest
-	// arrival-times first)
 	if ( icompr > 0 ) {
+		// Sort P-wave arrival times in descending order (i.e., earliest
+		// arrival-times first)
 		for ( i = (icompr + 1) / 2; i >= 1; --i ) {
 			for ( j = 0; j < icompr - i; ++j ) {
 				if ( stations[j].ordercompr > stations[j + i].ordercompr ) {
@@ -187,8 +182,8 @@ void sc_locsat_hypcut(
 		}
 	}
 
-	// Sort S-P times in descending order (i.e., earliest times first)
 	if ( isminusp > 0 ) {
+		// Sort S-P times in descending order (i.e., earliest times first)
 		for ( i = (isminusp + 1) / 2; i >= 1; --i ) {
 			for ( j = 0; j < isminusp - i; ++j ) {
 				if ( stations[j].ordersminusp > stations[j + i].ordersminusp ) {
@@ -203,9 +198,9 @@ void sc_locsat_hypcut(
 		}
 	}
 
-	// Sort azimuths according to their data standard errors in increasing
-	// order (i.e., smallest azimuthal standard errors first)
 	if ( iazim > 0 ) {
+		// Sort azimuths according to their data standard errors in increasing
+		// order (i.e., smallest azimuthal standard errors first)
 		for ( i = (iazim + 1) / 2; i >= 1; --i ) {
 			for ( j = 0; j < iazim - i; ++j ) {
 				if ( stations[j].orderdsd > stations[j + i].orderdsd ) {
@@ -220,9 +215,9 @@ void sc_locsat_hypcut(
 		}
 	}
 
-	// Sort slownesses in increasing order (i.e., largest slowness is
-	// nearest the event and often can be quite diagnostic)
 	if ( islow > 0 ) {
+		// Sort slownesses in increasing order (i.e., largest slowness is
+		// nearest the event and often can be quite diagnostic)
 		for ( i = (islow + 1) / 2; i >= 1; --i ) {
 			for ( j = 0; j < islow - i; ++j ) {
 				if ( stations[j].orderdsd2 > stations[j + i].orderdsd2 ) {
@@ -293,18 +288,18 @@ void sc_locsat_hypcut(
 	j = stations[0].indexsminusp;
 	n = stations[j - 1].iwave;
 
-	if ( tbd[n * ttt->lentbd] > stations[0].dis ) {
+	if ( ttt->tbd[n * ttt->lentbd] > stations[0].dis ) {
 		goto L1130;
 	}
 
-	i__1 = ntbd[n];
+	i__1 = ttt->ntbd[n];
 	for ( i = 0; i < i__1; ++i ) {
-		if ( tbd[i + n * ttt->lentbd] > stations[0].dis ) {
-			tmp = (stations[0].dis - tbd[i - 1 + n * ttt->lentbd]) /
-			      (tbd[i + n * ttt->lentbd] - tbd[i - 1 + n * ttt->lentbd]);
-			tcalc = tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
-			        tmp * (tbtt[i + n * ttt->lentbz * ttt->lentbd] -
-			               tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
+		if ( ttt->tbd[i + n * ttt->lentbd] > stations[0].dis ) {
+			tmp = (stations[0].dis - ttt->tbd[i - 1 + n * ttt->lentbd]) /
+			      (ttt->tbd[i + n * ttt->lentbd] - ttt->tbd[i - 1 + n * ttt->lentbd]);
+			tcalc = ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
+			        tmp * (ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] -
+			               ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
 			torg = stations[j - 1].ordercompr - tcalc;
 			break;
 		}
@@ -394,34 +389,34 @@ L1180:
 		n = stations[j - 1].iwave;
 		// Calculate theoretical travel times
 		sc_locsat_distaz2(stations[j - 1].lat, stations[j - 1].lon, *crosslat, *crosslon, &stations->dis, &azi, &baz);
-		i__1 = ntbd[n];
+		i__1 = ttt->ntbd[n];
 		for ( i = 0; i < i__1; ++i ) {
-			if ( tbd[i + n * ttt->lentbd] > stations[0].dis ) {
-				tmp = (stations[0].dis - tbd[i - 1 + n * ttt->lentbd]) /
-				      (tbd[i + n * ttt->lentbd] - tbd[i - 1 + n * ttt->lentbd]);
-				tcalc = tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
-				        tmp * (tbtt[i + n * ttt->lentbz * ttt->lentbd] -
-				               tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
+			if ( ttt->tbd[i + n * ttt->lentbd] > stations[0].dis ) {
+				tmp = (stations[0].dis - ttt->tbd[i - 1 + n * ttt->lentbd]) /
+				      (ttt->tbd[i + n * ttt->lentbd] - ttt->tbd[i - 1 + n * ttt->lentbd]);
+				tcalc = ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
+				        tmp * (ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] -
+				               ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
 				res1 = (d1 = stations[j - 1].comprtime - torg - tcalc, abs(d1));
 				goto L1200;
 			}
 		}
 L1200:
 		sc_locsat_distaz2(stations[j - 1].lat, stations[j - 1].lon, crosslat[1], crosslon[1], &stations[1].dis, &azi, &baz);
-		i__1 = ntbd[n];
+		i__1 = ttt->ntbd[n];
 		for ( i = 0; i < i__1; ++i ) {
-			if ( tbd[i + n * ttt->lentbd] > stations[1].dis ) {
-				tmp = (stations[1].dis - tbd[i - 1 + n * ttt->lentbd]) /
-				      (tbd[i + n * ttt->lentbd] - tbd[i - 1 + n * ttt->lentbd]);
-				tcalc = tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
-				        tmp * (tbtt[i + n * ttt->lentbz * ttt->lentbd] -
-				               tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
+			if ( ttt->tbd[i + n * ttt->lentbd] > stations[1].dis ) {
+				tmp = (stations[1].dis - ttt->tbd[i - 1 + n * ttt->lentbd]) /
+				      (ttt->tbd[i + n * ttt->lentbd] - ttt->tbd[i - 1 + n * ttt->lentbd]);
+				tcalc = ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd] +
+				        tmp * (ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] -
+				               ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
 				res2 = (d1 = stations[j - 1].comprtime - torg - tcalc, abs(d1));
 				goto L1220;
 			}
 		}
-		// Choose travel time with the smallest residual
 L1220:
+		// Choose travel time with the smallest residual
 		if ( res1 < res2 ) {
 			*alat0 = crosslat[0];
 			*alon0 = crosslon[0];
@@ -430,7 +425,7 @@ L1220:
 			*alat0 = crosslat[1];
 			*alon0 = crosslon[1];
 		}
-		// Done.  Exit routine.
+		// Done.
 		return;
 	}
 	else {
@@ -449,19 +444,19 @@ L1230:
 			// Calculate distance from station to the origin and then
 			// find the crossing points
 			tcalc = stations[k - 1].ordercompr - torg;
-			if ( tbtt[n * ttt->lentbz * ttt->lentbd] > tcalc ) {
+			if ( ttt->tbtt[n * ttt->lentbz * ttt->lentbd] > tcalc ) {
 				goto L1270;
 			}
-			i__2 = ntbd[n];
+			i__2 = ttt->ntbd[n];
 			for ( i = 0; i < i__2; ++i ) {
-				if ( tbtt[i + n * ttt->lentbz * ttt->lentbd] > tcalc ) {
+				if ( ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] > tcalc ) {
 					tmp = (tcalc -
-					       tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]) /
-					      (tbtt[i + n * ttt->lentbz * ttt->lentbd] -
-					       tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
-					dist1 = tbd[i - 1 + n * ttt->lentbd] +
-					        tmp * (tbd[i + n * ttt->lentbd] -
-					               tbd[i - 1 + n * ttt->lentbd]);
+					       ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]) /
+					      (ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] -
+					       ttt->tbtt[i - 1 + n * ttt->lentbz * ttt->lentbd]);
+					dist1 = ttt->tbd[i - 1 + n * ttt->lentbd] +
+					        tmp * (ttt->tbd[i + n * ttt->lentbd] -
+					               ttt->tbd[i - 1 + n * ttt->lentbd]);
 					break;
 				}
 			}
@@ -567,19 +562,12 @@ L1290:;
 			return;
 		}
 	}
-	/*     Look here for 1 azimuth and the 2 closest arrvial times */
-	/*     if (iazim.eq.1 .and. icompr.gt.1) then */
-	/*        n1 = indexdsd(1) */
-	/*        Preferably with an arrival time from the azimuth datum */
-	/*        do 1310 i = 1, icompr */
-	/*           if (n1.eq.indexcompr(i)) then */
 
-	/*           end if */
-	/* 1310    continue */
-	/*     end if */
-	/*     Find station with slowness and azimuth, then compute the location */
-	/*     from these data */
 	if ( islow > 0 && iazim > 0 ) {
+		// Look here for 1 azimuth and the 2 closest arrvial times.
+		// Preferably with an arrival time from the azimuth datum.
+		// Find station with slowness and azimuth, then compute the location
+		// from these data.
 		iusesta = stations[0].indexdsd2;
 		useslow = stations[iusesta - 1].bestslow;
 		useazim = stations[iusesta - 1].bestazim;
@@ -589,7 +577,7 @@ L1290:;
 				                  (useslow - slowness[j - 1]) /
 				                  (slowness[j] - slowness[j - 1]) +
 				                  distance[j - 1];
-				// Done.  Let's go find a lat./lon. pair !
+				// Done. Let's go find a lat./lon. pair!
 				sta1 = stations[iusesta - 1].lat;
 				sta2 = stations[iusesta - 1].lon;
 				sc_locsat_latlon2(sta1, sta2, stations[0].dis, useazim, &a1, &a2);
@@ -599,10 +587,11 @@ L1290:;
 			}
 		}
 	}
-	// # Look here for 3 closest arrvial times
-	// Use point near station with earlist arrival time.  Use the azimuth
-	// at that station, if there is one.  Probably will become unneccesary!
+
 	if ( icompr > 0 ) {
+		// Look here for 3 closest arrvial times
+		// Use point near station with earlist arrival time.  Use the azimuth
+		// at that station, if there is one.  Probably will become unneccesary!
 		iusesta = stations[0].indexcompr;
 		stations[0].dis = 5.;
 		if ( stations[iusesta - 1].goodazim ) {
@@ -611,9 +600,9 @@ L1290:;
 		else {
 			useazim = 0.;
 		}
-		// Use best determied azimuth
 	}
 	else if ( iazim > 0 ) {
+		// Use best determied azimuth
 		iusesta = stations[0].indexdsd;
 		stations[0].dis = 5.;
 		if ( stations[iusesta - 1].goodazim ) {
@@ -622,10 +611,10 @@ L1290:;
 		else {
 			useazim = 0.;
 		}
-		// Finally try station with the best slowness (as defined by the
-		// smallest s.d.) and the default azimuth
 	}
 	else if ( islow > 0 ) {
+		// Finally try station with the best slowness (as defined by the
+		// smallest s.d.) and the default azimuth
 		iusesta = stations[0].indexdsd2;
 		useslow = stations[iusesta - 1].bestslow;
 		for ( j = 1; j <= 18; ++j ) {
@@ -637,14 +626,13 @@ L1290:;
 			}
 		}
 		useazim = 0.;
-		// Bail out!
 	}
 	else {
+		// Bail out!
 		*ierr = 1;
 		return;
 	}
 
-	// Done !
 	sc_locsat_latlon2(
 		stations[iusesta - 1].lat, stations[iusesta - 1].lon,
 		stations[0].dis, useazim, &a1, &a2

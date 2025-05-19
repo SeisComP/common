@@ -220,7 +220,7 @@ void sc_locsat(
 
 	sc_locsat_hypinv(
 		ttt, data, ndata, stations, nsta,
-		alat0, alon0, zfoc0, sig0, ndf0, pconf, 6371.00877141506f,
+		alat0, alon0, zfoc0, sig0, ndf0, pconf, LOCSAT_EARTH_RADIUS,
 		damp, maxit,
 		fxdflg, alat, alon, zfoc, torg, sighat, snssd,
 		ndf, epmaj, epmin, epstr, zfint, toint, sxx, syy, szz, stt, sxy, sxz,

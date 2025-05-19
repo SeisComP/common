@@ -13,9 +13,9 @@
 typedef struct {
 	// Input
 	char  sta[16];
-	float lat;
-	float lon;
-	float elev;
+	float lat;  // In degrees
+	float lon;  // In degrees
+	float elev; // In km
 
 	// Temporary
 	float distance;
