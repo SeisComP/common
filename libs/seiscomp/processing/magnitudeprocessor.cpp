@@ -477,10 +477,10 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 	try { _maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod"); }
 	catch ( ... ) {}
 
-	SEISCOMP_DEBUG("  + minimum distance = %s deg", toString(_minimumDistanceDeg, "%.5f deg"));
-	SEISCOMP_DEBUG("  + maximum distance = %s deg", toString(_maximumDistanceDeg, "%.5f deg"));
-	SEISCOMP_DEBUG("  + minimum depth = %s km", toString(_minimumDepthKm, "%.3f km"));
-	SEISCOMP_DEBUG("  + maximum depth = %s km", toString(_maximumDepthKm, "%.3f km"));
+	SEISCOMP_DEBUG("  + minimum distance = %s deg", toString(_minimumDistanceDeg, "%.5f"));
+	SEISCOMP_DEBUG("  + maximum distance = %s deg", toString(_maximumDistanceDeg, "%.5f"));
+	SEISCOMP_DEBUG("  + minimum depth = %s km", toString(_minimumDepthKm, "%.3f"));
+	SEISCOMP_DEBUG("  + maximum depth = %s km", toString(_maximumDepthKm, "%.3f"));
 	SEISCOMP_DEBUG("  + minimum SNR = %s", toString(_minimumSNR, "%f"));
 	SEISCOMP_DEBUG("  + minimum period = %ss", toString(_minimumPeriod, "%f"));
 	SEISCOMP_DEBUG("  + maximum period = %ss", toString(_maximumPeriod, "%f"));
