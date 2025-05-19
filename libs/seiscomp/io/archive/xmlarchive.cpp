@@ -261,7 +261,7 @@ bool XMLArchive::open(const char* filename) {
 			SEISCOMP_WARNING("%s: %s", filename, e.what());
 			return false;
 		}
-	
+
 		_buf = fb;
 		_deleteOnClose = true;
 	}
@@ -323,7 +323,7 @@ bool XMLArchive::open() {
 			break;
 			//++xmlNsRunner;
 		}
-	
+
 		xmlFree(xmlNsList);
 	}
 
@@ -342,7 +342,7 @@ bool XMLArchive::open() {
 		}
 		else
 			setVersion(Core::Version(atoi((char*)version),0));
-	
+
 		xmlFree(version);
 	}
 	else
@@ -417,7 +417,7 @@ bool XMLArchive::create(bool writeVersion, bool headerNode) {
 
 	if ( headerNode )
 		rootNode = addRootNode(_rootTag.c_str());
-	
+
 	_current = rootNode;
 	_objectLocation = _current;
 
@@ -812,10 +812,10 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 						_property.clear();
 						return false;
 					}
-	
+
 					_attribName = name;
 					_property = (const char*)prop;
-		
+
 					xmlFree(prop);
 				}
 			}
@@ -834,7 +834,7 @@ bool XMLArchive::locateObjectByName(const char* name, const char* targetClass, b
 
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -867,7 +867,7 @@ bool XMLArchive::locateNextObjectByName(const char* name, const char* targetClas
 	else {
 		return false;
 	}
-	
+
 	return false;
 }
 
@@ -887,7 +887,7 @@ std::string XMLArchive::determineClassName() {
 		xmlFree(classname);
 	}
 	return strClassname;
-#else	
+#else
 	return (const char*)locationNode->name;
 #endif
 }
@@ -1029,11 +1029,11 @@ void* XMLArchive::addRootNode(const char* name) const {
 	if ( versionMajor() || versionMinor() )
 		xmlSetProp(rootNode, (const xmlChar*)"version",
 		                     (const xmlChar*)(Seiscomp::Core::toString(versionMajor()) + "." + Seiscomp::Core::toString(versionMinor())).c_str());
-	
+
 	if ( !_namespace.first.empty() || !_namespace.second.empty() )
 		xmlNewNs(rootNode, _namespace.second.empty()?nullptr:(const xmlChar*)_namespace.second.c_str(),
 		                   _namespace.first.empty()?nullptr:(const xmlChar*)_namespace.first.c_str());
-	
+
 	xmlDocSetRootElement((xmlDocPtr)_document, rootNode);
 
 	return rootNode;
@@ -1044,7 +1044,7 @@ void XMLArchive::serialize(RootType* object) {
 	void* backupCurrent = _current;
 	void* backupLocation = _objectLocation;
 	_current = _objectLocation;
-	
+
 	Seiscomp::Core::Archive::serialize(object);
 
 	_current = backupCurrent;
@@ -1061,7 +1061,7 @@ void XMLArchive::serialize(SerializeDispatcher& disp) {
 	void* backupCurrent = _current;
 	void* backupLocation = _objectLocation;
 	_current = _objectLocation;
-	
+
 	Seiscomp::Core::Archive::serialize(disp);
 
 	_current = backupCurrent;
