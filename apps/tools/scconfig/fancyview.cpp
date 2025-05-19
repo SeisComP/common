@@ -204,7 +204,7 @@ class NewStructDialog : public QDialog {
 			QLabel *label = new QLabel("Name:");
 			hlayout->addWidget(label);
 			_name = new QLineEdit;
-			QRegExp rx("[A-Za-z0-9_\\-]+");
+			QRegExp rx("[A-Za-z0-9_\\(){}-]+");
 			_name->setValidator(new QRegExpValidator(rx,0));
 			hlayout->addWidget(_name);
 			layout->addLayout(hlayout);
@@ -263,7 +263,7 @@ class NewCatBindingDialog : public QDialog {
 			QLabel *label = new QLabel("Name:");
 			hlayout->addWidget(label);
 			_name = new QLineEdit;
-			QRegExp rx("[A-Za-z0-9_\\-]+");
+			QRegExp rx("[A-Za-z0-9_\\(){}-]+");
 			_name->setValidator(new QRegExpValidator(rx,0));
 			hlayout->addWidget(_name);
 			layout->addLayout(hlayout);
