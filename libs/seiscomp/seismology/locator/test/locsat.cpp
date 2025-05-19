@@ -156,6 +156,9 @@ struct TestInstance {
 		if ( !Seiscomp::Client::Inventory::Instance()->inventory() ) {
 			Seiscomp::Client::Inventory::Instance()->load("data/inventory.xml");
 		}
+
+		setenv("SEISCOMP_LOCSAT_TABLE_DIR", "../../../../3rd-party/locsat/data", 1);
+
 		locator = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
 		locator->init(Seiscomp::Config::Config());
 		locator->setProfile("iasp91");
@@ -190,6 +193,9 @@ struct TestInstanceIII {
 		if ( !Seiscomp::Client::Inventory::Instance()->inventory() ) {
 			Seiscomp::Client::Inventory::Instance()->load("data/inventory.xml");
 		}
+
+		setenv("SEISCOMP_LOCSAT_TABLE_DIR", "../../../../3rd-party/locsat/data", 1);
+
 		locator = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
 		locator->init(Seiscomp::Config::Config());
 		locator->setProfile("iasp91");
