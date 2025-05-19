@@ -8,7 +8,7 @@
  * program setbrn
  */
 
-extern void tauspl();
+void tauspl(int i1, int i2, double *pt, double *c1, double *c2, double *c3, double *c4, double *c5);
 
 static void pdecx(int n1, int nph, float fac);
 static void collct(int i1, int i2, double *x, float xmn);
