@@ -3316,12 +3316,18 @@ void OriginLocatorView::init() {
 	// Commit bags
 	set<string> profiles;
 	string customConfigPrefix = "olv.customCommits.";
-	Seiscomp::Config::SymbolTable::iterator it = SCApp->configuration().symbolTable()->begin();
+	auto it = SCApp->configuration().symbolTable()->begin();
 	for ( ; it != SCApp->configuration().symbolTable()->end(); ++it ) {
 		const string &param = (*it)->name;
-		if ( param.compare(0, customConfigPrefix.size(), customConfigPrefix) ) continue;
+		if ( param.compare(0, customConfigPrefix.size(), customConfigPrefix) ) {
+			continue;
+		}
+
 		size_t pos = param.find('.', customConfigPrefix.size());
-		if ( pos == string::npos ) continue;
+		if ( pos == string::npos ) {
+			continue;
+		}
+
 		string profile = param.substr(customConfigPrefix.size(), pos-customConfigPrefix.size());
 		if ( profiles.find(profile) != profiles.end() ) continue;
 		profiles.insert(profile);
