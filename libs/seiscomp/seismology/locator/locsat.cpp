@@ -1756,7 +1756,7 @@ void LOCSAT::addSite(const char *station, float lat, float lon, float elev) {
 	strncpy(_sites.back().sta, station, sizeof(LOCSAT_Site::sta) - 1);
 	_sites.back().lat = lat;
 	_sites.back().lon = lon;
-	_sites.back().elev = elev*0.001;
+	_sites.back().elev = elev * 0.001;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -212,10 +212,7 @@ TravelTimeList *LibTau::compute(double lat1, double lon1, double dep1,
 	if ( ellc ) {
 		TravelTimeList::iterator it;
 		for ( it = ttlist->begin(); it != ttlist->end(); ++it ) {
-			double ecorr = 0.;
-			if ( ellipcorr((*it).phase, lat1, lon1, lat2, lon2, dep1, ecorr) ) {
-				(*it).time += ecorr;
-			}
+			(*it).time += ellipticityCorrection((*it).phase, lat1, lon1, dep1, lat2, lon2);
 		}
 	}
 
@@ -261,10 +258,7 @@ TravelTime LibTau::computeFirst(double lat1, double lon1, double dep1,
 	TravelTime tt = computeFirst(delta, dep1);
 
 	if ( ellc ) {
-		double ecorr = 0.;
-		if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) ) {
-			tt.time += ecorr;
-		}
+		tt.time += ellipticityCorrection(tt.phase, lat1, lon1, dep1, lat2, lon2);
 	}
 
 	return tt;

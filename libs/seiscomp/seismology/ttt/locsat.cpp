@@ -248,16 +248,13 @@ TravelTimeList *Locsat::compute(double lat1, double lon1, double dep1,
 
 	sc_locsat_distaz2(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
 
-	/* TODO apply ellipticity correction */
 	TravelTimeList *ttlist = compute(delta, dep1);
 	ttlist->delta = delta;
 	ttlist->depth = dep1;
 
 	if ( ellc ) {
 		for ( auto &tt : *ttlist ) {
-			double ecorr = 0.;
-			if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-				tt.time += ecorr;
+			tt.time += ellipticityCorrection(tt.phase, lat1, lon1, dep1, lat2, lon2);
 		}
 	}
 
@@ -285,9 +282,7 @@ TravelTime Locsat::compute(const char *phase,
 	TravelTime tt = compute(phase, delta, dep1);
 
 	if ( ellc ) {
-		double ecorr = 0.;
-		if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-			tt.time += ecorr;
+		tt.time += ellipticityCorrection(tt.phase, lat1, lon1, dep1, lat2, lon2);
 	}
 
 	return tt;
@@ -314,9 +309,7 @@ double Locsat::computeTime(const char *phase,
 	double ttime = computeTime(phase, delta, dep1);
 
 	if ( ellc ) {
-		double ecorr = 0.;
-		if ( ellipcorr(phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-			ttime += ecorr;
+		ttime += ellipticityCorrection(phase, lat1, lon1, dep1, lat2, lon2);
 	}
 
 	return ttime;
@@ -371,9 +364,7 @@ TravelTime Locsat::computeFirst(double lat1, double lon1, double dep1,
 
 	TravelTime tt = computeFirst(delta, dep1);
 	if ( ellc ) {
-		double ecorr = 0.;
-		if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-			tt.time += ecorr;
+		tt.time += ellipticityCorrection(tt.phase, lat1, lon1, dep1, lat2, lon2);
 	}
 
 	return tt;

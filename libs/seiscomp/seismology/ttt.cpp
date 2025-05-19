@@ -33,56 +33,12 @@ IMPLEMENT_INTERFACE_FACTORY(Seiscomp::TravelTimeTableInterface, SC_SYSTEM_CORE_A
 namespace Seiscomp {
 
 
-bool ellipcorr(const std::string &phase, double lat1, double lon1, double lat2, double lon2, double depth, double &corr) {
-	corr = 0.;
+double ellipticityCorrection(const std::string &phase,
+                             double lat1, double lon1, double depth,
+                             double lat2, double lon2) {
 	double delta, azi1, azi2;
 	Seiscomp::Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
-	float ecorr = 0;
-
-	if ( phase == "P" || phase == "Pn" || phase == "Pg" || phase == "Pb"
-	  || phase == "Pdif" || phase == "Pdiff" ) {
-		sc_locsat_elpcor("P", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "PcP" ) {
-		sc_locsat_elpcor("PcP", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "PKPab" ) {
-		sc_locsat_elpcor("PKPab", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "PKPbc" ) {
-		sc_locsat_elpcor("PKPbc", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "PKPdf" ) {
-		sc_locsat_elpcor("PKPdf", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "PKiKP" ) {
-		sc_locsat_elpcor("PKiKP", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "S" || phase == "Sn" || phase == "Sg" || phase == "Sb"
-	       || phase == "Sdif" || phase == "Sdiff" ) {
-		sc_locsat_elpcor("S", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "ScS" ) {
-		sc_locsat_elpcor("ScS", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "SKSac" ) {
-		sc_locsat_elpcor("SKSac", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "SKSdf" ) {
-		sc_locsat_elpcor("SKSdf", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "ScP" ) {
-		sc_locsat_elpcor("SKP", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else if ( phase == "SKP" ) {
-		sc_locsat_elpcor("ScP", delta, depth, azi1, 90. - lat1, &ecorr);
-	}
-	else {
-		return false;
-	}
-
-	corr = ecorr;
-	return true;
+	return sc_locsat_elpcor(phase.c_str(), delta, depth, azi1, 90. - lat1);
 }
 
 
