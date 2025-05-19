@@ -484,7 +484,7 @@ void XMLArchive::close() {
 
 	_forceWriteVersion = -1;
 
-	initGenericErrorDefaultFunc(nullptr);
+	xmlSetGenericErrorFunc(nullptr, nullptr);
 	setVersion(Core::Version(0,0));
 }
 
@@ -635,10 +635,7 @@ void XMLArchive::read(std::string& value) {
 
 
 void XMLArchive::write(Seiscomp::Core::Time& value) {
-	if ( (hint() & XML_MANDATORY) || value.valid() )
-		writeAttrib(Seiscomp::Core::toString(value));
-	else
-		_property = "";
+	writeAttrib(Seiscomp::Core::toString(value));
 }
 
 
