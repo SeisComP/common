@@ -4318,49 +4318,48 @@ namespace Swig {
 #define SWIGTYPE_p_const_iterator swig_types[605]
 #define SWIGTYPE_p_const_reference swig_types[606]
 #define SWIGTYPE_p_difference_type swig_types[607]
-#define SWIGTYPE_p_double swig_types[608]
-#define SWIGTYPE_p_file_iterator swig_types[609]
-#define SWIGTYPE_p_fmtflags swig_types[610]
-#define SWIGTYPE_p_int swig_types[611]
-#define SWIGTYPE_p_int_type swig_types[612]
-#define SWIGTYPE_p_iostate swig_types[613]
-#define SWIGTYPE_p_iterator swig_types[614]
-#define SWIGTYPE_p_iterator_category swig_types[615]
-#define SWIGTYPE_p_long swig_types[616]
-#define SWIGTYPE_p_long_long swig_types[617]
-#define SWIGTYPE_p_off_type swig_types[618]
-#define SWIGTYPE_p_openmode swig_types[619]
-#define SWIGTYPE_p_p_PyObject swig_types[620]
-#define SWIGTYPE_p_pos_type swig_types[621]
-#define SWIGTYPE_p_seekdir swig_types[622]
-#define SWIGTYPE_p_short swig_types[623]
-#define SWIGTYPE_p_signed_char swig_types[624]
-#define SWIGTYPE_p_size_t swig_types[625]
-#define SWIGTYPE_p_size_type swig_types[626]
-#define SWIGTYPE_p_state_type swig_types[627]
-#define SWIGTYPE_p_std__allocatorT_Seiscomp__TravelTime_t swig_types[628]
-#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[629]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[630]
-#define SWIGTYPE_p_std__exception swig_types[631]
-#define SWIGTYPE_p_std__invalid_argument swig_types[632]
-#define SWIGTYPE_p_std__listT_Seiscomp__TravelTime_t swig_types[633]
-#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[634]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[635]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[636]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[637]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[638]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[639]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t swig_types[640]
-#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[641]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[642]
-#define SWIGTYPE_p_traits_type swig_types[643]
-#define SWIGTYPE_p_unsigned_char swig_types[644]
-#define SWIGTYPE_p_unsigned_int swig_types[645]
-#define SWIGTYPE_p_unsigned_long_long swig_types[646]
-#define SWIGTYPE_p_unsigned_short swig_types[647]
-#define SWIGTYPE_p_value_type swig_types[648]
-static swig_type_info *swig_types[650];
-static swig_module_info swig_module = {swig_types, 649, 0, 0, 0, 0};
+#define SWIGTYPE_p_file_iterator swig_types[608]
+#define SWIGTYPE_p_fmtflags swig_types[609]
+#define SWIGTYPE_p_int swig_types[610]
+#define SWIGTYPE_p_int_type swig_types[611]
+#define SWIGTYPE_p_iostate swig_types[612]
+#define SWIGTYPE_p_iterator swig_types[613]
+#define SWIGTYPE_p_iterator_category swig_types[614]
+#define SWIGTYPE_p_long swig_types[615]
+#define SWIGTYPE_p_long_long swig_types[616]
+#define SWIGTYPE_p_off_type swig_types[617]
+#define SWIGTYPE_p_openmode swig_types[618]
+#define SWIGTYPE_p_p_PyObject swig_types[619]
+#define SWIGTYPE_p_pos_type swig_types[620]
+#define SWIGTYPE_p_seekdir swig_types[621]
+#define SWIGTYPE_p_short swig_types[622]
+#define SWIGTYPE_p_signed_char swig_types[623]
+#define SWIGTYPE_p_size_t swig_types[624]
+#define SWIGTYPE_p_size_type swig_types[625]
+#define SWIGTYPE_p_state_type swig_types[626]
+#define SWIGTYPE_p_std__allocatorT_Seiscomp__TravelTime_t swig_types[627]
+#define SWIGTYPE_p_std__basic_iosT_char_t swig_types[628]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[629]
+#define SWIGTYPE_p_std__exception swig_types[630]
+#define SWIGTYPE_p_std__invalid_argument swig_types[631]
+#define SWIGTYPE_p_std__listT_Seiscomp__TravelTime_t swig_types[632]
+#define SWIGTYPE_p_std__mapT_std__string_std__string_std__lessT_std__string_t_std__allocatorT_std__pairT_std__string_const_std__string_t_t_t swig_types[633]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[634]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[635]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[636]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[637]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[638]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Seismology__LocatorInterface__PickItem_std__allocatorT_Seiscomp__Seismology__LocatorInterface__PickItem_t_t swig_types[639]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[640]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[641]
+#define SWIGTYPE_p_traits_type swig_types[642]
+#define SWIGTYPE_p_unsigned_char swig_types[643]
+#define SWIGTYPE_p_unsigned_int swig_types[644]
+#define SWIGTYPE_p_unsigned_long_long swig_types[645]
+#define SWIGTYPE_p_unsigned_short swig_types[646]
+#define SWIGTYPE_p_value_type swig_types[647]
+static swig_type_info *swig_types[649];
+static swig_module_info swig_module = {swig_types, 648, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -16696,7 +16695,7 @@ SWIGINTERN PyObject *TravelTimeTable_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Python_InitShadowInstance(args);
 }
 
-SWIGINTERN PyObject *_wrap_ellipcorr(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_ellipticityCorrection(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   std::string *arg1 = 0 ;
   double arg2 ;
@@ -16704,7 +16703,6 @@ SWIGINTERN PyObject *_wrap_ellipcorr(PyObject *self, PyObject *args) {
   double arg4 ;
   double arg5 ;
   double arg6 ;
-  double *arg7 = 0 ;
   int res1 = SWIG_OLDOBJ ;
   double val2 ;
   int ecode2 = 0 ;
@@ -16716,60 +16714,50 @@ SWIGINTERN PyObject *_wrap_ellipcorr(PyObject *self, PyObject *args) {
   int ecode5 = 0 ;
   double val6 ;
   int ecode6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
-  PyObject *swig_obj[7] ;
-  bool result;
+  PyObject *swig_obj[6] ;
+  double result;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "ellipcorr", 7, 7, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "ellipticityCorrection", 6, 6, swig_obj)) SWIG_fail;
   {
     std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ellipcorr" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ellipticityCorrection" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ellipcorr" "', argument " "1"" of type '" "std::string const &""'"); 
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ellipticityCorrection" "', argument " "1"" of type '" "std::string const &""'"); 
     }
     arg1 = ptr;
   }
   ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ellipcorr" "', argument " "2"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ellipticityCorrection" "', argument " "2"" of type '" "double""'");
   } 
   arg2 = static_cast< double >(val2);
   ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ellipcorr" "', argument " "3"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ellipticityCorrection" "', argument " "3"" of type '" "double""'");
   } 
   arg3 = static_cast< double >(val3);
   ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "ellipcorr" "', argument " "4"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "ellipticityCorrection" "', argument " "4"" of type '" "double""'");
   } 
   arg4 = static_cast< double >(val4);
   ecode5 = SWIG_AsVal_double(swig_obj[4], &val5);
   if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "ellipcorr" "', argument " "5"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "ellipticityCorrection" "', argument " "5"" of type '" "double""'");
   } 
   arg5 = static_cast< double >(val5);
   ecode6 = SWIG_AsVal_double(swig_obj[5], &val6);
   if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "ellipcorr" "', argument " "6"" of type '" "double""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "ellipticityCorrection" "', argument " "6"" of type '" "double""'");
   } 
   arg6 = static_cast< double >(val6);
-  res7 = SWIG_ConvertPtr(swig_obj[6], &argp7, SWIGTYPE_p_double,  0 );
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "ellipcorr" "', argument " "7"" of type '" "double &""'"); 
-  }
-  if (!argp7) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ellipcorr" "', argument " "7"" of type '" "double &""'"); 
-  }
-  arg7 = reinterpret_cast< double * >(argp7);
   {
     try {
-      result = (bool)Seiscomp::ellipcorr((std::string const &)*arg1,arg2,arg3,arg4,arg5,arg6,*arg7);
+      result = (double)Seiscomp::ellipticityCorrection((std::string const &)*arg1,arg2,arg3,arg4,arg5,arg6);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16781,7 +16769,7 @@ SWIGINTERN PyObject *_wrap_ellipcorr(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  resultobj = SWIG_From_double(static_cast< double >(result));
   if (SWIG_IsNewObj(res1)) delete arg1;
   return resultobj;
 fail:
@@ -17091,7 +17079,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_TravelTimeTable", _wrap_delete_TravelTimeTable, METH_O, "delete_TravelTimeTable(TravelTimeTable self)"},
 	 { "TravelTimeTable_swigregister", TravelTimeTable_swigregister, METH_O, NULL},
 	 { "TravelTimeTable_swiginit", TravelTimeTable_swiginit, METH_VARARGS, NULL},
-	 { "ellipcorr", _wrap_ellipcorr, METH_VARARGS, "ellipcorr(std::string const & phase, double lat1, double lon1, double lat2, double lon2, double depth, double & corr) -> bool"},
+	 { "ellipticityCorrection", _wrap_ellipticityCorrection, METH_VARARGS, "ellipticityCorrection(std::string const & phase, double lat1, double lon1, double depth, double lat2, double lon2) -> double"},
 	 { "getPhase", _wrap_getPhase, METH_VARARGS, "getPhase(TravelTimeList arg1, std::string const & phaseCode) -> TravelTime"},
 	 { "firstArrivalP", _wrap_firstArrivalP, METH_O, "firstArrivalP(TravelTimeList arg1) -> TravelTime"},
 	 { NULL, NULL, 0, NULL }
@@ -18526,7 +18514,6 @@ static swig_type_info _swigt__p_char_type = {"_p_char_type", "char_type *", 0, 0
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_reference = {"_p_const_reference", "const_reference *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_double = {"_p_double", "double *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_file_iterator = {"_p_file_iterator", "file_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_fmtflags = {"_p_fmtflags", "fmtflags *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "int32_t *|int_fast16_t *|int_fast32_t *|int_least32_t *|intptr_t *|int *", 0, 0, (void*)0, 0};
@@ -19184,7 +19171,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_const_iterator,
   &_swigt__p_const_reference,
   &_swigt__p_difference_type,
-  &_swigt__p_double,
   &_swigt__p_file_iterator,
   &_swigt__p_fmtflags,
   &_swigt__p_int,
@@ -19828,7 +19814,6 @@ static swig_cast_info _swigc__p_char_type[] = {  {&_swigt__p_char_type, 0, 0, 0}
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_reference[] = {  {&_swigt__p_const_reference, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_file_iterator[] = {  {&_swigt__p_file_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_fmtflags[] = {  {&_swigt__p_fmtflags, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
@@ -20486,7 +20471,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_const_iterator,
   _swigc__p_const_reference,
   _swigc__p_difference_type,
-  _swigc__p_double,
   _swigc__p_file_iterator,
   _swigc__p_fmtflags,
   _swigc__p_int,

@@ -724,9 +724,9 @@ class TravelTimeTable(TravelTimeTableInterface):
 # Register TravelTimeTable in _seismology:
 _seismology.TravelTimeTable_swigregister(TravelTimeTable)
 
-def ellipcorr(phase, lat1, lon1, lat2, lon2, depth, corr):
-    r"""ellipcorr(std::string const & phase, double lat1, double lon1, double lat2, double lon2, double depth, double & corr) -> bool"""
-    return _seismology.ellipcorr(phase, lat1, lon1, lat2, lon2, depth, corr)
+def ellipticityCorrection(phase, lat1, lon1, depth, lat2, lon2):
+    r"""ellipticityCorrection(std::string const & phase, double lat1, double lon1, double depth, double lat2, double lon2) -> double"""
+    return _seismology.ellipticityCorrection(phase, lat1, lon1, depth, lat2, lon2)
 
 def getPhase(arg1, phaseCode):
     r"""getPhase(TravelTimeList arg1, std::string const & phaseCode) -> TravelTime"""
