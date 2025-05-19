@@ -465,7 +465,7 @@ L1230:
 					break;
 				}
 			}
-L1250:
+
 			icerr = 0;
 			ic2 = icross << 1;
 			sta1 = stations[n1 - 1].lat;
