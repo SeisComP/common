@@ -273,12 +273,6 @@ SET(PROJECT_API_H client.h)
 SET(SYSTEM_CLIENT_HEADERS "")
 
 SC_ADD_LIBRARY(SYSTEM_CLIENT client)
-
-target_sources(seiscomp_client
-  PRIVATE
-    io/recordfilter/mseedencoder.h
-	io/recordfilter/mseedencoder.cpp
-)
 SC_LIB_INSTALL_HEADERS(SYSTEM_CLIENT)
 
 SET(SYSTEM_CLIENT_DATA client/data/cities.xml)
