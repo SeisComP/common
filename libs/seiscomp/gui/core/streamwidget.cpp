@@ -133,8 +133,7 @@ void StreamWidget::startWaveformDataAcquisition()
 	// _thread->addStream(station->network()->code(), station->code(), stream->locCode(), stream->code() + "Z");
 	_thread->addStream(net, sta, loc, cha);
 	Core::Time startTime = Core::Time::UTC() - _ringBufferSize;
-	Core::Time endTime/* = Core::Time::UTC()*/;
-	_thread->setTimeWindow(Core::TimeWindow(startTime, endTime));
+	_thread->setStartTime(startTime);
 
 	_recordSequence = new RingBuffer(_ringBufferSize);
 	_recordWidget->setRecords(0, _recordSequence);
