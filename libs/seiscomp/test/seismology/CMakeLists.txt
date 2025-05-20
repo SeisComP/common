@@ -1,5 +1,6 @@
 SET(TESTS
 	libtau.cpp
+	polyregion.cpp
 )
 
 ADD_DEFINITIONS("-DBUILD_DIR=${SC3_PACKAGE_BINARY_DIR}")
