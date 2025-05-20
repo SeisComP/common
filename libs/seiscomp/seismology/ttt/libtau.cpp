@@ -65,9 +65,6 @@ namespace Seiscomp {
 namespace TTT {
 
 
-std::string LibTau::_tablePrefix = Environment::Instance()->shareDir() + "/ttt/";
-
-
 
 LibTau::LibTau(const LibTau &other) {
 	*this = other;
@@ -90,11 +87,6 @@ LibTau::~LibTau() {
 }
 
 
-void LibTau::SetTablePrefix(const std::string &prefix) {
-	_tablePrefix = prefix;
-}
-
-
 bool LibTau::setModel(const std::string &model) {
 	initPath(model);
 	return true;
@@ -107,6 +99,15 @@ const std::string &LibTau::model() const {
 
 
 void LibTau::initPath(const std::string &model) {
+	std::string tablePrefix;
+	const char *tablePrefix_ = getenv("SEISCOMP_LIBTAU_TABLE_DIR");
+	if ( !tablePrefix_ ) {
+		tablePrefix = Environment::Instance()->shareDir() + "/ttt/";
+	}
+	else {
+		tablePrefix = tablePrefix_;
+	}
+
 	if ( _model != model ) {
 		if ( _initialized ) {
 			tabout(&_handle);
@@ -119,7 +120,7 @@ void LibTau::initPath(const std::string &model) {
 	}
 
 	if ( !model.empty() ) {
-		std::string tablePath = _tablePrefix + model;
+		std::string tablePath = tablePrefix + model;
 
 		// Fill the handle structure with zeros
 		memset(&_handle, 0, sizeof(_handle));

@@ -56,8 +56,6 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 
 
 	public:
-		static void SetTablePrefix(const std::string &prefix);
-
 		bool setModel(const std::string &model) override;
 		const std::string &model() const override;
 
@@ -126,7 +124,6 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 		void initPath(const std::string &model);
 
 
-		static std::string _tablePrefix;
 		libtau             _handle;
 		double             _depth{-1};
 		std::string        _model;

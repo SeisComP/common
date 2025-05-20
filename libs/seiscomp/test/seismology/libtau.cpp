@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(MultiThreaded) {
 	vector<thread> threads;
 	threads.resize(4);
 
-	TTT::LibTau::SetTablePrefix(STR2(BUILD_DIR) "/libs/3rd-party/tau/data/");
+	setenv("SEISCOMP_LIBTAU_TABLE_DIR", STR2(BUILD_DIR) "/libs/3rd-party/tau/data/", 1);
 
 	for ( auto &thrd : threads ) {
 		thrd = thread([]() {
