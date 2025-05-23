@@ -5123,7 +5123,9 @@ void OriginLocatorView::updateContent() {
 
 	SC_D.ui.labelEvaluation->setText(evalMode);
 	SC_D.ui.labelMethod->setText(SC_D.currentOrigin->methodID().c_str());
+	SC_D.ui.labelMethod->setToolTip(SC_D.currentOrigin->methodID().c_str());
 	SC_D.ui.labelEarthModel->setText(SC_D.currentOrigin->earthModelID().c_str());
+	SC_D.ui.labelEarthModel->setToolTip(SC_D.currentOrigin->earthModelID().c_str());
 
 	SC_D.ui.labelNumPhases->setText(QString("%1").arg(activeArrivals));
 	SC_D.ui.labelNumPhasesError->setText(QString("%1").arg(SC_D.currentOrigin->arrivalCount()));
