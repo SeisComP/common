@@ -21,7 +21,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <boost/regex.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -30,11 +30,11 @@
 #define SEISCOMP_COMPONENT PolyRegion
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/system.h>
+#include <seiscomp/core/strings.h>
 
 namespace fs = boost::filesystem;
 
-namespace Seiscomp {
-namespace Geo {
+namespace Seiscomp::Geo {
 
 
 
@@ -44,13 +44,14 @@ PolyRegions::PolyRegions(const std::string &location) {
 
 
 PolyRegions::~PolyRegions() {
-	for (size_t i = 0; i < _regions.size(); i++ ) {
-		delete _regions[i];
+	for ( auto *region : _regions ) {
+		delete region;
 	}
 }
 
 
 size_t PolyRegions::read(const std::string& location) {
+	SEISCOMP_DEBUG("Reading FEP regions from directory: %s", location.c_str());
 	fs::path directory;
 	try {
 		directory = SC_FS_PATH(location);
@@ -60,8 +61,9 @@ size_t PolyRegions::read(const std::string& location) {
 		return 0;
 	}
 
-	if ( !fs::exists(directory) )
+	if ( !fs::exists(directory) ) {
 		return regionCount();
+	}
 
 	fs::directory_iterator end_itr;
 	std::vector<std::string> files;
@@ -69,11 +71,13 @@ size_t PolyRegions::read(const std::string& location) {
 	try {
 		for ( fs::directory_iterator itr(directory); itr != end_itr; ++itr ) {
 
-			if ( fs::is_directory(*itr) )
+			if ( fs::is_directory(*itr) ) {
 				continue;
+			}
 
-			if ( boost::regex_match(SC_FS_IT_LEAF(itr), boost::regex(".*\\.(?:fep)")) )
+			if ( boost::regex_match(SC_FS_IT_LEAF(itr), boost::regex(".*\\.(?:fep)")) ) {
 				files.push_back(SC_FS_IT_STR(itr));
+			}
 		}
 	}
 	catch ( const std::exception &ex ) {
@@ -83,9 +87,10 @@ size_t PolyRegions::read(const std::string& location) {
 
 	std::sort(files.begin(), files.end());
 
-	for ( size_t i = 0; i < files.size(); ++i ) {
-		if ( !readFepBoundaries(files[i]) )
-			SEISCOMP_ERROR("Error reading file: %s", files[i].c_str());
+	for ( auto &file : files ) {
+		if ( !readFepBoundaries(file) ) {
+			SEISCOMP_ERROR("Error reading file: %s", file.c_str());
+		}
 	}
 
 	info();
@@ -98,54 +103,119 @@ size_t PolyRegions::read(const std::string& location) {
 
 
 bool PolyRegions::readFepBoundaries(const std::string& filename) {
-	SEISCOMP_DEBUG("reading boundary polygons from file: %s", filename.c_str());
-
+	SEISCOMP_DEBUG("Reading FEP regions from file: %s", filename.c_str());
 	std::ifstream infile(filename.c_str());
 
-	if ( infile.bad() )
+	if ( infile.bad() ) {
 		return false;
+	}
 
-	boost::regex vertexLine("^\\s*([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)(?:\\s+([^\\d\\s].*)$|\\s*$)");
-	boost::regex LLine("^\\s*L\\s+(.*)$");
+	auto closePolygon = [](GeoFeature *&pr, size_t &vertexSize, size_t lineNum,
+	        const std::string &filename, const char *msg) {
+		if ( !pr ) {
+			return;
+		}
+
+		SEISCOMP_WARNING("%s on line %zu of file: %s", msg, lineNum, filename);
+		delete pr;
+		pr = nullptr;
+	};
+
+	boost::regex vertexLine(R"(^([-+]?[0-9]*\.?[0-9]+)\s+([-+]?[0-9]*\.?[0-9]+)(?:\s+([^\d\s].*)$|$))");
+	boost::regex sizeLine(R"(^99*\.?[0-9]+\s+99*\.?[0-9]+\s+([0-9]+)$)");
+	boost::regex LLine(R"(^L\s+(.*)$)");
 	boost::smatch what;
 
 	std::string line;
-	bool newPolygon = true;
 	GeoFeature *pr = nullptr;
-	OPT(GeoCoordinate) last;
+	size_t lineNum = 0;
+	size_t vertexSize = 0;
+	GeoCoordinate lastCoord;
 
 	while ( std::getline(infile, line) ) {
-		if ( newPolygon ){
-			pr = new GeoFeature();
-			newPolygon = false;
+		++lineNum;
+
+		Core::trim(line);
+
+		if ( line.empty() || line[0] == '#' ) {
+			continue;
 		}
 
+		// vertex line: longitude latitude
 		if ( boost::regex_match(line, what, vertexLine) ) {
-			if ( last ) pr->addVertex(*last);
-			last = GeoCoordinate(atof(what.str(2).c_str()), atof(what.str(1).c_str())).normalize();
-		}
-		else if ( boost::regex_match(line, what, LLine) ) {
-			if ( last && pr->vertices().size() > 0 ) {
-				if ( *last != pr->vertices().back() )
-					pr->addVertex(*last);
+			if ( pr && vertexSize ) {
+				closePolygon(pr, vertexSize, lineNum, filename,
+				             "Incomplete polygon, "
+				             "found vertex but expected name definition");
 			}
 
-			if ( pr->vertices().size() < 3 )
-				delete pr;
+			if ( pr ) {
+				pr->addVertex(lastCoord);
+			}
 			else {
-				pr->setName(what.str(1));
-				pr->setClosedPolygon(true);
-				pr->updateBoundingBox();
-				addRegion(pr);
+				pr = new GeoFeature();
+			}
+			lastCoord = GeoCoordinate(atof(what.str(2).c_str()),
+			                          atof(what.str(1).c_str())).normalize();
 
-				if ( pr->area() < 0 )
-					pr->invertOrder();
+			continue;
+		}
+
+		// skip line if no vertex line has been read so far
+		if ( !pr ) {
+			SEISCOMP_WARNING("No vertex read so far, ignoring line %zu of "
+			                 "file: %s", lineNum, filename);
+			continue;
+		}
+
+		// vertex size (optional): 99.0 99.0 SIZE
+		if ( boost::regex_match(line, what, sizeLine) ) {
+			if ( vertexSize ) {
+				SEISCOMP_WARNING("Ignoring unexpected polygon size definition "
+				                 "on line %zu of file: %s", lineNum, filename);
+				continue;
 			}
 
-			last = Core::None;
-			newPolygon = true;
+			vertexSize = atoi(what.str(1).c_str());
+			if ( vertexSize != pr->vertices().size() + 1 ) {
+				SEISCOMP_WARNING("Polygon size definition on line %zu does not "
+				                 "match vertexes read (%zu != %zu), file: %s",
+				                 lineNum, vertexSize, pr->vertices().size() + 1,
+				                 filename);
+			}
+			continue;
 		}
+
+		// polygon name: L NAME
+		if ( boost::regex_match(line, what, LLine) ) {
+			if ( lastCoord != pr->vertices().front() ) {
+				pr->addVertex(lastCoord);
+			}
+
+			if ( pr->vertices().size() < 3 ) {
+				closePolygon(pr, vertexSize, lineNum, filename,
+				             "Too few vertices for polygon");
+				continue;
+			}
+
+			pr->setName(what.str(1));
+			pr->setClosedPolygon(true);
+			pr->updateBoundingBox();
+
+			if ( pr->area() < 0 ) {
+				pr->invertOrder();
+			}
+
+			addRegion(pr);
+			pr = nullptr;
+			vertexSize = 0;
+			continue;
+		}
+
+		closePolygon(pr, vertexSize, lineNum, filename, "Incomplete polygon");
 	}
+
+	closePolygon(pr, vertexSize, lineNum, filename, "Incomplete polygon");
 
 	return true;
 }
@@ -161,25 +231,27 @@ size_t PolyRegions::regionCount() const {
 }
 
 
-GeoFeature *PolyRegions::region(int i) const{
-	return _regions.size() > 0 ? _regions[i] : nullptr;
+GeoFeature *PolyRegions::region(int i) const {
+	return _regions.empty() ? nullptr : _regions[i];
 }
 
 
-void PolyRegions::print(){
-	for ( size_t i = 0; i < _regions.size(); i++ ){
-		std::cerr << region(i)->name() << std::endl;
-		std::cerr <<  region(i)->vertices().size() << std::endl;
+void PolyRegions::print() {
+	for ( auto *region : _regions) {
+		std::cerr << region->name() << '\n'
+		          << region->vertices().size() << '\n';
 	}
+	std::cerr.flush();
 }
 
 
-void PolyRegions::info(){
-	SEISCOMP_DEBUG("Number of PolyRegions loaded: %lu", (unsigned long)_regions.size());
+void PolyRegions::info() {
+	SEISCOMP_DEBUG("Number of PolyRegions loaded: %zu", _regions.size());
 
 	int sum = 0;
-	for ( size_t i = 0; i < _regions.size(); i++ )
-		sum += region(i)->vertices().size();
+	for ( auto *region : _regions ) {
+		sum += region->vertices().size();
+	}
 
 	SEISCOMP_DEBUG("Total number of vertices read in: %d", sum);
 }
@@ -187,25 +259,24 @@ void PolyRegions::info(){
 
 GeoFeature *PolyRegions::findRegion(double lat, double lon) const {
 	auto gc = GeoCoordinate(lat, lon).normalize();
-	for ( size_t i = 0; i < regionCount(); ++i ) {
-		if ( region(i)->contains(gc) ) {
-			return region(i);
+	for ( auto *region : _regions ) {
+		if ( region->contains(gc) ) {
+			return region;
 		}
 	}
 
-	return nullptr;
+	return {};
 }
 
 
 std::string PolyRegions::findRegionName(double lat, double lon) const {
-	GeoFeature *region = findRegion(lat, lon);
+	auto *region = findRegion(lat, lon);
 	if ( region ) {
 		return region->name();
 	}
 
-	return "";
+	return {};
 }
 
 
-}
 }

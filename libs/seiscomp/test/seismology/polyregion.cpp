@@ -38,7 +38,6 @@ using namespace Seiscomp;
 	abort(); } \
 } while(0)
 
-
 BOOST_AUTO_TEST_SUITE(seiscomp_core_seismology_polygon)
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -48,9 +47,11 @@ BOOST_AUTO_TEST_SUITE(seiscomp_core_seismology_polygon)
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(FEP) {
 	Geo::PolyRegions regions("data/regions/fep");
-	ASSERT_MSG(regions.regionCount() == 1,
+	ASSERT_MSG(regions.regionCount() == 3,
 	           "Invalid number of polygons in: " << regions.dataDir());
 	BOOST_CHECK_EQUAL(regions.findRegionName(52.387549, 13.068868), "Potsdam 😎");
+	BOOST_CHECK_EQUAL(regions.region(1)->name(), "NoSize");
+	BOOST_CHECK_EQUAL(regions.region(2)->name(), "Comment");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
