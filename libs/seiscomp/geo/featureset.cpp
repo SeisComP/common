@@ -27,6 +27,7 @@
 #include <seiscomp/core/system.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/geo/formats/bna.h>
+#include <seiscomp/geo/formats/fep.h>
 #include <seiscomp/geo/formats/geojson.h>
 
 #include <boost/version.hpp>
@@ -241,7 +242,7 @@ size_t GeoFeatureSet::readDir(const std::string &dirPath) {
 		return 0;
 	}
 
-	// Read the BNA directory recursively
+	// Read the directory recursively
 	Core::Time start = Core::Time::UTC();
 	size_t fileCount = readDirRecursive(directory, addNewCategory(""));
 	SEISCOMP_INFO("%s in %fs", initStatus(dirPath, fileCount).c_str(),
@@ -401,9 +402,15 @@ ssize_t GeoFeatureSet::readFile(const std::string &filename,
 	     filename.substr(filename.length() - 4) == ".bna") {
 		return static_cast<ssize_t>(readBNA(*this, filename, category));
 	}
-	else if ( filename.length() >= 8 &&
-	          filename.substr(filename.length() - 8) == ".geojson") {
+
+	if ( filename.length() >= 8 &&
+	     filename.substr(filename.length() - 8) == ".geojson") {
 		return static_cast<ssize_t>(readGeoJSON(*this, filename, category));
+	}
+
+	if ( filename.length() >= 4 &&
+	     filename.substr(filename.length() - 4) == ".fep") {
+		return static_cast<ssize_t>(readFEP(*this, filename, category));
 	}
 
 	return -1;

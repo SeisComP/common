@@ -429,7 +429,10 @@ size_t readGeoJSON(GeoFeatureSet &featureSet, const std::string &path,
 
 	rapidjson::Document doc;
 	ifstream ifs(path.c_str());
-	if ( !ifs.is_open() ) return false;
+	if ( !ifs.is_open() ) {
+		return 0;
+	}
+
 	rapidjson::IStreamWrapper isw(ifs);
 	doc.ParseStream(isw);
 	if ( doc.HasParseError() ) {

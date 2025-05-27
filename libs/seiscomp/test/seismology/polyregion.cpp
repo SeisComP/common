@@ -59,4 +59,17 @@ BOOST_AUTO_TEST_CASE(FEP) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(GeoJSON) {
+	Geo::PolyRegions regions("data/regions/geojson");
+	ASSERT_MSG(regions.regionCount() == 2,
+	           "Invalid number of polygons in: " << regions.dataDir());
+	BOOST_CHECK_EQUAL(regions.findRegionName(52.387549, 13.068868), "Potsdam 😎");
+	BOOST_CHECK_EQUAL(regions.region(1)->name(), "Polyline");
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_SUITE_END()
