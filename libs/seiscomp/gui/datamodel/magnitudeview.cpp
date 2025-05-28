@@ -603,7 +603,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 			case USED:
 				try {
 					snprintf(buf, 10, "   %.3f", _magnitude->stationMagnitudeContribution(index.row())->weight());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( Core::ValueException& ) {}
 				break;
@@ -626,13 +626,13 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 
 			case MAGNITUDE:
 				snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, smval);
-				return buf;
+				return QString::fromUtf8(buf);
 
 			case RESIDUAL:
 				if ( _magnitude ) {
 					try {
 						snprintf(buf, 10, "%.2f", _magnitude->stationMagnitudeContribution(index.row())->residual());
-						return buf;
+						return QString::fromUtf8(buf);
 					}
 					catch ( ... ) {}
 				}
@@ -646,7 +646,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 							snprintf(buf, 10, "%.*f", SCScheme.precision.distance, Math::Geo::deg2km(distance));
 						else
 							snprintf(buf, 10, distance<10 ? "%.2f" : "%.1f", distance);
-						return buf;
+						return QString::fromUtf8(buf);
 					}
 					// return _distance[index.row()] < 0?QVariant():_distance[index.row()];
 				}
@@ -967,7 +967,7 @@ MagnitudeRowFilter::MagnitudeRowFilter(ModelAbstractRowFilter **filter_ptr, QWid
 	}
 
 	QVBoxLayout *layout = new QVBoxLayout;
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	_ui.frameFilters->setLayout(layout);
 
 	for ( int i = 0; i < _rows.count(); ++i ) {
@@ -1349,7 +1349,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	}
 
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	if ( _map ) {
 		_map->setMouseTracking(true);
 		hboxLayout->addWidget(_map);
@@ -1361,7 +1361,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	}
 
 	hboxLayout = new QHBoxLayout(_ui->frameMagnitudeTypes);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 
 	_tabMagnitudes = new QTabBar(_ui->frameMagnitudeTypes);
 	_tabMagnitudes->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
@@ -1994,7 +1994,7 @@ void MagnitudeView::computeMagnitudes() {
 		grid->addItem(spacer, _availableMagTypes->size(), 0);
 		grid->setColumnStretch(0, 0);
 		grid->setColumnStretch(1, 1);
-		grid->setMargin(0);
+		grid->setContentsMargins(0, 0, 0, 0);
 
 		QWidget *typeSelections = new QWidget;
 		typeSelections->setLayout(grid);

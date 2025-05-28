@@ -1197,7 +1197,7 @@ class SpectrumView : public SpectrumViewBase {
 			frame->setFrameShape(QFrame::StyledPanel);
 
 			vl = new QVBoxLayout;
-			vl->setMargin(0);
+			vl->setContentsMargins(0, 0, 0, 0);
 			vl->addWidget(spectrumWidget);
 			frame->setLayout(vl);
 
@@ -2635,12 +2635,12 @@ void PickerView::init() {
 	wrapper->setAutoFillBackground(true);
 
 	QBoxLayout* layout = new QVBoxLayout(SC_D.ui.framePickList);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 	layout->addWidget(wrapper);
 
 	layout = new QVBoxLayout(wrapper);
-	layout->setMargin(SC_D.ui.frameZoom->layout()->margin());
+	layout->setContentsMargins(SC_D.ui.frameZoom->layout()->contentsMargins());
 	layout->setSpacing(6);
 	layout->addWidget(SC_D.recordView);
 
@@ -2691,7 +2691,7 @@ void PickerView::init() {
 	        this, SLOT(currentMarkerChanged(Seiscomp::Gui::RecordMarker*)));
 
 	layout = new QVBoxLayout(SC_D.ui.frameCurrentRow);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 	layout->addWidget(SC_D.currentRecord);
 
@@ -2702,7 +2702,7 @@ void PickerView::init() {
 	SC_D.timeScale->setRangeSelectionEnabled(true);
 
 	layout = new QVBoxLayout(SC_D.ui.frameTimeScale);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 	layout->addWidget(SC_D.timeScale);
 
@@ -3441,8 +3441,8 @@ void PickerView::initPhases() {
 
 			if ( i < 9 ) {
 				pickAction->setShortcut(Qt::Key_1 + i);
-				alignAction->setShortcut(Qt::CTRL + Qt::Key_1 + i);
-				alignTheoreticalAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_1 + i);
+				alignAction->setShortcut(Qt::CTRL | Qt::Key(Qt::Key_1 + i));
+				alignTheoreticalAction->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key(Qt::Key_1 + i));
 			}
 
 			SC_D.ui.menuPicking->addAction(pickAction);
@@ -3618,8 +3618,9 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 			action->setText(text);
 			action->setData(i);
 
-			if ( i < 9 )
-				action->setShortcut(Qt::SHIFT + (Qt::Key_1 + i));
+			if ( i < 9 ) {
+				action->setShortcut(Qt::SHIFT | Qt::Key(Qt::Key_1 + i));
+			}
 
 			connect(action, SIGNAL(triggered()), this, SLOT(setPickUncertainty()));
 
@@ -8791,9 +8792,7 @@ void PickerView::searchStation() {
 void PickerView::searchByText(const QString &text) {
 	if ( text.isEmpty() ) return;
 
-	QRegExp rx(text + "*");
-	rx.setPatternSyntax(QRegExp::Wildcard);
-	rx.setCaseSensitivity(Qt::CaseInsensitive);
+	QRegularExpression rx = QRegularExpression::fromWildcard(text + "*", Qt::CaseInsensitive);
 
 	while ( true ) {
 		int row = SC_D.recordView->findByText(0, rx, SC_D.lastFoundRow+1);

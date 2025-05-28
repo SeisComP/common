@@ -35,10 +35,16 @@
 #include <QLabel>
 #include <QTimer>
 #include <QSettings>
+#include <QLayout>
 
 
 class QTreeWidget;
 class QTreeWidgetItem;
+
+
+inline void setMargin(QLayout *layout, int margin) {
+	layout->setContentsMargins(margin, margin, margin, margin);
+}
 
 
 class ConfigurationTreeItemModel : public QStandardItemModel {

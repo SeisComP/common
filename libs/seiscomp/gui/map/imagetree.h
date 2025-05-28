@@ -28,6 +28,7 @@
 #endif
 #include <seiscomp/gui/core/maps.h>
 
+#include <QObject>
 #include <QImage>
 #include <QMutex>
 

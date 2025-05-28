@@ -207,8 +207,8 @@ class NewStructDialog : public QDialog {
 			QLabel *label = new QLabel("Name:");
 			hlayout->addWidget(label);
 			_name = new QLineEdit;
-			QRegExp rx("[A-Za-z0-9_\\(){}-]+");
-			_name->setValidator(new QRegExpValidator(rx,0));
+			QRegularExpression rx("[A-Za-z0-9_\\(){}-]+");
+			_name->setValidator(new QRegularExpressionValidator(rx,0));
 			hlayout->addWidget(_name);
 			layout->addLayout(hlayout);
 
@@ -266,8 +266,8 @@ class NewCatBindingDialog : public QDialog {
 			QLabel *label = new QLabel("Name:");
 			hlayout->addWidget(label);
 			_name = new QLineEdit;
-			QRegExp rx("[A-Za-z0-9_\\(){}-]+");
-			_name->setValidator(new QRegExpValidator(rx,0));
+			QRegularExpression rx("[A-Za-z0-9_\\(){}-]+");
+			_name->setValidator(new QRegularExpressionValidator(rx,0));
 			hlayout->addWidget(_name);
 			layout->addLayout(hlayout);
 
@@ -1086,7 +1086,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
                     Seiscomp::System::BindingCategory *cat, bool collapsed) {
 	QHBoxLayout *hlayout = new QHBoxLayout;
-	hlayout->setMargin(0);
+	setMargin(hlayout, 0);
 
 	BlockHandle *catHandle = new BlockHandle;
 	catHandle->setCheckable(true);

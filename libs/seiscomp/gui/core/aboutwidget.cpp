@@ -25,8 +25,6 @@
 #include <seiscomp/system/environment.h>
 #include <seiscomp/utils/files.h>
 
-#include <QDesktopWidget>
-
 
 namespace Seiscomp {
 namespace Gui {
@@ -53,10 +51,12 @@ AboutWidget::AboutWidget(QWidget* parent, Qt::WindowFlags f)
 	if ( w < minWidth ) w = minWidth;
 	if ( h < minHeight ) h = minHeight;
 
-	if ( w > QApplication::desktop()->size().width() )
-		w = QApplication::desktop()->size().width();
-	if ( h > QApplication::desktop()->size().height() )
-		h = QApplication::desktop()->size().height();
+	if ( w > QApplication::primaryScreen()->size().width() ) {
+		w = QApplication::primaryScreen()->size().width();
+	}
+	if ( h > QApplication::primaryScreen()->size().height() ) {
+		h = QApplication::primaryScreen()->size().height();
+	}
 
 	resize(w, h);
 }

@@ -18,15 +18,17 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_EVENTLISTVIEW_H
+#define SEISCOMP_GUI_EVENTLISTVIEW_H
 
-#ifndef SEISCOMP_GUI_ORIGINLISTVIEW_H
-#define SEISCOMP_GUI_ORIGINLISTVIEW_H
 
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/qt.h>
+#include <seiscomp/datamodel/databasequery.h>
+#include <seiscomp/datamodel/station.h>
+#include <seiscomp/datamodel/eventparameters_package.h>
 #ifndef Q_MOC_RUN
-#include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/geo/boundingbox.h>
 #endif
@@ -38,6 +40,7 @@
 class QTreeWidget;
 class QTreeWidgetItem;
 
+
 namespace Ui {
 	class EventListView;
 	class EventListViewRegionFilterDialog;
@@ -45,21 +48,6 @@ namespace Ui {
 
 
 namespace Seiscomp {
-
-namespace DataModel {
-
-
-DEFINE_SMARTPOINTER(Event);
-DEFINE_SMARTPOINTER(Origin);
-DEFINE_SMARTPOINTER(FocalMechanism);
-DEFINE_SMARTPOINTER(Pick);
-DEFINE_SMARTPOINTER(Station);
-DEFINE_SMARTPOINTER(Amplitude);
-class OriginReference;
-class DatabaseQuery;
-class Notifier;
-
-}
 
 namespace Client {
 

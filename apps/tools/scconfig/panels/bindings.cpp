@@ -496,7 +496,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 
 	connect(searchClose, SIGNAL(clicked()), this, SLOT(closeSearch()));
 
-	searchLayout->setMargin(8);
+	searchLayout->setContentsMargins(8, 8, 8, 8);
 	searchLayout->addWidget(labelSearch);
 	searchLayout->addWidget(search);
 	searchLayout->addWidget(searchClose);
@@ -534,7 +534,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 	hlayout->addWidget(_label);
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->setSpacing(1);
 	setLayout(l);
 	l->addWidget(_header);
@@ -686,7 +686,7 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_docFolder = QIcon(":/res/icons/document_folder.png");
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	setLayout(l);
 
 	QSplitter *splitter = new QSplitter;
@@ -705,7 +705,7 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	QWidget *folderView = new QWidget(this);
 	folderView->setAutoFillBackground(true);
 	QVBoxLayout *fl = new QVBoxLayout;
-	fl->setMargin(0);
+	fl->setContentsMargins(0, 0, 0, 0);
 	fl->setSpacing(0);
 	folderView->setLayout(fl);
 
@@ -745,7 +745,7 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 
 	QWidget *container = new QWidget;
 	QVBoxLayout *modulesFolderLayout = new QVBoxLayout;
-	modulesFolderLayout->setMargin(0);
+	modulesFolderLayout->setContentsMargins(0, 0, 0, 0);
 	modulesFolderLayout->setSpacing(0);
 	container->setAutoFillBackground(true);
 	container->setLayout(modulesFolderLayout);

@@ -617,7 +617,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 
 			QVBoxLayout *l = new QVBoxLayout;
 			l->setSpacing(0);
-			l->setMargin(0);
+			setMargin(l, 0);
 
 			headerLabel = new StatusLabel;
 			headerLabel->setWordWrap(true);
@@ -633,7 +633,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 
 			QHBoxLayout *buttonLayout = new QHBoxLayout;
 			buttonLayout->addStretch();
-			buttonLayout->setMargin(4);
+			setMargin(buttonLayout, 4);
 
 			okButton = new QPushButton;
 			cancelButton = new QPushButton;
@@ -711,7 +711,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		QDialog dlg;
 		QVBoxLayout *l = new QVBoxLayout;
 		l->setSpacing(0);
-		l->setMargin(0);
+		setMargin(l, 0);
 		dlg.setLayout(l);
 
 		StatusLabel *headerLabel = new StatusLabel;
@@ -729,7 +729,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		l->addWidget(w);
 
 		QHBoxLayout *buttonLayout = new QHBoxLayout;
-		buttonLayout->setMargin(4);
+		setMargin(buttonLayout, 4);
 
 		QPushButton *fix = new QPushButton;
 		buttonLayout->addWidget(fix);
@@ -773,7 +773,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		QDialog dlg;
 		QVBoxLayout *l = new QVBoxLayout;
 		l->setSpacing(0);
-		l->setMargin(0);
+		setMargin(l, 0);
 		dlg.setLayout(l);
 
 		StatusLabel *headerLabel = new StatusLabel;
@@ -790,7 +790,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		l->addWidget(w);
 
 		QHBoxLayout *buttonLayout = new QHBoxLayout;
-		buttonLayout->setMargin(4);
+		setMargin(buttonLayout, 4);
 
 		QPushButton *btnReplace = new QPushButton;
 		btnReplace->setText(btnReplace->tr("Apply"));
@@ -1406,7 +1406,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	QGridLayout *centralLayout = new QGridLayout(centralWidget);
 
 	centralLayout->setSpacing(1);
-	centralLayout->setMargin(1);
+	setMargin(centralLayout, 1);
 	centralWidget->setLayout(centralLayout);
 	setCentralWidget(centralWidget);
 
@@ -1441,7 +1441,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	QVBoxLayout *vl = new QVBoxLayout;
 	vl->addWidget(_headline);
 	vl->addWidget(_description);
-	vl->setMargin(0);
+	setMargin(vl, 0);
 	vl->setSpacing(0);
 	infoWidget->setLayout(vl);
 	infoWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));

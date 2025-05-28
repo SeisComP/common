@@ -96,7 +96,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	configurationPanel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
 	//configurationPanel->setAutoFillBackground(true);
 	QHBoxLayout *configurationLayout = new QHBoxLayout;
-	configurationLayout->setMargin(0);
+	configurationLayout->setContentsMargins(0, 0, 0, 0);
 	configurationLayout->setSpacing(1);
 	configurationPanel->setLayout(configurationLayout);
 
@@ -136,7 +136,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	QWidget *settingsPanel = new QWidget;
 	settingsPanel->setAutoFillBackground(true);
 	QVBoxLayout *settingsLayout = new QVBoxLayout;
-	settingsLayout->setMargin(0);
+	settingsLayout->setContentsMargins(0, 0, 0, 0);
 	settingsPanel->setLayout(settingsLayout);
 
 	QSizePolicy sp = settingsPanel->sizePolicy();
@@ -159,7 +159,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	searchClose->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
 	searchClose->setFixedSize(18,18);
 
-	searchLayout->setMargin(8);
+	searchLayout->setContentsMargins(0, 0, 0, 0);
 	searchLayout->addWidget(labelSearch);
 	searchLayout->addWidget(search);
 	searchLayout->addWidget(searchClose);

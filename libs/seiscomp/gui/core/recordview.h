@@ -422,7 +422,7 @@ class SC_GUI_API RecordView : public QWidget {
 		//! Finds a row by its text using regular expressions.
 		//! The first occurence according the sorting is returned.
 		//! If no item matches then -1 is returned.
-		int findByText(int row, QRegExp &regexp, int startRow = 0) const;
+		int findByText(int row, const QRegularExpression &regexp, int startRow = 0) const;
 
 		//! Sort the items by the time value of the markers with
 		//! text markerText

@@ -261,7 +261,7 @@ void EventSummary::init() {
 	_symbol = nullptr;
 	_map = new EventSummaryMap(this, _maptree.get(), _ui->map);
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->map);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	hboxLayout->addWidget(_map);
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
@@ -337,7 +337,7 @@ void EventSummary::init() {
 	_ui->type->installEventFilter(drawFilter);
 
 	_magnitudeRows = new QVBoxLayout(_ui->magnitudes);
-	_magnitudeRows->setMargin(0);
+	_magnitudeRows->setContentsMargins(0, 0, 0, 0);
 	_magnitudeRows->setSpacing(layout()->spacing());
 
 	_ui->exportButton->setVisible(false);

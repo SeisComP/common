@@ -1381,11 +1381,11 @@ void EventEdit::init() {
 	_fmActivity->hide();
 
 	QHBoxLayout *l = new QHBoxLayout(_ui.frameMap);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->addWidget(_originMap);
 
 	l = new QHBoxLayout(_ui.fmMap);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->addWidget(_fmMap);
 
 	_updateLocalEPInstance = false;
@@ -1790,7 +1790,8 @@ void EventEdit::init() {
 	_originTree = new OriginTreeWidget(this, _ui.frameOrigins);
 
 	l = new QHBoxLayout(_ui.frameOrigins);
-	l->setMargin(0); l->setSpacing(0);
+	l->setContentsMargins(0, 0, 0, 0);
+	l->setSpacing(0);
 	l->addWidget(_originTree);
 
 	_ui.frameOrigins->setLayout(l);

@@ -507,7 +507,7 @@ void RecordView::setFramesEnabled(bool e) {
 			if ( frame ) {
 				//frame->setFrameShape(_frames?QFrame::StyledPanel:QFrame::NoFrame);
 				frame->setFrameStyle(_frames?(QFrame::StyledPanel | QFrame::Raised):(QFrame::NoFrame | QFrame::Plain));
-				frame->layout()->setMargin(_frameMargin);
+				frame->layout()->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 			}
 		}
 	}
@@ -591,7 +591,7 @@ void RecordView::setupUi() {
 	QFrame *frame = new QFrame;
 	QVBoxLayout *frameLayout = new QVBoxLayout(frame);
 	frameLayout->setSpacing(0);
-	frameLayout->setMargin(_frameMargin);
+	frameLayout->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 	frameLayout->addWidget(_timeScaleInfo);
 	frame->setLayout(frameLayout);
 	frame->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
@@ -600,7 +600,7 @@ void RecordView::setupUi() {
 
 	QWidget *timeScaleAuxWidget = new QWidget;
 	_timeScaleAuxLayout->setSpacing(_horizontalSpacing);
-	_timeScaleAuxLayout->setMargin(0);
+	_timeScaleAuxLayout->setContentsMargins(0, 0, 0, 0);
 
 	// Add left info frame
 	_timeScaleAuxLayout->addWidget(frame);
@@ -610,7 +610,7 @@ void RecordView::setupUi() {
 	frame->setFrameStyle(_frames?(QFrame::StyledPanel | QFrame::Raised):(QFrame::NoFrame | QFrame::Plain));
 	frameLayout = new QVBoxLayout(frame);
 	frameLayout->setSpacing(0);
-	frameLayout->setMargin(_frameMargin);
+	frameLayout->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 	frameLayout->addWidget(_timeScaleWidget);
 	frame->setLayout(frameLayout);
 
@@ -628,7 +628,7 @@ void RecordView::setupUi() {
 
 	QLayout* centralLayout = new QVBoxLayout;
 	centralLayout->setSpacing(_rowSpacing);
-	centralLayout->setMargin(0);
+	centralLayout->setContentsMargins(0, 0, 0, 0);
 	setLayout(centralLayout);
 
 	centralLayout->addWidget(_scrollArea);
@@ -2783,15 +2783,17 @@ void RecordView::sortByData() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int RecordView::findByText(int row, QRegExp &regexp, int startRow) const {
+int RecordView::findByText(int row, const QRegularExpression &regexp, int startRow) const {
 	for ( int i = startRow; i < _rows.size(); ++i ) {
 		RecordViewItem* rvItem = _rows[i];
 
-		if (rvItem->label()->itemCount() <= row)
+		if ( rvItem->label()->itemCount() <= row ) {
 			continue;
+		}
 
-		if ( regexp.exactMatch(rvItem->label()->text(row)) )
+		if ( regexp.match(rvItem->label()->text(row)).hasMatch() ) {
 			return i;
+		}
 	}
 
 	return -1;

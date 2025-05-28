@@ -82,7 +82,7 @@ SystemPanel::SystemPanel(QWidget *parent)
 	setDescription("The current status of the system");
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->setSpacing(1);
 	setLayout(l);
 
@@ -197,7 +197,7 @@ SystemPanel::SystemPanel(QWidget *parent)
 
 	QWidget *container = new QWidget;
 	QVBoxLayout *cl = new QVBoxLayout;
-	cl->setMargin(0);
+	cl->setContentsMargins(0, 0, 0, 0);
 	cl->setSpacing(0);
 	container->setLayout(cl);
 	_procLabel = new QLabel;

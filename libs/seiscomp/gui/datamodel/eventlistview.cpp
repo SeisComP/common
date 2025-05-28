@@ -2458,7 +2458,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._commandWaitDialog = nullptr;
 
 	QBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	SC_D._ui->frameList->setLayout(l);
 
 	SC_D._treeWidget = new TreeWidget(SC_D._ui->frameList);
@@ -3162,10 +3162,10 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	addAction(SC_D._ui->actionCopyRowToClipboard);
 
 	auto *expandAll = new QAction(this);
-	expandAll->setShortcut(Qt::CTRL + Qt::Key_E);
+	expandAll->setShortcut(Qt::CTRL | Qt::Key_E);
 
 	auto *collapseAll = new QAction(this);
-	collapseAll->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_E);
+	collapseAll->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_E);
 
 	addAction(expandAll);
 	addAction(collapseAll);
@@ -3851,12 +3851,12 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 	if ( !SCScheme.dateTime.useLocalTime ) {
 		start.setTimeSpec(Qt::UTC);
 		end.setTimeSpec(Qt::UTC);
-		start.setTime_t(tw.startTime().epochSeconds());
-		end.setTime_t(tw.endTime().epochSeconds());
+		start.setSecsSinceEpoch(tw.startTime().epochSeconds());
+		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
 	else {
-		start.setTime_t(tw.startTime().epochSeconds());
-		end.setTime_t(tw.endTime().epochSeconds());
+		start.setSecsSinceEpoch(tw.startTime().epochSeconds());
+		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
 
 	SC_D._ui->dateTimeEditStart->setDateTime(start);
@@ -6030,7 +6030,7 @@ void EventListView::setControlsHidden(bool hide) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::setCustomControls(QWidget* widget) const {
 	SC_D._ui->frameCustomControls->setLayout(new QHBoxLayout());
-	SC_D._ui->frameCustomControls->layout()->setMargin(0);
+	SC_D._ui->frameCustomControls->layout()->setContentsMargins(0, 0, 0, 0);
 	SC_D._ui->frameCustomControls->layout()->addWidget(widget);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

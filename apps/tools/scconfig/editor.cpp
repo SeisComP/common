@@ -17,6 +17,8 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
+#include "gui.h"
 #include "editor.h"
 
 #include <QAbstractTextDocumentLayout>
@@ -95,30 +97,30 @@ ConfigHighlighter::ConfigHighlighter(QTextDocument *parent)
 	keywordPatterns << "\\binclude\\b" << "\\bdel\\b"
 	                << "\\btrue\\b" << "\\bfalse\\b";
 	foreach (const QString &pattern, keywordPatterns) {
-		rule.pattern = QRegExp(pattern);
+		rule.pattern = QRegularExpression(pattern);
 		rule.format = _keywordFormat;
 		_rules.append(rule);
 	}
 
 	_commentFormat.setForeground(Qt::darkGray);
 	_commentFormat.setFontItalic(true);
-	rule.pattern = QRegExp("#[^\n]*");
+	rule.pattern = QRegularExpression("#[^\n]*");
 	rule.format = _commentFormat;
 	_rules.append(rule);
 
 	_quotationFormat.setForeground(Qt::darkGreen);
-	rule.pattern = QRegExp("\".*\"");
+	rule.pattern = QRegularExpression("\".*\"");
 	rule.format = _quotationFormat;
 	_rules.append(rule);
 
 	_variableFormat.setForeground(Qt::darkRed);
-	rule.pattern = QRegExp("\\$\\{.*\\}");
+	rule.pattern = QRegularExpression("\\$\\{.*\\}");
 	rule.format = _variableFormat;
 	_rules.append(rule);
 
 	QTextCharFormat whitespaceFormat;
 	whitespaceFormat.setForeground(QColor(192,192,192));
-	rule.pattern = QRegExp("\\s");
+	rule.pattern = QRegularExpression("\\s");
 	rule.format = whitespaceFormat;
 	_rules.append(rule);
 
@@ -133,12 +135,13 @@ ConfigHighlighter::ConfigHighlighter(QTextDocument *parent)
 
 void ConfigHighlighter::highlightBlock(const QString &text) {
 	foreach ( const Rule &rule, _rules ) {
-		QRegExp expression(rule.pattern);
-		int index = expression.indexIn(text);
-		while ( index >= 0 ) {
-			int length = expression.matchedLength();
+		QRegularExpression expression(rule.pattern);
+		auto match = expression.match(text);
+		while ( match.hasMatch() ) {
+			int index = match.capturedStart();
+			int length = match.capturedLength();
 			setFormat(index, length, rule.format);
-			index = expression.indexIn(text, index + length);
+			match = expression.match(text, index + length);
 		}
 	}
 	setCurrentBlockState(0);
@@ -288,7 +291,7 @@ ConfigFileWidget::ConfigFileWidget(QWidget *parent) : QWidget(parent) {
 	_errorlist->setAlternatingRowColors(true);
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	l->setSpacing(0);
 	QLabel *header = new QLabel;
 	header->setText("Parsing issues");
@@ -527,23 +530,23 @@ void ConfigChangesWidget::setChanges(const Seiscomp::System::ConfigDelegate::Cha
 				break;
 		}
 
-		item->setData(Qt::BackgroundColorRole, bgColor);
+		item->setData(Qt::BackgroundRole, bgColor);
 		_table->setItem(i, 0, item);
 
 		item = new QTableWidgetItem(change.variable.c_str());
-		item->setData(Qt::BackgroundColorRole, bgColor);
+		item->setData(Qt::BackgroundRole, bgColor);
 		item->setData(Qt::FontRole, boldFont);
 		_table->setItem(i, 1, item);
 
 		if ( !change.oldContent.empty() ) {
 			item = new QTableWidgetItem(change.oldContent.c_str());
-			item->setData(Qt::BackgroundColorRole, bgColor);
+			item->setData(Qt::BackgroundRole, bgColor);
 			_table->setItem(i, 2, item);
 		}
 
 		if ( !change.newContent.empty() ) {
 			item = new QTableWidgetItem(change.newContent.c_str());
-			item->setData(Qt::BackgroundColorRole, bgColor);
+			item->setData(Qt::BackgroundRole, bgColor);
 			_table->setItem(i, 3, item);
 		}
 	}

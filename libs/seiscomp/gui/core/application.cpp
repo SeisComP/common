@@ -41,6 +41,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QSplashScreen>
+#include <QTextCodec>
 
 #include <set>
 #include <iostream>
@@ -1615,8 +1616,8 @@ void Application::messagesAvailable() {
 
 		CommandMessage *cmd = CommandMessage::Cast(msg);
 		if ( cmd && _filterCommands ) {
-			QRegExp re(cmd->client().c_str());
-			if ( re.exactMatch(Client::Application::_settings.messaging.user.c_str()) ) {
+			QRegularExpression re(cmd->client().c_str());
+			if ( re.match(Client::Application::_settings.messaging.user.c_str()).hasMatch() ) {
 				if ( cmd->command() == CM_SHOW_NOTIFICATION ) {
 					if ( !cmd->parameter().empty() ) {
 						NotificationLevel nl = NL_UNDEFINED;

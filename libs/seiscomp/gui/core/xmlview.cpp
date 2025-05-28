@@ -19,6 +19,7 @@
 
 
 #include <seiscomp/gui/core/xmlview.h>
+#include <QXmlDefaultHandler>
 #include <QtXml>
 
 

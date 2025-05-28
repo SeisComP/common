@@ -47,6 +47,7 @@
 #include <seiscomp/logging/log.h>
 
 #include <QMessageBox>
+
 #include <functional>
 #include <numeric>
 #include <fstream>
@@ -1881,12 +1882,12 @@ void AmplitudeView::init() {
 	wrapper->setAutoFillBackground(true);
 
 	QBoxLayout* layout = new QVBoxLayout(SC_D.ui.frameTraces);
-	layout->setMargin(2);
+	layout->setContentsMargins(2, 2, 2, 2);
 	layout->setSpacing(0);
 	layout->addWidget(wrapper);
 
 	layout = new QVBoxLayout(wrapper);
-	layout->setMargin(SC_D.ui.frameZoom->layout()->margin());
+	layout->setContentsMargins(SC_D.ui.frameZoom->layout()->contentsMargins());
 	layout->setSpacing(6);
 	layout->addWidget(SC_D.recordView);
 
@@ -1937,7 +1938,7 @@ void AmplitudeView::init() {
 	*/
 
 	layout = new QVBoxLayout(SC_D.ui.frameCurrentRow);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 	layout->addWidget(SC_D.currentRecord);
 
@@ -1949,7 +1950,7 @@ void AmplitudeView::init() {
 	SC_D.timeScale->setSelectionHandleEnabled(2, false);
 
 	layout = new QVBoxLayout(SC_D.ui.frameTimeScale);
-	layout->setMargin(0);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 	layout->addWidget(SC_D.timeScale);
 
@@ -6307,11 +6308,12 @@ void AmplitudeView::searchByText(const QString &text) {
 		return;
 	}
 
-	QRegExp rx(text + "*");
-	rx.setPatternSyntax(QRegExp::Wildcard);
-	rx.setCaseSensitivity(Qt::CaseInsensitive);
+	int row = SC_D.recordView->findByText(
+		0,
+		QRegularExpression::fromWildcard(text + "*", Qt::CaseInsensitive),
+		SC_D.lastFoundRow + 1
+	);
 
-	int row = SC_D.recordView->findByText(0, rx, SC_D.lastFoundRow+1);
 	if ( row != -1 ) {
 		SC_D.recordView->setCurrentItem(SC_D.recordView->itemAt(row));
 		SC_D.lastFoundRow = row;

@@ -143,7 +143,7 @@ MagList::MagList(QWidget* parent)
 
 	_mainLayout = new QGridLayout(this);
 	_mainLayout->setSpacing(0);
-	_mainLayout->setMargin(0);
+	_mainLayout->setContentsMargins(0, 0, 0, 0);
 // 	setLayout(_mainLayout);
 
 // 	setWidget(_widget);
@@ -248,7 +248,7 @@ void MagList::addMag(const std::string& type, bool bold, bool visible) {
 	}
 	else
 		magRow->setBold(bold);
-	
+
 	magRow->setVisible(visible);
 }
 
@@ -406,12 +406,12 @@ void MagRow::init() {
 
 	_rowsLayout = new QHBoxLayout(this);
 	_rowsLayout->setSpacing(0);
-	_rowsLayout->setMargin(0);
+	_rowsLayout->setContentsMargins(0, 0, 0, 0);
 	_rowsLayout->addWidget(_type);
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_magnitude);
 		//l->addWidget(_magnitudeReference);
 		_rowsLayout->addLayout(l);
@@ -422,7 +422,7 @@ void MagRow::init() {
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_stdev);
 		//l->addWidget(_stdevReference);
 		_rowsLayout->addLayout(l);
@@ -433,7 +433,7 @@ void MagRow::init() {
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_quality);
 		//l->addWidget(_qualityReference);
 		_rowsLayout->addLayout(l);
@@ -655,12 +655,12 @@ EventSummaryView::~EventSummaryView(){
 #define DISABLE_FRAME(f) \
 	f->setFrameShape(QFrame::NoFrame); \
 	if ( f->layout() ) \
-		f->layout()->setMargin(0)
+		f->layout()->setContentsMargins(0, 0, 0, 0)
 
 
 #define ENABLE_FRAME(f) \
 	f->setFrameStyle(QFrame::StyledPanel | QFrame::Raised); \
-	if ( f->layout() ) f->layout()->setMargin(4); \
+	if ( f->layout() ) f->layout()->setContentsMargins(4, 4, 4, 4); \
 	if ( f->layout() ) f->layout()->setSpacing(4)
 
 
@@ -714,7 +714,7 @@ void EventSummaryView::init() {
 	infoPanel->setSizePolicy(sp);
 
 	QVBoxLayout *l = new QVBoxLayout(infoPanel);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 
 	QWidget *hypoCenterInfo = new QWidget(infoPanel);
 	_uiHypocenter->setupUi(hypoCenterInfo);
@@ -735,11 +735,12 @@ void EventSummaryView::init() {
 	area->setWidgetResizable(true);
 	//area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	area->setFrameShape(QFrame::NoFrame);
-	if ( area->layout() )
-		area->layout()->setMargin(0);
+	if ( area->layout() ) {
+		area->layout()->setContentsMargins(0, 0, 0, 0);
+	}
 
 	l = new QVBoxLayout(_ui->frameEpicenterInformation);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->addWidget(area);
 
 	_automaticOriginEnabledColor = Qt::darkRed;
@@ -1052,7 +1053,7 @@ void EventSummaryView::init() {
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
 	hboxLayout->setObjectName("hboxLayoutMap");
 	hboxLayout->setSpacing(6);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	hboxLayout->addWidget(_map);
 
 	QAction* refreshAction = new QAction(this);
@@ -2065,7 +2066,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 		catch ( ... ) {
 			_uiHypocenter->labelLongitudeError->setText(QString());
 		}
-		
+
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
@@ -2279,7 +2280,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 		catch ( ... ) {
 			_uiHypocenter->labelLongitudeErrorAutomatic->setText(QString());
 		}
-		
+
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)

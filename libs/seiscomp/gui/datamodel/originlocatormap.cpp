@@ -400,7 +400,7 @@ void OriginLocatorMap::mousePressEvent(QMouseEvent *event) {
 				}
 			}
 		}
-		else if ( event->button() == Qt::MidButton && _enabledCreateOrigin ) {
+		else if ( event->button() == Qt::MiddleButton && _enabledCreateOrigin ) {
 			QPointF epicenter;
 			if ( canvas().projection()->unproject(epicenter, event->pos()) )
 				emit artificialOriginRequested(epicenter, event->globalPos());

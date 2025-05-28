@@ -32,7 +32,6 @@
 #include <QSizePolicy>
 #include <QHeaderView>
 #include <QKeyEvent>
-#include <QRegExp>
 
 
 namespace Seiscomp {
@@ -60,30 +59,30 @@ class StationsModel : public QAbstractTableModel {
 			if ( inv != nullptr ) {
 				for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 					DataModel::Network* n = inv->network(i);
-		
+
 					try {
 						if ( n->end() <= time )
 							continue;
 					}
 					catch ( Core::ValueException& ) {}
-		
+
 					for ( size_t j = 0; j < n->stationCount(); ++j ) {
 						DataModel::Station* s = n->station(j);
-		
+
 						try {
 							if ( s->end() <= time )
 								continue;
 						}
 						catch ( Core::ValueException& ) {}
-		
+
 						if ( ignoreDisabledStations
 						  && !SCApp->isStationEnabled(n->code(), s->code()) )
 							continue;
-		
+
 						QString code = (n->code() + "." + s->code()).c_str();
-		
+
 						if ( blackList && blackList->contains(code) ) continue;
-		
+
 						Entry entry;
 						entry.station = s;
 						entry.code = code;
@@ -99,7 +98,7 @@ class StationsModel : public QAbstractTableModel {
 		void setReferenceLocation(double lat, double lon) {
 			for ( int row = 0; row < _data.size(); ++row ) {
 				DataModel::Station *s = _data[row].station;
-		
+
 				double azi2;
 				Math::Geo::delazi(lat, lon, s->latitude(), s->longitude(), &_data[row].distance, &_data[row].azimuth, &azi2);
 			}
@@ -250,7 +249,7 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	//_ui.table->horizontalHeader()->hide();
 
 	//_stationNames;
-	
+
 	connect(_ui.stationLineEdit, SIGNAL(textChanged(const QString&)),
 	        this, SLOT(listMatchingStations(const QString&)));
 }

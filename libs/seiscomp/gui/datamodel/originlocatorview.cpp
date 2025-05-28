@@ -602,7 +602,7 @@ class OriginCommitOptions : public QDialog {
 
 			// Increase number of visible items to 20 (default=10), ensure
 			// all commonEventTypes are visible
-			int maxItems = max(20, eventTypesWhitelist.size() + 1);
+			int maxItems = max(qsizetype(20), eventTypesWhitelist.size() + 1);
 			ui.comboEventTypes->setMaxVisibleItems(maxItems);
 
 			EventType defaultType = EARTHQUAKE;
@@ -2075,7 +2075,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case WEIGHT:
 				try {
 					snprintf(buf, 10, "%.2f", a->weight());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -2136,7 +2136,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case RESIDUAL:
 				try {
 					snprintf(buf, 10, "%.2f", a->timeResidual());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -2153,7 +2153,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case BACKAZIMUTH_RESIDUAL:
 				try {
 					snprintf(buf, 10, "%.1f", a->backazimuthResidual());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -2170,14 +2170,18 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case SLOWNESS_RESIDUAL:
 				try {
 					snprintf(buf, 10, "%.2f", a->horizontalSlownessResidual());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
 				break;
 
 			// Distance
 			case DISTANCE:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 				if ( _distances[index.row()].canConvert(QVariant::Double) ) {
+#else
+				if ( _distances[index.row()].canConvert(QMetaType(QMetaType::Double)) ) {
+#endif
 					auto distance = _distances[index.row()].toDouble();
 					if ( SCScheme.unit.distanceInKM ) {
 						snprintf(buf, 10, "%.*f", SCScheme.precision.distance, distance);
@@ -2185,7 +2189,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 					else {
 						snprintf(buf, 10, distance<10 ? "%.2f" : "%.1f", distance);
 					}
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				return _distances[index.row()];
 
@@ -2226,12 +2230,16 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case TAKEOFF:
 				try {
 					snprintf(buf, 10, "%.1f", a->takeOffAngle());
-					return buf;
+					return QString::fromUtf8(buf);
 				}
 				catch ( ... ) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 					if ( _takeOffs[index.row()].canConvert(QVariant::Double) ) {
+#else
+					if ( _takeOffs[index.row()].canConvert(QMetaType(QMetaType::Double)) ) {
+#endif
 						snprintf(buf, 10, "%.1f", _takeOffs[index.row()].toDouble());
-						return buf;
+						return QString::fromUtf8(buf);
 					}
 					return _takeOffs[index.row()];
 				}
@@ -3103,7 +3111,7 @@ void OriginLocatorView::init() {
 	QHBoxLayout* hboxLayout = new QHBoxLayout(SC_D.ui.frameMap);
 	hboxLayout->setObjectName("hboxLayoutMap");
 	hboxLayout->setSpacing(6);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	hboxLayout->addWidget(SC_D.map);
 
 	SC_D.plotTab = new QTabBar(SC_D.ui.groupResiduals);
