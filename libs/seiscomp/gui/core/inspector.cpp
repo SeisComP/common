@@ -100,6 +100,7 @@ void Inspector::setObject(BaseObject *obj) {
 	_ui.tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Attribute"));
 	_ui.tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Type"));
 	_ui.tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("Value"));
+	_ui.tableWidget->verticalHeader()->setVisible(false);
 
 	if ( _object == nullptr ) return;
 

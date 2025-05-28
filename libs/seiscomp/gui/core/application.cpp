@@ -41,7 +41,9 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QSplashScreen>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QTextCodec>
+#endif
 
 #include <set>
 #include <iostream>
@@ -311,7 +313,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	// because it uses SCApp pointer
 	_scheme = new Scheme();
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+#endif
 
 	// Disable group separator (thousand separator) in output and input. E.g.,
 	// QLineEdits using a QDoubleValidator will no longer accept a comma.

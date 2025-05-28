@@ -19,7 +19,6 @@
 
 
 #include <seiscomp/gui/core/xmlview.h>
-#include <QXmlDefaultHandler>
 #include <QtXml>
 
 
@@ -27,22 +26,27 @@ namespace Seiscomp {
 namespace Gui {
 
 
-class XmlHandler : public QXmlDefaultHandler {
+class XmlHandler {
 	public:
 		XmlHandler(QTreeWidget* w)
-		 : QXmlDefaultHandler(), _tree(w), _parent(nullptr), _currentItem(nullptr) {}
+		 : _tree(w), _parent(nullptr), _currentItem(nullptr) {}
 
-		bool startElement(const QString& /*namespaceURI*/,
-		                  const QString& localName,
-		                  const QString& /*qName*/,
-		                  const QXmlAttributes& atts) {
+		bool startDocument() {
+			return true;
+		}
 
+		bool startElement(const QString &/*namespaceURI*/,
+		                  const QString &localName,
+		                  const QString &/*qName*/,
+		                  const QXmlStreamAttributes &atts) {
 			_currentItem = new QTreeWidgetItem();
 			_currentItem->setText(0, localName);
-			if ( _parent == nullptr )
+			if ( _parent == nullptr ) {
 				_tree->addTopLevelItem(_currentItem);
-			else
+			}
+			else {
 				_parent->addChild(_currentItem);
+			}
 
 			QFont font(_currentItem->font(0));
 			font.setBold(true);
@@ -50,10 +54,10 @@ class XmlHandler : public QXmlDefaultHandler {
 
 			_parent = _currentItem;
 
-			for ( int i = 0; i < atts.count(); ++i ) {
+			for ( const auto &attr : atts ) {
 				QTreeWidgetItem* item = new QTreeWidgetItem(_parent);
-				item->setText(0, atts.localName(i));
-				item->setText(1, atts.value(i));
+				item->setText(0, attr.name().toString());
+				item->setText(1, atts.value(attr.qualifiedName().toString()).toString());
 				QFont font(item->font(0));
 				//font.setBold(true);
 				font.setItalic(true);
@@ -73,11 +77,12 @@ class XmlHandler : public QXmlDefaultHandler {
 			return true;
 		}
 
-		bool endElement(const QString& /*namespaceURI*/,
-		                const QString& /*localName*/,
-		                const QString& /*qName*/) {
-			if ( _parent != nullptr )
+		bool endElement(const QString &/*namespaceURI*/,
+		                const QString &/*localName*/,
+		                const QString &/*qName*/) {
+			if ( _parent ) {
 				_parent = _parent->parent();
+			}
 
 			_currentItem = nullptr;
 
@@ -114,21 +119,42 @@ XMLView::XMLView(QWidget * parent, Qt::WindowFlags f, bool deleteOnClose)
 XMLView::~XMLView() {
 }
 
-void XMLView::setContent(const QString& content) {
+void XMLView::setContent(const QString &content) {
 	_ui.treeWidget->clear();
 	//_ui.treeWidget->adjustSize();
 
-	QXmlInputSource source;
-	source.setData(content);
+	QXmlStreamReader xmlReader(content);
+	XmlHandler handler(_ui.treeWidget);
+	bool continueProcessing = true;
+	while ( continueProcessing && !xmlReader.atEnd() ) {
+		auto token = xmlReader.readNext();
+		switch ( token ) {
+			case QXmlStreamReader::StartDocument:
+				continueProcessing = handler.startDocument();
+				break;
+			case QXmlStreamReader::StartElement:
+				continueProcessing = handler.startElement(
+					xmlReader.namespaceUri().toString(), xmlReader.name().toString(),
+					xmlReader.qualifiedName().toString(), xmlReader.attributes()
+				);
+				break;
+			case QXmlStreamReader::EndElement:
+				continueProcessing = handler.endElement(
+					 xmlReader.namespaceUri().toString(), xmlReader.name().toString(),
+					 xmlReader.qualifiedName().toString()
+				);
+				break;
+			case QXmlStreamReader::EndDocument:
+				continueProcessing = handler.endDocument();
+				break;
+			default:
+				break;
+		}
+	}
 
-	QXmlSimpleReader xmlReader;
-	XmlHandler *handler = new XmlHandler(_ui.treeWidget);
-
-	xmlReader.setContentHandler(handler);
-	xmlReader.setErrorHandler(handler);
-	xmlReader.parse(&source);
-
-	delete handler;
+	if ( xmlReader.hasError() ) {
+		// Error handling
+	}
 }
 
 
