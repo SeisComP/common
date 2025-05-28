@@ -1027,11 +1027,16 @@ QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 		}
 	}
 
+	if ( node->childs.empty() ) {
+		return menu;
+	}
+
 	// Add "Select all" and "Select none" options if more than 1 property
 	// is available
-	auto *firstPropertyAction = menu->actions().first();
+	auto actions = menu->actions();
+	auto *firstPropertyAction = actions.empty() ? nullptr : actions.first();
 
-	if ( (node != _root) && !node->childs.empty() ) {
+	if ( node != _root ) {
 		// Toggle layer
 		auto *toggleAction = new QAction(tr("Hide layer"), menu);
 		toggleAction->setData(QVariant::fromValue<void*>(node->properties));
