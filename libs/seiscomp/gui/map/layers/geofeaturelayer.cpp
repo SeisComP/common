@@ -1157,9 +1157,11 @@ void GeoFeatureLayer::initLayerProperites() {
 
 	const auto &fepRegions = Regions::polyRegions();
 	if ( fepRegions.regionCount() > 0 ) {
+		// Ensure root node is initialized
+		createOrGetNodeForCategory(nullptr);
+
 		// Add fep properties
 		auto *fepNode = new CategoryNode(nullptr);
-		createOrGetNodeForCategory(nullptr)->childs.push_back(fepNode);
 		fepNode->properties = new LayerProperties("fep", _root->properties);
 		fepNode->properties->read(fepRegions.dataDir());
 
@@ -1167,6 +1169,9 @@ void GeoFeatureLayer::initLayerProperites() {
 			//fepNode->features.push_back(fepRegions.region(i));
 			fepNode->quadtree.addItem(fepRegions.region(i));
 		}
+
+		_root->childs.push_back(fepNode);
+		_root->childsByName.push_back(fepNode);
 	}
 
 	if ( _root ) {
