@@ -84,8 +84,8 @@ class ProfileValidator : public QValidator {
 		: QValidator(parent) {}
 
 		State validate(QString &txt, int &pos) const {
-			auto count = txt.count();
-			for ( auto i = 0; i < count; ++i ) {
+			auto cnt = txt.size();
+			for ( auto i = 0; i < cnt; ++i ) {
 				if ( txt[i].isDigit() ) {
 					continue;
 				}
