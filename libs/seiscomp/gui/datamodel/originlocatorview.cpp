@@ -602,7 +602,7 @@ class OriginCommitOptions : public QDialog {
 
 			// Increase number of visible items to 20 (default=10), ensure
 			// all commonEventTypes are visible
-			int maxItems = max(qsizetype(20), eventTypesWhitelist.size() + 1);
+			int maxItems = max(20, int(eventTypesWhitelist.size() + 1));
 			ui.comboEventTypes->setMaxVisibleItems(maxItems);
 
 			EventType defaultType = EARTHQUAKE;
