@@ -97,12 +97,23 @@ void PolyRegions::info() {
 	SEISCOMP_DEBUG("Number of PolyRegions loaded: %zu",
 	               _regions.features().size());
 
-	int sum = 0;
+	size_t sum = 0;
 	for ( auto *f : _regions.features() ) {
 		sum += f->vertices().size();
+
+		if ( !f->closedPolygon() ) {
+			SEISCOMP_WARNING("PolyRegion '%s' is not a closed polygon", f->name());
+			continue;
+		}
+
+		auto area = f->area();
+		if ( area <=0 ) {
+			SEISCOMP_WARNING("Area of PolyRegion '%s' is not positive: %f",
+			                 f->name(), area);
+		}
 	}
 
-	SEISCOMP_DEBUG("Total number of vertices read in: %d", sum);
+	SEISCOMP_DEBUG("Total number of vertices read in: %zu", sum);
 }
 
 
