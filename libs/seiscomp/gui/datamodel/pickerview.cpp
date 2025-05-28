@@ -8792,7 +8792,10 @@ void PickerView::searchStation() {
 void PickerView::searchByText(const QString &text) {
 	if ( text.isEmpty() ) return;
 
-	QRegularExpression rx = QRegularExpression::fromWildcard(text + "*", Qt::CaseInsensitive);
+	QRegularExpression rx = QRegularExpression(
+		QRegularExpression::wildcardToRegularExpression(text + "*"),
+		QRegularExpression::CaseInsensitiveOption
+	);
 
 	while ( true ) {
 		int row = SC_D.recordView->findByText(0, rx, SC_D.lastFoundRow+1);

@@ -6310,7 +6310,7 @@ void AmplitudeView::searchByText(const QString &text) {
 
 	int row = SC_D.recordView->findByText(
 		0,
-		QRegularExpression::fromWildcard(text + "*", Qt::CaseInsensitive),
+		QRegularExpression(QRegularExpression::wildcardToRegularExpression(text + "*"), QRegularExpression::CaseInsensitiveOption),
 		SC_D.lastFoundRow + 1
 	);
 
