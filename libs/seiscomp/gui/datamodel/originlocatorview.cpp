@@ -3822,6 +3822,12 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 		rect.setRight(maxRight);
 	}
 
+	// fm plot: fix values between 0 and 1
+	if ( SC_D.plotTab->currentIndex() == PT_FM ) {
+		rect.setLeft(0.0);
+		rect.setRight(1.0);
+	}
+
 	// polar and fm plots: fixed values for top/bottom
 	if ( SC_D.plotTab->currentIndex() == PT_POLAR ||
 	     SC_D.plotTab->currentIndex() == PT_FM ) {
