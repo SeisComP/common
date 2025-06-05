@@ -12,7 +12,7 @@
 				Locator parameters: Router. This locator requires the plugin
 				&quot;locrouter&quot; to be loaded.
 				</description>
-				<parameter name="regions" type="string">
+				<parameter name="regions" type="file" options="read">
 					<description>
 					A GeoJSON or BNA file defining locator profiles by region.
 					Supported polygon attributes:

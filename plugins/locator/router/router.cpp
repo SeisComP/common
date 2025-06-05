@@ -25,6 +25,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/plugin.h>
 #include <seiscomp/datamodel/origin.h>
+#include <seiscomp/system/environment.h>
 
 using namespace std;
 using namespace Seiscomp;
@@ -44,6 +45,15 @@ ADD_SC_PLUGIN("Meta locator routing location requests to actual locator "
               "implementations",
               "gempa GmbH <seiscomp-devel@gempa.de>", 0, 1, 0)
 REGISTER_LOCATOR(RouterLocator, "Router");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+string locProcIndex(const string &locator, const string &profile) {
+	return locator + "_" + profile;
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -70,6 +80,11 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 			return false;
 		}
 
+		if ( !_initialLocator->init(config) ) {
+			SEISCOMP_ERROR("Could not initialize initial locator: " + locator);
+			return false;
+		}
+
 		if ( !profile.empty() ) {
 			const auto &profiles = _initialLocator->profiles();
 			if ( find(profiles.begin(), profiles.end(), profile) == profiles.end() ) {
@@ -81,11 +96,20 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 
 			_initialLocator->setProfile(profile);
 		}
+
+		_locators[locProcIndex(locator, profile)] = _initialLocator;
+		_joinedCapabilities |= _initialLocator->capabilities();
+	}
+
+	auto *env = Seiscomp::Environment::Instance();
+	if ( !env ) {
+		SEISCOMP_ERROR("Could not load SeisComP environment");
+		return false;
 	}
 
 	string regionFile;
 	try {
-		regionFile = config.getString("RouterLocator.regions");
+		regionFile = env->absolutePath(config.getString("RouterLocator.regions"));
 	}
 	catch ( ... ) {}
 
@@ -101,43 +125,83 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 
 	for ( const auto &feature : _geoFeatureSet.features() ) {
 		LocatorProfile profile;
+		const auto *featureName = feature->name().c_str();
 
 		double depth;
-		for ( const auto &att : feature->attributes() ) {
-			if ( att.first == "locator") {
-				profile.locator = att.second;
+		for ( const auto &[key, value] : feature->attributes() ) {
+			if ( key == "locator") {
+				profile.locatorName = value;
 			}
-			else if ( att.first == "profile" ) {
-				profile.profile = att.second;
+			else if ( key == "profile" ) {
+				profile.profileName = value;
 			}
-			else if ( att.first == "minDepth" ) {
-				if ( fromString(depth, att.second) ) {
+			else if ( key == "minDepth" ) {
+				if ( fromString(depth, value) ) {
 					profile.minDepth = depth;
 				}
 				else {
-					SEISCOMP_WARNING("Invalid minDepth value in feature: %s",
-					                 feature->name().c_str());
+					SEISCOMP_WARNING("[%s] Invalid minDepth", featureName);
 				}
 			}
-			else if ( att.first == "maxDepth" ) {
-				if ( fromString(depth, att.second) ) {
+			else if ( key == "maxDepth" ) {
+				if ( fromString(depth, value) ) {
 					profile.maxDepth = depth;
 				}
 				else {
-					SEISCOMP_WARNING("Invalid maxDepth value in feature: %s",
-					                 feature->name().c_str());
+					SEISCOMP_WARNING("[%s] Invalid maxDepth", featureName);
 				}
 			}
 		}
 
-		if ( profile.locator.empty() ) {
-			SEISCOMP_WARNING("Missing locator name in feature: %s",
-			                 feature->name().c_str());
+		if ( profile.locatorName.empty() ) {
+			SEISCOMP_WARNING("[%s] Missing locator name", featureName);
 			continue;
 		}
 
-		profile.feature = feature;
-		_profiles.emplace_back(profile);
+		// lookup profile locator
+		string key = locProcIndex(profile.locatorName, profile.profileName);
+		auto loc_it = _locators.find(key);
+		const auto *locName = profile.locatorName.c_str();
+
+		// cache miss: create and initialize locator
+		if ( loc_it == _locators.end() ) {
+			LocatorInterfacePtr tmpLoc = LocatorInterface::Create(locName);
+			if ( !tmpLoc ) {
+				SEISCOMP_WARNING("[%s] Could not load locator: %s",
+				                 featureName, locName);
+				continue;
+			}
+
+			if ( !tmpLoc->init(config) ) {
+				SEISCOMP_WARNING("[%s] Could not initialize locator: %s",
+				                 featureName, locName);
+				continue;
+			}
+
+			if ( !profile.profileName.empty() ) {
+				const auto &profiles = tmpLoc->profiles();
+				if ( find(profiles.begin(), profiles.end(),
+				          profile.profileName) == profiles.end() ) {
+					SEISCOMP_WARNING("[%s] Profile '%s' not supported by "
+					                 "locator: %s", featureName,
+					                 profile.profileName.c_str(), locName);
+					continue;
+				}
+				tmpLoc->setProfile(profile.profileName);
+			}
+
+			_locators[key] = tmpLoc;
+			_joinedCapabilities |= tmpLoc->capabilities();
+
+			profile.feature = feature;
+			profile.locator = tmpLoc.get();
+			_profiles.emplace_back(profile);
+		}
+	}
+
+	if ( _profiles.empty() ) {
+		SEISCOMP_ERROR("No valid profiles found in: %s", regionFile.c_str());
+		return false;
 	}
 
 	// sort by rank and area, prioritize larger ranks and smaller areas
@@ -147,6 +211,9 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 		       ( a.feature->rank() == a.feature->rank() &&
 		         a.feature->area() < b.feature->area() );
 	});
+
+	SEISCOMP_DEBUG("Router locator initialized with %lu profiles",
+	               _profiles.size());
 
 	return true;
 }
@@ -174,7 +241,7 @@ void RouterLocator::setProfile(const string &name) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int RouterLocator::capabilities() const {
-	return InitialLocation | DistanceCutOff | FixedDepth | IgnoreInitialLocation;
+	return _joinedCapabilities;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -214,30 +281,13 @@ Origin *RouterLocator::locate(PickList &pickList,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataModel::Origin *RouterLocator::relocate(const Origin *origin) {
-	auto *locProf = lookup(origin);
+	const auto *locProf = lookup(origin);
 	if ( !locProf ) {
 		throw LocatorException("Could not find suitable locator profile for "
 		                       "initial location");
 	}
 
-	auto *locator = LocatorInterface::Create(locProf->locator.c_str());
-	if ( !locator ) {
-		throw LocatorException("Could not load locator: " + locProf->locator);
-	}
-
-	if ( !locProf->profile.empty() ) {
-		const auto &profiles = locator->profiles();
-		if ( find(profiles.begin(), profiles.end(),
-		          locProf->profile) == profiles.end() ) {
-			throw LocatorException("profile '" + locProf->profile +
-			                       "' not supported by locator '" +
-			                       locProf->locator + "'");
-		}
-
-		locator->setProfile(locProf->profile);
-	}
-
-	return locator->relocate(origin);
+	return locProf->locator->relocate(origin);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -256,8 +306,13 @@ RouterLocator::lookup(const scdm::Origin *origin) const {
 	OPT(double) depth;
 	try {
 		depth = origin->depth().value();
+		SEISCOMP_DEBUG("Locator lookup for hypocenter: %f/%f/%f",
+		               epicenter.latitude(), epicenter.latitude(), *depth);
 	}
-	catch ( ValueException& ) {}
+	catch ( ValueException& ) {
+		SEISCOMP_DEBUG("Locator lookup for epicenter: %f/%f",
+		               epicenter.latitude(), epicenter.latitude());
+	}
 
 	for ( const auto &profile : _profiles ) {
 		// test if epicenter is contained in geofeature
@@ -275,6 +330,13 @@ RouterLocator::lookup(const scdm::Origin *origin) const {
 		     (profile.maxDepth && depth > *profile.maxDepth) ) {
 			continue;
 		}
+
+		SEISCOMP_DEBUG("Feature '%s' matches %scenter, locator: %s/%s",
+		               profile.feature->name().c_str(),
+		               profile.minDepth||profile.maxDepth ? "hypo" : "epi",
+		               profile.locatorName.c_str(),
+		               profile.profileName.empty() ?
+		                   "-" : profile.profileName.c_str());
 
 		return &profile;
 	}

@@ -58,19 +58,30 @@ class RouterLocator : public Seiscomp::Seismology::LocatorInterface {
 
 	protected:
 		struct LocatorProfile {
-			std::string locator;
-			std::string profile;
+			std::string locatorName;
+			std::string profileName;
 			OPT(double) minDepth;
 			OPT(double) maxDepth;
 			Seiscomp::Geo::GeoFeature *feature;
+			Seiscomp::Seismology::LocatorInterface *locator{nullptr};
 		};
 		using LocatorProfiles = std::vector<LocatorProfile>;
+
+		// Maps a <locator>_<profile> name to an initialized locator instance.
+		// An individual locator instance is required for each profile since
+		// the locator interface does not support resetting the profile nor does
+		// it provide access to the default profile name.
+		using LocatorPool = std::map<std::string,
+		                             Seiscomp::Seismology::LocatorInterfacePtr>;
 
 		const LocatorProfile* lookup(const scdm::Origin *origin) const;
 
 		Seiscomp::Seismology::LocatorInterfacePtr   _initialLocator;
 		Seiscomp::Geo::GeoFeatureSet                _geoFeatureSet;
+
 		LocatorProfiles                             _profiles;
+		LocatorPool                                 _locators;
+		int                                         _joinedCapabilities{0};
 };
 
 
