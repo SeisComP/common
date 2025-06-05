@@ -326,8 +326,7 @@ QString timeToString(const Core::Time &t, const char *fmt, bool addTimeZone) {
 
 
 void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTimeZone) {
-	if ( SCScheme.dateTime.useLocalTime )
-		label->setToolTip((t.toString(fmt) + " UTC").c_str());
+	label->setToolTip((t.iso() + " UTC").c_str());
 	label->setText(timeToString(t, fmt, addTimeZone));
 }
 
