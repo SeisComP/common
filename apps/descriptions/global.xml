@@ -936,6 +936,8 @@
 				Create amplitude type profiles to define the time windows,
 				minimum signal-to-noise ratio, amplitude thresholds and
 				restitution for measuring amplitudes of a certain type.
+
+				Standard amplitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 					<description>
@@ -1043,7 +1045,7 @@
 						</description>
 					</parameter>
 				</group>
-				<struct type="GlobalBindingsAmplitudeProfile" title="Amplitude type profile" aliases="config:amplitudes.aliases">
+				<struct type="GlobalBindingsAmplitudeProfile" title="Amplitude type profile: Use name of amplitude type" aliases="config:amplitudes.aliases">
 					<description>
 					An amplitude profile configures global parameters for a
 					particular amplitude type. The available amplitude types
@@ -1093,19 +1095,25 @@
 					<parameter name="minPeriod" type="double" unit="s">
 						<description>
 						Define the minimum period of the measured amplitude. If
-						the period is below this value, the amplitude will not be emittet.
-						This value is amplitude type specific and has no global
+						the period is below this value, the amplitude will not be emitted.
+						This value is specific to amplitude type and has no global
 						default value. A value lower or equal than 0 will disable
 						this check.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no amplitude is send.
 						</description>
 					</parameter>
 					<parameter name="maxPeriod" type="double" unit="s">
 						<description>
 						Define the maximum period of the measured amplitude. If
-						the period is above this value, the amplitude will not be emittet.
-						This value is amplitude type specific and has no global
+						the period is above this value, the amplitude will not be emitted.
+						This value is specific to amplitude type and has no global
 						default value. A value lower or equal than 0 will disable
 						this check.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no amplitude is send.
 						</description>
 					</parameter>
 					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
@@ -1229,11 +1237,13 @@
 			</group>
 			<group name="magnitudes">
 				<description>
-				Define magnitude parameters independent of amplitude-type profiles.
-				For magnitude correction parameters, e.g., network of station
-				corrections, create a magnitude type profile.
+				Define the calibration parameters and constraints for computing
+				magnitudes from measured amplitudes including static corrections.
+				The parameters are independent of amplitude-type profiles.
+
+				Standard magnitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
-				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile" aliases="config:magnitudes.aliases">
+				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile: Use name of magnitude type" aliases="config:magnitudes.aliases">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types
@@ -1313,8 +1323,11 @@
 						the QC check. The station magnitude will be computed
 						anyway but if the period is below this threshold it will
 						be associated with weight zero and will not contribute
-						to the network magnitude. If this value is set then it
+						to the network magnitude. If this value is set, then it
 						overrides the regionalized setting.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no magnitude is computed.
 						</description>
 					</parameter>
 					<parameter name="maxPeriod" type="double" unit="s">
@@ -1323,8 +1336,11 @@
 						the QC check. The station magnitude will be computed
 						anyway but if the period is above this threshold it will
 						be associated with weight zero and will not contribute
-						to the network magnitude. If this value is set then it
+						to the network magnitude. If this value is set, then it
 						overrides the regionalized setting.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no magnitude is computed.
 						</description>
 					</parameter>
 				</struct>

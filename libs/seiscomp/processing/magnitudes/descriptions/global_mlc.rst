@@ -65,7 +65,8 @@ replacing '$name' in the parameters below:
    Signal window begin; :confval:`amplitudes.$name.signalBegin`; -5;  (+++)
    Signal window end; :confval:`amplitudes.$name.signalEnd`; 150 (+) or distance/3+30 (++); (**+**) When measured by :ref:`scautopick`, (**++**) When measured by :ref:`scamp` or :ref:`scolv`  (+++)
    Minimum :term:`SNR`; :confval:`amplitudes.$name.minSNR`;not applied; Compares the maximum amplitudes measured within the signal and noise windows
-   Amplitude staturation; :confval:`amplitudes.$name.saturationThreshold`; false; Apply for avoiding measurements on clipped data
+   Period range; NA; NA; Period is not measured. A configuration will prevent any MLc amplitude from being measured
+   Amplitude saturation; :confval:`amplitudes.$name.saturationThreshold`; false; Apply for avoiding measurements on clipped data
    Response correction; :confval:`amplitudes.$name.enableResponses`; false; Activate for input units other than nm/s and set :confval:`amplitudes.$name.resp.minFreq`, :confval:`amplitudes.$name.resp.maxFreq`
 
 **(+++)** All values defining the time windows for measuring noise and signal
@@ -162,6 +163,7 @@ Configurable parameters:
    Maximum distance; :confval:`magnitudes.MLc.maxDist`; 8; Measurements beyond 8 deg are strictly ignored
    Minimum source depth; :confval:`magnitudes.MLc.minDepth`; -10;
    Maximum source depth; :confval:`magnitudes.MLc.maxDepth`; 80; Can be extended beyond default
+   Period range; NA; NA; Period is not measured. A configuration will prevent any MLc magnitude from being computed
    Amplitude type;; MLc; Configurable by :ref:`amplitude and magnitude alias <concepts_magnitudes-aliases>`
    Amplitude unit;; mm; other units can be assumed by amplitude scaling with :confval:`amplitudes.MLc.amplitudeScale`
    Magnitude calibration type; :confval:`magnitudes.MLc.calibrationType`; parametric; parametric and A0 (non-parametric) are available
@@ -214,7 +216,6 @@ parameters of the aliases will be configured in global bindings or by
 magnitude-type profiles in global module configuration. Read the
 :ref:`Tutorial on magnitude aliases <tutorials_magnitude-aliases>` for the
 details.
-
 
 
 Regionalization
