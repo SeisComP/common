@@ -74,7 +74,7 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 		DataModel::Origin *locate(PickList& pickList) override;
 		DataModel::Origin *locate(PickList& pickList,
 		                          double initLat, double initLon, double initDepth,
-		                          const Seiscomp::Core::Time& initTime) override;
+		                          const Core::Time& initTime) override;
 
 		virtual DataModel::Origin *relocate(const DataModel::Origin* origin) override;
 
@@ -86,19 +86,20 @@ class SC_SYSTEM_CORE_API FixedHypocenter : public LocatorInterface {
 		};
 
 		// Configuration
-		IDList      _profiles;
-		int         _degreesOfFreedom{8};
-		double      _confidenceLevel{0.9};
-		double      _defaultTimeError{1.0};
+		IDList          _profiles;
+		int             _degreesOfFreedom{8};
+		double          _confidenceLevel{0.9};
+		double          _defaultTimeError{1.0};
 		union {
-			uint8_t _flags{UseOriginUncertainties};
-			bool    _legacyAndUnusedFlag;
+			uint8_t     _flags{UseOriginUncertainties};
+			bool        _legacyAndUnusedFlag;
 		};
-		bool        _verbose{false};
-		std::string _lastError;
-		OPT(double) _initLat;
-		OPT(double) _initLon;
-		OPT(double) _initDepth;
+		bool            _verbose{false};
+		std::string     _lastError;
+		OPT(double)     _initLat;
+		OPT(double)     _initLon;
+		OPT(double)     _initDepth;
+		OPT(Core::Time) _initTime;
 
 		// Runtime
 		TravelTimeTableInterfacePtr _ttt;
