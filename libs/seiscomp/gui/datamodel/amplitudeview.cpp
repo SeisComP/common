@@ -6308,6 +6308,7 @@ void AmplitudeView::searchByText(const QString &text) {
 		return;
 	}
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,12,0)
 	int row = SC_D.recordView->findByText(
 		0,
 		QRegularExpression(QRegularExpression::wildcardToRegularExpression(text + "*"), QRegularExpression::CaseInsensitiveOption),
@@ -6330,6 +6331,13 @@ void AmplitudeView::searchByText(const QString &text) {
 		SC_D.searchStation->setPalette(pal);
 		SC_D.lastFoundRow = -1;
 	}
+#else
+	QMessageBox::critical(
+		this,
+		"Qt version too old",
+		"Searching is not supported with your Qt version. You need at least Qt 5.12."
+	);
+#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

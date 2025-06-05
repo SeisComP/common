@@ -8792,6 +8792,7 @@ void PickerView::searchStation() {
 void PickerView::searchByText(const QString &text) {
 	if ( text.isEmpty() ) return;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,12,0)
 	QRegularExpression rx = QRegularExpression(
 		QRegularExpression::wildcardToRegularExpression(text + "*"),
 		QRegularExpression::CaseInsensitiveOption
@@ -8820,6 +8821,13 @@ void PickerView::searchByText(const QString &text) {
 
 		break;
 	}
+#else
+	QMessageBox::critical(
+		this,
+		"Qt version too old",
+		"Searching is not supported with your Qt version. You need at least Qt 5.12."
+	);
+#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
