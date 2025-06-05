@@ -140,7 +140,7 @@ class SC_GUI_API StandardLegend : public Legend {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		Qt:: Orientation           _orientation;
+		Qt::Orientation            _orientation;
 		QList<StandardLegendItem*> _items;
 		int                        _columns;
 		int                        _columnWidth;
