@@ -387,7 +387,7 @@ class SC_BROKER_API Queue {
 		TaskQueue            _tasks;
 		TaskQueue            _results;
 		Core::Time           _created;
-		Core::Time           _lastSOHTimestamp;
+		OPT(Core::Time)      _lastSOHTimestamp;
 		int                  _allocatedClientHeap;
 		int                  _sohInterval;
 		int                  _inactivityLimit;

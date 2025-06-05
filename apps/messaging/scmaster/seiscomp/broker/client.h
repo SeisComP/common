@@ -184,7 +184,7 @@ class SC_BROKER_API Client {
 		SequenceNumber  _sequenceNumber{0};
 		SequenceNumber  _acknowledgeWindow{20};
 		SequenceNumber  _acknowledgeCounter{20};
-		Core::Time      _ackInitiated;
+		OPT(Core::Time) _ackInitiated;
 		int             _inactivityCounter{0}; // The number of seconds
 		                                       // of inactivity
 

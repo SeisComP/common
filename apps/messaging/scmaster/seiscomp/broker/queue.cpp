@@ -298,7 +298,7 @@ bool Queue::publish(Client *sender, Message *msg) {
 			if ( sender->_acknowledgeCounter == 0 ) {
 				sender->_acknowledgeCounter = sender->_acknowledgeWindow;
 				sender->ack();
-				sender->_ackInitiated = Core::Time();
+				sender->_ackInitiated = Core::None;
 			}
 			else if ( !sender->_ackInitiated )
 				sender->_ackInitiated = msg->timestamp;
@@ -772,14 +772,16 @@ void Queue::timeout() {
 		Client *client = cit.value();
 		++cit;
 
-		if ( !client ) continue;
+		if ( !client ) {
+			continue;
+		}
 
 		if ( client->_ackInitiated ) {
-			Core::TimeSpan dt = now - client->_ackInitiated;
+			Core::TimeSpan dt = now - *client->_ackInitiated;
 			if ( dt.seconds() > 0 ) {
 				client->_acknowledgeCounter = client->_acknowledgeWindow;
 				client->ack();
-				client->_ackInitiated = Core::Time();
+				client->_ackInitiated = Core::None;
 			}
 		}
 
@@ -792,10 +794,10 @@ void Queue::timeout() {
 		}
 	}
 
-	if ( !_lastSOHTimestamp.valid() ) {
+	if ( !_lastSOHTimestamp ) {
 		_lastSOHTimestamp = now;
 	}
-	else if ( now - _lastSOHTimestamp >= Core::TimeSpan(_sohInterval,0) ) {
+	else if ( now - *_lastSOHTimestamp >= Core::TimeSpan(_sohInterval, 0) ) {
 		// Create scmaster SOH message
 		_lastSOHTimestamp = now;
 
