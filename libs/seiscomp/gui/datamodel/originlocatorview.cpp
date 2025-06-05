@@ -2995,8 +2995,8 @@ void OriginLocatorView::init() {
 	SC_D.ui.tableArrivals->setMouseTracking(true);
 	SC_D.ui.tableArrivals->resizeColumnToContents(0);
 
-	connect(SC_D.ui.tableArrivals->horizontalHeader(), SIGNAL(sectionClicked(int)),
-	        SC_D.ui.tableArrivals, SLOT(sortByColumn(int)));
+	connect(SC_D.ui.tableArrivals->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+	        SC_D.ui.tableArrivals, SLOT(sortByColumn(int, Qt::SortOrder)));
 
 	connect(SC_D.ui.tableArrivals, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableArrivalsContextMenuRequested(const QPoint &)));
@@ -3266,10 +3266,10 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.cbLocator->setCurrentIndex(defaultLocatorIdx);
 
-	connect(SC_D.ui.cbLocator, SIGNAL(currentIndexChanged(const QString &)),
+	connect(SC_D.ui.cbLocator, SIGNAL(currentTextChanged(const QString &)),
 	        this, SLOT(locatorChanged(const QString &)));
 
-	connect(SC_D.ui.cbLocatorProfile, SIGNAL(currentIndexChanged(const QString &)),
+	connect(SC_D.ui.cbLocatorProfile, SIGNAL(currentTextChanged(const QString &)),
 	        this, SLOT(locatorProfileChanged(const QString &)));
 
 	connect(SC_D.ui.btnLocatorSettings, SIGNAL(clicked()),

@@ -235,8 +235,8 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	_ui.table->setModel(filterModel);
 
 	// Configure widget
-	connect(_ui.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-	        _ui.table, SLOT(sortByColumn(int)));
+	connect(_ui.table->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+	        _ui.table, SLOT(sortByColumn(int, Qt::SortOrder)));
 	_ui.table->horizontalHeader()->setSortIndicatorShown(true);
 	_ui.table->horizontalHeader()->setStretchLastSection(true);
 	_ui.table->verticalHeader()->hide();

@@ -1385,8 +1385,8 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	connect(_ui->tableStationMagnitudes->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableStationMagnitudesHeaderContextMenuRequested(const QPoint &)));
 
-	connect(_ui->tableStationMagnitudes->horizontalHeader(), SIGNAL(sectionClicked(int)),
-	        _ui->tableStationMagnitudes, SLOT(sortByColumn(int)));
+	connect(_ui->tableStationMagnitudes->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+	        _ui->tableStationMagnitudes, SLOT(sortByColumn(int, Qt::SortOrder)));
 	connect(_ui->tableStationMagnitudes, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableStationMagnitudesContextMenuRequested(const QPoint &)));
 
