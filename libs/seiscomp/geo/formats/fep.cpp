@@ -46,14 +46,36 @@ size_t readFEP(GeoFeatureSet &featureSet, const string &path,
 		return 0;
 	}
 
-	auto closePolygon = [](GeoFeature *&f, size_t &vertexSize, size_t lineNum,
-	                       const string &path, const char *msg) {
+	auto closePolygon = [](GeoFeature *&f, GeoFeatureSet &gfs, size_t lineNum,
+	                       const string &path) {
 		if ( !f ) {
 			return;
 		}
 
-		SEISCOMP_WARNING("%s on line %zu of file: %s", msg, lineNum, path);
-		delete f;
+		if ( f->name().empty() ) {
+			SEISCOMP_WARNING("No name defined for polygon on line %zu of file "
+			                 "file: %s", f->name(), lineNum, path);
+			delete f;
+			f = nullptr;
+			return;
+		}
+
+		if ( f->vertices().size() < 3 ) {
+			SEISCOMP_WARNING("Too few vertices for polygon '%s' on line %zu of "
+			                 "file: %s", f->name(), lineNum, path);
+			delete f;
+			f = nullptr;
+			return;
+		}
+
+		f->setClosedPolygon(true);
+		f->updateBoundingBox();
+
+		if ( f->area() < 0 ) {
+			f->invertOrder();
+		}
+
+		gfs.addFeature(f);
 		f = nullptr;
 	};
 
@@ -65,7 +87,7 @@ size_t readFEP(GeoFeatureSet &featureSet, const string &path,
 	string line;
 	GeoFeature *f = nullptr;
 	size_t lineNum = 0;
-	size_t vertexSize = 0;
+	bool endOfVertices = false;
 	GeoCoordinate lastCoord;
 	size_t currentNumberOfFeatures = featureSet.features().size();
 
@@ -80,10 +102,9 @@ size_t readFEP(GeoFeatureSet &featureSet, const string &path,
 
 		// vertex line: longitude latitude
 		if ( boost::regex_match(line, what, vertexLine) ) {
-			if ( f && vertexSize ) {
-				closePolygon(f, vertexSize, lineNum, path,
-				             "Incomplete polygon, "
-				             "found vertex but expected name definition");
+			if ( endOfVertices ) {
+				closePolygon(f, featureSet, lineNum, path);
+				endOfVertices = false;
 			}
 
 			if ( f ) {
@@ -105,55 +126,32 @@ size_t readFEP(GeoFeatureSet &featureSet, const string &path,
 			continue;
 		}
 
+		// stop reading vertices
+		if ( f->vertices().empty() || lastCoord != f->vertices().front() ) {
+			f->addVertex(lastCoord);
+		}
+		endOfVertices = true;
+
 		// vertex size (optional): 99.0 99.0 SIZE
 		if ( boost::regex_match(line, what, sizeLine) ) {
-			if ( vertexSize ) {
-				SEISCOMP_WARNING("Ignoring unexpected polygon size definition "
-				                 "on line %zu of file: %s", lineNum, path);
-				continue;
-			}
-
-			vertexSize = atoi(what.str(1).c_str());
+			size_t vertexSize = atoi(what.str(1).c_str());
 			if ( vertexSize != f->vertices().size() + 1 ) {
 				SEISCOMP_WARNING("Polygon size definition on line %zu does not "
 				                 "match vertexes read (%zu != %zu), file: %s",
 				                 lineNum, vertexSize, f->vertices().size() + 1,
 				                 path);
 			}
+
 			continue;
 		}
 
 		// polygon name: L NAME
 		if ( boost::regex_match(line, what, LLine) ) {
-			if ( lastCoord != f->vertices().front() ) {
-				f->addVertex(lastCoord);
-			}
-
-			if ( f->vertices().size() < 3 ) {
-				closePolygon(f, vertexSize, lineNum, path,
-				             "Too few vertices for polygon");
-				continue;
-			}
-
 			f->setName(what.str(1));
-			f->setClosedPolygon(true);
-			f->updateBoundingBox();
-
-			if ( f->area() < 0 ) {
-				f->invertOrder();
-			}
-
-			featureSet.addFeature(f);
-
-			f = nullptr;
-			vertexSize = 0;
-			continue;
 		}
-
-		closePolygon(f, vertexSize, lineNum, path, "Incomplete polygon");
 	}
 
-	closePolygon(f, vertexSize, lineNum, path, "Incomplete polygon");
+	closePolygon(f, featureSet, lineNum, path);
 
 	return featureSet.features().size() - currentNumberOfFeatures;
 }
