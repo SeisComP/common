@@ -1875,8 +1875,8 @@ void MagnitudeView::openWaveforms() {
 			if ( QMessageBox::question(this, "Waveform review",
 			                           QString("A waveform review window for type %1 is still active.\n"
 			                                   "Do you want to replace it with current type %2?")
-			                           .arg(_amplitudeView->currentMagnitudeType().c_str())
-			                           .arg(_netMag->type().c_str()),
+			                           .arg(_amplitudeView->currentMagnitudeType().c_str(),
+			                                _netMag->type().c_str()),
 			                           QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
 			     == QMessageBox::No )
 				return;
@@ -1889,6 +1889,22 @@ void MagnitudeView::openWaveforms() {
 
 		try {
 			_amplitudeView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
+		}
+		catch ( ... ) {}
+
+		try {
+			auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
+			double minDist = 0, maxDist = 1000;
+			try {
+				minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
+			}
+			catch ( ... ) {}
+			try {
+				maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
+			}
+			catch ( ... ) {}
+
+			_amplitudeView->setAuxiliaryChannels(patterns, minDist, maxDist);
 		}
 		catch ( ... ) {}
 
