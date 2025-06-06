@@ -4526,25 +4526,25 @@ void PickerView::loadNextStations(float distance) {
 
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 					auto sid = waveformIDToStdString(streamID);
-					bool isAuxilliary = false;
+					bool isAuxiliary = false;
 					for ( const auto &pattern : SC_D.auxiliaryStreamIDPatterns ) {
 						if ( Core::wildcmp(pattern, sid) ) {
-							isAuxilliary = true;
+							isAuxiliary = true;
 							break;
 						}
 					}
 
-					if ( isAuxilliary ) {
-						// Auxilliary station will only be added (unless associated)
+					if ( isAuxiliary ) {
+						// Auxiliary station will only be added (unless associated)
 						// if they are within a configured distance range.
 						if ( delta < SC_D.auxiliaryMinDistance ) {
-							SEISCOMP_DEBUG("Auxilliary channel %s rejected, too close (%f < %f)",
+							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too close (%f < %f)",
 							               sid.c_str(), delta, SC_D.auxiliaryMinDistance);
 							continue;
 						}
 
 						if ( delta > SC_D.auxiliaryMaxDistance ) {
-							SEISCOMP_DEBUG("Auxilliary channel %s rejected, too far away (%f > %f)",
+							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too far away (%f > %f)",
 							               sid.c_str(), delta, SC_D.auxiliaryMaxDistance);
 							continue;
 						}
