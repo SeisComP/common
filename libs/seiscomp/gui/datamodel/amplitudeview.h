@@ -246,6 +246,9 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
 
+		void setAuxiliaryChannels(const std::vector<std::string> &patterns,
+		                          double minimumDistance, double maximumDistance);
+
 		//! Sets an origin and inserts the traces for each arrival
 		//! in the view.
 		bool setOrigin(Seiscomp::DataModel::Origin*, const std::string &magType);
