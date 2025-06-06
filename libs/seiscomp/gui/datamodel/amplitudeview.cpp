@@ -203,7 +203,7 @@ class MyRecordWidget : public RecordWidget {
 			}
 		}
 
-		void setSelected(const Core::Time &t1, const Core::Time &t2) {
+		void setSelected(const OPT(Core::Time) &t1, const OPT(Core::Time) &t2) {
 			_t1 = t1;
 			_t2 = t2;
 			update();
@@ -211,13 +211,15 @@ class MyRecordWidget : public RecordWidget {
 
 	protected:
 		void drawCustomBackground(QPainter &painter) {
-			if ( !_t1 || !_t2 ) return;
+			if ( !_t1 || !_t2 ) {
+				return;
+			}
 
 			// The painter transform is set up that the upper left coordinate
 			// lies on the upper left coordinate of the trace canvas
 
-			int x1 = mapCanvasTime(_t1);
-			int x2 = mapCanvasTime(_t2);
+			int x1 = mapCanvasTime(*_t1);
+			int x2 = mapCanvasTime(*_t2);
 
 			//int y1 = streamYPos(currentRecords());
 			//int h = streamHeight(currentRecords());
@@ -226,11 +228,11 @@ class MyRecordWidget : public RecordWidget {
 
 			QColor col = palette().color(QPalette::Highlight);
 			col.setAlpha(64);
-			painter.fillRect(x1,y1,x2-x1+1,h, col);
+			painter.fillRect(x1, y1, x2 - x1 + 1, h, col);
 		}
 
 	private:
-		Core::Time _t1, _t2;
+		OPT(Core::Time) _t1, _t2;
 };
 
 
@@ -1104,7 +1106,7 @@ void ThreeComponentTrace::removeProcessedData(int comp) {
 
 
 bool ThreeComponentTrace::transform(int comp, Record *rec) {
-	Core::Time minStartTime;
+	OPT(Core::Time) minStartTime;
 	Core::Time maxStartTime;
 	Core::Time minEndTime;
 	bool gotRecords = false;
@@ -1145,7 +1147,7 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 			if ( minStartTime ) {
 				for ( int i = 0; i < 3; ++i ) {
 					while ( it[i] != traces[i].raw->end() ) {
-						if ( (*it[i])->endTime() <= minStartTime ) {
+						if ( (*it[i])->endTime() <= *minStartTime ) {
 							++it[i];
 						}
 						else
@@ -1231,8 +1233,9 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 			int minLen = 0;
 
 			// Clip maxStartTime to minStartTime
-			if ( maxStartTime < minStartTime )
-				maxStartTime = minStartTime;
+			if ( minStartTime && (maxStartTime < *minStartTime) ) {
+				maxStartTime = *minStartTime;
+			}
 
 			// Rotate records
 			for ( int i = 0; i < 3; ++i ) {
@@ -3472,7 +3475,6 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	SC_D.stations.clear();
 
 	Core::Time originTime = SC_D.origin->time();
-	if ( !originTime ) originTime = Core::Time::UTC();
 
 	SC_D.minTime = -60;
 	SC_D.maxTime = +120;
