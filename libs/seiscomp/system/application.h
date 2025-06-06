@@ -1008,7 +1008,11 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 									visitedItem.flags & OptionBinding<T>::InterpretAsPath
 								);
 							}
-							catch ( ... ) {}
+							catch ( Config::OptionNotFoundException &e ) {}
+							catch ( ... ) {
+								// All other exceptions are not OK.
+								return false;
+							}
 						}
 						return true;
 					}

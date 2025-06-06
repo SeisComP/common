@@ -504,7 +504,11 @@ class ConfigOptionLinker {
 					try {
 						visitedItem.value = Generic::Detail::getConfig<T>(proc._external.cfg, prefix + visitedItem.configFileRelativeSymbol, visitedItem.flags & ConfigOptionBinding< std::vector<T> >::InterpretAsPath);
 					}
-					catch ( ... ) {}
+					catch ( Config::OptionNotFoundException &e ) {}
+					catch ( ... ) {
+						// All other exceptions are not OK.
+						return false;
+					}
 				}
 				return true;
 			}

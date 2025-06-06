@@ -1499,7 +1499,7 @@ bool Application::initConfiguration() {
 	}
 
 	if ( !_settingsLinker ) {
-		cerr << _settingsLinker.lastError() << endl;
+		SEISCOMP_ERROR("%s", _settingsLinker.lastError());
 		return false;
 	}
 
