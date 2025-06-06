@@ -122,6 +122,11 @@ REGISTER_LOCATOR(FixedHypocenter, "FixedHypocenter");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FixedHypocenter::init(const Config::Config &config) {
+	_initLat = Core::None;
+	_initLon = Core::None;
+	_initDepth = Core::None;
+	_initTime = Core::None;
+
 	try {
 		_profiles = config.getStrings("FixedHypocenter.profiles");
 	}
@@ -136,6 +141,45 @@ bool FixedHypocenter::init(const Config::Config &config) {
 			_profiles.push_back("LOCSAT/iasp91");
 			_profiles.push_back("LOCSAT/tab");
 		}
+	}
+
+	try {
+		_initLat = config.getDouble("FixedHypocenter.lat");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.lat: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initLon = config.getDouble("FixedHypocenter.lon");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.lon: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initDepth = config.getDouble("FixedHypocenter.depth");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.depth: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initTime = Core::Time::FromString(config.getString("FixedHypocenter.time"));
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.time: %s", e.what());
+		return false;
 	}
 
 	try {
@@ -163,11 +207,6 @@ bool FixedHypocenter::init(const Config::Config &config) {
 		}
 	}
 	catch ( ... ) {}
-
-	_initLat = Core::None;
-	_initLon = Core::None;
-	_initDepth = Core::None;
-	_initTime = Core::None;
 
 	return true;
 }
