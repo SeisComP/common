@@ -1253,8 +1253,8 @@ bool ThreeComponentTrace::transform(int comp, Record *rec) {
 
 				for ( RecordSequence::iterator rec_it = it[i]; rec_it != seq_end; ++rec_it ) {
 					const Array *rec_data = (*rec_it)->data();
-					if ( rec_data == nullptr ) {
-						SEISCOMP_ERROR("%s: no data for record", (*rec_it)->streamID().c_str());
+					if ( !rec_data ) {
+						SEISCOMP_ERROR("%s: no data for record", (*rec_it)->streamID());
 						return gotRecords;
 					}
 
