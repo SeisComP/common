@@ -107,7 +107,9 @@ void sc_locsat_rdtttab(
 		*upper/lower case filenames
 		**  e.g. Microsofts NTFS or HFS+ on Mac's
 		*/
-		if ( (strcmp(*s2ptr, "pP") == 0) || strcmp(*s2ptr, "sS") == 0 ) {
+		if ( (strcmp(*s2ptr, "pP") == 0)
+		  || (strcmp(*s2ptr, "sS") == 0)
+		  || (strcmp(*s2ptr, "PKiKP") == 0) ) {
 			strcat(filnam, "_");
 		}
 

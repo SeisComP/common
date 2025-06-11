@@ -77,8 +77,8 @@ void sc_locsat_free_ttt(LOCSAT_TTT *ttt) {
 
 
 static const char *default_phases[] = {
-	"P", "Pb", "PcP", "Pg", "PKKP", "PKP", "PKPab", "PKPbc", "PKPdf", "Pn",
-	"pP", "PP", "pPKPab", "pPKPbc", "pPKPdf",
+	"P", "Pb", "PcP", "Pg", "PKiKP", "PKIKP", "PKKP", "PKP", "PKPab", "PKPbc",
+	"PKPdf", "Pn", "pP", "PP", "pPKPab", "pPKPbc", "pPKPdf",
 
 	"S", "Sb", "ScP", "ScS", "Sg", "SKKP", "SKP", "SKPdf", "SKS", "SKSac",
 	"SKSdf", "sP", "sPKPab", "sPKPbc", "sPKPdf", "Sn", "sS", "SS",
