@@ -111,7 +111,7 @@ void rdtttab(char *froot, /* Size [ca. 1024] */
 		/** HACK to avoid problems with filesystems not able to handle upper/lower case filenames
 		**  e.g. Microsofts NTFS or HFS+ on Mac's
 		*/
-		if ( strcmp(*s2ptr, "pP") == 0 )
+		if ( !strcmp(*s2ptr, "pP") || !strcmp(*s2ptr, "sS") || !strcmp(*s2ptr, "PKiKP") )
 			strcat(filnam, "_");
 
 		// Initialize grid with -1

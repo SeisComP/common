@@ -288,11 +288,15 @@ int locsat0_(char *dstaid, char *dwavid, char *dtype, char *atype,
              ftnlen prtflg_len, ftnlen fxdflg_len, ftnlen outfile_len);
 
 static const char *default_phases[] = {
-	"LQ", "LR", "Lg", "P", "PKP", "PP",
-	"PKPab", "PKPbc", "PKPdf", "SKPdf",
-	"PcP", "Pg", "Pn", "Rg", "S", "SKS",
-	"SS", "ScS", "Sn", "Sg", "pP", "sP",
-	"Pb", "Sb", "Is", "It", "Iw"
+	"P", "Pb", "PcP", "Pg", "PKiKP", "PKIKP", "PKKP", "PKP", "PKPab", "PKPbc",
+	"PKPdf", "Pn", "pP", "PP", "pPKPab", "pPKPbc", "pPKPdf",
+
+	"S", "Sb", "ScP", "ScS", "Sg", "SKKP", "SKP", "SKPdf", "SKS", "SKSac",
+	"SKSdf", "sP", "sPKPab", "sPKPbc", "sPKPdf", "Sn", "sS", "SS",
+
+	"LQ", "LR", "Lg", "Rg",
+
+	"Is", "It", "Iw"
 };
 
 
