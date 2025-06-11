@@ -591,11 +591,12 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 			return QVariant();
 	}
 
-	StationMagnitude* sm = StationMagnitude::Find(_magnitude->stationMagnitudeContribution(index.row())->stationMagnitudeID());
+	StationMagnitude *sm = StationMagnitude::Find(_magnitude->stationMagnitudeContribution(index.row())->stationMagnitudeID());
 
 	if ( role == Qt::DisplayRole ) {
-		if ( sm == nullptr )
+		if ( !sm ) {
 			return QVariant();
+		}
 
 		char buf[10];
 		double smval = sm->magnitude().value();
@@ -708,7 +709,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 	else if ( role == Qt::BackgroundRole ) {
-		if ( sm != nullptr ) {
+		if ( sm ) {
 			try {
 				if ( !sm->passedQC() )
 					return failedQCColor;
@@ -719,30 +720,38 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 	else if ( role == Qt::UserRole ) {
 		switch ( index.column() ) {
 			case NETWORK:
-				try {
-					return sm->waveformID().networkCode().c_str();
+				if ( sm ) {
+					try {
+						return sm->waveformID().networkCode().c_str();
+					}
+					catch ( ... ) {}
 				}
-				catch ( ... ) {}
 				break;
 
 			case STATION:
-				try {
-					return sm->waveformID().stationCode().c_str();
+				if ( sm ) {
+					try {
+						return sm->waveformID().stationCode().c_str();
+					}
+					catch ( ... ) {}
 				}
-				catch ( ... ) {}
 				break;
 
 			case CHANNEL:
-				try {
-					return sm->waveformID().channelCode().c_str();
+				if ( sm ) {
+					try {
+						return sm->waveformID().channelCode().c_str();
+					}
+					catch ( ValueException& ) {}
 				}
-				catch ( ValueException& ) {}
 				break;
 
 			// Magnitude
 			case MAGNITUDE:
-				try { return sm->magnitude().value(); }
-				catch ( ValueException& ) {}
+				if ( sm ) {
+					try { return sm->magnitude().value(); }
+					catch ( ValueException& ) {}
+				}
 				break;
 			// Residual
 			case RESIDUAL:
@@ -755,29 +764,34 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 			case DISTANCE:
 				if ( index.row() < _distance.size() ) {
 					double distance = _distance[index.row()];
-					if ( distance >= 0 )
+					if ( distance >= 0 ) {
 						return distance;
+					}
 				}
 				break;
 			case SNR:
 			{
-				AmplitudePtr amp = _cache->get<Amplitude>(sm->amplitudeID());
-				if ( amp ) {
-					try {
-						return amp->snr();
+				if ( sm ) {
+					AmplitudePtr amp = _cache->get<Amplitude>(sm->amplitudeID());
+					if ( amp ) {
+						try {
+							return amp->snr();
+						}
+						catch ( ... ) {}
 					}
-					catch ( ... ) {}
 				}
 				return -1;
 			}
 			case PERIOD:
 			{
-				AmplitudePtr amp = _cache->get<Amplitude>(sm->amplitudeID());
-				if ( amp ) {
-					try {
-						return amp->period().value();
+				if ( sm ) {
+					AmplitudePtr amp = _cache->get<Amplitude>(sm->amplitudeID());
+					if ( amp ) {
+						try {
+							return amp->period().value();
+						}
+						catch ( ... ) {}
 					}
-					catch ( ... ) {}
 				}
 				return -1;
 			}
@@ -809,17 +823,21 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 	else if ( role == Qt::ToolTipRole ) {
 		switch ( index.column() ) {
 			case CREATED:
-				try {
-					return sm->creationInfo().creationTime().toString("%F %T.%f").c_str();
+				if ( sm ) {
+					try {
+						return sm->creationInfo().creationTime().toString("%F %T.%f").c_str();
+					}
+					catch ( ValueException& ) {}
 				}
-				catch ( ValueException& ) {}
 				break;
 
 			case UPDATED:
-				try {
-					return sm->creationInfo().modificationTime().toString("%F %T.%f").c_str();
+				if ( sm ) {
+					try {
+						return sm->creationInfo().modificationTime().toString("%F %T.%f").c_str();
+					}
+					catch ( ValueException& ) {}
 				}
-				catch ( ValueException& ) {}
 				break;
 		}
 	}
@@ -3556,7 +3574,7 @@ void MagnitudeView::updateContent() {
 	// setup model/view table
 	_modelStationMagnitudes.setOrigin(_origin.get(), _netMag.get());
 
-	QAbstractItemModel* m = _ui->tableStationMagnitudes->model();
+	QAbstractItemModel *m = _ui->tableStationMagnitudes->model();
 	if ( m ) delete m;
 
 	_modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
