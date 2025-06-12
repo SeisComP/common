@@ -36,7 +36,7 @@ class Yes { No no[2]; };
 
 
 template <typename T>
-Yes isOptionalTester(boost::optional<T>*);
+Yes isOptionalTester(Optional<T>*);
 No isOptionalTester(void*);
 
 

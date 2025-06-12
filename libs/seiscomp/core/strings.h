@@ -76,7 +76,7 @@ template <typename T>
 std::string toString(const std::vector<T> &v);
 
 template <typename T>
-std::string toString(const ::boost::optional<T> &v);
+std::string toString(const Optional<T> &v);
 
 
 template <typename T>

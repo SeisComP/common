@@ -279,7 +279,7 @@ class Archive {
 		void read(::boost::intrusive_ptr<T> &object);
 
 		template <typename T>
-		void read(::boost::optional<T> &object);
+		void read(Optional<T> &object);
 
 
 	// ------------------------------------------------------------------
@@ -347,7 +347,7 @@ class Archive {
 		void write(::boost::intrusive_ptr<T>&);
 
 		template <typename T>
-		void write(::boost::optional<T>&);
+		void write(Optional<T>&);
 
 
 	// ------------------------------------------------------------------
@@ -523,7 +523,7 @@ class Archive {
 		void read(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass);
 
 		template <typename T>
-		void read(const char *name, ::boost::optional<T> &object, const char *targetClass);
+		void read(const char *name, Optional<T> &object, const char *targetClass);
 
 		template <typename T>
 		void write(const char *name, T &object, const char *targetClass);
@@ -538,7 +538,7 @@ class Archive {
 
 		//! Helper function to distinguish between C pointer and Optionals
 		template <typename T>
-		void write(const char *name, ::boost::optional<T> &object, const char *targetClass);
+		void write(const char *name, Optional<T> &object, const char *targetClass);
 
 		int setChildHint(int h);
 

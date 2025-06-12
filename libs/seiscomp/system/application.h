@@ -57,7 +57,7 @@ bool convertString(T &value, const std::string &str) {
 
 
 template <typename T>
-bool convertString(boost::optional<T> &value, const std::string &str) {
+bool convertString(Core::Optional<T> &value, const std::string &str) {
 	using namespace Seiscomp::Core;
 	T tmp;
 	if ( !fromString(tmp, str) ) {

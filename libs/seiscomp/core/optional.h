@@ -24,19 +24,16 @@
 
 #include <seiscomp/core.h>
 
-#include <exception>
 #include <boost/optional.hpp>
-#include <boost/none.hpp>
-#if __cplusplus >= 201703L
+#include <exception>
 #include <optional>
-#endif
 #include <type_traits>
 
 
 namespace Seiscomp {
 namespace Core {
 
-/** \brief Redefines boost::optional<T>
+/** \brief Redefines std::optional<T>
   * Optional values can be set or unset.
   * \code
   *   void print(const Optional<int> &v) {
@@ -53,10 +50,12 @@ namespace Core {
   * \endcode
   */
 template <typename T>
-using Optional = ::boost::optional<T>;
+using Optional = ::std::optional<T>;
+
+using NoneType = ::std::nullopt_t;
 
 /** Defines None */
-SC_SYSTEM_CORE_API extern ::boost::none_t const None;
+SC_SYSTEM_CORE_API extern NoneType const None;
 
 
 template <class...>
@@ -74,10 +73,8 @@ template<template<class...> class U, typename ...Args>
 struct isOptional<U<Args...>>
 : std::integral_constant<
 	bool,
-	std::is_base_of<boost::optional<Args...>, U<Args...>>::value
-#if __cplusplus >= 201703L
-	|| std::is_base_of<std::optional<Args...>, U<Args...>>::value
-#endif
+	std::is_base_of<std::optional<Args...>, U<Args...>>::value
+	|| std::is_base_of<boost::optional<Args...>, U<Args...>>::value
 > {};
 
 

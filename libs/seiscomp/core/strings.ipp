@@ -114,7 +114,7 @@ inline std::string toString(const std::vector<T>& v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline std::string toString(const ::boost::optional<T>& v) {
+inline std::string toString(const Seiscomp::Core::Optional<T> &v) {
 	if ( !v )
 		return "None";
 
@@ -128,10 +128,10 @@ inline std::string toString(const ::boost::optional<T>& v) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #if __cplusplus >= 201703L
 template <typename T>
-bool fromString(std::optional<T> &value, const std::string &str) {
+bool fromString(boost::optional<T> &value, const std::string &str) {
 	static_assert(
 		False<T>::value,
-		"String conversion for std optional values is not supported"
+		"String conversion for boost optional values is not supported"
 	);
 	return false;
 }
@@ -143,10 +143,10 @@ bool fromString(std::optional<T> &value, const std::string &str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-bool fromString(boost::optional<T> &value, const std::string &str) {
+bool fromString(Optional<T> &value, const std::string &str) {
 	static_assert(
 		False<T>::value,
-		"String conversion for boost optional values is not supported"
+		"String conversion for optional values is not supported"
 	);
 	return false;
 }

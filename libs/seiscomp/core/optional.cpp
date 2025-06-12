@@ -22,19 +22,11 @@
 #include <seiscomp/core/datetime.h>
 
 
-// Explicit template instantiation of some optional types
-template class boost::optional<bool>;
-template class boost::optional<int>;
-template class boost::optional<float>;
-template class boost::optional<double>;
-template class boost::optional<Seiscomp::Core::Time>;
-
-
 namespace Seiscomp {
 namespace Core {
 
 
-::boost::none_t const None = ::boost::none;
+std::nullopt_t const None = std::nullopt;
 
 ValueError::ValueError() throw() {}
 ValueError::~ValueError() throw() {}

@@ -20,10 +20,36 @@
 
 #define SEISCOMP_TEST_MODULE SeisComP
 
-#include <boost/optional/optional_io.hpp>
-#include <seiscomp/unittest/unittests.h>
 
+#include <seiscomp/core/optional.h>
 #include <seiscomp/utils/url.h>
+
+
+
+namespace std {
+
+
+ostream &operator<<(ostream &os, const nullopt_t &) {
+	os << "--";
+	return os;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, const optional<T> &value) {
+	if ( value ) {
+		os << "--";
+	}
+	else {
+		os << *value;
+	}
+	return os;
+}
+
+
+}
+
+
+#include <seiscomp/unittest/unittests.h>
 
 
 using namespace Seiscomp::Util;

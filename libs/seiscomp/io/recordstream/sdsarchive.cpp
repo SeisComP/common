@@ -594,8 +594,8 @@ bool SDSArchive::resolveFiles(const string &net, const string &sta,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SDSArchive::resolveRequest() {
-	Time stime = _curidx->stime.get_value_or(Time());
-	Time etime = _curidx->etime.get_value_or(Time());
+	Time stime = _curidx->stime.value_or(Time());
+	Time etime = _curidx->etime.value_or(Time());
 
 	int sdoy = getDoy(stime);
 	int edoy = getDoy(etime);
@@ -627,7 +627,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	double samprate = 0.0;
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
-	Time stime = !_curidx->stime ? _stime.get_value_or(Time()) : *_curidx->stime;
+	Time stime = !_curidx->stime ? _stime.value_or(Time()) : *_curidx->stime;
 	off_t fpos;
 	int retcode;
 	long int offset = 0;
