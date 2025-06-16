@@ -3323,25 +3323,25 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_boost__any swig_types[114]
 #define SWIGTYPE_p_boost__bad_any_cast swig_types[115]
 #define SWIGTYPE_p_boost__dynamic_bitsetT_t swig_types[116]
-#define SWIGTYPE_p_boost__none_t swig_types[117]
-#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[118]
-#define SWIGTYPE_p_char swig_types[119]
-#define SWIGTYPE_p_const_iterator swig_types[120]
-#define SWIGTYPE_p_double swig_types[121]
-#define SWIGTYPE_p_float swig_types[122]
-#define SWIGTYPE_p_int swig_types[123]
-#define SWIGTYPE_p_iterator swig_types[124]
-#define SWIGTYPE_p_long_long swig_types[125]
-#define SWIGTYPE_p_short swig_types[126]
-#define SWIGTYPE_p_signed_char swig_types[127]
-#define SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t swig_types[128]
-#define SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t swig_types[129]
-#define SWIGTYPE_p_std__complexT_double_t swig_types[130]
-#define SWIGTYPE_p_std__complexT_float_t swig_types[131]
-#define SWIGTYPE_p_std__exception swig_types[132]
-#define SWIGTYPE_p_std__istream swig_types[133]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator swig_types[134]
-#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator swig_types[135]
+#define SWIGTYPE_p_boost__variantT_int_double_std__string_t swig_types[117]
+#define SWIGTYPE_p_char swig_types[118]
+#define SWIGTYPE_p_const_iterator swig_types[119]
+#define SWIGTYPE_p_double swig_types[120]
+#define SWIGTYPE_p_float swig_types[121]
+#define SWIGTYPE_p_int swig_types[122]
+#define SWIGTYPE_p_iterator swig_types[123]
+#define SWIGTYPE_p_long_long swig_types[124]
+#define SWIGTYPE_p_short swig_types[125]
+#define SWIGTYPE_p_signed_char swig_types[126]
+#define SWIGTYPE_p_std__chrono__durationT_Seiscomp__Core__TimeSpan__Storage_std__micro_t swig_types[127]
+#define SWIGTYPE_p_std__chrono__time_pointT_std__chrono__system_clock_Seiscomp__Core__Time__Duration_t swig_types[128]
+#define SWIGTYPE_p_std__complexT_double_t swig_types[129]
+#define SWIGTYPE_p_std__complexT_float_t swig_types[130]
+#define SWIGTYPE_p_std__exception swig_types[131]
+#define SWIGTYPE_p_std__istream swig_types[132]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator swig_types[133]
+#define SWIGTYPE_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator swig_types[134]
+#define SWIGTYPE_p_std__nullopt_t swig_types[135]
 #define SWIGTYPE_p_std__ostream swig_types[136]
 #define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[137]
 #define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[138]
@@ -6862,7 +6862,7 @@ SWIGINTERN int Swig_var_Unset_set(PyObject *) {
 SWIGINTERN PyObject *Swig_var_Unset_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&Seiscomp::Core::None), SWIGTYPE_p_boost__none_t,  0 );
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&Seiscomp::Core::None), SWIGTYPE_p_std__nullopt_t,  0 );
   return pyobj;
 }
 
@@ -53888,7 +53888,6 @@ static swig_type_info _swigt__p_bool = {"_p_bool", "bool *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__any = {"_p_boost__any", "Seiscomp::Core::MetaValue *|boost::any *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__bad_any_cast = {"_p_boost__bad_any_cast", "Seiscomp::Core::BadMetaValueCast *|boost::bad_any_cast *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__dynamic_bitsetT_t = {"_p_boost__dynamic_bitsetT_t", "Seiscomp::BitSet::ImplType *|boost::dynamic_bitset< > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_boost__none_t = {"_p_boost__none_t", "::boost::none_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__variantT_int_double_std__string_t = {"_p_boost__variantT_int_double_std__string_t", "Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::PropertyValue *|boost::variant< int,double,std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_iterator = {"_p_const_iterator", "const_iterator *", 0, 0, (void*)0, 0};
@@ -53907,6 +53906,7 @@ static swig_type_info _swigt__p_std__exception = {"_p_std__exception", "std::exc
 static swig_type_info _swigt__p_std__istream = {"_p_std__istream", "std::istream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::const_iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::const_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator = {"_p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator", "Seiscomp::Core::GenericMessage< Seiscomp::Core::BaseObject >::iterator *|std::list< Seiscomp::Core::SmartPointer< Seiscomp::Core::BaseObject > >::iterator *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__nullopt_t = {"_p_std__nullopt_t", "Seiscomp::Core::NoneType *|::std::nullopt_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t", "Seiscomp::Core::MetaObjectHandle *|std::shared_ptr< Seiscomp::Core::MetaObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t", "Seiscomp::Core::MetaPropertyHandle *|std::shared_ptr< Seiscomp::Core::MetaProperty > *", 0, 0, (void*)0, 0};
@@ -54062,7 +54062,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_boost__any,
   &_swigt__p_boost__bad_any_cast,
   &_swigt__p_boost__dynamic_bitsetT_t,
-  &_swigt__p_boost__none_t,
   &_swigt__p_boost__variantT_int_double_std__string_t,
   &_swigt__p_char,
   &_swigt__p_const_iterator,
@@ -54081,6 +54080,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__istream,
   &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator,
   &_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator,
+  &_swigt__p_std__nullopt_t,
   &_swigt__p_std__ostream,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
@@ -54236,7 +54236,6 @@ static swig_cast_info _swigc__p_bool[] = {  {&_swigt__p_bool, 0, 0, 0},{0, 0, 0,
 static swig_cast_info _swigc__p_boost__any[] = {  {&_swigt__p_boost__any, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__bad_any_cast[] = {  {&_swigt__p_boost__bad_any_cast, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__dynamic_bitsetT_t[] = {  {&_swigt__p_boost__dynamic_bitsetT_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_boost__none_t[] = {  {&_swigt__p_boost__none_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__variantT_int_double_std__string_t[] = {  {&_swigt__p_boost__variantT_int_double_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_iterator[] = {  {&_swigt__p_const_iterator, 0, 0, 0},{0, 0, 0, 0}};
@@ -54255,6 +54254,7 @@ static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception
 static swig_cast_info _swigc__p_std__istream[] = {  {&_swigt__p_std__istream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator[] = {  {&_swigt__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__nullopt_t[] = {  {&_swigt__p_std__nullopt_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ostream[] = {  {&_swigt__p_std__ostream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -54410,7 +54410,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_boost__any,
   _swigc__p_boost__bad_any_cast,
   _swigc__p_boost__dynamic_bitsetT_t,
-  _swigc__p_boost__none_t,
   _swigc__p_boost__variantT_int_double_std__string_t,
   _swigc__p_char,
   _swigc__p_const_iterator,
@@ -54429,6 +54428,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__istream,
   _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__const_iterator,
   _swigc__p_std__listT_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t_t__iterator,
+  _swigc__p_std__nullopt_t,
   _swigc__p_std__ostream,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,

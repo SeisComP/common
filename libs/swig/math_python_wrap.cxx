@@ -3393,27 +3393,28 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_std__complexT_double_t swig_types[184]
 #define SWIGTYPE_p_std__exception swig_types[185]
 #define SWIGTYPE_p_std__invalid_argument swig_types[186]
-#define SWIGTYPE_p_std__ostream swig_types[187]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[188]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[189]
-#define SWIGTYPE_p_std__string swig_types[190]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[191]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[192]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[193]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[194]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[195]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[196]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[197]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[198]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[199]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[200]
-#define SWIGTYPE_p_unsigned_char swig_types[201]
-#define SWIGTYPE_p_unsigned_int swig_types[202]
-#define SWIGTYPE_p_unsigned_long_long swig_types[203]
-#define SWIGTYPE_p_unsigned_short swig_types[204]
-#define SWIGTYPE_p_value_type swig_types[205]
-static swig_type_info *swig_types[207];
-static swig_module_info swig_module = {swig_types, 206, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__nullopt_t swig_types[187]
+#define SWIGTYPE_p_std__ostream swig_types[188]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[189]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[190]
+#define SWIGTYPE_p_std__string swig_types[191]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[192]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[193]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[194]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[195]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[196]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[197]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[198]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[199]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[200]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[201]
+#define SWIGTYPE_p_unsigned_char swig_types[202]
+#define SWIGTYPE_p_unsigned_int swig_types[203]
+#define SWIGTYPE_p_unsigned_long_long swig_types[204]
+#define SWIGTYPE_p_unsigned_short swig_types[205]
+#define SWIGTYPE_p_value_type swig_types[206]
+static swig_type_info *swig_types[208];
+static swig_module_info swig_module = {swig_types, 207, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -53516,6 +53517,7 @@ static swig_type_info _swigt__p_Seiscomp__Core__UnderflowException = {"_p_Seisco
 static swig_type_info _swigt__p_Seiscomp__Core__ValueError = {"_p_Seiscomp__Core__ValueError", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Core__ValueException = {"_p_Seiscomp__Core__ValueException", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__nullopt_t = {"_p_std__nullopt_t", "Seiscomp::Core::NoneType *|::std::nullopt_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t", "Seiscomp::Core::MetaObjectHandle *|std::shared_ptr< Seiscomp::Core::MetaObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t", "Seiscomp::Core::MetaPropertyHandle *|std::shared_ptr< Seiscomp::Core::MetaProperty > *", 0, 0, (void*)0, 0};
@@ -53724,6 +53726,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__complexT_double_t,
   &_swigt__p_std__exception,
   &_swigt__p_std__invalid_argument,
+  &_swigt__p_std__nullopt_t,
   &_swigt__p_std__ostream,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
@@ -53932,6 +53935,7 @@ static swig_cast_info _swigc__p_Seiscomp__Core__ValueError[] = {{&_swigt__p_Seis
 static swig_cast_info _swigc__p_Seiscomp__Core__ValueException[] = {{&_swigt__p_Seiscomp__Core__ValueException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception, 0, 0, 0},  {&_swigt__p_Seiscomp__Core__ClassNotFound, _p_Seiscomp__Core__ClassNotFoundTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__DuplicateClassname, _p_Seiscomp__Core__DuplicateClassnameTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__EndOfStreamException, _p_Seiscomp__Core__EndOfStreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__GeneralException, _p_Seiscomp__Core__GeneralExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__MemoryException, _p_Seiscomp__Core__MemoryExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OperationInterrupted, _p_Seiscomp__Core__OperationInterruptedTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__OverflowException, _p_Seiscomp__Core__OverflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__StreamException, _p_Seiscomp__Core__StreamExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeConversionException, _p_Seiscomp__Core__TypeConversionExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__TypeException, _p_Seiscomp__Core__TypeExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__UnderflowException, _p_Seiscomp__Core__UnderflowExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueError, _p_Seiscomp__Core__ValueErrorTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Core__ValueException, _p_Seiscomp__Core__ValueExceptionTo_p_std__exception, 0, 0},  {&_swigt__p_Seiscomp__Math__Filtering__AlignmentError, _p_Seiscomp__Math__Filtering__AlignmentErrorTo_p_std__exception, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__nullopt_t[] = {  {&_swigt__p_std__nullopt_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ostream[] = {  {&_swigt__p_std__ostream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -54140,6 +54144,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__complexT_double_t,
   _swigc__p_std__exception,
   _swigc__p_std__invalid_argument,
+  _swigc__p_std__nullopt_t,
   _swigc__p_std__ostream,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
