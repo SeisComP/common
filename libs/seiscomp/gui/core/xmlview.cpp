@@ -138,6 +138,9 @@ void XMLView::setContent(const QString &content) {
 					xmlReader.qualifiedName().toString(), xmlReader.attributes()
 				);
 				break;
+			case QXmlStreamReader::Characters:
+				handler.characters(xmlReader.text().toString());
+				break;
 			case QXmlStreamReader::EndElement:
 				continueProcessing = handler.endElement(
 					 xmlReader.namespaceUri().toString(), xmlReader.name().toString(),
