@@ -28,15 +28,15 @@
 #define  REPAINT_WITHOUT_ERASE   FALSE
 #define  REPAINT_AFTER_ERASE     TRUE
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 class SC_GUI_API TimeScale : public Ruler {
 	Q_OBJECT
 
 	public:
-		TimeScale(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags(), Position pos = Bottom);
-		~TimeScale(){}
+		TimeScale(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags(),
+		          Position pos = Bottom);
+		~TimeScale() override = default;
 
 		void setTimeRange(double tmin, double tmax) {
 			setRange(tmin, tmax);
@@ -53,9 +53,9 @@ class SC_GUI_API TimeScale : public Ruler {
 		void setAbsoluteTimeEnabled(bool absoluteTime, bool absoluteDate = true);
 
 	protected:
-		bool getTickText(double pos, double lastPos,
-		                 int line, QString &str) const;
-		void updateIntervals();
+		bool getTickText(double pos, double lastPos, int line,
+		                 QString &str) const override;
+		void updateIntervals() override;
 
 	protected:
 		Core::Time  _alignment;
@@ -67,7 +67,6 @@ class SC_GUI_API TimeScale : public Ruler {
 };
 
 
-}
 }
 
 # endif
