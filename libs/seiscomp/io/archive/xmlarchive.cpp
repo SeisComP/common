@@ -484,7 +484,8 @@ void XMLArchive::close() {
 
 	_forceWriteVersion = -1;
 
-	initGenericErrorDefaultFunc(nullptr);
+        xmlStructuredErrorFunc handler = xmlStructuredErrorHandler;
+	 xmlStructuredErrorFunc(nullptr, handler);
 	setVersion(Core::Version(0,0));
 }
 
