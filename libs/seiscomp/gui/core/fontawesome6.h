@@ -41,6 +41,12 @@ namespace Seiscomp {
 namespace Gui {
 namespace FontAwesome6 {
 
+inline namespace Literals {
+
+QChar operator""_fa6(const char *, size_t);
+
+}
+
 
 struct Version {
 	enum {
@@ -50,6 +56,14 @@ struct Version {
 	};
 };
 
+
+/**
+ * @brief Returns the character code of an icon name.
+ * The names as given at https://fontawesome.com without the css "fa-" prefix.
+ * @param name The icon name, like "calendar-days".
+ * @return The character code or QChar()
+ */
+QChar code(const QString &name);
 
 QFont font();
 QFont fontSolid();
