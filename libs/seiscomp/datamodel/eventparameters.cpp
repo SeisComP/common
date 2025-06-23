@@ -1350,15 +1350,16 @@ void EventParameters::serialize(Archive &ar) {
 		),
 		Archive::STATIC_TYPE
 	);
-	ar & NAMED_OBJECT_HINT("catalog",
-		Seiscomp::Core::Generic::containerMember(
-			_catalogs,
-			[this](const CatalogPtr &catalog) {
-				return add(catalog.get());
-			}
-		),
-		Archive::STATIC_TYPE
-	);
+	if ( ar.supportsVersion<0,14>() )
+		ar & NAMED_OBJECT_HINT("catalog",
+			Seiscomp::Core::Generic::containerMember(
+				_catalogs,
+				[this](const CatalogPtr &catalog) {
+					return add(catalog.get());
+				}
+			),
+			Archive::STATIC_TYPE
+		);
 	ar & NAMED_OBJECT_HINT("event",
 		Seiscomp::Core::Generic::containerMember(
 			_events,

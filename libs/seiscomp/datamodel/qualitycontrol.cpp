@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/qualitycontrol.h>
+#include <seiscomp/datamodel/qclog.h>
 #include <algorithm>
 #include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
@@ -244,21 +245,6 @@ QCLog *QualityControl::qCLog(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog *QualityControl::qCLog(const QCLogIndex &i) const {
-	for ( const auto &elem : _qCLogs ) {
-		if ( i == elem->index() ) {
-			return elem.get();
-		}
-	}
-
-	return nullptr;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QCLog *QualityControl::findQCLog(const std::string& publicID) const {
 	for ( const auto &elem : _qCLogs ) {
 		if ( elem->publicID() == publicID ) {
@@ -375,20 +361,6 @@ bool QualityControl::removeQCLog(size_t i) {
 	_qCLogs.erase(_qCLogs.begin() + i);
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::removeQCLog(const QCLogIndex &i) {
-	QCLog *object = qCLog(i);
-	if ( !object ) {
-		return false;
-	}
-
-	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

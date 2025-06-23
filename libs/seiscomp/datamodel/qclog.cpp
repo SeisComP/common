@@ -34,10 +34,10 @@ IMPLEMENT_SC_CLASS_DERIVED(QCLog, PublicObject, "QCLog");
 
 
 QCLog::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &QCLog::setWaveformID, &QCLog::waveformID));
+	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", false, false, false, &QCLog::setWaveformID, &QCLog::waveformID));
 	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &QCLog::setCreatorID, &QCLog::creatorID));
 	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setCreated, &QCLog::created));
-	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &QCLog::setStart, &QCLog::start));
+	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setStart, &QCLog::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &QCLog::setEnd, &QCLog::end));
 	addProperty(Core::simpleProperty("message", "string", false, false, false, false, false, false, nullptr, &QCLog::setMessage, &QCLog::message));
 }
@@ -46,54 +46,6 @@ QCLog::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObje
 IMPLEMENT_METAOBJECT(QCLog)
 
 
-QCLogIndex::QCLogIndex() {
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLogIndex::QCLogIndex(Seiscomp::Core::Time start_,
-                       const WaveformStreamID& waveformID_) {
-	start = start_;
-	waveformID = waveformID_;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLogIndex::QCLogIndex(const QCLogIndex &idx) {
-	start = idx.start;
-	waveformID = idx.waveformID;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLogIndex::operator==(const QCLogIndex &idx) const {
-	return start == idx.start &&
-	       waveformID == idx.waveformID;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLogIndex::operator!=(const QCLogIndex &idx) const {
-	return !operator==(idx);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QCLog::QCLog() {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -166,9 +118,10 @@ QCLog *QCLog::Find(const std::string& publicID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QCLog::operator==(const QCLog &rhs) const {
-	if ( _index != rhs._index ) return false;
+	if ( _waveformID != rhs._waveformID ) return false;
 	if ( _creatorID != rhs._creatorID ) return false;
 	if ( _created != rhs._created ) return false;
+	if ( _start != rhs._start ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _message != rhs._message ) return false;
 	return true;
@@ -198,7 +151,7 @@ bool QCLog::equal(const QCLog &other) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void QCLog::setWaveformID(const WaveformStreamID& waveformID) {
-	_index.waveformID = waveformID;
+	_waveformID = waveformID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -207,7 +160,7 @@ void QCLog::setWaveformID(const WaveformStreamID& waveformID) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformStreamID& QCLog::waveformID() {
-	return _index.waveformID;
+	return _waveformID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -216,7 +169,7 @@ WaveformStreamID& QCLog::waveformID() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const WaveformStreamID& QCLog::waveformID() const {
-	return _index.waveformID;
+	return _waveformID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -261,7 +214,7 @@ Seiscomp::Core::Time QCLog::created() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void QCLog::setStart(Seiscomp::Core::Time start) {
-	_index.start = start;
+	_start = start;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -270,7 +223,7 @@ void QCLog::setStart(Seiscomp::Core::Time start) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::Core::Time QCLog::start() const {
-	return _index.start;
+	return _start;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -314,28 +267,6 @@ const std::string& QCLog::message() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const QCLogIndex &QCLog::index() const {
-	return _index;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QCLog::equalIndex(const QCLog *lhs) const {
-	if ( !lhs ) {
-		return false;
-	}
-
-	return lhs->index() == index();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QualityControl *QCLog::qualityControl() const {
 	return static_cast<QualityControl*>(parent());
 }
@@ -347,9 +278,10 @@ QualityControl *QCLog::qualityControl() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QCLog &QCLog::operator=(const QCLog &other) {
 	PublicObject::operator=(other);
-	_index = other._index;
+	_waveformID = other._waveformID;
 	_creatorID = other._creatorID;
 	_created = other._created;
+	_start = other._start;
 	_end = other._end;
 	_message = other._message;
 	return *this;
@@ -491,10 +423,10 @@ void QCLog::serialize(Archive &ar) {
 	PublicObject::serialize(ar);
 	if ( !ar.success() ) return;
 
-	ar & NAMED_OBJECT_HINT("waveformID", _index.waveformID, Archive::STATIC_TYPE | Archive::XML_ELEMENT | Archive::XML_MANDATORY | Archive::INDEX_ATTRIBUTE);
+	ar & NAMED_OBJECT_HINT("waveformID", _waveformID, Archive::STATIC_TYPE | Archive::XML_ELEMENT | Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT_HINT("creatorID", _creatorID, Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT_HINT("created", _created, Archive::SPLIT_TIME | Archive::XML_MANDATORY);
-	ar & NAMED_OBJECT_HINT("start", _index.start, Archive::XML_ELEMENT | Archive::SPLIT_TIME | Archive::XML_MANDATORY | Archive::INDEX_ATTRIBUTE);
+	ar & NAMED_OBJECT_HINT("start", _start, Archive::XML_ELEMENT | Archive::SPLIT_TIME | Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT_HINT("end", _end, Archive::XML_ELEMENT | Archive::SPLIT_TIME | Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT_HINT("message", _message, Archive::XML_ELEMENT | Archive::XML_MANDATORY);
 }

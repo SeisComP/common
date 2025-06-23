@@ -23,7 +23,6 @@
 
 
 #include <vector>
-#include <seiscomp/datamodel/qclog.h>
 #include <seiscomp/datamodel/waveformquality.h>
 #include <seiscomp/datamodel/outage.h>
 #include <seiscomp/datamodel/notifier.h>
@@ -110,7 +109,6 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeQCLog(size_t i);
-		bool removeQCLog(const QCLogIndex &i);
 		bool removeWaveformQuality(size_t i);
 		bool removeWaveformQuality(const WaveformQualityIndex &i);
 		bool removeOutage(size_t i);
@@ -124,7 +122,6 @@ class SC_SYSTEM_CORE_API QualityControl : public PublicObject {
 		//! Index access
 		//! @return The object at index i
 		QCLog *qCLog(size_t i) const;
-		QCLog *qCLog(const QCLogIndex &i) const;
 
 		WaveformQuality *waveformQuality(size_t i) const;
 		WaveformQuality *waveformQuality(const WaveformQualityIndex &i) const;

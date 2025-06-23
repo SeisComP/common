@@ -38,37 +38,6 @@ DEFINE_SMARTPOINTER(QCLog);
 class QualityControl;
 
 
-class SC_SYSTEM_CORE_API QCLogIndex {
-	// ------------------------------------------------------------------
-	//  Xstruction
-	// ------------------------------------------------------------------
-	public:
-		//! Constructor
-		QCLogIndex();
-		QCLogIndex(Seiscomp::Core::Time start,
-		           const WaveformStreamID& waveformID);
-
-		//! Copy constructor
-		QCLogIndex(const QCLogIndex&);
-
-
-	// ------------------------------------------------------------------
-	//  Operators
-	// ------------------------------------------------------------------
-	public:
-		bool operator==(const QCLogIndex&) const;
-		bool operator!=(const QCLogIndex&) const;
-
-
-	// ------------------------------------------------------------------
-	//  Attributes
-	// ------------------------------------------------------------------
-	public:
-		Seiscomp::Core::Time start;
-		WaveformStreamID waveformID;
-};
-
-
 class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	DECLARE_SC_CLASS(QCLog)
 	DECLARE_SERIALIZATION;
@@ -127,6 +96,10 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	//  Setters/Getters
 	// ------------------------------------------------------------------
 	public:
+		//! The waveform identifier for which the annotation is valid.
+		//! Each component
+		//! can contain wildcards (asterisk or question mark) but no
+		//! regular expressions.
 		void setWaveformID(const WaveformStreamID& waveformID);
 		WaveformStreamID& waveformID();
 		const WaveformStreamID& waveformID() const;
@@ -145,17 +118,6 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 
 		void setMessage(const std::string& message);
 		const std::string& message() const;
-
-
-	// ------------------------------------------------------------------
-	//  Index management
-	// ------------------------------------------------------------------
-	public:
-		//! Returns the object's index
-		const QCLogIndex &index() const;
-
-		//! Checks two objects for equality regarding their index
-		bool equalIndex(const QCLog *lhs) const;
 
 
 	// ------------------------------------------------------------------
@@ -183,12 +145,11 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
-		// Index
-		QCLogIndex _index;
-
 		// Attributes
+		WaveformStreamID _waveformID;
 		std::string _creatorID;
 		Seiscomp::Core::Time _created;
+		Seiscomp::Core::Time _start;
 		Seiscomp::Core::Time _end;
 		std::string _message;
 

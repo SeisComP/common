@@ -282,7 +282,8 @@ int DatabaseReader::load(EventParameters* eventParameters) {
 			load(eventParameters->focalMechanism(i));
 	}
 
-	count += loadCatalogs(eventParameters);
+	if ( supportsVersion<0,14>() )
+		count += loadCatalogs(eventParameters);
 	{
 		size_t elementCount = eventParameters->catalogCount();
 		for ( size_t i = 0; i < elementCount; ++i )
