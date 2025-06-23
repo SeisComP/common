@@ -469,27 +469,33 @@ void EventSummary::updateTimeAgo() {
 		ago = "ago";
 
 	int days = sec / 86400;
-	int hours = (sec - days*86400) / 3600;
-	int minutes = (sec - days*86400 - hours*3600) / 60;
-	int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+	int hours = (sec - days * 86400) / 3600;
+	int minutes = (sec - days * 86400 - hours * 3600) / 60;
+	int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 	QString text;
 
-	if ( days > 0 )
-		text = QString("%1d and %2h %3").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ').arg(ago);
-	else if ( ( days == 0 ) && ( hours > 0 ) )
-		text = QString("%1h and %2m %3").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ').arg(ago);
-	else if ( ( days == 0 ) && ( hours == 0 ) && ( minutes > 0 ) ) {
-		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay )
-			text = QString("%1m %3").arg(minutes, 0, 'd', 0, ' ').arg(ago);
-		else
-			text = QString("%1m and %2s %3").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ').arg(ago);
+	if ( days > 0 ) {
+		text = QString("%1d and %2h %3").arg(days).arg(hours).arg(ago);
 	}
-	else if ( ( days == 0 ) && ( hours == 0 ) && ( minutes == 0 ) && ( seconds > 0 ) )
-		text = QString("%1s %3").arg(seconds, 0, 'd', 0, ' ').arg(ago);
+	else if ( !days && (hours > 0) ) {
+		text = QString("%1h and %2m %3").arg(hours).arg(minutes).arg(ago);
+	}
+	else if ( !days && !hours && (minutes > 0) ) {
+		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay ) {
+			text = QString("%1m %2").arg(minutes).arg(ago);
+		}
+		else {
+			text = QString("%1m and %2s %3").arg(minutes).arg(seconds).arg(ago);
+		}
+	}
+	else if ( !days && !hours && !minutes && (seconds > 0) ) {
+		text = QString("%1s %2").arg(seconds).arg(ago);
+	}
 
-	if ( text != _ui->timeAgo->text() )
+	if ( text != _ui->timeAgo->text() ) {
 		_ui->timeAgo->setText(text);
+	}
 
 	if ( _alertActive && _alertSettings.gradient.size() != 0 ) {
 		// update color only on change

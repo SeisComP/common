@@ -1726,7 +1726,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	try {
 		DataModel::OriginQuality quality = _currentOrigin->quality();
 		try{
-			_uiHypocenter->_lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount()));
 		}
 		catch(Core::ValueException&) {
 			_uiHypocenter->_lbNoPhases->setText("--");
@@ -1905,7 +1905,7 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 	try {
 		DataModel::OriginQuality quality = origin->quality();
 		try{
-			_uiHypocenter->_lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount()));
 		}
 		catch(Core::ValueException&) {
 			_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
@@ -2032,7 +2032,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelMw->setText("-");
 
 		try {
-			_uiHypocenter->labelMoment->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMoment->setText(QString("%1").arg(mt->scalarMoment().value(), 0, 'E', 2));
 		}
 		catch ( ... ) {
 			_uiHypocenter->labelMoment->setText("-");
@@ -2248,7 +2248,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelMwAutomatic->setText("-");
 
 		try {
-			_uiHypocenter->labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment().value(), 0, 'E', 2));
 		}
 		catch ( ... ) {
 			_uiHypocenter->labelMomentAutomatic->setText("-");
@@ -2745,28 +2745,28 @@ void EventSummaryView::updateTimeAgoLabel(){
 
 	int sec = ts.seconds();
 	int days = sec / 86400;
-	int hours = (sec - days*86400) / 3600;
-	int minutes = (sec - days*86400 - hours*3600) / 60;
-	int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+	int hours = (sec - days * 86400) / 3600;
+	int minutes = (sec - days * 86400 - hours * 3600) / 60;
+	int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 	QString text;
 
 	if ( days > 0 ) {
-		text = QString("%1 days and %2 hours ago").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ');
+		text = QString("%1 days and %2 hours ago").arg(days).arg(hours);
 	}
-	else if ( (days == 0) && (hours > 0) ) {
-		text = QString("%1 hours and %2 minutes ago").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
+	else if ( !days && (hours > 0) ) {
+		text = QString("%1 hours and %2 minutes ago").arg(hours).arg(minutes);
 	}
-	else if ( (days == 0) && (hours == 0) && (minutes > 0) ) {
+	else if ( !days && !hours && (minutes > 0) ) {
 		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay ) {
-			text = QString("%1 minutes").arg(minutes, 0, 'd', 0, ' ');
+			text = QString("%1 minutes").arg(minutes);
 		}
 		else {
-			text = QString("%1 minutes and %2 seconds ago").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
+			text = QString("%1 minutes and %2 seconds ago").arg(minutes).arg(seconds);
 		}
 	}
-	else if ((days == 0) && (hours == 0) && (minutes == 0) && (seconds > 0) ) {
-		text = QString("%1 seconds ago").arg(seconds, 0, 'd', 0, ' ');
+	else if ( !days && !hours && !minutes && (seconds > 0) ) {
+		text = QString("%1 seconds ago").arg(seconds);
 	}
 
 	if ( text != _ui->_lbTimeAgo->text() ) {

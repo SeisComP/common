@@ -91,13 +91,13 @@ class EventTreeItem : public SchemeTreeItem {
 
 				Magnitude* nm = Magnitude::Cast(PublicObject::Find(event->preferredMagnitudeID()));
 				if ( nm ){
-					setText(2, QString("%1").arg(nm->magnitude(), 0, 'f', 1));
+					setText(2, QString("%1").arg(nm->magnitude().value(), 0, 'f', 1));
 					setText(3, QString(nm->type().c_str()));
 
 					//! display the station Count of a magnitude
 					try {
 						int staCount = nm->stationCount();
-						setText(4, QString("%1").arg(staCount, 0, 'd', 0, ' '));
+						setText(4, QString("%1").arg(staCount));
 					}
 					catch(...){
 						setText(4, QString("?"));
@@ -117,7 +117,7 @@ class EventTreeItem : public SchemeTreeItem {
 				if (origin){
 					try{
 						OriginQuality quality = origin->quality();
-						setText(5, QString("%1").arg(quality.associatedPhaseCount(), 0, 'd', 0, ' '));
+						setText(5, QString("%1").arg(quality.associatedPhaseCount()));
 					}
 					catch(...){
 						setText(5, "-");
@@ -194,15 +194,15 @@ class NetMagTreeItem : public SchemeTreeItem {
 			setText(0, QString("%1").arg(netMag->publicID().c_str()));
 
 			if ( netMag ){
-					setText(2, QString("%1").arg(netMag->magnitude(), 0, 'f', 1));
+					setText(2, QString("%1").arg(netMag->magnitude().value(), 0, 'f', 1));
 					setText(3, QString(netMag->type().c_str()));
 
 					//! display the station Count of a magnitude
 					try {
 						int staCount = netMag->stationCount();
-						setText(4, QString("%1").arg(staCount, 0, 'd', 0, ' '));
+						setText(4, QString("%1").arg(staCount));
 					}
-					catch(...){
+					catch (...) {
 						setText(4, QString("?"));
 					}
 					//! -----------------------------------------------------

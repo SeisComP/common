@@ -439,9 +439,9 @@ class SquareSizeFilter : public QObject {
 };
 
 QString npToString(const NodalPlane &np) {
-	return QString("%1/%2/%3").arg(np.strike(), 0, 'f', 2)
-	                          .arg(np.dip(), 0, 'f', 2)
-	                          .arg(np.rake(), 0, 'f', 2);
+	return QString("%1/%2/%3").arg(np.strike().value(), 0, 'f', 2)
+	                          .arg(np.dip().value(), 0, 'f', 2)
+	                          .arg(np.rake().value(), 0, 'f', 2);
 }
 
 class OriginTreeWidget : public QTreeWidget {

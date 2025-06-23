@@ -938,25 +938,25 @@ class SchemeTreeItem : public TreeItem {
 
 			int sec = ts.seconds();
 			int days = sec / 86400;
-			int hours = (sec - days*86400) / 3600;
-			int minutes = (sec - days*86400 - hours*3600) / 60;
-			int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+			int hours = (sec - days * 86400) / 3600;
+			int minutes = (sec - days * 86400 - hours * 3600) / 60;
+			int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 			QString text;
 
 			if ( days > 0 ) {
-				text = QString("%1d %2h").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ');
+				text = QString("%1d %2h").arg(days).arg(hours);
 			}
 			else {
 				if ( hours > 0 ) {
-					text = QString("%1h %2m").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
+					text = QString("%1h %2m").arg(hours).arg(minutes);
 				}
 				else {
 					if ( minutes > 0 ) {
-						text = QString("%1m %2s").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
+						text = QString("%1m %2s").arg(minutes).arg(seconds);
 					}
 					else {
-						text = QString("%1s").arg(seconds, 0, 'd', 0, ' ');
+						text = QString("%1s").arg(seconds);
 					}
 				}
 			}
@@ -1822,7 +1822,7 @@ class EventTreeItem : public SchemeTreeItem {
 
 				try{
 					const OriginQuality &quality = origin->quality();
-					setText(config.columnMap[COL_PHASES], QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+					setText(config.columnMap[COL_PHASES], QString("%1").arg(quality.usedPhaseCount()));
 					setData(config.columnMap[COL_PHASES], Qt::UserRole, static_cast<double>(quality.usedPhaseCount()));
 				}
 				catch ( ValueException& ) {

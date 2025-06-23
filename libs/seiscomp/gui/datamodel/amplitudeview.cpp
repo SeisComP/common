@@ -3696,8 +3696,8 @@ void AmplitudeView::updateOriginInformation() {
 
 		title = QString("ID: %1, Lat/Lon: %2 | %3, Depth: %4 km")
 		                 .arg(SC_D.origin->publicID().c_str())
-		                 .arg(SC_D.origin->latitude(), 0, 'f', 2)
-		                 .arg(SC_D.origin->longitude(), 0, 'f', 2)
+		                 .arg(SC_D.origin->latitude().value(), 0, 'f', 2)
+		                 .arg(SC_D.origin->longitude().value(), 0, 'f', 2)
 		                 .arg(depth);
 	}
 	else {
