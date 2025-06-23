@@ -111,4 +111,12 @@
 	#define QT_PROCESS_STARTDETACHED3(cmd, wd, pid) QProcess::startDetached(cmd, wd, pid)
 #endif
 
+// 6.0:
+//  Q[*]Event::pos() -> position().toPoint()
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+	#define QT_EVENT_POS(dropEvent) dropEvent->position().toPoint()
+#else
+	#define QT_EVENT_POS(dropEvent) dropEvent->pos()
+#endif
+
 #endif

@@ -2095,7 +2095,7 @@ class TreeWidget : public QTreeWidget {
 		void dragMoveEvent(QDragMoveEvent *event) override {
 			QTreeWidget::dragMoveEvent(event);
 
-			auto *item = static_cast<SchemeTreeItem*>(itemAt(event->position().toPoint()));
+			auto *item = static_cast<SchemeTreeItem*>(itemAt(QT_EVENT_POS(event)));
 
 			/*
 			if ( _lastDropItem && item != _lastDropItem ) {
@@ -3700,7 +3700,8 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 	if ( obj == SC_D._treeWidget->viewport() ) {
 		if ( ev->type() == QEvent::Drop ) {
 			auto *event = static_cast<QDropEvent*>(ev);
-			auto *item = static_cast<SchemeTreeItem*>(SC_D._treeWidget->itemAt(event->position().toPoint()));
+			auto *item = static_cast<SchemeTreeItem*>(
+			        SC_D._treeWidget->itemAt(QT_EVENT_POS(event)));
 			if ( !item || item->type() == ST_None ) {
 				event->ignore();
 				return true;

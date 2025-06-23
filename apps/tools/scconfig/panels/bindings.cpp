@@ -226,7 +226,7 @@ class StationTreeView : public QTreeView {
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->position().toPoint());
+			QModelIndex idx = indexAt(QT_EVENT_POS(event));
 
 			if ( idx.isValid() ) {
 				if ( _followSelection ) {
@@ -310,7 +310,7 @@ class StationsFolderView : public QListView {
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->position().toPoint());
+			QModelIndex idx = indexAt(QT_EVENT_POS(event));
 
 			if ( idx.isValid() ) {
 				selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
