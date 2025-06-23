@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS Pick;
 DROP TABLE IF EXISTS OriginReference;
 DROP TABLE IF EXISTS FocalMechanismReference;
 DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS Arrival;
 DROP TABLE IF EXISTS Origin;
 DROP TABLE IF EXISTS Parameter;
@@ -85,7 +86,7 @@ CREATE TABLE PublicObject (
 	  ON DELETE CASCADE
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.2');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (NULL);
@@ -962,6 +963,37 @@ CREATE INDEX Event_preferredFocalMechanismID ON Event(preferredFocalMechanismID)
 CREATE TRIGGER EventUpdate UPDATE ON Event
 BEGIN
 	UPDATE Event SET _last_modified=CURRENT_TIMESTAMP WHERE _oid=old._oid;
+END;
+
+CREATE TABLE Catalog (
+	_oid INTEGER NOT NULL,
+	_parent_oid INTEGER NOT NULL,
+	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	name VARCHAR NOT NULL,
+	description TEXT,
+	creationInfo_agencyID VARCHAR,
+	creationInfo_agencyURI VARCHAR,
+	creationInfo_author VARCHAR,
+	creationInfo_authorURI VARCHAR,
+	creationInfo_creationTime DATETIME,
+	creationInfo_creationTime_ms INTEGER,
+	creationInfo_modificationTime DATETIME,
+	creationInfo_modificationTime_ms INTEGER,
+	creationInfo_version VARCHAR,
+	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
+	start DATETIME NOT NULL,
+	start_ms INTEGER NOT NULL,
+	end DATETIME,
+	end_ms INTEGER,
+	dynamic INTEGER(1) NOT NULL,
+	PRIMARY KEY(_oid)
+);
+
+CREATE INDEX Catalog__parent_oid ON Catalog(_parent_oid);
+
+CREATE TRIGGER CatalogUpdate UPDATE ON Catalog
+BEGIN
+	UPDATE Catalog SET _last_modified=CURRENT_TIMESTAMP WHERE _oid=old._oid;
 END;
 
 CREATE TABLE Arrival (

@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/event.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <algorithm>
 #include <seiscomp/datamodel/version.h>
@@ -298,8 +299,17 @@ const CreationInfo& Event::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *Event::catalog() const {
+	return Catalog::Cast(parent());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 EventParameters *Event::eventParameters() const {
-	return static_cast<EventParameters*>(parent());
+	return EventParameters::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -345,6 +355,9 @@ bool Event::attachTo(PublicObject *parent) {
 	}
 
 	// check all possible parents
+	Catalog *catalog = Catalog::Cast(parent);
+	if ( catalog != nullptr )
+		return catalog->add(this);
 	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
@@ -364,6 +377,23 @@ bool Event::detachFrom(PublicObject *object) {
 	}
 
 	// check all possible parents
+	Catalog *catalog = Catalog::Cast(object);
+	if ( catalog != nullptr ) {
+		// If the object has been added already to the parent locally
+		// just remove it by pointer
+		if ( object == parent() )
+			return catalog->remove(this);
+		// The object has not been added locally so it must be looked up
+		else {
+			Event *child = catalog->findEvent(publicID());
+			if ( child != nullptr )
+				return catalog->remove(child);
+			else {
+				SEISCOMP_DEBUG("Event::detachFrom(Catalog): event has not been found");
+				return false;
+			}
+		}
+	}
 	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally

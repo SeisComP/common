@@ -27,6 +27,7 @@
 #include <seiscomp/datamodel/stationmagnitude.h>
 #include <seiscomp/datamodel/pick.h>
 #include <seiscomp/datamodel/event.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/parameter.h>
 #include <seiscomp/datamodel/parameterset.h>
@@ -352,6 +353,15 @@ Event *Comment::event() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *Comment::catalog() const {
+	return Catalog::Cast(parent());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *Comment::origin() const {
 	return Origin::Cast(parent());
 }
@@ -472,6 +482,9 @@ bool Comment::attachTo(PublicObject *parent) {
 	Event *event = Event::Cast(parent);
 	if ( event != nullptr )
 		return event->add(this);
+	Catalog *catalog = Catalog::Cast(parent);
+	if ( catalog != nullptr )
+		return catalog->add(this);
 	Origin *origin = Origin::Cast(parent);
 	if ( origin != nullptr )
 		return origin->add(this);
@@ -624,6 +637,23 @@ bool Comment::detachFrom(PublicObject *object) {
 				return event->remove(child);
 			else {
 				SEISCOMP_DEBUG("Comment::detachFrom(Event): comment has not been found");
+				return false;
+			}
+		}
+	}
+	Catalog *catalog = Catalog::Cast(object);
+	if ( catalog != nullptr ) {
+		// If the object has been added already to the parent locally
+		// just remove it by pointer
+		if ( object == parent() )
+			return catalog->remove(this);
+		// The object has not been added locally so it must be looked up
+		else {
+			Comment *child = catalog->comment(index());
+			if ( child != nullptr )
+				return catalog->remove(child);
+			else {
+				SEISCOMP_DEBUG("Comment::detachFrom(Catalog): comment has not been found");
 				return false;
 			}
 		}

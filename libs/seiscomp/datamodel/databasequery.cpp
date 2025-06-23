@@ -53,34 +53,6 @@ DatabaseQuery::~DatabaseQuery() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* DatabaseQuery::getStation(const std::string& network_code,
-                                   const std::string& station_code,
-                                   Seiscomp::Core::Time time) {
-	if ( !validInterface() ) return NULL;
-
-	std::string query;
-	query += "select PStation." + _T("publicID") + ",Station.* from Network,Station,PublicObject as PStation where Station._parent_oid=Network._oid and Station._oid=PStation._oid and Network." + _T("start") + "<='";
-	query += toString(time);
-	query += "' and (Network." + _T("end") + ">='";
-	query += toString(time);
-	query += "' or Network." + _T("end") + " is null) and Station." + _T("start") + "<='";
-	query += toString(time);
-	query += "' and (Station." + _T("end") + ">='";
-	query += toString(time);
-	query += "' or Station." + _T("end") + " is null) and Network." + _T("code") + "='";
-	query += toString(network_code);
-	query += "' and Station." + _T("code") + "='";
-	query += toString(station_code);
-	query += "'";
-
-	return Station::Cast(queryObject(Station::TypeInfo(), query));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Event* DatabaseQuery::getEvent(const std::string& originID) {
 	if ( !validInterface() ) return NULL;
 
@@ -575,6 +547,28 @@ DatabaseIterator DatabaseQuery::getEvents(Seiscomp::Core::Time startTime,
 	query += toString(startTime);
 	query += "' and Origin." + _T("time_value") + "<='";
 	query += toString(endTime);
+	query += "'";
+
+	return getObjectIterator(query, Event::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator DatabaseQuery::getEvents(const std::string& catalogID,
+                                          Seiscomp::Core::Time startTime,
+                                          Seiscomp::Core::Time endTime) {
+	if ( !validInterface() ) return DatabaseIterator();
+
+	std::string query;
+	query += "select PEvent." + _T("publicID") + ",Event.* from Catalog,PublicObject as PCatalog,Origin,PublicObject as POrigin,Event,PublicObject as PEvent where POrigin." + _T("publicID") + "=Event." + _T("preferredOriginID") + " and Event._parent_oid=Catalog._oid and Catalog._oid=PCatalog._oid and Origin._oid=POrigin._oid and Event._oid=PEvent._oid and Origin." + _T("time_value") + ">='";
+	query += toString(startTime);
+	query += "' and Origin." + _T("time_value") + "<='";
+	query += toString(endTime);
+	query += "' and PCatalog." + _T("publicID") + "='";
+	query += toString(catalogID);
 	query += "'";
 
 	return getObjectIterator(query, Event::TypeInfo());

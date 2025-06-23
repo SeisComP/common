@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS Pick;
 DROP TABLE IF EXISTS OriginReference;
 DROP TABLE IF EXISTS FocalMechanismReference;
 DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS Arrival;
 DROP TABLE IF EXISTS Origin;
 DROP TABLE IF EXISTS Parameter;
@@ -91,7 +92,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.2');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (DEFAULT);
@@ -927,6 +928,35 @@ CREATE INDEX Event_m_preferredMagnitudeID ON Event(m_preferredMagnitudeID);
 CREATE INDEX Event_m_preferredFocalMechanismID ON Event(m_preferredFocalMechanismID);
 
 CREATE TRIGGER Event_update BEFORE UPDATE ON Event FOR EACH ROW EXECUTE PROCEDURE update_modified();
+
+
+CREATE TABLE Catalog (
+	_oid BIGINT NOT NULL,
+	_parent_oid BIGINT NOT NULL,
+	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	m_name VARCHAR(255) NOT NULL,
+	m_description TEXT,
+	m_creationInfo_agencyID VARCHAR(64),
+	m_creationInfo_agencyURI VARCHAR(255),
+	m_creationInfo_author VARCHAR(128),
+	m_creationInfo_authorURI VARCHAR(255),
+	m_creationInfo_creationTime TIMESTAMP,
+	m_creationInfo_creationTime_ms INTEGER,
+	m_creationInfo_modificationTime TIMESTAMP,
+	m_creationInfo_modificationTime_ms INTEGER,
+	m_creationInfo_version VARCHAR(64),
+	m_creationInfo_used BOOLEAN NOT NULL DEFAULT '0',
+	m_start TIMESTAMP NOT NULL,
+	m_start_ms INTEGER NOT NULL,
+	m_end TIMESTAMP,
+	m_end_ms INTEGER,
+	m_dynamic BOOLEAN NOT NULL,
+	PRIMARY KEY(_oid)
+);
+
+CREATE INDEX Catalog__parent_oid ON Catalog(_parent_oid);
+
+CREATE TRIGGER Catalog_update BEFORE UPDATE ON Catalog FOR EACH ROW EXECUTE PROCEDURE update_modified();
 
 
 CREATE TABLE Arrival (

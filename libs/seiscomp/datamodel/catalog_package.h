@@ -18,34 +18,11 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_EVENTPARAMETERS_PACKAGE_H__
-#define SEISCOMP_DATAMODEL_EVENTPARAMETERS_PACKAGE_H__
+#ifndef SEISCOMP_DATAMODEL_CATALOG_PACKAGE_H__
+#define SEISCOMP_DATAMODEL_CATALOG_PACKAGE_H__
 
 
-#include <seiscomp/datamodel/eventdescription.h>
-#include <seiscomp/datamodel/comment.h>
-#include <seiscomp/datamodel/dataused.h>
-#include <seiscomp/datamodel/compositetime.h>
-#include <seiscomp/datamodel/pickreference.h>
-#include <seiscomp/datamodel/amplitudereference.h>
-#include <seiscomp/datamodel/reading.h>
-#include <seiscomp/datamodel/momenttensorcomponentcontribution.h>
-#include <seiscomp/datamodel/momenttensorstationcontribution.h>
-#include <seiscomp/datamodel/momenttensorphasesetting.h>
-#include <seiscomp/datamodel/momenttensor.h>
-#include <seiscomp/datamodel/focalmechanism.h>
-#include <seiscomp/datamodel/amplitude.h>
-#include <seiscomp/datamodel/stationmagnitudecontribution.h>
-#include <seiscomp/datamodel/magnitude.h>
-#include <seiscomp/datamodel/stationmagnitude.h>
-#include <seiscomp/datamodel/pick.h>
-#include <seiscomp/datamodel/originreference.h>
-#include <seiscomp/datamodel/focalmechanismreference.h>
-#include <seiscomp/datamodel/event.h>
 #include <seiscomp/datamodel/catalog.h>
-#include <seiscomp/datamodel/arrival.h>
-#include <seiscomp/datamodel/origin.h>
-#include <seiscomp/datamodel/eventparameters.h>
 
 
 #endif

@@ -25,6 +25,7 @@
 #include <seiscomp/datamodel/reading.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/focalmechanism.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/event.h>
 #include <algorithm>
 #include <seiscomp/datamodel/version.h>
@@ -45,6 +46,7 @@ EventParameters::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core
 	addProperty(arrayObjectProperty("reading", "Reading", &EventParameters::readingCount, &EventParameters::reading, static_cast<bool (EventParameters::*)(Reading*)>(&EventParameters::add), &EventParameters::removeReading, static_cast<bool (EventParameters::*)(Reading*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("origin", "Origin", &EventParameters::originCount, &EventParameters::origin, static_cast<bool (EventParameters::*)(Origin*)>(&EventParameters::add), &EventParameters::removeOrigin, static_cast<bool (EventParameters::*)(Origin*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("focalMechanism", "FocalMechanism", &EventParameters::focalMechanismCount, &EventParameters::focalMechanism, static_cast<bool (EventParameters::*)(FocalMechanism*)>(&EventParameters::add), &EventParameters::removeFocalMechanism, static_cast<bool (EventParameters::*)(FocalMechanism*)>(&EventParameters::remove)));
+	addProperty(arrayObjectProperty("catalog", "Catalog", &EventParameters::catalogCount, &EventParameters::catalog, static_cast<bool (EventParameters::*)(Catalog*)>(&EventParameters::add), &EventParameters::removeCatalog, static_cast<bool (EventParameters::*)(Catalog*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("event", "Event", &EventParameters::eventCount, &EventParameters::event, static_cast<bool (EventParameters::*)(Event*)>(&EventParameters::add), &EventParameters::removeEvent, static_cast<bool (EventParameters::*)(Event*)>(&EventParameters::remove)));
 }
 
@@ -85,6 +87,9 @@ EventParameters::~EventParameters() {
 	}
 	for ( auto &focalMechanism : _focalMechanisms ) {
 		focalMechanism->setParent(nullptr);
+	}
+	for ( auto &catalog : _catalogs ) {
+		catalog->setParent(nullptr);
 	}
 	for ( auto &event : _events ) {
 		event->setParent(nullptr);
@@ -248,6 +253,18 @@ bool EventParameters::updateChild(Object *child) {
 		return false;
 	}
 
+	Catalog *catalogChild = Catalog::Cast(child);
+	if ( catalogChild != nullptr ) {
+		Catalog *catalogElement
+			= Catalog::Cast(PublicObject::Find(catalogChild->publicID()));
+		if ( catalogElement && catalogElement->parent() == this ) {
+			*catalogElement = *catalogChild;
+			catalogElement->update();
+			return true;
+		}
+		return false;
+	}
+
 	Event *eventChild = Event::Cast(child);
 	if ( eventChild != nullptr ) {
 		Event *eventElement
@@ -278,6 +295,8 @@ void EventParameters::accept(Visitor *visitor) {
 	for ( auto &&elem : _origins )
 		elem->accept(visitor);
 	for ( auto &&elem : _focalMechanisms )
+		elem->accept(visitor);
+	for ( auto &&elem : _catalogs )
 		elem->accept(visitor);
 	for ( auto &&elem : _events )
 		elem->accept(visitor);
@@ -993,6 +1012,147 @@ bool EventParameters::removeFocalMechanism(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+size_t EventParameters::catalogCount() const {
+	return _catalogs.size();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *EventParameters::catalog(size_t i) const {
+	return _catalogs[i].get();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *EventParameters::findCatalog(const std::string& publicID) const {
+	for ( const auto &elem : _catalogs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
+
+	return nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::add(Catalog *catalog) {
+	if ( !catalog ) {
+		return false;
+	}
+
+	// Element has already a parent
+	if ( catalog->parent() != nullptr ) {
+		SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element has already a parent");
+		return false;
+	}
+
+	if ( PublicObject::IsRegistrationEnabled() ) {
+		Catalog *catalogCached = Catalog::Find(catalog->publicID());
+		if ( catalogCached ) {
+			if ( catalogCached->parent() ) {
+				if ( catalogCached->parent() == this ) {
+					SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element with same publicID has been added already");
+				}
+				else {
+					SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element with same publicID has been added already to another object");
+				}
+				return false;
+			}
+			else {
+				catalog = catalogCached;
+			}
+		}
+	}
+
+	// Add the element
+	_catalogs.push_back(catalog);
+	catalog->setParent(this);
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		NotifierCreator nc(OP_ADD);
+		catalog->accept(&nc);
+	}
+
+	// Notify registered observers
+	childAdded(catalog);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::remove(Catalog *catalog) {
+	if ( !catalog ) {
+		return false;
+	}
+
+	if ( catalog->parent() != this ) {
+		SEISCOMP_ERROR("EventParameters::remove(Catalog*) -> element has another parent");
+		return false;
+	}
+
+	auto it = std::find(_catalogs.begin(), _catalogs.end(), catalog);
+	// Element has not been found
+	if ( it == _catalogs.end() ) {
+		SEISCOMP_ERROR("EventParameters::remove(Catalog*) -> child object has not been found although the parent pointer matches???");
+		return false;
+	}
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		Notifier::Create(this, OP_REMOVE, it->get());
+	}
+
+	(*it)->setParent(nullptr);
+	childRemoved((*it).get());
+
+	_catalogs.erase(it);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::removeCatalog(size_t i) {
+	// index out of bounds
+	if ( i >= _catalogs.size() )
+		return false;
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		Notifier::Create(this, OP_REMOVE, _catalogs[i].get());
+	}
+
+	_catalogs[i]->setParent(nullptr);
+	childRemoved(_catalogs[i].get());
+
+	_catalogs.erase(_catalogs.begin() + i);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t EventParameters::eventCount() const {
 	return _events.size();
 }
@@ -1186,6 +1346,15 @@ void EventParameters::serialize(Archive &ar) {
 			_focalMechanisms,
 			[this](const FocalMechanismPtr &focalMechanism) {
 				return add(focalMechanism.get());
+			}
+		),
+		Archive::STATIC_TYPE
+	);
+	ar & NAMED_OBJECT_HINT("catalog",
+		Seiscomp::Core::Generic::containerMember(
+			_catalogs,
+			[this](const CatalogPtr &catalog) {
+				return add(catalog.get());
 			}
 		),
 		Archive::STATIC_TYPE

@@ -18,11 +18,15 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_DATAMODEL_EVENTPARAMETERS_H
-#define SEISCOMP_DATAMODEL_EVENTPARAMETERS_H
+#ifndef SEISCOMP_DATAMODEL_CATALOG_H
+#define SEISCOMP_DATAMODEL_CATALOG_H
 
 
+#include <string>
+#include <seiscomp/datamodel/creationinfo.h>
+#include <seiscomp/core/datetime.h>
 #include <vector>
+#include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/publicobject.h>
 #include <seiscomp/core/exceptions.h>
@@ -32,38 +36,49 @@ namespace Seiscomp {
 namespace DataModel {
 
 
-DEFINE_SMARTPOINTER(EventParameters);
-DEFINE_SMARTPOINTER(Pick);
-DEFINE_SMARTPOINTER(Amplitude);
-DEFINE_SMARTPOINTER(Reading);
-DEFINE_SMARTPOINTER(Origin);
-DEFINE_SMARTPOINTER(FocalMechanism);
 DEFINE_SMARTPOINTER(Catalog);
+DEFINE_SMARTPOINTER(Comment);
 DEFINE_SMARTPOINTER(Event);
 
+class EventParameters;
 
-/**
- * \brief This type can hold objects of type Event, Origin,
- * \brief Magnitude, StationMagnitude,
- * \brief FocalMechanism, Reading, Amplitude, and Pick.
- */
-class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
-	DECLARE_SC_CLASS(EventParameters)
+
+class SC_SYSTEM_CORE_API Catalog : public PublicObject {
+	DECLARE_SC_CLASS(Catalog)
 	DECLARE_SERIALIZATION;
 	DECLARE_METAOBJECT;
 
 	// ------------------------------------------------------------------
 	//  Xstruction
 	// ------------------------------------------------------------------
-	public:
-		//! Constructor
-		EventParameters();
+	protected:
+		//! Protected constructor
+		Catalog();
 
+	public:
 		//! Copy constructor
-		EventParameters(const EventParameters &other);
+		Catalog(const Catalog &other);
+
+		//! Constructor with publicID
+		Catalog(const std::string& publicID);
 
 		//! Destructor
-		~EventParameters() override;
+		~Catalog() override;
+
+
+	// ------------------------------------------------------------------
+	//  Creators
+	// ------------------------------------------------------------------
+	public:
+		static Catalog *Create();
+		static Catalog *Create(const std::string& publicID);
+
+
+	// ------------------------------------------------------------------
+	//  Lookup
+	// ------------------------------------------------------------------
+	public:
+		static Catalog *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -72,14 +87,42 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		EventParameters &operator=(const EventParameters &other);
+		Catalog &operator=(const Catalog &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const EventParameters &other) const;
-		bool operator!=(const EventParameters &other) const;
+		bool operator==(const Catalog &other) const;
+		bool operator!=(const Catalog &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const EventParameters &other) const;
+		bool equal(const Catalog &other) const;
+
+
+	// ------------------------------------------------------------------
+	//  Setters/Getters
+	// ------------------------------------------------------------------
+	public:
+		void setName(const std::string& name);
+		const std::string& name() const;
+
+		//! Catalog description
+		void setDescription(const std::string& description);
+		const std::string& description() const;
+
+		//! CreationInfo for the Catalog object.
+		void setCreationInfo(const OPT(CreationInfo)& creationInfo);
+		CreationInfo& creationInfo();
+		const CreationInfo& creationInfo() const;
+
+		//! Start of epoch in ISO datetime format
+		void setStart(Seiscomp::Core::Time start);
+		Seiscomp::Core::Time start() const;
+
+		//! End of epoch (empty if the catalog epoch is open)
+		void setEnd(const OPT(Seiscomp::Core::Time)& end);
+		Seiscomp::Core::Time end() const;
+
+		void setDynamic(bool dynamic);
+		bool dynamic() const;
 
 
 	// ------------------------------------------------------------------
@@ -94,12 +137,7 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Pick *obj);
-		bool add(Amplitude *obj);
-		bool add(Reading *obj);
-		bool add(Origin *obj);
-		bool add(FocalMechanism *obj);
-		bool add(Catalog *obj);
+		bool add(Comment *obj);
 		bool add(Event *obj);
 
 		/**
@@ -109,12 +147,7 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Pick *obj);
-		bool remove(Amplitude *obj);
-		bool remove(Reading *obj);
-		bool remove(Origin *obj);
-		bool remove(FocalMechanism *obj);
-		bool remove(Catalog *obj);
+		bool remove(Comment *obj);
 		bool remove(Event *obj);
 
 		/**
@@ -123,41 +156,24 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 		 * @return true The object has been removed
 		 * @return false The index is out of bounds
 		 */
-		bool removePick(size_t i);
-		bool removeAmplitude(size_t i);
-		bool removeReading(size_t i);
-		bool removeOrigin(size_t i);
-		bool removeFocalMechanism(size_t i);
-		bool removeCatalog(size_t i);
+		bool removeComment(size_t i);
+		bool removeComment(const CommentIndex &i);
 		bool removeEvent(size_t i);
 
 		//! Retrieve the number of objects of a particular class
-		size_t pickCount() const;
-		size_t amplitudeCount() const;
-		size_t readingCount() const;
-		size_t originCount() const;
-		size_t focalMechanismCount() const;
-		size_t catalogCount() const;
+		size_t commentCount() const;
 		size_t eventCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		Pick *pick(size_t i) const;
-		Amplitude *amplitude(size_t i) const;
-		Reading *reading(size_t i) const;
-		Origin *origin(size_t i) const;
-		FocalMechanism *focalMechanism(size_t i) const;
-		Catalog *catalog(size_t i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 		Event *event(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		Pick *findPick(const std::string& publicID) const;
-		Amplitude *findAmplitude(const std::string& publicID) const;
-		Reading *findReading(const std::string& publicID) const;
-		Origin *findOrigin(const std::string& publicID) const;
-		FocalMechanism *findFocalMechanism(const std::string& publicID) const;
-		Catalog *findCatalog(const std::string& publicID) const;
 		Event *findEvent(const std::string& publicID) const;
+
+		EventParameters *eventParameters() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;
@@ -178,16 +194,19 @@ class SC_SYSTEM_CORE_API EventParameters : public PublicObject {
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
+		// Attributes
+		std::string _name;
+		std::string _description;
+		OPT(CreationInfo) _creationInfo;
+		Seiscomp::Core::Time _start;
+		OPT(Seiscomp::Core::Time) _end;
+		bool _dynamic;
+
 		// Aggregations
-		std::vector<PickPtr> _picks;
-		std::vector<AmplitudePtr> _amplitudes;
-		std::vector<ReadingPtr> _readings;
-		std::vector<OriginPtr> _origins;
-		std::vector<FocalMechanismPtr> _focalMechanisms;
-		std::vector<CatalogPtr> _catalogs;
+		std::vector<CommentPtr> _comments;
 		std::vector<EventPtr> _events;
 
-	DECLARE_SC_CLASSFACTORY_FRIEND(EventParameters);
+	DECLARE_SC_CLASSFACTORY_FRIEND(Catalog);
 };
 
 

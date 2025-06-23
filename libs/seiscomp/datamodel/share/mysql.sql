@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS Pick;
 DROP TABLE IF EXISTS OriginReference;
 DROP TABLE IF EXISTS FocalMechanismReference;
 DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS Arrival;
 DROP TABLE IF EXISTS Origin;
 DROP TABLE IF EXISTS Parameter;
@@ -85,7 +86,7 @@ CREATE TABLE PublicObject (
 		ON DELETE CASCADE
 ) ENGINE=INNODB;
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.2');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (NULL);
@@ -844,6 +845,31 @@ CREATE TABLE Event (
 	FOREIGN KEY(_oid)
 		REFERENCES Object(_oid)
 		ON DELETE CASCADE
+) ENGINE=INNODB;
+
+CREATE TABLE Catalog (
+	_oid BIGINT(20) NOT NULL,
+	_parent_oid BIGINT(20) NOT NULL,
+	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	name VARCHAR(255) NOT NULL,
+	description LONGTEXT,
+	creationInfo_agencyID VARCHAR(64),
+	creationInfo_agencyURI VARCHAR(255),
+	creationInfo_author VARCHAR(128),
+	creationInfo_authorURI VARCHAR(255),
+	creationInfo_creationTime DATETIME,
+	creationInfo_creationTime_ms INTEGER,
+	creationInfo_modificationTime DATETIME,
+	creationInfo_modificationTime_ms INTEGER,
+	creationInfo_version VARCHAR(64),
+	creationInfo_used TINYINT(1) NOT NULL DEFAULT '0',
+	start DATETIME NOT NULL,
+	start_ms INTEGER NOT NULL,
+	end DATETIME,
+	end_ms INTEGER,
+	dynamic TINYINT(1) NOT NULL,
+	PRIMARY KEY(_oid),
+	INDEX(_parent_oid)
 ) ENGINE=INNODB;
 
 CREATE TABLE Arrival (

@@ -42,6 +42,7 @@ class Magnitude;
 class StationMagnitude;
 class Pick;
 class Event;
+class Catalog;
 class Origin;
 class Parameter;
 class ParameterSet;
@@ -171,6 +172,7 @@ class SC_SYSTEM_CORE_API Comment : public Object {
 		StationMagnitude *stationMagnitude() const;
 		Pick *pick() const;
 		Event *event() const;
+		Catalog *catalog() const;
 		Origin *origin() const;
 		Parameter *parameter() const;
 		ParameterSet *parameterSet() const;

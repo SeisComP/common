@@ -45,6 +45,7 @@ DEFINE_SMARTPOINTER(Comment);
 DEFINE_SMARTPOINTER(OriginReference);
 DEFINE_SMARTPOINTER(FocalMechanismReference);
 
+class Catalog;
 class EventParameters;
 
 
@@ -217,6 +218,12 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 
 		//! Find an object by its unique attribute(s)
 
+		/**
+		 * The following methods return the parent object by type.
+		 * Because different parent types are possible, just one
+		 * of these methods will return a valid pointer at a time.
+		 */
+		Catalog *catalog() const;
 		EventParameters *eventParameters() const;
 
 		//! Implement Object interface

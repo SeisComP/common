@@ -41,6 +41,7 @@ SET(
 		originreference.h
 		focalmechanismreference.h
 		event.h
+		catalog.h
 		originuncertainty.h
 		arrival.h
 		origin.h
@@ -149,6 +150,7 @@ SET(
 		originreference.cpp
 		focalmechanismreference.cpp
 		event.cpp
+		catalog.cpp
 		originuncertainty.cpp
 		arrival.cpp
 		origin.cpp

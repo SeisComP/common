@@ -48,6 +48,7 @@ class DataUsed;
 class MomentTensorPhaseSetting;
 class MomentTensorStationContribution;
 class MomentTensorComponentContribution;
+class Catalog;
 class Event;
 class EventDescription;
 class OriginReference;
@@ -132,16 +133,17 @@ class SC_SYSTEM_CORE_API DatabaseReader : public DatabaseArchive {
 		 *         over to the caller. If no object has been found, NULL
 		 *         is returned.
 		 */
-		PublicObject* loadObject(const Seiscomp::Core::RTTI& classType,
+		PublicObject *loadObject(const Seiscomp::Core::RTTI& classType,
 		                         const std::string& publicID);
 
-		EventParameters* loadEventParameters();
+		EventParameters *loadEventParameters();
 		int load(EventParameters*);
 		int loadPicks(EventParameters*);
 		int loadAmplitudes(EventParameters*);
 		int loadReadings(EventParameters*);
 		int loadOrigins(EventParameters*);
 		int loadFocalMechanisms(EventParameters*);
+		int loadCatalogs(EventParameters*);
 		int loadEvents(EventParameters*);
 		int load(Pick*);
 		int loadComments(Pick*);
@@ -171,13 +173,16 @@ class SC_SYSTEM_CORE_API DatabaseReader : public DatabaseArchive {
 		int loadMomentTensorStationContributions(MomentTensor*);
 		int load(MomentTensorStationContribution*);
 		int loadMomentTensorComponentContributions(MomentTensorStationContribution*);
+		int load(Catalog*);
+		int loadComments(Catalog*);
+		int loadEvents(Catalog*);
 		int load(Event*);
 		int loadEventDescriptions(Event*);
 		int loadComments(Event*);
 		int loadOriginReferences(Event*);
 		int loadFocalMechanismReferences(Event*);
-		
-		Config* loadConfig();
+
+		Config *loadConfig();
 		int load(Config*);
 		int loadParameterSets(Config*);
 		int loadConfigModules(Config*);
@@ -190,14 +195,14 @@ class SC_SYSTEM_CORE_API DatabaseReader : public DatabaseArchive {
 		int loadConfigStations(ConfigModule*);
 		int load(ConfigStation*);
 		int loadSetups(ConfigStation*);
-		
-		QualityControl* loadQualityControl();
+
+		QualityControl *loadQualityControl();
 		int load(QualityControl*);
 		int loadQCLogs(QualityControl*);
 		int loadWaveformQualitys(QualityControl*);
 		int loadOutages(QualityControl*);
-		
-		Inventory* loadInventory();
+
+		Inventory *loadInventory();
 		int load(Inventory*);
 		int loadStationGroups(Inventory*);
 		int loadAuxDevices(Inventory*);
@@ -230,34 +235,33 @@ class SC_SYSTEM_CORE_API DatabaseReader : public DatabaseArchive {
 		int loadStreams(SensorLocation*);
 		int load(Stream*);
 		int loadComments(Stream*);
-		
-		Routing* loadRouting();
+
+		Routing *loadRouting();
 		int load(Routing*);
 		int loadRoutes(Routing*);
 		int loadAccesss(Routing*);
 		int load(Route*);
 		int loadRouteArclinks(Route*);
 		int loadRouteSeedlinks(Route*);
-		
-		Journaling* loadJournaling();
+
+		Journaling *loadJournaling();
 		int load(Journaling*);
 		int loadJournalEntrys(Journaling*);
-		
-		ArclinkLog* loadArclinkLog();
+
+		ArclinkLog *loadArclinkLog();
 		int load(ArclinkLog*);
 		int loadArclinkRequests(ArclinkLog*);
 		int loadArclinkUsers(ArclinkLog*);
 		int load(ArclinkRequest*);
 		int loadArclinkStatusLines(ArclinkRequest*);
 		int loadArclinkRequestLines(ArclinkRequest*);
-		
-		DataAvailability* loadDataAvailability();
+
+		DataAvailability *loadDataAvailability();
 		int load(DataAvailability*);
 		int loadDataExtents(DataAvailability*);
 		int load(DataExtent*);
 		int loadDataSegments(DataExtent*);
 		int loadDataAttributeExtents(DataExtent*);
-
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
