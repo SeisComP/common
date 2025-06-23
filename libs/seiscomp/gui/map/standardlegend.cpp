@@ -25,9 +25,7 @@
 #include <QFontMetrics>
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -35,8 +33,9 @@ namespace Map {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 StandardLegendItem::StandardLegendItem(StandardLegend *legend) {
-	if ( legend )
+	if ( legend ) {
 		legend->addItem(this);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -44,39 +43,48 @@ StandardLegendItem::StandardLegendItem(StandardLegend *legend) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(const QPen &p, const QString &l)
-: pen(p), label(l), size(-1) {}
+StandardLegendItem::StandardLegendItem(QPen p, QString l)
+: pen(std::move(p)), label(std::move(l)) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(const QPen &p, const QString &l, int s)
-: pen(p), label(l), size(s) {}
+StandardLegendItem::StandardLegendItem(QPen p, QString l, int s)
+: pen(std::move(p)), label(std::move(l)), size(s) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(const QPen &p, const QBrush &b, const QString &l)
-: pen(p), brush(b), label(l), size(-1) {}
+StandardLegendItem::StandardLegendItem(QPen p, const QBrush &b, QString l)
+: pen(std::move(p)), brush(b), label(std::move(l)) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(const QPen &p, const QBrush &b, const QString &l, int s)
-: pen(p), brush(b), label(l), size(s) {}
+StandardLegendItem::StandardLegendItem(QPen p, const QBrush &b, QString l, int s)
+: pen(std::move(p)), brush(b), label(std::move(l)), size(s) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::~StandardLegendItem() {}
+StandardLegendItem::StandardLegendItem(QImage sym, QString l)
+: symbol(std::move(sym)), label(std::move(l)) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+StandardLegendItem::StandardLegendItem(QImage sym, QString l, int s)
+: symbol(std::move(sym)), label(std::move(l)), size(s) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -95,6 +103,12 @@ void StandardLegendItem::draw(QPainter *painter, const QRect &symbolRect,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegendItem::drawSymbol(QPainter *painter, const QRect &rect) {
+	// Draw symbol if available
+	if ( !symbol.isNull() ) {
+		painter->drawImage(rect, symbol);
+		return;
+	}
+
 	// Limit pen width to 12.5% of rect width to ensure different line styles
 	// can be distinguished.
 	QPen p(pen);
@@ -169,8 +183,7 @@ void StandardLegend::addItem(StandardLegendItem *item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::clear() {
-	for ( int i = 0; i < _items.count(); ++i )
-		delete _items[i];
+	qDeleteAll(_items);
 	_items.clear();
 	_layoutDirty = true;
 }
@@ -192,7 +205,10 @@ StandardLegendItem *StandardLegend::takeItem(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::setMaximumColumns(int columns) {
-	if ( _maxColumns == columns ) return;
+	if ( _maxColumns == columns ) {
+		return;
+	}
+
 	_maxColumns = columns;
 	_layoutDirty = true;
 }
@@ -203,7 +219,10 @@ void StandardLegend::setMaximumColumns(int columns) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::setOrientation(Qt::Orientation orientation) {
-	if ( _orientation == orientation ) return;
+	if ( _orientation == orientation ) {
+		return;
+	}
+
 	_orientation = orientation;
 	_layoutDirty = true;
 }
@@ -214,8 +233,9 @@ void StandardLegend::setOrientation(Qt::Orientation orientation) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::update() {
-	if ( layer() )
+	if ( layer() ) {
 		updateLayout(layer()->size());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -224,7 +244,9 @@ void StandardLegend::update() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::updateLayout(const QSize &size) {
-	if ( !size.isValid() ) return;
+	if ( !size.isValid() ) {
+		return;
+	}
 
 	_columnWidth = 0;
 
@@ -241,11 +263,13 @@ void StandardLegend::updateLayout(const QSize &size) {
 
 	for ( int i = 0; i < _items.count(); ++i ) {
 		int itemWidth = fm.boundingRect(_items[i]->label).width();
-		if ( itemWidth > _columnWidth )
+		if ( itemWidth > _columnWidth ) {
 			_columnWidth = itemWidth;
+		}
 
-		if ( _items[i]->size > symbolSize )
+		if ( _items[i]->size > symbolSize ) {
 			symbolSize = _items[i]->size;
+		}
 	}
 
 	symbolSize = qMax(symbolSize, fontHeight);
@@ -258,7 +282,9 @@ void StandardLegend::updateLayout(const QSize &size) {
 			_size.setWidth((_columnWidth + _symbolSize.width() + fontHeight/2)*_columns + fontHeight + fontHeight/2*(_columns-1));
 			_size.setHeight(qMax(((_items.count()+_columns-1)/_columns)*(_symbolSize.height() + fontHeight/2)+fontHeight/2, 0));
 
-			if ( ch <= 0 ) return;
+			if ( ch <= 0 ) {
+				return;
+			}
 
 			while ( (_size.width() < size.width()) && (_size.height() > ch-30)
 			     && ((_maxColumns <= 0) || (_columns < _maxColumns))
@@ -276,7 +302,9 @@ void StandardLegend::updateLayout(const QSize &size) {
 			_size.setWidth((_columnWidth + _symbolSize.width() + fontHeight/2)*_columns + fontHeight + fontHeight/2*(_columns-1));
 			_size.setHeight(qMax(((_items.count()+_columns-1)/_columns)*(_symbolSize.height() + fontHeight/2)+fontHeight/2, 0));
 
-			if ( ch <= 0 ) return;
+			if ( ch <= 0 ) {
+				return;
+			}
 
 			rows = 1;
 
@@ -313,11 +341,13 @@ void StandardLegend::contextResizeEvent(const QSize &size) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void StandardLegend::draw(const QRect &rect, QPainter &painter) {
-	if ( _layoutDirty && layer() )
+	if ( _layoutDirty && layer() ) {
 		updateLayout(layer()->size());
+	}
 
-	if ( !_columnWidth )
+	if ( !_columnWidth ) {
 		return;
+	}
 
 	QFontMetrics fm(font());
 	int fontHeight = fm.height();
@@ -342,7 +372,9 @@ void StandardLegend::draw(const QRect &rect, QPainter &painter) {
 
 				int itemsPerColumn = (_items.count() + _columns-1) / _columns;
 				int cnt = _items.count() - itemsPerColumn * c;
-				if ( cnt > itemsPerColumn ) cnt = itemsPerColumn;
+				if ( cnt > itemsPerColumn ) {
+					cnt = itemsPerColumn;
+				}
 
 				for ( int i = 0; i < cnt; ++i, ++idx ) {
 					symbolRect.setSize(_symbolSize);
@@ -371,7 +403,9 @@ void StandardLegend::draw(const QRect &rect, QPainter &painter) {
 
 				int itemsPerColumn = (_items.count() + _columns-1) / _columns;
 				int cnt = _items.count() - itemsPerColumn * c;
-				if ( cnt > itemsPerColumn ) cnt = itemsPerColumn;
+				if ( cnt > itemsPerColumn ) {
+					cnt = itemsPerColumn;
+				}
 
 				for ( int i = 0; i < cnt; ++i ) {
 					int idx = i*_columns+c;
@@ -402,6 +436,4 @@ void StandardLegend::draw(const QRect &rect, QPainter &painter) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-} // namespace Map
-} // namespce Gui
-} // namespace Seiscomp
+} // namespace Seiscomp::Gui::Map

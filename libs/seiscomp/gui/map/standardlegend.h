@@ -30,9 +30,7 @@
 #include <QRect>
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 
 class StandardLegend;
@@ -44,11 +42,14 @@ class SC_GUI_API StandardLegendItem {
 	// ----------------------------------------------------------------------
 	public:
 		StandardLegendItem(StandardLegend *legend = nullptr);
-		StandardLegendItem(const QPen &p, const QString &l);
-		StandardLegendItem(const QPen &p, const QString &l, int s);
-		StandardLegendItem(const QPen &p, const QBrush &b, const QString &l);
-		StandardLegendItem(const QPen &p, const QBrush &b, const QString &l, int s);
-		virtual ~StandardLegendItem();
+		StandardLegendItem(QPen p, QString l);
+		StandardLegendItem(QPen p, QString l, int s);
+		StandardLegendItem(QPen p, const QBrush &b, QString l);
+		StandardLegendItem(QPen p, const QBrush &b, QString l, int s);
+		StandardLegendItem(QImage sym, QString l);
+		StandardLegendItem(QImage sym, QString l, int s);
+
+		virtual ~StandardLegendItem() = default;
 
 
 	// ----------------------------------------------------------------------
@@ -73,8 +74,9 @@ class SC_GUI_API StandardLegendItem {
 	public:
 		QPen    pen;
 		QBrush  brush;
+		QImage  symbol;
 		QString label;
-		int     size;
+		int     size{-1};
 };
 
 
@@ -86,7 +88,7 @@ class SC_GUI_API StandardLegend : public Legend {
 		//! C'tor
 		StandardLegend(QObject *parent);
 		//! D'tor
-		~StandardLegend();
+		~StandardLegend() override;
 
 
 	// ----------------------------------------------------------------------
@@ -125,8 +127,8 @@ class SC_GUI_API StandardLegend : public Legend {
 	//  Legend interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void contextResizeEvent(const QSize &size);
-		virtual void draw(const QRect &r, QPainter &p);
+		void contextResizeEvent(const QSize &size) override;
+		void draw(const QRect &r, QPainter &p) override;
 
 
 	// ----------------------------------------------------------------------
@@ -160,9 +162,7 @@ inline StandardLegendItem *StandardLegend::itemAt(int index) const {
 }
 
 
-} // namespace Map
-} // namespce Gui
-} // namespace Seiscomp
+} // namespace Seiscomp::Gui::Map
 
 
 #endif

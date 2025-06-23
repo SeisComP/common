@@ -32,9 +32,7 @@
 #include <QImage>
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 
 class Canvas;
@@ -47,7 +45,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 
 	public:
 		GeoFeatureLayer(QObject *parent = nullptr);
-		virtual ~GeoFeatureLayer();
+		~GeoFeatureLayer() override;
 
 
 	public:
@@ -76,12 +74,12 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 		 */
 		void renderFeatures(Canvas *canvas, QPainter &painter);
 
-		virtual void setVisible(bool flag);
-		virtual void bufferUpdated(Canvas *canvas, QPainter &painter);
+		void setVisible(bool flag) override;
+		void bufferUpdated(Canvas *canvas, QPainter &painter) override;
 
-		virtual QMenu *menu(QMenu*) const;
+		QMenu *menu(QMenu*) const override;
 
-		virtual void geoFeatureSetUpdated();
+		void geoFeatureSetUpdated() override;
 
 
 	private slots:
@@ -194,9 +192,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 };
 
 
-}
-}
-}
+} // ns Seiscomp::Gui::Map
 
 
 #endif

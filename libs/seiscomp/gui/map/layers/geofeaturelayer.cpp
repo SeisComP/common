@@ -32,9 +32,7 @@
 
 using namespace std;
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 namespace {
 
@@ -745,7 +743,7 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawRect(props->symbolRect.translated(p));
 						painter->drawText(textRect.translated(p),
-										  props->symbolNameAlignment, name);
+						                  props->symbolNameAlignment, name);
 					}
 				}
 			}
@@ -971,16 +969,50 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 
 		sort(items.begin(), items.end(), compareByIndex);
 
-		for ( const auto &item : items ) {
-			if ( item->filled ) {
-				legend->addItem(new StandardLegendItem(item->pen,
-				                                       item->brush,
-				                                       item->label.c_str()));
+		for ( const auto &item : std::as_const(items) ) {
+			StandardLegendItem *li;
+			QString label = item->label.c_str();
+			// Symbol
+			if ( !item->symbolIcon.isNull() ) {
+				li = new StandardLegendItem(item->symbolIcon, label);
 			}
+			// Shape
+			else if ( item->symbolShape != LayerProperties::Disabled ) {
+				const auto &rect = item->symbolRect;
+				QImage img(rect.size(), QImage::Format_ARGB32);
+				img.fill(Qt::transparent);
+				QPainter painter(&img);
+				painter.translate(-rect.topLeft());
+				painter.setPen(item->pen);
+				painter.setBrush(item->brush);
+				painter.setRenderHint(QPainter::Antialiasing, true);
+
+				// Preprocessed polygon
+				if ( !item->symbolPolygon.isEmpty() ) {
+					painter.drawPolygon(item->symbolPolygon);
+				}
+				// Circle
+				else if ( item->symbolShape == LayerProperties::Circle ) {
+					painter.drawEllipse(rect);
+				}
+				// Square
+				else if ( item->symbolShape == LayerProperties::Square ) {
+					painter.drawRect(rect);
+				}
+				// else LayerProperties::None - Nothing to draw
+
+				painter.end();
+				li = new StandardLegendItem(img, label);
+			}
+			// filled polygon
+			else if ( item->filled ) {
+				li = new StandardLegendItem(item->pen, item->brush, label);
+			}
+			// polyline of un-filled polygon
 			else {
-				legend->addItem(new StandardLegendItem(item->pen,
-				                                       item->label.c_str()));
+				li = new StandardLegendItem(item->pen, label);
 			}
+			legend->addItem(li);
 		}
 
 		addLegend(legend);
@@ -1296,6 +1328,4 @@ bool GeoFeatureLayer::compareNodeByName(const GeoFeatureLayer::CategoryNode *n1,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
-}
+} // ns Seiscomp::Gui::Map
