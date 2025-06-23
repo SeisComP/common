@@ -36,8 +36,7 @@
 class QLabel;
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 SC_GUI_API extern QChar degrees;
@@ -49,18 +48,25 @@ SC_GUI_API QColor readColor(const std::string &query, const std::string &str,
                             const QColor &base, bool *ok = nullptr);
 
 SC_GUI_API Qt::PenStyle stringToPenStyle(const std::string &str);
-SC_GUI_API Qt::PenStyle readPenStyle(const std::string &query, const std::string &str,
+SC_GUI_API Qt::PenStyle readPenStyle(const std::string &query,
+                                     const std::string &str,
                                      Qt::PenStyle base, bool *ok = nullptr);
 
 SC_GUI_API Qt::BrushStyle stringToBrushStyle(const std::string &str);
-SC_GUI_API Qt::BrushStyle readBrushStyle(const std::string &query, const std::string &str,
-                                         Qt::BrushStyle base, bool *ok = nullptr);
+SC_GUI_API Qt::BrushStyle readBrushStyle(const std::string &query,
+                                         const std::string &str,
+                                         Qt::BrushStyle base,
+                                         bool *ok = nullptr);
 
-SC_GUI_API QString latitudeToString(double lat, bool withValue = true, bool withUnit = true, int precision = 2);
-SC_GUI_API QString longitudeToString(double lon, bool withValue = true, bool withUnit = true, int precision = 2);
+SC_GUI_API QString latitudeToString(double lat, bool withValue = true,
+                                    bool withUnit = true, int precision = 2);
+SC_GUI_API QString longitudeToString(double lon, bool withValue = true,
+                                     bool withUnit = true, int precision = 2);
 SC_GUI_API QString depthToString(double depth, int precision = 0);
-SC_GUI_API QString timeToString(const Core::Time &t, const char *fmt, bool addTimeZone = false);
-SC_GUI_API void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTimeZone = false);
+SC_GUI_API QString timeToString(const Core::Time &t, const char *fmt,
+                                bool addTimeZone = false);
+SC_GUI_API void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt,
+                            bool addTimeZone = false);
 SC_GUI_API QString elapsedTimeString(const Core::TimeSpan &dt);
 SC_GUI_API QString numberToEngineering(double value, int precision = 1);
 
@@ -72,24 +78,25 @@ SC_GUI_API QString numberToEngineering(double value, int precision = 1);
  * @param elev Target elevation in meters.
  * @return The hypocentral distance in degrees.
  */
-SC_GUI_API double hypocentralDistance(double epicentral, double depth, double elev);
+SC_GUI_API double hypocentralDistance(double epicentral, double depth,
+                                      double elev);
 
 /**
  * @brief Computes the distance in degrees according to the scheme setting.
  * This is either the epicentral or hypocentral distance.
- * @param lat0 Source latitude.
- * @param lon0 Source longitude.
- * @param depth0 Source depth in km.
- * @param lat1 Target latitude.
- * @param lon1 Target longitude.
- * @param elev1 Target elevation in meters.
+ * @param lat1 Source latitude.
+ * @param lon1 Source longitude.
+ * @param depth1 Source depth in km.
+ * @param lat2 Target latitude.
+ * @param lon2 Target longitude.
+ * @param elev2 Target elevation in meters.
  * @param az The output azimuth from source to target.
  * @param baz The output back-azimuth from target to source.
  * @param epicentral The output epicentral distance.
  * @return Distance in degrees.
  */
-SC_GUI_API double computeDistance(double lat0, double lon0, double depth0,
-                                  double lat1, double lon1, double elev1,
+SC_GUI_API double computeDistance(double lat1, double lon1, double depth1,
+                                  double lat2, double lon2, double elev2,
                                   double *az = nullptr, double *baz = nullptr,
                                   double *epicentral = nullptr);
 
@@ -117,13 +124,40 @@ class SC_GUI_API EllipsisDrawer : public QObject {
 		bool eventFilter(QObject *obj, QEvent *event);
 };
 
+/**
+ * @brief Constructs an icon from a file path, application resource file or
+ * fontawsome identifier. Supported schemes:
+ *  - qrc:  Application resource read from qrc file
+ *  - file: File path
+ *  - fa:   Fontawesome symbol, regular style
+ *  - far:  Fontawesome symbol, regular style
+ *  - fas:  Fontawesome symbol, solid style
+ *  - fa6:  Fontawesome6 symbol, regular style
+ *  - far6: Fontawesome6 symbol, regular style
+ *  - fas6: Fontawesome6 symbol, solid style
+ *
+ *  If the URL contains no scheme the default QIcon(QString) constructor is
+ *  used.
+ *
+ * Examples:
+ *   file:/path/to/file.png             File path
+ *   /path/to/file.png                  File path, same as above
+ *   qrc:images/images/connect_no.png   Application resource read from qrc file
+ *   :images/images/connect_no.png      Application resource, same as above
+ *   fa:ballon                          Fontawesome ballon, regular
+ *   fas:ballon                         Fontawesome ballon, solid
+ *
+ * @param url Icon URL string.
+ * @return QIcon instanance.
+ */
+SC_GUI_API QIcon iconFromURL(const QString &url);
+
 
 template <typename T>
 using ObjectChangeList = std::vector<std::pair<Core::SmartPointer<T>, bool>>;
 
 
-}
-}
+} // ns Seiscomp::Gui
 
 
 #endif
