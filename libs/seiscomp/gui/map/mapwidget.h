@@ -41,11 +41,11 @@ class QSpinBox;
 namespace Seiscomp {
 namespace Gui {
 
-class SaveBNADialog : public QDialog {
+class SaveGeoFeatureDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		SaveBNADialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+		SaveGeoFeatureDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	public:
 		QLineEdit *name;
@@ -142,9 +142,10 @@ class SC_GUI_API MapWidget : public QWidget {
 		bool     _filterMap{false};
 		bool     _forceGrayScale{false};
 
-		QVector<QPointF> _measurePoints;
-		QString          _measureText;
-		SaveBNADialog   *_measureBNADialog;
+		QVector<QPointF>      _measurePoints;
+		QString               _measureText;
+		SaveGeoFeatureDialog *_measureSaveDialog;
+
 		QPoint   _firstDraggingPosition;
 		QPoint   _lastDraggingPosition;
 
