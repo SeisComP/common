@@ -50,20 +50,22 @@ class SC_GUI_API SelectStation : public QDialog {
 		explicit SelectStation(Core::Time time, bool ignoreDisabledStations,
 		                       const QSet<QString> &blackList,
 		                       QWidget* parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
-		~SelectStation();
 
 		QList<DataModel::Station*> selectedStations() const;
 
 		void setReferenceLocation(double lat, double lon);
 
 
+	protected:
+		void keyPressEvent(QKeyEvent *event) override;
+
+	private slots:
+		void listMatchingStations();
+
+
 	// ------------------------------------------------------------------
 	// Private Interface
 	// ------------------------------------------------------------------
-	private slots:
-		void listMatchingStations(const QString& substr);
-
-
 	private:
 		void init(Core::Time, bool ignoreDisabledStations,
 		          const QSet<QString> *blackList);
