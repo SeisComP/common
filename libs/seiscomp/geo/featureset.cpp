@@ -40,8 +40,7 @@ using namespace std;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Geo {
+namespace Seiscomp::Geo {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -75,8 +74,9 @@ GeoFeatureSetObserver::GeoFeatureSetObserver() : _observedSet(nullptr) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeatureSetObserver::~GeoFeatureSetObserver() {
-	if ( _observedSet )
+	if ( _observedSet ) {
 		_observedSet->unregisterObserver(this);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -84,14 +84,7 @@ GeoFeatureSetObserver::~GeoFeatureSetObserver() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeatureSet::GeoFeatureSet() {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeatureSet::GeoFeatureSet(const GeoFeatureSet &) {
+GeoFeatureSet::GeoFeatureSet(const GeoFeatureSet &/*unused*/) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -102,9 +95,9 @@ GeoFeatureSet::GeoFeatureSet(const GeoFeatureSet &) {
 GeoFeatureSet::~GeoFeatureSet() {
 	clear();
 
-	ObserverList::iterator it;
-	for ( it = _observers.begin(); it != _observers.end(); ++it )
-		(*it)->_observedSet = nullptr;
+	for ( auto *observer : _observers ) {
+		observer->_observedSet = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -113,10 +106,10 @@ GeoFeatureSet::~GeoFeatureSet() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeatureSet::registerObserver(GeoFeatureSetObserver *observer) {
-	ObserverList::iterator it = find(_observers.begin(), _observers.end(),
-	                                 observer);
-	if ( it != _observers.end() )
+	auto it = find(_observers.begin(), _observers.end(), observer);
+	if ( it != _observers.end() ) {
 		return false;
+	}
 
 	observer->_observedSet = this;
 	_observers.push_back(observer);
@@ -129,10 +122,10 @@ bool GeoFeatureSet::registerObserver(GeoFeatureSetObserver *observer) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeatureSet::unregisterObserver(GeoFeatureSetObserver *observer) {
-	ObserverList::iterator it = find(_observers.begin(), _observers.end(),
-	                                 observer);
-	if ( it == _observers.end() )
+	auto it = find(_observers.begin(), _observers.end(), observer);
+	if ( it == _observers.end() ) {
 		return false;
+	}
 
 	observer->_observedSet = nullptr;
 	_observers.erase(it);
@@ -144,16 +137,35 @@ bool GeoFeatureSet::unregisterObserver(GeoFeatureSetObserver *observer) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool GeoFeatureSet::operator==(const GeoFeatureSet &other) const {
+	return std::tie(_features, _categories, _observers) ==
+	       std::tie(other._features, other._categories, other._observers);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool GeoFeatureSet::operator!=(const GeoFeatureSet &other) const {
+	return !(*this == other);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeatureSet::clear() {
 	// Delete all GeoFeatures
-	for ( size_t i = 0; i < _features.size(); ++i ) {
-		delete _features[i];
+	for ( const auto *feature : _features ) {
+		delete feature;
 	}
 	_features.clear();
 
 	// Delete all Categories
-	for ( size_t i = 0; i < _categories.size(); ++i ) {
-		delete _categories[i];
+	for ( const auto *category : _categories ) {
+		delete category;
 	}
 	_categories.clear();
 }
@@ -187,9 +199,9 @@ void GeoFeatureSet::load() {
 		}
 	}
 
-	ObserverList::iterator it;
-	for ( it = _observers.begin(); it != _observers.end(); ++it )
-		(*it)->geoFeatureSetUpdated();
+	for ( auto *observer : _observers ) {
+		observer->geoFeatureSetUpdated();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -283,12 +295,15 @@ size_t GeoFeatureSet::readBNADirRecursive(const fs::path &directory,
 				);
 			}
 			else if ( fileName.length() < 4 ||
-			          fileName.substr(fileName.length() - 4) != ".bna")
+			          fileName.substr(fileName.length() - 4) != ".bna") {
 				continue;
-			else if ( readBNA(*this, SC_FS_IT_STR(itd), category) > 0 )
+			}
+			else if ( readBNA(*this, SC_FS_IT_STR(itd), category) > 0 ) {
 				++fileCount;
-			else
+			}
+			else {
 				SEISCOMP_ERROR("Error reading file: %s", SC_FS_IT_STR(itd).c_str());
+			}
 		}
 	}
 	catch ( const exception & ) {}
@@ -347,12 +362,11 @@ size_t GeoFeatureSet::readDirRecursive(const boost::filesystem::path &directory,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Category* GeoFeatureSet::addNewCategory(const string name,
-                                        const Category* parent) {
-	Category* category = new Category(_categories.size(),
-		parent == nullptr || parent->name == "" ? name :
+Category* GeoFeatureSet::addNewCategory(string name, const Category *parent) {
+	auto *category = new Category(_categories.size(),
+		!parent || parent->name.empty() ? name :
 		parent->name + "." + name, parent);
-	category->localName = name;
+	category->localName = std::move(name);
 	_categories.push_back(category);
 	return category;
 }
@@ -362,11 +376,11 @@ Category* GeoFeatureSet::addNewCategory(const string name,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const string GeoFeatureSet::initStatus(const string &directory,
-                                       unsigned int fileCount) const {
-	unsigned int vertexCount = 0;
+string GeoFeatureSet::initStatus(const string &directory,
+                                 unsigned int fileCount) const {
+	size_t vertexCount = 0;
 
-	vector<GeoFeature*>::const_iterator itf;
+	Features::const_iterator itf;
 
 	for ( itf = _features.begin(); itf != _features.end(); ++itf ) {
 		vertexCount += (*itf)->vertices().size();
@@ -388,7 +402,7 @@ const string GeoFeatureSet::initStatus(const string &directory,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeatureSet::readBNAFile(const string &filename,
                                 const Category *category) {
-	return readBNA(*this, filename, category) > 0 ? true : false;
+	return readBNA(*this, filename, category) > 0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -440,6 +454,15 @@ bool GeoFeatureSet::compareByRank(const GeoFeature* gf1, const GeoFeature* gf2) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-} // ns Geo
-} // ns Seiscomp
+std::ostream& operator<<(std::ostream& os, const GeoFeatureSet &gfs) {
+	writeGeoJSON(os, gfs.features());
+	return os;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns Seiscomp::Geo
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

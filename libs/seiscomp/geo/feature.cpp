@@ -19,57 +19,77 @@
 
 
 #include <seiscomp/geo/feature.h>
+#include <seiscomp/geo/formats/geojson.h>
 
 #include <algorithm>
 #include <iostream>
 
 
-using namespace Seiscomp::Geo;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace Seiscomp::Geo {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeature::GeoFeature(const Category* category, unsigned int rank)
+GeoFeature::GeoFeature(const Category *category, unsigned int rank)
 : _category(category)
-, _userData(nullptr)
-, _rank(rank)
-, _closedPolygon(false) {}
+, _rank(rank) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeature::GeoFeature(const std::string& name, const Category* category,
+GeoFeature::GeoFeature(std::string name, const Category *category,
                        unsigned int rank)
-: _name(name)
+: _name(std::move(name))
 , _category(category)
-, _userData(nullptr)
-, _rank(rank)
-, _closedPolygon(false) {}
+, _rank(rank) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-GeoFeature::GeoFeature(const std::string &name, const Category* category,
-                       unsigned int rank, const Attributes &attributes)
-: _name(name)
+GeoFeature::GeoFeature(std::string name, const Category* category,
+                       unsigned int rank, Attributes attributes)
+: _name(std::move(name))
 , _category(category)
-, _userData(nullptr)
 , _rank(rank)
-, _attributes(attributes)
-, _closedPolygon(false) {}
+, _attributes(std::move(attributes)) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 GeoFeature::~GeoFeature() {
 	_vertices.clear();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool GeoFeature::operator==(const GeoFeature& other) const {
+	// _bbox not part of the comparison because it is derived from the vertices
+	return std::tie(_name, _category, _userData, _rank, _attributes, _vertices,
+	                _closedPolygon, _subFeatures) ==
+	       std::tie(other._name, other._category, other._userData, other._rank,
+	                other._attributes, other._vertices, other._closedPolygon,
+	                other._subFeatures);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool GeoFeature::operator!=(const GeoFeature& other) const {
+	return !(*this == other);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -98,8 +118,9 @@ void GeoFeature::setAttribute(const std::string &name, const std::string &value)
 void GeoFeature::addVertex(const GeoCoordinate &v, bool newSubFeature) {
 	// Mark this vertex as the beginning of a new sub feature. Note: The first
 	// vertex is never a subfeature
-	if ( newSubFeature && !_vertices.empty() )
+	if ( newSubFeature && !_vertices.empty() ) {
 		_subFeatures.push_back(_vertices.size());
+	}
 
 	// Add the new vertex
 	_vertices.push_back(v);
@@ -111,7 +132,8 @@ void GeoFeature::addVertex(const GeoCoordinate &v, bool newSubFeature) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeature::updateBoundingBox() {
-	size_t startIdx = 0, endIdx = 0;
+	size_t startIdx = 0;
+	size_t endIdx = 0;
 	size_t nSubFeat = _subFeatures.size();
 
 	_bbox = GeoBoundingBox();
@@ -131,15 +153,17 @@ void GeoFeature::updateBoundingBox() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void GeoFeature::invertOrder() {
-	size_t startIdx = 0, endIdx = 0;
+	size_t startIdx = 0;
+	size_t endIdx = 0;
 	size_t nSubFeat = _subFeatures.size();
 
 	for ( size_t i = 0; i <= nSubFeat; ++i ) {
 		endIdx = (i == nSubFeat ? _vertices.size() : _subFeatures[i]);
 		size_t count = endIdx-startIdx;
 		size_t halfCount = count/2;
-		for ( size_t j = 0; j < halfCount; ++j )
+		for ( size_t j = 0; j < halfCount; ++j ) {
 			std::swap(_vertices[startIdx+j], _vertices[startIdx+count-1-j]);
+		}
 		startIdx = endIdx;
 	}
 }
@@ -151,8 +175,9 @@ void GeoFeature::invertOrder() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
-typedef std::pair<size_t, double> SubFeatureIndexWithArea;
-bool cmpSubFeature(const SubFeatureIndexWithArea &sf1, const SubFeatureIndexWithArea &sf2) {
+using SubFeatureIndexWithArea = std::pair<size_t, double>;
+bool cmpSubFeature(const SubFeatureIndexWithArea &sf1,
+                   const SubFeatureIndexWithArea &sf2) {
 	return fabs(sf1.second) > fabs(sf2.second);
 }
 
@@ -160,16 +185,18 @@ bool cmpSubFeature(const SubFeatureIndexWithArea &sf1, const SubFeatureIndexWith
 
 void GeoFeature::sort() {
 	// Nothing to do without any subfeatures
-	if ( _subFeatures.empty() || !_closedPolygon )
+	if ( _subFeatures.empty() || !_closedPolygon ) {
 		return;
+	}
 
 	std::vector<SubFeatureIndexWithArea> subFeatures;
 
-	size_t startIdx = 0, endIdx;
+	size_t startIdx = 0;
+	size_t endIdx = 0;
 	for ( size_t i = 0; i <= _subFeatures.size(); ++i, startIdx = endIdx ) {
 		endIdx = (i == _subFeatures.size() ? _vertices.size() : _subFeatures[i]);
 		double A = Seiscomp::Geo::area(&_vertices[startIdx], endIdx - startIdx);
-		subFeatures.push_back(SubFeatureIndexWithArea(i, A));
+		subFeatures.emplace_back(i, A);
 	}
 
 	std::sort(subFeatures.begin(), subFeatures.end(), cmpSubFeature);
@@ -183,24 +210,27 @@ void GeoFeature::sort() {
 		}
 	}
 
-	if ( !needResort )
+	if ( !needResort ) {
 		return;
+	}
 
 	GeoCoordinates tmpv(_vertices);
 	std::vector<size_t> tmpsf(_subFeatures);
 	size_t vi = 0;
 	size_t sfi = 0;
 
-	for ( size_t i = 0; i < subFeatures.size(); ++i ) {
-		size_t sf = subFeatures[i].first;
+	for ( const auto &subfeature : subFeatures ) {
+		size_t sf = subfeature.first;
 		size_t startIdx = !sf ? 0 : tmpsf[sf-1];
 		size_t endIdx = sf == tmpsf.size() ? tmpv.size() : tmpsf[sf];
 
-		if ( sfi )
+		if ( sfi ) {
 			_subFeatures[sfi-1] = vi;
+		}
 
-		for ( size_t j = startIdx; j < endIdx; ++j )
+		for ( size_t j = startIdx; j < endIdx; ++j ) {
 			_vertices[vi++] = tmpv[j];
+		}
 
 		++sfi;
 	}
@@ -224,9 +254,12 @@ void GeoFeature::setUserData(void *d) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool GeoFeature::contains(const GeoCoordinate &v) const {
-	if ( !closedPolygon() ) return false;
+	if ( !closedPolygon() ) {
+		return false;
+	}
 
-	size_t startIdx = 0, endIdx = 0;
+	size_t startIdx = 0;
+	size_t endIdx = 0;
 	size_t nSubFeat = _subFeatures.size();
 	bool isInside = false;
 
@@ -247,9 +280,12 @@ bool GeoFeature::contains(const GeoCoordinate &v) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double GeoFeature::area() const {
-	if ( !closedPolygon() ) return 0;
+	if ( !closedPolygon() ) {
+		return 0;
+	}
 
-	size_t startIdx = 0, endIdx = 0;
+	size_t startIdx = 0;
+	size_t endIdx = 0;
 	size_t nSubFeat = _subFeatures.size();
 	double A = 0.0;
 
@@ -270,3 +306,21 @@ double GeoFeature::area() const {
 double GeoFeature::area(const GeoCoordinate *polygon, size_t sides) {
 	return Seiscomp::Geo::area(polygon, sides);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::ostream& operator<<(std::ostream& os, const GeoFeature &gf) {
+	writeGeoJSON(os, gf);
+	return os;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns Seiscomp::Geo
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

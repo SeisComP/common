@@ -28,14 +28,15 @@
 #include <vector>
 
 #include <seiscomp/unittest/unittests.h>
-
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/geo/coordinate.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/geo/featureset.h>
+#include <seiscomp/geo/formats/geojson.h>
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/seismology/regions/polygon.h>
+#include <seiscomp/utils/files.h>
 
 #include <boost/system/error_code.hpp>
 
@@ -50,8 +51,28 @@ struct RegionTest {
 	string name;
 };
 
+#define ASSERT_MSG(cond, msg) do \
+{ if (!(cond)) { \
+	ostringstream oss; \
+	oss << __FILE__ << "(" << __LINE__ << "): "<< msg << "\n"; cerr << oss.str(); \
+	abort(); } \
+} while(0)
 
-BOOST_AUTO_TEST_SUITE(seiscomp_core_georegions)
+
+
+struct F {
+	F()
+	: dataDir(string(SOURCE_DIR) + "/data/"),
+	  resultDir(string(BINARY_DIR) + "/result/") {}
+
+	string dataDir;
+	string resultDir;
+};
+
+BOOST_FIXTURE_TEST_SUITE(seiscomp_core_georegions, F)
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -218,10 +239,10 @@ BOOST_AUTO_TEST_CASE(poly7) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(fepRegions) {
 	PolyRegions regions;
-	regions.read("./data/fep");
+	regions.read(dataDir + "fep");
 
 	ifstream ifs;
-	ifs.open("./data/region-test.csv");
+	ifs.open(dataDir + "region-test.csv");
 
 	BOOST_REQUIRE(ifs.is_open());
 
@@ -230,10 +251,14 @@ BOOST_AUTO_TEST_CASE(fepRegions) {
 		ifs >> tr.lat >> tr.lon;
 		getline(ifs, tr.name);
 		Core::trim(tr.name);
-		if ( tr.name.empty() ) continue;
+		if ( tr.name.empty() ) {
+			continue;
+		}
+
 		string name = regions.findRegionName(tr.lat, tr.lon);
-		if ( name.empty() )
+		if ( name.empty() ) {
 			name = Regions::getRegionName(tr.lat, tr.lon);
+		}
 		BOOST_CHECK_EQUAL(name, tr.name);
 	}
 }
@@ -245,7 +270,7 @@ BOOST_AUTO_TEST_CASE(fepRegions) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(bnaRegions) {
 	GeoFeatureSet features;
-	features.readFile("./data/bna/brandenburg.bna", nullptr);
+	features.readFile(dataDir + "bna/brandenburg.bna", nullptr);
 	BOOST_REQUIRE(!features.features().empty());
 
 	GeoFeature *f = features.features()[0];
@@ -256,42 +281,41 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 
 	features.clear();
 
-	BOOST_REQUIRE(features.readFile("./data/bna/bna-with-comments.bna", nullptr));
+	BOOST_REQUIRE(features.readFile(dataDir + "bna/bna-with-comments.bna", nullptr));
 
 	features.clear();
-	features.readFile("./data/bna/header-with-attributes.bna", nullptr);
+	features.readFile(dataDir + "bna/header-with-attributes.bna", nullptr);
 
 	vector<GeoFeature> expected;
 	GeoFeature::Attributes atts;
 
 	atts["eventType"] = "quarry blast";
 	atts["maxDepth"] = "10";
-	expected.push_back(GeoFeature("name1", nullptr, 4, atts));
+	expected.emplace_back("name1", nullptr, 4, atts);
 	atts.clear();
 
 	atts["test1"] = "1,2,3";
 	atts["test2"] = "1:2:3";
 	atts["test3"] = "1,2,3";
 	atts["test4"] = "1:2:3";
-	expected.push_back(GeoFeature("name2", nullptr, 5, atts));
+	expected.emplace_back("name2", nullptr, 5, atts);
 	atts.clear();
 
 	atts["test1"] = "1,2,3";
 	atts["te:st"] = "bar";
-	expected.push_back(GeoFeature("name3", nullptr, 1, atts));
+	expected.emplace_back("name3", nullptr, 1, atts);
 	atts.clear();
 
 	BOOST_REQUIRE(features.features().size() == expected.size());
-	vector<GeoFeature>::const_iterator exp_it = expected.begin();
-	vector<GeoFeature*>::const_iterator got_it = features.features().begin();
+	auto exp_it = expected.begin();
+	auto got_it = features.features().begin();
 	for ( ; exp_it != expected.end(); ++exp_it, ++got_it ) {
 		BOOST_CHECK_EQUAL(exp_it->name(), (*got_it)->name());
 		BOOST_CHECK_EQUAL(exp_it->rank(), (*got_it)->rank());
 		bool success = true;
-		GeoFeature::Attributes::const_iterator exp_att_it = exp_it->attributes().begin();
-		GeoFeature::Attributes::const_iterator got_att_it;
+		auto exp_att_it = exp_it->attributes().begin();
 		for ( ; exp_att_it != exp_it->attributes().end() && success; ++exp_att_it ) {
-			got_att_it = (*got_it)->attributes().find(exp_att_it->first);
+			auto got_att_it = (*got_it)->attributes().find(exp_att_it->first);
 			success = got_att_it != (*got_it)->attributes().end() &&
 			          exp_att_it->second == got_att_it->second;
 			BOOST_CHECK(success);
@@ -305,13 +329,25 @@ BOOST_AUTO_TEST_CASE(bnaRegions) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(geojsonRegions) {
-	GeoFeatureSet features;
+	string srcDir = dataDir + "geojson/";
+	string srcFile;
+	string dstDir = resultDir + "geojson/";
+
+	ASSERT_MSG(Util::pathExists(srcDir),
+			   "Test data dir not found: " << srcDir);
+	ASSERT_MSG(Util::pathExists(dstDir) || Util::createPath(dstDir),
+	           "Could not create output directory: " << dstDir);
+	string testFile;
+
+	GeoFeatureSet gfs;
 
 	// *********************
 	// Point outside Feature
-	BOOST_REQUIRE(features.readFile("./data/geojson/point.geojson", nullptr));
-	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
-	auto f = features.features()[0];
+	srcFile = srcDir + "point.geojson";
+	BOOST_TEST_INFO("Invalid Point: " << srcFile);
+	BOOST_REQUIRE(gfs.readFile(srcFile, nullptr));
+	BOOST_REQUIRE_EQUAL(gfs.features().size(), 1);
+	auto *f = gfs.features()[0];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK(f->name().empty());
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -323,10 +359,12 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 
 	// ***********************
 	// Feature with MultiPoint
-	features.clear();
-	BOOST_REQUIRE(features.readFile("./data/geojson/feature.geojson", nullptr));
-	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
-	f = features.features()[0];
+	gfs.clear();
+	srcFile = srcDir + "feature.geojson";
+	BOOST_TEST_INFO("Invalid Feature: " << srcFile);
+	BOOST_REQUIRE(gfs.readFile(srcFile, nullptr));
+	BOOST_REQUIRE_EQUAL(gfs.features().size(), 1);
+	f = gfs.features()[0];
 	BOOST_CHECK_EQUAL(f->subFeatures().size(), 1);
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "MultiPoint");
@@ -340,10 +378,12 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 
 	// ************************
 	// Feature without Geometry
-	features.clear();
-	BOOST_REQUIRE(features.readFile("./data/geojson/feature-no-geometry.geojson", nullptr));
-	BOOST_REQUIRE_EQUAL(features.features().size(), 1);
-	f = features.features()[0];
+	gfs.clear();
+	srcFile = srcDir + "feature-no-geometry.geojson";
+	BOOST_TEST_INFO("Invalid feature: " << srcFile);
+	BOOST_REQUIRE(gfs.readFile(srcFile, nullptr));
+	BOOST_REQUIRE_EQUAL(gfs.features().size(), 1);
+	f = gfs.features()[0];
 	BOOST_CHECK_EQUAL(f->subFeatures().size(), 0);
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "FeatureWithoutGeometry");
@@ -355,13 +395,16 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 
 	// *****************
 	// FeatureCollection
-	features.clear();
-	BOOST_REQUIRE(features.readFile("./data/geojson/featurecollection.geojson", nullptr));
-	BOOST_CHECK_EQUAL(features.features().size(), 7);
+	gfs.clear();
+	srcFile = srcDir + "featurecollection.geojson";
+	BOOST_TEST_INFO("Invalid FeatureCollection: " << srcFile);
+	BOOST_REQUIRE(gfs.readFile(srcFile, nullptr));
+	BOOST_CHECK_EQUAL(gfs.features().size(), 7);
 
 	// Point
-	BOOST_REQUIRE_GE(features.features().size(), 1);
-	f = features.features()[0];
+	BOOST_TEST_INFO("Invalid Point in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 1);
+	f = gfs.features()[0];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "Point");
 	BOOST_CHECK_EQUAL(f->rank(), 16);
@@ -376,8 +419,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 13, 52, 13));
 
 	// MultiPoint
-	BOOST_REQUIRE_GE(features.features().size(), 2);
-	f = features.features()[1];
+	BOOST_TEST_INFO("Invalid MultiPoint in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 2);
+	f = gfs.features()[1];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "MultiPoint");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -389,8 +433,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 14, 52, 15));
 
 	// LineString
-	BOOST_REQUIRE_GE(features.features().size(), 3);
-	f = features.features()[2];
+	BOOST_TEST_INFO("Invalid LineString in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 3);
+	f = gfs.features()[2];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "LineString");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -403,8 +448,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(-17, 20, -17, 23));
 
 	// MultiLineString
-	BOOST_REQUIRE_GE(features.features().size(), 4);
-	f = features.features()[3];
+	BOOST_TEST_INFO("Invalid MultiLineString in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 4);
+	f = gfs.features()[3];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "MultiLineString");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -419,8 +465,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(-15, 20, -15, 29));
 
 	// Polygon
-	BOOST_REQUIRE_GE(features.features().size(), 5);
-	f = features.features()[4];
+	BOOST_TEST_INFO("Invalid Polygon in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 5);
+	f = gfs.features()[4];
 	BOOST_CHECK(f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "Polygon");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -434,8 +481,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(-5, 0, -2, 3));
 
 	// MultiPolygon
-	BOOST_REQUIRE_GE(features.features().size(), 6);
-	f = features.features()[5];
+	BOOST_TEST_INFO("Invalid MultiPolygon in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 6);
+	f = gfs.features()[5];
 	BOOST_CHECK(f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "MultiPolygon");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -452,8 +500,9 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(-25, 10, -22, 23));
 
 	// GeometryCollection consisting of Point, LineString, MultiPoint and LineString
-	BOOST_REQUIRE_GE(features.features().size(), 7);
-	f = features.features()[6];
+	BOOST_TEST_INFO("Invalid GeometryCollection in FeatureCollection: " << srcFile);
+	BOOST_REQUIRE_GE(gfs.features().size(), 7);
+	f = gfs.features()[6];
 	BOOST_CHECK(!f->closedPolygon());
 	BOOST_CHECK_EQUAL(f->name(), "GeometryCollection");
 	BOOST_CHECK_EQUAL(f->rank(), 1);
@@ -469,6 +518,27 @@ BOOST_AUTO_TEST_CASE(geojsonRegions) {
 	BOOST_CHECK_EQUAL(f->vertices()[5], GeoCoordinate(52, 55)); // LineString
 	BOOST_CHECK_EQUAL(f->vertices()[6], GeoCoordinate(52, 56));
 	BOOST_CHECK(f->bbox() == GeoBoundingBox(52, 50, 52, 56));
+
+	// **********
+	// Write file
+	string dstFile = dstDir + "featurecollection.geojson";
+	BOOST_TEST_INFO("Wrote invalid number of features to: " << dstFile);
+	BOOST_CHECK_EQUAL(writeGeoJSON(dstFile, gfs.features(), 2),
+	                  gfs.features().size());
+
+	// Read output file
+	GeoFeatureSet gfs2;
+	BOOST_TEST_INFO("Invalid number of features in: " << dstFile);
+	BOOST_CHECK_EQUAL(readGeoJSON(gfs2, dstFile), gfs.features().size());
+
+	ASSERT_MSG(gfs.features().size() == gfs2.features().size(),
+	           "GeoFeatureSets mismatch");
+
+	auto exp = gfs.features().begin();
+	for ( const auto *got : gfs2.features() ) {
+		BOOST_TEST_INFO("Missmatch in feature: " << got->name());
+		BOOST_CHECK_EQUAL(*got, **exp++);
+	}
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -88,6 +88,8 @@ namespace Core {
    - Added Seiscomp::Math::Geo::WGS84_FLATTENING
    - Removed defined KM_OF_DEGREE
    - Renamed Seiscomp::ellipcorr to Seiscomp::ellipticityCorrection
+   - Added Seiscomp::Geo::readFEP
+   - Added Seiscomp::Geo::writeGeoJSON
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator

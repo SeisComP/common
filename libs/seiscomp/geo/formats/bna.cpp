@@ -31,8 +31,7 @@
 using namespace std;
 
 
-namespace Seiscomp {
-namespace Geo {
+namespace Seiscomp::Geo {
 
 namespace {
 
@@ -52,13 +51,14 @@ bool readBNAHeader(string &segment, unsigned int &rank,
 		error = "BNA requires at least 2 header fields";
 		return false;
 	}
-	else if ( fields.size() > 5 ) {
+
+	if ( fields.size() > 5 ) {
 		error = "BNA allows at most 5 header fields";
 		return false;
 	}
 
 	// read segment name from first field
-	vector<string>::iterator it = fields.begin();
+	auto it = fields.begin();
 	segment = Core::trim(*it);
 
 	// read rank and attributes from next fields
@@ -77,18 +77,23 @@ bool readBNAHeader(string &segment, unsigned int &rank,
 		// "foo1: bar1, foo2: bar2"
 		char *source = const_cast<char *>(it->c_str());
 		size_t sourceLen = it->size();
-		const char *key, *value;
-		size_t keyLen, valueLen;
+		const char *key;
+		const char *value;
+		size_t keyLen;
+		size_t valueLen;
 		char delimFound = 0;
 		while ( sourceLen > 0 ) {
 			key = Core::tokenizeUnescape(keyLen, sourceLen, source, delimFound, ":");
-			if ( key == nullptr || !sourceLen || !delimFound )
+			if ( key == nullptr || !sourceLen || !delimFound ) {
 				break;
+			}
 			value = Core::tokenizeUnescape(valueLen, sourceLen, source, delimFound, ",");
-			if ( value != nullptr )
+			if ( value != nullptr ) {
 				attributes[string(key, keyLen)] = string(value, valueLen);
-			else
+			}
+			else {
 				attributes[string(key, keyLen)] = "";
+			}
 		}
 	}
 
@@ -113,22 +118,26 @@ bool readBNAHeader(string &segment, unsigned int &rank,
 }
 
 
-size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
+size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
                const Category *category) {
-	SEISCOMP_DEBUG("Reading segments from file: %s", filename.c_str());
+	SEISCOMP_DEBUG("Reading segments from file: %s", path.c_str());
 
-	ifstream infile(filename.c_str());
+	ifstream infile(path.c_str());
 
 	if ( infile.fail() ) {
 		SEISCOMP_WARNING("Could not open segment file for reading: %s",
-		                 filename.c_str());
+		                 path.c_str());
 		return false;
 	}
 
 	vector<GeoFeature*> features;
 	GeoFeature *feature;
-	unsigned int lineNum = 0, rank, points;
-	string line, segment, error;
+	unsigned int lineNum = 0;
+	unsigned int rank;
+	unsigned int points;
+	string line;
+	string segment;
+	string error;
 	const char *nptr;
 	char *endptr;
 	bool isClosed;
@@ -149,7 +158,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 
 		if ( !readBNAHeader(segment, rank, attributes, points, isClosed, error, line) ) {
 			SEISCOMP_ERROR("error reading BNA header in file %s at line %i: %s",
-			               filename.c_str(), lineNum, error.c_str());
+			               path.c_str(), lineNum, error.c_str());
 			fileValid = false;
 			break;
 		}
@@ -157,8 +166,9 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 
 		feature = new GeoFeature(segment, category, rank, attributes);
 		features.push_back(feature);
-		if ( isClosed )
+		if ( isClosed ) {
 			feature->setClosedPolygon(true);
+		}
 
 		// read vertices, expected format:
 		//   "lon1,lat1 lon2,lat2 ... lon_i,lat_i\n"
@@ -168,7 +178,9 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 		while ( true ) {
 			if ( nptr == nullptr ) {
 				// stop if all points have been read
-				if ( pi == points ) break;
+				if ( pi == points ) {
+					break;
+				}
 
 				// read next line
 				if ( infile.good() ) {
@@ -186,7 +198,9 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 			}
 
 			// advance nptr to next none white space
-			while ( isspace(*nptr) ) ++nptr;
+			while ( isspace(*nptr) ) {
+				++nptr;
+			}
 
 			// read next line if end of line is reached
 			if ( *nptr == '\0' ) {
@@ -211,7 +225,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lon < -180 || v.lon > 180) {
 				SEISCOMP_ERROR("invalid longitude in file %s at line %i",
-				               filename.c_str(), lineNum);
+				               path.c_str(), lineNum);
 				fileValid = false;
 				break;
 			}
@@ -220,7 +234,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 			nptr = strchr(endptr, ',');
 			if ( nptr == nullptr ) {
 				SEISCOMP_ERROR("invalid coordinate separator in file %s at line %i",
-				               filename.c_str(), lineNum);
+				               path.c_str(), lineNum);
 				fileValid = false;
 				break;
 			}
@@ -231,17 +245,20 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
 			     v.lat < -90 || v.lat > 90) {
 				SEISCOMP_ERROR("invalid latitude in file %s at line %i",
-				               filename.c_str(), lineNum);
+				               path.c_str(), lineNum);
 				fileValid = false;
 				break;
 			}
 			nptr = endptr;
 
-			while ( isspace(*nptr) ) ++nptr;
+			while ( isspace(*nptr) ) {
+				++nptr;
+			}
 
 			// Skip comments
-			if ( strncmp(nptr, "--", 2) == 0 )
+			if ( strncmp(nptr, "--", 2) == 0 ) {
 				nptr = nullptr;
+			}
 
 			// increase number of succesfully read points
 			pi += 1;
@@ -254,11 +271,12 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 					startSubFeature = true;
 					continue;
 				}
+
 				// Don't add the vertex if it is equal to the start point of
 				// the current subfeature
-				else if ( !startSubFeature &&
-				          !feature->subFeatures().empty() &&
-				          v == feature->vertices()[feature->subFeatures().back()] ) {
+				if ( !startSubFeature &&
+				     !feature->subFeatures().empty() &&
+				     v == feature->vertices()[feature->subFeatures().back()] ) {
 					continue;
 				}
 			}
@@ -269,24 +287,25 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &filename,
 
 		if ( fileValid ) {
 			feature->updateBoundingBox();
-			if ( feature->area() < 0 )
+			if ( feature->area() < 0 ) {
 				feature->invertOrder();
+			}
 		}
 	}
 
 	if ( fileValid ) {
-		for ( GeoFeature *f : features )
+		for ( GeoFeature *f : features ) {
 			featureSet.addFeature(f);
+		}
 		return features.size();
 	}
-	else {
-		for ( size_t i = 0; i < features.size(); ++i ) {
-			delete features[i];
-		}
-		return 0;
+
+	for ( auto *feature : features ) {
+		delete feature;
 	}
+
+	return 0;
 }
 
 
-}
-}
+} // ns Seiscomp::Geo

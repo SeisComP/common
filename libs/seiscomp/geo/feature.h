@@ -26,6 +26,7 @@
 #include <seiscomp/geo/boundingbox.h>
 
 #include <map>
+#include <ostream>
 
 namespace Seiscomp {
 namespace Geo {
@@ -39,27 +40,32 @@ struct SC_SYSTEM_CORE_API Category {
 	unsigned int id;
 	std::string name;
 	std::string localName;
-	const Category* parent;
+	const Category *parent;
 	std::string dataDir;
 
 	Category(unsigned int id, std::string name = "",
-	         const Category* parent = nullptr) :
-	    id(id), name(name), parent(parent) {}
+	         const Category *parent = nullptr) :
+	    id(id), name(std::move(name)), parent(parent) {}
 };
 
 
 class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 	public:
-		typedef std::map<std::string, std::string> Attributes;
+		using GeoCoordinates = std::vector<GeoCoordinate>;
+		using SubFeatures = std::vector<size_t>;
+		using Attributes = std::map<std::string, std::string>;
 
-		GeoFeature(const Category* category = nullptr, unsigned int rank = 1);
-		GeoFeature(const std::string& name, const Category* category,
+		GeoFeature(const Category  *category = nullptr, unsigned int rank = 1);
+		GeoFeature(std::string name, const Category *category,
 		           unsigned int rank);
-		GeoFeature(const std::string& name, const Category* category,
-		           unsigned int rank, const Attributes& attributes);
+		GeoFeature(std::string name, const Category *category,
+		           unsigned int rank, Attributes attributes);
 		virtual ~GeoFeature();
 
 	public:
+		bool operator==(const GeoFeature &other) const;
+		bool operator!=(const GeoFeature &other) const;
+
 		void setName(const std::string &name) { _name = name; }
 		const std::string &name() const { return _name; }
 
@@ -100,9 +106,9 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 		void setUserData(void*);
 		void *userData() const;
 
-		const std::vector<GeoCoordinate> &vertices() const { return _vertices; }
+		const GeoCoordinates &vertices() const { return _vertices; }
 		const GeoBoundingBox &bbox() const { return _bbox; }
-		const std::vector<size_t> &subFeatures() const { return _subFeatures; }
+		const SubFeatures &subFeatures() const { return _subFeatures; }
 
 		bool contains(const GeoCoordinate &v) const;
 
@@ -115,24 +121,25 @@ class SC_SYSTEM_CORE_API GeoFeature : public Core::BaseObject {
 		static double area(const GeoCoordinate *polygon, size_t sides) __attribute__((deprecated));
 
 	private:
-		typedef std::vector<GeoCoordinate> GeoCoordinates;
-
 		std::string          _name;
-		const Category      *_category;
-		void                *_userData;
-		unsigned int         _rank;
+		const Category      *_category{nullptr};
+		void                *_userData{nullptr};
+		unsigned int         _rank{1};
 		GeoFeature::Attributes   _attributes;
 
 		GeoCoordinates       _vertices;
-		bool                 _closedPolygon;
+		bool                 _closedPolygon{false};
 		GeoBoundingBox       _bbox;
 
 		/** Index of verticies marking the start of a sub feature.
 		 *  E.g. if the GeoFeature defines a main area and a group of
 		 *  islands this vector would contain the indices of the start
 		 *  point of each island */
-		std::vector<size_t>  _subFeatures;
+		SubFeatures _subFeatures;
 };
+
+
+std::ostream& operator<<(std::ostream& os, const GeoFeature &gf);
 
 
 inline void *GeoFeature::userData() const {
