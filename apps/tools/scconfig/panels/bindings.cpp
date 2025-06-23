@@ -162,14 +162,14 @@ class NewNameDialog : public QDialog {
 			int rows = _root.model()->rowCount(_root);
 
 			if ( _name->text().isEmpty() ) {
-				QMessageBox::critical(NULL, "Empty name",
+				QMessageBox::critical(nullptr, "Empty name",
 				                      "Empty names are not allowed. ");
 				return;
 			}
 
 			for ( int i = 0; i < rows; ++i ) {
 				if ( _root.model()->index(i, 0, _root).data().toString() == _name->text() ) {
-					QMessageBox::critical(NULL, "Duplicate name",
+					QMessageBox::critical(nullptr, "Duplicate name",
 					                      "The name exists already and duplicate "
 					                      "names are not allowed.");
 					return;
@@ -226,7 +226,7 @@ class StationTreeView : public QTreeView {
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->pos());
+			QModelIndex idx = indexAt(event->position().toPoint());
 
 			if ( idx.isValid() ) {
 				if ( _followSelection ) {
@@ -310,14 +310,16 @@ class StationsFolderView : public QListView {
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->pos());
+			QModelIndex idx = indexAt(event->position().toPoint());
 
-			if ( idx.isValid() )
+			if ( idx.isValid() ) {
 				selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
+			}
 			else {
 				selectionModel()->clear();
-				foreach ( const QModelIndex &i, _selectedItems )
+				foreach ( const QModelIndex &i, _selectedItems ) {
 					selectionModel()->select(i, QItemSelectionModel::Select);
+				}
 			}
 
 			event->setAccepted(selectionModel()->hasSelection());
@@ -370,7 +372,7 @@ class ProfilesModel : public QStandardItemModel {
 				        .arg(b->name.c_str());
 			}
 
-			if ( text.isEmpty() ) return NULL;
+			if ( text.isEmpty() ) return nullptr;
 
 			QMimeData *data = new QMimeData;
 			data->setText(text);
@@ -388,14 +390,14 @@ BindingsViewDelegate::BindingsViewDelegate(QObject *parent) : QItemDelegate(pare
 QWidget *BindingsViewDelegate::createEditor(QWidget *parent,
                                             const QStyleOptionViewItem &option,
                                             const QModelIndex &index) const {
-	if ( index.column() != 1 ) return NULL;
-	if ( index.data(Type).toInt() != TypeProfile ) return NULL;
+	if ( index.column() != 1 ) return nullptr;
+	if ( index.data(Type).toInt() != TypeProfile ) return nullptr;
 
 	ModuleBinding *binding = getLink<ModuleBinding>(index.sibling(index.row(),0));
-	if ( binding == NULL ) return NULL;
+	if ( binding == nullptr ) return nullptr;
 
 	Module *mod = static_cast<Module*>(binding->parent);
-	if ( mod == NULL ) return NULL;
+	if ( mod == nullptr ) return nullptr;
 
 	QComboBox *editor = new QComboBox(parent);
 	editor->addItem("");
@@ -433,9 +435,9 @@ void BindingsViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
 		return;
 
 	binding = mod->bind(id, value.toStdString());
-	if ( binding == NULL ) {
+	if ( binding == nullptr ) {
 		setEditorData(cBox, index);
-		QMessageBox::critical(NULL, "Change profile",
+		QMessageBox::critical(nullptr, "Change profile",
 		                            "Changing the profile failed.");
 		return;
 	}
@@ -468,7 +470,7 @@ void BindingsViewDelegate::profileChanged(const QString &text) {
 }
 
 
-BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
+BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(nullptr) {
 	_bindingModel = new ConfigurationTreeItemModel(this);
 	_view = new FancyView(this);
 	_view->setAutoFillBackground(true);
@@ -545,7 +547,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 
 void BindingView::clear() {
 	_bindingModel->clear();
-	_view->setModel(NULL);
+	_view->setModel(nullptr);
 	_label->setText("");
 	_icon->setPixmap(QPixmap());
 	_rootIndex = QModelIndex();
@@ -675,7 +677,7 @@ void BindingView::closeSearch() {
 
 
 BindingsPanel::BindingsPanel(QWidget *parent)
-: ConfiguratorPanel(false, parent), _bindingsModel(NULL), _profilesModel(NULL) {
+: ConfiguratorPanel(false, parent), _bindingsModel(nullptr), _profilesModel(nullptr) {
 	_name = "Bindings";
 	_icon = QIcon(":/res/icons/bindings.png");
 	setHeadline("Bindings");
@@ -841,16 +843,16 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	ConfiguratorPanel::setModel(model);
 
-	_bindingView->setModel(NULL, NULL);
-	_stationsTreeView->setModel(NULL);
-	_stationsFolderView->setModel(NULL);
-	_modulesView->setModel(NULL);
-	_modulesFolderView->setModel(NULL);
+	_bindingView->setModel(nullptr, nullptr);
+	_stationsTreeView->setModel(nullptr);
+	_stationsFolderView->setModel(nullptr);
+	_modulesView->setModel(nullptr);
+	_modulesFolderView->setModel(nullptr);
 
 	if ( _bindingsModel ) delete _bindingsModel;
 	if ( _profilesModel ) delete _profilesModel;
 
-	if ( model == NULL ) return;
+	if ( model == nullptr ) return;
 
 	// -------------------------------
 	// Create bindings model
@@ -1000,7 +1002,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 		}
 	}
 
-	_modulesFolderView->setModel(NULL);
+	_modulesFolderView->setModel(nullptr);
 	_modulesView->setModel(_profilesModel);
 	_modulesView->setRootIndex(rootItem->index());
 	connect(_modulesView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
@@ -1036,7 +1038,7 @@ void BindingsPanel::moduleTreeCurrentChanged(const QModelIndex &curr, const QMod
 			_addProfile->setEnabled(false);
 			_deleteProfile->setEnabled(false);
 			_modulesFolderView->setEnabled(false);
-			_modulesFolderView->setModel(NULL);
+			_modulesFolderView->setModel(nullptr);
 	}
 }
 
@@ -1249,7 +1251,7 @@ void BindingsPanel::removeModuleBindings(const QModelIndex &idx,
 			Module *mod = (Module*)b->parent;
 
 			if ( modName != mod->definition->name.c_str() ) continue;
-			if ( name != NULL && *name != b->name.c_str() ) continue;
+			if ( name != nullptr && *name != b->name.c_str() ) continue;
 
 			if ( mod->removeStation(id) )
 				_stationsFolderView->model()->removeRow(i.row(), idx);
@@ -1277,7 +1279,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			QMenu menu;
 			QAction *clearAction = menu.addAction("Clear all module bindings");
 			QAction *deleteAction = menu.addAction("Delete");
-			QMenu *removeBinding = NULL;
+			QMenu *removeBinding = nullptr;
 
 			QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 
@@ -1311,7 +1313,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			a = menu.exec(_stationsFolderView->mapToGlobal(p));
 			if ( a == clearAction ) {
 				if ( sel->selectedIndexes().count() > 0 ) {
-					if ( QMessageBox::question(NULL, "Clear bindings",
+					if ( QMessageBox::question(nullptr, "Clear bindings",
 					       QString("Do you really want to remove all module\n"
 					               "bindings of %1 selected %2?")
 					       .arg(sel->selectedIndexes().count())
@@ -1321,30 +1323,33 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 						return;
 				}
 
-				foreach ( const QModelIndex &idx, sel->selectedIndexes() )
+				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					clearModuleBindings(idx);
+				}
 			}
-			else if ( a == deleteAction )
+			else if ( a == deleteAction ) {
 				deleteItem();
-			else if ( a != NULL && removeBinding != NULL &&
-			          a->parentWidget() != NULL &&
-			          a->parentWidget()->parentWidget() == removeBinding ) {
+			}
+			else if ( a && removeBinding && a->parent()
+			       && (a->parent()->parent() == removeBinding) ) {
 				QString bindingName = a->data().toString();
-				QString moduleName = a->parentWidget()->objectName();
+				QString moduleName = a->parent()->objectName();
 
-				QString *bindingNameFilter = NULL;
-				if ( a->data().isValid() )
+				QString *bindingNameFilter = nullptr;
+				if ( a->data().isValid() ) {
 					bindingNameFilter = &bindingName;
+				}
 
-				foreach ( const QModelIndex &idx, sel->selectedIndexes() )
+				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					removeModuleBindings(idx, moduleName, bindingNameFilter);
+				}
 			}
 		}
 		else if ( type == TypeModule ) {
 			QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 			QMenu menu;
-			QMenu *menuProfile = NULL;
-			Module *mod = NULL;
+			QMenu *menuProfile = nullptr;
+			Module *mod = nullptr;
 
 			if ( sel->isSelected(hoveredIdx) &&
 			     sel->selectedIndexes().count() == 1 ) {
@@ -1353,7 +1358,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				mod = (Module*)b->parent;
 				a = menuProfile->addAction("None");
 				a->setEnabled(!b->name.empty());
-				a->setData(QVariant::fromValue((void*)NULL));
+				a->setData(QVariant::fromValue((void*)nullptr));
 				for ( size_t i = 0; i < mod->profiles.size(); ++i ) {
 					a = menuProfile->addAction(mod->profiles[i]->name.c_str());
 					a->setData(QVariant::fromValue((void*)mod->profiles[i].get()));
@@ -1368,7 +1373,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			QAction *deleteAction = menu.addAction("Delete");
 
 			a = menu.exec(_stationsFolderView->mapToGlobal(p));
-			if ( a == NULL ) return;
+			if ( a == nullptr ) return;
 
 			if ( a == deleteAction )
 				deleteItem();
@@ -1378,13 +1383,13 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 
 				ModuleBinding *b = reinterpret_cast<ModuleBinding*>(a->data().value<void*>());
 				if ( b ) {
-					if ( !mod->bind(id, b) ) b = NULL;
+					if ( !mod->bind(id, b) ) b = nullptr;
 				}
 				else
 					b = mod->bind(id, "");
 
 				if ( !b ) {
-					QMessageBox::critical(NULL, "Change profile",
+					QMessageBox::critical(nullptr, "Change profile",
 					                            "Changing the profile failed.");
 					return;
 				}
@@ -1406,7 +1411,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 		QMenu menu;
 		QAction *addNetwork = menu.addAction("Add network");
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( a == nullptr ) return;
 
 		if ( a == addNetwork ) {
 			NewNameDialog dlg(idx, true, this);
@@ -1433,7 +1438,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 		QMenu menu;
 		QAction *addStation = menu.addAction("Add station");
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( a == nullptr ) return;
 
 		if ( a == addStation ) {
 			NewNameDialog dlg(idx, true, this);
@@ -1476,7 +1481,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 
 		for ( size_t i = 0; i < model->modules.size(); ++i ) {
 			mod = model->modules[i].get();
-			if ( mod->supportsBindings() && mod->getBinding(id) == NULL ) {
+			if ( mod->supportsBindings() && mod->getBinding(id) == nullptr ) {
 				a = bindingMenu->addAction(mod->definition->name.c_str());
 				a->setData(QVariant::fromValue((void*)mod));
 			}
@@ -1486,13 +1491,13 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			bindingMenu->setEnabled(false);
 
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( a == nullptr ) return;
 
 		if ( a->parent() == bindingMenu ) {
 			Module *mod = reinterpret_cast<Module*>(a->data().value<void*>());
 			ModuleBinding *binding = mod->bind(id, "");
-			if ( binding == NULL ) {
-				QMessageBox::critical(NULL, "Add binding",
+			if ( binding == nullptr ) {
+				QMessageBox::critical(nullptr, "Add binding",
 				                      "Creation of binding failed.");
 				return;
 			}
@@ -1553,7 +1558,7 @@ void BindingsPanel::modulesFolderViewContextMenu(const QPoint &p) {
 	QMenu menu;
 
 	QAction *addAction = menu.addAction(tr("Add profile"));
-	QAction *delAction = NULL;
+	QAction *delAction = nullptr;
 
 	if ( !_modulesFolderView->selectionModel()->selectedIndexes().empty() )
 		delAction = menu.addAction(tr("Delete selected profiles"));
@@ -1580,7 +1585,7 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 network(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
@@ -1606,7 +1611,7 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 station(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
@@ -1627,7 +1632,7 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 binding(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
@@ -1717,9 +1722,9 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 		{
 			// Get module
 			Module *mod = _model->model()->module(qPrintable(module));
-			if ( mod == NULL ) return false;
+			if ( mod == nullptr ) return false;
 			ModuleBinding *prof = mod->getProfile(qPrintable(profile));
-			if ( prof == NULL ) return false;
+			if ( prof == nullptr ) return false;
 
 			StationID id(qPrintable(idx.parent().data().toString()),
 			             qPrintable(idx.data().toString()));
@@ -1821,7 +1826,7 @@ void BindingsPanel::addProfile() {
 
 	ModuleBinding *profile = mod->createProfile(dlg.name().toStdString());
 
-	if ( profile == NULL ) {
+	if ( profile == nullptr ) {
 		QMessageBox::critical(this, "Add profile",
 		                      "Adding the profile failed.");
 		return;
@@ -1845,7 +1850,7 @@ void BindingsPanel::deleteProfile() {
 	QModelIndexList selection = sel->selectedIndexes();
 	if ( selection.isEmpty() ) return;
 
-	if ( QMessageBox::question(NULL, "Delete",
+	if ( QMessageBox::question(nullptr, "Delete",
 	           QString("Do you really want to delete %1 profile(s)?\n"
 	                   "Each active binding that is using one of the "
 	                   "selected profiles will be removed as well.")

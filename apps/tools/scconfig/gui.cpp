@@ -1523,7 +1523,11 @@ void Configurator::updateModeLabel() {
 			setWindowTitle(tr("SeisComP %1 - system configuration [ %2 ]")
 			               .arg(version.c_str())
 			               .arg(Environment::Instance()->appConfigDir().c_str()));
-			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/system-settings.png"), QSize(72,72));
+			{
+				QIcon icon(":/res/icons/system-settings.png");
+				std::cerr << icon.isNull() << std::endl;
+				static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(icon, QSize(72,72));
+			}
 			break;
 		default:
 			break;
@@ -1640,21 +1644,33 @@ void Configurator::panelDescriptionChanged(const QString &text) {
 
 
 void Configurator::switchToSystemMode() {
-	if ( _configurationStage == Environment::CS_CONFIG_APP ) return;
+	if ( _configurationStage == Environment::CS_CONFIG_APP ) {
+		return;
+	}
+
 	_configurationStage = Environment::CS_CONFIG_APP;
 	_model->setModel(_model->model(), _configurationStage);
-	foreach ( Panel p, _panels )
+
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
+
 	updateModeLabel();
 }
 
 
 void Configurator::switchToUserMode() {
-	if ( _configurationStage == Environment::CS_USER_APP ) return;
+	if ( _configurationStage == Environment::CS_USER_APP ) {
+		return;
+	}
+
 	_configurationStage = Environment::CS_USER_APP;
 	_model->setModel(_model->model(), _configurationStage);
-	foreach ( Panel p, _panels )
+
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
+
 	updateModeLabel();
 }
 
@@ -1679,10 +1695,12 @@ void Configurator::showWarningMessage(const QString &msg) {
 
 void Configurator::clicked(QObject *o) {
 	if ( _modeLabel == o ) {
-		if ( _configurationStage == Environment::CS_CONFIG_APP )
+		if ( _configurationStage == Environment::CS_CONFIG_APP ) {
 			switchToUserMode();
-		else
+		}
+		else {
 			switchToSystemMode();
+		}
 	}
 }
 

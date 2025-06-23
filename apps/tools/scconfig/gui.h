@@ -195,7 +195,7 @@ class Configurator : public QMainWindow {
 
 	public:
 		Configurator(Seiscomp::Environment::ConfigStage stage,
-		             QWidget *parent = NULL);
+		             QWidget *parent = nullptr);
 		~Configurator();
 
 		bool setModel(Seiscomp::System::Model *model);
