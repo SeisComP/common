@@ -2095,7 +2095,7 @@ class TreeWidget : public QTreeWidget {
 		void dragMoveEvent(QDragMoveEvent *event) override {
 			QTreeWidget::dragMoveEvent(event);
 
-			auto *item = static_cast<SchemeTreeItem*>(itemAt(event->pos()));
+			auto *item = static_cast<SchemeTreeItem*>(itemAt(event->position().toPoint()));
 
 			/*
 			if ( _lastDropItem && item != _lastDropItem ) {
@@ -3700,7 +3700,7 @@ bool EventListView::eventFilter(QObject *obj, QEvent *ev) {
 	if ( obj == SC_D._treeWidget->viewport() ) {
 		if ( ev->type() == QEvent::Drop ) {
 			auto *event = static_cast<QDropEvent*>(ev);
-			auto *item = static_cast<SchemeTreeItem*>(SC_D._treeWidget->itemAt(event->pos()));
+			auto *item = static_cast<SchemeTreeItem*>(SC_D._treeWidget->itemAt(event->position().toPoint()));
 			if ( !item || item->type() == ST_None ) {
 				event->ignore();
 				return true;
@@ -3849,8 +3849,8 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 	QDateTime end;
 
 	if ( !SCScheme.dateTime.useLocalTime ) {
-		start.setTimeSpec(Qt::UTC);
-		end.setTimeSpec(Qt::UTC);
+		start.setTimeZone(QTimeZone(Qt::UTC));
+		end.setTimeZone(QTimeZone(Qt::UTC));
 		start.setSecsSinceEpoch(tw.startTime().epochSeconds());
 		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
@@ -6389,8 +6389,8 @@ EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent
 		_ui->cbRegions->addItem((*_regionList)[i].name);
 	}
 
-	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(QString)),
-	        this, SLOT(regionSelectionChanged(QString)));
+	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(regionSelectionChanged(int)));
 
 	connect(_ui->okButton, SIGNAL(clicked()), this, SLOT(accept()));
 	connect(_ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -6410,7 +6410,8 @@ EventListViewRegionFilterDialog::~EventListViewRegionFilterDialog() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListViewRegionFilterDialog::regionSelectionChanged(const QString &text) {
+void EventListViewRegionFilterDialog::regionSelectionChanged(int idx) {
+	QString text = _ui->cbRegions->itemText(idx);
 	for ( int i = 0; i < _regionList->size(); ++i ) {
 		if ( (*_regionList)[i].name == text ) {
 			_ui->edMinLat->setText(QString::number((*_regionList)[i].bbox.south));

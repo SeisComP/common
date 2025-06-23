@@ -517,8 +517,8 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void openConnectionInfo(const QPoint &);
 		void destroyedSpectrumWidget(QObject *);
 
-		void ttInterfaceChanged(QString);
-		void ttTableChanged(QString);
+		void ttInterfaceChanged(int);
+		void ttTableChanged(int);
 
 
 	protected:

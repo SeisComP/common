@@ -2103,12 +2103,12 @@ void AmplitudeView::init() {
 	}
 
 	if ( SC_D.comboTTT->count() > 0 ) {
-		connect(SC_D.comboTTT, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttInterfaceChanged(QString)));
+		connect(SC_D.comboTTT, SIGNAL(currentIndexChanged(int)), this, SLOT(ttInterfaceChanged(int)));
 		SC_D.comboTTTables = new QComboBox;
 		SC_D.comboTTTables->setToolTip(tr("Select one of the supported tables for the current travel time table backend."));
 		SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTTables);
-		ttInterfaceChanged(SC_D.comboTTT->currentText());
-		connect(SC_D.comboTTTables, SIGNAL(currentIndexChanged(QString)), this, SLOT(ttTableChanged(QString)));
+		ttInterfaceChanged(SC_D.comboTTT->currentIndex());
+		connect(SC_D.comboTTTables, SIGNAL(currentIndexChanged(int)), this, SLOT(ttTableChanged(int)));
 	}
 	else {
 		delete SC_D.comboTTT;
@@ -3855,7 +3855,8 @@ void AmplitudeView::openConnectionInfo(const QPoint &p) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::ttInterfaceChanged(QString interface) {
+void AmplitudeView::ttInterfaceChanged(int idx) {
+	auto interface = SC_D.comboTTT->itemText(idx);
 	SC_D.comboTTTables->blockSignals(true);
 	SC_D.comboTTTables->clear();
 
@@ -3870,15 +3871,16 @@ void AmplitudeView::ttInterfaceChanged(QString interface) {
 				currentIndex = SC_D.comboTTTables->count()-1;
 		}
 
-		if ( currentIndex >= 0 )
+		if ( currentIndex >= 0 ) {
 			SC_D.comboTTTables->setCurrentIndex(currentIndex);
+		}
 	}
 	catch ( ... ) {}
 
 	SC_D.comboTTTables->setEnabled(SC_D.comboTTTables->count() > 0);
 	SC_D.comboTTTables->blockSignals(false);
 
-	ttTableChanged(SC_D.comboTTTables->currentText());
+	ttTableChanged(SC_D.comboTTTables->currentIndex());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3886,7 +3888,8 @@ void AmplitudeView::ttInterfaceChanged(QString interface) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::ttTableChanged(QString tables) {
+void AmplitudeView::ttTableChanged(int idx) {
+	auto tables = SC_D.comboTTTables->itemText(idx);
 	SC_D.ttTableName = tables.toStdString();
 
 	SC_D.ttTable = TravelTimeTableInterfaceFactory::Create(SC_D.ttInterface.c_str());

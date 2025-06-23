@@ -394,8 +394,8 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void openConnectionInfo(const QPoint &);
 
-		void ttInterfaceChanged(QString);
-		void ttTableChanged(QString);
+		void ttInterfaceChanged(int);
+		void ttTableChanged(int);
 
 
 	protected:

@@ -324,7 +324,7 @@ class SC_GUI_API EventListViewRegionFilterDialog : public QDialog {
 	//  Slots
 	// ------------------------------------------------------------------
 	private slots:
-		void regionSelectionChanged(const QString &);
+		void regionSelectionChanged(int idx);
 		void showError(const QString &);
 
 
