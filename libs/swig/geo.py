@@ -332,15 +332,6 @@ class GeoBoundingBox(object):
 _geo.GeoBoundingBox_swigregister(GeoBoundingBox)
 cvar = _geo.cvar
 
-
-def __lshift__(*args):
-    r"""
-    __lshift__(std::ostream & os, GeoCoordinate arg2) -> std::ostream
-    __lshift__(std::ostream & os, formatted_lat arg2) -> std::ostream
-    __lshift__(std::ostream & os, formatted_lon arg2) -> std::ostream
-    __lshift__(std::ostream & os, GeoBoundingBox box) -> std::ostream &
-    """
-    return _geo.__lshift__(*args)
 class Category(object):
     r"""Proxy of C++ Seiscomp::Geo::Category class."""
 
@@ -368,11 +359,19 @@ class GeoFeature(seiscomp.core.BaseObject):
     def __init__(self, *args):
         r"""
         __init__(GeoFeature self, Category category=None, unsigned int rank=1) -> GeoFeature
-        __init__(GeoFeature self, std::string const & name, Category category, unsigned int rank) -> GeoFeature
-        __init__(GeoFeature self, std::string const & name, Category category, unsigned int rank, Seiscomp::Geo::GeoFeature::Attributes const & attributes) -> GeoFeature
+        __init__(GeoFeature self, std::string name, Category category, unsigned int rank) -> GeoFeature
+        __init__(GeoFeature self, std::string name, Category category, unsigned int rank, Seiscomp::Geo::GeoFeature::Attributes attributes) -> GeoFeature
         """
         _geo.GeoFeature_swiginit(self, _geo.new_GeoFeature(*args))
     __swig_destroy__ = _geo.delete_GeoFeature
+
+    def __eq__(self, other):
+        r"""__eq__(GeoFeature self, GeoFeature other) -> bool"""
+        return _geo.GeoFeature___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(GeoFeature self, GeoFeature other) -> bool"""
+        return _geo.GeoFeature___ne__(self, other)
 
     def setName(self, name):
         r"""setName(GeoFeature self, std::string const & name)"""
@@ -498,6 +497,14 @@ class GeoFeatureSet(seiscomp.core.BaseObject):
         r"""unregisterObserver(GeoFeatureSet self, GeoFeatureSetObserver arg2) -> bool"""
         return _geo.GeoFeatureSet_unregisterObserver(self, arg2)
 
+    def __eq__(self, other):
+        r"""__eq__(GeoFeatureSet self, GeoFeatureSet other) -> bool"""
+        return _geo.GeoFeatureSet___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(GeoFeatureSet self, GeoFeatureSet other) -> bool"""
+        return _geo.GeoFeatureSet___ne__(self, other)
+
     def clear(self):
         r"""clear(GeoFeatureSet self)"""
         return _geo.GeoFeatureSet_clear(self)
@@ -536,6 +543,17 @@ class GeoFeatureSet(seiscomp.core.BaseObject):
 
 # Register GeoFeatureSet in _geo:
 _geo.GeoFeatureSet_swigregister(GeoFeatureSet)
+
+def __lshift__(*args):
+    r"""
+    __lshift__(std::ostream & os, GeoCoordinate arg2) -> std::ostream
+    __lshift__(std::ostream & os, formatted_lat arg2) -> std::ostream
+    __lshift__(std::ostream & os, formatted_lon arg2) -> std::ostream
+    __lshift__(std::ostream & os, GeoBoundingBox box) -> std::ostream
+    __lshift__(std::ostream & os, GeoFeature gf) -> std::ostream
+    __lshift__(std::ostream & os, GeoFeatureSet gfs) -> std::ostream &
+    """
+    return _geo.__lshift__(*args)
 class GeoFeatureSetSingleton(object):
     r"""Proxy of C++ Seiscomp::Geo::GeoFeatureSetSingleton class."""
 

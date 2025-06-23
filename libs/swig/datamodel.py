@@ -2738,6 +2738,10 @@ class Comment(Object):
         r"""event(Comment self) -> Event"""
         return _datamodel.Comment_event(self)
 
+    def catalog(self):
+        r"""catalog(Comment self) -> Seiscomp::DataModel::Catalog *"""
+        return _datamodel.Comment_catalog(self)
+
     def origin(self):
         r"""origin(Comment self) -> Origin"""
         return _datamodel.Comment_origin(self)
@@ -8522,6 +8526,10 @@ class Event(PublicObject):
         """
         return _datamodel.Event_focalMechanismReference(self, *args)
 
+    def catalog(self):
+        r"""catalog(Event self) -> Seiscomp::DataModel::Catalog *"""
+        return _datamodel.Event_catalog(self)
+
     def eventParameters(self):
         r"""eventParameters(Event self) -> EventParameters"""
         return _datamodel.Event_eventParameters(self)
@@ -9280,6 +9288,7 @@ class EventParameters(PublicObject):
         add(EventParameters self, Reading obj) -> bool
         add(EventParameters self, Origin obj) -> bool
         add(EventParameters self, FocalMechanism obj) -> bool
+        add(EventParameters self, Seiscomp::DataModel::Catalog * obj) -> bool
         add(EventParameters self, Event obj) -> bool
         """
         return _datamodel.EventParameters_add(self, *args)
@@ -9291,6 +9300,7 @@ class EventParameters(PublicObject):
         remove(EventParameters self, Reading obj) -> bool
         remove(EventParameters self, Origin obj) -> bool
         remove(EventParameters self, FocalMechanism obj) -> bool
+        remove(EventParameters self, Seiscomp::DataModel::Catalog * obj) -> bool
         remove(EventParameters self, Event obj) -> bool
         """
         return _datamodel.EventParameters_remove(self, *args)
@@ -9314,6 +9324,10 @@ class EventParameters(PublicObject):
     def removeFocalMechanism(self, i):
         r"""removeFocalMechanism(EventParameters self, size_t i) -> bool"""
         return _datamodel.EventParameters_removeFocalMechanism(self, i)
+
+    def removeCatalog(self, i):
+        r"""removeCatalog(EventParameters self, size_t i) -> bool"""
+        return _datamodel.EventParameters_removeCatalog(self, i)
 
     def removeEvent(self, i):
         r"""removeEvent(EventParameters self, size_t i) -> bool"""
@@ -9339,6 +9353,10 @@ class EventParameters(PublicObject):
         r"""focalMechanismCount(EventParameters self) -> size_t"""
         return _datamodel.EventParameters_focalMechanismCount(self)
 
+    def catalogCount(self):
+        r"""catalogCount(EventParameters self) -> size_t"""
+        return _datamodel.EventParameters_catalogCount(self)
+
     def eventCount(self):
         r"""eventCount(EventParameters self) -> size_t"""
         return _datamodel.EventParameters_eventCount(self)
@@ -9363,6 +9381,10 @@ class EventParameters(PublicObject):
         r"""focalMechanism(EventParameters self, size_t i) -> FocalMechanism"""
         return _datamodel.EventParameters_focalMechanism(self, i)
 
+    def catalog(self, i):
+        r"""catalog(EventParameters self, size_t i) -> Seiscomp::DataModel::Catalog *"""
+        return _datamodel.EventParameters_catalog(self, i)
+
     def event(self, i):
         r"""event(EventParameters self, size_t i) -> Event"""
         return _datamodel.EventParameters_event(self, i)
@@ -9386,6 +9408,10 @@ class EventParameters(PublicObject):
     def findFocalMechanism(self, publicID):
         r"""findFocalMechanism(EventParameters self, std::string const & publicID) -> FocalMechanism"""
         return _datamodel.EventParameters_findFocalMechanism(self, publicID)
+
+    def findCatalog(self, publicID):
+        r"""findCatalog(EventParameters self, std::string const & publicID) -> Seiscomp::DataModel::Catalog *"""
+        return _datamodel.EventParameters_findCatalog(self, publicID)
 
     def findEvent(self, publicID):
         r"""findEvent(EventParameters self, std::string const & publicID) -> Event"""
@@ -19320,9 +19346,9 @@ class DatabaseReader(DatabaseArchive):
         r"""loadFocalMechanisms(DatabaseReader self, EventParameters arg2) -> int"""
         return _datamodel.DatabaseReader_loadFocalMechanisms(self, arg2)
 
-    def loadEvents(self, arg2):
-        r"""loadEvents(DatabaseReader self, EventParameters arg2) -> int"""
-        return _datamodel.DatabaseReader_loadEvents(self, arg2)
+    def loadCatalogs(self, arg2):
+        r"""loadCatalogs(DatabaseReader self, EventParameters arg2) -> int"""
+        return _datamodel.DatabaseReader_loadCatalogs(self, arg2)
 
     def loadPickReferences(self, arg2):
         r"""loadPickReferences(DatabaseReader self, Reading arg2) -> int"""
@@ -19371,6 +19397,13 @@ class DatabaseReader(DatabaseArchive):
     def loadMomentTensorComponentContributions(self, arg2):
         r"""loadMomentTensorComponentContributions(DatabaseReader self, MomentTensorStationContribution arg2) -> int"""
         return _datamodel.DatabaseReader_loadMomentTensorComponentContributions(self, arg2)
+
+    def loadEvents(self, *args):
+        r"""
+        loadEvents(DatabaseReader self, EventParameters arg2) -> int
+        loadEvents(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
+        """
+        return _datamodel.DatabaseReader_loadEvents(self, *args)
 
     def loadEventDescriptions(self, arg2):
         r"""loadEventDescriptions(DatabaseReader self, Event arg2) -> int"""
@@ -19513,6 +19546,7 @@ class DatabaseReader(DatabaseArchive):
         loadComments(DatabaseReader self, Magnitude arg2) -> int
         loadComments(DatabaseReader self, FocalMechanism arg2) -> int
         loadComments(DatabaseReader self, MomentTensor arg2) -> int
+        loadComments(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
         loadComments(DatabaseReader self, Event arg2) -> int
         loadComments(DatabaseReader self, ParameterSet arg2) -> int
         loadComments(DatabaseReader self, Parameter arg2) -> int
@@ -19591,6 +19625,7 @@ class DatabaseReader(DatabaseArchive):
         load(DatabaseReader self, FocalMechanism arg2) -> int
         load(DatabaseReader self, MomentTensor arg2) -> int
         load(DatabaseReader self, MomentTensorStationContribution arg2) -> int
+        load(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
         load(DatabaseReader self, Event arg2) -> int
         load(DatabaseReader self, Config arg2) -> int
         load(DatabaseReader self, ParameterSet arg2) -> int
@@ -19637,10 +19672,6 @@ class DatabaseQuery(DatabaseReader):
         r"""__init__(DatabaseQuery self, DatabaseInterface dbDriver) -> DatabaseQuery"""
         _datamodel.DatabaseQuery_swiginit(self, _datamodel.new_DatabaseQuery(dbDriver))
     __swig_destroy__ = _datamodel.delete_DatabaseQuery
-
-    def getStation(self, network_code, station_code, time):
-        r"""getStation(DatabaseQuery self, std::string const & network_code, std::string const & station_code, Time time) -> Station"""
-        return _datamodel.DatabaseQuery_getStation(self, network_code, station_code, time)
 
     def getEvent(self, originID):
         r"""getEvent(DatabaseQuery self, std::string const & originID) -> Event"""
@@ -19723,9 +19754,12 @@ class DatabaseQuery(DatabaseReader):
         r"""getPreferredMagnitudes(DatabaseQuery self, Time startTime, Time endTime, std::string const & referenceMagnitudeID) -> DatabaseIterator"""
         return _datamodel.DatabaseQuery_getPreferredMagnitudes(self, startTime, endTime, referenceMagnitudeID)
 
-    def getEvents(self, startTime, endTime):
-        r"""getEvents(DatabaseQuery self, Time startTime, Time endTime) -> DatabaseIterator"""
-        return _datamodel.DatabaseQuery_getEvents(self, startTime, endTime)
+    def getEvents(self, *args):
+        r"""
+        getEvents(DatabaseQuery self, Time startTime, Time endTime) -> DatabaseIterator
+        getEvents(DatabaseQuery self, std::string const & catalogID, Time startTime, Time endTime) -> DatabaseIterator
+        """
+        return _datamodel.DatabaseQuery_getEvents(self, *args)
 
     def getOrigins(self, eventID):
         r"""getOrigins(DatabaseQuery self, std::string const & eventID) -> DatabaseIterator"""
