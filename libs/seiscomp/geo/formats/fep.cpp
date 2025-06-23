@@ -38,7 +38,7 @@ namespace Seiscomp::Geo {
 
 size_t readFEP(GeoFeatureSet &featureSet, const string &path,
                const Category *category) {
-	SEISCOMP_DEBUG("Reading polygons from file: %s", path.c_str());
+	SEISCOMP_DEBUG("Reading polygons from file: %s", path);
 
 	ifstream infile(path.c_str());
 

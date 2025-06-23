@@ -84,11 +84,11 @@ bool readBNAHeader(string &segment, unsigned int &rank,
 		char delimFound = 0;
 		while ( sourceLen > 0 ) {
 			key = Core::tokenizeUnescape(keyLen, sourceLen, source, delimFound, ":");
-			if ( key == nullptr || !sourceLen || !delimFound ) {
+			if ( !key || !sourceLen || !delimFound ) {
 				break;
 			}
 			value = Core::tokenizeUnescape(valueLen, sourceLen, source, delimFound, ",");
-			if ( value != nullptr ) {
+			if ( value ) {
 				attributes[string(key, keyLen)] = string(value, valueLen);
 			}
 			else {
@@ -120,13 +120,13 @@ bool readBNAHeader(string &segment, unsigned int &rank,
 
 size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
                const Category *category) {
-	SEISCOMP_DEBUG("Reading segments from file: %s", path.c_str());
+	SEISCOMP_DEBUG("Reading segments from file: %s", path);
 
 	ifstream infile(path.c_str());
 
 	if ( infile.fail() ) {
 		SEISCOMP_WARNING("Could not open segment file for reading: %s",
-		                 path.c_str());
+		                 path);
 		return false;
 	}
 
@@ -158,7 +158,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
 
 		if ( !readBNAHeader(segment, rank, attributes, points, isClosed, error, line) ) {
 			SEISCOMP_ERROR("error reading BNA header in file %s at line %i: %s",
-			               path.c_str(), lineNum, error.c_str());
+			               path, lineNum, error);
 			fileValid = false;
 			break;
 		}
@@ -176,7 +176,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
 		nptr = nullptr;
 		unsigned int pi = 0;
 		while ( true ) {
-			if ( nptr == nullptr ) {
+			if ( !nptr ) {
 				// stop if all points have been read
 				if ( pi == points ) {
 					break;
@@ -222,19 +222,19 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
 			errno = 0;
 			v.lon = strtod(nptr, &endptr);
 
-			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
-			     v.lon < -180 || v.lon > 180) {
+			if ( errno || !endptr || (endptr == nptr) ||
+			     (v.lon < -180) || (v.lon > 180) ) {
 				SEISCOMP_ERROR("invalid longitude in file %s at line %i",
-				               path.c_str(), lineNum);
+				               path, lineNum);
 				fileValid = false;
 				break;
 			}
 
 			// search for comma
 			nptr = strchr(endptr, ',');
-			if ( nptr == nullptr ) {
+			if ( !nptr ) {
 				SEISCOMP_ERROR("invalid coordinate separator in file %s at line %i",
-				               path.c_str(), lineNum);
+				               path, lineNum);
 				fileValid = false;
 				break;
 			}
@@ -242,10 +242,10 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
 			// read latitude
 			endptr = nullptr; nptr += 1;
 			v.lat = strtod(nptr, &endptr);
-			if ( errno != 0 || endptr == nullptr || endptr == nptr ||
-			     v.lat < -90 || v.lat > 90) {
+			if ( errno || !endptr || endptr == nptr ||
+			     (v.lat < -90) || (v.lat > 90) ) {
 				SEISCOMP_ERROR("invalid latitude in file %s at line %i",
-				               path.c_str(), lineNum);
+				               path, lineNum);
 				fileValid = false;
 				break;
 			}

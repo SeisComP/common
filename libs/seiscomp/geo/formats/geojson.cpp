@@ -253,7 +253,7 @@ struct SymbolTable {
 
 			dataNode = it->second.second;
 
-			//SEISCOMP_DEBUG("Found geometry of type: %s", name.c_str());
+			//SEISCOMP_DEBUG("Found geometry of type: %s", name);
 			return it->second.first;
 		}
 
@@ -791,7 +791,7 @@ void writeGeoJSON(std::ostream &out, Document &document, int indent = -1) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t readGeoJSON(GeoFeatureSet &featureSet, const std::string &path,
                    const Category *category) {
-	SEISCOMP_DEBUG("Reading features from GeoJSON file: %s", path.c_str());
+	SEISCOMP_DEBUG("Reading features from GeoJSON file: %s", path);
 
 	Document doc;
 	ifstream ifs(path.c_str());
@@ -876,7 +876,7 @@ bool writeGeoJSON(std::ostream &os, const GeoFeature &feature, int indent) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool writeGeoJSON(const std::string &path, const GeoFeature &feature,
                   int indent) {
-	SEISCOMP_DEBUG("Writing GeoFeature to GeoJSON file: %s", path.c_str());
+	SEISCOMP_DEBUG("Writing GeoFeature to GeoJSON file: %s", path);
 
 	// Write buffer to file
 	std::ofstream ofs(path);
