@@ -141,7 +141,7 @@ class SC_GUI_API EventListView : public QWidget {
 		QList<Seiscomp::DataModel::Event*> selectedEvents();
 
 		QTreeWidget *eventTree();
-		Seiscomp::DataModel::Event *eventFromTreeItem(QTreeWidgetItem *item) const;
+		static Seiscomp::DataModel::Event *eventFromTreeItem(QTreeWidgetItem *item);
 
 		int eventCount() const;
 

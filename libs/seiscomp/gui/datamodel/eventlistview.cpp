@@ -76,8 +76,7 @@ using namespace Seiscomp::DataModel;
 using namespace Seiscomp::IO;
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 namespace {
@@ -865,8 +864,10 @@ class TreeItem : public QTreeWidgetItem {
 			*/
 		}
 
+		[[nodiscard]]
 		bool isEnabled() const { return _enabled; }
 
+		[[nodiscard]]
 		QVariant data(int column, int role) const override {
 			if ( !_enabled && role == Qt::ForegroundRole ) {
 				return config.disabledColor;
@@ -1005,6 +1006,7 @@ class SchemeTreeItem : public TreeItem {
 			}
 		}
 
+		[[nodiscard]]
 		PublicObject* object() const { return _object.get(); }
 
 	private:
@@ -1044,6 +1046,7 @@ class OriginTreeItem : public SchemeTreeItem {
 		}
 		*/
 
+		[[nodiscard]]
 		Origin* origin() const { return static_cast<Origin*>(object()); }
 
 		void setPublishState(bool ps) {
@@ -1215,6 +1218,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 
 		~FocalMechanismTreeItem() override = default;
 
+		[[nodiscard]]
 		FocalMechanism* focalMechanism() const { return static_cast<FocalMechanism*>(object()); }
 
 		void setPublishState(bool ps) {
@@ -1389,13 +1393,26 @@ class EventTreeItem : public SchemeTreeItem {
 		}
 		*/
 
+		[[nodiscard]]
 		Event* event() const { return static_cast<Event*>(object()); }
 
+		[[nodiscard]]
 		QTreeWidgetItem *origins() const { return _origins; }
 
-		int originItemCount() const { return _origins?_origins->childCount():0; }
-		QTreeWidgetItem *originItem(int i) const { return _origins?_origins->child(i):nullptr; }
-		QTreeWidgetItem *takeOrigin(int i) const { return _origins?_origins->takeChild(i):nullptr; }
+		[[nodiscard]]
+		int originItemCount() const {
+			return _origins?_origins->childCount():0;
+		}
+
+		[[nodiscard]]
+		QTreeWidgetItem *originItem(int i) const {
+			return _origins?_origins->child(i):nullptr;
+		}
+
+		[[nodiscard]]
+		QTreeWidgetItem *takeOrigin(int i) const {
+			return _origins?_origins->takeChild(i):nullptr;
+		}
 
 		void addOriginItem(QTreeWidgetItem *item) {
 			if ( !_origins ) {
@@ -1425,12 +1442,15 @@ class EventTreeItem : public SchemeTreeItem {
 			_origins->insertChild(i, item);
 		}
 
+		[[nodiscard]]
 		QTreeWidgetItem *focalMechanisms() const { return _focalMechanisms; }
 
+		[[nodiscard]]
 		int focalMechanismItemCount() const {
 			return _focalMechanisms?_focalMechanisms->childCount():0;
 		}
 
+		[[nodiscard]]
 		QTreeWidgetItem *focalMechanismItem(int i) const {
 			return _focalMechanisms?_focalMechanisms->child(i):nullptr;
 		}
@@ -1591,8 +1611,8 @@ class EventTreeItem : public SchemeTreeItem {
 				_hasMultipleAgencies = false;
 
 				// Reset origin process columns
-				for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
-					int pos = config.originScriptColumns[i].pos;
+				for ( const auto &col : config.originScriptColumns) {
+					int pos = col.pos;
 					if ( config.eventScriptPositions.contains(pos) ) {
 						continue;
 					}
@@ -1630,8 +1650,8 @@ class EventTreeItem : public SchemeTreeItem {
 
 							// Copy item states from preferred origin item
 							// if column is not part of event script columns
-							for ( int i = 0; i < config.originScriptColumns.size(); ++i ) {
-								int pos = config.originScriptColumns[i].pos;
+							for ( const auto &col : config.originScriptColumns ) {
+								int pos = col.pos;
 								if ( config.eventScriptPositions.contains(pos) ) {
 									continue;
 								}
@@ -1833,7 +1853,7 @@ class EventTreeItem : public SchemeTreeItem {
 				try {
 					const OriginQuality &quality = origin->quality();
 					setText(config.columnMap[COL_RMS], QString("%1").arg(quality.standardError(), 0, 'f', SCScheme.precision.rms));
-					setData(config.columnMap[COL_RMS], Qt::UserRole, static_cast<double>(quality.standardError()));
+					setData(config.columnMap[COL_RMS], Qt::UserRole, quality.standardError());
 				}
 				catch ( ValueException& ) {
 					setText(config.columnMap[COL_RMS], "-");
@@ -2334,6 +2354,7 @@ class EventFilterWidget : public QWidget {
 		/**
 		 * Returns a filter structure according to the current settings.
 		 */
+		[[nodiscard]]
 		EventListView::Filter filter() const {
 			EventListView::Filter f;
 
@@ -2392,6 +2413,7 @@ class CustomWidgetMenu : public QMenu {
 	public:
 		CustomWidgetMenu(QWidget *parent = nullptr) : QMenu(parent) {}
 
+		[[nodiscard]]
 		QSize sizeHint() const override { return QWidget::sizeHint(); }
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2761,8 +2783,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 		// event run: check for columns with same position and label
 		bool matchFound = false;
-		for ( int i = 0; i < scriptColumns.size(); ++i ) {
-			ConfigProcessColumn &other = scriptColumns[i];
+		for ( auto &other : scriptColumns ) {
 			if ( other.pos == item.pos && other.label == item.label ) {
 				if ( !item.originScript.isEmpty() ) {
 					other.originScript = item.originScript;
@@ -2780,9 +2801,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	}
 
 	// Apply process column configuration
-	for ( int i = 0; i < scriptColumns.size(); ++i ) {
-		ConfigProcessColumn &item = scriptColumns[i];
-
+	for ( auto &item : scriptColumns ) {
 		if ( item.pos >= 0 && item.pos < SC_D._itemConfig.header.size() ) {
 			SC_D._itemConfig.header.insert(item.pos, item.label);
 			if ( item.pos <= SC_D._itemConfig.customColumn ) {
@@ -3323,7 +3342,7 @@ void EventListView::onHideOutsideRegion(int checked) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::onFilterRegionModeChanged(int index) {
+void EventListView::onFilterRegionModeChanged(int mode) {
 	updateHideState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4100,7 +4119,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				continue;
 			}
 
-			EventPtr ev = mit.value();
+			const EventPtr &ev = mit.value();
 
 			ev->add(oref.get());
 		}
@@ -4175,7 +4194,7 @@ void EventListView::readFromDatabase(const Filter &filter) {
 				continue;
 			}
 
-			EventPtr ev = mit.value();
+			const EventPtr &ev = mit.value();
 
 			ev->add(fmref.get());
 		}
@@ -4873,7 +4892,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			{
 				auto *item = static_cast<EventTreeItem*>(findEvent(e->publicID()));
 				if ( !item ) {
-					item = static_cast<EventTreeItem*>(addEvent(e, true));
+					item = addEvent(e, true);
 				}
 				else {
 					updateHideState(item);
@@ -5903,12 +5922,9 @@ QTreeWidget *EventListView::eventTree() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Seiscomp::DataModel::Event *
-EventListView::eventFromTreeItem(QTreeWidgetItem *item) const {
+EventListView::eventFromTreeItem(QTreeWidgetItem *item) {
 	auto *schemeItem = dynamic_cast<SchemeTreeItem*>(item);
-	if ( !schemeItem ) {
-		return nullptr;
-	}
-	return Event::Cast(schemeItem->object());
+	return schemeItem ? Event::Cast(schemeItem->object()) : nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6386,8 +6402,8 @@ EventListViewRegionFilterDialog::EventListViewRegionFilterDialog(QWidget *parent
 		return;
 	}
 
-	for ( int i = 0; i < _regionList->size(); ++i ) {
-		_ui->cbRegions->addItem((*_regionList)[i].name);
+	for ( const auto &region : *_regionList ) {
+		_ui->cbRegions->addItem(region.name);
 	}
 
 	connect(_ui->cbRegions, SIGNAL(currentIndexChanged(int)),
@@ -6413,14 +6429,15 @@ EventListViewRegionFilterDialog::~EventListViewRegionFilterDialog() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListViewRegionFilterDialog::regionSelectionChanged(int idx) {
 	QString text = _ui->cbRegions->itemText(idx);
-	for ( int i = 0; i < _regionList->size(); ++i ) {
-		if ( (*_regionList)[i].name == text ) {
-			_ui->edMinLat->setText(QString::number((*_regionList)[i].bbox.south));
-			_ui->edMaxLat->setText(QString::number((*_regionList)[i].bbox.north));
-			_ui->edMinLon->setText(QString::number((*_regionList)[i].bbox.west));
-			_ui->edMaxLon->setText(QString::number((*_regionList)[i].bbox.east));
-			if ( (*_regionList)[i].poly ) {
-				_ui->cbPolys->setCurrentIndex(_ui->cbPolys->findText((*_regionList)[i].poly->name().c_str()));
+	for ( const auto &region : *_regionList ) {
+		if ( region.name == text ) {
+			_ui->edMinLat->setText(QString::number(region.bbox.south));
+			_ui->edMaxLat->setText(QString::number(region.bbox.north));
+			_ui->edMinLon->setText(QString::number(region.bbox.west));
+			_ui->edMaxLon->setText(QString::number(region.bbox.east));
+			if ( region.poly ) {
+				_ui->cbPolys->setCurrentIndex(
+				        _ui->cbPolys->findText(region.poly->name().c_str()));
 			}
 			else {
 				_ui->cbPolys->setCurrentIndex(0);
@@ -6512,6 +6529,5 @@ void EventListViewRegionFilterDialog::accept() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // ns Seiscomp::Gui
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
