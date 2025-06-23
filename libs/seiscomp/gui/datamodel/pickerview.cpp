@@ -3241,6 +3241,8 @@ void PickerView::init() {
 	SC_D.ui.menuPicking->addAction(SC_D.ui.actionPickP);
 	SC_D.ui.menuPicking->addAction(SC_D.ui.actionPickS);
 
+	SC_D.ui.menu_Tools->addAction(SC_D.ui.actionAddStations);
+
 	/*
 	QDockWidget *dock = new QDockWidget(tr("Filter picks"), this);
 	dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
