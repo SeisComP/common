@@ -132,8 +132,8 @@ bool SQLiteDatabase::handleURIParameter(const std::string &name,
 		return false;
 	}
 
-	if ( name == "debug" && value != "0" && value != "false" ) {
-		if ( value.empty() || value == "true" ) {
+	if ( (name == "debug") && (value != "0") && (value != "false") ) {
+		if ( value.empty() || (value == "true") ) {
 			_debugUMask = SQLITE_TRACE_STMT;
 		}
 		else if ( !Core::fromString(_debugUMask, value) ) {
@@ -329,6 +329,10 @@ bool SQLiteDatabase::execute(const char* command) {
 		sqlite3_free(errmsg);
 	}
 
+	if ( _debugUMask ) {
+		SEISCOMP_DEBUG("%s", command);
+	}
+
 	return result == SQLITE_OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -351,6 +355,10 @@ bool SQLiteDatabase::beginQuery(const char* query) {
 	int res = sqlite3_prepare(_handle, query, -1, &_stmt, &tail);
 	if ( res != SQLITE_OK || !_stmt ) {
 		return false;
+	}
+
+	if ( _debugUMask ) {
+		SEISCOMP_DEBUG("%s", query);
 	}
 
 	_columnCount = sqlite3_column_count(_stmt);
