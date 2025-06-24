@@ -116,42 +116,6 @@ char ZH_COMPS[3] = {'Z', 'H', '-'};
 char Z12_COMPS[3] = {'Z', '1', '2'};
 
 
-MAKEENUM(
-	RotationType,
-	EVALUES(
-		RT_123,
-		RT_ZNE,
-		RT_ZRT,
-		RT_LQT,
-		RT_ZH
-	),
-	ENAMES(
-		"123",
-		"ZNE",
-		"ZRT",
-		"LQT",
-		"ZH(L2)"
-	)
-);
-
-
-MAKEENUM(
-	UnitType,
-	EVALUES(
-		UT_RAW,
-		UT_ACC,
-		UT_VEL,
-		UT_DISP
-	),
-	ENAMES(
-		"Sensor",
-		"Acceleration",
-		"Velocity",
-		"Displacement"
-	)
-);
-
-
 const char *Units[3] = {
 	"m/s**2",
 	"m/s",
@@ -159,14 +123,17 @@ const char *Units[3] = {
 };
 
 
-UnitType fromGainUnit(const std::string &gainUnit) {
-	if ( !strcasecmp(gainUnit.c_str(), Units[0]) )
-		return UT_ACC;
-	else if ( !strcasecmp(gainUnit.c_str(), Units[1]) )
-		return UT_VEL;
-	else if ( !strcasecmp(gainUnit.c_str(), Units[2]) )
-		return UT_DISP;
-	return UT_RAW;
+PickerView::Config::UnitType fromGainUnit(const std::string &gainUnit) {
+	if ( !strcasecmp(gainUnit.c_str(), Units[0]) ) {
+		return PickerView::Config::UT_ACC;
+	}
+	else if ( !strcasecmp(gainUnit.c_str(), Units[1]) ) {
+		return PickerView::Config::UT_VEL;
+	}
+	else if ( !strcasecmp(gainUnit.c_str(), Units[2]) ) {
+		return PickerView::Config::UT_DISP;
+	}
+	return PickerView::Config::UT_RAW;
 }
 
 
@@ -510,7 +477,7 @@ class PickerMarker : public RecordMarker {
 		             Type type, bool newPick)
 		: RecordMarker(parent, pos)
 		, _type(type)
-		, _slot(-1), _rot(RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123) {
 			setMovable(newPick);
 			init();
 		}
@@ -521,7 +488,7 @@ class PickerMarker : public RecordMarker {
 		             Type type, bool newPick)
 		: RecordMarker(parent, pos, text)
 		, _type(type)
-		, _slot(-1), _rot(RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123) {
 			setMovable(newPick);
 			init();
 		}
@@ -2230,7 +2197,7 @@ PickerRecordLabel::PickerRecordLabel(int items, QWidget *parent, const char* nam
 	latitude = 999;
 	longitude = 999;
 
-	unit = UT_RAW;
+	unit = PickerView::Config::UT_RAW;
 
 	hasGotData = false;
 	isEnabledByConfig = false;
@@ -2427,26 +2394,6 @@ void PickerRecordLabel::removeLabelColor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickerView::Config::Config() {
-	timingQualityLow = Qt::darkRed;
-	timingQualityMedium = Qt::yellow;
-	timingQualityHigh = Qt::darkGreen;
-
-	defaultDepth = 10;
-	alignmentPosition = 0.5;
-
-	hideDisabledStations = false;
-
-	onlyApplyIntegrationFilterOnce = true;
-	ignoreDisabledStations = true;
-	showDataInSensorUnit = false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::Config::getPickPhases(StringList &phases) const {
 	getPickPhases(phases, phaseGroups);
 	foreach ( const QString &ph, favouritePhases ) {
@@ -2576,8 +2523,8 @@ void PickerView::init() {
 
 	//SC_D.ttTable.setBranch("P");
 
-	SC_D.currentRotationMode = RT_123;
-	SC_D.currentUnitMode = UT_RAW;
+	SC_D.currentRotationMode = SC_D.config.initialRotation.toInt();
+	SC_D.currentUnitMode = SC_D.config.initialUnit.toInt();
 	SC_D.settingsRestored = false;
 	SC_D.currentSlot = -1;
 	SC_D.currentFilter = nullptr;
@@ -2815,16 +2762,18 @@ void PickerView::init() {
 	SC_D.comboRotation = new QComboBox;
 	//SC_D.comboRotation->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 	SC_D.comboRotation->setDuplicatesEnabled(false);
-	for ( int i = 0; i < RotationType::Quantity; ++i )
-		SC_D.comboRotation->addItem(ERotationTypeNames::name(i));
+	for ( int i = 0; i < PickerView::Config::RotationType::Quantity; ++i ) {
+		SC_D.comboRotation->addItem(PickerView::Config::ERotationTypeNames::name(i));
+	}
 	SC_D.comboRotation->setCurrentIndex(SC_D.currentRotationMode);
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboRotation);
 
 	SC_D.comboUnit = new QComboBox;
 	SC_D.comboUnit->setDuplicatesEnabled(false);
-	for ( int i = 0; i < UnitType::Quantity; ++i )
-		SC_D.comboUnit->addItem(EUnitTypeNames::name(i));
+	for ( int i = 0; i < PickerView::Config::UnitType::Quantity; ++i ) {
+		SC_D.comboUnit->addItem(PickerView::Config::EUnitTypeNames::name(i));
+	}
 	SC_D.comboUnit->setCurrentIndex(SC_D.currentUnitMode);
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboUnit);
@@ -3515,16 +3464,19 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 
 	Config::UncertaintyProfiles::iterator it;
 	it = SC_D.config.uncertaintyProfiles.find(SC_D.config.uncertaintyProfile);
-	if ( it != SC_D.config.uncertaintyProfiles.end() )
+	if ( it != SC_D.config.uncertaintyProfiles.end() ) {
 		SC_D.uncertainties = it.value();
+	}
 
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setUncertainties(SC_D.uncertainties);
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setCrossHairEnabled(SC_D.config.showCrossHair);
 
-	if ( SCScheme.unit.distanceInKM )
+	if ( SCScheme.unit.distanceInKM ) {
 		SC_D.spinDistance->setValue(Math::Geo::deg2km(SC_D.config.defaultAddStationsDistance));
-	else
+	}
+	else {
 		SC_D.spinDistance->setValue(SC_D.config.defaultAddStationsDistance);
+	}
 
 	if ( SC_D.comboFilter ) {
 		SC_D.comboFilter->blockSignals(true);
@@ -3659,6 +3611,10 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 
 	SC_D.ui.actionShowUnassociatedPicks->setChecked(SC_D.config.loadAllPicks);
 	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
+
+	SC_D.comboRotation->setCurrentIndex(SC_D.config.initialRotation);
+	SC_D.comboUnit->setCurrentIndex(SC_D.config.initialUnit);
+	SC_D.ui.actionLimitFilterToZoomTrace->setChecked(SC_D.config.limitFilterToZoomTrace);
 
 	showTraceScaleToggled(SC_D.config.showDataInSensorUnit);
 	initPhases();
@@ -4219,14 +4175,18 @@ void PickerView::loadNextStations() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::sortByState() {
-	if ( SC_D.ui.actionSortByDistance->isChecked() )
+	if ( SC_D.ui.actionSortByDistance->isChecked() ) {
 		sortByDistance();
-	else if ( SC_D.ui.actionSortByAzimuth->isChecked() )
+	}
+	else if ( SC_D.ui.actionSortByAzimuth->isChecked() ) {
 		sortByAzimuth();
-	else if ( SC_D.ui.actionSortAlphabetically->isChecked() )
+	}
+	else if ( SC_D.ui.actionSortAlphabetically->isChecked() ) {
 		sortAlphabetically();
-	else if ( SC_D.ui.actionSortByResidual->isChecked() )
+	}
+	else if ( SC_D.ui.actionSortByResidual->isChecked() ) {
 		sortByResidual();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4245,12 +4205,15 @@ void PickerView::alignByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::componentByState() {
-	if ( SC_D.ui.actionShowZComponent->isChecked() )
+	if ( SC_D.ui.actionShowZComponent->isChecked() ) {
 		showComponent('Z');
-	else if ( SC_D.ui.actionShowNComponent->isChecked() )
+	}
+	else if ( SC_D.ui.actionShowNComponent->isChecked() ) {
 		showComponent('1');
-	else if ( SC_D.ui.actionShowEComponent->isChecked() )
+	}
+	else if ( SC_D.ui.actionShowEComponent->isChecked() ) {
 		showComponent('2');
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4259,8 +4222,9 @@ void PickerView::componentByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::resetState() {
-	if ( SC_D.comboRotation->currentIndex() > RT_123 )
+	if ( SC_D.comboRotation->currentIndex() > PickerView::Config::RT_123 ) {
 		changeRotation(SC_D.comboRotation->currentIndex());
+	}
 
 	showComponent('Z');
 	alignOnOriginTime();
@@ -4776,6 +4740,10 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 	selectFirstVisibleItem(SC_D.recordView);
 
+	if ( SC_D.config.loadStationsWithinDistanceInitially ) {
+		loadNextStations();
+	}
+
 	setUpdatesEnabled(true);
 
 	SC_D.currentRecord->showTimeRange(tmin, tmax);
@@ -4967,17 +4935,17 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	}
 
 
-	if ( SC_D.comboRotation->currentIndex() == RT_ZRT ) {
-		changeRotation(RT_ZRT);
+	if ( SC_D.comboRotation->currentIndex() == PickerView::Config::RT_ZRT ) {
+		changeRotation(PickerView::Config::RT_ZRT);
 	}
-	else if ( SC_D.comboRotation->currentIndex() == RT_LQT ) {
-		changeRotation(RT_LQT);
+	else if ( SC_D.comboRotation->currentIndex() == PickerView::Config::RT_LQT ) {
+		changeRotation(PickerView::Config::RT_LQT);
 	}
-	else if ( SC_D.comboRotation->currentIndex() == RT_ZNE ) {
-		changeRotation(RT_ZNE);
+	else if ( SC_D.comboRotation->currentIndex() == PickerView::Config::RT_ZNE ) {
+		changeRotation(PickerView::Config::RT_ZNE);
 	}
-	else if ( SC_D.comboRotation->currentIndex() == RT_ZH ) {
-		changeRotation(RT_ZH);
+	else if ( SC_D.comboRotation->currentIndex() == PickerView::Config::RT_ZH ) {
+		changeRotation(PickerView::Config::RT_ZH);
 	}
 
 	componentByState();
@@ -6271,7 +6239,7 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 	if ( loc ) {
 		getThreeComponents(tc, loc, streamID.channelCode().substr(0, streamID.channelCode().size()-1).c_str(), SC_D.origin->time());
 
-		label->unit = UT_RAW;
+		label->unit = PickerView::Config::UT_RAW;
 
 		if ( tc.comps[ThreeComponents::Vertical] ) {
 			comps[0] = *tc.comps[ThreeComponents::Vertical]->code().rbegin();
@@ -6675,16 +6643,16 @@ void PickerView::updateItemLabel(RecordViewItem* item, char component) {
 
 		if ( slot >= 0 && slot < 3 ) {
 			switch ( SC_D.comboRotation->currentIndex() ) {
-				case RT_ZNE:
+				case PickerView::Config::RT_ZNE:
 					comp = ZNE_COMPS[slot];
 					break;
-				case RT_ZRT:
+				case PickerView::Config::RT_ZRT:
 					comp = ZRT_COMPS[slot];
 					break;
-				case RT_LQT:
+				case PickerView::Config::RT_LQT:
 					comp = LQT_COMPS[slot];
 					break;
-				case RT_ZH:
+				case PickerView::Config::RT_ZH:
 					comp = ZH_COMPS[slot];
 					break;
 				default:
@@ -7041,16 +7009,16 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 
 	if ( slot >= 0 && slot < 3 ) {
 		switch ( SC_D.comboRotation->currentIndex() ) {
-			case RT_ZNE:
+			case PickerView::Config::RT_ZNE:
 				component = ZNE_COMPS[slot];
 				break;
-			case RT_ZRT:
+			case PickerView::Config::RT_ZRT:
 				component = ZRT_COMPS[slot];
 				break;
-			case RT_LQT:
+			case PickerView::Config::RT_LQT:
 				component = LQT_COMPS[slot];
 				break;
-			case RT_ZH:
+			case PickerView::Config::RT_ZH:
 				component = ZH_COMPS[slot];
 				break;
 			default:
@@ -7063,19 +7031,19 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 		if ( code == '?' ) continue;
 
 		switch ( SC_D.comboRotation->currentIndex() ) {
-			case RT_123:
+			case PickerView::Config::RT_123:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(code));
 				break;
-			case RT_ZNE:
+			case PickerView::Config::RT_ZNE:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZNE_COMPS[i]));
 				break;
-			case RT_ZRT:
+			case PickerView::Config::RT_ZRT:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZRT_COMPS[i]));
 				break;
-			case RT_LQT:
+			case PickerView::Config::RT_LQT:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(LQT_COMPS[i]));
 				break;
-			case RT_ZH:
+			case PickerView::Config::RT_ZH:
 				SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZH_COMPS[i]));
 				break;
 		}
@@ -8104,19 +8072,19 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 					char comp;
 					switch ( marker->rotation() ) {
 						default:
-						case RT_123:
+						case PickerView::Config::RT_123:
 							comp = rvi->mapSlotToComponent(marker->slot());
 							break;
-						case RT_ZNE:
+						case PickerView::Config::RT_ZNE:
 							comp = ZNE_COMPS[marker->slot()];
 							break;
-						case RT_ZRT:
+						case PickerView::Config::RT_ZRT:
 							comp = ZRT_COMPS[marker->slot()];
 							break;
-						case RT_LQT:
+						case PickerView::Config::RT_LQT:
 							comp = LQT_COMPS[marker->slot()];
 							break;
-						case RT_ZH:
+						case PickerView::Config::RT_ZH:
 							comp = ZH_COMPS[marker->slot()];
 							break;
 					}
@@ -9325,7 +9293,7 @@ void PickerView::changeRotation(int index) {
 	}
 
 	// Change icons depending on the current rotation mode
-	if ( index == RT_ZRT ) {
+	if ( index == PickerView::Config::RT_ZRT ) {
 		SC_D.ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelR.png")));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
@@ -9343,7 +9311,10 @@ void PickerView::changeRotation(int index) {
 	}
 
 
-	if ( index == RT_ZNE || index == RT_ZRT || index == RT_LQT || index == RT_ZH ) {
+	if ( index == PickerView::Config::RT_ZNE
+	  || index == PickerView::Config::RT_ZRT
+	  || index == PickerView::Config::RT_LQT
+	  || index == PickerView::Config::RT_ZH ) {
 		bool tmp = SC_D.config.loadAllComponents;
 		SC_D.config.loadAllComponents = true;
 
@@ -9361,19 +9332,19 @@ void PickerView::changeRotation(int index) {
 			if ( code == '?' ) continue;
 
 			switch ( index ) {
-				case RT_123:
+				case PickerView::Config::RT_123:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(code));
 					break;
-				case RT_ZNE:
+				case PickerView::Config::RT_ZNE:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZNE_COMPS[i]));
 					break;
-				case RT_ZRT:
+				case PickerView::Config::RT_ZRT:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZRT_COMPS[i]));
 					break;
-				case RT_LQT:
+				case PickerView::Config::RT_LQT:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(LQT_COMPS[i]));
 					break;
-				case RT_ZH:
+				case PickerView::Config::RT_ZH:
 					SC_D.currentRecord->setRecordID(i, QString("%1").arg(ZH_COMPS[i]));
 					break;
 			}
@@ -9408,13 +9379,18 @@ void PickerView::updateRecordAxisLabel(RecordViewItem *item) {
 	PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 
 	switch ( SC_D.currentUnitMode ) {
-		case UT_DISP:
-		case UT_VEL:
-		case UT_ACC:
-			if ( label->unit != UT_RAW ) {
+		case PickerView::Config::UT_DISP:
+		case PickerView::Config::UT_VEL:
+		case PickerView::Config::UT_ACC:
+			if ( label->unit != PickerView::Config::UT_RAW ) {
 				if ( item->widget()->areScaledValuesShown() ) {
 					for ( int i = 0; i < 3; ++i ) {
-						item->widget()->setRecordLabel(i, tr("%1").arg(Units[SC_D.currentUnitMode-UT_ACC]));
+						item->widget()->setRecordLabel(
+							i,
+							tr("%1").arg(
+								Units[SC_D.currentUnitMode - PickerView::Config::UT_ACC]
+							)
+						);
 					}
 				}
 				else {
@@ -9462,10 +9438,10 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 		int integrationSteps = 0;
 		switch ( SC_D.currentUnitMode ) {
-			case UT_DISP:
-			case UT_VEL:
-			case UT_ACC:
-				if ( label->unit != UT_RAW ) {
+			case PickerView::Config::UT_DISP:
+			case PickerView::Config::UT_VEL:
+			case PickerView::Config::UT_ACC:
+				if ( label->unit != PickerView::Config::UT_RAW ) {
 					integrationSteps = SC_D.currentUnitMode - label->unit;
 				}
 				else {
@@ -9474,7 +9450,7 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 					return true;
 				}
 				break;
-			case UT_RAW:
+			case PickerView::Config::UT_RAW:
 			default:
 				break;
 		}
@@ -9535,7 +9511,7 @@ bool PickerView::applyFilter(RecordViewItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickerView::applyRotation(RecordViewItem *item, int type) {
 	switch ( type ) {
-		case RT_123:
+		case PickerView::Config::RT_123:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation.identity();
@@ -9543,7 +9519,7 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 			label->data.setTransformationEnabled(false);
 			break;
 		}
-		case RT_ZNE:
+		case PickerView::Config::RT_ZNE:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation = label->orientationZNE;
@@ -9551,7 +9527,7 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 			label->data.setTransformationEnabled(true);
 			break;
 		}
-		case RT_ZRT:
+		case PickerView::Config::RT_ZRT:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation.mult(label->orientationZRT, label->orientationZNE);
@@ -9559,7 +9535,7 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 			label->data.setTransformationEnabled(true);
 			break;
 		}
-		case RT_LQT:
+		case PickerView::Config::RT_LQT:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation.mult(label->orientationLQT, label->orientationZNE);
@@ -9567,7 +9543,7 @@ bool PickerView::applyRotation(RecordViewItem *item, int type) {
 			label->data.setTransformationEnabled(true);
 			break;
 		}
-		case RT_ZH:
+		case PickerView::Config::RT_ZH:
 		{
 			PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 			label->data.transformation = label->orientationZNE;
