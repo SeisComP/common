@@ -89,6 +89,8 @@ namespace Core {
    - Removed defined KM_OF_DEGREE
    - Renamed Seiscomp::ellipcorr to Seiscomp::ellipticityCorrection
    - Removed Seiscomp::DataModel::DatabaseQuery::getStation
+   - Added Seiscomp::Geo::readFEP
+   - Added Seiscomp::Geo::writeGeoJSON
 
  "16.4.0"   0x100400
    - Add Seiscomp::Math::Matrix3<T> ostream output operator
