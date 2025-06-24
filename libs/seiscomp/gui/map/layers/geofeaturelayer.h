@@ -123,7 +123,7 @@ class SC_GUI_API GeoFeatureLayer : public Layer,
 			int                        roughness{-1};
 			bool                       filled{false};
 			int                        symbolSize{8};
-			QImage                     symbolIcon;
+			QPixmap                    symbolIcon;
 			QPoint                     symbolIconHotspot;
 			SymbolShape                symbolShape{Disabled};
 			QPolygon                   symbolPolygon;

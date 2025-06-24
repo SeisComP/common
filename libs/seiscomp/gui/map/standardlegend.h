@@ -46,8 +46,8 @@ class SC_GUI_API StandardLegendItem {
 		StandardLegendItem(QPen p, QString l, int s);
 		StandardLegendItem(QPen p, const QBrush &b, QString l);
 		StandardLegendItem(QPen p, const QBrush &b, QString l, int s);
-		StandardLegendItem(QImage sym, QString l);
-		StandardLegendItem(QImage sym, QString l, int s);
+		StandardLegendItem(QPixmap sym, QString l);
+		StandardLegendItem(QPixmap sym, QString l, int s);
 
 		virtual ~StandardLegendItem() = default;
 
@@ -74,7 +74,7 @@ class SC_GUI_API StandardLegendItem {
 	public:
 		QPen    pen;
 		QBrush  brush;
-		QImage  symbol;
+		QPixmap symbol;
 		QString label;
 		int     size{-1};
 };

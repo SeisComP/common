@@ -75,7 +75,7 @@ StandardLegendItem::StandardLegendItem(QPen p, const QBrush &b, QString l, int s
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(QImage sym, QString l)
+StandardLegendItem::StandardLegendItem(QPixmap sym, QString l)
 : symbol(std::move(sym)), label(std::move(l)) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -83,7 +83,7 @@ StandardLegendItem::StandardLegendItem(QImage sym, QString l)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StandardLegendItem::StandardLegendItem(QImage sym, QString l, int s)
+StandardLegendItem::StandardLegendItem(QPixmap sym, QString l, int s)
 : symbol(std::move(sym)), label(std::move(l)), size(s) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -105,7 +105,7 @@ void StandardLegendItem::draw(QPainter *painter, const QRect &symbolRect,
 void StandardLegendItem::drawSymbol(QPainter *painter, const QRect &rect) {
 	// Draw symbol if available
 	if ( !symbol.isNull() ) {
-		painter->drawImage(rect, symbol);
+		painter->drawPixmap(rect, symbol);
 		return;
 	}
 

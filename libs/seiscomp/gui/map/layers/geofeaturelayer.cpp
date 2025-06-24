@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/fontawesome6.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/map/layers/geofeaturelayer.h>
 #include <seiscomp/gui/map/canvas.h>
@@ -329,11 +330,29 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 	// read and scale symbol icon
 	if ( !symbolIconPath.empty() ) {
-		if ( symbolIconPath[0] == '/' ) {
-			symbolIcon = QImage(symbolIconPath.c_str());
+		QUrl iconUrl(symbolIconPath.c_str());
+		QString scheme = iconUrl.scheme();
+
+		if ( scheme.isEmpty() || scheme == "file" ) {
+			QImage img;
+			QString path = iconUrl.path();
+			if ( dataDir.empty() || path.isEmpty() || path[0] == '/' ) {
+				img = QImage(path);
+			}
+			else {
+				img = QImage((dataDir + '/' + path.toStdString()).c_str());
+			}
+			symbolIcon = QPixmap::fromImage(img);
 		}
-		else {
-			symbolIcon = QImage((dataDir + '/' + symbolIconPath).c_str());
+		else if ( scheme == "qrc" ) {
+			symbolIcon = QPixmap::fromImage(QImage(":" + iconUrl.path()));
+		}
+		else if ( scheme == "fa" || scheme == "far" ||
+		          scheme == "fa6" || scheme == "far6" ) {
+			symbolIcon = FontAwesome6::icon(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
+		}
+		else if ( scheme == "fas" || scheme == "fas6" ) {
+			symbolIcon = FontAwesome6::iconSolid(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
 		}
 
 		// symbol could not be loaded: fall back to empty symbol shape
@@ -349,14 +368,14 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 			                     symbolIconHotspot.y() * symbolIcon.size().height() / oldSize.height());
 			symbolRect = symbolIcon.rect();
 			symbolRect.moveTo(-scaledHotspot);
-			return;
 		}
 		// use original icon and hotspot dimension
 		else {
 			symbolRect = symbolIcon.rect();
 			symbolRect.moveTo(-symbolIconHotspot);
-			return;
 		}
+
+		return;
 	}
 
 	if ( symbolShape == Disabled ) {
@@ -675,16 +694,16 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 			if ( name.isEmpty() ) {
 				for ( const auto &v : f->vertices() ) {
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
-						painter->drawImage(props->symbolRect.translated(p),
-						                   props->symbolIcon);
+						painter->drawPixmap(props->symbolRect.translated(p),
+						                    props->symbolIcon);
 					}
 				}
 			}
 			else {
 				for ( const auto &v : f->vertices() ) {
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
-						painter->drawImage(props->symbolRect.translated(p),
-						                   props->symbolIcon);
+						painter->drawPixmap(props->symbolRect.translated(p),
+						                    props->symbolIcon);
 						painter->drawText(textRect.translated(p),
 						                  props->symbolNameAlignment, name);
 					}
@@ -1002,7 +1021,7 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 				// else LayerProperties::None - Nothing to draw
 
 				painter.end();
-				li = new StandardLegendItem(img, label);
+				li = new StandardLegendItem(QPixmap::fromImage(img), label);
 			}
 			// filled polygon
 			else if ( item->filled ) {
