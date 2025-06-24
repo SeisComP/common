@@ -131,46 +131,61 @@ Station* getStation(const Inventory *inventory,
                     const std::string &stationCode,
                     const Core::Time &time,
                     InventoryError *error) {
-	if ( inventory == nullptr )
+	if ( !inventory ) {
 		return nullptr;
+	}
 
 	InventoryError err;
 	ERR(NETWORK_CODE_NOT_FOUND);
 
 	for ( size_t i = 0; i < inventory->networkCount(); ++i ) {
 		DataModel::Network* network = inventory->network(i);
-		if ( network->code() != networkCode ) continue;
+		if ( network->code() != networkCode ) {
+			continue;
+		}
 
 		ERR(NETWORK_EPOCH_NOT_FOUND);
 
 		try {
-			if ( network->end() < time ) continue;
+			if ( network->end() < time ) {
+				continue;
+			}
 		}
 		catch (...) {
 		}
 
-		if ( network->start() > time ) continue;
+		if ( network->start() > time ) {
+			continue;
+		}
 
 		ERR(STATION_CODE_NOT_FOUND);
 
 		for ( size_t j = 0; j < network->stationCount(); ++j ) {
 			DataModel::Station* station = network->station(j);
-			if ( station->code() != stationCode ) continue;
+			if ( station->code() != stationCode ) {
+				continue;
+			}
 
 			ERR(STATION_EPOCH_NOT_FOUND);
 
 			try {
-				if ( station->end() < time ) continue;
+				if ( station->end() < time ) {
+					continue;
+				}
 			}
 			catch (...) {}
 
-			if ( station->start() > time ) continue;
+			if ( station->start() > time ) {
+				continue;
+			}
 
 			return station;
 		}
 	}
 
-	if ( error ) *error = err;
+	if ( error ) {
+		*error = err;
+	}
 
 	return nullptr;
 }
@@ -203,43 +218,56 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
 	return nullptr;
 	*/
 
-	if ( inventory == nullptr )
+	if ( !inventory ) {
 		return nullptr;
+	}
 
 	InventoryError err;
 	ERR(NETWORK_CODE_NOT_FOUND);
 
 	for ( size_t i = 0; i < inventory->networkCount(); ++i ) {
 		DataModel::Network* network = inventory->network(i);
-		if ( network->code() != networkCode ) continue;
+		if ( network->code() != networkCode ) {
+			continue;
+		}
 
 		ERR(STATION_CODE_NOT_FOUND);
 
 		for ( size_t j = 0; j < network->stationCount(); ++j ) {
 			DataModel::Station* sta = network->station(j);
-			if ( sta->code() != stationCode ) continue;
+			if ( sta->code() != stationCode ) {
+				continue;
+			}
 
 			ERR(SENSOR_CODE_NOT_FOUND);
 
 			for ( size_t k = 0; k < sta->sensorLocationCount(); ++k ) {
 				DataModel::SensorLocation* loc = sta->sensorLocation(k);
-				if ( loc->code() != locationCode ) continue;
+				if ( loc->code() != locationCode ) {
+					continue;
+				}
 
 				ERR(SENSOR_EPOCH_NOT_FOUND);
 
 				try {
-					if ( loc->end() <= time ) continue;
+					if ( loc->end() <= time ) {
+						continue;
+					}
 				}
 				catch (...) {}
 
-				if ( loc->start() > time ) continue;
+				if ( loc->start() > time ) {
+					continue;
+				}
 
 				return loc;
 			}
 		}
 	}
 
-	if ( error ) *error = err;
+	if ( error ) {
+		*error = err;
+	}
 
 	return nullptr;
 }
@@ -254,33 +282,43 @@ Stream* getStream(const Inventory *inventory,
 	InventoryError err;
 	DataModel::SensorLocation *loc = getSensorLocation(inventory, networkCode, stationCode,
 	                                                   locationCode, time, &err);
-	if ( loc != nullptr ) {
+	if ( loc ) {
 		ERR(STREAM_CODE_NOT_FOUND);
 		for ( size_t i = 0; i < loc->streamCount(); ++i ) {
 			DataModel::Stream *stream = loc->stream(i);
-			if ( stream->code() != channelCode ) continue;
+			if ( stream->code() != channelCode ) {
+				continue;
+			}
 
 			ERR(STREAM_EPOCH_NOT_FOUND);
 
 			try {
-				if ( stream->end() <= time ) continue;
+				if ( stream->end() <= time ) {
+					continue;
+				}
 			}
 			catch (...) {}
 
-			if ( stream->start() > time ) continue;
+			if ( stream->start() > time ) {
+				continue;
+			}
 
 			return stream;
 		}
 	}
 
-	if ( error ) *error = err;
+	if ( error ) {
+		*error = err;
+	}
 
 	return nullptr;
 }
 
 
 Station* getStation(const Inventory *inventory, const Pick *pick) {
-	if ( pick == nullptr ) return nullptr;
+	if ( !pick ) {
+		return nullptr;
+	}
 
 	return getStation(inventory, pick->waveformID().networkCode(),
 	                  pick->waveformID().stationCode(),
@@ -290,7 +328,9 @@ Station* getStation(const Inventory *inventory, const Pick *pick) {
 
 SensorLocation* getSensorLocation(const Inventory *inventory,
                                   const Pick *pick) {
-	if ( pick == nullptr ) return nullptr;
+	if ( !pick ) {
+		return nullptr;
+	}
 
 	return getSensorLocation(inventory, pick->waveformID().networkCode(),
 	                         pick->waveformID().stationCode(), pick->waveformID().locationCode(),
@@ -300,7 +340,9 @@ SensorLocation* getSensorLocation(const Inventory *inventory,
 
 Stream* getStream(const Inventory *inventory,
                   const Pick *pick) {
-	if ( pick == nullptr ) return nullptr;
+	if ( !pick ) {
+		return nullptr;
+	}
 
 	return getStream(inventory, pick->waveformID().networkCode(),
 	                 pick->waveformID().stationCode(), pick->waveformID().locationCode(),
@@ -318,14 +360,19 @@ Stream *getVerticalComponent(const SensorLocation *loc, const char *streamCode, 
 		Stream *stream = loc->stream(i);
 
 		try {
-			if ( stream->end() < time ) continue;
+			if ( stream->end() < time ) {
+				continue;
+			}
 		}
 		catch (...) {}
 
-		if ( stream->start() > time ) continue;
-
-		if ( stream->code().compare(0, len, streamCode) )
+		if ( stream->start() > time ) {
 			continue;
+		}
+
+		if ( stream->code().compare(0, len, streamCode) ) {
+			continue;
+		}
 
 		try {
 			// Z is up vector. Since we do not care about the sign
