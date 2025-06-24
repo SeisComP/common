@@ -1436,15 +1436,17 @@ void Canvas::translate(const QPointF &delta) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::onLegendAdded(Legend *legend) {
-	LegendAreas::iterator it = _legendAreas.find(legend->alignment());
-	if ( it == _legendAreas.end() )
+	auto it = _legendAreas.find(legend->alignment());
+	if ( it == _legendAreas.end() ) {
 		it = _legendAreas.insert(legend->alignment(), LegendArea());
+	}
 
 	LegendArea &area = *it;
 	area.append(LegendItem(legend));
 	if ( legend->layer() && legend->layer()->isVisible() &&
-	     legend->isEnabled() && area.currentIndex == -1 )
+	     legend->isEnabled() && area.currentIndex == -1 ) {
 		area.currentIndex = area.findNext();
+	}
 
 	connect(legend, SIGNAL(enabled(Seiscomp::Gui::Map::Legend*, bool)),
 	        this, SLOT(setLegendEnabled(Seiscomp::Gui::Map::Legend*, bool)));
