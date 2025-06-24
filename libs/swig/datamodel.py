@@ -10501,33 +10501,6 @@ class Config(PublicObject):
 
 # Register Config in _datamodel:
 _datamodel.Config_swigregister(Config)
-class QCLogIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::QCLogIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(QCLogIndex self) -> QCLogIndex
-        __init__(QCLogIndex self, Time start, WaveformStreamID waveformID) -> QCLogIndex
-        __init__(QCLogIndex self, QCLogIndex arg2) -> QCLogIndex
-        """
-        _datamodel.QCLogIndex_swiginit(self, _datamodel.new_QCLogIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(QCLogIndex self, QCLogIndex arg2) -> bool"""
-        return _datamodel.QCLogIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(QCLogIndex self, QCLogIndex arg2) -> bool"""
-        return _datamodel.QCLogIndex___ne__(self, arg2)
-    start = property(_datamodel.QCLogIndex_start_get, _datamodel.QCLogIndex_start_set, doc=r"""start : Seiscomp::Core::Time""")
-    waveformID = property(_datamodel.QCLogIndex_waveformID_get, _datamodel.QCLogIndex_waveformID_set, doc=r"""waveformID : Seiscomp::DataModel::WaveformStreamID""")
-    __swig_destroy__ = _datamodel.delete_QCLogIndex
-
-# Register QCLogIndex in _datamodel:
-_datamodel.QCLogIndex_swigregister(QCLogIndex)
 class QCLog(PublicObject):
     r"""Proxy of C++ Seiscomp::DataModel::QCLog class."""
 
@@ -10664,14 +10637,6 @@ class QCLog(PublicObject):
     def message(self):
         r"""message(QCLog self) -> std::string const &"""
         return _datamodel.QCLog_message(self)
-
-    def index(self):
-        r"""index(QCLog self) -> QCLogIndex"""
-        return _datamodel.QCLog_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(QCLog self, QCLog lhs) -> bool"""
-        return _datamodel.QCLog_equalIndex(self, lhs)
 
     def qualityControl(self):
         r"""qualityControl(QCLog self) -> QualityControl"""
@@ -11208,12 +11173,9 @@ class QualityControl(PublicObject):
         """
         return _datamodel.QualityControl_remove(self, *args)
 
-    def removeQCLog(self, *args):
-        r"""
-        removeQCLog(QualityControl self, size_t i) -> bool
-        removeQCLog(QualityControl self, QCLogIndex i) -> bool
-        """
-        return _datamodel.QualityControl_removeQCLog(self, *args)
+    def removeQCLog(self, i):
+        r"""removeQCLog(QualityControl self, size_t i) -> bool"""
+        return _datamodel.QualityControl_removeQCLog(self, i)
 
     def removeWaveformQuality(self, *args):
         r"""
@@ -11241,12 +11203,9 @@ class QualityControl(PublicObject):
         r"""outageCount(QualityControl self) -> size_t"""
         return _datamodel.QualityControl_outageCount(self)
 
-    def qCLog(self, *args):
-        r"""
-        qCLog(QualityControl self, size_t i) -> QCLog
-        qCLog(QualityControl self, QCLogIndex i) -> QCLog
-        """
-        return _datamodel.QualityControl_qCLog(self, *args)
+    def qCLog(self, i):
+        r"""qCLog(QualityControl self, size_t i) -> QCLog"""
+        return _datamodel.QualityControl_qCLog(self, i)
 
     def waveformQuality(self, *args):
         r"""
