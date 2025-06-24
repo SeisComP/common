@@ -348,7 +348,7 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 			bool nslcEmpty = filterRegExp().isEmpty();
 			bool matchNSLC = nslcEmpty || filterRegExp().exactMatch(entry->code);
 #else
-			bool nslcEmpty = filterRegularExpression().pattern().isEmpty()
+			bool nslcEmpty = filterRegularExpression().pattern().isEmpty();
 			bool matchNSLC = nslcEmpty || filterRegularExpression().match(entry->code).hasMatch();
 #endif
 			bool matchNetworkType = _networkType && (*_networkType == entry->networkType);
