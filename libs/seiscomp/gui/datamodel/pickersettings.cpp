@@ -262,9 +262,11 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.cbRemoveAllAutomaticPicks->setChecked(_pickerConfig.removeAutomaticPicks);
 
 	_ui.cbUsePerStreamTimeWindow->setChecked(_pickerConfig.usePerStreamTimeWindows);
-	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.preOffset.seconds()));
+	_ui.preTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.preOffset.seconds()).addMSecs(_pickerConfig.preOffset.microseconds() / 1000));
 	adjustPreSlider(_ui.preTimeEdit->time());
-	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()));
+	_ui.postTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()).addMSecs(_pickerConfig.postOffset.microseconds() / 1000));
 	adjustPostSlider(_ui.postTimeEdit->time());
 	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()));
 
@@ -533,8 +535,10 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.removeAutomaticPicks = _ui.cbRemoveAllAutomaticPicks->isChecked();
 
 	_pickerConfig.usePerStreamTimeWindows = _ui.cbUsePerStreamTimeWindow->isChecked();
-	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()), 0);
-	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()), 0);
+	int msecs = QTime(0, 0, 0, 0).msecsTo(_ui.preTimeEdit->time());
+	_pickerConfig.preOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
+	msecs = QTime(0, 0, 0, 0).msecsTo(_ui.postTimeEdit->time());
+	_pickerConfig.postOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
 	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()), 0);
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
