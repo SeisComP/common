@@ -76,6 +76,7 @@ class SC_SYSTEM_CORE_API Exporter : public IO::Exporter, public OutputHandler {
 
 		void put(const char *content) override;
 
+		void writeAttrString(const char *str);
 		void writeString(const char *str);
 
 

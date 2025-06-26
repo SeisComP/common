@@ -259,7 +259,7 @@ void Exporter::addAttribute(const char *name, const char *ns, const char *value)
 		_ostr << name;
 
 	_ostr << "=" << "\"";
-	writeString(value);
+	writeAttrString(value);
 	_ostr << "\"";
 }
 
@@ -295,7 +295,7 @@ void Exporter::closeElement(const char *name, const char *ns) {
 }
 
 
-void Exporter::writeString(const char *content) {
+void Exporter::writeAttrString(const char *content) {
 	// &amp; refers to an ampersand (&)
 	// &lt; refers to a less-than symbol (<)
 	// &gt; refers to a greater-than symbol (>)
@@ -317,6 +317,29 @@ void Exporter::writeString(const char *content) {
 				break;
 			case '\"':
 				_ostr << "&quot;";
+				break;
+			default:
+				_ostr << *content;
+		}
+		++content;
+	}
+}
+
+
+void Exporter::writeString(const char *content) {
+	// &amp; refers to an ampersand (&)
+	// &lt; refers to a less-than symbol (<)
+	// &gt; refers to a greater-than symbol (>)
+	while ( *content != '\0' ) {
+		switch ( *content ) {
+			case '&':
+				_ostr << "&amp;";
+				break;
+			case '<':
+				_ostr << "&lt;";
+				break;
+			case '>':
+				_ostr << "&gt;";
 				break;
 			default:
 				_ostr << *content;
