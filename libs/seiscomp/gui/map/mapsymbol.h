@@ -214,11 +214,11 @@ class SC_GUI_API Symbol {
 	// Private data members
 	// ----------------------------------------------------------------------
 	protected:
-		int                           _type;
+		int                           _type{0};
 		std::string                   _id;
-		Priority                      _priority;
-		bool                          _clipped;
-		bool                          _visible;
+		Priority                      _priority{NONE};
+		bool                          _clipped{false};
+		bool                          _visible{true};
 		QPointF                       _location;
 		QPoint                        _position;
 		QSize                         _size;
