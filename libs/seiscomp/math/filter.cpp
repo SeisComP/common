@@ -147,11 +147,12 @@ struct Generator {
 		value_type f = nullptr;
 		typename ParserT::parameter_list &parameters = parser.parameters;
 
-		if ( filterType == "self" )
+		if ( filterType == "self" ) {
 			f = new Math::Filtering::SelfFilter<component_type>();
+		}
 		else {
 			f = Math::Filtering::InPlaceFilterFactory<component_type>::Create(filterType.c_str());
-			if ( f == nullptr ) {
+			if ( !f ) {
 				parameters.clear();
 				parser.error_message = "unknown filter '" + filterType + "'";
 				return nullptr;
@@ -159,16 +160,18 @@ struct Generator {
 		}
 
 		try {
-			int result = f->setParameters(parameters.size(), &parameters[0]);
+			int result = f->setParameters(parameters.size(), parameters.data());
 			if ( result != (int)parameters.size() ) {
 				parameters.clear();
 				delete f;
 
 				stringstream ss;
-				if ( result >= 0 )
+				if ( result >= 0 ) {
 					ss << "filter '" << filterType << "' takes " << result << " parameters";
-				else
+				}
+				else {
 					ss << "wrong parameter at position " << (-result) << " for filter '" << filterType << "'";
+				}
 
 				parser.error_message = ss.str();
 				return nullptr;
