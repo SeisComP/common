@@ -1060,7 +1060,10 @@ struct NodalPlaneHandler : TypedClassHandler<NodalPlane> {
 };
 
 struct NodalPlanesHandler : TypedClassHandler<NodalPlanes> {
-	NodalPlanesHandler() { addList("nodalPlane1, nodalPlane2"); }
+	NodalPlanesHandler() {
+		addList("nodalPlane1, nodalPlane2");
+		add("preferredPlane", nullptr, Optional, Attribute);
+	}
 };
 
 struct SourceTimeFunctionHandler : TypedClassHandler<SourceTimeFunction> {
