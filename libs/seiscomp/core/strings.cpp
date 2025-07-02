@@ -421,9 +421,11 @@ int split(std::vector<std::string> &tokens, const char *source,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int split(std::vector<std::string> &tokens, const std::string &source,
+int split(std::vector<std::string> &tokens, std::string_view source,
           const char *delimiter, bool compressOn) {
-	return split(tokens, source.c_str(), delimiter, compressOn);
+	boost::split(tokens, source, boost::is_any_of(delimiter),
+	             ((compressOn) ? boost::token_compress_on : boost::token_compress_off));
+	return static_cast<int>(tokens.size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

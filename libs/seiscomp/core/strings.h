@@ -73,7 +73,7 @@ template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
 std::string toString(const Enum<ENUMTYPE, END, NAMES> &value);
 
 template <typename T>
-std::string toString(const std::vector<T> &v);
+std::string toString(const std::vector<T> &v, char delimiter = ' ');
 
 template <typename T>
 std::string toString(const Optional<T> &v);
@@ -124,7 +124,7 @@ template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
 bool fromString(Enum<ENUMTYPE, END, NAMES> &value, std::string_view sv);
 
 template <typename T>
-bool fromString(std::vector<T> &vec, std::string_view sv);
+bool fromString(std::vector<T> &vec, std::string_view sv, char delimiter = ' ');
 
 
 /**
@@ -151,12 +151,12 @@ int split(std::vector<std::string> &tokens, const char *source,
           const char *delimiter, bool compressOn = true);
 
 /**
- * @brief Convenience function which takes an std::string as source parameter
+ * @brief Convenience function which takes an std::string_view as source parameter
  *        rather than a const char pointer.
  *        See @ref split(std::vector<std::string> &, const char *, const char *, bool).
  */
 SC_SYSTEM_CORE_API
-int split(std::vector<std::string> &tokens, const std::string &source,
+int split(std::vector<std::string> &tokens, std::string_view source,
           const char *delimiter, bool compressOn = true);
 
 /**
@@ -305,7 +305,7 @@ const char *tokenizeExt(size_t &lenTok, size_t &lenSource, const char *&source,
                         const char *whitespaces = " \t\n\v\f\r",
                         const char *quotes = "\"'");
 
-/**
+/**split(
  * @brief Splits a string into several tokens separated by one of the specified
  *        delimiter characters. A delimiter character is ignored if it occurs in
  *        a quoted string or if it is protected by a backslash. Likewise quotes

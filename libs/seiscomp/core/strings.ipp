@@ -89,18 +89,20 @@ std::string toString(const Enum<ENUMTYPE, END, NAMES>& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline std::string toString(const std::vector<T>& v) {
-	typename std::vector<T>::const_iterator it = v.begin();
+inline std::string toString(const std::vector<T>& v, char delimiter) {
+	auto it = v.begin();
 	std::string str;
-	if ( it != v.end() )
+	if ( it != v.end() ) {
 		str += toString(*it);
-	else
+	}
+	else {
 		return "";
+	}
 
 	++it;
 
 	while ( it != v.end() ) {
-		str += " ";
+		str += delimiter;
 		str += toString(*it);
 		++it;
 	}
@@ -196,13 +198,16 @@ inline bool fromString(std::complex<T>& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool fromString(std::vector<T>& vec, const std::string& str) {
+inline bool fromString(std::vector<T>& vec, std::string_view sv, char delimiter) {
 	std::vector<std::string> tokens;
-	split(tokens, str.c_str(), " ");
+	char tmp[2] = { delimiter, '\0' };
+	split(tokens, sv, tmp);
+	vec.clear();
 	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		T v;
-		if ( !fromString(v, tokens[i]) )
+		if ( !fromString(v, tokens[i]) ) {
 			return false;
+		}
 		vec.push_back(v);
 	}
 
@@ -215,28 +220,39 @@ inline bool fromString(std::vector<T>& vec, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool fromString(std::vector<std::complex<T> >& vec, const std::string& str) {
+inline bool fromString(std::vector<std::complex<T> >& vec, std::string_view sv, char delimiter) {
 	std::vector<std::string> tokens;
-	split(tokens, str.c_str(), " ");
+	char tmp[2] = { delimiter, '\0' };
+	split(tokens, sv, tmp);
+	vec.clear();
 	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		std::complex<T> v;
 		int count = 1;
 
-		size_t countPos = tokens[i].find_first_not_of(' ');
+		size_t countPos = tokens[i].find_first_not_of(delimiter);
 		if ( countPos != std::string::npos ) {
 			if ( tokens[i][countPos] != '(' ) {
 				size_t bracketPos = tokens[i].find('(', countPos);
 				// Invalid complex string
-				if ( bracketPos == std::string::npos ) continue;
-				if ( !fromString(count, tokens[i].substr(countPos, bracketPos-countPos)) )
+				if ( bracketPos == std::string::npos ) {
+					continue;
+				}
+
+				if ( !fromString(count, tokens[i].substr(countPos, bracketPos-countPos)) ) {
 					return false;
+				}
+
 				tokens[i] = tokens[i].substr(bracketPos);
 			}
 		}
 
-		if ( !fromString(v, tokens[i]) ) return false;
-		for ( int i = 0; i < count; ++i )
+		if ( !fromString(v, tokens[i]) ) {
+			return false;
+		}
+
+		for ( int c = 0; c < count; ++c ) {
 			vec.push_back(v);
+		}
 	}
 
 	return true;
