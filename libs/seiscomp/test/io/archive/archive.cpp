@@ -24,7 +24,9 @@
 #include "eventxml.h"
 
 #include <seiscomp/datamodel/eventparameters.h>
+#include <seiscomp/datamodel/inventory_package.h>
 #include <seiscomp/datamodel/journaling.h>
+#include <seiscomp/io/archive/binarchive.h>
 #include <seiscomp/io/archive/jsonarchive.h>
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/logging/fd.h>
@@ -177,6 +179,23 @@ BOOST_AUTO_TEST_CASE(xmlMixed) {
 
 	BOOST_CHECK_EQUAL(ep->className(), DataModel::EventParameters::ClassName());
 	BOOST_CHECK_EQUAL(ej->className(), DataModel::Journaling::ClassName());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(binEmptyArrays) {
+	DataModel::ResponsePAZPtr polesAndZeros = DataModel::ResponsePAZ::Create("RESP");
+	polesAndZeros->setPoles(DataModel::ComplexArray());
+	polesAndZeros->setZeros(DataModel::ComplexArray());
+
+	IO::VBinaryArchive ar;
+	stringbuf storage(ios_base::out);
+	ar.create(&storage);
+	ar << polesAndZeros;
+	ar.close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
