@@ -107,6 +107,14 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 		//! Sets the root namespace used when creating new documents
 		void setRootNamespace(const std::string& name, const std::string& uri);
 
+		/**
+		 * @brief Sets the list delimiter when reading and writing lists.
+		 * This parameter only applies for lists which are not complex numbers.
+		 * These will be converted using space as delimiter.
+		 * @param delimiter The delimiter character
+		 */
+		void setListDelimiter(char delimiter);
+
 
 	// ----------------------------------------------------------------------
 	//  Read methods
@@ -234,21 +242,22 @@ class SC_SYSTEM_CORE_API XMLArchive : public Seiscomp::Core::Archive {
 
 
 	protected:
-		mutable void* _document;
-		mutable void* _current;
-		mutable void* _objectLocation;
-		mutable std::string _property;
-		mutable std::string _attribName;
+		mutable void        *_document;
+		mutable void        *_current;
+		mutable void        *_objectLocation;
+		mutable std::string  _property;
+		mutable std::string  _attribName;
 
-		int         _forceWriteVersion;
-		std::string _rootTag;
+		int                  _forceWriteVersion;
+		std::string          _rootTag;
+		char                 _listDelimiter{' '};
 
-		std::streambuf* _buf;
-		bool _deleteOnClose;
+		std::streambuf      *_buf;
+		bool                 _deleteOnClose;
 
-		bool _formattedOutput;
-		bool _compression;
-		CompressionMethod _compressionMethod;
+		bool                 _formattedOutput;
+		bool                 _compression;
+		CompressionMethod    _compressionMethod;
 
 		std::pair<std::string, std::string> _namespace;
 };

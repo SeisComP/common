@@ -510,6 +510,11 @@ void XMLArchive::setRootName(const std::string &name) {
 }
 
 
+void XMLArchive::setListDelimiter(char delimiter) {
+	_listDelimiter = delimiter;
+}
+
+
 void XMLArchive::setFormattedOutput(bool enable) {
 	_formattedOutput = enable;
 }
@@ -567,47 +572,47 @@ void XMLArchive::read(double& value) {
 
 
 void XMLArchive::read(std::vector<char>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<int8_t>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<int16_t>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<int32_t>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<int64_t>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<float>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<double>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<std::string>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
 void XMLArchive::read(std::vector<Core::Time>& value) {
-	setValidity(Seiscomp::Core::fromString(value, _property));
+	setValidity(Seiscomp::Core::fromString(value, _property, _listDelimiter));
 }
 
 
@@ -670,47 +675,47 @@ void XMLArchive::write(double value) {
 
 
 void XMLArchive::write(std::vector<char>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<int8_t>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<int16_t>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<int32_t>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<int64_t>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<float>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<double>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<std::string>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
 void XMLArchive::write(std::vector<Core::Time>& value) {
-	writeAttrib(Seiscomp::Core::toString(value));
+	writeAttrib(Seiscomp::Core::toString(value, _listDelimiter));
 }
 
 
