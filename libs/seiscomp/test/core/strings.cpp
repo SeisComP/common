@@ -320,6 +320,27 @@ BOOST_AUTO_TEST_CASE(incompleteNumberConversions) {
 }
 
 
+BOOST_AUTO_TEST_CASE(vectorConversions) {
+	vector<int> numbers;
+	vector<string> strings;
+
+	BOOST_CHECK(fromString(numbers, "1 2 3 4"));
+	BOOST_CHECK_EQUAL(toString(numbers), "1 2 3 4");
+
+	BOOST_CHECK(fromString(strings, "1 2 3 4"));
+	BOOST_CHECK_EQUAL(toString(strings), "1 2 3 4");
+
+	BOOST_CHECK(fromString(numbers, "1,2,3,4", ','));
+	BOOST_CHECK_EQUAL(toString(numbers, ','), "1,2,3,4");
+
+	BOOST_CHECK(fromString(strings, "1,2,3,4", ','));
+	BOOST_CHECK_EQUAL(toString(strings, ','), "1,2,3,4");
+
+	BOOST_CHECK(fromString(strings, "abc,def,123,456", ','));
+	BOOST_CHECK_EQUAL(toString(strings, ':'), "abc:def:123:456");
+}
+
+
 BOOST_AUTO_TEST_CASE(tokenize1) {
 	const char *text = "Hello, World!";
 	size_t len = strlen(text), tok_len;
