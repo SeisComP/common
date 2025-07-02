@@ -222,7 +222,7 @@ QPolygon StationSymbol::generateShape(int posX, int posY, int radius) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const QPolygon& StationSymbol::stationPolygon() const {
+const QPolygon &StationSymbol::stationPolygon() const {
 	return _stationPolygon;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
