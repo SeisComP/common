@@ -158,52 +158,18 @@ Scheme::Colors::Colors() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Splash::Splash()
-: version(0,104,158,255), message(128,128,128,255) {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Picks::Picks() {
-	manual = Qt::green;
-	automatic = Qt::red;
-	undefined = Qt::gray;
-	disabled = Qt::gray;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Colors::Arrivals::Arrivals() {
-	manual = QColor(0, 160, 0);
-	automatic = QColor(160, 0, 0);
-	theoretical = QColor(0, 0, 160);
-	undefined = QColor(160, 0, 0);
-	disabled = Qt::gray;
-	uncertainties = QPen(Qt::gray, 0.8);
-	defaultUncertainties = QPen(QColor(128,128,128,64), 0.8);
-
-	/* BERND Version
-	residuals.setColorAt(-10, QColor(0,0,255));
-	residuals.setColorAt(0, QColor(0,255,0));
-	residuals.setColorAt(10, QColor(255,0,255));
-	*/
-
-	residuals.setColorAt(+8, QColor(100,0,0));
-	residuals.setColorAt(+4, QColor(255,0,0));
-	residuals.setColorAt(+3, QColor(255,100,100));
-	residuals.setColorAt(+2, QColor(255,170,170));
-	residuals.setColorAt(+1, QColor(255,220,220));
-	residuals.setColorAt( 0, QColor(255,255,255));
-	residuals.setColorAt(-1, QColor(220,220,255));
-	residuals.setColorAt(-2, QColor(170,170,255));
-	residuals.setColorAt(-3, QColor(100,100,255));
-	residuals.setColorAt(-4, QColor(0,0,255));
-	residuals.setColorAt(-8, QColor(0,0,100));
+	residuals.setColorAt(+8, QColor(100, 0, 0));
+	residuals.setColorAt(+4, QColor(255, 0, 0));
+	residuals.setColorAt(+3, QColor(255, 100, 100));
+	residuals.setColorAt(+2, QColor(255, 170, 170));
+	residuals.setColorAt(+1, QColor(255, 220, 220));
+	residuals.setColorAt( 0, QColor(255, 255, 255));
+	residuals.setColorAt(-1, QColor(220, 220, 255));
+	residuals.setColorAt(-2, QColor(170, 170, 255));
+	residuals.setColorAt(-3, QColor(100, 100, 255));
+	residuals.setColorAt(-4, QColor(0, 0, 255));
+	residuals.setColorAt(-8, QColor(0, 0, 100));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -212,33 +178,17 @@ Scheme::Colors::Arrivals::Arrivals() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Colors::Magnitudes::Magnitudes() {
-	set = QColor(0, 160, 0);
-	unset = Qt::transparent;
-	disabled = Qt::gray;
-
-	residuals.setColorAt(+1.0, QColor(100,0,0));
-	residuals.setColorAt(+0.6, QColor(255,0,0));
-	residuals.setColorAt(+0.4, QColor(255,100,100));
-	residuals.setColorAt(+0.2, QColor(255,170,170));
-	residuals.setColorAt(+0.1, QColor(255,220,220));
-	residuals.setColorAt( 0.0, QColor(255,255,255));
-	residuals.setColorAt(-0.1, QColor(220,220,255));
-	residuals.setColorAt(-0.2, QColor(170,170,255));
-	residuals.setColorAt(-0.4, QColor(100,100,255));
-	residuals.setColorAt(-0.6, QColor(0,0,255));
-	residuals.setColorAt(-1.0, QColor(0,0,100));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::RecordStates::RecordStates() {
-	unrequested = QColor(0,0,0,128);
-	requested = QColor(255,255,0,128);
-	inProgress = QColor(0,255,0,16);
-	notAvailable = QColor(255,0,0,128);
+	residuals.setColorAt(+1.0, QColor(100, 0, 0));
+	residuals.setColorAt(+0.6, QColor(255, 0, 0));
+	residuals.setColorAt(+0.4, QColor(255, 100, 100));
+	residuals.setColorAt(+0.2, QColor(255, 170, 170));
+	residuals.setColorAt(+0.1, QColor(255, 220, 220));
+	residuals.setColorAt( 0.0, QColor(255, 255, 255));
+	residuals.setColorAt(-0.1, QColor(220, 220, 255));
+	residuals.setColorAt(-0.2, QColor(170, 170, 255));
+	residuals.setColorAt(-0.4, QColor(100, 100, 255));
+	residuals.setColorAt(-0.6, QColor(0, 0, 255));
+	residuals.setColorAt(-1.0, QColor(0, 0, 100));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -268,218 +218,13 @@ Scheme::Colors::RecordBorders::RecordBorders() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Records::Records() {
-	alignment = Qt::red;
-	foreground = QColor(128, 128, 128);
-	alternateForeground = foreground;
-	spectrogram = Qt::black;
-	offset = QColor(192,192,255);
-	gridPen = QPen(QColor(0,0,0,32), 1, Qt::DashLine);
-	subGridPen = QPen(QColor(0,0,0,0), 1, Qt::DotLine);
-	gaps = QColor(255, 255, 0, 64);
-	overlaps = QColor(255, 0, 255, 64);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Stations::Stations() {
-	text = Qt::white;
-	associated = QColor(130, 173, 88);
-	selected = QColor(77, 77, 184);
-	triggering = QColor(Qt::red);
-	triggered0 = QColor(0, 128, 255);
-	triggered1 = QColor(0, 0, 255);
-	triggered2 = QColor(0, 0, 128);
-	disabled = QColor(102, 102, 102, 100);
-	idle = QColor(102, 102, 102, 128);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::QC::QC() :
-	delay0(0, 255, 255),
-	delay1(0, 255, 0),
-	delay2(255, 253, 0),
-	delay3(255, 102, 51),
-	delay4(255, 0, 0),
-	delay5(204, 204, 204),
-	delay6(153, 153, 153),
-	delay7(102, 102, 102),
-//	qcWarning(255, 255, 255),
-	qcWarning(Qt::yellow),
-	qcError(Qt::red),
-	qcOk(Qt::green),
-	qcNotSet(0, 0, 0) {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Colors::OriginSymbol::OriginSymbol() {
-	classic = false;
 	depth.discrete = true;
 	depth.gradient.setColorAt(0, Qt::red);
 	depth.gradient.setColorAt(50, QColor(255, 165, 0));
 	depth.gradient.setColorAt(100, Qt::yellow);
 	depth.gradient.setColorAt(250, Qt::green);
 	depth.gradient.setColorAt(600, Qt::blue);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::OriginStatus::OriginStatus() :
-	automatic(Qt::red),
-	manual(Qt::darkGreen){}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::GroundMotion::GroundMotion() :
-	gmNotSet(0, 0, 0),
-	gm0(0, 0, 255),
-	gm1(0, 0, 255),
-	gm2(0, 167, 255),
-	gm3(0, 238, 255),
-	gm4(0, 255,  0),
-	gm5(255,255,0),
-	gm6(255, 210, 0),
-	gm7(255, 160, 0),
-	gm8(255, 0, 0),
-	gm9(160, 0, 60)
-{}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::RecordView::RecordView() :
-	selectedTraceZoom(192, 192, 255, 192)
-{}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Map::Map()
-: lines(255, 255, 255, 64)
-, outlines(255, 255, 255)
-, directivity(QColor(255 ,160, 0))
-, grid(Qt::white, 1, Qt::DotLine)
-, stationAnnotations(Qt::red)
-, cityLabels(Qt::black)
-, cityOutlines(Qt::black)
-, cityCapital(255, 160, 122)
-, cityNormal(Qt::white)
-, cityHalo(Qt::white)
-{
-	annotations.normalText = QPen(QColor(192,192,192));
-	annotations.normalBorder = QPen(QColor(160,160,164));
-	annotations.normalBackground = QColor(32,32,32,192);
-
-	annotations.highlightedText = QPen(QColor(0,0,0));
-	annotations.highlightedBorder = QPen(QColor(160,160,164));
-	annotations.highlightedBackground = QColor(255,255,255,192);
-
-	annotations.textSize = 9;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Colors::Legend::Legend() :
-	background(255, 255, 255, 224),
-	border(160, 160, 160),
-	text(64, 64, 64),
-	headerText(0, 0, 0)
-{}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Splash::Splash() {
-	version.pos = QPoint(390, 145);
-	version.align = Qt::AlignRight | Qt::AlignTop;
-	message.pos = QPoint(200, 260);
-	message.align = Qt::AlignHCenter | Qt::AlignBottom;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Map::Map() {
-	stationSize = 12;
-	originSymbolMinSize = 9;
-	originSymbolMinMag = 1.2;
-	originSymbolScaleMag = 4.9;
-	vectorLayerAntiAlias = true;
-	bilinearFilter = true;
-	showGrid = true;
-	showLayers = true;
-	showCities = true;
-	showLegends = false;
-	cityPopulationWeight = 150;
-	cityHaloWidth = 0;
-	toBGR = false;
-	polygonRoughness = 3;
-	projection = "";
-	maxZoom = 24;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Marker::Marker() {
-	lineWidth = 1;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::RecordBorders::RecordBorders() {
-	drawMode = Gui::RecordWidget::Box;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Records::Records() {
-	lineWidth = 1;
-	antiAliasing = true;
-	optimize = true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Fonts::Fonts() {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -520,41 +265,6 @@ void Scheme::Fonts::setBase(const QFont& f) {
 	splashVersion.setPixelSize(16);
 	splashMessage = base;
 	splashMessage.setPixelSize(12);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Precision::Precision() {
-	depth = 0;
-	distance = 1;
-	location = 2;
-	magnitude = 1;
-	originTime = 0;
-	pickTime = 1;
-	traceValues = 1;
-	rms = 1;
-	uncertainties = 0;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::Unit::Unit() {
-	distanceInKM = false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Scheme::DateTime::DateTime() {
-	useLocalTime = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

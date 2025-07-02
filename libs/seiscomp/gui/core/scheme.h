@@ -50,45 +50,42 @@ class SC_GUI_API Scheme {
 			Colors();
 
 			struct Splash {
-				Splash();
-				QColor version;
-				QColor message;
+				QColor version{0, 104, 158,255};
+				QColor message{128, 128, 128, 255};
 			};
 
 			struct Picks {
-				Picks();
-				QColor manual;
-				QColor automatic;
-				QColor undefined;
-				QColor disabled;
+				QColor manual{Qt::green};
+				QColor automatic{Qt::red};
+				QColor undefined{Qt::gray};
+				QColor disabled{Qt::gray};
 			};
 
 			struct Arrivals {
 				Arrivals();
-				QColor   manual;
-				QColor   automatic;
-				QColor   theoretical;
-				QColor   undefined;
-				QColor   disabled;
-				QPen     uncertainties;
-				QPen     defaultUncertainties;
+				QColor   manual{0, 160, 0};
+				QColor   automatic{160, 0, 0};
+				QColor   theoretical{0, 0, 160};
+				QColor   undefined{160, 0, 0};
+				QColor   disabled{Qt::gray};
+				QPen     uncertainties{{Qt::gray}, 0.8};
+				QPen     defaultUncertainties{{{128,128,128,64}}, 0.8};
 				Gradient residuals;
 			};
 
 			struct Magnitudes {
 				Magnitudes();
-				QColor set;
-				QColor unset;
-				QColor disabled;
+				QColor set{0, 160, 0};
+				QColor unset{Qt::transparent};
+				QColor disabled{Qt::gray};
 				Gradient residuals;
 			};
 
 			struct RecordStates {
-				RecordStates();
-				QColor unrequested;
-				QColor requested;
-				QColor inProgress;
-				QColor notAvailable;
+				QColor unrequested{0,0,0,128};
+				QColor requested{255,255,0,128};
+				QColor inProgress{0,255,0,16};
+				QColor notAvailable{255,0,0,128};
 			};
 
 			struct BrushPen {
@@ -104,49 +101,46 @@ class SC_GUI_API Scheme {
 			};
 
 			struct Records {
-				Records();
-				QColor alignment;
+				QColor alignment{Qt::red};
 				QColor background;
 				QColor alternateBackground;
-				QColor foreground;
-				QColor alternateForeground;
-				QColor spectrogram;
-				QPen offset;
-				QPen gridPen;
-				QPen subGridPen;
-				QBrush gaps;
-				QBrush overlaps;
+				QColor foreground{128, 128, 128};
+				QColor alternateForeground{128, 128, 128};
+				QColor spectrogram{Qt::black};
+				QPen offset{{192,192,255}};
+				QPen gridPen{{{0,0,0,32}}, 1, Qt::DashLine};
+				QPen subGridPen{{{0,0,0,0}}, 1, Qt::DotLine};
+				QBrush gaps{{255, 255, 0, 64}};
+				QBrush overlaps{{255, 0, 255, 64}};
 				RecordStates states;
 				RecordBorders borders;
 			};
 
 			struct Stations {
-				Stations();
-				QColor text;
-				QColor associated;
-				QColor selected;
-				QColor triggering;
-				QColor triggered0;
-				QColor triggered1;
-				QColor triggered2;
-				QColor disabled;
-				QColor idle;
+				QColor text{Qt::white};
+				QColor associated{130, 173, 88};
+				QColor selected{77, 77, 184};
+				QColor triggering{Qt::red};
+				QColor triggered0{0, 128, 255};
+				QColor triggered1{0, 0, 255};
+				QColor triggered2{0, 0, 128};
+				QColor disabled{102, 102, 102, 100};
+				QColor idle{102, 102, 102, 128};
 			};
 
 			struct QC {
-				QC();
-				QColor delay0;
-				QColor delay1;
-				QColor delay2;
-				QColor delay3;
-				QColor delay4;
-				QColor delay5;
-				QColor delay6;
-				QColor delay7;
-				QColor qcWarning;
-				QColor qcError;
-				QColor qcOk;
-				QColor qcNotSet;
+				QColor delay0{0, 255, 255};
+				QColor delay1{0, 255, 0};
+				QColor delay2{255, 253, 0};
+				QColor delay3{255, 102, 51};
+				QColor delay4{255, 0, 0};
+				QColor delay5{204, 204, 204};
+				QColor delay6{153, 153, 153};
+				QColor delay7{102, 102, 102};
+				QColor qcWarning{Qt::yellow};
+				QColor qcError{Qt::red};
+				QColor qcOk{Qt::green};
+				QColor qcNotSet{0, 0, 0};
 			};
 
 			struct ConfigGradient {
@@ -156,68 +150,63 @@ class SC_GUI_API Scheme {
 
 			struct OriginSymbol {
 				OriginSymbol();
-				bool           classic;
+				bool           classic{false};
 				ConfigGradient depth;
 			};
 
 			struct OriginStatus {
-				OriginStatus();
-				QColor automatic;
-				QColor manual;
+				QColor automatic{Qt::red};
+				QColor manual{Qt::darkGreen};
 			};
 
 			struct GroundMotion {
-				GroundMotion();
-				QColor gmNotSet;
-				QColor gm0;
-				QColor gm1;
-				QColor gm2;
-				QColor gm3;
-				QColor gm4;
-				QColor gm5;
-				QColor gm6;
-				QColor gm7;
-				QColor gm8;
-				QColor gm9;
+				QColor gmNotSet{0, 0, 0};
+				QColor gm0{0, 0, 255};
+				QColor gm1{0, 0, 255};
+				QColor gm2{0, 167, 255};
+				QColor gm3{0, 238, 255};
+				QColor gm4{0, 255,  0};
+				QColor gm5{255, 255, 0};
+				QColor gm6{255, 210, 0};
+				QColor gm7{255, 160, 0};
+				QColor gm8{255, 0, 0};
+				QColor gm9{160, 0, 60};
 			};
 
 			struct RecordView {
-				RecordView();
-				QColor selectedTraceZoom;
+				QColor selectedTraceZoom{192, 192, 255, 192};
 			};
 
 			struct Map {
-				Map();
-				QColor lines;
-				QColor outlines;
-				QPen   directivity;
-				QPen   grid;
-				QColor stationAnnotations;
-				QColor cityLabels;
-				QColor cityOutlines;
-				QColor cityCapital;
-				QColor cityNormal;
-				QColor cityHalo;
+				QColor lines{255, 255, 255, 64};
+				QColor outlines{255, 255, 255};
+				QPen   directivity{{255 ,160, 0}};
+				QPen   grid{Qt::white, 1, Qt::DotLine};
+				QColor stationAnnotations{Qt::red};
+				QColor cityLabels{Qt::black};
+				QColor cityOutlines{Qt::black};
+				QColor cityCapital{255, 160, 122};
+				QColor cityNormal{Qt::white};
+				QColor cityHalo{Qt::white};
 
 				struct {
-					QPen   normalText;
-					QPen   normalBorder;
-					QBrush normalBackground;
+					QPen   normalText{{192,192,192}};
+					QPen   normalBorder{{160,160,164}};
+					QBrush normalBackground{{32,32,32,192}};
 
-					QPen   highlightedText;
-					QPen   highlightedBorder;
-					QBrush highlightedBackground;
+					QPen   highlightedText{{0,0,0}};
+					QPen   highlightedBorder{{160,160,164}};
+					QBrush highlightedBackground{{255,255,255,192}};
 
-					int    textSize;
+					int    textSize{9};
 				}      annotations;
 			};
 
 			struct Legend {
-				Legend();
-				QColor background;
-				QColor border;
-				QColor text;
-				QColor headerText;
+				QColor background{255, 255, 255, 224};
+				QColor border{160, 160, 160};
+				QColor text{64, 64, 64};
+				QColor headerText{0, 0, 0};
 			};
 
 			public:
@@ -240,7 +229,6 @@ class SC_GUI_API Scheme {
 		};
 
 		struct Fonts {
-			Fonts();
 			void setBase(const QFont& f);
 
 			QFont base;
@@ -258,83 +246,67 @@ class SC_GUI_API Scheme {
 		};
 
 		struct Splash {
-			Splash();
-
 			struct Pos {
 				QPoint pos;
 				int    align;
 			};
 
-			Pos version;
-			Pos message;
+			Pos version{{390, 145}, Qt::AlignRight | Qt::AlignTop};
+			Pos message{{200, 260}, Qt::AlignHCenter | Qt::AlignBottom};
 		};
 
 		struct Map {
-			Map();
-
-			int  stationSize;
-			int  originSymbolMinSize;
-			double originSymbolMinMag;
-			double originSymbolScaleMag;
-			bool vectorLayerAntiAlias;
-			bool bilinearFilter;
-			bool showGrid;
-			bool showLayers;
-			bool showCities;
-			bool showLegends;
-			int  cityPopulationWeight;
-			int  cityHaloWidth;
-			bool toBGR;
-			int  polygonRoughness;
+			int         stationSize{12};
+			int         originSymbolMinSize{9};
+			double      originSymbolMinMag{1.2};
+			double      originSymbolScaleMag{4.9};
+			bool        vectorLayerAntiAlias{true};
+			bool        bilinearFilter{true};
+			bool        showGrid{true};
+			bool        showLayers{true};
+			bool        showCities{true};
+			bool        showLegends{false};
+			int         cityPopulationWeight{150};
+			int         cityHaloWidth{0};
+			bool        toBGR{false};
+			int         polygonRoughness{3};
 			std::string projection;
-			int  maxZoom;
+			int         maxZoom{24};
 		};
 
 		struct Marker {
-			Marker();
-
-			int lineWidth;
+			int lineWidth{1};
 		};
 
 		struct RecordBorders {
-			RecordBorders();
-
-			Gui::RecordWidget::RecordBorderDrawMode drawMode;
+			Gui::RecordWidget::RecordBorderDrawMode drawMode{Gui::RecordWidget::Box};
 		};
 
 		struct Records {
-			Records();
-
-			int lineWidth;
-			bool antiAliasing;
-			bool optimize;
+			int           lineWidth{1};
+			bool          antiAliasing{true};
+			bool          optimize{true};
 			RecordBorders recordBorders;
 		};
 
 		struct Precision {
-			Precision();
-
-			int depth;
-			int distance;
-			int location;
-			int magnitude;
-			int originTime;
-			int pickTime;
-			int traceValues;
-			int rms;
-			int uncertainties;
+			int depth{0};
+			int distance{1};
+			int location{2};
+			int magnitude{1};
+			int originTime{0};
+			int pickTime{1};
+			int traceValues{1};
+			int rms{1};
+			int uncertainties{0};
 		};
 
 		struct Unit {
-			Unit();
-
-			bool distanceInKM;
+			bool distanceInKM{false};
 		};
 
 		struct DateTime {
-			DateTime();
-
-			bool useLocalTime;
+			bool useLocalTime{false};
 		};
 
 	public:
