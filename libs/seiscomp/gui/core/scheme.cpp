@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 
-
 #include <seiscomp/gui/core/scheme.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/core/application.h>
@@ -26,16 +25,21 @@
 #include <QTabBar>
 #include <QTabWidget>
 
-#include <boost/algorithm/string.hpp>
+#include <algorithm>
+#include <cctype>
+
 
 #define READ_BOOL(location) \
 	try { location = SCApp->configGetBool("scheme."#location); } \
 	catch ( ... ) {}
 
+#define READ_STRING_VAR(var, location) \
+	try { var = SCApp->configGetString("scheme."#location); } \
+	catch ( ... ) {}
+
 #define READ_STRING(location) \
 	try { location = SCApp->configGetString("scheme."#location); } \
 	catch ( ... ) {}
-
 
 #define READ_COLOR(location) \
 	location = SCApp->configGetColor("scheme."#location, location);
@@ -112,11 +116,6 @@ QColor blend(const QColor& c1, const QColor& c2) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Scheme::Scheme() {
-	showMenu = true;
-	showStatusBar = true;
-	tabPosition = -1;
-	distanceHypocentral = false;
-
 	fonts.setBase(SCApp->font());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -130,12 +129,14 @@ void Scheme::applyTabPosition(QTabWidget *tab) {
 
 	if ( tabPosition > 0 ) {
 		tab->setTabPosition(static_cast<QTabWidget::TabPosition>(tabPosition-1));
-		if ( tabBar )
+		if ( tabBar ) {
 			tabBar->setVisible(true);
+		}
 	}
 	else if ( tabPosition == 0 ) {
-		if ( tabBar )
+		if ( tabBar ) {
 			tabBar->setVisible(false);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -279,16 +280,21 @@ void Scheme::fetch() {
 	std::string tabPosition = "";
 	READ_STRING(tabPosition);
 
-	if ( tabPosition == "off" )
+	if ( tabPosition == "off" ) {
 		this->tabPosition = 0;
-	else if ( tabPosition == "north" )
+	}
+	else if ( tabPosition == "north" ) {
 		this->tabPosition = 1;
-	else if ( tabPosition == "south" )
+	}
+	else if ( tabPosition == "south" ) {
 		this->tabPosition = 2;
-	else if ( tabPosition == "west" )
+	}
+	else if ( tabPosition == "west" ) {
 		this->tabPosition = 3;
-	else if ( tabPosition == "east" )
+	}
+	else if ( tabPosition == "east" ) {
 		this->tabPosition = 4;
+	}
 
 	READ_BOOL(distanceHypocentral);
 
@@ -410,12 +416,15 @@ void Scheme::fetch() {
 		vector<string> agencyColors = SCApp->configGetStrings("scheme.colors.agencies");
 		for ( size_t i = 0; i < agencyColors.size(); ++i ) {
 			size_t pos = agencyColors[i].rfind(':');
-			if ( pos == std::string::npos ) continue;
-			std::string value = agencyColors[i].substr(0, pos);
-			std::string strColor = agencyColors[i].substr(pos+1);
+			if ( pos == std::string::npos ) {
+				continue;
+			}
+			string value = agencyColors[i].substr(0, pos);
+			string strColor = agencyColors[i].substr(pos + 1);
 			QColor color;
-			if ( fromString(color, strColor) )
+			if ( fromString(color, strColor) ) {
 				colors.agencies[value] = color;
+			}
 		}
 	}
 	catch ( ... ) {}
@@ -426,8 +435,13 @@ void Scheme::fetch() {
 	READ_BOOL(records.optimize);
 
 	try {
-		string mode = SCApp->configGetString("scheme.records.borders.drawMode");
-		boost::to_lower(mode);
+		string mode;
+		READ_STRING_VAR(mode, records.borders.drawMode);
+		std::transform(
+			mode.begin(), mode.end(), mode.begin(),
+			[](unsigned char c) { return std::tolower(c); }
+		);
+
 		if ( mode == "box" ) {
 			records.recordBorders.drawMode = Gui::RecordWidget::Box;
 		}
@@ -460,6 +474,22 @@ void Scheme::fetch() {
 	READ_POINT(splash.message.pos);
 
 	READ_INT(map.stationSize);
+	{
+		string name;
+		READ_STRING_VAR(name, map.stationSymbol);
+		if ( name == "triangle" ) {
+			map.stationSymbol = Map::StationSymbol::Triangle;
+		}
+		else if ( name == "diamond" ) {
+			map.stationSymbol = Map::StationSymbol::Diamond;
+		}
+		else if ( name == "box" ) {
+			map.stationSymbol = Map::StationSymbol::Box;
+		}
+		else {
+			map.stationSymbol = Map::StationSymbol::Triangle;
+		}
+	}
 	READ_INT(map.originSymbolMinSize);
 	READ_DOUBLE(map.originSymbolMinMag);
 	READ_DOUBLE(map.originSymbolScaleMag);

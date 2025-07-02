@@ -256,22 +256,29 @@ class SC_GUI_API Scheme {
 		};
 
 		struct Map {
-			int         stationSize{12};
-			int         originSymbolMinSize{9};
-			double      originSymbolMinMag{1.2};
-			double      originSymbolScaleMag{4.9};
-			bool        vectorLayerAntiAlias{true};
-			bool        bilinearFilter{true};
-			bool        showGrid{true};
-			bool        showLayers{true};
-			bool        showCities{true};
-			bool        showLegends{false};
-			int         cityPopulationWeight{150};
-			int         cityHaloWidth{0};
-			bool        toBGR{false};
-			int         polygonRoughness{3};
-			std::string projection;
-			int         maxZoom{24};
+			enum class StationSymbol {
+				Triangle,
+				Diamond,
+				Box
+			};
+
+			int           stationSize{12};
+			StationSymbol stationSymbol{StationSymbol::Triangle};
+			int           originSymbolMinSize{9};
+			double        originSymbolMinMag{1.2};
+			double        originSymbolScaleMag{4.9};
+			bool          vectorLayerAntiAlias{true};
+			bool          bilinearFilter{true};
+			bool          showGrid{true};
+			bool          showLayers{true};
+			bool          showCities{true};
+			bool          showLegends{false};
+			int           cityPopulationWeight{150};
+			int           cityHaloWidth{0};
+			bool          toBGR{false};
+			int           polygonRoughness{3};
+			std::string   projection;
+			int           maxZoom{24};
 		};
 
 		struct Marker {
@@ -310,10 +317,10 @@ class SC_GUI_API Scheme {
 		};
 
 	public:
-		bool      showMenu;
-		bool      showStatusBar;
-		int       tabPosition;
-		bool      distanceHypocentral;
+		bool      showMenu{true};
+		bool      showStatusBar{true};
+		int       tabPosition{-1};
+		bool      distanceHypocentral{false};
 
 		Splash    splash;
 		Colors    colors;
