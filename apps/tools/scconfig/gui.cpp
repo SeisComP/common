@@ -407,9 +407,9 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 
 	QStandardItem *value = new QStandardItem(valueText);
 	QStandardItem *locked = new QStandardItem();
-	QStandardItem *values = new QStandardItem(param->definition->values.c_str());
+	QStandardItem *values = new QStandardItem(Core::toString(param->definition->values).c_str());
 	QStandardItem *range = new QStandardItem(param->definition->range.c_str());
-	QStandardItem *options = new QStandardItem(param->definition->options.c_str());
+	QStandardItem *options = new QStandardItem(Core::toString(param->definition->options).c_str());
 
 	SymbolMapItem *symbol = param->symbols[targetStage].get();
 	bool paramLocked = symbol?symbol->symbol.stage == Environment::CS_UNDEFINED:true;
@@ -440,7 +440,7 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
 		}
-		descText = descText + "Supported values: " + param->definition->values;
+		descText = descText + "Supported values: " + Core::toString(param->definition->values);
 	}
 	if ( !param->definition->range.empty() ) {
 		if ( !descText.empty() ) {
@@ -452,7 +452,7 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
 		}
-		descText = descText + "Options: " + param->definition->options;
+		descText = descText + "Options: " + Core::toString(param->definition->options);
 	}
 	name->setToolTip(descText.c_str());
 	type->setToolTip(name->toolTip());
@@ -1515,17 +1515,14 @@ void Configurator::updateModeLabel() {
 	switch ( _configurationStage ) {
 		case Environment::CS_USER_APP:
 			setWindowTitle(tr("SeisComP %1 - user configuration [ %2 ]")
-			               .arg(version.c_str())
-			               .arg(Environment::Instance()->configDir().c_str()));
+			               .arg(version.c_str(), Environment::Instance()->configDir().c_str()));
 			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/user-settings.png"), QSize(72,72));
 			break;
 		case Environment::CS_CONFIG_APP:
 			setWindowTitle(tr("SeisComP %1 - system configuration [ %2 ]")
-			               .arg(version.c_str())
-			               .arg(Environment::Instance()->appConfigDir().c_str()));
+			               .arg(version.c_str(), Environment::Instance()->appConfigDir().c_str()));
 			{
 				QIcon icon(":/res/icons/system-settings.png");
-				std::cerr << icon.isNull() << std::endl;
 				static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(icon, QSize(72,72));
 			}
 			break;
@@ -1538,7 +1535,6 @@ void Configurator::updateModeLabel() {
 bool Configurator::setModel(System::Model *model) {
 	QtConfigDelegate cd(&_settings);
 	model->readConfig(Environment::CS_USER_APP, &cd);
-
 	cd.showConflicts();
 
 	if ( _configurationStage == Environment::CS_UNDEFINED ) {
@@ -1553,19 +1549,22 @@ bool Configurator::setModel(System::Model *model) {
 					break;
 			}
 		}
-		else
+		else {
 			return false;
+		}
 	}
 
-	if ( cd.hasErrors )
+	if ( cd.hasErrors ) {
 		showWarningMessage("Configuration loaded with errors");
+	}
 
 	updateModeLabel();
 
 	_model->setModel(model, _configurationStage);
 
-	foreach ( Panel p, _panels )
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
 
 	//_treeView->hideColumn(1);
 	return true;

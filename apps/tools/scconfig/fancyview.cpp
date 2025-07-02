@@ -27,6 +27,7 @@
 #include <QToolButton>
 #include <QPushButton>
 #include <QComboBox>
+#include <QCompleter>
 #include <QDialog>
 #include <QMessageBox>
 #include <QDir>
@@ -583,6 +584,41 @@ class BoolEdit : public QCheckBox, public FancyViewItemEdit {
 		QString value() const {
 			return isChecked()?"true":"false";
 		}
+};
+
+
+class ComboEdit : public QComboBox, public FancyViewItemEdit {
+	public:
+		ComboEdit(QWidget *parent = 0) : QComboBox(parent) {
+			setEditable(true);
+			completer()->setCaseSensitivity(Qt::CaseSensitive);
+		}
+
+		QWidget *widget() { return this; }
+
+		void setValue(const QString &value) {
+			setCurrentText(value);
+		}
+
+		QString value() const {
+			return currentText();
+		}
+
+	/*
+	protected:
+		void focusInEvent(QFocusEvent *e) {
+			QPalette pal = palette();
+			pal.setColor(QPalette::Base, QColor(255,255,224));
+			setPalette(pal);
+			QLineEdit::focusInEvent(e);
+		}
+
+		void focusOutEvent(QFocusEvent *e) {
+			QPalette pal;
+			setPalette(pal);
+			QLineEdit::focusOutEvent(e);
+		}
+	*/
 };
 
 
@@ -1462,7 +1498,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	bool isOverridden = param->symbol.stage > _configStage;
 	bool isDefined = param->symbol.stage > Environment::CS_UNDEFINED;
 
-	FancyViewItemEdit *inputWidget;
+	FancyViewItemEdit *inputWidget = nullptr;
 	QWidget *textWidget;
 	QHBoxLayout *nameLayout = new QHBoxLayout;
 
@@ -1511,20 +1547,31 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		name->setFont(f);
 		name->setText(paramLabel);
 
-		StringEdit *edit = new StringEdit;
-		edit->setValue(idx.sibling(idx.row(),2).data().toString());
-
 		textWidget = name;
-		inputWidget = edit;
 
-		connect(edit, SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
-		connect(edit, SIGNAL(textEdited(QString)), this, SLOT(optionTextChanged(QString)));
-
-		nameLayout->addWidget(name);
-		paramLayout->addLayout(nameLayout);
+		if ( param->definition->values.empty()
+		  || (param->definition->type.compare(0, 5, "list:") == 0)
+		  || (param->definition->type == "file") ) {
+			// No predefined values or the type is a list of some type
+			StringEdit *edit = new StringEdit;
+			edit->setValue(idx.sibling(idx.row(),2).data().toString());
+			connect(edit, SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
+			connect(edit, SIGNAL(textEdited(QString)), this, SLOT(optionTextChanged(QString)));
+			inputWidget = edit;
+		}
+		else {
+			ComboEdit *combo = new ComboEdit;
+			for ( const auto &value : param->definition->values ) {
+				combo->addItem(value.c_str());
+			}
+			combo->setValue(idx.sibling(idx.row(),2).data().toString());
+			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextChanged(QString)));
+			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextEdited()));
+			inputWidget = combo;
+		}
 
 		if ( isOverridden ) {
-			QPalette pal = edit->palette();
+			QPalette pal = inputWidget->widget()->palette();
 
 			QColor oldBase = pal.color(QPalette::Disabled, QPalette::Base);
 			QColor oldWindow = pal.color(QPalette::Disabled, QPalette::Window);
@@ -1535,10 +1582,12 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			pal.setColor(QPalette::Disabled, QPalette::Base, blend(AlertColor, oldBase, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertColor, oldWindow, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Text, blend(Qt::white, oldText, 50));
-			edit->setPalette(pal);
+			inputWidget->widget()->setPalette(pal);
 		}
 
-		paramLayout->addWidget(edit);
+		nameLayout->addWidget(name);
+		paramLayout->addLayout(nameLayout);
+		paramLayout->addWidget(inputWidget->widget());
 	}
 
 	nameLayout->addStretch();
@@ -1565,7 +1614,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
 		}
-		descText = descText + "Supported values: " + param->definition->values;
+		descText = descText + "Supported values: " + Core::toString(param->definition->values);
 	}
 	if ( !param->definition->range.empty() ) {
 		if ( !descText.empty() ) {
@@ -1577,7 +1626,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
 		}
-		descText = descText + "Options: " + param->definition->options;
+		descText = descText + "Options: " + Core::toString(param->definition->options);
 	}
 	if ( !descText.empty() ) {
 		DescLabel *desc = new DescLabel;
@@ -1841,9 +1890,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 
 		isPathType = true;
-		vector<string> toks;
-		Core::split(toks, param->definition->options.c_str(), ",");
-		for ( auto &item : toks) {
+		for ( auto &item : param->definition->options ) {
 			if ( item == "read" ) {
 				// files must exist if tagged as read
 				QFile file(value.c_str());
@@ -1912,9 +1959,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 
 		isPathType = true;
 		// check options
-		vector<string> toks;
-		Core::split(toks, param->definition->options.c_str(), ",");
-		for ( auto &item : toks) {
+		for ( auto &item : param->definition->options ) {
 			if ( item == "read") {
 				// directoryies must exist if tagged as read
 				QDir dir(value.c_str());
@@ -1989,9 +2034,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 	// test values themselves
 	if ( !param->definition->values.empty() && !isPathType ) {
 		bool valueAccept = false;
-		vector<string> valuesAllowed;
-		Core::split(valuesAllowed, param->definition->values.c_str(), ",");
-		for ( const auto &value : valuesAllowed ) {
+		for ( const auto &value : param->definition->values ) {
 			if ( valueTest == Core::trim(value) ) {
 				valueAccept = true;
 				break;
@@ -2001,7 +2044,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		if ( !valueAccept ) {
 			if ( verbose && !symbolURIString.empty() ) {
 				cerr << symbolURIString << param->variableName << " = '" << valueTest
-				     << "' is not a member of '" << param->definition->values
+				     << "' is not a member of '" << Core::toString(param->definition->values)
 				     << "'" << endl;
 			}
 			eval += "<b>Unsupported value:</b> ";
