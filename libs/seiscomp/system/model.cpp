@@ -2279,7 +2279,6 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 		}
 	}
 
-
 	// Read station module configuration
 	keyDir = stationConfigDir(true);
 
@@ -2372,7 +2371,6 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 		cout << "</" << it1->first << ">" << endl;
 	}
 	*/
-
 
 	return true;
 }

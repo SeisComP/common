@@ -543,6 +543,7 @@ bool SchemaDefinitions::load(const char *path) {
 
 bool SchemaDefinitions::reload() {
 	IO::XMLArchive ar;
+	ar.setListDelimiter(',');
 
 	_modules.clear();
 	_plugins.clear();
