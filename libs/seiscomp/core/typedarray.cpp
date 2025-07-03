@@ -177,7 +177,7 @@ void TypedArray<T>::setData(int size, const T* data) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 const void* TypedArray<T>::data() const {
-	return _data.empty()?nullptr:&_data[0];
+	return _data.data();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -187,7 +187,7 @@ const void* TypedArray<T>::data() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 T* TypedArray<T>::typedData() {
-	return _data.empty()?nullptr:&_data[0];
+	return _data.data();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -197,7 +197,7 @@ T* TypedArray<T>::typedData() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 const T* TypedArray<T>::typedData() const {
-	return _data.empty()?nullptr:&_data[0];
+	return _data.data();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

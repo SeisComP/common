@@ -358,10 +358,10 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 	ArrayPtr tmp_ar;
 	const TypedArray<T> *ar = TypedArray<T>::ConstCast(rec->data());
-	if ( ar == nullptr ) {
-		tmp_ar = rec->data()->copy(dataType<T>());
+	if ( !ar ) {
+		tmp_ar = rec->data() ? rec->data()->copy(dataType<T>()) : nullptr;
 		ar = TypedArray<T>::ConstCast(tmp_ar);
-		if ( ar == nullptr ) {
+		if ( !ar ) {
 			SEISCOMP_ERROR("[dec] internal error: wrong converted type received");
 			return nullptr;
 		}
@@ -369,7 +369,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 	size_t data_len = (size_t)ar->size();
 	const T *data = ar->typedData();
-	T *buffer = &stage->buffer[0];
+	T *buffer = stage->buffer.data();
 
 	if ( stage->missingSamples > 0 ) {
 		if ( !stage->startTime.valid() ) {
@@ -421,7 +421,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	do {
 		if ( stage->samplesToSkip == 0 ) {
 			// Calculate scalar product of coefficients and ring buffer
-			double *coeff = &((*stage->coefficients)[0]);
+			double *coeff = stage->coefficients->data();
 			double weightedSum = 0;
 
 			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {
@@ -541,7 +541,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	if ( data_len == 0 ) return nullptr;
 
 	const T *data = ar->typedData();
-	T *buffer = &stage->buffer[0];
+	T *buffer = stage->buffer.data();
 	Core::Time startTime;
 
 	if ( stage->missingSamples > 0 ) {
@@ -829,7 +829,7 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 			double weights[2] = {1,1};
 			double desired[2] = {1,0};
 
-			if ( remez(&((*coeff)[0]), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
+			if ( remez(coeff->data(), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
 				SEISCOMP_WARNING("[dec] failed to build coefficients for N=%d, ignore stream", stage->N);
 				stage->valid = false;
 				delete coeff;

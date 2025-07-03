@@ -239,7 +239,7 @@ void Cropper::crop(const Record *rec) {
 
 	size_t data_len = (size_t)ar->size();
 	const double *data = ar->typedData();
-	double *buffer = &_buffer->buffer[0];
+	double *buffer = _buffer->buffer.data();
 
 	if ( _buffer->missingSamples > 0 ) {
 		size_t toCopy = std::min(_buffer->missingSamples, data_len);
