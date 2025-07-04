@@ -230,8 +230,8 @@ ResponsePAZ::getTransferFunction(int numberOfIntegrations) {
 	try {
 		Math::Restitution::FFT::PolesAndZeros *paz =
 			new Math::Restitution::FFT::PolesAndZeros(
-				(int)_poles.size(), &_poles[0],
-				(int)_zeros.size(), &_zeros[0],
+				(int)_poles.size(), _poles.data(),
+				(int)_zeros.size(), _zeros.data(),
 				normalizationFactor(), numberOfIntegrations);
 		return paz;
 	}
