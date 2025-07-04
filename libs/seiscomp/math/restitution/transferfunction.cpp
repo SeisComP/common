@@ -173,10 +173,15 @@ PolesAndZeros::PolesAndZeros(const SeismometerResponse::PolesAndZeros &polesAndZ
 
 
 PolesAndZeros::PolesAndZeros(int n_poles, Pole *poles, int n_zeros, Zero *zeros, double norm, int addZeros) {
-	paz.poles.assign(poles, poles + n_poles);
-	paz.zeros.assign(zeros, zeros + n_zeros);
-	for ( int i = 0; i < addZeros; ++i )
+	if ( n_poles ) {
+		paz.poles.assign(poles, poles + n_poles);
+	}
+	if ( n_zeros ) {
+		paz.zeros.assign(zeros, zeros + n_zeros);
+	}
+	for ( int i = 0; i < addZeros; ++i ) {
 		paz.zeros.push_back(0.0);
+	}
 	paz.norm = norm;
 }
 
