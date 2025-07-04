@@ -268,7 +268,8 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.postTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
 	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()).addMSecs(_pickerConfig.postOffset.microseconds() / 1000));
 	adjustPostSlider(_ui.postTimeEdit->time());
-	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()));
+	_ui.minimumLengthTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()).addMSecs(_pickerConfig.minimumTimeWindow.microseconds() / 1000));
 
 	_ui.slWaveformAlignment->setValue(_pickerConfig.alignmentPosition*100);
 	_ui.waveformAlignmentEdit->setValue(_pickerConfig.alignmentPosition*100);
@@ -539,7 +540,8 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.preOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
 	msecs = QTime(0, 0, 0, 0).msecsTo(_ui.postTimeEdit->time());
 	_pickerConfig.postOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
-	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()), 0);
+	msecs = QTime(0, 0, 0, 0).msecsTo(_ui.minimumLengthTimeEdit->time());
+	_pickerConfig.minimumTimeWindow = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);;
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
 	if ( _pickerConfig.alignmentPosition < 0 ) {
