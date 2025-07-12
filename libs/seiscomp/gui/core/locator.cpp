@@ -54,7 +54,7 @@ DataModel::Origin* relocate(Seismology::LocatorInterface *locator, DataModel::Or
 	try {
 		Util::StopWatch stopWatch;
 		newOrg = locator->relocate(origin);
-		double elapsed = stopWatch.elapsed();
+		double elapsed = static_cast<double>(stopWatch.elapsed());
 		SEISCOMP_DEBUG("Locator took %fms", elapsed*1E3);
 		if ( newOrg )
 			return newOrg;
@@ -109,7 +109,7 @@ DataModel::Origin* relocate(Seismology::LocatorInterface *locator, DataModel::Or
 
 	Util::StopWatch stopWatch;
 	newOrg = locator->relocate(tmp.get());
-	double elapsed = stopWatch.elapsed();
+	double elapsed = static_cast<double>(stopWatch.elapsed());
 	SEISCOMP_DEBUG("Locator took %fms", elapsed*1E3);
 
 	if ( newOrg )

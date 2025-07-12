@@ -75,6 +75,16 @@ bool Client::setDiscardSelf(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Client::setStatusOnly(bool enable) {
+	_statusOnly = enable;
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Client::setAcknowledgeWindow(SequenceNumber numberOfMessages) {
 	_acknowledgeWindow = numberOfMessages;
 	_acknowledgeCounter = _acknowledgeWindow;

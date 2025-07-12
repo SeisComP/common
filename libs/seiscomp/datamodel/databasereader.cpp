@@ -32,7 +32,7 @@
 #include <seiscomp/datamodel/arclinklog_package.h>
 #include <seiscomp/datamodel/dataavailability_package.h>
 #include <seiscomp/datamodel/comment.h>
-
+#include <seiscomp/datamodel/event.h>
 
 using namespace std;
 
@@ -115,6 +115,12 @@ PublicObject* DatabaseReader::loadObject(const Seiscomp::Core::RTTI& classType,
 	if ( momentTensorStationContribution ) {
 		load(momentTensorStationContribution);
 		return momentTensorStationContribution;
+	}
+
+	Catalog* catalog = Catalog::Cast(publicObject);
+	if ( catalog ) {
+		load(catalog);
+		return catalog;
 	}
 
 	Event* event = Event::Cast(publicObject);
@@ -229,7 +235,7 @@ EventParameters* DatabaseReader::loadEventParameters() {
 	load(eventParameters);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return eventParameters;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -276,6 +282,14 @@ int DatabaseReader::load(EventParameters* eventParameters) {
 			load(eventParameters->focalMechanism(i));
 	}
 
+	if ( supportsVersion<0,14>() )
+		count += loadCatalogs(eventParameters);
+	{
+		size_t elementCount = eventParameters->catalogCount();
+		for ( size_t i = 0; i < elementCount; ++i )
+			load(eventParameters->catalog(i));
+	}
+
 	count += loadEvents(eventParameters);
 	{
 		size_t elementCount = eventParameters->eventCount();
@@ -291,7 +305,7 @@ int DatabaseReader::load(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadPicks(EventParameters* eventParameters) {
+int DatabaseReader::loadPicks(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -321,7 +335,7 @@ int DatabaseReader::loadPicks(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAmplitudes(EventParameters* eventParameters) {
+int DatabaseReader::loadAmplitudes(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -351,7 +365,7 @@ int DatabaseReader::loadAmplitudes(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadReadings(EventParameters* eventParameters) {
+int DatabaseReader::loadReadings(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -381,7 +395,7 @@ int DatabaseReader::loadReadings(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadOrigins(EventParameters* eventParameters) {
+int DatabaseReader::loadOrigins(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -411,7 +425,7 @@ int DatabaseReader::loadOrigins(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadFocalMechanisms(EventParameters* eventParameters) {
+int DatabaseReader::loadFocalMechanisms(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -441,7 +455,37 @@ int DatabaseReader::loadFocalMechanisms(EventParameters* eventParameters) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadEvents(EventParameters* eventParameters) {
+int DatabaseReader::loadCatalogs(EventParameters *eventParameters) {
+	if ( !validInterface() || eventParameters == nullptr ) return 0;
+
+	bool saveState = Notifier::IsEnabled();
+	Notifier::Disable();
+
+	DatabaseIterator it;
+	size_t count = 0;
+	it = getObjects(eventParameters, Catalog::TypeInfo());
+	while ( *it ) {
+		if ( (*it)->parent() == nullptr ) {
+			eventParameters->add(Catalog::Cast(*it));
+			++count;
+		}
+		else
+			SEISCOMP_INFO("EventParameters::add(Catalog) -> Catalog has already another parent");
+		++it;
+	}
+	it.close();
+
+	Notifier::SetEnabled(saveState);
+
+	return count;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int DatabaseReader::loadEvents(EventParameters *eventParameters) {
 	if ( !validInterface() || eventParameters == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -484,7 +528,7 @@ int DatabaseReader::load(Pick* pick) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Pick* pick) {
+int DatabaseReader::loadComments(Pick *pick) {
 	if ( !validInterface() || pick == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -527,7 +571,7 @@ int DatabaseReader::load(Amplitude* amplitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Amplitude* amplitude) {
+int DatabaseReader::loadComments(Amplitude *amplitude) {
 	if ( !validInterface() || amplitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -572,7 +616,7 @@ int DatabaseReader::load(Reading* reading) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadPickReferences(Reading* reading) {
+int DatabaseReader::loadPickReferences(Reading *reading) {
 	if ( !validInterface() || reading == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -602,7 +646,7 @@ int DatabaseReader::loadPickReferences(Reading* reading) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAmplitudeReferences(Reading* reading) {
+int DatabaseReader::loadAmplitudeReferences(Reading *reading) {
 	if ( !validInterface() || reading == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -663,7 +707,7 @@ int DatabaseReader::load(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Origin* origin) {
+int DatabaseReader::loadComments(Origin *origin) {
 	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -693,7 +737,7 @@ int DatabaseReader::loadComments(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadCompositeTimes(Origin* origin) {
+int DatabaseReader::loadCompositeTimes(Origin *origin) {
 	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -723,7 +767,7 @@ int DatabaseReader::loadCompositeTimes(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadArrivals(Origin* origin) {
+int DatabaseReader::loadArrivals(Origin *origin) {
 	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -753,7 +797,7 @@ int DatabaseReader::loadArrivals(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStationMagnitudes(Origin* origin) {
+int DatabaseReader::loadStationMagnitudes(Origin *origin) {
 	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -783,7 +827,7 @@ int DatabaseReader::loadStationMagnitudes(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadMagnitudes(Origin* origin) {
+int DatabaseReader::loadMagnitudes(Origin *origin) {
 	if ( !validInterface() || origin == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -826,7 +870,7 @@ int DatabaseReader::load(StationMagnitude* stationMagnitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(StationMagnitude* stationMagnitude) {
+int DatabaseReader::loadComments(StationMagnitude *stationMagnitude) {
 	if ( !validInterface() || stationMagnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -871,7 +915,7 @@ int DatabaseReader::load(Magnitude* magnitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Magnitude* magnitude) {
+int DatabaseReader::loadComments(Magnitude *magnitude) {
 	if ( !validInterface() || magnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -901,7 +945,7 @@ int DatabaseReader::loadComments(Magnitude* magnitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStationMagnitudeContributions(Magnitude* magnitude) {
+int DatabaseReader::loadStationMagnitudeContributions(Magnitude *magnitude) {
 	if ( !validInterface() || magnitude == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -951,7 +995,7 @@ int DatabaseReader::load(FocalMechanism* focalMechanism) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(FocalMechanism* focalMechanism) {
+int DatabaseReader::loadComments(FocalMechanism *focalMechanism) {
 	if ( !validInterface() || focalMechanism == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -981,7 +1025,7 @@ int DatabaseReader::loadComments(FocalMechanism* focalMechanism) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadMomentTensors(FocalMechanism* focalMechanism) {
+int DatabaseReader::loadMomentTensors(FocalMechanism *focalMechanism) {
 	if ( !validInterface() || focalMechanism == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1035,7 +1079,7 @@ int DatabaseReader::load(MomentTensor* momentTensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(MomentTensor* momentTensor) {
+int DatabaseReader::loadComments(MomentTensor *momentTensor) {
 	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1065,7 +1109,7 @@ int DatabaseReader::loadComments(MomentTensor* momentTensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataUseds(MomentTensor* momentTensor) {
+int DatabaseReader::loadDataUseds(MomentTensor *momentTensor) {
 	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1095,7 +1139,7 @@ int DatabaseReader::loadDataUseds(MomentTensor* momentTensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor* momentTensor) {
+int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor *momentTensor) {
 	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1125,7 +1169,7 @@ int DatabaseReader::loadMomentTensorPhaseSettings(MomentTensor* momentTensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadMomentTensorStationContributions(MomentTensor* momentTensor) {
+int DatabaseReader::loadMomentTensorStationContributions(MomentTensor *momentTensor) {
 	if ( !validInterface() || momentTensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1168,7 +1212,7 @@ int DatabaseReader::load(MomentTensorStationContribution* momentTensorStationCon
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadMomentTensorComponentContributions(MomentTensorStationContribution* momentTensorStationContribution) {
+int DatabaseReader::loadMomentTensorComponentContributions(MomentTensorStationContribution *momentTensorStationContribution) {
 	if ( !validInterface() || momentTensorStationContribution == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1184,6 +1228,86 @@ int DatabaseReader::loadMomentTensorComponentContributions(MomentTensorStationCo
 		}
 		else
 			SEISCOMP_INFO("MomentTensorStationContribution::add(MomentTensorComponentContribution) -> MomentTensorComponentContribution has already another parent");
+		++it;
+	}
+	it.close();
+
+	Notifier::SetEnabled(saveState);
+
+	return count;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int DatabaseReader::load(Catalog* catalog) {
+	size_t count = 0;
+
+	count += loadComments(catalog);
+
+	count += loadEvents(catalog);
+	{
+		size_t elementCount = catalog->eventCount();
+		for ( size_t i = 0; i < elementCount; ++i )
+			load(catalog->event(i));
+	}
+
+	return count;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int DatabaseReader::loadComments(Catalog *catalog) {
+	if ( !validInterface() || catalog == nullptr ) return 0;
+
+	bool saveState = Notifier::IsEnabled();
+	Notifier::Disable();
+
+	DatabaseIterator it;
+	size_t count = 0;
+	it = getObjects(catalog, Comment::TypeInfo());
+	while ( *it ) {
+		if ( (*it)->parent() == nullptr ) {
+			catalog->add(Comment::Cast(*it));
+			++count;
+		}
+		else
+			SEISCOMP_INFO("Catalog::add(Comment) -> Comment has already another parent");
+		++it;
+	}
+	it.close();
+
+	Notifier::SetEnabled(saveState);
+
+	return count;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int DatabaseReader::loadEvents(Catalog *catalog) {
+	if ( !validInterface() || catalog == nullptr ) return 0;
+
+	bool saveState = Notifier::IsEnabled();
+	Notifier::Disable();
+
+	DatabaseIterator it;
+	size_t count = 0;
+	it = getObjects(catalog, Event::TypeInfo());
+	while ( *it ) {
+		if ( (*it)->parent() == nullptr ) {
+			catalog->add(Event::Cast(*it));
+			++count;
+		}
+		else
+			SEISCOMP_INFO("Catalog::add(Event) -> Event has already another parent");
 		++it;
 	}
 	it.close();
@@ -1217,7 +1341,7 @@ int DatabaseReader::load(Event* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadEventDescriptions(Event* event) {
+int DatabaseReader::loadEventDescriptions(Event *event) {
 	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1247,7 +1371,7 @@ int DatabaseReader::loadEventDescriptions(Event* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Event* event) {
+int DatabaseReader::loadComments(Event *event) {
 	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1277,7 +1401,7 @@ int DatabaseReader::loadComments(Event* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadOriginReferences(Event* event) {
+int DatabaseReader::loadOriginReferences(Event *event) {
 	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1307,7 +1431,7 @@ int DatabaseReader::loadOriginReferences(Event* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadFocalMechanismReferences(Event* event) {
+int DatabaseReader::loadFocalMechanismReferences(Event *event) {
 	if ( !validInterface() || event == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1345,7 +1469,7 @@ Config* DatabaseReader::loadConfig() {
 	load(config);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return config;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1379,7 +1503,7 @@ int DatabaseReader::load(Config* config) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadParameterSets(Config* config) {
+int DatabaseReader::loadParameterSets(Config *config) {
 	if ( !validInterface() || config == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1409,7 +1533,7 @@ int DatabaseReader::loadParameterSets(Config* config) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadConfigModules(Config* config) {
+int DatabaseReader::loadConfigModules(Config *config) {
 	if ( !validInterface() || config == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1459,7 +1583,7 @@ int DatabaseReader::load(ParameterSet* parameterSet) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadParameters(ParameterSet* parameterSet) {
+int DatabaseReader::loadParameters(ParameterSet *parameterSet) {
 	if ( !validInterface() || parameterSet == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1489,7 +1613,7 @@ int DatabaseReader::loadParameters(ParameterSet* parameterSet) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(ParameterSet* parameterSet) {
+int DatabaseReader::loadComments(ParameterSet *parameterSet) {
 	if ( !validInterface() || parameterSet == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1532,7 +1656,7 @@ int DatabaseReader::load(Parameter* parameter) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Parameter* parameter) {
+int DatabaseReader::loadComments(Parameter *parameter) {
 	if ( !validInterface() || parameter == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1580,7 +1704,7 @@ int DatabaseReader::load(ConfigModule* configModule) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadConfigStations(ConfigModule* configModule) {
+int DatabaseReader::loadConfigStations(ConfigModule *configModule) {
 	if ( !validInterface() || configModule == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1623,7 +1747,7 @@ int DatabaseReader::load(ConfigStation* configStation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadSetups(ConfigStation* configStation) {
+int DatabaseReader::loadSetups(ConfigStation *configStation) {
 	if ( !validInterface() || configStation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1661,7 +1785,7 @@ QualityControl* DatabaseReader::loadQualityControl() {
 	load(qualityControl);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return qualityControl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1687,7 +1811,7 @@ int DatabaseReader::load(QualityControl* qualityControl) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadQCLogs(QualityControl* qualityControl) {
+int DatabaseReader::loadQCLogs(QualityControl *qualityControl) {
 	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1717,7 +1841,7 @@ int DatabaseReader::loadQCLogs(QualityControl* qualityControl) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadWaveformQualitys(QualityControl* qualityControl) {
+int DatabaseReader::loadWaveformQualitys(QualityControl *qualityControl) {
 	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1747,7 +1871,7 @@ int DatabaseReader::loadWaveformQualitys(QualityControl* qualityControl) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadOutages(QualityControl* qualityControl) {
+int DatabaseReader::loadOutages(QualityControl *qualityControl) {
 	if ( !validInterface() || qualityControl == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1785,7 +1909,7 @@ Inventory* DatabaseReader::loadInventory() {
 	load(inventory);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return inventory;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1852,7 +1976,7 @@ int DatabaseReader::load(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStationGroups(Inventory* inventory) {
+int DatabaseReader::loadStationGroups(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1882,7 +2006,7 @@ int DatabaseReader::loadStationGroups(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAuxDevices(Inventory* inventory) {
+int DatabaseReader::loadAuxDevices(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1912,7 +2036,7 @@ int DatabaseReader::loadAuxDevices(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadSensors(Inventory* inventory) {
+int DatabaseReader::loadSensors(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1942,7 +2066,7 @@ int DatabaseReader::loadSensors(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataloggers(Inventory* inventory) {
+int DatabaseReader::loadDataloggers(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -1972,7 +2096,7 @@ int DatabaseReader::loadDataloggers(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadResponsePAZs(Inventory* inventory) {
+int DatabaseReader::loadResponsePAZs(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2002,7 +2126,7 @@ int DatabaseReader::loadResponsePAZs(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadResponseFIRs(Inventory* inventory) {
+int DatabaseReader::loadResponseFIRs(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2032,7 +2156,7 @@ int DatabaseReader::loadResponseFIRs(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadResponseIIRs(Inventory* inventory) {
+int DatabaseReader::loadResponseIIRs(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2062,7 +2186,7 @@ int DatabaseReader::loadResponseIIRs(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadResponsePolynomials(Inventory* inventory) {
+int DatabaseReader::loadResponsePolynomials(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2092,7 +2216,7 @@ int DatabaseReader::loadResponsePolynomials(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadResponseFAPs(Inventory* inventory) {
+int DatabaseReader::loadResponseFAPs(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2122,7 +2246,7 @@ int DatabaseReader::loadResponseFAPs(Inventory* inventory) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadNetworks(Inventory* inventory) {
+int DatabaseReader::loadNetworks(Inventory *inventory) {
 	if ( !validInterface() || inventory == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2165,7 +2289,7 @@ int DatabaseReader::load(StationGroup* stationGroup) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStationReferences(StationGroup* stationGroup) {
+int DatabaseReader::loadStationReferences(StationGroup *stationGroup) {
 	if ( !validInterface() || stationGroup == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2208,7 +2332,7 @@ int DatabaseReader::load(AuxDevice* auxDevice) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAuxSources(AuxDevice* auxDevice) {
+int DatabaseReader::loadAuxSources(AuxDevice *auxDevice) {
 	if ( !validInterface() || auxDevice == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2251,7 +2375,7 @@ int DatabaseReader::load(Sensor* sensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadSensorCalibrations(Sensor* sensor) {
+int DatabaseReader::loadSensorCalibrations(Sensor *sensor) {
 	if ( !validInterface() || sensor == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2296,7 +2420,7 @@ int DatabaseReader::load(Datalogger* datalogger) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataloggerCalibrations(Datalogger* datalogger) {
+int DatabaseReader::loadDataloggerCalibrations(Datalogger *datalogger) {
 	if ( !validInterface() || datalogger == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2326,7 +2450,7 @@ int DatabaseReader::loadDataloggerCalibrations(Datalogger* datalogger) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDecimations(Datalogger* datalogger) {
+int DatabaseReader::loadDecimations(Datalogger *datalogger) {
 	if ( !validInterface() || datalogger == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2377,7 +2501,7 @@ int DatabaseReader::load(Network* network) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Network* network) {
+int DatabaseReader::loadComments(Network *network) {
 	if ( !validInterface() || network == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2407,7 +2531,7 @@ int DatabaseReader::loadComments(Network* network) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStations(Network* network) {
+int DatabaseReader::loadStations(Network *network) {
 	if ( !validInterface() || network == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2458,7 +2582,7 @@ int DatabaseReader::load(Station* station) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Station* station) {
+int DatabaseReader::loadComments(Station *station) {
 	if ( !validInterface() || station == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2488,7 +2612,7 @@ int DatabaseReader::loadComments(Station* station) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadSensorLocations(Station* station) {
+int DatabaseReader::loadSensorLocations(Station *station) {
 	if ( !validInterface() || station == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2541,7 +2665,7 @@ int DatabaseReader::load(SensorLocation* sensorLocation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(SensorLocation* sensorLocation) {
+int DatabaseReader::loadComments(SensorLocation *sensorLocation) {
 	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2571,7 +2695,7 @@ int DatabaseReader::loadComments(SensorLocation* sensorLocation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAuxStreams(SensorLocation* sensorLocation) {
+int DatabaseReader::loadAuxStreams(SensorLocation *sensorLocation) {
 	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2601,7 +2725,7 @@ int DatabaseReader::loadAuxStreams(SensorLocation* sensorLocation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadStreams(SensorLocation* sensorLocation) {
+int DatabaseReader::loadStreams(SensorLocation *sensorLocation) {
 	if ( !validInterface() || sensorLocation == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2645,7 +2769,7 @@ int DatabaseReader::load(Stream* stream) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadComments(Stream* stream) {
+int DatabaseReader::loadComments(Stream *stream) {
 	if ( !validInterface() || stream == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2683,7 +2807,7 @@ Routing* DatabaseReader::loadRouting() {
 	load(routing);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return routing;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2712,7 +2836,7 @@ int DatabaseReader::load(Routing* routing) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadRoutes(Routing* routing) {
+int DatabaseReader::loadRoutes(Routing *routing) {
 	if ( !validInterface() || routing == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2742,7 +2866,7 @@ int DatabaseReader::loadRoutes(Routing* routing) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadAccesss(Routing* routing) {
+int DatabaseReader::loadAccesss(Routing *routing) {
 	if ( !validInterface() || routing == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2787,7 +2911,7 @@ int DatabaseReader::load(Route* route) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadRouteArclinks(Route* route) {
+int DatabaseReader::loadRouteArclinks(Route *route) {
 	if ( !validInterface() || route == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2817,7 +2941,7 @@ int DatabaseReader::loadRouteArclinks(Route* route) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadRouteSeedlinks(Route* route) {
+int DatabaseReader::loadRouteSeedlinks(Route *route) {
 	if ( !validInterface() || route == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2855,7 +2979,7 @@ Journaling* DatabaseReader::loadJournaling() {
 	load(journaling);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return journaling;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2877,7 +3001,7 @@ int DatabaseReader::load(Journaling* journaling) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadJournalEntrys(Journaling* journaling) {
+int DatabaseReader::loadJournalEntrys(Journaling *journaling) {
 	if ( !validInterface() || journaling == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2915,7 +3039,7 @@ ArclinkLog* DatabaseReader::loadArclinkLog() {
 	load(arclinkLog);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return arclinkLog;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2944,7 +3068,7 @@ int DatabaseReader::load(ArclinkLog* arclinkLog) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadArclinkRequests(ArclinkLog* arclinkLog) {
+int DatabaseReader::loadArclinkRequests(ArclinkLog *arclinkLog) {
 	if ( !validInterface() || arclinkLog == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -2974,7 +3098,7 @@ int DatabaseReader::loadArclinkRequests(ArclinkLog* arclinkLog) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadArclinkUsers(ArclinkLog* arclinkLog) {
+int DatabaseReader::loadArclinkUsers(ArclinkLog *arclinkLog) {
 	if ( !validInterface() || arclinkLog == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -3019,7 +3143,7 @@ int DatabaseReader::load(ArclinkRequest* arclinkRequest) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadArclinkStatusLines(ArclinkRequest* arclinkRequest) {
+int DatabaseReader::loadArclinkStatusLines(ArclinkRequest *arclinkRequest) {
 	if ( !validInterface() || arclinkRequest == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -3049,7 +3173,7 @@ int DatabaseReader::loadArclinkStatusLines(ArclinkRequest* arclinkRequest) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadArclinkRequestLines(ArclinkRequest* arclinkRequest) {
+int DatabaseReader::loadArclinkRequestLines(ArclinkRequest *arclinkRequest) {
 	if ( !validInterface() || arclinkRequest == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -3087,7 +3211,7 @@ DataAvailability* DatabaseReader::loadDataAvailability() {
 	load(dataAvailability);
 
 	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-	
+
 	return dataAvailability;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3114,7 +3238,7 @@ int DatabaseReader::load(DataAvailability* dataAvailability) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataExtents(DataAvailability* dataAvailability) {
+int DatabaseReader::loadDataExtents(DataAvailability *dataAvailability) {
 	if ( !validInterface() || dataAvailability == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -3159,7 +3283,7 @@ int DatabaseReader::load(DataExtent* dataExtent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataSegments(DataExtent* dataExtent) {
+int DatabaseReader::loadDataSegments(DataExtent *dataExtent) {
 	if ( !validInterface() || dataExtent == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();
@@ -3189,7 +3313,7 @@ int DatabaseReader::loadDataSegments(DataExtent* dataExtent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int DatabaseReader::loadDataAttributeExtents(DataExtent* dataExtent) {
+int DatabaseReader::loadDataAttributeExtents(DataExtent *dataExtent) {
 	if ( !validInterface() || dataExtent == nullptr ) return 0;
 
 	bool saveState = Notifier::IsEnabled();

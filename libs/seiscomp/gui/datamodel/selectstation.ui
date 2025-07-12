@@ -1,61 +1,142 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SelectStation</class>
- <widget class="QDialog" name="SelectStation" >
-  <property name="geometry" >
+ <widget class="QDialog" name="SelectStation">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>400</height>
+    <width>854</width>
+    <height>788</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Add station(s)</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="stationListLabel" >
-     <property name="text" >
-      <string>Station List:</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelNSLC">
+       <property name="text">
+        <string>NET.STA:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEditNSLC"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QCheckBox" name="cbExcludeNSLC">
+       <property name="text">
+        <string>Exclude</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Network type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="comboNetworkType">
+       <item>
+        <property name="text">
+         <string>- No filter -</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QCheckBox" name="cbExcludeNetworkType">
+       <property name="text">
+        <string>Exclude</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Station type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="comboStationType">
+       <item>
+        <property name="text">
+         <string>- No filter -</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QCheckBox" name="cbExcludeStationType">
+       <property name="text">
+        <string>Exclude</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Sensor unit:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="comboSensorUnit">
+       <item>
+        <property name="text">
+         <string>- No filter- </string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QCheckBox" name="cbExcludeSensorUnit">
+       <property name="text">
+        <string>Exclude</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QLineEdit" name="stationLineEdit" />
-   </item>
-   <item>
-    <widget class="QTableView" name="table" >
-     <property name="alternatingRowColors" >
+    <widget class="QTableView" name="table">
+     <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
-     <property name="selectionBehavior" >
+     <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -64,8 +145,8 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btnAdd" >
-       <property name="text" >
+      <widget class="QPushButton" name="btnAdd">
+       <property name="text">
         <string>Add</string>
        </property>
       </widget>
@@ -74,7 +155,18 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
+ <tabstops>
+  <tabstop>lineEditNSLC</tabstop>
+  <tabstop>cbExcludeNSLC</tabstop>
+  <tabstop>comboNetworkType</tabstop>
+  <tabstop>cbExcludeNetworkType</tabstop>
+  <tabstop>comboStationType</tabstop>
+  <tabstop>cbExcludeStationType</tabstop>
+  <tabstop>comboSensorUnit</tabstop>
+  <tabstop>cbExcludeSensorUnit</tabstop>
+  <tabstop>table</tabstop>
+  <tabstop>btnAdd</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -83,13 +175,13 @@
    <receiver>SelectStation</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>217</x>
-     <y>333</y>
+    <hint type="sourcelabel">
+     <x>607</x>
+     <y>651</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>51</x>
-     <y>318</y>
+    <hint type="destinationlabel">
+     <x>213</x>
+     <y>631</y>
     </hint>
    </hints>
   </connection>

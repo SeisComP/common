@@ -40,7 +40,7 @@ using namespace std;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 
-const TimeSpan DefaultRealtimeAvailability = 3600;
+const TimeSpan DefaultRealtimeAvailability{3600, 0};
 
 
 namespace {
@@ -97,7 +97,7 @@ CombinedConnection::CombinedConnection() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CombinedConnection::CombinedConnection(std::string serverloc) {
 	init();
-	setSource(serverloc);
+	CombinedConnection::setSource(serverloc);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -137,6 +137,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	size_t p1,p2;
 
 	_archiveEndTime = Core::Time();
+	bool hasValidArchiveEndTime = false;
 
 	/*
 	 * Format of source is:
@@ -339,6 +340,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 				}
 
 				_realtimeAvailability = Core::TimeSpan(0,0);
+				hasValidArchiveEndTime = true;
 			}
 		}
 	}
@@ -373,8 +375,9 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		return false;
 	}
 
-	if ( !_archiveEndTime.valid() )
-		_archiveEndTime = Time::GMT() - _realtimeAvailability;
+	if ( !hasValidArchiveEndTime ) {
+		_archiveEndTime = Time::UTC() - _realtimeAvailability;
+	}
 
 	SEISCOMP_DEBUG("Split   : %s", _archiveEndTime.iso().c_str());
 
@@ -396,17 +399,22 @@ bool CombinedConnection::addStream(const string &net, const string &sta,
 	result = _tmpStreams.insert(StreamIdx(net, sta, loc, cha));
 	return result.second;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CombinedConnection::addStream(const string &net, const string &sta,
                                    const string &loc, const string &cha,
-                                   const Seiscomp::Core::Time &stime,
-                                   const Seiscomp::Core::Time &etime) {
+                                   const OPT(Core::Time) &stime,
+                                   const OPT(Core::Time) &etime) {
 	SEISCOMP_DEBUG("add stream %lu %s.%s.%s.%s", (unsigned long) _nStream, net.c_str(),
 	               sta.c_str(), loc.c_str(), cha.c_str());
 
-	if ( stime.valid() && stime < _archiveEndTime ) {
-		if ( etime.valid() && etime <= _archiveEndTime ) {
-			_archive->addStream(net, sta, loc, cha, stime, etime);
+	if ( stime && *stime < _archiveEndTime ) {
+		if ( etime && *etime <= _archiveEndTime ) {
+			_archive->addStream(net, sta, loc, cha, *stime, *etime);
 			++_nArchive;
 		}
 		else {
@@ -430,7 +438,7 @@ bool CombinedConnection::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CombinedConnection::setStartTime(const Seiscomp::Core::Time &stime) {
+bool CombinedConnection::setStartTime(const OPT(Core::Time) &stime) {
 	_startTime = stime;
 	return true;
 }
@@ -440,7 +448,7 @@ bool CombinedConnection::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CombinedConnection::setEndTime(const Seiscomp::Core::Time &etime) {
+bool CombinedConnection::setEndTime(const OPT(Core::Time) &etime) {
 	_endTime = etime;
 	return true;
 }

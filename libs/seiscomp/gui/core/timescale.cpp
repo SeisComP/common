@@ -34,21 +34,20 @@
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/gui/core/compat.h>
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 TimeScale::TimeScale(QWidget *parent, Qt::WindowFlags f, Position pos)
  : Ruler(parent, f, pos) {
 	_showAbsoluteValues = false;
 	_showAbsoluteDate= false;
-	setLimits(Seiscomp::Core::TimeSpan::MinTime, Seiscomp::Core::TimeSpan::MaxTime, 0.001, 315360000.0);
+	setLimits(Core::Time::MinTime, Core::Time::MaxTime, 0.001, 315360000.0);
 }
 
 
-void TimeScale::setAlignment(const Seiscomp::Core::Time& t) {
+void TimeScale::setAlignment(const Core::Time &t) {
 	_alignment = t;
-	_ofs = _showAbsoluteValues ? (double)_alignment : 0;
+	_ofs = _showAbsoluteValues ? static_cast<double>(_alignment) : 0;
 	emit changedInterval(_drx[0], _drx[1], _ofs);
 }
 
@@ -56,8 +55,9 @@ void TimeScale::setAlignment(const Seiscomp::Core::Time& t) {
 void TimeScale::setAbsoluteTimeEnabled(bool absoluteTime, bool absoluteDate) {
 	absoluteDate = absoluteTime && absoluteDate;
 	if ( _showAbsoluteValues == absoluteTime &&
-	     _showAbsoluteDate == absoluteDate )
+	     _showAbsoluteDate == absoluteDate ) {
 		return;
+	}
 
 	_showAbsoluteValues = absoluteTime;
 	_showAbsoluteDate = absoluteDate;
@@ -140,38 +140,36 @@ void TimeScale::updateIntervals() {
 
 bool TimeScale::getTickText(double pos, double lastPos,
                             int line, QString &str) const {
-	if ( !_showAbsoluteValues )
+	if ( !_showAbsoluteValues ) {
 		return Ruler::getTickText(pos, lastPos, line, str);
+	}
 
 	// Fixed floating point precision error
-	if ( pos > 0 )
+	if ( pos > 0 ) {
 		pos += 5E-10;
-	else
+	}
+	else {
 		pos -= 5E-10;
+	}
 
 	if ( line == 0 ) {
 		try {
-			Seiscomp::Core::Time time(pos);
-			if ( !time.valid() ) return false;
-
+			Core::Time time(pos);
 			str = timeToString(time, _primaryTimeFormat);
 			return true;
 		}
 		catch ( const Core::OverflowException&) { return false; }
-		
+
 	}
 
 	if ( line == 1 && _showAbsoluteDate ) {
 		try {
-			Seiscomp::Core::Time time(pos);
-			if ( time.valid() ) {
-				QString timeStr = timeToString(time, _secondaryTimeFormat);
-				Seiscomp::Core::Time prevTime(lastPos);
-				if ( !prevTime.valid() ||
-				     timeToString(prevTime, _secondaryTimeFormat) != timeStr ) {
-					str = timeStr;
-					return true;
-				}
+			Core::Time time(pos);
+			Core::Time prevTime(lastPos);
+			QString timeStr = timeToString(time, _secondaryTimeFormat);
+			if ( timeToString(prevTime, _secondaryTimeFormat) != timeStr ) {
+				str = timeStr;
+				return true;
 			}
 		}
 		catch ( const Core::OverflowException&) { return false; }
@@ -180,5 +178,4 @@ bool TimeScale::getTickText(double pos, double lastPos,
 	return false;
 }
 
-} // ns Gui
-} // ns Seiscomp
+} // ns Seiscomp::Gui

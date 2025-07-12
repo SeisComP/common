@@ -150,8 +150,9 @@ void SimpleDetector::process(const Record *record, const DoubleArray &filteredDa
 	//TODO: Find better solution to check if processing start lies within
 	//      the record.
 	int startIndex = 0;
-	if ( !_stream.initialized )
+	if ( !_stream.initialized ) {
 		startIndex = std::max(0, int(n) - int(_stream.receivedSamples - _stream.neededSamples));
+	}
 
 	for ( size_t i = startIndex; i < n; ++i ) {
 		double v = filteredData[i];

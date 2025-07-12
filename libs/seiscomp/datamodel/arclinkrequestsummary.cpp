@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(ArclinkRequestSummary, "ArclinkRequestSummary");
 
 
-ArclinkRequestSummary::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ArclinkRequestSummary::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("okLineCount", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setOkLineCount, &ArclinkRequestSummary::okLineCount));
 	addProperty(Core::simpleProperty("totalLineCount", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setTotalLineCount, &ArclinkRequestSummary::totalLineCount));
 	addProperty(Core::simpleProperty("averageTimeWindow", "int", false, false, false, false, false, false, nullptr, &ArclinkRequestSummary::setAverageTimeWindow, &ArclinkRequestSummary::averageTimeWindow));
@@ -53,7 +53,7 @@ ArclinkRequestSummary::ArclinkRequestSummary() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestSummary::ArclinkRequestSummary(const ArclinkRequestSummary& other)
+ArclinkRequestSummary::ArclinkRequestSummary(const ArclinkRequestSummary &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -71,7 +71,7 @@ ArclinkRequestSummary::~ArclinkRequestSummary() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestSummary::operator==(const ArclinkRequestSummary& rhs) const {
+bool ArclinkRequestSummary::operator==(const ArclinkRequestSummary &rhs) const {
 	if ( !(_okLineCount == rhs._okLineCount) )
 		return false;
 	if ( !(_totalLineCount == rhs._totalLineCount) )
@@ -86,7 +86,7 @@ bool ArclinkRequestSummary::operator==(const ArclinkRequestSummary& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestSummary::operator!=(const ArclinkRequestSummary& rhs) const {
+bool ArclinkRequestSummary::operator!=(const ArclinkRequestSummary &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -95,7 +95,7 @@ bool ArclinkRequestSummary::operator!=(const ArclinkRequestSummary& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestSummary::equal(const ArclinkRequestSummary& other) const {
+bool ArclinkRequestSummary::equal(const ArclinkRequestSummary &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +158,7 @@ int ArclinkRequestSummary::averageTimeWindow() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestSummary& ArclinkRequestSummary::operator=(const ArclinkRequestSummary& other) {
+ArclinkRequestSummary &ArclinkRequestSummary::operator=(const ArclinkRequestSummary &other) {
 	_okLineCount = other._okLineCount;
 	_totalLineCount = other._totalLineCount;
 	_averageTimeWindow = other._averageTimeWindow;
@@ -170,7 +170,7 @@ ArclinkRequestSummary& ArclinkRequestSummary::operator=(const ArclinkRequestSumm
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkRequestSummary::serialize(Archive& ar) {
+void ArclinkRequestSummary::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

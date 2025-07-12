@@ -67,7 +67,7 @@ class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
 		RealQuantity();
 
 		//! Copy constructor
-		RealQuantity(const RealQuantity& other);
+		RealQuantity(const RealQuantity &other);
 
 		//! Custom constructor
 		RealQuantity(double value,
@@ -79,7 +79,7 @@ class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
 
 		//! Destructor
 		~RealQuantity() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -89,14 +89,14 @@ class SC_SYSTEM_CORE_API RealQuantity : public Core::BaseObject {
 		operator double() const;
 
 		//! Copies the metadata of other to this
-		RealQuantity& operator=(const RealQuantity& other);
+		RealQuantity &operator=(const RealQuantity &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const RealQuantity& other) const;
-		bool operator!=(const RealQuantity& other) const;
+		bool operator==(const RealQuantity &other) const;
+		bool operator!=(const RealQuantity &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const RealQuantity& other) const;
+		bool equal(const RealQuantity &other) const;
 
 
 	// ------------------------------------------------------------------

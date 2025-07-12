@@ -160,11 +160,14 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 	private:
 		double               latitude;
 		double               longitude;
+		double               elevation;
 		int                  unit;
 		QString              gainUnit[3];
+		double               gainToSI[3];
 		ThreeComponentTrace  data;
 		Math::Matrix3d       orientationZNE;
 		Math::Matrix3d       orientationZRT;
+		Math::Matrix3d       orientationLQT;
 
 		bool                 hasGotData;
 		bool                 isEnabledByConfig;
@@ -224,6 +227,40 @@ class SC_GUI_API PickerView : public QMainWindow {
 			typedef QList<QString> StringList;
 			typedef StringList PhaseList;
 
+			MAKEENUM(
+				RotationType,
+				EVALUES(
+					RT_123,
+					RT_ZNE,
+					RT_ZRT,
+					RT_LQT,
+					RT_ZH
+				),
+				ENAMES(
+					"123",
+					"ZNE",
+					"ZRT",
+					"LQT",
+					"ZH(L2)"
+				)
+			);
+
+			MAKEENUM(
+				UnitType,
+				EVALUES(
+					UT_RAW,
+					UT_ACC,
+					UT_VEL,
+					UT_DISP
+				),
+				ENAMES(
+					"Sensor",
+					"Acceleration",
+					"Velocity",
+					"Displacement"
+				)
+			);
+
 			struct PhaseGroup {
 				QString name;
 				QList<PhaseGroup> childs;
@@ -242,7 +279,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 			FilterList filters;
 
 			QString integrationFilter;
-			bool onlyApplyIntegrationFilterOnce;
+			bool onlyApplyIntegrationFilterOnce{true};
 
 			GroupList phaseGroups;
 			PhaseList favouritePhases;
@@ -252,44 +289,46 @@ class SC_GUI_API PickerView : public QMainWindow {
 			UncertaintyProfiles uncertaintyProfiles;
 			QString uncertaintyProfile;
 
-			bool showCrossHair;
+			bool showCrossHair{false};
 
-			bool ignoreUnconfiguredStations;
-			bool ignoreDisabledStations;
-			bool loadAllComponents;
-			bool loadAllPicks;
-			bool loadStrongMotionData;
-			bool usePerStreamTimeWindows;
-			bool limitStations;
-			bool showAllComponents;
-			bool hideStationsWithoutData;
-			bool hideDisabledStations;
+			bool ignoreUnconfiguredStations{false};
+			bool ignoreDisabledStations{true};
+			bool loadAllComponents{true};
+			bool loadAllPicks{true};
+			bool loadStrongMotionData{false};
+			bool usePerStreamTimeWindows{false};
+			bool limitStations{false};
+			bool showAllComponents{false};
+			bool hideStationsWithoutData{false};
+			bool hideDisabledStations{false};
+			bool showDataInSensorUnit{false};
+			bool limitFilterToZoomTrace{false};
 
-			int    limitStationCount;
-			double allComponentsMaximumStationDistance;
-			double defaultAddStationsDistance;
+			RotationType initialRotation{RT_123};
+			UnitType     initialUnit{UT_RAW};
 
-			double defaultDepth;
+			int    limitStationCount{10};
+			double allComponentsMaximumStationDistance{10.0};
+			double defaultAddStationsDistance{15.0};
+			bool   loadStationsWithinDistanceInitially{false};
 
-			bool removeAutomaticStationPicks;
-			bool removeAutomaticPicks;
+			double defaultDepth{10.0};
 
-			Core::TimeSpan preOffset;
-			Core::TimeSpan postOffset;
-			Core::TimeSpan minimumTimeWindow;
+			bool removeAutomaticStationPicks{false};
+			bool removeAutomaticPicks{false};
 
-			double alignmentPosition;
-			double offsetWindowStart;
-			double offsetWindowEnd;
+			Core::TimeSpan preOffset{60, 0};
+			Core::TimeSpan postOffset{120, 0};
+			Core::TimeSpan minimumTimeWindow{1800, 0};
 
-			QColor timingQualityLow;
-			QColor timingQualityMedium;
-			QColor timingQualityHigh;
+			double alignmentPosition{0.5};
+
+			QColor timingQualityLow{Qt::darkRed};
+			QColor timingQualityMedium{Qt::yellow};
+			QColor timingQualityHigh{Qt::darkGreen};
 
 			OPT(double) repickerSignalStart;
 			OPT(double) repickerSignalEnd;
-
-			Config();
 
 			void addFilter(const QString &f, const QString &n) {
 				filters.push_back(QPair<QString, QString>(f, n));
@@ -515,8 +554,8 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void openConnectionInfo(const QPoint &);
 		void destroyedSpectrumWidget(QObject *);
 
-		void ttInterfaceChanged(QString);
-		void ttTableChanged(QString);
+		void ttInterfaceChanged(int);
+		void ttTableChanged(int);
 
 
 	protected:
@@ -527,6 +566,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 	private:
 		void figureOutTravelTimeTable();
+		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
 
 		void init();
 		void initPhases();

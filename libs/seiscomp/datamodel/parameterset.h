@@ -56,28 +56,28 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ParameterSet(const ParameterSet& other);
+		ParameterSet(const ParameterSet &other);
 
 		//! Constructor with publicID
 		ParameterSet(const std::string& publicID);
 
 		//! Destructor
 		~ParameterSet() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ParameterSet* Create();
-		static ParameterSet* Create(const std::string& publicID);
+		static ParameterSet *Create();
+		static ParameterSet *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ParameterSet* Find(const std::string& publicID);
+		static ParameterSet *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -86,14 +86,14 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ParameterSet& operator=(const ParameterSet& other);
+		ParameterSet &operator=(const ParameterSet &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ParameterSet& other) const;
-		bool operator!=(const ParameterSet& other) const;
+		bool operator==(const ParameterSet &other) const;
+		bool operator!=(const ParameterSet &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ParameterSet& other) const;
+		bool equal(const ParameterSet &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -109,7 +109,7 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		void setCreated(const OPT(Seiscomp::Core::Time)& created);
 		Seiscomp::Core::Time created() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -122,8 +122,8 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Parameter* obj);
-		bool add(Comment* obj);
+		bool add(Parameter *obj);
+		bool add(Comment *obj);
 
 		/**
 		 * Removes an object.
@@ -132,8 +132,8 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Parameter* obj);
-		bool remove(Comment* obj);
+		bool remove(Parameter *obj);
+		bool remove(Comment *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -143,7 +143,7 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 		 */
 		bool removeParameter(size_t i);
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t parameterCount() const;
@@ -151,15 +151,15 @@ class SC_SYSTEM_CORE_API ParameterSet : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Parameter* parameter(size_t i) const;
+		Parameter *parameter(size_t i) const;
 
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		Parameter* findParameter(const std::string& publicID) const;
+		Parameter *findParameter(const std::string& publicID) const;
 
-		Config* config() const;
+		Config *config() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -828,13 +828,6 @@ struct OriginUncertaintyHandler : IO::XML::MemberHandler {
 			catch ( Core::ValueException & ) {}
 			try { ou.setMaxHorizontalUncertainty(ou.maxHorizontalUncertainty() * 1000); }
 			catch ( Core::ValueException & ) {}
-			try {
-				ConfidenceEllipsoid &ce = ou.confidenceEllipsoid();
-				ce.setSemiMajorAxisLength(ce.semiMajorAxisLength() * 1000);
-				ce.setSemiMinorAxisLength(ce.semiMinorAxisLength() * 1000);
-				ce.setSemiIntermediateAxisLength(ce.semiIntermediateAxisLength() * 1000);
-			}
-			catch ( Core::ValueException & ) {}
 
 			output->handle(&ou, "originUncertainty", ns, &__originUncertaintySecondaryHandler);
 			return true;
@@ -1067,7 +1060,10 @@ struct NodalPlaneHandler : TypedClassHandler<NodalPlane> {
 };
 
 struct NodalPlanesHandler : TypedClassHandler<NodalPlanes> {
-	NodalPlanesHandler() { addList("nodalPlane1, nodalPlane2"); }
+	NodalPlanesHandler() {
+		addList("nodalPlane1, nodalPlane2");
+		add("preferredPlane", nullptr, Optional, Attribute);
+	}
 };
 
 struct SourceTimeFunctionHandler : TypedClassHandler<SourceTimeFunction> {

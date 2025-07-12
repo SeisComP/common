@@ -92,7 +92,7 @@ void TimeWindowProcessor::fill(size_t n, double *samples) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TimeWindowProcessor::setTimeWindow(const Core::TimeWindow &tw) {
-	if ( !(bool)tw ) {
+	if ( !tw ) {
 		_timeWindow = Core::TimeWindow();
 		_safetyTimeWindow = Core::TimeWindow();
 		return;
@@ -126,13 +126,13 @@ const Core::TimeWindow &TimeWindowProcessor::safetyTimeWindow() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimeWindowProcessor::setMargin(const Core::TimeSpan& margin) {
+void TimeWindowProcessor::setMargin(const Core::TimeSpan &margin) {
 	if ( margin.length() < 0 ) {
 		throw Core::UnderflowException("margin must be greater or equal to zero");
 	}
 
 	_safetyMargin = margin;
-	if ( static_cast<bool>(_timeWindow) ) {
+	if ( _timeWindow ) {
 		_safetyTimeWindow.setStartTime(_timeWindow.startTime() - _safetyMargin - _initTime);
 	}
 }

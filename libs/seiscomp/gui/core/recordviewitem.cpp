@@ -950,12 +950,12 @@ void RecordViewItem::setupUi(bool withFrame, int frameMargin, int hSpacing) {
 
 	QHBoxLayout *lay = new QHBoxLayout(this);
 	lay->setSpacing(hSpacing);
-	lay->setMargin(0);
+	lay->setContentsMargins(0, 0, 0, 0);
 
 	frame = new QFrame(this);
 	_labelLayout = new QVBoxLayout(frame);
 	_labelLayout->setSpacing(0);
-	_labelLayout->setMargin(frameMargin);
+	_labelLayout->setContentsMargins(frameMargin, frameMargin, frameMargin, frameMargin);
 	//_labelLayout->addWidget(_label);
 	frame->setLayout(_labelLayout);
 	//frame->setFrameShape(withFrame?QFrame::StyledPanel:QFrame::NoFrame);
@@ -967,7 +967,7 @@ void RecordViewItem::setupUi(bool withFrame, int frameMargin, int hSpacing) {
 	frame = new QFrame(this);
 	_widgetLayout = new QVBoxLayout(frame);
 	_widgetLayout->setSpacing(0);
-	_widgetLayout->setMargin(frameMargin);
+	_widgetLayout->setContentsMargins(frameMargin, frameMargin, frameMargin, frameMargin);
 	//_widgetLayout->addWidget(_widget);
 	frame->setLayout(_widgetLayout);
 	//frame->setFrameShape(withFrame?QFrame::StyledPanel:QFrame::NoFrame);

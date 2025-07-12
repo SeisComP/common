@@ -84,28 +84,28 @@ class SC_SYSTEM_CORE_API ResponsePAZ : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ResponsePAZ(const ResponsePAZ& other);
+		ResponsePAZ(const ResponsePAZ &other);
 
 		//! Constructor with publicID
 		ResponsePAZ(const std::string& publicID);
 
 		//! Destructor
 		~ResponsePAZ() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ResponsePAZ* Create();
-		static ResponsePAZ* Create(const std::string& publicID);
+		static ResponsePAZ *Create();
+		static ResponsePAZ *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ResponsePAZ* Find(const std::string& publicID);
+		static ResponsePAZ *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -114,14 +114,14 @@ class SC_SYSTEM_CORE_API ResponsePAZ : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ResponsePAZ& operator=(const ResponsePAZ& other);
+		ResponsePAZ &operator=(const ResponsePAZ &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ResponsePAZ& other) const;
-		bool operator!=(const ResponsePAZ& other) const;
+		bool operator==(const ResponsePAZ &other) const;
+		bool operator!=(const ResponsePAZ &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ResponsePAZ& other) const;
+		bool equal(const ResponsePAZ &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -194,17 +194,17 @@ class SC_SYSTEM_CORE_API ResponsePAZ : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ResponsePAZIndex& index() const;
+		const ResponsePAZIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ResponsePAZ* lhs) const;
+		bool equalIndex(const ResponsePAZ *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

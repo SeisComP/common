@@ -36,7 +36,7 @@ class Yes { No no[2]; };
 
 
 template <typename T>
-Yes isOptionalTester(boost::optional<T>*);
+Yes isOptionalTester(Optional<T>*);
 No isOptionalTester(void*);
 
 
@@ -84,13 +84,13 @@ class MetaEnumImpl : public MetaEnum {
 		MetaEnumImpl() : MetaEnum() {}
 
 	public:
-		int keyCount() const { return T::Quantity; }
+		int keyCount() const override { return T::Quantity; }
 
 		//! Returns the key name at a given index
-		const char *key(int index) const;
+		const char *key(int index) const override;
 
-		const char *valueToKey(int value) const;
-		int keyToValue(const char *key) const;
+		const char *valueToKey(int value) const override;
+		int keyToValue(const char *key) const override;
 };
 
 #define DECLARE_METAENUM(CLASS, var) Seiscomp::Core::MetaEnumImpl<CLASS> var
@@ -148,7 +148,7 @@ class MetaClassProperty : public MetaProperty {
 
 
 	public:
-		BaseObject *createClass() const {
+		BaseObject *createClass() const override {
 			return new T();
 		}
 };
@@ -235,14 +235,14 @@ class SimplePropertyHelper<T,U,F1,F2,0> : public MetaProperty {
 		SimplePropertyHelper(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(BaseObject *object, MetaValue value) const {
+		bool write(BaseObject *object, MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
-			(target->*_setter)(boost::any_cast<U>(value));
+			(target->*_setter)(metaValueCast<U>(value));
 			return true;
 		}
 
-		bool writeString(BaseObject *object, const std::string &value) const {
+		bool writeString(BaseObject *object, const std::string &value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -254,13 +254,13 @@ class SimplePropertyHelper<T,U,F1,F2,0> : public MetaProperty {
 			return true;
 		}
 
-		MetaValue read(const BaseObject *object) const {
+		MetaValue read(const BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw GeneralException("invalid object");
 			return (target->*_getter)();
 		}
 
-		std::string readString(const BaseObject *object) const {
+		std::string readString(const BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw GeneralException("invalid object");
 			return toString((target->*_getter)());
@@ -277,18 +277,18 @@ class SimplePropertyHelper<T,U,F1,F2,1> : public MetaProperty {
 		SimplePropertyHelper(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(BaseObject *object, MetaValue value) const {
+		bool write(BaseObject *object, MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
 			if ( value.empty() )
 				(target->*_setter)(Core::None);
 			else
-				(target->*_setter)(boost::any_cast<U>(value));
+				(target->*_setter)(metaValueCast<U>(value));
 			return true;
 		}
 
-		bool writeString(BaseObject *object, const std::string &value) const {
+		bool writeString(BaseObject *object, const std::string &value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -298,19 +298,19 @@ class SimplePropertyHelper<T,U,F1,F2,1> : public MetaProperty {
 				typename Core::Generic::remove_optional<U>::type tmp;
 				if ( !fromString(tmp, value) )
 					return false;
-	
+
 				(target->*_setter)(tmp);
 			}
 			return true;
 		}
 
-		MetaValue read(const BaseObject *object) const {
+		MetaValue read(const BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw GeneralException("invalid object");
 			return (target->*_getter)();
 		}
 
-		std::string readString(const BaseObject *object) const {
+		std::string readString(const BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw GeneralException("invalid object");
 			return toString((target->*_getter)());

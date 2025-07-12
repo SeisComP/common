@@ -21,13 +21,16 @@
 #ifndef SEISCOMP_CONFIGURATION_EDITOR_H__
 #define SEISCOMP_CONFIGURATION_EDITOR_H__
 
+
 #ifndef Q_MOC_RUN
 #include <seiscomp/system/model.h>
 #endif
 
 #include <QSyntaxHighlighter>
+#include <QRegularExpression>
 #include <QTextEdit>
 #include <QWidget>
+
 
 class QLineEdit;
 class QListWidget;
@@ -42,7 +45,7 @@ class ConfigHighlighter : public QSyntaxHighlighter {
 
 	private:
 		struct Rule {
-			QRegExp pattern;
+			QRegularExpression pattern;
 			QTextCharFormat format;
 		};
 

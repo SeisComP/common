@@ -53,25 +53,25 @@ class SC_SYSTEM_CORE_API CreationInfo : public Core::BaseObject {
 		CreationInfo();
 
 		//! Copy constructor
-		CreationInfo(const CreationInfo& other);
+		CreationInfo(const CreationInfo &other);
 
 		//! Destructor
 		~CreationInfo() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		CreationInfo& operator=(const CreationInfo& other);
+		CreationInfo &operator=(const CreationInfo &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const CreationInfo& other) const;
-		bool operator!=(const CreationInfo& other) const;
+		bool operator==(const CreationInfo &other) const;
+		bool operator!=(const CreationInfo &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const CreationInfo& other) const;
+		bool equal(const CreationInfo &other) const;
 
 
 	// ------------------------------------------------------------------

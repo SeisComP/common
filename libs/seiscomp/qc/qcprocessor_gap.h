@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorGap : public QcProcessor {
 	public:
 		QcProcessorGap();
 		double getGap();
-		bool setState(const Record *record, const DoubleArray &data);
+		bool setState(const Record *record, const DoubleArray &data) override;
 };
 
 

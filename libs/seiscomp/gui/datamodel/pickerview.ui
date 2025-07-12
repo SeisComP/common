@@ -1419,7 +1419,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show trace values in nano sensor units</string>
+    <string>Show trace values in sensor units</string>
    </property>
   </action>
   <action name="actionClipComponentsToViewport">

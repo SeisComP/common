@@ -249,7 +249,7 @@ size_t Server::numberOfQueues() const {
 void Server::createStatisticsSnapshot() {
 	ServerStatisticsPtr stats = new ServerStatistics;
 
-	stats->timestamp = Core::Time::GMT();
+	stats->timestamp = Core::Time::UTC();
 	stats->queues.resize(numberOfQueues());
 
 	lockStatistics();

@@ -87,28 +87,28 @@ class SC_SYSTEM_CORE_API ResponseFAP : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ResponseFAP(const ResponseFAP& other);
+		ResponseFAP(const ResponseFAP &other);
 
 		//! Constructor with publicID
 		ResponseFAP(const std::string& publicID);
 
 		//! Destructor
 		~ResponseFAP() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ResponseFAP* Create();
-		static ResponseFAP* Create(const std::string& publicID);
+		static ResponseFAP *Create();
+		static ResponseFAP *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ResponseFAP* Find(const std::string& publicID);
+		static ResponseFAP *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -117,14 +117,14 @@ class SC_SYSTEM_CORE_API ResponseFAP : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ResponseFAP& operator=(const ResponseFAP& other);
+		ResponseFAP &operator=(const ResponseFAP &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ResponseFAP& other) const;
-		bool operator!=(const ResponseFAP& other) const;
+		bool operator==(const ResponseFAP &other) const;
+		bool operator!=(const ResponseFAP &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ResponseFAP& other) const;
+		bool equal(const ResponseFAP &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -165,17 +165,17 @@ class SC_SYSTEM_CORE_API ResponseFAP : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ResponseFAPIndex& index() const;
+		const ResponseFAPIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ResponseFAP* lhs) const;
+		bool equalIndex(const ResponseFAP *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

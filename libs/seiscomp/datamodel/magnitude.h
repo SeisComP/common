@@ -69,28 +69,28 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Magnitude(const Magnitude& other);
+		Magnitude(const Magnitude &other);
 
 		//! Constructor with publicID
 		Magnitude(const std::string& publicID);
 
 		//! Destructor
 		~Magnitude() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Magnitude* Create();
-		static Magnitude* Create(const std::string& publicID);
+		static Magnitude *Create();
+		static Magnitude *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Magnitude* Find(const std::string& publicID);
+		static Magnitude *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -99,14 +99,14 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Magnitude& operator=(const Magnitude& other);
+		Magnitude &operator=(const Magnitude &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Magnitude& other) const;
-		bool operator!=(const Magnitude& other) const;
+		bool operator==(const Magnitude &other) const;
+		bool operator!=(const Magnitude &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Magnitude& other) const;
+		bool equal(const Magnitude &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -162,7 +162,7 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -175,8 +175,8 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
-		bool add(StationMagnitudeContribution* obj);
+		bool add(Comment *obj);
+		bool add(StationMagnitudeContribution *obj);
 
 		/**
 		 * Removes an object.
@@ -185,8 +185,8 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
-		bool remove(StationMagnitudeContribution* obj);
+		bool remove(Comment *obj);
+		bool remove(StationMagnitudeContribution *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -195,9 +195,9 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeStationMagnitudeContribution(size_t i);
-		bool removeStationMagnitudeContribution(const StationMagnitudeContributionIndex& i);
+		bool removeStationMagnitudeContribution(const StationMagnitudeContributionIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
@@ -205,15 +205,15 @@ class SC_SYSTEM_CORE_API Magnitude : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
-		StationMagnitudeContribution* stationMagnitudeContribution(size_t i) const;
-		StationMagnitudeContribution* stationMagnitudeContribution(const StationMagnitudeContributionIndex& i) const;
+		StationMagnitudeContribution *stationMagnitudeContribution(size_t i) const;
+		StationMagnitudeContribution *stationMagnitudeContribution(const StationMagnitudeContributionIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Origin* origin() const;
+		Origin *origin() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

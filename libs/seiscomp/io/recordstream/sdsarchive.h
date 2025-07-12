@@ -48,36 +48,36 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 	public:
 		SDSArchive();
 		SDSArchive(const std::string arcroot);
-		virtual ~SDSArchive();
+		~SDSArchive() override;
 
 
 	// ----------------------------------------------------------------------
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setSource(const std::string &source);
+		bool setSource(const std::string &source) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &startTime,
+		               const OPT(Core::Time) &endTime) override;
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
-		virtual bool setTimeWindow(const Seiscomp::Core::TimeWindow &tw);
+		bool setStartTime(const OPT(Core::Time) &stime) override;
+		bool setEndTime(const OPT(Core::Time) &etime) override;
+		bool setTimeWindow(const Core::TimeWindow &tw) override;
 
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
-		virtual void close();
+		void close() override;
 
-		virtual Seiscomp::Record *next();
+		Record *next() override;
 
 
 	// ----------------------------------------------------------------------
@@ -90,8 +90,8 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 			      const std::string& loc, const std::string& cha);
 			Index(const std::string& net, const std::string& sta,
 			      const std::string& loc, const std::string& cha,
-			      const Seiscomp::Core::Time& stime,
-			      const Seiscomp::Core::Time& etime);
+			      const OPT(Core::Time) &stime,
+			      const OPT(Core::Time) &etime);
 
 			Index &operator=(const Index &other);
 			bool operator<(const Index &other) const;
@@ -102,19 +102,20 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 			std::string sta;
 			std::string loc;
 			std::string cha;
-			mutable Seiscomp::Core::Time stime;
-			mutable Seiscomp::Core::Time etime;
+
+			mutable OPT(Core::Time) stime;
+			mutable OPT(Core::Time) etime;
 		};
 
 
-		typedef std::set<Index> IndexSet;
-		typedef std::list<Index> IndexList;
-		typedef std::pair<std::string,bool> File;
-		typedef std::queue<File> FileQueue;
+		using IndexSet = std::set<Index>;
+		using IndexList = std::list<Index>;
+		using File = std::pair<std::string,bool>;
+		using FileQueue = std::queue<File>;
 
 		std::vector<std::string>  _arcroots;
-		Seiscomp::Core::Time      _stime;
-		Seiscomp::Core::Time      _etime;
+		OPT(Core::Time)           _stime;
+		OPT(Core::Time)           _etime;
 		IndexList                 _orderedRequests;
 		IndexSet                  _streamSet;
 		IndexList::iterator       _curiter;

@@ -74,10 +74,12 @@ bool parseTime(Core::Time &time, const char *data, size_t len) {
 		}
 	}
 
-	if ( tok_count != 6 )
+	if ( tok_count != 6 ) {
 		return false;
+	}
 
-	return time.set(toks[0], toks[1], toks[2], toks[3], toks[4], toks[5], 0).valid();
+	time.set(toks[0], toks[1], toks[2], toks[3], toks[4], toks[5], 0);
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -102,12 +104,7 @@ ClientSession::ClientSession(Wired::Socket *s, size_t maxLen)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-size_t ClientSession::inAvail() const {
-	return _bytesPending + Wired::ClientSession::inAvail();
+}
+}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-}
-}
-}

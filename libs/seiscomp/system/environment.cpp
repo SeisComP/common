@@ -68,7 +68,7 @@ bool Environment::init() {
 	if ( !installDir ) {
 #ifdef SEISCOMP_ROOT
 		_installDir = SEISCOMP_ROOT;
-		SEISCOMP_DEBUG("Setting predefined installdir: %s", _installDir.c_str());
+		SEISCOMP_DEBUG("Setting predefined installdir: %s", _installDir);
 #else
 		_installDir = ".";
 		SEISCOMP_DEBUG("Guessing installdir: %s", _installDir.c_str());
@@ -76,7 +76,7 @@ bool Environment::init() {
 	}
 	else {
 		_installDir = installDir;
-		SEISCOMP_DEBUG("Setting installdir from $SEISCOMP_ROOT: %s", _installDir.c_str());
+		SEISCOMP_DEBUG("Setting installdir from $SEISCOMP_ROOT: %s", _installDir);
 	}
 
 
@@ -112,7 +112,7 @@ bool Environment::init() {
 	_appConfigDir = _installDir + "/etc";
 
 	const char* localConfigDir = getenv("SEISCOMP_LOCAL_CONFIG");
-	if ( localConfigDir == nullptr ) {
+	if ( !localConfigDir ) {
 #ifndef WIN32
 		_localConfigDir  = _homeDir + "/.seiscomp";
 #else
@@ -123,16 +123,18 @@ bool Environment::init() {
 		_localConfigDir  = localConfigDir;
 	}
 
-	SEISCOMP_INFO("using local config dir: %s", _localConfigDir.c_str() );
+	SEISCOMP_INFO("using local config dir: %s", _localConfigDir);
 
 	_logDir           = _localConfigDir + "/log";
 	_archiveFileName  = "_archive.log";
 
-	if ( !createDir(_localConfigDir) )
-		SEISCOMP_WARNING( "Could not create directory: %s", _localConfigDir.c_str() );
+	if ( !createDir(_localConfigDir) ) {
+		SEISCOMP_WARNING( "Could not create directory: %s", _localConfigDir);
+	}
 
-	if ( !createDir(_logDir) )
-		SEISCOMP_ERROR("Could not create directory: %s", _logDir.c_str());
+	if ( !createDir(_logDir) ) {
+		SEISCOMP_ERROR("Could not create directory: %s", _logDir);
+	}
 
 	return true;
 }
@@ -300,7 +302,7 @@ std::string Environment::globalConfigFileName(const std::string& programname) co
 namespace {
 
 struct PathResolver : public Util::VariableResolver {
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		Environment *env = Environment::Instance();
 
 		if ( variable == "LOGDIR" )

@@ -108,6 +108,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "127") && value == 127);
+		BOOST_CHECK(fromString(value, "+127") && value == 127);
 		BOOST_CHECK(fromString(value, "-128") && value == -128);
 		BOOST_CHECK(!fromString(value, "129"));
 		BOOST_CHECK(!fromString(value, "-129"));
@@ -119,6 +120,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(fromString(value, "255") && value == 255);
+		BOOST_CHECK(fromString(value, "+255") && value == 255);
 		BOOST_CHECK(fromString(value, "0") && value == 0);
 		BOOST_CHECK(!fromString(value, "256"));
 		BOOST_CHECK(!fromString(value, "abc"));
@@ -129,6 +131,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "32767") && value == 32767);
+		BOOST_CHECK(fromString(value, "+32767") && value == 32767);
 		BOOST_CHECK(fromString(value, "-32768") && value == -32768);
 		BOOST_CHECK(!fromString(value, "32768"));
 		BOOST_CHECK(!fromString(value, "-32769"));
@@ -140,6 +143,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
 		BOOST_CHECK(fromString(value, "65535") && value == 65535);
+		BOOST_CHECK(fromString(value, "+65535") && value == 65535);
 		BOOST_CHECK(fromString(value, "0") && value == 0);
 		BOOST_CHECK(!fromString(value, "65536"));
 		BOOST_CHECK(!fromString(value, "abc"));
@@ -150,6 +154,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 		BOOST_CHECK(fromString(value, "10") && value == 10);
 		BOOST_CHECK(fromString(value, "-10") && value == -10);
 		BOOST_CHECK(fromString(value, "2147483647") && value == 2147483647);
+		BOOST_CHECK(fromString(value, "+2147483647") && value == 2147483647);
 		BOOST_CHECK(fromString(value, "-2147483648") && value == -2147483648);
 		BOOST_CHECK(!fromString(value, "2147483649"));
 		BOOST_CHECK(!fromString(value, "-2147483649"));
@@ -176,21 +181,20 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	}
 
 	{
-		// Only signed 64bit values are supported for string conversions. So
-		// unsigned 64bit integers must produce ERANGE when reading values
-		// larger than 2**63.
 		uint64_t value;
 		BOOST_CHECK(fromString(value, "10") && value == 10);
+		BOOST_CHECK(fromString(value, "+10") && value == 10);
 		BOOST_CHECK(!fromString(value, "-10"));
-		BOOST_CHECK(!fromString(value, toString(std::numeric_limits<uint64_t>::max())));
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<unsigned long long int>::max()/2);
-		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<unsigned long long int>::min());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max())) && value == std::numeric_limits<uint64_t>::max());
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::max()/2)) && value == std::numeric_limits<uint64_t>::max()/2);
+		BOOST_CHECK(fromString(value, toString(std::numeric_limits<uint64_t>::min())) && value == std::numeric_limits<uint64_t>::min());
 		BOOST_CHECK(!fromString(value, "abc"));
 	}
 
 	{
 		float value;
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0f) < 0.000001f);
+		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0f) < 0.000001f);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0f) < 0.000001f);
 		BOOST_CHECK(!fromString(value, "abc"));
 		BOOST_CHECK(!fromString(value, "1.0e-40"));
@@ -214,6 +218,7 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 	{
 		double value;
 		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0) < 0.000001);
+		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0) < 0.000001);
 		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0) < 0.000001);
 		BOOST_CHECK(!fromString(value, "abc"));
 		BOOST_CHECK(fromString(value, "inf"));
@@ -315,6 +320,27 @@ BOOST_AUTO_TEST_CASE(incompleteNumberConversions) {
 }
 
 
+BOOST_AUTO_TEST_CASE(vectorConversions) {
+	vector<int> numbers;
+	vector<string> strings;
+
+	BOOST_CHECK(fromString(numbers, "1 2 3 4"));
+	BOOST_CHECK_EQUAL(toString(numbers), "1 2 3 4");
+
+	BOOST_CHECK(fromString(strings, "1 2 3 4"));
+	BOOST_CHECK_EQUAL(toString(strings), "1 2 3 4");
+
+	BOOST_CHECK(fromString(numbers, "1,2,3,4", ','));
+	BOOST_CHECK_EQUAL(toString(numbers, ','), "1,2,3,4");
+
+	BOOST_CHECK(fromString(strings, "1,2,3,4", ','));
+	BOOST_CHECK_EQUAL(toString(strings, ','), "1,2,3,4");
+
+	BOOST_CHECK(fromString(strings, "abc,def,123,456", ','));
+	BOOST_CHECK_EQUAL(toString(strings, ':'), "abc:def:123:456");
+}
+
+
 BOOST_AUTO_TEST_CASE(tokenize1) {
 	const char *text = "Hello, World!";
 	size_t len = strlen(text), tok_len;
@@ -396,8 +422,9 @@ BOOST_AUTO_TEST_CASE(stringify1) {
 	for ( size_t i = 1; i <= 100; ++i ) {
 		string tmp;
 		tmp.resize(i);
-		for ( size_t j = 0; j < tmp.size(); ++j )
+		for ( size_t j = 0; j < tmp.size(); ++j ) {
 			tmp[j] = static_cast<char>(random() * 25 / RAND_MAX + 'A');
+		}
 		string out = stringify("%s", tmp.c_str());
 		BOOST_CHECK_EQUAL(tmp, out);
 	}
@@ -414,10 +441,10 @@ BOOST_AUTO_TEST_CASE(split1) {
 	data.push_back(TestCase("ab", true,  "1a2b3",       vec("1", "2", "3")));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		split(result, it->source, it->delimiter, it->compressOn);
+	for ( auto &testcase : data ) {
+		split(result, testcase.source, testcase.delimiter, testcase.compressOn);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -442,10 +469,10 @@ BOOST_AUTO_TEST_CASE(splitExtNoUnescape) {
 	data.push_back(TestCase(" ",  true,  " foo\\ bar\r\n     a ",     vec("", "foo\\ bar\r\n", "a", "" ), false));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		splitExt(result, it->source, it->delimiter, it->compressOn, false, it->trim);
+	for ( auto &testcase : data ) {
+		splitExt(result, testcase.source, testcase.delimiter, testcase.compressOn, false, testcase.trim);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -479,10 +506,10 @@ BOOST_AUTO_TEST_CASE(splitExtUnescape) {
 	data.push_back(TestCase(",",  true,  "'\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t'", vec("\\\"\\t\\\\ \\,\\\\ \\\\t"), true));
 
 	vector<string> result;
-	for ( TestData::const_iterator it = data.begin(); it != data.end(); ++it ) {
-		splitExt(result, it->source, it->delimiter, it->compressOn, true, it->trim);
+	for ( auto &testcase : data ) {
+		splitExt(result, testcase.source, testcase.delimiter, testcase.compressOn, true, testcase.trim);
 		BOOST_CHECK_EQUAL_COLLECTIONS(result.begin(), result.end(),
-		                              it->tokens.begin(), it->tokens.end());
+		                              testcase.tokens.begin(), testcase.tokens.end());
 	}
 }
 
@@ -500,6 +527,59 @@ BOOST_AUTO_TEST_CASE(enums) {
 	e = TEST1;
 	s = fmt::format("{}", e);
 	BOOST_CHECK_EQUAL(s, "test1");
+}
+
+BOOST_AUTO_TEST_CASE(trim1) {
+	string s = "  abc     ";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "  abc";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "abc     ";
+	BOOST_CHECK_EQUAL(trim(s), "abc");
+	s = "            ";
+	BOOST_CHECK_EQUAL(trim(s), "");
+	s = {};
+	BOOST_CHECK_EQUAL(trim(s), "");
+}
+
+BOOST_AUTO_TEST_CASE(tok1) {
+	string s = "A;B;;;;C;D";
+	string_view sv(s);
+
+	auto tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "A");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "B");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "C");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "D");
+	tok = tokenize(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	BOOST_CHECK_EQUAL(tok.data(), nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(tok2) {
+	string s = "A;B;;;;C;D";
+	string_view sv(s);
+
+	auto tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "A");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "B");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "C");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "D");
+	tok = tokenize2(sv, ";");
+	BOOST_CHECK_EQUAL(tok, "");
+	BOOST_CHECK_EQUAL(tok.data(), nullptr);
 }
 
 

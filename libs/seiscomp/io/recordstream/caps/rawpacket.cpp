@@ -125,7 +125,7 @@ void RawDataRecord::readMetaData(std::streambuf &buf, int size, Header &header,
 	size -= header.dataSize();
 	int dtsize = sizeOf(header.dataType);
 	if ( dtsize == 0 ) {
-		SEISCOMP_WARNING("unknown data type: %d", header.dataType);
+		SEISCOMP_WARNING("unknown data type: %d", static_cast<int>(header.dataType));
 		return;
 	}
 
@@ -256,7 +256,7 @@ DataRecord::ReadStatus RawDataRecord::getData(streambuf &buf, int size,
 	int sampleCount;
 	int dataTypeSize = sizeOf(_header.dataType);
 	if ( dataTypeSize == 0 ) {
-		SEISCOMP_WARNING("unknown data type: %d", _header.dataType);
+		SEISCOMP_WARNING("unknown data type: %d", static_cast<int>(_header.dataType));
 		return RS_Error;
 	}
 
@@ -356,7 +356,7 @@ DataRecord::ReadStatus RawDataRecord::getData(streambuf &buf, int size,
 
 		default:
 			SEISCOMP_ERROR("THIS SHOULD NEVER HAPPEN: ignored invalid data with type %d",
-			               _header.dataType);
+			               static_cast<int>(_header.dataType));
 			return RS_Error;
 	};
 

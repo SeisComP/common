@@ -81,7 +81,7 @@ class SC_SYSTEM_CORE_API Channel : public Node {
 		Channel(const std::string &name, LogLevel level);
 		virtual ~Channel();
 
-		virtual void publish(const Data &data);
+		virtual void publish(const Data &data) override;
 		const std::string &name() const;
 
 		LogLevel logLevel() const;

@@ -85,25 +85,25 @@ class SC_SYSTEM_CORE_API AuxStream : public Object {
 		AuxStream();
 
 		//! Copy constructor
-		AuxStream(const AuxStream& other);
+		AuxStream(const AuxStream &other);
 
 		//! Destructor
 		~AuxStream() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		AuxStream& operator=(const AuxStream& other);
+		AuxStream &operator=(const AuxStream &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const AuxStream& other) const;
-		bool operator!=(const AuxStream& other) const;
+		bool operator==(const AuxStream &other) const;
+		bool operator!=(const AuxStream &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const AuxStream& other) const;
+		bool equal(const AuxStream &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -157,17 +157,17 @@ class SC_SYSTEM_CORE_API AuxStream : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const AuxStreamIndex& index() const;
+		const AuxStreamIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const AuxStream* lhs) const;
+		bool equalIndex(const AuxStream *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		SensorLocation* sensorLocation() const;
+		SensorLocation *sensorLocation() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -23,7 +23,7 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/processing/picker/araic.h>
-#include <seiscomp/io/records/sacrecord.h>
+#include <seiscomp/io/records/mseedrecord.h>
 
 #include <fstream>
 
@@ -89,7 +89,7 @@ void maeda_aic(int n, TYPE *data, int &kmin, double &snr, int margin=10) {
 		else
 			sumwin2 += data[i];
 	}
-	
+
 	for ( int k = imin; k < imax; ++k ) {
 		double var1 = sumwin1/(k-1),
 		       var2 = sumwin2/(n-k-1);
@@ -130,7 +130,7 @@ void maeda_aic_const(int n, const TYPE *data, int &kmin, double &snr, int margin
 		else
 			sumwin2 += squared;
 	}
-	
+
 	for ( int k = imin; k < imax; ++k ) {
 		double var1 = sumwin1/(k-1),
 		       var2 = sumwin2/(n-k-1);
@@ -190,8 +190,8 @@ bool ARAICPicker::setup(const Settings &settings) {
 
 	if ( !_filter.empty() ) {
 		string error;
-		Core::SmartPointer<Filter>::Impl tmp = Filter::Create(_filter, &error);
-		if ( tmp == nullptr ) {
+		Core::SmartPointer<Filter> tmp = Filter::Create(_filter, &error);
+		if ( !tmp ) {
 			SEISCOMP_ERROR("failed to create filter '%s': %s",
 			               _filter.c_str(), error.c_str());
 			return false;
@@ -230,7 +230,7 @@ bool ARAICPicker::calculatePick(int n, const double *data,
                                 int &triggerIdx, int &lowerUncertainty,
                                 int &upperUncertainty, double &snr,
                                 OPT(Polarity) &polarity) {
-	Core::SmartPointer<Filter>::Impl filter = _filter.empty()?nullptr:Filter::Create(_filter);
+	Core::SmartPointer<Filter> filter = _filter.empty()?nullptr:Filter::Create(_filter);
 	if ( filter ) {
 		SEISCOMP_DEBUG("AIC: created filter %s", _filter.c_str());
 		try {
@@ -255,30 +255,30 @@ bool ARAICPicker::calculatePick(int n, const double *data,
 	vector<double> tmp(signalEndIdx);
 	for ( int i = 0; i < signalEndIdx; ++i ) tmp[i] = data[i]-average;
 
-	if ( _dumpTraces ) {
-		IO::SACRecord sac(*_stream.lastRecord);
-		sac.setStartTime(dataTimeWindow().startTime() + Core::TimeSpan(signalStartIdx/_stream.fsamp));
-		sac.setData(tmp.size()-signalStartIdx, &tmp[signalStartIdx], Array::DOUBLE);
-		sac.setChannelCode("AIC");
+	if ( _dumpTraces && _stream.lastRecord ) {
+		GenericRecord gen(*_stream.lastRecord);
+		gen.setStartTime(dataTimeWindow().startTime() + Core::TimeSpan(signalStartIdx/_stream.fsamp));
+		gen.setData(tmp.size() - signalStartIdx, &tmp[signalStartIdx], Array::DOUBLE);
+		gen.setLocationCode("AC");
 
 		std::ofstream ofs;
-		ofs.open((_stream.lastRecord->streamID() + _trigger.iso() + ".sac").c_str());
-		sac.write(ofs);
+		ofs.open((_stream.lastRecord->streamID() + _trigger.iso() + ".mseed").c_str());
+		IO::MSeedRecord(gen).write(ofs);
 		ofs.close();
 	}
 
 	if ( filter ) {
 		filter->apply(tmp);
 
-		if ( _dumpTraces ) {
-			IO::SACRecord sac(*_stream.lastRecord);
-			sac.setStartTime(dataTimeWindow().startTime() + Core::TimeSpan(signalStartIdx/_stream.fsamp));
-			sac.setChannelCode("AIF");
-			sac.setData(tmp.size()-signalStartIdx, &tmp[signalStartIdx], Array::DOUBLE);
+		if ( _dumpTraces && _stream.lastRecord ) {
+			GenericRecord gen(*_stream.lastRecord);
+			gen.setStartTime(dataTimeWindow().startTime() + Core::TimeSpan(signalStartIdx/_stream.fsamp));
+			gen.setLocationCode("AF");
+			gen.setData(tmp.size() - signalStartIdx, &tmp[signalStartIdx], Array::DOUBLE);
 
 			std::ofstream ofs;
-			ofs.open((_stream.lastRecord->streamID() + _trigger.iso() + "-filter.sac").c_str());
-			sac.write(ofs);
+			ofs.open((_stream.lastRecord->streamID() + _trigger.iso() + "-filter.mseed").c_str());
+			IO::MSeedRecord(gen).write(ofs);
 			ofs.close();
 		}
 	}

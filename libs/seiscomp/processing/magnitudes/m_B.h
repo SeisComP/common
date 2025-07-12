@@ -30,14 +30,12 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mB)
-
 	public:
 		MagnitudeProcessor_mB();
-		MagnitudeProcessor_mB(const std::string& type);
+		MagnitudeProcessor_mB(const std::string &type);
 
-
-		bool setup(const Settings &settings) override;
+	public:
+		void setDefaults() override;
 
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
@@ -51,10 +49,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
 		Status estimateMw(const Config::Config *config,
 		                  double magnitude, double &Mw_estimate,
 		                  double &Mw_stdError) override;
-
-	private:
-		double                  minDistanceDeg;
-		double                  maxDistanceDeg;
 };
 
 

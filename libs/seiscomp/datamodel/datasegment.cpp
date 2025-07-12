@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(DataSegment, Object, "DataSegment");
 
 
-DataSegment::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+DataSegment::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &DataSegment::setStart, &DataSegment::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, false, false, nullptr, &DataSegment::setEnd, &DataSegment::end));
 	addProperty(Core::simpleProperty("updated", "datetime", false, false, false, false, false, false, nullptr, &DataSegment::setUpdated, &DataSegment::updated));
@@ -63,7 +63,7 @@ DataSegmentIndex::DataSegmentIndex(Seiscomp::Core::Time start_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataSegmentIndex::DataSegmentIndex(const DataSegmentIndex& idx) {
+DataSegmentIndex::DataSegmentIndex(const DataSegmentIndex &idx) {
 	start = idx.start;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -72,7 +72,7 @@ DataSegmentIndex::DataSegmentIndex(const DataSegmentIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegmentIndex::operator==(const DataSegmentIndex& idx) const {
+bool DataSegmentIndex::operator==(const DataSegmentIndex &idx) const {
 	return start == idx.start;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +81,7 @@ bool DataSegmentIndex::operator==(const DataSegmentIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegmentIndex::operator!=(const DataSegmentIndex& idx) const {
+bool DataSegmentIndex::operator!=(const DataSegmentIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,7 +99,7 @@ DataSegment::DataSegment() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataSegment::DataSegment(const DataSegment& other)
+DataSegment::DataSegment(const DataSegment &other)
 : Object() {
 	*this = other;
 }
@@ -117,7 +117,7 @@ DataSegment::~DataSegment() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::operator==(const DataSegment& rhs) const {
+bool DataSegment::operator==(const DataSegment &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _updated != rhs._updated ) return false;
@@ -132,7 +132,7 @@ bool DataSegment::operator==(const DataSegment& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::operator!=(const DataSegment& rhs) const {
+bool DataSegment::operator!=(const DataSegment &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -141,7 +141,7 @@ bool DataSegment::operator!=(const DataSegment& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::equal(const DataSegment& other) const {
+bool DataSegment::equal(const DataSegment &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -258,7 +258,7 @@ bool DataSegment::outOfOrder() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const DataSegmentIndex& DataSegment::index() const {
+const DataSegmentIndex &DataSegment::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -267,8 +267,11 @@ const DataSegmentIndex& DataSegment::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::equalIndex(const DataSegment* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool DataSegment::equalIndex(const DataSegment *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -277,7 +280,7 @@ bool DataSegment::equalIndex(const DataSegment* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataExtent* DataSegment::dataExtent() const {
+DataExtent *DataSegment::dataExtent() const {
 	return static_cast<DataExtent*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -286,7 +289,7 @@ DataExtent* DataSegment::dataExtent() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataSegment& DataSegment::operator=(const DataSegment& other) {
+DataSegment &DataSegment::operator=(const DataSegment &other) {
 	_index = other._index;
 	_end = other._end;
 	_updated = other._updated;
@@ -301,10 +304,11 @@ DataSegment& DataSegment::operator=(const DataSegment& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::assign(Object* other) {
-	DataSegment* otherDataSegment = DataSegment::Cast(other);
-	if ( other == nullptr )
+bool DataSegment::assign(Object *other) {
+	DataSegment *otherDataSegment = DataSegment::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDataSegment;
 
@@ -316,11 +320,13 @@ bool DataSegment::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool DataSegment::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	DataExtent* dataExtent = DataExtent::Cast(parent);
+	DataExtent *dataExtent = DataExtent::Cast(parent);
 	if ( dataExtent != nullptr )
 		return dataExtent->add(this);
 
@@ -333,11 +339,13 @@ bool DataSegment::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataSegment::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool DataSegment::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	DataExtent* dataExtent = DataExtent::Cast(object);
+	DataExtent *dataExtent = DataExtent::Cast(object);
 	if ( dataExtent != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -345,7 +353,7 @@ bool DataSegment::detachFrom(PublicObject* object) {
 			return dataExtent->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			DataSegment* child = dataExtent->dataSegment(index());
+			DataSegment *child = dataExtent->dataSegment(index());
 			if ( child != nullptr )
 				return dataExtent->remove(child);
 			else {
@@ -365,8 +373,9 @@ bool DataSegment::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataSegment::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -376,8 +385,8 @@ bool DataSegment::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* DataSegment::clone() const {
-	DataSegment* clonee = new DataSegment();
+Object *DataSegment::clone() const {
+	DataSegment *clonee = new DataSegment();
 	*clonee = *this;
 	return clonee;
 }
@@ -387,7 +396,7 @@ Object* DataSegment::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataSegment::accept(Visitor* visitor) {
+void DataSegment::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -396,7 +405,7 @@ void DataSegment::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataSegment::serialize(Archive& ar) {
+void DataSegment::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

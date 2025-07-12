@@ -292,11 +292,11 @@ std::string HttpSocket<SocketType>::httpReadRaw(int size)
 template <typename SocketType>
 std::string HttpSocket<SocketType>::httpReadSome(int size)
 {
-	if ( _decomp != nullptr ) {
+	if ( _decomp ) {
 		HttpSource<SocketType> src(this);
 		std::vector<char> tmp(size);
-		std::streamsize bytesRead = _decomp->read(src, &tmp[0], size);
-		return std::string(&tmp[0], bytesRead);
+		std::streamsize bytesRead = _decomp->read(src, tmp.data(), size);
+		return std::string(tmp.data(), bytesRead);
 	}
 	else {
 		return httpReadRaw(size);

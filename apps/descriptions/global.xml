@@ -34,7 +34,7 @@
 				comma. Add ${plugins} to consider all previously read values.
 				</description>
 			</parameter>
-			<parameter name="cityXML" type="string">
+			<parameter name="cityXML" type="file" values="*.xml" options="read">
 				<description>
 				Path to the cities XML file. If undefined, the data is read
 				from &quot;@CONFIGDIR@/cities.xml&quot; or
@@ -59,7 +59,7 @@
 				applications.
 				</description>
 			</parameter>
-			<parameter name="publicIDPattern" type="string">
+			<parameter name="publicIDPattern" type="string" default="@classname@/@time/%Y%m%d%H%M%S.%f@.@id@">
 				<description>
 				Define a custom pattern for generation of public object IDs.
 				The following variables are resolved:
@@ -110,7 +110,12 @@
 				</description>
 			</parameter>
 			<group name="logging">
-				<parameter name="level" type="int" default="2">
+				<description>
+				Control the logging of SeisComP applications. The log information
+				are written to log files per modules as
+				&quot;@CONFIGDIR@/log/[module].log&quot;.
+				</description>
+				<parameter name="level" type="int" default="2" values="1,2,3,4">
 					<description>
 					Set the logging level between 1 and 4 where 1=ERROR,
 					2=WARNING, 3=INFO and 4=DEBUG.
@@ -160,7 +165,7 @@
 						</parameter>
 						<parameter name="archiveSize" type="int" default="7">
 							<description>
-							How many historic log files to keep.
+							The maximum number of historic log files to keep.
 							</description>
 						</parameter>
 						<parameter name="maxFileSize" type="int" default="104857600" unit="byte">
@@ -264,14 +269,14 @@
 				is established. Override these values only if you know what you
 				are doing.
 				</description>
-				<parameter name="inventory" type="string">
+				<parameter name="inventory" type="file" options="read" values="*.xml">
 					<description>
 					Load the inventory database from a given XML file if set.
 					This overrides the inventory definitions loaded from the
 					database backend.
 					</description>
 				</parameter>
-				<parameter name="config" type="string">
+				<parameter name="config" type="file" options="read" values="*.xml">
 					<description>
 					Load the configuration database from a given XML file if set.
 					This overrides the configuration definitions loaded from the
@@ -280,35 +285,46 @@
 				</parameter>
 			</group>
 			<group name="processing">
+				<description>
+				Filter the objects for processing according to parameter values.
+				</description>
 				<group name="whitelist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Define a whitelist of agencies that are allowed for
-						processing. Separate items by comma.
+						Define a whitelist of agency IDs corresponding to
+						&quot;agencyID&quot; that are allowed for
+						processing. Objects from all other agencies will be
+						ignored. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 				<group name="blacklist">
 					<parameter name="agencies" type="list:string">
 						<description>
-						Define a blacklist of agencies that are not allowed for
+						Define a blacklist of agency IDs corresponding to
+						&quot;agencyID&quot; that are not allowed for
 						processing. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 			</group>
 			<group name="inventory">
+				<description>
+				Filter the considered inventory according to parameter values.
+				</description>
 				<group name="whitelist">
 					<parameter name="nettype" type="list:string">
 						<description>
 						List of network types to include when loading the
-						inventory.
+						inventory. All other types will be ignored. Separate
+						items by comma.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
 						List of station types to include when loading the
-						inventory.
+						inventory. All other types will be ignored. Separate
+						items by comma.
 						</description>
 					</parameter>
 				</group>
@@ -316,19 +332,19 @@
 					<parameter name="nettype" type="list:string">
 						<description>
 						List of network types to exclude when loading the
-						inventory.
+						inventory. Separate items by comma.
 						</description>
 					</parameter>
 					<parameter name="statype" type="list:string">
 						<description>
 						List of station types to exclude when loading the
-						inventory.
+						inventory. Separate items by comma.
 						</description>
 					</parameter>
 				</group>
 			</group>
 			<group name="scripts">
-				<parameter name="crashHandler" type="path">
+				<parameter name="crashHandler" type="file" options="read">
 					<description>
 					Path to crash handler script.
 					</description>
@@ -368,6 +384,9 @@
 				</parameter>
 			</group>
 			<group name="commands">
+				<description>
+				Control the handling of command messages.
+				</description>
 				<parameter name="target" type="string">
 					<description>
 					A regular expression of all clients that should handle
@@ -381,16 +400,15 @@
 			</group>
 			<group name="ttt">
 				<description>
-				Travel time table related configuration. Travel time tables can
-				be added via plugins. Built-in interfaces are LOCSAT, libtau and
-				homogeneous.
-				For each loaded interface a list of supported models must be
-				provided.
+				Configure interfaces to travel-time tables (travel-time
+				interfaces). Built-in interfaces are LOCSAT, libtau and
+				homogeneous. For each loaded interface the supported tables must
+				be provided.
 				</description>
 				<struct type="ttt profile">
 					<parameter name="tables" type="list:string">
 						<description>
-						The list of supported model names per interface.
+						The list of supported table (model) names per interface.
 						</description>
 					</parameter>
 				</struct>
@@ -399,10 +417,32 @@
 				<description>
 				Parameters for amplitude measurements.
 				</description>
+				<parameter name="aliases" type="list:string">
+					<description>
+					Definition of amplitude aliases for deriving new amplitude
+					types from an existing amplitude. Separate
+					multiple entries by comma.
+
+					Format:
+
+					NewType:OriginalAmplitudeType
+
+					Examples for deriving an amplitude of new type ABC from MLv:
+
+					ABC:MLv
+
+					Alias amplitudes can be configured like any other amplitude
+					and used for any alias magnitude.
+					</description>
+				</parameter>
 				<parameter name="iaspei" type="boolean" default="false">
 					<description>
 					Compute ML peak-to-trough and mb amplitudes according to
 					IASPEI recommendations.
+
+					For Ms(BB) amplitudes check that the dominant period of the
+					signal is within the valid range (3, 60). The period range
+					may be set in a Ms(BB) amplitude profile in global bindings.
 					</description>
 				</parameter>
 				<group name="ttt">
@@ -442,6 +482,15 @@
 						</description>
 					</parameter>
 				</group>
+				<struct type="GlobalAmplitudeProfile" title="Amplitude-type profile" aliases="config:amplitudes.aliases">
+					<parameter name="considerUnusedArrivals" type="boolean" default="false">
+						<description>
+						If enabled, then also stations with unused (disabled)
+						arrivals are considered for amplitude and implicitly
+						magnitude computations, e.g. by scamp, scmag and scolv.
+						</description>
+					</parameter>
+				</struct>
 			</group>
 			<group name="magnitudes">
 				<description>
@@ -468,7 +517,8 @@
 
 					ABC:MLv
 
-					Alias magnitudes can be configured like any other magnitude.
+					Alias magnitudes can be configured like any other magnitude
+					and used together with any original or alias amplitudes.
 					</description>
 				</parameter>
 				<struct type="GlobalMagnitudeProfile" title="Magnitude-type profile for regionalization and Mw mapping" aliases="config:magnitudes.aliases">
@@ -488,7 +538,7 @@
 						interpolated but not extrapolated.
 						</description>
 					</parameter>
-					<parameter name="regionFile" type="path">
+					<parameter name="regionFile" type="file" options="read">
 						<description>
 						Path to a geofeature file, e.g. in BNA or GeoJSON format,
 						with one or more polygons defining geographic regions.
@@ -515,7 +565,7 @@
 								Enable the region or not.
 								</description>
 							</parameter>
-							<parameter name="minDist" type="double" unit="deg">
+							<parameter name="minDist" type="string" unit="deg">
 								<description>
 								The minimum distance required to compute a
 								magnitude. This settings has no effect with e.g.
@@ -524,7 +574,7 @@
 								The default value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="maxDist" type="double" unit="deg">
+							<parameter name="maxDist" type="string" unit="deg">
 								<description>
 								The maximum distance allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick
@@ -533,7 +583,7 @@
 								value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="minDepth" type="double" unit="km">
+							<parameter name="minDepth" type="string" unit="km">
 								<description>
 								The minimum depth required to compute a magnitude.
 								This settings has no effect with e.g. scautopick
@@ -542,7 +592,7 @@
 								value is implementation specific.
 								</description>
 							</parameter>
-							<parameter name="maxDepth" type="double" unit="km">
+							<parameter name="maxDepth" type="string" unit="km">
 								<description>
 								The maximum depth allowed to compute a magnitude.
 								This settings has no effect with e.g. scautopick
@@ -812,12 +862,12 @@
 
 				<option flag="I" long-flag="record-url" argument="arg" default="" publicID="records#record-url">
 					<description>
-					The recordstream source URL, format:
+					The RecordStream source URL. Format:
 					[service://]location[#type].
-					&quot;service&quot; is the name of the recordstream driver
+					&quot;service&quot; is the name of the RecordStream driver
 					which can be queried with &quot;--record-driver-list&quot;.
 					If &quot;service&quot; is not given, &quot;file://&quot; is
-					used.
+					used and simply the name of a miniSEED file can be given.
 					</description>
 				</option>
 
@@ -833,7 +883,7 @@
 			</group>
 
 			<group name="Cities"  publicID="cities">
-				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml">
+				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml" type="file" options="read" values="*.xml">
 					<description>
 					The path to the cities XML file. This overrides the default
 					paths. Compare with the global parameter &quot;citiesXML&quot;.
@@ -886,21 +936,24 @@
 				Create amplitude type profiles to define the time windows,
 				minimum signal-to-noise ratio, amplitude thresholds and
 				restitution for measuring amplitudes of a certain type.
+
+				Standard amplitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 					<description>
 					Define the saturation threshold for the optional saturation
 					check.
 					By default, the saturation check is disabled but giving a
-					value above 0 will enable it. Waveforms that are saturated
-					are not used for amplitude calculations.
+					value above 0 will enable it. Waveforms with raw amplitudes
+					above the threshold will then be considered saturated and
+					not used for amplitude calculations.
 
 					This value can either be an absolute value of counts such
 					as &quot;100000&quot; counts or a relative value
 					(optionally in percent) with respect to the number of
-					effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
-					The first version uses 1**23 * 0.8 whereas the latter
-					uses 1**23 * 80/100.
+					effective bits, e.g., &quot;0.8@23&quot; or &quot;80%@23&quot;.
+					The first and the second version represent 0.8 * 2**23 and
+					80/100 * 2**23, respectively, which is the same.
 
 					The boolean value &quot;false&quot; explicitly disables
 					the check.
@@ -992,7 +1045,7 @@
 						</description>
 					</parameter>
 				</group>
-				<struct type="GlobalAmplitudeProfile" title="Amplitude type profile">
+				<struct type="GlobalBindingsAmplitudeProfile" title="Amplitude type profile: Use name of amplitude type" aliases="config:amplitudes.aliases">
 					<description>
 					An amplitude profile configures global parameters for a
 					particular amplitude type. The available amplitude types
@@ -1002,18 +1055,19 @@
 					</description>
 					<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 						<description>
-						Define the saturation threshold for the optional
-						saturation check. By default, the saturation check is
-						disabled but giving a value above 0 will enable it.
-						Waveforms that are saturated are not used for amplitude
-						calculations.
+						Define the saturation threshold for the optional saturation
+						check.
+						By default, the saturation check is disabled but giving a
+						value above 0 will enable it. Waveforms with raw amplitudes
+						above the threshold will then be considered saturated and
+						not used for amplitude calculations.
 
 						This value can either be an absolute value of counts such
 						as &quot;100000&quot; counts or a relative value
 						(optionally in percent) with respect to the number of
-						effective bits, e.g. &quot;0.8@23&quot; or &quot;80%@23&quot;.
-						The first version uses 1**23 * 0.8 whereas the latter
-						uses 1**23 * 80/100.
+						effective bits, e.g., &quot;0.8@23&quot; or &quot;80%@23&quot;.
+						The first and the second version represent 0.8 * 2**23 and
+						80/100 * 2**23, respectively, which is the same.
 
 						The boolean value &quot;false&quot; explicitly disables
 						the check.
@@ -1031,14 +1085,38 @@
 						will be used instead.
 						</description>
 					</parameter>
-					<parameter name="minSNR" type="double">
+					<parameter name="minSNR" type="double" default="3">
 						<description>
 						Define the minimum SNR to be reached to compute the
 						amplitudes. This value is amplitude type specific and
 						has no global default value.
 						</description>
 					</parameter>
-					<parameter name="noiseBegin" type="double" unit="s">
+					<parameter name="minPeriod" type="double" unit="s">
+						<description>
+						Define the minimum period of the measured amplitude. If
+						the period is below this value, the amplitude will not be emitted.
+						This value is specific to amplitude type and has no global
+						default value. A value lower or equal than 0 will disable
+						this check.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no amplitude is send.
+						</description>
+					</parameter>
+					<parameter name="maxPeriod" type="double" unit="s">
+						<description>
+						Define the maximum period of the measured amplitude. If
+						the period is above this value, the amplitude will not be emitted.
+						This value is specific to amplitude type and has no global
+						default value. A value lower or equal than 0 will disable
+						this check.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no amplitude is send.
+						</description>
+					</parameter>
+					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
@@ -1047,7 +1125,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="noiseEnd" type="double" unit="s">
+					<parameter name="noiseEnd" type="string" unit="time grammar" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
@@ -1056,7 +1134,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalBegin" type="double" unit="s">
+					<parameter name="signalBegin" type="string" unit="time grammar" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
@@ -1065,7 +1143,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalEnd" type="double" unit="s">
+					<parameter name="signalEnd" type="string" unit="time grammar" default="30">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
@@ -1074,7 +1152,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="minDist" type="double" unit="deg">
+					<parameter name="minDist" type="string" unit="deg" default="0">
 						<description>
 						The minimum distance required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1083,7 +1161,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDist" type="double" unit="deg">
+					<parameter name="maxDist" type="string" unit="deg" default="180">
 						<description>
 						The maximum distance allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1092,7 +1170,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="minDepth" type="double" unit="km">
+					<parameter name="minDepth" type="string" unit="km" default="-1000000">
 						<description>
 						The minimum depth required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1101,7 +1179,7 @@
 						specific.
 						</description>
 					</parameter>
-					<parameter name="maxDepth" type="double" unit="km">
+					<parameter name="maxDepth" type="string" unit="km" default="1000000">
 						<description>
 						The maximum depth allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
@@ -1159,11 +1237,13 @@
 			</group>
 			<group name="magnitudes">
 				<description>
-				Define magnitude parameters independent of amplitude-type profiles.
-				For magnitude correction parameters, e.g., network of station
-				corrections, create a magnitude type profile.
+				Define the calibration parameters and constraints for computing
+				magnitudes from measured amplitudes including static corrections.
+				The parameters are independent of amplitude-type profiles.
+
+				Standard magnitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
-				<struct type="GlobalBindingsMagnitudeTypeProfile" title="Magnitude type profile">
+				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile: Use name of magnitude type" aliases="config:magnitudes.aliases">
 					<description>
 					A magnitude profile configures global parameters for a
 					particular magnitude type. The available magnitude types
@@ -1189,6 +1269,78 @@
 						The name is the name of the region. Without
 						a name the value is the default without regionalization.
 						Example: &quot;0.0, regionA: -0.1, regionB: 0.2&quot;.
+						</description>
+					</parameter>
+					<parameter name="minDist" type="string" unit="deg">
+						<description>
+						The minimum distance in degree required to compute a
+						magnitude. This settings has no effect with e.g.
+						scautopick as there is no information about the
+						source of the event to compute the distance.
+						The default value is implementation specific.
+						</description>
+					</parameter>
+					<parameter name="maxDist" type="string" unit="deg">
+						<description>
+						The maximum distance in degree allowed to compute a magnitude.
+						This settings has no effect with e.g. scautopick
+						as there is no information about the source of
+						the event to compute the distance. The default
+						value is implementation specific.
+						</description>
+					</parameter>
+					<parameter name="minDepth" type="string" unit="km">
+						<description>
+						The minimum depth required to compute a magnitude.
+						This settings has no effect with e.g. scautopick
+						as there is no information about the source of
+						the event to retrieve the depth. The default
+						value is implementation specific.
+						</description>
+					</parameter>
+					<parameter name="maxDepth" type="string" unit="km">
+						<description>
+						The maximum depth allowed to compute a magnitude.
+						This settings has no effect with e.g. scautopick
+						as there is no information about the source of
+						the event to retrieve the depth. The default
+						value is implementation specific.
+						</description>
+					</parameter>
+					<parameter name="minSNR" type="double">
+						<description>
+						The minimum SNR required for a magnitude to pass
+						the QC check. The station magnitude will be computed
+						anyway but if the SNR is below this threshold it will
+						be associated with weight zero and will not contribute
+						to the network magnitude. If this value is set then it
+						overrides the regionalized setting.
+						</description>
+					</parameter>
+					<parameter name="minPeriod" type="double" unit="s">
+						<description>
+						The minimum period required for a magnitude to pass
+						the QC check. The station magnitude will be computed
+						anyway but if the period is below this threshold it will
+						be associated with weight zero and will not contribute
+						to the network magnitude. If this value is set, then it
+						overrides the regionalized setting.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no magnitude is computed.
+						</description>
+					</parameter>
+					<parameter name="maxPeriod" type="double" unit="s">
+						<description>
+						The maximum period allowed for a magnitude to pass
+						the QC check. The station magnitude will be computed
+						anyway but if the period is above this threshold it will
+						be associated with weight zero and will not contribute
+						to the network magnitude. If this value is set, then it
+						overrides the regionalized setting.
+
+						Caution: If a value is set but the amplitude does not
+						provide the period, no magnitude is computed.
 						</description>
 					</parameter>
 				</struct>

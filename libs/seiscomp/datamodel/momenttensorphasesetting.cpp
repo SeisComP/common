@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(MomentTensorPhaseSetting, Object, "MomentTensorPhaseSetting");
 
 
-MomentTensorPhaseSetting::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+MomentTensorPhaseSetting::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &MomentTensorPhaseSetting::setCode, &MomentTensorPhaseSetting::code));
 	addProperty(Core::simpleProperty("lowerPeriod", "float", false, false, false, false, false, false, nullptr, &MomentTensorPhaseSetting::setLowerPeriod, &MomentTensorPhaseSetting::lowerPeriod));
 	addProperty(Core::simpleProperty("upperPeriod", "float", false, false, false, false, false, false, nullptr, &MomentTensorPhaseSetting::setUpperPeriod, &MomentTensorPhaseSetting::upperPeriod));
@@ -62,7 +62,7 @@ MomentTensorPhaseSettingIndex::MomentTensorPhaseSettingIndex(const std::string& 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorPhaseSettingIndex::MomentTensorPhaseSettingIndex(const MomentTensorPhaseSettingIndex& idx) {
+MomentTensorPhaseSettingIndex::MomentTensorPhaseSettingIndex(const MomentTensorPhaseSettingIndex &idx) {
 	code = idx.code;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -71,7 +71,7 @@ MomentTensorPhaseSettingIndex::MomentTensorPhaseSettingIndex(const MomentTensorP
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSettingIndex::operator==(const MomentTensorPhaseSettingIndex& idx) const {
+bool MomentTensorPhaseSettingIndex::operator==(const MomentTensorPhaseSettingIndex &idx) const {
 	return code == idx.code;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -80,7 +80,7 @@ bool MomentTensorPhaseSettingIndex::operator==(const MomentTensorPhaseSettingInd
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSettingIndex::operator!=(const MomentTensorPhaseSettingIndex& idx) const {
+bool MomentTensorPhaseSettingIndex::operator!=(const MomentTensorPhaseSettingIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,7 +99,7 @@ MomentTensorPhaseSetting::MomentTensorPhaseSetting() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorPhaseSetting::MomentTensorPhaseSetting(const MomentTensorPhaseSetting& other)
+MomentTensorPhaseSetting::MomentTensorPhaseSetting(const MomentTensorPhaseSetting &other)
 : Object() {
 	*this = other;
 }
@@ -144,7 +144,7 @@ MomentTensorPhaseSetting::~MomentTensorPhaseSetting() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::operator==(const MomentTensorPhaseSetting& rhs) const {
+bool MomentTensorPhaseSetting::operator==(const MomentTensorPhaseSetting &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _lowerPeriod != rhs._lowerPeriod ) return false;
 	if ( _upperPeriod != rhs._upperPeriod ) return false;
@@ -158,7 +158,7 @@ bool MomentTensorPhaseSetting::operator==(const MomentTensorPhaseSetting& rhs) c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::operator!=(const MomentTensorPhaseSetting& rhs) const {
+bool MomentTensorPhaseSetting::operator!=(const MomentTensorPhaseSetting &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ bool MomentTensorPhaseSetting::operator!=(const MomentTensorPhaseSetting& rhs) c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::equal(const MomentTensorPhaseSetting& other) const {
+bool MomentTensorPhaseSetting::equal(const MomentTensorPhaseSetting &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -270,7 +270,7 @@ double MomentTensorPhaseSetting::maximumTimeShift() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const MomentTensorPhaseSettingIndex& MomentTensorPhaseSetting::index() const {
+const MomentTensorPhaseSettingIndex &MomentTensorPhaseSetting::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -279,8 +279,11 @@ const MomentTensorPhaseSettingIndex& MomentTensorPhaseSetting::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::equalIndex(const MomentTensorPhaseSetting* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool MomentTensorPhaseSetting::equalIndex(const MomentTensorPhaseSetting *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -289,7 +292,7 @@ bool MomentTensorPhaseSetting::equalIndex(const MomentTensorPhaseSetting* lhs) c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* MomentTensorPhaseSetting::momentTensor() const {
+MomentTensor *MomentTensorPhaseSetting::momentTensor() const {
 	return static_cast<MomentTensor*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -298,7 +301,7 @@ MomentTensor* MomentTensorPhaseSetting::momentTensor() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorPhaseSetting& MomentTensorPhaseSetting::operator=(const MomentTensorPhaseSetting& other) {
+MomentTensorPhaseSetting &MomentTensorPhaseSetting::operator=(const MomentTensorPhaseSetting &other) {
 	_index = other._index;
 	_lowerPeriod = other._lowerPeriod;
 	_upperPeriod = other._upperPeriod;
@@ -312,10 +315,11 @@ MomentTensorPhaseSetting& MomentTensorPhaseSetting::operator=(const MomentTensor
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::assign(Object* other) {
-	MomentTensorPhaseSetting* otherMomentTensorPhaseSetting = MomentTensorPhaseSetting::Cast(other);
-	if ( other == nullptr )
+bool MomentTensorPhaseSetting::assign(Object *other) {
+	MomentTensorPhaseSetting *otherMomentTensorPhaseSetting = MomentTensorPhaseSetting::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherMomentTensorPhaseSetting;
 
@@ -327,11 +331,13 @@ bool MomentTensorPhaseSetting::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool MomentTensorPhaseSetting::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(parent);
+	MomentTensor *momentTensor = MomentTensor::Cast(parent);
 	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
@@ -344,11 +350,13 @@ bool MomentTensorPhaseSetting::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool MomentTensorPhaseSetting::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(object);
+	MomentTensor *momentTensor = MomentTensor::Cast(object);
 	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -356,7 +364,7 @@ bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
 			return momentTensor->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			MomentTensorPhaseSetting* child = momentTensor->momentTensorPhaseSetting(index());
+			MomentTensorPhaseSetting *child = momentTensor->momentTensorPhaseSetting(index());
 			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
@@ -376,8 +384,9 @@ bool MomentTensorPhaseSetting::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorPhaseSetting::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -387,8 +396,8 @@ bool MomentTensorPhaseSetting::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* MomentTensorPhaseSetting::clone() const {
-	MomentTensorPhaseSetting* clonee = new MomentTensorPhaseSetting();
+Object *MomentTensorPhaseSetting::clone() const {
+	MomentTensorPhaseSetting *clonee = new MomentTensorPhaseSetting();
 	*clonee = *this;
 	return clonee;
 }
@@ -398,7 +407,7 @@ Object* MomentTensorPhaseSetting::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorPhaseSetting::accept(Visitor* visitor) {
+void MomentTensorPhaseSetting::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -407,7 +416,7 @@ void MomentTensorPhaseSetting::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorPhaseSetting::serialize(Archive& ar) {
+void MomentTensorPhaseSetting::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

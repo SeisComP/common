@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Inventory, PublicObject, "Inventory");
 
 
-Inventory::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Inventory::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayObjectProperty("stationGroup", "StationGroup", &Inventory::stationGroupCount, &Inventory::stationGroup, static_cast<bool (Inventory::*)(StationGroup*)>(&Inventory::add), &Inventory::removeStationGroup, static_cast<bool (Inventory::*)(StationGroup*)>(&Inventory::remove)));
 	addProperty(arrayObjectProperty("auxDevice", "AuxDevice", &Inventory::auxDeviceCount, &Inventory::auxDevice, static_cast<bool (Inventory::*)(AuxDevice*)>(&Inventory::add), &Inventory::removeAuxDevice, static_cast<bool (Inventory::*)(AuxDevice*)>(&Inventory::remove)));
 	addProperty(arrayObjectProperty("sensor", "Sensor", &Inventory::sensorCount, &Inventory::sensor, static_cast<bool (Inventory::*)(Sensor*)>(&Inventory::add), &Inventory::removeSensor, static_cast<bool (Inventory::*)(Sensor*)>(&Inventory::remove)));
@@ -58,7 +58,7 @@ Inventory::Inventory(): PublicObject("Inventory") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory::Inventory(const Inventory& other)
+Inventory::Inventory(const Inventory &other)
 : PublicObject() {
 	*this = other;
 }
@@ -106,7 +106,7 @@ Inventory::~Inventory() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::operator==(const Inventory& rhs) const {
+bool Inventory::operator==(const Inventory &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -115,7 +115,7 @@ bool Inventory::operator==(const Inventory& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::operator!=(const Inventory& rhs) const {
+bool Inventory::operator!=(const Inventory &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -124,7 +124,7 @@ bool Inventory::operator!=(const Inventory& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::equal(const Inventory& other) const {
+bool Inventory::equal(const Inventory &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -133,7 +133,7 @@ bool Inventory::equal(const Inventory& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory& Inventory::operator=(const Inventory& other) {
+Inventory &Inventory::operator=(const Inventory &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -143,10 +143,11 @@ Inventory& Inventory::operator=(const Inventory& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::assign(Object* other) {
-	Inventory* otherInventory = Inventory::Cast(other);
-	if ( other == nullptr )
+bool Inventory::assign(Object *other) {
+	Inventory *otherInventory = Inventory::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherInventory;
 
@@ -158,7 +159,7 @@ bool Inventory::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::attachTo(PublicObject* parent) {
+bool Inventory::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +168,7 @@ bool Inventory::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::detachFrom(PublicObject* object) {
+bool Inventory::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -185,8 +186,8 @@ bool Inventory::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Inventory::clone() const {
-	Inventory* clonee = new Inventory();
+Object *Inventory::clone() const {
+	Inventory *clonee = new Inventory();
 	*clonee = *this;
 	return clonee;
 }
@@ -196,10 +197,10 @@ Object* Inventory::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::updateChild(Object* child) {
-	StationGroup* stationGroupChild = StationGroup::Cast(child);
+bool Inventory::updateChild(Object *child) {
+	StationGroup *stationGroupChild = StationGroup::Cast(child);
 	if ( stationGroupChild != nullptr ) {
-		StationGroup* stationGroupElement
+		StationGroup *stationGroupElement
 			= StationGroup::Cast(PublicObject::Find(stationGroupChild->publicID()));
 		if ( stationGroupElement && stationGroupElement->parent() == this ) {
 			*stationGroupElement = *stationGroupChild;
@@ -209,9 +210,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	AuxDevice* auxDeviceChild = AuxDevice::Cast(child);
+	AuxDevice *auxDeviceChild = AuxDevice::Cast(child);
 	if ( auxDeviceChild != nullptr ) {
-		AuxDevice* auxDeviceElement
+		AuxDevice *auxDeviceElement
 			= AuxDevice::Cast(PublicObject::Find(auxDeviceChild->publicID()));
 		if ( auxDeviceElement && auxDeviceElement->parent() == this ) {
 			*auxDeviceElement = *auxDeviceChild;
@@ -221,9 +222,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	Sensor* sensorChild = Sensor::Cast(child);
+	Sensor *sensorChild = Sensor::Cast(child);
 	if ( sensorChild != nullptr ) {
-		Sensor* sensorElement
+		Sensor *sensorElement
 			= Sensor::Cast(PublicObject::Find(sensorChild->publicID()));
 		if ( sensorElement && sensorElement->parent() == this ) {
 			*sensorElement = *sensorChild;
@@ -233,9 +234,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	Datalogger* dataloggerChild = Datalogger::Cast(child);
+	Datalogger *dataloggerChild = Datalogger::Cast(child);
 	if ( dataloggerChild != nullptr ) {
-		Datalogger* dataloggerElement
+		Datalogger *dataloggerElement
 			= Datalogger::Cast(PublicObject::Find(dataloggerChild->publicID()));
 		if ( dataloggerElement && dataloggerElement->parent() == this ) {
 			*dataloggerElement = *dataloggerChild;
@@ -245,9 +246,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	ResponsePAZ* responsePAZChild = ResponsePAZ::Cast(child);
+	ResponsePAZ *responsePAZChild = ResponsePAZ::Cast(child);
 	if ( responsePAZChild != nullptr ) {
-		ResponsePAZ* responsePAZElement
+		ResponsePAZ *responsePAZElement
 			= ResponsePAZ::Cast(PublicObject::Find(responsePAZChild->publicID()));
 		if ( responsePAZElement && responsePAZElement->parent() == this ) {
 			*responsePAZElement = *responsePAZChild;
@@ -257,9 +258,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	ResponseFIR* responseFIRChild = ResponseFIR::Cast(child);
+	ResponseFIR *responseFIRChild = ResponseFIR::Cast(child);
 	if ( responseFIRChild != nullptr ) {
-		ResponseFIR* responseFIRElement
+		ResponseFIR *responseFIRElement
 			= ResponseFIR::Cast(PublicObject::Find(responseFIRChild->publicID()));
 		if ( responseFIRElement && responseFIRElement->parent() == this ) {
 			*responseFIRElement = *responseFIRChild;
@@ -269,9 +270,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	ResponseIIR* responseIIRChild = ResponseIIR::Cast(child);
+	ResponseIIR *responseIIRChild = ResponseIIR::Cast(child);
 	if ( responseIIRChild != nullptr ) {
-		ResponseIIR* responseIIRElement
+		ResponseIIR *responseIIRElement
 			= ResponseIIR::Cast(PublicObject::Find(responseIIRChild->publicID()));
 		if ( responseIIRElement && responseIIRElement->parent() == this ) {
 			*responseIIRElement = *responseIIRChild;
@@ -281,9 +282,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	ResponsePolynomial* responsePolynomialChild = ResponsePolynomial::Cast(child);
+	ResponsePolynomial *responsePolynomialChild = ResponsePolynomial::Cast(child);
 	if ( responsePolynomialChild != nullptr ) {
-		ResponsePolynomial* responsePolynomialElement
+		ResponsePolynomial *responsePolynomialElement
 			= ResponsePolynomial::Cast(PublicObject::Find(responsePolynomialChild->publicID()));
 		if ( responsePolynomialElement && responsePolynomialElement->parent() == this ) {
 			*responsePolynomialElement = *responsePolynomialChild;
@@ -293,9 +294,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	ResponseFAP* responseFAPChild = ResponseFAP::Cast(child);
+	ResponseFAP *responseFAPChild = ResponseFAP::Cast(child);
 	if ( responseFAPChild != nullptr ) {
-		ResponseFAP* responseFAPElement
+		ResponseFAP *responseFAPElement
 			= ResponseFAP::Cast(PublicObject::Find(responseFAPChild->publicID()));
 		if ( responseFAPElement && responseFAPElement->parent() == this ) {
 			*responseFAPElement = *responseFAPChild;
@@ -305,9 +306,9 @@ bool Inventory::updateChild(Object* child) {
 		return false;
 	}
 
-	Network* networkChild = Network::Cast(child);
+	Network *networkChild = Network::Cast(child);
 	if ( networkChild != nullptr ) {
-		Network* networkElement
+		Network *networkElement
 			= Network::Cast(PublicObject::Find(networkChild->publicID()));
 		if ( networkElement && networkElement->parent() == this ) {
 			*networkElement = *networkChild;
@@ -325,7 +326,7 @@ bool Inventory::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Inventory::accept(Visitor* visitor) {
+void Inventory::accept(Visitor *visitor) {
 	for ( auto &&elem : _stationGroups )
 		elem->accept(visitor);
 	for ( auto &&elem : _auxDevices )
@@ -362,7 +363,7 @@ size_t Inventory::stationGroupCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* Inventory::stationGroup(size_t i) const {
+StationGroup *Inventory::stationGroup(size_t i) const {
 	return _stationGroups[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -371,10 +372,12 @@ StationGroup* Inventory::stationGroup(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* Inventory::stationGroup(const StationGroupIndex& i) const {
-	for ( std::vector<StationGroupPtr>::const_iterator it = _stationGroups.begin(); it != _stationGroups.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+StationGroup *Inventory::stationGroup(const StationGroupIndex &i) const {
+	for ( const auto &elem : _stationGroups ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -384,10 +387,12 @@ StationGroup* Inventory::stationGroup(const StationGroupIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* Inventory::findStationGroup(const std::string& publicID) const {
-	for ( std::vector<StationGroupPtr>::const_iterator it = _stationGroups.begin(); it != _stationGroups.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+StationGroup *Inventory::findStationGroup(const std::string& publicID) const {
+	for ( const auto &elem : _stationGroups ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -397,9 +402,10 @@ StationGroup* Inventory::findStationGroup(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(StationGroup* stationGroup) {
-	if ( stationGroup == nullptr )
+bool Inventory::add(StationGroup *stationGroup) {
+	if ( !stationGroup ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( stationGroup->parent() != nullptr ) {
@@ -408,17 +414,20 @@ bool Inventory::add(StationGroup* stationGroup) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		StationGroup* stationGroupCached = StationGroup::Find(stationGroup->publicID());
+		StationGroup *stationGroupCached = StationGroup::Find(stationGroup->publicID());
 		if ( stationGroupCached ) {
 			if ( stationGroupCached->parent() ) {
-				if ( stationGroupCached->parent() == this )
+				if ( stationGroupCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(StationGroup*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(StationGroup*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				stationGroup = stationGroupCached;
+			}
 		}
 	}
 
@@ -443,9 +452,10 @@ bool Inventory::add(StationGroup* stationGroup) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(StationGroup* stationGroup) {
-	if ( stationGroup == nullptr )
+bool Inventory::remove(StationGroup *stationGroup) {
+	if ( !stationGroup ) {
 		return false;
+	}
 
 	if ( stationGroup->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(StationGroup*) -> element has another parent");
@@ -461,8 +471,7 @@ bool Inventory::remove(StationGroup* stationGroup) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -485,8 +494,7 @@ bool Inventory::removeStationGroup(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_stationGroups[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _stationGroups[i].get());
 	}
 
 	_stationGroups[i]->setParent(nullptr);
@@ -502,9 +510,12 @@ bool Inventory::removeStationGroup(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeStationGroup(const StationGroupIndex& i) {
-	StationGroup* object = stationGroup(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeStationGroup(const StationGroupIndex &i) {
+	StationGroup *object = stationGroup(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -522,7 +533,7 @@ size_t Inventory::auxDeviceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxDevice* Inventory::auxDevice(size_t i) const {
+AuxDevice *Inventory::auxDevice(size_t i) const {
 	return _auxDevices[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -531,10 +542,12 @@ AuxDevice* Inventory::auxDevice(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxDevice* Inventory::auxDevice(const AuxDeviceIndex& i) const {
-	for ( std::vector<AuxDevicePtr>::const_iterator it = _auxDevices.begin(); it != _auxDevices.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+AuxDevice *Inventory::auxDevice(const AuxDeviceIndex &i) const {
+	for ( const auto &elem : _auxDevices ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -544,10 +557,12 @@ AuxDevice* Inventory::auxDevice(const AuxDeviceIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AuxDevice* Inventory::findAuxDevice(const std::string& publicID) const {
-	for ( std::vector<AuxDevicePtr>::const_iterator it = _auxDevices.begin(); it != _auxDevices.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+AuxDevice *Inventory::findAuxDevice(const std::string& publicID) const {
+	for ( const auto &elem : _auxDevices ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -557,9 +572,10 @@ AuxDevice* Inventory::findAuxDevice(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(AuxDevice* auxDevice) {
-	if ( auxDevice == nullptr )
+bool Inventory::add(AuxDevice *auxDevice) {
+	if ( !auxDevice ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( auxDevice->parent() != nullptr ) {
@@ -568,17 +584,20 @@ bool Inventory::add(AuxDevice* auxDevice) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		AuxDevice* auxDeviceCached = AuxDevice::Find(auxDevice->publicID());
+		AuxDevice *auxDeviceCached = AuxDevice::Find(auxDevice->publicID());
 		if ( auxDeviceCached ) {
 			if ( auxDeviceCached->parent() ) {
-				if ( auxDeviceCached->parent() == this )
+				if ( auxDeviceCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(AuxDevice*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(AuxDevice*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				auxDevice = auxDeviceCached;
+			}
 		}
 	}
 
@@ -603,9 +622,10 @@ bool Inventory::add(AuxDevice* auxDevice) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(AuxDevice* auxDevice) {
-	if ( auxDevice == nullptr )
+bool Inventory::remove(AuxDevice *auxDevice) {
+	if ( !auxDevice ) {
 		return false;
+	}
 
 	if ( auxDevice->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(AuxDevice*) -> element has another parent");
@@ -621,8 +641,7 @@ bool Inventory::remove(AuxDevice* auxDevice) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -645,8 +664,7 @@ bool Inventory::removeAuxDevice(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_auxDevices[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _auxDevices[i].get());
 	}
 
 	_auxDevices[i]->setParent(nullptr);
@@ -662,9 +680,12 @@ bool Inventory::removeAuxDevice(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeAuxDevice(const AuxDeviceIndex& i) {
-	AuxDevice* object = auxDevice(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeAuxDevice(const AuxDeviceIndex &i) {
+	AuxDevice *object = auxDevice(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -682,7 +703,7 @@ size_t Inventory::sensorCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Inventory::sensor(size_t i) const {
+Sensor *Inventory::sensor(size_t i) const {
 	return _sensors[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -691,10 +712,12 @@ Sensor* Inventory::sensor(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Inventory::sensor(const SensorIndex& i) const {
-	for ( std::vector<SensorPtr>::const_iterator it = _sensors.begin(); it != _sensors.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Sensor *Inventory::sensor(const SensorIndex &i) const {
+	for ( const auto &elem : _sensors ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -704,10 +727,12 @@ Sensor* Inventory::sensor(const SensorIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Inventory::findSensor(const std::string& publicID) const {
-	for ( std::vector<SensorPtr>::const_iterator it = _sensors.begin(); it != _sensors.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Sensor *Inventory::findSensor(const std::string& publicID) const {
+	for ( const auto &elem : _sensors ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -717,9 +742,10 @@ Sensor* Inventory::findSensor(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(Sensor* sensor) {
-	if ( sensor == nullptr )
+bool Inventory::add(Sensor *sensor) {
+	if ( !sensor ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( sensor->parent() != nullptr ) {
@@ -728,17 +754,20 @@ bool Inventory::add(Sensor* sensor) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Sensor* sensorCached = Sensor::Find(sensor->publicID());
+		Sensor *sensorCached = Sensor::Find(sensor->publicID());
 		if ( sensorCached ) {
 			if ( sensorCached->parent() ) {
-				if ( sensorCached->parent() == this )
+				if ( sensorCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(Sensor*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(Sensor*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				sensor = sensorCached;
+			}
 		}
 	}
 
@@ -763,9 +792,10 @@ bool Inventory::add(Sensor* sensor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(Sensor* sensor) {
-	if ( sensor == nullptr )
+bool Inventory::remove(Sensor *sensor) {
+	if ( !sensor ) {
 		return false;
+	}
 
 	if ( sensor->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Sensor*) -> element has another parent");
@@ -781,8 +811,7 @@ bool Inventory::remove(Sensor* sensor) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -805,8 +834,7 @@ bool Inventory::removeSensor(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensors[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensors[i].get());
 	}
 
 	_sensors[i]->setParent(nullptr);
@@ -822,9 +850,12 @@ bool Inventory::removeSensor(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeSensor(const SensorIndex& i) {
-	Sensor* object = sensor(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeSensor(const SensorIndex &i) {
+	Sensor *object = sensor(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -842,7 +873,7 @@ size_t Inventory::dataloggerCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Inventory::datalogger(size_t i) const {
+Datalogger *Inventory::datalogger(size_t i) const {
 	return _dataloggers[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -851,10 +882,12 @@ Datalogger* Inventory::datalogger(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Inventory::datalogger(const DataloggerIndex& i) const {
-	for ( std::vector<DataloggerPtr>::const_iterator it = _dataloggers.begin(); it != _dataloggers.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Datalogger *Inventory::datalogger(const DataloggerIndex &i) const {
+	for ( const auto &elem : _dataloggers ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -864,10 +897,12 @@ Datalogger* Inventory::datalogger(const DataloggerIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Datalogger* Inventory::findDatalogger(const std::string& publicID) const {
-	for ( std::vector<DataloggerPtr>::const_iterator it = _dataloggers.begin(); it != _dataloggers.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Datalogger *Inventory::findDatalogger(const std::string& publicID) const {
+	for ( const auto &elem : _dataloggers ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -877,9 +912,10 @@ Datalogger* Inventory::findDatalogger(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(Datalogger* datalogger) {
-	if ( datalogger == nullptr )
+bool Inventory::add(Datalogger *datalogger) {
+	if ( !datalogger ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( datalogger->parent() != nullptr ) {
@@ -888,17 +924,20 @@ bool Inventory::add(Datalogger* datalogger) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Datalogger* dataloggerCached = Datalogger::Find(datalogger->publicID());
+		Datalogger *dataloggerCached = Datalogger::Find(datalogger->publicID());
 		if ( dataloggerCached ) {
 			if ( dataloggerCached->parent() ) {
-				if ( dataloggerCached->parent() == this )
+				if ( dataloggerCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(Datalogger*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(Datalogger*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				datalogger = dataloggerCached;
+			}
 		}
 	}
 
@@ -923,9 +962,10 @@ bool Inventory::add(Datalogger* datalogger) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(Datalogger* datalogger) {
-	if ( datalogger == nullptr )
+bool Inventory::remove(Datalogger *datalogger) {
+	if ( !datalogger ) {
 		return false;
+	}
 
 	if ( datalogger->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Datalogger*) -> element has another parent");
@@ -941,8 +981,7 @@ bool Inventory::remove(Datalogger* datalogger) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -965,8 +1004,7 @@ bool Inventory::removeDatalogger(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataloggers[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataloggers[i].get());
 	}
 
 	_dataloggers[i]->setParent(nullptr);
@@ -982,9 +1020,12 @@ bool Inventory::removeDatalogger(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeDatalogger(const DataloggerIndex& i) {
-	Datalogger* object = datalogger(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeDatalogger(const DataloggerIndex &i) {
+	Datalogger *object = datalogger(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1002,7 +1043,7 @@ size_t Inventory::responsePAZCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* Inventory::responsePAZ(size_t i) const {
+ResponsePAZ *Inventory::responsePAZ(size_t i) const {
 	return _responsePAZs[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1011,10 +1052,12 @@ ResponsePAZ* Inventory::responsePAZ(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* Inventory::responsePAZ(const ResponsePAZIndex& i) const {
-	for ( std::vector<ResponsePAZPtr>::const_iterator it = _responsePAZs.begin(); it != _responsePAZs.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ResponsePAZ *Inventory::responsePAZ(const ResponsePAZIndex &i) const {
+	for ( const auto &elem : _responsePAZs ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1024,10 +1067,12 @@ ResponsePAZ* Inventory::responsePAZ(const ResponsePAZIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* Inventory::findResponsePAZ(const std::string& publicID) const {
-	for ( std::vector<ResponsePAZPtr>::const_iterator it = _responsePAZs.begin(); it != _responsePAZs.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ResponsePAZ *Inventory::findResponsePAZ(const std::string& publicID) const {
+	for ( const auto &elem : _responsePAZs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1037,9 +1082,10 @@ ResponsePAZ* Inventory::findResponsePAZ(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(ResponsePAZ* responsePAZ) {
-	if ( responsePAZ == nullptr )
+bool Inventory::add(ResponsePAZ *responsePAZ) {
+	if ( !responsePAZ ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( responsePAZ->parent() != nullptr ) {
@@ -1048,17 +1094,20 @@ bool Inventory::add(ResponsePAZ* responsePAZ) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ResponsePAZ* responsePAZCached = ResponsePAZ::Find(responsePAZ->publicID());
+		ResponsePAZ *responsePAZCached = ResponsePAZ::Find(responsePAZ->publicID());
 		if ( responsePAZCached ) {
 			if ( responsePAZCached->parent() ) {
-				if ( responsePAZCached->parent() == this )
+				if ( responsePAZCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(ResponsePAZ*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(ResponsePAZ*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				responsePAZ = responsePAZCached;
+			}
 		}
 	}
 
@@ -1083,9 +1132,10 @@ bool Inventory::add(ResponsePAZ* responsePAZ) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(ResponsePAZ* responsePAZ) {
-	if ( responsePAZ == nullptr )
+bool Inventory::remove(ResponsePAZ *responsePAZ) {
+	if ( !responsePAZ ) {
 		return false;
+	}
 
 	if ( responsePAZ->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponsePAZ*) -> element has another parent");
@@ -1101,8 +1151,7 @@ bool Inventory::remove(ResponsePAZ* responsePAZ) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1125,8 +1174,7 @@ bool Inventory::removeResponsePAZ(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responsePAZs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responsePAZs[i].get());
 	}
 
 	_responsePAZs[i]->setParent(nullptr);
@@ -1142,9 +1190,12 @@ bool Inventory::removeResponsePAZ(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeResponsePAZ(const ResponsePAZIndex& i) {
-	ResponsePAZ* object = responsePAZ(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeResponsePAZ(const ResponsePAZIndex &i) {
+	ResponsePAZ *object = responsePAZ(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1162,7 +1213,7 @@ size_t Inventory::responseFIRCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* Inventory::responseFIR(size_t i) const {
+ResponseFIR *Inventory::responseFIR(size_t i) const {
 	return _responseFIRs[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1171,10 +1222,12 @@ ResponseFIR* Inventory::responseFIR(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* Inventory::responseFIR(const ResponseFIRIndex& i) const {
-	for ( std::vector<ResponseFIRPtr>::const_iterator it = _responseFIRs.begin(); it != _responseFIRs.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ResponseFIR *Inventory::responseFIR(const ResponseFIRIndex &i) const {
+	for ( const auto &elem : _responseFIRs ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1184,10 +1237,12 @@ ResponseFIR* Inventory::responseFIR(const ResponseFIRIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* Inventory::findResponseFIR(const std::string& publicID) const {
-	for ( std::vector<ResponseFIRPtr>::const_iterator it = _responseFIRs.begin(); it != _responseFIRs.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ResponseFIR *Inventory::findResponseFIR(const std::string& publicID) const {
+	for ( const auto &elem : _responseFIRs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1197,9 +1252,10 @@ ResponseFIR* Inventory::findResponseFIR(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(ResponseFIR* responseFIR) {
-	if ( responseFIR == nullptr )
+bool Inventory::add(ResponseFIR *responseFIR) {
+	if ( !responseFIR ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( responseFIR->parent() != nullptr ) {
@@ -1208,17 +1264,20 @@ bool Inventory::add(ResponseFIR* responseFIR) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ResponseFIR* responseFIRCached = ResponseFIR::Find(responseFIR->publicID());
+		ResponseFIR *responseFIRCached = ResponseFIR::Find(responseFIR->publicID());
 		if ( responseFIRCached ) {
 			if ( responseFIRCached->parent() ) {
-				if ( responseFIRCached->parent() == this )
+				if ( responseFIRCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(ResponseFIR*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(ResponseFIR*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				responseFIR = responseFIRCached;
+			}
 		}
 	}
 
@@ -1243,9 +1302,10 @@ bool Inventory::add(ResponseFIR* responseFIR) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(ResponseFIR* responseFIR) {
-	if ( responseFIR == nullptr )
+bool Inventory::remove(ResponseFIR *responseFIR) {
+	if ( !responseFIR ) {
 		return false;
+	}
 
 	if ( responseFIR->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseFIR*) -> element has another parent");
@@ -1261,8 +1321,7 @@ bool Inventory::remove(ResponseFIR* responseFIR) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1285,8 +1344,7 @@ bool Inventory::removeResponseFIR(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseFIRs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseFIRs[i].get());
 	}
 
 	_responseFIRs[i]->setParent(nullptr);
@@ -1302,9 +1360,12 @@ bool Inventory::removeResponseFIR(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeResponseFIR(const ResponseFIRIndex& i) {
-	ResponseFIR* object = responseFIR(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeResponseFIR(const ResponseFIRIndex &i) {
+	ResponseFIR *object = responseFIR(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1322,7 +1383,7 @@ size_t Inventory::responseIIRCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* Inventory::responseIIR(size_t i) const {
+ResponseIIR *Inventory::responseIIR(size_t i) const {
 	return _responseIIRs[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1331,10 +1392,12 @@ ResponseIIR* Inventory::responseIIR(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* Inventory::responseIIR(const ResponseIIRIndex& i) const {
-	for ( std::vector<ResponseIIRPtr>::const_iterator it = _responseIIRs.begin(); it != _responseIIRs.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ResponseIIR *Inventory::responseIIR(const ResponseIIRIndex &i) const {
+	for ( const auto &elem : _responseIIRs ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1344,10 +1407,12 @@ ResponseIIR* Inventory::responseIIR(const ResponseIIRIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* Inventory::findResponseIIR(const std::string& publicID) const {
-	for ( std::vector<ResponseIIRPtr>::const_iterator it = _responseIIRs.begin(); it != _responseIIRs.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ResponseIIR *Inventory::findResponseIIR(const std::string& publicID) const {
+	for ( const auto &elem : _responseIIRs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1357,9 +1422,10 @@ ResponseIIR* Inventory::findResponseIIR(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(ResponseIIR* responseIIR) {
-	if ( responseIIR == nullptr )
+bool Inventory::add(ResponseIIR *responseIIR) {
+	if ( !responseIIR ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( responseIIR->parent() != nullptr ) {
@@ -1368,17 +1434,20 @@ bool Inventory::add(ResponseIIR* responseIIR) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ResponseIIR* responseIIRCached = ResponseIIR::Find(responseIIR->publicID());
+		ResponseIIR *responseIIRCached = ResponseIIR::Find(responseIIR->publicID());
 		if ( responseIIRCached ) {
 			if ( responseIIRCached->parent() ) {
-				if ( responseIIRCached->parent() == this )
+				if ( responseIIRCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(ResponseIIR*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(ResponseIIR*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				responseIIR = responseIIRCached;
+			}
 		}
 	}
 
@@ -1403,9 +1472,10 @@ bool Inventory::add(ResponseIIR* responseIIR) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(ResponseIIR* responseIIR) {
-	if ( responseIIR == nullptr )
+bool Inventory::remove(ResponseIIR *responseIIR) {
+	if ( !responseIIR ) {
 		return false;
+	}
 
 	if ( responseIIR->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseIIR*) -> element has another parent");
@@ -1421,8 +1491,7 @@ bool Inventory::remove(ResponseIIR* responseIIR) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1445,8 +1514,7 @@ bool Inventory::removeResponseIIR(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseIIRs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseIIRs[i].get());
 	}
 
 	_responseIIRs[i]->setParent(nullptr);
@@ -1462,9 +1530,12 @@ bool Inventory::removeResponseIIR(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeResponseIIR(const ResponseIIRIndex& i) {
-	ResponseIIR* object = responseIIR(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeResponseIIR(const ResponseIIRIndex &i) {
+	ResponseIIR *object = responseIIR(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1482,7 +1553,7 @@ size_t Inventory::responsePolynomialCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* Inventory::responsePolynomial(size_t i) const {
+ResponsePolynomial *Inventory::responsePolynomial(size_t i) const {
 	return _responsePolynomials[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1491,10 +1562,12 @@ ResponsePolynomial* Inventory::responsePolynomial(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* Inventory::responsePolynomial(const ResponsePolynomialIndex& i) const {
-	for ( std::vector<ResponsePolynomialPtr>::const_iterator it = _responsePolynomials.begin(); it != _responsePolynomials.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ResponsePolynomial *Inventory::responsePolynomial(const ResponsePolynomialIndex &i) const {
+	for ( const auto &elem : _responsePolynomials ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1504,10 +1577,12 @@ ResponsePolynomial* Inventory::responsePolynomial(const ResponsePolynomialIndex&
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePolynomial* Inventory::findResponsePolynomial(const std::string& publicID) const {
-	for ( std::vector<ResponsePolynomialPtr>::const_iterator it = _responsePolynomials.begin(); it != _responsePolynomials.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ResponsePolynomial *Inventory::findResponsePolynomial(const std::string& publicID) const {
+	for ( const auto &elem : _responsePolynomials ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1517,9 +1592,10 @@ ResponsePolynomial* Inventory::findResponsePolynomial(const std::string& publicI
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(ResponsePolynomial* responsePolynomial) {
-	if ( responsePolynomial == nullptr )
+bool Inventory::add(ResponsePolynomial *responsePolynomial) {
+	if ( !responsePolynomial ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( responsePolynomial->parent() != nullptr ) {
@@ -1528,17 +1604,20 @@ bool Inventory::add(ResponsePolynomial* responsePolynomial) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ResponsePolynomial* responsePolynomialCached = ResponsePolynomial::Find(responsePolynomial->publicID());
+		ResponsePolynomial *responsePolynomialCached = ResponsePolynomial::Find(responsePolynomial->publicID());
 		if ( responsePolynomialCached ) {
 			if ( responsePolynomialCached->parent() ) {
-				if ( responsePolynomialCached->parent() == this )
+				if ( responsePolynomialCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(ResponsePolynomial*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(ResponsePolynomial*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				responsePolynomial = responsePolynomialCached;
+			}
 		}
 	}
 
@@ -1563,9 +1642,10 @@ bool Inventory::add(ResponsePolynomial* responsePolynomial) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(ResponsePolynomial* responsePolynomial) {
-	if ( responsePolynomial == nullptr )
+bool Inventory::remove(ResponsePolynomial *responsePolynomial) {
+	if ( !responsePolynomial ) {
 		return false;
+	}
 
 	if ( responsePolynomial->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponsePolynomial*) -> element has another parent");
@@ -1581,8 +1661,7 @@ bool Inventory::remove(ResponsePolynomial* responsePolynomial) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1605,8 +1684,7 @@ bool Inventory::removeResponsePolynomial(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responsePolynomials[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responsePolynomials[i].get());
 	}
 
 	_responsePolynomials[i]->setParent(nullptr);
@@ -1622,9 +1700,12 @@ bool Inventory::removeResponsePolynomial(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeResponsePolynomial(const ResponsePolynomialIndex& i) {
-	ResponsePolynomial* object = responsePolynomial(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeResponsePolynomial(const ResponsePolynomialIndex &i) {
+	ResponsePolynomial *object = responsePolynomial(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1642,7 +1723,7 @@ size_t Inventory::responseFAPCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* Inventory::responseFAP(size_t i) const {
+ResponseFAP *Inventory::responseFAP(size_t i) const {
 	return _responseFAPs[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1651,10 +1732,12 @@ ResponseFAP* Inventory::responseFAP(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* Inventory::responseFAP(const ResponseFAPIndex& i) const {
-	for ( std::vector<ResponseFAPPtr>::const_iterator it = _responseFAPs.begin(); it != _responseFAPs.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ResponseFAP *Inventory::responseFAP(const ResponseFAPIndex &i) const {
+	for ( const auto &elem : _responseFAPs ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1664,10 +1747,12 @@ ResponseFAP* Inventory::responseFAP(const ResponseFAPIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFAP* Inventory::findResponseFAP(const std::string& publicID) const {
-	for ( std::vector<ResponseFAPPtr>::const_iterator it = _responseFAPs.begin(); it != _responseFAPs.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+ResponseFAP *Inventory::findResponseFAP(const std::string& publicID) const {
+	for ( const auto &elem : _responseFAPs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1677,9 +1762,10 @@ ResponseFAP* Inventory::findResponseFAP(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(ResponseFAP* responseFAP) {
-	if ( responseFAP == nullptr )
+bool Inventory::add(ResponseFAP *responseFAP) {
+	if ( !responseFAP ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( responseFAP->parent() != nullptr ) {
@@ -1688,17 +1774,20 @@ bool Inventory::add(ResponseFAP* responseFAP) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		ResponseFAP* responseFAPCached = ResponseFAP::Find(responseFAP->publicID());
+		ResponseFAP *responseFAPCached = ResponseFAP::Find(responseFAP->publicID());
 		if ( responseFAPCached ) {
 			if ( responseFAPCached->parent() ) {
-				if ( responseFAPCached->parent() == this )
+				if ( responseFAPCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(ResponseFAP*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(ResponseFAP*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				responseFAP = responseFAPCached;
+			}
 		}
 	}
 
@@ -1723,9 +1812,10 @@ bool Inventory::add(ResponseFAP* responseFAP) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(ResponseFAP* responseFAP) {
-	if ( responseFAP == nullptr )
+bool Inventory::remove(ResponseFAP *responseFAP) {
+	if ( !responseFAP ) {
 		return false;
+	}
 
 	if ( responseFAP->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(ResponseFAP*) -> element has another parent");
@@ -1741,8 +1831,7 @@ bool Inventory::remove(ResponseFAP* responseFAP) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1765,8 +1854,7 @@ bool Inventory::removeResponseFAP(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_responseFAPs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _responseFAPs[i].get());
 	}
 
 	_responseFAPs[i]->setParent(nullptr);
@@ -1782,9 +1870,12 @@ bool Inventory::removeResponseFAP(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeResponseFAP(const ResponseFAPIndex& i) {
-	ResponseFAP* object = responseFAP(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeResponseFAP(const ResponseFAPIndex &i) {
+	ResponseFAP *object = responseFAP(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1802,7 +1893,7 @@ size_t Inventory::networkCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Inventory::network(size_t i) const {
+Network *Inventory::network(size_t i) const {
 	return _networks[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1811,10 +1902,12 @@ Network* Inventory::network(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Inventory::network(const NetworkIndex& i) const {
-	for ( std::vector<NetworkPtr>::const_iterator it = _networks.begin(); it != _networks.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Network *Inventory::network(const NetworkIndex &i) const {
+	for ( const auto &elem : _networks ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1824,10 +1917,12 @@ Network* Inventory::network(const NetworkIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Inventory::findNetwork(const std::string& publicID) const {
-	for ( std::vector<NetworkPtr>::const_iterator it = _networks.begin(); it != _networks.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Network *Inventory::findNetwork(const std::string& publicID) const {
+	for ( const auto &elem : _networks ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1837,9 +1932,10 @@ Network* Inventory::findNetwork(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::add(Network* network) {
-	if ( network == nullptr )
+bool Inventory::add(Network *network) {
+	if ( !network ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( network->parent() != nullptr ) {
@@ -1848,17 +1944,20 @@ bool Inventory::add(Network* network) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Network* networkCached = Network::Find(network->publicID());
+		Network *networkCached = Network::Find(network->publicID());
 		if ( networkCached ) {
 			if ( networkCached->parent() ) {
-				if ( networkCached->parent() == this )
+				if ( networkCached->parent() == this ) {
 					SEISCOMP_ERROR("Inventory::add(Network*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Inventory::add(Network*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				network = networkCached;
+			}
 		}
 	}
 
@@ -1883,9 +1982,10 @@ bool Inventory::add(Network* network) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::remove(Network* network) {
-	if ( network == nullptr )
+bool Inventory::remove(Network *network) {
+	if ( !network ) {
 		return false;
+	}
 
 	if ( network->parent() != this ) {
 		SEISCOMP_ERROR("Inventory::remove(Network*) -> element has another parent");
@@ -1901,8 +2001,7 @@ bool Inventory::remove(Network* network) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1925,8 +2024,7 @@ bool Inventory::removeNetwork(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_networks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _networks[i].get());
 	}
 
 	_networks[i]->setParent(nullptr);
@@ -1942,9 +2040,12 @@ bool Inventory::removeNetwork(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Inventory::removeNetwork(const NetworkIndex& i) {
-	Network* object = network(i);
-	if ( object == nullptr ) return false;
+bool Inventory::removeNetwork(const NetworkIndex &i) {
+	Network *object = network(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1953,7 +2054,7 @@ bool Inventory::removeNetwork(const NetworkIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Inventory::serialize(Archive& ar) {
+void Inventory::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

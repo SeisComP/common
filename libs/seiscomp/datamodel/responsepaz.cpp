@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ResponsePAZ, PublicObject, "ResponsePAZ");
 
 
-ResponsePAZ::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ResponsePAZ::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponsePAZ::setName, &ResponsePAZ::name));
 	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &ResponsePAZ::setType, &ResponsePAZ::type));
 	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponsePAZ::setGain, &ResponsePAZ::gain));
@@ -71,7 +71,7 @@ ResponsePAZIndex::ResponsePAZIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZIndex::ResponsePAZIndex(const ResponsePAZIndex& idx) {
+ResponsePAZIndex::ResponsePAZIndex(const ResponsePAZIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -80,7 +80,7 @@ ResponsePAZIndex::ResponsePAZIndex(const ResponsePAZIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZIndex::operator==(const ResponsePAZIndex& idx) const {
+bool ResponsePAZIndex::operator==(const ResponsePAZIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,7 +89,7 @@ bool ResponsePAZIndex::operator==(const ResponsePAZIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZIndex::operator!=(const ResponsePAZIndex& idx) const {
+bool ResponsePAZIndex::operator!=(const ResponsePAZIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -106,7 +106,7 @@ ResponsePAZ::ResponsePAZ() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ::ResponsePAZ(const ResponsePAZ& other)
+ResponsePAZ::ResponsePAZ(const ResponsePAZ &other)
 : PublicObject() {
 	*this = other;
 }
@@ -133,8 +133,8 @@ ResponsePAZ::~ResponsePAZ() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* ResponsePAZ::Create() {
-	ResponsePAZ* object = new ResponsePAZ();
+ResponsePAZ *ResponsePAZ::Create() {
+	ResponsePAZ *object = new ResponsePAZ();
 	return static_cast<ResponsePAZ*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -143,7 +143,7 @@ ResponsePAZ* ResponsePAZ::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* ResponsePAZ::Create(const std::string& publicID) {
+ResponsePAZ *ResponsePAZ::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -160,7 +160,7 @@ ResponsePAZ* ResponsePAZ::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ* ResponsePAZ::Find(const std::string& publicID) {
+ResponsePAZ *ResponsePAZ::Find(const std::string& publicID) {
 	return ResponsePAZ::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -169,7 +169,7 @@ ResponsePAZ* ResponsePAZ::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::operator==(const ResponsePAZ& rhs) const {
+bool ResponsePAZ::operator==(const ResponsePAZ &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _type != rhs._type ) return false;
 	if ( _gain != rhs._gain ) return false;
@@ -192,7 +192,7 @@ bool ResponsePAZ::operator==(const ResponsePAZ& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::operator!=(const ResponsePAZ& rhs) const {
+bool ResponsePAZ::operator!=(const ResponsePAZ &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -201,7 +201,7 @@ bool ResponsePAZ::operator!=(const ResponsePAZ& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::equal(const ResponsePAZ& other) const {
+bool ResponsePAZ::equal(const ResponsePAZ &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -519,7 +519,7 @@ double ResponsePAZ::correction() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ResponsePAZIndex& ResponsePAZ::index() const {
+const ResponsePAZIndex &ResponsePAZ::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -528,8 +528,11 @@ const ResponsePAZIndex& ResponsePAZ::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::equalIndex(const ResponsePAZ* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ResponsePAZ::equalIndex(const ResponsePAZ *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -538,7 +541,7 @@ bool ResponsePAZ::equalIndex(const ResponsePAZ* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* ResponsePAZ::inventory() const {
+Inventory *ResponsePAZ::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -547,7 +550,7 @@ Inventory* ResponsePAZ::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponsePAZ& ResponsePAZ::operator=(const ResponsePAZ& other) {
+ResponsePAZ &ResponsePAZ::operator=(const ResponsePAZ &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_type = other._type;
@@ -571,10 +574,11 @@ ResponsePAZ& ResponsePAZ::operator=(const ResponsePAZ& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::assign(Object* other) {
-	ResponsePAZ* otherResponsePAZ = ResponsePAZ::Cast(other);
-	if ( other == nullptr )
+bool ResponsePAZ::assign(Object *other) {
+	ResponsePAZ *otherResponsePAZ = ResponsePAZ::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherResponsePAZ;
 
@@ -586,11 +590,13 @@ bool ResponsePAZ::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ResponsePAZ::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -603,11 +609,13 @@ bool ResponsePAZ::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ResponsePAZ::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -615,7 +623,7 @@ bool ResponsePAZ::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ResponsePAZ* child = inventory->findResponsePAZ(publicID());
+			ResponsePAZ *child = inventory->findResponsePAZ(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -635,8 +643,9 @@ bool ResponsePAZ::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponsePAZ::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -646,8 +655,8 @@ bool ResponsePAZ::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ResponsePAZ::clone() const {
-	ResponsePAZ* clonee = new ResponsePAZ();
+Object *ResponsePAZ::clone() const {
+	ResponsePAZ *clonee = new ResponsePAZ();
 	*clonee = *this;
 	return clonee;
 }
@@ -657,7 +666,7 @@ Object* ResponsePAZ::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponsePAZ::updateChild(Object* child) {
+bool ResponsePAZ::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -666,7 +675,7 @@ bool ResponsePAZ::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponsePAZ::accept(Visitor* visitor) {
+void ResponsePAZ::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -683,7 +692,7 @@ void ResponsePAZ::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponsePAZ::serialize(Archive& ar) {
+void ResponsePAZ::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

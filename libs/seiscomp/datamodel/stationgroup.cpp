@@ -39,7 +39,7 @@ static Seiscomp::Core::MetaEnumImpl<StationGroupType> metaStationGroupType;
 }
 
 
-StationGroup::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+StationGroup::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("type", "StationGroupType", false, true, &metaStationGroupType, &StationGroup::setType, &StationGroup::type));
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &StationGroup::setCode, &StationGroup::code));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, true, false, nullptr, &StationGroup::setStart, &StationGroup::start));
@@ -72,7 +72,7 @@ StationGroupIndex::StationGroupIndex(const std::string& code_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroupIndex::StationGroupIndex(const StationGroupIndex& idx) {
+StationGroupIndex::StationGroupIndex(const StationGroupIndex &idx) {
 	code = idx.code;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -81,7 +81,7 @@ StationGroupIndex::StationGroupIndex(const StationGroupIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroupIndex::operator==(const StationGroupIndex& idx) const {
+bool StationGroupIndex::operator==(const StationGroupIndex &idx) const {
 	return code == idx.code;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -90,7 +90,7 @@ bool StationGroupIndex::operator==(const StationGroupIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroupIndex::operator!=(const StationGroupIndex& idx) const {
+bool StationGroupIndex::operator!=(const StationGroupIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -107,7 +107,7 @@ StationGroup::StationGroup() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup::StationGroup(const StationGroup& other)
+StationGroup::StationGroup(const StationGroup &other)
 : PublicObject() {
 	*this = other;
 }
@@ -137,8 +137,8 @@ StationGroup::~StationGroup() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* StationGroup::Create() {
-	StationGroup* object = new StationGroup();
+StationGroup *StationGroup::Create() {
+	StationGroup *object = new StationGroup();
 	return static_cast<StationGroup*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -147,7 +147,7 @@ StationGroup* StationGroup::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* StationGroup::Create(const std::string& publicID) {
+StationGroup *StationGroup::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -164,7 +164,7 @@ StationGroup* StationGroup::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup* StationGroup::Find(const std::string& publicID) {
+StationGroup *StationGroup::Find(const std::string& publicID) {
 	return StationGroup::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -173,7 +173,7 @@ StationGroup* StationGroup::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::operator==(const StationGroup& rhs) const {
+bool StationGroup::operator==(const StationGroup &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _type != rhs._type ) return false;
 	if ( _start != rhs._start ) return false;
@@ -190,7 +190,7 @@ bool StationGroup::operator==(const StationGroup& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::operator!=(const StationGroup& rhs) const {
+bool StationGroup::operator!=(const StationGroup &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -199,7 +199,7 @@ bool StationGroup::operator!=(const StationGroup& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::equal(const StationGroup& other) const {
+bool StationGroup::equal(const StationGroup &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -364,7 +364,7 @@ double StationGroup::elevation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const StationGroupIndex& StationGroup::index() const {
+const StationGroupIndex &StationGroup::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -373,8 +373,11 @@ const StationGroupIndex& StationGroup::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::equalIndex(const StationGroup* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool StationGroup::equalIndex(const StationGroup *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -383,7 +386,7 @@ bool StationGroup::equalIndex(const StationGroup* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* StationGroup::inventory() const {
+Inventory *StationGroup::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -392,7 +395,7 @@ Inventory* StationGroup::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationGroup& StationGroup::operator=(const StationGroup& other) {
+StationGroup &StationGroup::operator=(const StationGroup &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_type = other._type;
@@ -410,10 +413,11 @@ StationGroup& StationGroup::operator=(const StationGroup& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::assign(Object* other) {
-	StationGroup* otherStationGroup = StationGroup::Cast(other);
-	if ( other == nullptr )
+bool StationGroup::assign(Object *other) {
+	StationGroup *otherStationGroup = StationGroup::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStationGroup;
 
@@ -425,11 +429,13 @@ bool StationGroup::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool StationGroup::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -442,11 +448,13 @@ bool StationGroup::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool StationGroup::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -454,7 +462,7 @@ bool StationGroup::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			StationGroup* child = inventory->findStationGroup(publicID());
+			StationGroup *child = inventory->findStationGroup(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -474,8 +482,9 @@ bool StationGroup::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationGroup::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -485,8 +494,8 @@ bool StationGroup::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* StationGroup::clone() const {
-	StationGroup* clonee = new StationGroup();
+Object *StationGroup::clone() const {
+	StationGroup *clonee = new StationGroup();
 	*clonee = *this;
 	return clonee;
 }
@@ -496,10 +505,10 @@ Object* StationGroup::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::updateChild(Object* child) {
-	StationReference* stationReferenceChild = StationReference::Cast(child);
+bool StationGroup::updateChild(Object *child) {
+	StationReference *stationReferenceChild = StationReference::Cast(child);
 	if ( stationReferenceChild != nullptr ) {
-		StationReference* stationReferenceElement = stationReference(stationReferenceChild->index());
+		StationReference *stationReferenceElement = stationReference(stationReferenceChild->index());
 		if ( stationReferenceElement != nullptr ) {
 			*stationReferenceElement = *stationReferenceChild;
 			stationReferenceElement->update();
@@ -516,7 +525,7 @@ bool StationGroup::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationGroup::accept(Visitor* visitor) {
+void StationGroup::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -544,7 +553,7 @@ size_t StationGroup::stationReferenceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationReference* StationGroup::stationReference(size_t i) const {
+StationReference *StationGroup::stationReference(size_t i) const {
 	return _stationReferences[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -553,10 +562,12 @@ StationReference* StationGroup::stationReference(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationReference* StationGroup::stationReference(const StationReferenceIndex& i) const {
-	for ( std::vector<StationReferencePtr>::const_iterator it = _stationReferences.begin(); it != _stationReferences.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+StationReference *StationGroup::stationReference(const StationReferenceIndex &i) const {
+	for ( const auto &elem : _stationReferences ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -566,9 +577,10 @@ StationReference* StationGroup::stationReference(const StationReferenceIndex& i)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::add(StationReference* stationReference) {
-	if ( stationReference == nullptr )
+bool StationGroup::add(StationReference *stationReference) {
+	if ( !stationReference ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( stationReference->parent() != nullptr ) {
@@ -605,9 +617,10 @@ bool StationGroup::add(StationReference* stationReference) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::remove(StationReference* stationReference) {
-	if ( stationReference == nullptr )
+bool StationGroup::remove(StationReference *stationReference) {
+	if ( !stationReference ) {
 		return false;
+	}
 
 	if ( stationReference->parent() != this ) {
 		SEISCOMP_ERROR("StationGroup::remove(StationReference*) -> element has another parent");
@@ -623,8 +636,7 @@ bool StationGroup::remove(StationReference* stationReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -647,8 +659,7 @@ bool StationGroup::removeStationReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_stationReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _stationReferences[i].get());
 	}
 
 	_stationReferences[i]->setParent(nullptr);
@@ -664,9 +675,12 @@ bool StationGroup::removeStationReference(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationGroup::removeStationReference(const StationReferenceIndex& i) {
-	StationReference* object = stationReference(i);
-	if ( object == nullptr ) return false;
+bool StationGroup::removeStationReference(const StationReferenceIndex &i) {
+	StationReference *object = stationReference(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -675,7 +689,7 @@ bool StationGroup::removeStationReference(const StationReferenceIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationGroup::serialize(Archive& ar) {
+void StationGroup::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

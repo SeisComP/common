@@ -34,7 +34,6 @@ std::string ExpectedAmplitudeUnit = "nm/s";
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_mB, MagnitudeProcessor, "MagnitudeProcessor_mB");
 REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -43,39 +42,30 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MagnitudeProcessor_mB::MagnitudeProcessor_mB::setup(const Settings &settings) {
-	if ( !MagnitudeProcessor::setup(settings) )
-		return false;
-
-	minDistanceDeg = 5.0; // default minimum distance
-	maxDistanceDeg = 105.0; // default maximum distance
-
-	// distance range in degree
-	try { minDistanceDeg = settings.getDouble("magnitudes." + type() + ".minDist"); }
-	catch ( ... ) {}
-
-	try { maxDistanceDeg = settings.getDouble("magnitudes." + type() + ".maxDist"); }
-	catch ( ... ) {}
-
-	return true;
+MagnitudeProcessor_mB::MagnitudeProcessor_mB()
+ : MagnitudeProcessor("mB") {
+	setDefaults();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_mB::MagnitudeProcessor_mB()
- : MagnitudeProcessor("mB") {}
+MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string &type)
+ : MagnitudeProcessor(type) {
+	MagnitudeProcessor_mB::setDefaults();
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string& type)
- : MagnitudeProcessor(type) {}
+void MagnitudeProcessor_mB::setDefaults() {
+	_minimumDistanceDeg = 5.0;   // default minimum distance
+	_maximumDistanceDeg = 105.0; // default maximum distance
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -89,18 +79,19 @@ MagnitudeProcessor::Status MagnitudeProcessor_mB::computeMagnitude(
         const DataModel::Origin *, const DataModel::SensorLocation *,
         const DataModel::Amplitude *, const Locale *, double &value) {
 	// Clip depth to 0
-	if ( depth < 0 ) depth = 0;
+	if ( depth < 0 ) {
+		depth = 0;
+	}
 
-	if ( delta < minDistanceDeg || delta > maxDistanceDeg )
-		return DistanceOutOfRange;
-
-	if ( amplitude <= 0 )
+	if ( amplitude <= 0 ) {
 		return AmplitudeOutOfRange;
+	}
 
-	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) )
+	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;
+	}
 
-	bool status = Magnitudes::compute_mb(amplitude*1.E-3, 2*M_PI, delta, depth+1, &value);
+	bool status = Magnitudes::compute_mb(amplitude * 1.E-3, 2 * M_PI, delta, depth + 1, &value);
 	value -= 0.14; // HACK until we have an optimal calibration function
 	return status ? OK : Error;
 }

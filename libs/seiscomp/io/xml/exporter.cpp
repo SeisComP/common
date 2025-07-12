@@ -38,7 +38,7 @@ namespace {
 
 class NamespaceCollector : public OutputHandler {
 	public:
-		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = nullptr) {
+		void handle(Core::BaseObject *obj, const char *defaultTag, const char *ns, NodeHandler *handler = nullptr) override {
 			TypeMap::Tag defTag(
 					defaultTag?defaultTag:"",
 					ns?ns:""
@@ -58,20 +58,20 @@ class NamespaceCollector : public OutputHandler {
 				handler->put(obj, tag->name.c_str(), tag->ns.c_str(), this);
 		}
 
-		bool openElement(const char *name, const char *ns) {
+		bool openElement(const char *name, const char *ns) override {
 			if ( ns && *ns != '\0' )
 				namespaces.insert(std::string(ns));
 			return true;
 		}
 
-		void addAttribute(const char *name, const char *ns, const char *value) {
+		void addAttribute(const char *name, const char *ns, const char *value) override {
 			if ( ns && *ns != '\0' )
 				namespaces.insert(std::string(ns));
 		}
 
-		void closeElement(const char *name, const char *ns) {}
+		void closeElement(const char *name, const char *ns) override {}
 
-		void put(const char *content) {}
+		void put(const char *content) override {}
 
 	public:
 		TypeMap *typemap;
@@ -259,7 +259,7 @@ void Exporter::addAttribute(const char *name, const char *ns, const char *value)
 		_ostr << name;
 
 	_ostr << "=" << "\"";
-	writeString(value);
+	writeAttrString(value);
 	_ostr << "\"";
 }
 
@@ -295,7 +295,7 @@ void Exporter::closeElement(const char *name, const char *ns) {
 }
 
 
-void Exporter::writeString(const char *content) {
+void Exporter::writeAttrString(const char *content) {
 	// &amp; refers to an ampersand (&)
 	// &lt; refers to a less-than symbol (<)
 	// &gt; refers to a greater-than symbol (>)
@@ -317,6 +317,29 @@ void Exporter::writeString(const char *content) {
 				break;
 			case '\"':
 				_ostr << "&quot;";
+				break;
+			default:
+				_ostr << *content;
+		}
+		++content;
+	}
+}
+
+
+void Exporter::writeString(const char *content) {
+	// &amp; refers to an ampersand (&)
+	// &lt; refers to a less-than symbol (<)
+	// &gt; refers to a greater-than symbol (>)
+	while ( *content != '\0' ) {
+		switch ( *content ) {
+			case '&':
+				_ostr << "&amp;";
+				break;
+			case '<':
+				_ostr << "&lt;";
+				break;
+			case '>':
+				_ostr << "&gt;";
 				break;
 			default:
 				_ostr << *content;

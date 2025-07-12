@@ -51,28 +51,29 @@ class SC_SYSTEM_CORE_API SchemaParameter : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		std::string name;
-		std::string type;
-		std::string unit;
-		std::string range;
-		std::string values;
-		std::string defaultValue;
-		std::string description;
-		OPT(bool) readOnly;
+		std::string              name;
+		std::string              type;
+		std::string              unit;
+		std::string              range;
+		std::vector<std::string> values;
+		std::vector<std::string> options;
+		std::string              defaultValue;
+		std::string              description;
+		OPT(bool)                readOnly;
 };
 
 
 DEFINE_SMARTPOINTER(SchemaGroup);
 DEFINE_SMARTPOINTER(SchemaStructure);
 
-
+DEFINE_SMARTPOINTER(SchemaStructExtent);
 DEFINE_SMARTPOINTER(SchemaParameters);
 class SC_SYSTEM_CORE_API SchemaParameters : public Core::BaseObject {
 	DECLARE_SC_CLASS(SchemaParameter);
@@ -109,7 +110,7 @@ class SC_SYSTEM_CORE_API SchemaParameters : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -119,7 +120,19 @@ class SC_SYSTEM_CORE_API SchemaParameters : public Core::BaseObject {
 		std::vector<SchemaParameterPtr> _parameters;
 		std::vector<SchemaGroupPtr>     _groups;
 		std::vector<SchemaStructurePtr> _structs;
+
+	public:
+		std::vector<SchemaStructExtentPtr> structExtents;
 };
+
+struct SchemaStructExtent : SchemaParameters {
+	DECLARE_SC_CLASS(SchemaStructExtent);
+
+	void serialize(Archive& ar) override;
+	std::string type;
+	std::string matchName;
+};
+
 
 
 class SC_SYSTEM_CORE_API SchemaGroup : public SchemaParameters {
@@ -136,7 +149,7 @@ class SC_SYSTEM_CORE_API SchemaGroup : public SchemaParameters {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -162,7 +175,7 @@ class SC_SYSTEM_CORE_API SchemaStructure : public SchemaParameters {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -192,7 +205,7 @@ class SC_SYSTEM_CORE_API SchemaSetupInputOption : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -219,7 +232,7 @@ class SC_SYSTEM_CORE_API SchemaSetupInput : public SchemaParameter {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -247,7 +260,7 @@ class SC_SYSTEM_CORE_API SchemaSetupGroup : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -275,7 +288,7 @@ class SC_SYSTEM_CORE_API SchemaSetup : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -307,7 +320,7 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -326,25 +339,6 @@ class SC_SYSTEM_CORE_API SchemaModule : public Core::BaseObject {
 };
 
 
-DEFINE_SMARTPOINTER(SchemaStructExtent);
-DEFINE_SMARTPOINTER(SchemaPluginParameters);
-struct SchemaPluginParameters : SchemaParameters {
-	DECLARE_SC_CLASS(SchemaPluginParameters);
-
-	void serialize(Archive& ar);
-	std::vector<SchemaStructExtentPtr> structExtents;
-};
-
-
-struct SchemaStructExtent : SchemaPluginParameters {
-	DECLARE_SC_CLASS(SchemaStructExtent);
-
-	void serialize(Archive& ar);
-	std::string type;
-	std::string matchName;
-};
-
-
 DEFINE_SMARTPOINTER(SchemaPlugin);
 class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 	DECLARE_SC_CLASS(SchemaPlugin);
@@ -360,7 +354,7 @@ class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
@@ -370,7 +364,7 @@ class SC_SYSTEM_CORE_API SchemaPlugin : public Core::BaseObject {
 		std::string               name;
 		std::vector<std::string>  extends;
 		std::string               description;
-		SchemaPluginParametersPtr parameters;
+		SchemaParametersPtr       parameters;
 		SchemaSetupPtr            setup;
 };
 
@@ -390,18 +384,18 @@ class SC_SYSTEM_CORE_API SchemaBinding : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		std::string              name;
-		std::string              module;
-		std::string              category;
-		std::string              description;
-		SchemaParametersPtr      parameters;
+		std::string         name;
+		std::string         module;
+		std::string         category;
+		std::string         description;
+		SchemaParametersPtr parameters;
 };
 
 
@@ -464,7 +458,7 @@ class SC_SYSTEM_CORE_API SchemaDefinitions : public Core::BaseObject {
 	//  Serialization
 	// ------------------------------------------------------------------
 	public:
-		void serialize(Archive& ar);
+		void serialize(Archive& ar) override;
 
 
 	// ------------------------------------------------------------------

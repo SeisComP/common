@@ -32,7 +32,7 @@
 #include <QSizePolicy>
 #include <QHeaderView>
 #include <QKeyEvent>
-#include <QRegExp>
+#include <QCompleter>
 
 
 namespace Seiscomp {
@@ -41,14 +41,52 @@ namespace Gui {
 namespace {
 
 
+QString parse(QString s) {
+	QString r;
+	bool isDoubleQuote = false;
+	bool isEscape = false;
+
+	for ( int i = 0; i < s.count(); ++i ) {
+		if ( s[i] == '\\' ) {
+			if ( !isEscape ) {
+				isEscape = true;
+				continue;
+			}
+		}
+
+		if ( s[i] == '"' ) {
+			if ( !isEscape ) {
+				isDoubleQuote = !isDoubleQuote;
+				continue;
+			}
+		}
+
+		isEscape = false;
+		r += s[i];
+	}
+
+	return r;
+}
+
+
 class StationsModel : public QAbstractTableModel {
 	public:
 		struct Entry {
 			DataModel::Station *station;
 			QString code;
+			QString networkType;
+			QString stationType;
+			QString sensorUnit;
 			double distance;
 			double azimuth;
+
+			// auxilliary
+			QStringList sensorUnits;
 		};
+
+		QStringList networkTypeOptions;
+		QStringList stationTypeOptions;
+		QStringList sensorUnitOptions;
 
 
 	public:
@@ -56,39 +94,76 @@ class StationsModel : public QAbstractTableModel {
 		              const QSet<QString> *blackList,
 		              bool ignoreDisabledStations,
 		              QObject *parent = 0) : QAbstractTableModel(parent) {
-			DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
-			if ( inv != nullptr ) {
+			auto *inv = Client::Inventory::Instance()->inventory();
+			if ( inv ) {
 				for ( size_t i = 0; i < inv->networkCount(); ++i ) {
-					DataModel::Network* n = inv->network(i);
-		
+					auto *n = inv->network(i);
+
 					try {
-						if ( n->end() <= time )
+						if ( n->end() <= time ) {
 							continue;
+						}
 					}
 					catch ( Core::ValueException& ) {}
-		
+
 					for ( size_t j = 0; j < n->stationCount(); ++j ) {
-						DataModel::Station* s = n->station(j);
-		
+						auto *s = n->station(j);
+
 						try {
-							if ( s->end() <= time )
+							if ( s->end() <= time ) {
 								continue;
+							}
 						}
 						catch ( Core::ValueException& ) {}
-		
+
 						if ( ignoreDisabledStations
-						  && !SCApp->isStationEnabled(n->code(), s->code()) )
+						  && !SCApp->isStationEnabled(n->code(), s->code()) ) {
 							continue;
-		
+						}
+
 						QString code = (n->code() + "." + s->code()).c_str();
-		
-						if ( blackList && blackList->contains(code) ) continue;
-		
+
+						if ( blackList && blackList->contains(code) ) {
+							continue;
+						}
+
 						Entry entry;
+
+						for ( size_t l = 0; l < s->sensorLocationCount(); ++l ) {
+							auto *loc = s->sensorLocation(l);
+							for ( size_t c = 0; c < loc->streamCount(); ++c ) {
+								auto *stream = loc->stream(c);
+								if ( !entry.sensorUnits.contains(stream->gainUnit().data()) ) {
+									entry.sensorUnits.append(stream->gainUnit().data());
+								}
+							}
+						}
+
 						entry.station = s;
 						entry.code = code;
+						entry.networkType = n->type().data();
+						entry.stationType = s->type().data();
+						entry.sensorUnit = entry.sensorUnits.join(", ");
 						entry.distance = 0;
 						entry.azimuth = 0;
+
+						// collection drop down options
+						if ( !networkTypeOptions.contains(entry.networkType) ) {
+							networkTypeOptions.append(entry.networkType);
+						}
+						networkTypeOptions.sort(Qt::CaseInsensitive);
+
+						if ( !stationTypeOptions.contains(entry.stationType) ) {
+							stationTypeOptions.append(entry.stationType);
+						}
+						stationTypeOptions.sort(Qt::CaseInsensitive);
+
+						foreach ( auto unit, entry.sensorUnits ) {
+							if ( !sensorUnitOptions.contains(unit) ) {
+								sensorUnitOptions.append(unit);
+							}
+						}
+						sensorUnitOptions.sort(Qt::CaseInsensitive);
 
 						_data.push_back(entry);
 					}
@@ -98,10 +173,13 @@ class StationsModel : public QAbstractTableModel {
 
 		void setReferenceLocation(double lat, double lon) {
 			for ( int row = 0; row < _data.size(); ++row ) {
-				DataModel::Station *s = _data[row].station;
-		
+				auto *s = _data[row].station;
 				double azi2;
-				Math::Geo::delazi(lat, lon, s->latitude(), s->longitude(), &_data[row].distance, &_data[row].azimuth, &azi2);
+				Math::Geo::delazi(lat, lon,
+				                  s->latitude(), s->longitude(),
+				                  &_data[row].distance,
+				                  &_data[row].azimuth,
+				                  &azi2);
 			}
 		}
 
@@ -110,7 +188,7 @@ class StationsModel : public QAbstractTableModel {
 		}
 
 		int columnCount(const QModelIndex &) const {
-			return 3;
+			return 6;
 		}
 
 		DataModel::Station *station(int row) const {
@@ -121,11 +199,17 @@ class StationsModel : public QAbstractTableModel {
 			if ( orientation == Qt::Horizontal && role == Qt::DisplayRole ) {
 				switch ( section ) {
 					case 0:
-						return "Name";
+						return "ID";
 					case 1:
 						return "Distance";
 					case 2:
 						return "Azimuth";
+					case 3:
+						return "Network";
+					case 4:
+						return "Station";
+					case 5:
+						return "Sensor";
 					default:
 						break;
 				}
@@ -143,6 +227,30 @@ class StationsModel : public QAbstractTableModel {
 							return QString("%1").arg(_data[index.row()].distance, 0, 'f', 1);
 						case 2:
 							return QString("%1").arg(_data[index.row()].azimuth, 0, 'f', 1);
+						case 3:
+							return _data[index.row()].networkType;
+						case 4:
+							return _data[index.row()].stationType;
+						case 5:
+							return _data[index.row()].sensorUnit;
+						default:
+							break;
+					}
+					break;
+				case Qt::ToolTipRole:
+					switch ( index.column() ) {
+						case 0:
+							return _data[index.row()].code;
+						case 1:
+							return QString("%1").arg(_data[index.row()].distance, 0, 'f', 1);
+						case 2:
+							return QString("%1").arg(_data[index.row()].azimuth, 0, 'f', 1);
+						case 3:
+							return _data[index.row()].networkType;
+						case 4:
+							return _data[index.row()].stationType;
+						case 5:
+							return _data[index.row()].sensorUnit;
 						default:
 							break;
 					}
@@ -164,6 +272,10 @@ class StationsModel : public QAbstractTableModel {
 			return QVariant();
 		}
 
+		const Entry *row(int row) const {
+			return &_data[row];
+		}
+
 	private:
 		QVector<Entry> _data;
 };
@@ -175,14 +287,100 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 			setFilterCaseSensitivity(Qt::CaseInsensitive);
 		}
 
-	protected:
-		bool lessThan(const QModelIndex &left, const QModelIndex &right) const {
-			if ( (left.column() == 1 && right.column() == 1)
-			  || (left.column() == 2 && right.column() == 2) )
-				return sourceModel()->data(left, Qt::UserRole).toDouble() < sourceModel()->data(right, Qt::UserRole).toDouble();
-			else
-				return QSortFilterProxyModel::lessThan(left, right);
+	public:
+		void includeNSLC(bool f) {
+			_includeNSLC = f;
 		}
+
+		void setNetworkType(const QString &type) {
+			if ( type.isEmpty() ) {
+				_networkType = Core::None;
+			}
+			else {
+				_networkType = parse(type);
+			}
+		}
+
+		void includeNetworkType(bool f) {
+			_includeNetworkType = f;
+		}
+
+		void setStationType(const QString &type) {
+			if ( type.isEmpty() ) {
+				_stationType = Core::None;
+			}
+			else {
+				_stationType = parse(type);
+			}
+		}
+
+		void includeStationType(bool f) {
+			_includeStationType = f;
+		}
+
+		void setSensorUnit(const QString &type) {
+			if ( type.isEmpty() ) {
+				_sensorUnit = Core::None;
+			}
+			else {
+				_sensorUnit = parse(type);
+			}
+		}
+
+		void includeSensorUnit(bool f) {
+			_includeSensorUnit = f;
+		}
+
+	protected:
+		bool lessThan(const QModelIndex &left, const QModelIndex &right) const override {
+			if ( (left.column() == 1 && right.column() == 1)
+			  || (left.column() == 2 && right.column() == 2) ) {
+				return sourceModel()->data(left, Qt::UserRole).toDouble() < sourceModel()->data(right, Qt::UserRole).toDouble();
+			}
+			else {
+				return QSortFilterProxyModel::lessThan(left, right);
+			}
+		}
+
+		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override {
+			auto entry = static_cast<StationsModel*>(sourceModel())->row(source_row);
+#if QT_VERSION_MAJOR < 6
+			bool nslcEmpty = filterRegExp().isEmpty();
+			bool matchNSLC = nslcEmpty || filterRegExp().exactMatch(entry->code);
+#else
+			bool nslcEmpty = filterRegularExpression().pattern().isEmpty();
+			bool matchNSLC = nslcEmpty || filterRegularExpression().match(entry->code).hasMatch();
+#endif
+			bool matchNetworkType = _networkType && (*_networkType == entry->networkType);
+			bool matchStationType = _stationType && (*_stationType == entry->stationType);
+
+			if ( (!nslcEmpty && (_includeNSLC != matchNSLC))
+			  || (_networkType && (_includeNetworkType != matchNetworkType))
+			  || (_stationType && (_includeStationType != matchStationType)) ) {
+				return false;
+			}
+
+			if ( _sensorUnit ) {
+				foreach ( auto unit, entry->sensorUnits ) {
+					if ( unit == *_sensorUnit ) {
+						return _includeSensorUnit;
+					}
+				}
+
+				return !_includeSensorUnit;
+			}
+
+			return true;
+		}
+
+	private:
+		bool         _includeNSLC{true};
+		bool         _includeNetworkType{true};
+		bool         _includeStationType{true};
+		bool         _includeSensorUnit{true};
+		OPT(QString) _networkType;
+		OPT(QString) _stationType;
+		OPT(QString) _sensorUnit;
 };
 
 
@@ -214,45 +412,64 @@ SelectStation::SelectStation(Core::Time time, bool ignoreDisabledStations,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SelectStation::~SelectStation()
-{
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
                          const QSet<QString> *blackList) {
 	_ui.setupUi(this);
 
-	_ui.stationLineEdit->setFocus(Qt::TabFocusReason);
+	_ui.lineEditNSLC->setFocus(Qt::TabFocusReason);
 
-	StationsModel *model = new StationsModel(time, blackList,
-	                                         ignoreDisabledStations, this);
+	auto model = new StationsModel(time, blackList,
+	                               ignoreDisabledStations, this);
 	QSortFilterProxyModel *filterModel = new StationsSortFilterProxyModel(this);
 	filterModel->setSourceModel(model);
 	_ui.table->setModel(filterModel);
 
 	// Configure widget
-	connect(_ui.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-	        _ui.table, SLOT(sortByColumn(int)));
+	connect(_ui.table->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+	        _ui.table, SLOT(sortByColumn(int, Qt::SortOrder)));
 	_ui.table->horizontalHeader()->setSortIndicatorShown(true);
-	_ui.table->horizontalHeader()->setStretchLastSection(true);
+	_ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	_ui.table->verticalHeader()->hide();
 
 	_ui.table->hideColumn(1);
 	_ui.table->hideColumn(2);
 
 	_ui.table->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
-	_ui.table->resizeColumnsToContents();
 	//_ui.table->horizontalHeader()->hide();
 
-	//_stationNames;
-	
-	connect(_ui.stationLineEdit, SIGNAL(textChanged(const QString&)),
-	        this, SLOT(listMatchingStations(const QString&)));
+	foreach ( auto option, model->networkTypeOptions ) {
+		_ui.comboNetworkType->addItem(option);
+	}
+
+	foreach ( auto option, model->stationTypeOptions ) {
+		_ui.comboStationType->addItem(option);
+	}
+
+	foreach ( auto option, model->sensorUnitOptions ) {
+		_ui.comboSensorUnit->addItem(option);
+	}
+
+	connect(_ui.lineEditNSLC, SIGNAL(textChanged(QString)),
+	        this, SLOT(listMatchingStations()));
+	connect(_ui.cbExcludeNSLC, SIGNAL(toggled(bool)),
+	        this, SLOT(listMatchingStations()));
+
+	connect(_ui.comboNetworkType, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(listMatchingStations()));
+	connect(_ui.cbExcludeNetworkType, SIGNAL(toggled(bool)),
+	        this, SLOT(listMatchingStations()));
+
+	connect(_ui.comboStationType, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(listMatchingStations()));
+	connect(_ui.cbExcludeStationType, SIGNAL(toggled(bool)),
+	        this, SLOT(listMatchingStations()));
+
+	connect(_ui.comboSensorUnit, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(listMatchingStations()));
+	connect(_ui.cbExcludeSensorUnit, SIGNAL(toggled(bool)),
+	        this, SLOT(listMatchingStations()));
+
+	listMatchingStations();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -260,10 +477,48 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SelectStation::listMatchingStations(const QString& substr) {
-	QString trimmedStr = substr.trimmed();
+void SelectStation::keyPressEvent(QKeyEvent *event) {
+	if ( (event->key() == Qt::Key_Enter) || (event->key() == Qt::Key_Return) ) {
+		return;
+	}
 
-	static_cast<QSortFilterProxyModel*>(_ui.table->model())->setFilterWildcard(trimmedStr);
+	QDialog::keyPressEvent(event);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::listMatchingStations() {
+	auto *model = static_cast<StationsSortFilterProxyModel*>(_ui.table->model());
+	model->includeNSLC(!_ui.cbExcludeNSLC->isChecked());
+
+	if ( _ui.comboNetworkType->currentIndex() > 0 ) {
+		model->setNetworkType(_ui.comboNetworkType->currentText().isEmpty() ? "\"\"" : _ui.comboNetworkType->currentText());
+	}
+	else {
+		model->setNetworkType(QString());
+	}
+	model->includeNetworkType(!_ui.cbExcludeNetworkType->isChecked());
+
+	if ( _ui.comboStationType->currentIndex() > 0 ) {
+		model->setStationType(_ui.comboStationType->currentText().isEmpty() ? "\"\"" : _ui.comboStationType->currentText());
+	}
+	else {
+		model->setStationType(QString());
+	}
+	model->includeStationType(!_ui.cbExcludeStationType->isChecked());
+
+	if ( _ui.comboSensorUnit->currentIndex() > 0 ) {
+		model->setSensorUnit(_ui.comboSensorUnit->currentText().isEmpty() ? "\"\"" : _ui.comboSensorUnit->currentText());
+	}
+	else {
+		model->setSensorUnit(QString());
+	}
+	model->includeSensorUnit(!_ui.cbExcludeSensorUnit->isChecked());
+
+	model->setFilterWildcard(_ui.lineEditNSLC->text().trimmed());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -278,8 +533,9 @@ QList<DataModel::Station*> SelectStation::selectedStations() const {
 	QSortFilterProxyModel *proxy = static_cast<QSortFilterProxyModel*>(_ui.table->model());
 	StationsModel* model = static_cast<StationsModel*>(proxy->sourceModel());
 
-	foreach ( const QModelIndex &index, list )
+	foreach ( const QModelIndex &index, list ) {
 		result.push_back(model->station(proxy->mapToSource(index).row()));
+	}
 
 	return result;
 }
@@ -298,5 +554,9 @@ void SelectStation::setReferenceLocation(double lat, double lon) {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace Gui
 } // namespace Seiscomp
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

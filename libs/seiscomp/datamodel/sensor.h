@@ -87,28 +87,28 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Sensor(const Sensor& other);
+		Sensor(const Sensor &other);
 
 		//! Constructor with publicID
 		Sensor(const std::string& publicID);
 
 		//! Destructor
 		~Sensor() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Sensor* Create();
-		static Sensor* Create(const std::string& publicID);
+		static Sensor *Create();
+		static Sensor *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Sensor* Find(const std::string& publicID);
+		static Sensor *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -117,14 +117,14 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Sensor& operator=(const Sensor& other);
+		Sensor &operator=(const Sensor &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Sensor& other) const;
-		bool operator!=(const Sensor& other) const;
+		bool operator==(const Sensor &other) const;
+		bool operator!=(const Sensor &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Sensor& other) const;
+		bool equal(const Sensor &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -178,12 +178,12 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const SensorIndex& index() const;
+		const SensorIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Sensor* lhs) const;
+		bool equalIndex(const Sensor *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -196,7 +196,7 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(SensorCalibration* obj);
+		bool add(SensorCalibration *obj);
 
 		/**
 		 * Removes an object.
@@ -205,7 +205,7 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(SensorCalibration* obj);
+		bool remove(SensorCalibration *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -214,19 +214,19 @@ class SC_SYSTEM_CORE_API Sensor : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeSensorCalibration(size_t i);
-		bool removeSensorCalibration(const SensorCalibrationIndex& i);
+		bool removeSensorCalibration(const SensorCalibrationIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t sensorCalibrationCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		SensorCalibration* sensorCalibration(size_t i) const;
-		SensorCalibration* sensorCalibration(const SensorCalibrationIndex& i) const;
+		SensorCalibration *sensorCalibration(size_t i) const;
+		SensorCalibration *sensorCalibration(const SensorCalibrationIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

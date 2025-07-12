@@ -772,9 +772,9 @@ Core::GreensFunction* SC3GF1DArchive::get() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
-                                        const Core::TimeSpan &ts,
-                                        double timeOfs) {
+Core::GreensFunction *SC3GF1DArchive::read(const std::string &file,
+                                           const Core::TimeSpan &ts,
+                                           double timeOfs) {
 #if SC_API_VERSION >= SC_API_VERSION_CHECK(13,0,0)
 #define GF_COMPS 10
 #else
@@ -817,15 +817,15 @@ Core::GreensFunction* SC3GF1DArchive::read(const std::string &file,
 			return nullptr;
 		}
 
-		if ( sac.startTime() >= ts ) {
+		if ( sac.startTime().epoch() >= ts.length() ) {
 			SEISCOMP_ERROR("Green's functions - %s: requested timespan not within range (%s < %s",
-			               filename.c_str(), Core::Time(ts).iso().c_str(), sac.startTime().iso().c_str());
+			               filename.c_str(), Core::Time(ts.length()).iso().c_str(), sac.startTime().iso().c_str());
 			if ( gf ) delete gf;
 			return nullptr;
 		}
 
-		timeOfs = (double)sac.startTime();
-		double cutSeconds = (double)ts - timeOfs;
+		timeOfs = sac.startTime().epoch();
+		double cutSeconds = ts.length() - timeOfs;
 
 		if ( gf && gf->timeOffset() != timeOfs ) {
 			SEISCOMP_ERROR("Green's functions - %s: mismatching start times,"
@@ -1090,8 +1090,9 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 	}
 	else {
 		TTPhases::iterator pit = config.travelTimes.find(phase);
-		if ( pit == config.travelTimes.end() )
+		if ( pit == config.travelTimes.end() ) {
 			return Core::None;
+		}
 
 		TTDistance &distanceDepths = pit->second;
 
@@ -1109,8 +1110,9 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 		TTDistance::iterator it_dist_from = it_dist_to;
 
 		// Distance out of range
-		if ( it_dist_to == distanceDepths.end() )
+		if ( it_dist_to == distanceDepths.end() ) {
 			return Core::None;
+		}
 
 		double toDist = it_dist_to->first;
 		double fromDist = toDist;
@@ -1135,7 +1137,7 @@ OPT(double) SC3GF1DArchive::getTravelTime(const std::string &phase,
 		}
 
 		// Interpolate distances
-		return (tt1 * (toDist-dist) + tt2 * (dist-fromDist)) / (toDist - fromDist);
+		return (tt1 * (toDist - dist) + tt2 * (dist - fromDist)) / (toDist - fromDist);
 	}
 
 	return Core::None;

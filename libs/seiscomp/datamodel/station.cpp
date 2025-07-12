@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Station, PublicObject, "Station");
 
 
-Station::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Station::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &Station::setCode, &Station::code));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Station::setStart, &Station::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Station::setEnd, &Station::end));
@@ -78,7 +78,7 @@ StationIndex::StationIndex(const std::string& code_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationIndex::StationIndex(const StationIndex& idx) {
+StationIndex::StationIndex(const StationIndex &idx) {
 	code = idx.code;
 	start = idx.start;
 }
@@ -88,7 +88,7 @@ StationIndex::StationIndex(const StationIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationIndex::operator==(const StationIndex& idx) const {
+bool StationIndex::operator==(const StationIndex &idx) const {
 	return code == idx.code &&
 	       start == idx.start;
 }
@@ -98,7 +98,7 @@ bool StationIndex::operator==(const StationIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationIndex::operator!=(const StationIndex& idx) const {
+bool StationIndex::operator!=(const StationIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -115,7 +115,7 @@ Station::Station() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station::Station(const Station& other)
+Station::Station(const Station &other)
 : PublicObject() {
 	*this = other;
 }
@@ -148,8 +148,8 @@ Station::~Station() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Station::Create() {
-	Station* object = new Station();
+Station *Station::Create() {
+	Station *object = new Station();
 	return static_cast<Station*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +158,7 @@ Station* Station::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Station::Create(const std::string& publicID) {
+Station *Station::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -175,7 +175,7 @@ Station* Station::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Station::Find(const std::string& publicID) {
+Station *Station::Find(const std::string& publicID) {
 	return Station::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -184,7 +184,7 @@ Station* Station::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::operator==(const Station& rhs) const {
+bool Station::operator==(const Station &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _description != rhs._description ) return false;
@@ -208,7 +208,7 @@ bool Station::operator==(const Station& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::operator!=(const Station& rhs) const {
+bool Station::operator!=(const Station &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -217,7 +217,7 @@ bool Station::operator!=(const Station& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::equal(const Station& other) const {
+bool Station::equal(const Station &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -539,7 +539,7 @@ const Blob& Station::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const StationIndex& Station::index() const {
+const StationIndex &Station::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -548,8 +548,11 @@ const StationIndex& Station::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::equalIndex(const Station* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Station::equalIndex(const Station *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -558,7 +561,7 @@ bool Station::equalIndex(const Station* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Station::network() const {
+Network *Station::network() const {
 	return static_cast<Network*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -567,7 +570,7 @@ Network* Station::network() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station& Station::operator=(const Station& other) {
+Station &Station::operator=(const Station &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_end = other._end;
@@ -592,10 +595,11 @@ Station& Station::operator=(const Station& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::assign(Object* other) {
-	Station* otherStation = Station::Cast(other);
-	if ( other == nullptr )
+bool Station::assign(Object *other) {
+	Station *otherStation = Station::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStation;
 
@@ -607,11 +611,13 @@ bool Station::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Station::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Network* network = Network::Cast(parent);
+	Network *network = Network::Cast(parent);
 	if ( network != nullptr )
 		return network->add(this);
 
@@ -624,11 +630,13 @@ bool Station::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Station::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Network* network = Network::Cast(object);
+	Network *network = Network::Cast(object);
 	if ( network != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -636,7 +644,7 @@ bool Station::detachFrom(PublicObject* object) {
 			return network->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Station* child = network->findStation(publicID());
+			Station *child = network->findStation(publicID());
 			if ( child != nullptr )
 				return network->remove(child);
 			else {
@@ -656,8 +664,9 @@ bool Station::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Station::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -667,8 +676,8 @@ bool Station::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Station::clone() const {
-	Station* clonee = new Station();
+Object *Station::clone() const {
+	Station *clonee = new Station();
 	*clonee = *this;
 	return clonee;
 }
@@ -678,10 +687,10 @@ Object* Station::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Station::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -690,9 +699,9 @@ bool Station::updateChild(Object* child) {
 		return false;
 	}
 
-	SensorLocation* sensorLocationChild = SensorLocation::Cast(child);
+	SensorLocation *sensorLocationChild = SensorLocation::Cast(child);
 	if ( sensorLocationChild != nullptr ) {
-		SensorLocation* sensorLocationElement
+		SensorLocation *sensorLocationElement
 			= SensorLocation::Cast(PublicObject::Find(sensorLocationChild->publicID()));
 		if ( sensorLocationElement && sensorLocationElement->parent() == this ) {
 			*sensorLocationElement = *sensorLocationChild;
@@ -710,7 +719,7 @@ bool Station::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Station::accept(Visitor* visitor) {
+void Station::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -740,7 +749,7 @@ size_t Station::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Station::comment(size_t i) const {
+Comment *Station::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -749,10 +758,12 @@ Comment* Station::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Station::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Station::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -762,9 +773,10 @@ Comment* Station::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Station::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -801,9 +813,10 @@ bool Station::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Station::remove(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Station::remove(Comment*) -> element has another parent");
@@ -819,8 +832,7 @@ bool Station::remove(Comment* comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -843,8 +855,7 @@ bool Station::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -860,9 +871,12 @@ bool Station::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Station::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -880,7 +894,7 @@ size_t Station::sensorLocationCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* Station::sensorLocation(size_t i) const {
+SensorLocation *Station::sensorLocation(size_t i) const {
 	return _sensorLocations[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -889,10 +903,12 @@ SensorLocation* Station::sensorLocation(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* Station::sensorLocation(const SensorLocationIndex& i) const {
-	for ( std::vector<SensorLocationPtr>::const_iterator it = _sensorLocations.begin(); it != _sensorLocations.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+SensorLocation *Station::sensorLocation(const SensorLocationIndex &i) const {
+	for ( const auto &elem : _sensorLocations ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -902,10 +918,12 @@ SensorLocation* Station::sensorLocation(const SensorLocationIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* Station::findSensorLocation(const std::string& publicID) const {
-	for ( std::vector<SensorLocationPtr>::const_iterator it = _sensorLocations.begin(); it != _sensorLocations.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+SensorLocation *Station::findSensorLocation(const std::string& publicID) const {
+	for ( const auto &elem : _sensorLocations ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -915,9 +933,10 @@ SensorLocation* Station::findSensorLocation(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::add(SensorLocation* sensorLocation) {
-	if ( sensorLocation == nullptr )
+bool Station::add(SensorLocation *sensorLocation) {
+	if ( !sensorLocation ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( sensorLocation->parent() != nullptr ) {
@@ -926,17 +945,20 @@ bool Station::add(SensorLocation* sensorLocation) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		SensorLocation* sensorLocationCached = SensorLocation::Find(sensorLocation->publicID());
+		SensorLocation *sensorLocationCached = SensorLocation::Find(sensorLocation->publicID());
 		if ( sensorLocationCached ) {
 			if ( sensorLocationCached->parent() ) {
-				if ( sensorLocationCached->parent() == this )
+				if ( sensorLocationCached->parent() == this ) {
 					SEISCOMP_ERROR("Station::add(SensorLocation*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("Station::add(SensorLocation*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				sensorLocation = sensorLocationCached;
+			}
 		}
 	}
 
@@ -961,9 +983,10 @@ bool Station::add(SensorLocation* sensorLocation) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::remove(SensorLocation* sensorLocation) {
-	if ( sensorLocation == nullptr )
+bool Station::remove(SensorLocation *sensorLocation) {
+	if ( !sensorLocation ) {
 		return false;
+	}
 
 	if ( sensorLocation->parent() != this ) {
 		SEISCOMP_ERROR("Station::remove(SensorLocation*) -> element has another parent");
@@ -979,8 +1002,7 @@ bool Station::remove(SensorLocation* sensorLocation) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1003,8 +1025,7 @@ bool Station::removeSensorLocation(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensorLocations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensorLocations[i].get());
 	}
 
 	_sensorLocations[i]->setParent(nullptr);
@@ -1020,9 +1041,12 @@ bool Station::removeSensorLocation(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Station::removeSensorLocation(const SensorLocationIndex& i) {
-	SensorLocation* object = sensorLocation(i);
-	if ( object == nullptr ) return false;
+bool Station::removeSensorLocation(const SensorLocationIndex &i) {
+	SensorLocation *object = sensorLocation(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1031,7 +1055,7 @@ bool Station::removeSensorLocation(const SensorLocationIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Station::serialize(Archive& ar) {
+void Station::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

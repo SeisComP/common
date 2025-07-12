@@ -61,28 +61,28 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 
 	public:
 		//! Copy constructor
-		StationMagnitude(const StationMagnitude& other);
+		StationMagnitude(const StationMagnitude &other);
 
 		//! Constructor with publicID
 		StationMagnitude(const std::string& publicID);
 
 		//! Destructor
 		~StationMagnitude() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static StationMagnitude* Create();
-		static StationMagnitude* Create(const std::string& publicID);
+		static StationMagnitude *Create();
+		static StationMagnitude *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static StationMagnitude* Find(const std::string& publicID);
+		static StationMagnitude *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -91,14 +91,14 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		StationMagnitude& operator=(const StationMagnitude& other);
+		StationMagnitude &operator=(const StationMagnitude &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const StationMagnitude& other) const;
-		bool operator!=(const StationMagnitude& other) const;
+		bool operator==(const StationMagnitude &other) const;
+		bool operator!=(const StationMagnitude &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const StationMagnitude& other) const;
+		bool equal(const StationMagnitude &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -158,7 +158,7 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -171,7 +171,7 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
+		bool add(Comment *obj);
 
 		/**
 		 * Removes an object.
@@ -180,7 +180,7 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
+		bool remove(Comment *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -189,19 +189,19 @@ class SC_SYSTEM_CORE_API StationMagnitude : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Origin* origin() const;
+		Origin *origin() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

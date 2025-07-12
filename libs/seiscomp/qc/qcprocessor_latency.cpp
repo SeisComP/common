@@ -34,7 +34,7 @@ IMPLEMENT_SC_CLASS_DERIVED(QcProcessorLatency, QcProcessor, "QcProcessorLatency"
 QcProcessorLatency::QcProcessorLatency() 
     : QcProcessor() {
 	
-	_lastRecordArrivalTime = Core::Time::GMT();
+	_lastRecordArrivalTime = Core::Time::UTC();
 
 }
 
@@ -44,7 +44,7 @@ QcProcessorLatency::QcProcessorLatency()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QcProcessorLatency::setState(const Record *record, const DoubleArray &data) {
 
-	Core::Time now = Core::Time::GMT();
+	Core::Time now = Core::Time::UTC();
 
 	_qcp->recordStartTime = now;
 	_qcp->recordEndTime = now;

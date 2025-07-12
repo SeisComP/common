@@ -161,9 +161,6 @@
              <property name="toolTip" >
               <string>Sets the type of the event. Selection changes are going to be sent immediately.</string>
              </property>
-             <property name="sizeAdjustPolicy" >
-              <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-             </property>
              <property name="minimumContentsLength" >
               <number>9</number>
              </property>

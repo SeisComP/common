@@ -57,10 +57,10 @@ class SC_SYSTEM_CORE_API RecordDemuxFilter : public RecordFilterInterface {
 	//  RecordFilter interface
 	// ------------------------------------------------------------------
 	public:
-		virtual Record *feed(const Record *rec);
-		virtual Record *flush();
-		virtual void reset();
-		virtual RecordFilterInterface *clone() const;
+		virtual Record *feed(const Record *rec) override;
+		virtual Record *flush() override;
+		virtual void reset() override;
+		virtual RecordFilterInterface *clone() const override;
 
 
 	// ------------------------------------------------------------------

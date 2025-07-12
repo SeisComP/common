@@ -82,28 +82,28 @@ class SC_SYSTEM_CORE_API StationReference : public Object {
 		StationReference();
 
 		//! Copy constructor
-		StationReference(const StationReference& other);
+		StationReference(const StationReference &other);
 
 		//! Custom constructor
 		StationReference(const std::string& stationID);
 
 		//! Destructor
 		~StationReference() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		StationReference& operator=(const StationReference& other);
+		StationReference &operator=(const StationReference &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const StationReference& other) const;
-		bool operator!=(const StationReference& other) const;
+		bool operator==(const StationReference &other) const;
+		bool operator!=(const StationReference &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const StationReference& other) const;
+		bool equal(const StationReference &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -120,17 +120,17 @@ class SC_SYSTEM_CORE_API StationReference : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const StationReferenceIndex& index() const;
+		const StationReferenceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const StationReference* lhs) const;
+		bool equalIndex(const StationReference *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		StationGroup* stationGroup() const;
+		StationGroup *stationGroup() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

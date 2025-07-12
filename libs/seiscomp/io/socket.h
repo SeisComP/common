@@ -91,7 +91,7 @@ class SC_SYSTEM_CORE_API Socket: public Seiscomp::Core::InterruptibleObject {
 		int takeFd();
 
 	protected:
-		void handleInterrupt(int) throw();
+		void handleInterrupt(int) throw() override;
 		virtual int readImpl(char *buf, int count);
 		virtual int writeImpl(const char *buf, int count);
 

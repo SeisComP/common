@@ -55,8 +55,8 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 		               const std::string& locationCode,
 		               const std::string& channelCode);
 
-		void setStartTime(const Seiscomp::Core::Time&);
-		void setEndTime(const Seiscomp::Core::Time&);
+		void setStartTime(const OPT(Seiscomp::Core::Time) &);
+		void setEndTime(const OPT(Seiscomp::Core::Time) &);
 		bool setTimeWindow(const Seiscomp::Core::TimeWindow&);
 
 		//! Sets whether to start the acquisition automatically
@@ -91,12 +91,12 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 	//  Protected interface
 	// ----------------------------------------------------------------------
 	protected:
-		bool init();
-		bool run();
-		void done();
-		void exit(int returnCode);
+		bool init() override;
+		bool run() override;
+		void done() override;
+		void exit(int returnCode) override;
 
-		bool dispatch(Core::BaseObject* obj);
+		bool dispatch(Core::BaseObject* obj) override;
 
 		void readRecords(bool sendEndNotification);
 
@@ -120,7 +120,7 @@ class SC_SYSTEM_CLIENT_API StreamApplication : public Application {
 		virtual void handleRecord(Record *rec) = 0;
 
 		//! Logs the received records for the last period
-		virtual void handleMonitorLog(const Core::Time &timestamp);
+		virtual void handleMonitorLog(const Core::Time &timestamp) override;
 
 
 	private:

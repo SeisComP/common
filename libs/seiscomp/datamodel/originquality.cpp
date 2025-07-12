@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(OriginQuality, "OriginQuality");
 
 
-OriginQuality::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+OriginQuality::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("associatedPhaseCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setAssociatedPhaseCount, &OriginQuality::associatedPhaseCount));
 	addProperty(Core::simpleProperty("usedPhaseCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setUsedPhaseCount, &OriginQuality::usedPhaseCount));
 	addProperty(Core::simpleProperty("associatedStationCount", "int", false, false, false, false, true, false, nullptr, &OriginQuality::setAssociatedStationCount, &OriginQuality::associatedStationCount));
@@ -59,7 +59,7 @@ OriginQuality::OriginQuality() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginQuality::OriginQuality(const OriginQuality& other)
+OriginQuality::OriginQuality(const OriginQuality &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -77,7 +77,7 @@ OriginQuality::~OriginQuality() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginQuality::operator==(const OriginQuality& rhs) const {
+bool OriginQuality::operator==(const OriginQuality &rhs) const {
 	if ( !(_associatedPhaseCount == rhs._associatedPhaseCount) )
 		return false;
 	if ( !(_usedPhaseCount == rhs._usedPhaseCount) )
@@ -110,7 +110,7 @@ bool OriginQuality::operator==(const OriginQuality& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginQuality::operator!=(const OriginQuality& rhs) const {
+bool OriginQuality::operator!=(const OriginQuality &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -119,7 +119,7 @@ bool OriginQuality::operator!=(const OriginQuality& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginQuality::equal(const OriginQuality& other) const {
+bool OriginQuality::equal(const OriginQuality &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -366,7 +366,7 @@ double OriginQuality::medianDistance() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginQuality& OriginQuality::operator=(const OriginQuality& other) {
+OriginQuality &OriginQuality::operator=(const OriginQuality &other) {
 	_associatedPhaseCount = other._associatedPhaseCount;
 	_usedPhaseCount = other._usedPhaseCount;
 	_associatedStationCount = other._associatedStationCount;
@@ -387,7 +387,7 @@ OriginQuality& OriginQuality::operator=(const OriginQuality& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginQuality::serialize(Archive& ar) {
+void OriginQuality::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

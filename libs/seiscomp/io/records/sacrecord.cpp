@@ -251,8 +251,8 @@ void SACRecord::read(std::istream &in) {
 	// to this time.
 	Core::Time reftime;
 
-	reftime = Core::Time(header.nzhour*3600+header.nzmin*60+header.nzsec, header.nzmsec*1000);
-	reftime += Core::Time::FromYearDay(header.nzyear, header.nzjday);
+	reftime = Core::Time::FromYearDay(header.nzyear, header.nzjday);
+	reftime += Core::TimeSpan(header.nzhour*3600+header.nzmin*60+header.nzsec, header.nzmsec*1000);
 
 	setStartTime(reftime + Core::TimeSpan(header.b));
 

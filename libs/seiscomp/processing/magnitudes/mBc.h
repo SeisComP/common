@@ -30,11 +30,11 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mBc : public MagnitudeProcessor_mB {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mBc)
-
 	public:
 		MagnitudeProcessor_mBc();
 
+	public:
+		void setDefaults() override {}
 		Status estimateMw(const Config::Config *config,
 		                  double magnitude, double &Mw_estimate,
 		                  double &Mw_stdError) override;

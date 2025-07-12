@@ -18,62 +18,27 @@
  ***************************************************************************/
 
 
-
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/core/interfacefactory.ipp>
+
+extern "C" {
+#include "loc.h"
+}
 
 
 IMPLEMENT_INTERFACE_FACTORY(Seiscomp::TravelTimeTableInterface, SC_SYSTEM_CORE_API);
 
 
-extern "C" {
-
-#include "f2c.h"
-void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *delta, double *azi1, double *azi2);
-int elpcor_(const char *phid, real *del, real *z__, real *azi, real *ecolat, real *ecorr, int phid_len);
-
-}
-
-
 namespace Seiscomp {
 
 
-bool ellipcorr(const std::string &phase, double lat1, double lon1, double lat2, double lon2, double depth, double &corr)
-{
-	corr = 0.;
+double ellipticityCorrection(const std::string &phase,
+                             double lat1, double lon1, double depth,
+                             double lat2, double lon2) {
 	double delta, azi1, azi2;
 	Seiscomp::Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
-	real staazi=azi1, stadel=delta, zfoc = depth, colat = 90. - lat1, ecorr=0;
-
-	if (phase=="P" || phase=="Pn" || phase=="Pg" || phase=="Pb" || phase=="Pdif" || phase=="Pdiff")
-		elpcor_("P       ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="PcP")
-		elpcor_("PcP     ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="PKPab")
-		elpcor_("PKPab   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="PKPbc")
-		elpcor_("PKPbc   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="PKPdf")
-		elpcor_("PKPdf   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="PKiKP")
-		elpcor_("PKiKP   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="S" || phase=="Sn" || phase=="Sg" || phase=="Sb" || phase=="Sdif" || phase=="Sdiff")
-		elpcor_("S       ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="ScS")
-		elpcor_("ScS     ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="SKSac")
-		elpcor_("SKSac   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="SKSdf")
-		elpcor_("SKSdf   ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="ScP")
-		elpcor_("SKP     ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else if (phase=="SKP")
-		elpcor_("ScP     ", &stadel, &zfoc, &staazi, &colat, &ecorr, 8);
-	else return false;
-
-	corr = ecorr;
-	return true;
+	return sc_locsat_elpcor(phase.c_str(), delta, depth, azi1, 90. - lat1);
 }
 
 
@@ -82,8 +47,7 @@ TravelTime::TravelTime() {}
 
 TravelTime::TravelTime(const std::string &_phase,
                        double _time, double _dtdd, double _dtdh, double _dddp,
-                       double _takeoff)
-{
+                       double _takeoff) {
 	phase   = _phase;
 	time    = _time;
 	dtdd    = _dtdd;

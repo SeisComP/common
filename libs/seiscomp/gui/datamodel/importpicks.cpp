@@ -33,6 +33,7 @@ namespace Gui {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportPicksDialog::Selection ImportPicksDialog::_lastSelection = ImportPicksDialog::LatestOrigin;
+int ImportPicksDialog::_lastCBSelection = ImportPicksDialog::CBUndefined;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -62,6 +63,15 @@ ImportPicksDialog::ImportPicksDialog(QWidget * parent, Qt::WindowFlags flags)
 			_ui.radioAllOrigins->setChecked(true);
 			break;
 	}
+
+	if ( _lastCBSelection == CBUndefined ) {
+		_lastCBSelection = currentCBSelection();
+	}
+	else {
+		_ui.checkAllAgencies->setChecked(_lastCBSelection & CBImportAllPicks);
+		_ui.checkAllPhases->setChecked(_lastCBSelection & CBImportAllPhases);
+		_ui.checkPreferTargetPhases->setChecked(_lastCBSelection & CBPreferTargetPhases);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -70,17 +80,23 @@ ImportPicksDialog::ImportPicksDialog(QWidget * parent, Qt::WindowFlags flags)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportPicksDialog::Selection ImportPicksDialog::currentSelection() const {
-	if ( _ui.radioLatestOrigin->isChecked() )
+	_lastCBSelection = currentCBSelection();
+
+	if ( _ui.radioLatestOrigin->isChecked() ) {
 		return _lastSelection = LatestOrigin;
+	}
 
-	if ( _ui.radioLatestAutomaticOrigin->isChecked() )
+	if ( _ui.radioLatestAutomaticOrigin->isChecked() ) {
 		return _lastSelection = LatestAutomaticOrigin;
+	}
 
-	if ( _ui.radioMaxPhaseOrigin->isChecked() )
+	if ( _ui.radioMaxPhaseOrigin->isChecked() ) {
 		return _lastSelection = MaxPhaseOrigin;
+	}
 
-	if ( _ui.radioAllOrigins->isChecked() )
+	if ( _ui.radioAllOrigins->isChecked() ) {
 		return _lastSelection = AllOrigins;
+	}
 
 	return _lastSelection = LatestOrigin;
 }
@@ -110,6 +126,25 @@ bool ImportPicksDialog::importAllPhases() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ImportPicksDialog::preferTargetPhases() const {
 	return _ui.checkPreferTargetPhases->isChecked();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int ImportPicksDialog::currentCBSelection() const {
+	int cbSelection = CBNone;
+	if ( importAllPicks() ) {
+		cbSelection |= CBImportAllPicks;
+	}
+	if ( importAllPhases() ) {
+		cbSelection |= CBImportAllPhases;
+	}
+	if ( preferTargetPhases() ) {
+		cbSelection |= CBPreferTargetPhases;
+	}
+	return cbSelection;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -41,16 +41,16 @@ namespace  sc = Seiscomp::Core;
 
 #define CHCK_RANGE                                   \
 	double diff = _tmax - _tmin;                     \
-	if ( _tmin < sc::TimeSpan::MinTime ) {           \
-		_tmin = sc::TimeSpan::MinTime;               \
+	if ( _tmin < sc::Time::MinTime ) {           \
+		_tmin = sc::Time::MinTime;               \
 		_tmax = _tmin + diff;                        \
 	}                                                \
 	                                                 \
-	if ( _tmax > sc::TimeSpan::MaxTime ) {           \
-		_tmax = sc::TimeSpan::MaxTime;               \
+	if ( _tmax > sc::Time::MaxTime ) {           \
+		_tmax = sc::Time::MaxTime;               \
 		_tmin = _tmax - diff;                        \
-		if ( _tmin < sc::TimeSpan::MinTime ) {       \
-			_tmin = sc::TimeSpan::MinTime;           \
+		if ( _tmin < sc::Time::MinTime ) {       \
+			_tmin = sc::Time::MinTime;           \
 			diff = _tmax - _tmin;                    \
 			_pixelPerSecond = canvasWidth() / diff;  \
 		}                                            \
@@ -61,17 +61,52 @@ namespace {
 
 
 bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
-            double &ofs, double &min, double &max, bool globalOffset = false,
-            const Core::TimeWindow &ofsTw = Core::TimeWindow()) {
+            double &ofs, double &min, double &max, bool globalOffset = false) {
 	ofs = 0;
 	double tmpOfs = 0;
 	int sampleCount = 0;
 	int offsetSampleCount = 0;
 	bool isFirst = true;
-	RecordSequence::const_iterator it = seq->begin();
+	auto it = tw ? seq->lowerBound(tw.startTime()) : seq->begin();
 	min = max = 0;
 
-	for (; it != seq->end(); ++it) {
+	if ( globalOffset ) {
+		// Compute pre time window offset if required
+		for ( auto oit = seq->begin(); oit != it; ++oit ) {
+			RecordCPtr rec = (*it);
+			int ns = rec->sampleCount();
+			if ( !ns || !rec->data() ) {
+				continue;
+			}
+
+			auto dataType = rec->data()->dataType();
+			if ( dataType == Array::FLOAT ) {
+				auto arr = static_cast<const FloatArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::DOUBLE ) {
+				auto arr = static_cast<const DoubleArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::INT ) {
+				auto arr = static_cast<const IntArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else {
+				continue;
+			}
+
+			offsetSampleCount += ns;
+		}
+	}
+
+	for ( ; it != seq->end(); ++it ) {
 		RecordCPtr rec = (*it);
 		int imin = 0, imax = 0;
 		int ns = rec->sampleCount();
@@ -80,48 +115,33 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 		}
 
 		auto dataType = rec->data()->dataType();
-		if ( globalOffset ) {
-			if ( dataType == Array::FLOAT ) {
-				auto arr = static_cast<const FloatArray*>(rec->data());
-				for ( int i = 0; i < ns; ++i )
-					tmpOfs += (*arr)[i];
-			}
-			else if ( dataType == Array::DOUBLE ) {
-				auto arr = static_cast<const DoubleArray*>(rec->data());
-				for ( int i = 0; i < ns; ++i )
-					tmpOfs += (*arr)[i];
-			}
-			else {
-				continue;
-			}
-
-			offsetSampleCount += ns;
-		}
 
 		if ( tw ) { // limit search for min/max to specified time window
 			try {
-				const Core::TimeWindow &rtw = rec->timeWindow();
-
-				if ( tw.overlaps(rtw) ) {
+				if ( rec->startTime() < tw.endTime() ) {
 					double fs = rec->samplingFrequency();
-					double dt = tw.startTime() - rec->startTime();
-					if(dt>0)
+					double dt = static_cast<double>(tw.startTime() - rec->startTime());
+					if ( dt > 0 ) {
 						imin = int(dt*fs);
+					}
 
-					dt = rec->endTime() - tw.endTime();
+					dt = static_cast<double>(rec->endTime() - tw.endTime());
 					imax = ns;
-					if(dt>0)
+					if ( dt > 0 ) {
 						imax -= int(dt*fs);
+					}
 				}
-				else
-					continue;
+				else {
+					break;
+				}
 			}
 			catch ( ... ) {
-				continue;
+				break;
 			}
 		}
-		else    // no time window specified -> search over whole record
+		else { // no time window specified -> search over whole record
 			imax = ns;
+		}
 
 		sampleCount += imax - imin;
 
@@ -133,6 +153,12 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			xmin = tmpMin;
 			xmax = tmpMax;
 		}
+		else if ( dataType == Array::INT ) {
+			int tmpMin, tmpMax;
+			::minmax(ns, static_cast<const IntArray*>(rec->data())->typedData(), imin, imax, &tmpMin, &tmpMax);
+			xmin = tmpMin;
+			xmax = tmpMax;
+		}
 		else if ( dataType == Array::DOUBLE ) {
 			::minmax(ns, static_cast<const DoubleArray*>(rec->data())->typedData(), imin, imax, &xmin, &xmax);
 		}
@@ -140,59 +166,26 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			continue;
 		}
 
-		if ( !globalOffset ) {
-			if ( ofsTw ) {
-				try {
-					const Core::TimeWindow &rtw = rec->timeWindow();
-
-					if ( ofsTw.overlaps(rtw) ) {
-						double fs = rec->samplingFrequency();
-						double dt = ofsTw.startTime() - rec->startTime();
-						if(dt>0)
-							imin = int(dt*fs);
-						else
-							imin = 0;
-
-						dt = rec->endTime() - ofsTw.endTime();
-						imax = ns;
-						if ( dt > 0 )
-							imax -= int(dt*fs);
-
-						if ( dataType == Array::FLOAT ) {
-							auto arr = static_cast<const FloatArray*>(rec->data());
-							for ( int i = imin; i < imax; ++i ) {
-								tmpOfs += (*arr)[i];
-							}
-						}
-						else if ( dataType == Array::DOUBLE ) {
-							auto arr = static_cast<const DoubleArray*>(rec->data());
-							for ( int i = imin; i < imax; ++i ) {
-								tmpOfs += (*arr)[i];
-							}
-						}
-
-						offsetSampleCount = sampleCount;
-					}
-				}
-				catch ( ... ) {}
-			}
-			else {
-				if ( dataType == Array::FLOAT ) {
-					auto arr = static_cast<const FloatArray*>(rec->data());
-					for ( int i = imin; i < imax; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-				else if ( dataType == Array::DOUBLE ) {
-					auto arr = static_cast<const DoubleArray*>(rec->data());
-					for ( int i = imin; i < imax; ++i ) {
-						tmpOfs += (*arr)[i];
-					}
-				}
-
-				offsetSampleCount = sampleCount;
+		if ( dataType == Array::FLOAT ) {
+			auto arr = static_cast<const FloatArray*>(rec->data());
+			for ( int i = imin; i < imax; ++i ) {
+				tmpOfs += (*arr)[i];
 			}
 		}
+		else if ( dataType == Array::DOUBLE ) {
+			auto arr = static_cast<const DoubleArray*>(rec->data());
+			for ( int i = imin; i < imax; ++i ) {
+				tmpOfs += (*arr)[i];
+			}
+		}
+		else if ( dataType == Array::INT ) {
+			auto arr = static_cast<const IntArray*>(rec->data());
+			for ( int i = 0; i < ns; ++i ) {
+				tmpOfs += (*arr)[i];
+			}
+		}
+
+		offsetSampleCount = sampleCount;
 
 		if( isFirst ) {
 			min = xmin;
@@ -207,6 +200,42 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 			if ( xmax > max ) {
 				max = xmax;
 			}
+		}
+	}
+
+	if ( globalOffset ) {
+		// Compute pre time window offset if required
+		for ( auto oit = it; oit != seq->end(); ++oit ) {
+			RecordCPtr rec = (*it);
+			int ns = rec->sampleCount();
+			if ( !ns || !rec->data() ) {
+				continue;
+			}
+
+			auto dataType = rec->data()->dataType();
+			if ( dataType == Array::FLOAT ) {
+				auto arr = static_cast<const FloatArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::DOUBLE ) {
+				auto arr = static_cast<const DoubleArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else if ( dataType == Array::INT ) {
+				auto arr = static_cast<const IntArray*>(rec->data());
+				for ( int i = 0; i < ns; ++i ) {
+					tmpOfs += (*arr)[i];
+				}
+			}
+			else {
+				continue;
+			}
+
+			offsetSampleCount += ns;
 		}
 	}
 
@@ -241,6 +270,7 @@ void updateVerticalAxis(double spacing[2], double rangeLower, double rangeUpper,
 			break;
 	}
 }
+
 
 void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
                       double spacing[2], const QRect &rect, int tickLength,
@@ -321,7 +351,7 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 			p.drawLine(baseLine, ry, baseLine + tick, ry);
 
 			if ( k == 0 ) {
-				str.setNum(cpos);
+				str = Gui::numberToEngineering(cpos);
 				QRect labelRect = p.fontMetrics().boundingRect(str);
 				// Safety margin to not cut text
 				labelRect.adjust(0, 0, labelRect.width(), 0);
@@ -643,7 +673,10 @@ const QString& RecordMarker::renderText() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordMarker::setVisible(bool visible) {
-	if ( _visible == visible ) return;
+	if ( _visible == visible ) {
+		return;
+	}
+
 	_visible = visible;
 	update();
 }
@@ -899,24 +932,27 @@ void RecordWidget::Stream::setDirty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::Stream::free() {
-	if ( records[0] != nullptr && ownRawRecords ) delete records[0];
-	if ( records[1] != nullptr && ownFilteredRecords ) delete records[1];
-	if ( filter != nullptr ) delete filter;
+	if ( records[0] && ownRawRecords ) {
+		delete records[0];
+	}
+	if ( records[1] && ownFilteredRecords ) {
+		delete records[1];
+	}
+	if ( filter ) {
+		delete filter;
+	}
 
-	records[0] = records[1] = nullptr;
 	filter = nullptr;
 
-	traces[0].poly = nullptr;
-	traces[1].poly = nullptr;
-
-	traces[0].status = QString();
-	traces[1].status = QString();
-
-	traces[0].timingQuality = -1;
-	traces[0].timingQualityCount = 0;
-
-	traces[1].timingQuality = -1;
-	traces[1].timingQualityCount = 0;
+	for ( int i = 0; i < 2; ++i ) {
+		records[i] = nullptr;
+		traces[i].poly = nullptr;
+		traces[i].dirty = true;
+		traces[i].dirtyData = true;
+		traces[i].status = QString();
+		traces[i].timingQuality = -1;
+		traces[i].timingQualityCount = 0;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -955,7 +991,7 @@ void RecordWidget::init() {
 	_valuePrecision = SCScheme.precision.traceValues;
 	_decorator = nullptr;
 	_shadowWidget = nullptr;
-	_shadowWidgetFlags = Raw;
+	_shadowWidgetFlags = Raw | Style;
 	_markerSourceWidget = nullptr;
 	_drawMode = Single;
 	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
@@ -1028,7 +1064,9 @@ void RecordWidget::clearRecords() {
 		(*it)->free();
 	}
 
-	if ( _shadowWidget ) _shadowWidget->clearRecords();
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->clearRecords();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1102,27 +1140,35 @@ void RecordWidget::removeCustomBackgroundColor() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
-	if ( _shadowWidget ) _shadowWidget->setRecords(slot, s, false);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setRecords(slot, s, false);
+	}
 
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
+	if ( !stream ) {
+		return false;
+	}
 
 	// If the same sequence is set again, make sure that it will
 	// not be destroyed by free()
-	if ( stream->records[Stream::Raw] == s )
+	if ( stream->records[Stream::Raw] == s ) {
 		stream->ownRawRecords = false;
+	}
 
 	// Reset filter to forget all old buffered samples
 	Filter *newFilter;
-	if ( stream->filter && !(_shadowWidgetFlags & Filtered) )
+	if ( stream->filter && !(_shadowWidgetFlags & Filtered) ) {
 		newFilter = stream->filter->clone();
-	else
+	}
+	else {
 		newFilter = nullptr;
+	}
 
 	// Delete old record sequence
 	stream->free();
 
 	stream->records[Stream::Raw] = s;
+	stream->traces[Stream::Raw].dirtyData = true;
 	stream->ownRawRecords = owner;
 	stream->filter = newFilter;
 
@@ -1133,7 +1179,48 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 		stream->traces[Stream::Raw].timingQualityCount = success ? count   :  0;
 		stream->traces[Stream::Raw].timingQuality      = success ? quality : -1;
 
-		if ( stream->filtering ) createFilter(slot);
+		if ( stream->filtering ) {
+			createFilter(slot);
+		}
+
+		_drawRecords = true;
+	}
+
+	changedRecords(slot, s);
+
+	stream->axisDirty = true;
+	stream->traces[Stream::Raw].dirtyData = true;
+	stream->traces[Stream::Filtered].dirtyData = true;
+
+	update();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Filtered) ) {
+		_shadowWidget->setFilteredRecords(slot, s, owner);
+		_shadowWidget->setDirty();
+	}
+
+	Stream *stream = getStream(slot);
+	if ( !stream ) {
+		return false;
+	}
+
+	if ( stream->ownFilteredRecords && stream->records[Stream::Filtered] ) {
+		delete stream->records[Stream::Filtered];
+	}
+
+	stream->records[Stream::Filtered] = s;
+	stream->traces[Stream::Filtered].dirtyData = true;
+	stream->ownFilteredRecords = owner;
+
+	if ( s ) {
 		_drawRecords = true;
 	}
 
@@ -1145,30 +1232,7 @@ bool RecordWidget::setRecords(int slot, RecordSequence *s, bool owner) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordWidget::setFilteredRecords(int slot, RecordSequence *s, bool owner) {
-	if ( _shadowWidget ) {
-		_shadowWidget->setFilteredRecords(slot, s, owner);
-		_shadowWidget->setDirty();
-	}
 
-	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
-
-	if ( stream->ownFilteredRecords && stream->records[Stream::Filtered] )
-		delete stream->records[Stream::Filtered];
-
-	stream->records[Stream::Filtered] = s;
-	stream->ownFilteredRecords = owner;
-	if ( s ) _drawRecords = true;
-
-	changedRecords(slot, s);
-	stream->setDirty();
-
-	update();
-	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1178,17 +1242,25 @@ void RecordWidget::changedRecords(int slot, RecordSequence*) {
 
 
 
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
-	if ( _shadowWidgetFlags & Filtered ) return true;
+	if ( !stream ) {
+		return false;
+	}
 
-	if ( stream->filter )
+	if ( _shadowWidgetFlags & Filtered ) {
+		return true;
+	}
+
+	if ( stream->filter ) {
 		delete stream->filter;
+	}
 
-	if ( filter )
+	if ( filter ) {
 		stream->filter = filter->clone();
+	}
 	else {
 		// Create a default filter
 		stream->filter = new Math::Filtering::SelfFilter<double>();
@@ -1198,6 +1270,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 	if ( stream->records[Stream::Filtered] && stream->ownFilteredRecords ) {
 		delete stream->records[Stream::Filtered];
 		stream->records[Stream::Filtered] = nullptr;
+		stream->traces[Stream::Filtered].dirtyData = true;
 	}
 
 	stream->traces[Stream::Filtered].status = QString();
@@ -1218,7 +1291,7 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 		}
 	}
 
-	if ( _shadowWidget ) {
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		if ( !(_shadowWidget->_shadowWidgetFlags & Filtered) ) {
 			_shadowWidget->setRecordFilter(slot, filter);
 		}
@@ -1246,12 +1319,15 @@ bool RecordWidget::setRecordScale(int slot, double scale) {
 
 	stream->scale = scale;
 
-	if ( _shadowWidget ) _shadowWidget->setRecordScale(slot, scale);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setRecordScale(slot, scale);
+	}
 
 	update();
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 
@@ -1266,16 +1342,24 @@ bool RecordWidget::isRecordVisible(int slot) {
 
 
 
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordVisible(int slot, bool visible) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
+	if ( !stream ) {
+		return false;
+	}
 
 	stream->visible = visible;
 
-	if ( _shadowWidget ) _shadowWidget->setRecordVisible(slot, visible);
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
+		_shadowWidget->setRecordVisible(slot, visible);
+	}
 
-	if ( _drawMode != Single ) setDirty();
+	if ( _drawMode != Single ) {
+		setDirty();
+	}
+
 	update();
 	return true;
 }
@@ -1291,8 +1375,9 @@ bool RecordWidget::setRecordID(int slot, const QString &id) {
 
 	stream->id = id;
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordID(slot, id);
+	}
 
 	return true;
 }
@@ -1308,8 +1393,9 @@ bool RecordWidget::setRecordLabel(int slot, const QString &label) {
 
 	stream->axisLabel = label;
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordLabel(slot, label);
+	}
 
 	return true;
 }
@@ -1336,8 +1422,9 @@ bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordPen(slot, pen);
+	}
 
 	return true;
 }
@@ -1354,8 +1441,9 @@ bool RecordWidget::setRecordAntialiasing(int slot, bool antialiasing) {
 	stream->antialiasing = antialiasing;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordAntialiasing(slot, antialiasing);
+	}
 
 	return true;
 }
@@ -1375,8 +1463,9 @@ bool RecordWidget::setRecordOptimization(int slot, bool enable) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordOptimization(slot, enable);
+	}
 
 	return true;
 }
@@ -1396,8 +1485,9 @@ bool RecordWidget::setRecordStepFunction(int slot, bool enable) {
 	stream->setDirty();
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordStepFunction(slot, enable);
+	}
 
 	return true;
 }
@@ -1415,8 +1505,9 @@ bool RecordWidget::setRecordBackgroundColor(int slot, QColor c) {
 	stream->hasCustomBackgroundColor = true;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordBackgroundColor(slot, c);
+	}
 
 	return true;
 }
@@ -1433,8 +1524,9 @@ bool RecordWidget::removeRecordBackgroundColor(int slot) {
 	stream->hasCustomBackgroundColor = false;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->removeRecordBackgroundColor(slot);
+	}
 
 	return true;
 }
@@ -1465,8 +1557,9 @@ bool RecordWidget::setRecordStatus(int slot, bool filtered, QString status) {
 	stream->traces[filtered ? 1 : 0].status = status;
 	update();
 
-	if ( _shadowWidget )
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 		_shadowWidget->setRecordStatus(slot, filtered, status);
+	}
 
 	return true;
 }
@@ -1590,12 +1683,14 @@ RecordSequence *RecordWidget::createRecords(int slot, bool owner) {
 
 			RecordSequence *seq = s->records[Stream::Raw]->clone();
 			ns->records[Stream::Raw] = seq;
+			ns->traces[Stream::Raw].dirtyData = true;
 			ns->ownRawRecords = owner;
 
 			setRecordFilter(slot, s->filter);
 
-			if ( _shadowWidget )
+			if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
 				_shadowWidget->setRecords(slot, seq, false);
+			}
 
 			if ( s->filtering )
 				createFilter(slot);
@@ -1629,7 +1724,9 @@ int RecordWidget::setCurrentRecords(int slot) {
 
 	update();
 
-	if ( _shadowWidget ) _shadowWidget->setCurrentRecords(slot);
+	if ( _shadowWidget && (_shadowWidget->_shadowWidgetFlags & Raw) ) {
+		_shadowWidget->setCurrentRecords(slot);
+	}
 
 	if ( _drawMode == Single ) {
 		emit traceUpdated(this);
@@ -1853,49 +1950,58 @@ bool RecordWidget::isClippingEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int flags) {
-	if ( _shadowWidget ) _shadowWidget->_shadowWidgetFlags = 0;
+	if ( _shadowWidget ) {
+		_shadowWidget->_shadowWidgetFlags = 0;
+	}
 
 	_shadowWidget = shadow;
-	if ( _shadowWidget == nullptr ) return;
+
+	if ( !_shadowWidget ) {
+		return;
+	}
 
 	//_shadowWidget->clearRecords();
-	if ( copyMarker )
+	if ( copyMarker ) {
 		_shadowWidget->clearMarker();
+	}
 
-	_shadowWidget->setSlotCount(slotCount());
 	_shadowWidget->_shadowWidgetFlags = flags;
 
 	if ( flags & Raw ) {
+		_shadowWidget->setSlotCount(slotCount());
+
 		for ( int i = 0; i < slotCount(); ++i ) {
 			_shadowWidget->setRecords(i, _streams[i]->records[Stream::Raw], false);
+			if ( flags & Filtered ) {
+				_shadowWidget->setFilteredRecords(i, _streams[i]->records[Stream::Filtered], false);
+			}
 		}
-	}
 
-	if ( flags & Filtered ) {
 		for ( int i = 0; i < slotCount(); ++i ) {
-			_shadowWidget->setFilteredRecords(i, _streams[i]->records[Stream::Filtered], false);
+			_shadowWidget->setRecordScale(i, _streams[i]->scale);
+			_shadowWidget->setRecordID(i, _streams[i]->id);
+			_shadowWidget->setRecordLabel(i, _streams[i]->axisLabel);
+			_shadowWidget->setRecordStatus(i, false, _streams[i]->traces[0].status);
+			_shadowWidget->setRecordStatus(i, true, _streams[i]->traces[1].status);
+
+			if ( flags & Style ) {
+				_shadowWidget->setRecordVisible(i, _streams[i]->visible);
+				_shadowWidget->setRecordPen(i, _streams[i]->pen);
+				_shadowWidget->setRecordAntialiasing(i, _streams[i]->antialiasing);
+				if ( _streams[i]->hasCustomBackgroundColor ) {
+					_shadowWidget->setRecordBackgroundColor(i, _streams[i]->customBackgroundColor);
+				}
+				else {
+					_shadowWidget->removeRecordBackgroundColor(i);
+				}
+			}
 		}
-	}
-
-	for ( int i = 0; i < slotCount(); ++i ) {
-		_shadowWidget->setRecordScale(i, _streams[i]->scale);
-		_shadowWidget->setRecordPen(i, _streams[i]->pen);
-		_shadowWidget->setRecordAntialiasing(i, _streams[i]->antialiasing);
-		_shadowWidget->setRecordID(i, _streams[i]->id);
-		_shadowWidget->setRecordLabel(i, _streams[i]->axisLabel);
-		_shadowWidget->setRecordVisible(i, _streams[i]->visible);
-		_shadowWidget->setRecordStatus(i, false, _streams[i]->traces[0].status);
-		_shadowWidget->setRecordStatus(i, true, _streams[i]->traces[1].status);
-
-		if ( _streams[i]->hasCustomBackgroundColor )
-			_shadowWidget->setRecordBackgroundColor(i, _streams[i]->customBackgroundColor);
-		else
-			_shadowWidget->removeRecordBackgroundColor(i);
 	}
 
 	if ( copyMarker ) {
-		foreach ( RecordMarker *m, _marker )
+		for ( auto *m : qAsConst(_marker) ) {
 			_shadowWidget->addMarker(m->copy());
+		}
 	}
 
 	_shadowWidget->_hoveredMarker = nullptr;
@@ -1965,16 +2071,23 @@ RecordSequence *RecordWidget::filteredRecords(int slot) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence* RecordWidget::takeRecords(int slot) {
-	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
+	if ( slot < 0 || slot >= _streams.size() ) {
+		return nullptr;
+	}
 
 	RecordSequence *seq = _streams[slot]->records[Stream::Raw];
 	_streams[slot]->records[Stream::Raw] = nullptr;
+	_streams[slot]->traces[Stream::Raw].dirtyData = true;
 	delete _streams[slot];
 	_streams.remove(slot);
 
-	if ( _drawMode == InRows ) emit layoutRequest();
+	if ( _drawMode == InRows ) {
+		emit layoutRequest();
+	}
 
-	if ( _shadowWidget ) _shadowWidget->takeRecords(slot);
+	if ( _shadowWidget ) {
+		_shadowWidget->takeRecords(slot);
+	}
 
 	return seq;
 }
@@ -2094,7 +2207,7 @@ void RecordWidget::setAmplAutoScaleEnabled(bool enabled) {
 	_useFixedAmplitudeRange = !enabled;
 	setDirty();
 	update();
-	
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2169,27 +2282,25 @@ const Seiscomp::Core::TimeWindow & RecordWidget::normalizationWindow() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::prepareRecords(Stream *s) {
-	Trace *trace = &s->traces[Stream::Raw];
-	if ( s->records[Stream::Raw] && (!s->filtering || _showAllRecords) ) {
-		trace->visible = minmax(s->records[Stream::Raw], _normalizationWindow,
-		                        trace->dOffset, trace->dyMin, trace->dyMax,
-		                        _useGlobalOffset, _offsetWindow);
-		trace->absMax = std::max(std::abs(trace->dOffset-trace->dyMin),
-		                         std::abs(trace->dOffset-trace->dyMax));
+	for ( int i = 0; i < 2; ++i ) {
+		auto &trace = s->traces[i];
+		if ( s->records[i] && ((s->filtering == static_cast<bool>(i)) || _showAllRecords) ) {
+			if ( (!_useGlobalOffset && _normalizationWindow) || s->traces[i].dirtyData ) {
+				trace.visible = minmax(s->records[i], _normalizationWindow,
+				                       trace.dOffset, trace.dyMin, trace.dyMax,
+				                       _useGlobalOffset);
+				trace.absMax = std::max(std::abs(trace.dOffset - trace.dyMin),
+				                        std::abs(trace.dOffset - trace.dyMax));
+			}
+			else {
+				trace.visible = true;
+			}
+			trace.dirtyData = false;
+		}
+		else {
+			trace.visible = false;
+		}
 	}
-	else
-		trace->visible = false;
-
-	trace = &s->traces[Stream::Filtered];
-	if ( s->records[Stream::Filtered] && (s->filtering || _showAllRecords) ) {
-		trace->visible = minmax(s->records[Stream::Filtered], _normalizationWindow,
-		                        trace->dOffset, trace->dyMin, trace->dyMax,
-		                        _useGlobalOffset, _offsetWindow);
-		trace->absMax = std::max(std::abs(trace->dOffset-trace->dyMin),
-		                         std::abs(trace->dOffset-trace->dyMax));
-	}
-	else
-		trace->visible = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2450,16 +2561,32 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 		case Stacked:
 		{
 			Stream *stream = nullptr;
+			double axisLower{-1}, axisUpper{1};
 
-			if ( (_currentSlot >= _streams.size() || _currentSlot < 0) || !_streams[_currentSlot]->visible )
-				stream = nullptr;
-			else
-				stream = _streams[_currentSlot];
+			if ( _drawMode == Single ) {
+				if ( _currentSlot >= 0 && _currentSlot < _streams.size() && _streams[_currentSlot]->visible ) {
+					stream = _streams[_currentSlot];
+				}
+			}
+			else {
+				for ( auto *s : qAsConst(_streams) ) {
+					int frontIndex = s->filtering?Stream::Filtered:Stream::Raw;
+					if ( s->visible && s->traces[frontIndex].visible ) {
+						stream = s;
+						break;
+					}
+				}
+			}
 
 			if ( stream ) {
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				double axisLower = stream->traces[frontIndex].fyMin,
-				       axisUpper = stream->traces[frontIndex].fyMax;
+				axisLower = stream->traces[frontIndex].fyMin;
+				axisUpper = stream->traces[frontIndex].fyMax;
+
+				if ( _drawMode == SameOffset ) {
+					axisLower -= stream->traces[frontIndex].yOffset;
+					axisUpper -= stream->traces[frontIndex].yOffset;
+				}
 
 				if ( _tracePaintOffset ) {
 					if ( _tracePaintOffset > 0 ) {
@@ -2485,23 +2612,27 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 					}
 				}
 
-				if ( _axisPosition == Right )
+				if ( _axisPosition == Right ) {
 					rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-				else
+				}
+				else {
 					rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+				}
 
-				double axisRange = axisUpper - axisLower;
-				if ( stream->height > 1 && axisRange > 0 ) {
+				// double axisRange = axisUpper - axisLower;
+				if ( stream->height > 1 ) {
 					if ( stream->axisDirty ) {
 						updateVerticalAxis(stream->axisSpacing, axisLower, axisUpper,
-						                   stream->height-1, fontHeight*2);
+						                   stream->height - 1, fontHeight * 2);
 						stream->axisDirty = false;
 					}
 
-					if ( _axisPosition == Right )
+					if ( _axisPosition == Right ) {
 						rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-					else
+					}
+					else {
 						rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+					}
 
 					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
 					                 rect, tickLength, stream->axisLabel,
@@ -2623,10 +2754,10 @@ void RecordWidget::showScaledValues(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setDirty() {
 	_drawRecords = true;
-	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-		Stream *s = *it;
-		if ( s == nullptr ) continue;
-		s->setDirty();
+	for ( Stream *s : qAsConst(_streams) ) {
+		if ( s ) {
+			s->setDirty();
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2799,7 +2930,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->height = streamHeight;
 
 				if ( stream->hasCustomBackgroundColor )
-					painter.fillRect(0,stream->posY,_canvasRect.width(),stream->height, blend(bg, stream->customBackgroundColor));
+					painter.fillRect(0, stream->posY, _canvasRect.width(), stream->height, blend(bg, stream->customBackgroundColor));
 
 				if ( (stream->records[Stream::Filtered] && (stream->filtering || _showAllRecords) && stream->traces[Stream::Filtered].dirty) ||
 					(stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
@@ -2817,13 +2948,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		case Stacked:
 		{
 			bool isDirty = false;
-			bool isFirst[2] = {true,true};
+			bool isFirst[2] = {true, true};
 			double minAmpl[2] = {0,0}, maxAmpl[2] = {0,0};
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-				Stream *stream = *it;
+			for ( auto &stream : _streams ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -2833,9 +2963,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->posY = 0;
 				stream->height = h;
 
-				if ( stream->hasCustomBackgroundColor &&
-					 !customBackgroundColor.isValid() )
+				if ( stream->hasCustomBackgroundColor && !customBackgroundColor.isValid() ) {
 					customBackgroundColor = stream->customBackgroundColor;
+				}
 
 				if ( (stream->records[Stream::Filtered] && (stream->filtering || _showAllRecords) && stream->traces[Stream::Filtered].dirty) ||
 					(stream->records[Stream::Raw] && (!stream->filtering || _showAllRecords) && stream->traces[Stream::Raw].dirty) ) {
@@ -2858,16 +2988,20 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( customBackgroundColor.isValid() )
-				painter.fillRect(_canvasRect, blend(bg, customBackgroundColor));
+			if ( customBackgroundColor.isValid() ) {
+				painter.fillRect(_canvasRect.translated(-_canvasRect.topLeft()), blend(bg, customBackgroundColor));
+			}
 
-			if ( !isDirty ) break;
+			if ( !isDirty ) {
+				break;
+			}
 
 			// Second pass draws all records
 			slot = 0;
-			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:nullptr;
-				if ( stream == nullptr ) continue;
+			for ( auto &stream : _streams ) {
+				if ( !stream->visible ) {
+					continue;
+				}
 
 				stream->traces[0].dyMin = minAmpl[0];
 				stream->traces[0].dyMax = maxAmpl[0];
@@ -2876,7 +3010,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				stream->traces[1].dyMax = maxAmpl[1];
 
 				drawRecords(stream, slot);
+
 				emitUpdated = true;
+				++slot;
 			}
 			break;
 		}
@@ -2927,16 +3063,21 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				}
 			}
 
-			if ( customBackgroundColor.isValid() )
-				painter.fillRect(_canvasRect, blend(bg, customBackgroundColor));
+			if ( customBackgroundColor.isValid() ) {
+				painter.fillRect(_canvasRect.translated(-_canvasRect.topLeft()), blend(bg, customBackgroundColor));
+			}
 
-			if ( !isDirty ) break;
+			if ( !isDirty ) {
+				break;
+			}
 
 			// Second pass draws all records
 			slot = 0;
 			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
-				Stream *stream = (*it)->visible?*it:nullptr;
-				if ( stream == nullptr ) continue;
+				Stream *stream = (*it)->visible ? *it : nullptr;
+				if ( !stream ) {
+					continue;
+				}
 
 				for ( int i = 0; i < 2; ++i ) {
 					int j = i ^ (stream->filtering?1:0);
@@ -3379,13 +3520,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					if ( _drawOffset ) {
 						QString str;
 						if ( _showScaledValues )
-							str = tr("amax: %1 %2")
-							      .arg(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
-							      .arg(stream->axisLabel);
+							str = tr("amax: %1%2")
+							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
-							str = tr("amax: %1 %2")
-							      .arg(trace.absMax, 0, 'f', _valuePrecision)
-							      .arg(stream->axisLabel);
+							str = tr("amax: %1%2")
+							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							           stream->axisLabel);
 
 						int rh = 2 * painter.fontMetrics().ascent() + 4;
 						int y = stream->height - rh;
@@ -3395,13 +3536,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( stream->height >= y+rh ) {
 							if ( _showScaledValues )
-								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale))
-								      .arg(stream->axisLabel);
+								str = tr("mean: %1%2")
+								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								           stream->axisLabel);
 							else
-								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset, 0, 'f', _valuePrecision)
-								      .arg(stream->axisLabel);
+								str = tr("mean: %1%2")
+								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								           stream->axisLabel);
 
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
@@ -3467,13 +3608,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						QString str;
 
 						if ( _showScaledValues )
-							str = tr("amax: %1 %2")
-							      .arg(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
-							      .arg(stream->axisLabel);
+							str = tr("amax: %1%2")
+							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
-							str = tr("amax: %1 %2")
-							      .arg(trace.absMax, 0, 'f', _valuePrecision)
-							      .arg(stream->axisLabel);
+							str = tr("amax: %1%2")
+							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							           stream->axisLabel);
 
 						int rh = 2*painter.fontMetrics().ascent()+4;
 						int y = stream->posY + stream->height - rh;
@@ -3483,13 +3624,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( stream->posY+stream->height >= y+rh ) {
 							if ( _showScaledValues )
-								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale))
-								      .arg(stream->axisLabel);
+								str = tr("mean: %1%2")
+								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								           stream->axisLabel);
 							else
-								str = tr("mean: %1 %2")
-								      .arg(trace.dOffset, 0, 'f', _valuePrecision)
-								      .arg(stream->axisLabel);
+								str = tr("mean: %1%2")
+								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								           stream->axisLabel);
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
 					}
@@ -3569,13 +3710,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					QString str;
 
 					if ( _showScaledValues )
-						str = tr("amax: %1 %2")
-						      .arg(absMax * (stream->scale > 0 ? stream->scale : -stream->scale))
-						      .arg(stream->axisLabel);
+						str = tr("amax: %1%2")
+						      .arg(numberToEngineering(absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+						           stream->axisLabel);
 					else
-						str = tr("amax: %1 %2")
-						      .arg(absMax, 0, 'f', _valuePrecision)
-						      .arg(stream->axisLabel);
+						str = tr("amax: %1%2")
+						      .arg(numberToEngineering(absMax, _valuePrecision),
+						           stream->axisLabel);
 
 					int rh = 2*painter.fontMetrics().ascent()+4;
 					int y = stream->height - rh;
@@ -3585,13 +3726,13 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( stream->height >= y+rh ) {
 						if ( _showScaledValues )
-							str = tr("mean: %1 %2")
-							      .arg(offset * (stream->scale > 0 ? stream->scale : -stream->scale))
-							      .arg(stream->axisLabel);
+							str = tr("mean: %1%2")
+							      .arg(numberToEngineering(offset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							           stream->axisLabel);
 						else
-							str = tr("mean: %1 %2")
-							      .arg(offset, 0, 'f', _valuePrecision)
-							      .arg(stream->axisLabel);
+							str = tr("mean: %1%2")
+							      .arg(numberToEngineering(offset, _valuePrecision),
+							           stream->axisLabel);
 						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 					}
 				}
@@ -3651,7 +3792,7 @@ void RecordWidget::drawActiveCursor(QPainter &painter, int x, int y) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mousePressEvent(QMouseEvent *event) {
-	if ( event->button() == Qt::MidButton ) {
+	if ( event->button() == Qt::MiddleButton ) {
 		emit clickedOnTime(unmapTime(event->x()));
 		return;
 	}
@@ -3693,12 +3834,14 @@ void RecordWidget::mousePressEvent(QMouseEvent *event) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mouseReleaseEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::LeftButton ) {
-		if ( _startDragPos.valid() ) {
-			if ( _startDragPos < _cursorPos )
-				emit selectedTimeRange(_startDragPos, _cursorPos);
-			else
-				emit selectedTimeRange(_cursorPos, _startDragPos);
-			_startDragPos = Core::Time();
+		if ( _startDragPos ) {
+			if ( *_startDragPos < _cursorPos ) {
+				emit selectedTimeRange(*_startDragPos, _cursorPos);
+			}
+			else {
+				emit selectedTimeRange(_cursorPos, *_startDragPos);
+			}
+			_startDragPos = Core::None;
 		}
 	}
 
@@ -3768,15 +3911,18 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 			_currentCursorYPos = event->pos().y();
 			setCursorPos(event->pos());
 
-			if ( _startDragPos.valid() ) {
-				if ( _startDragPos < _cursorPos )
-					emit selectedTimeRangeChanged(_startDragPos, _cursorPos);
-				else
-					emit selectedTimeRangeChanged(_cursorPos, _startDragPos);
+			if ( _startDragPos ) {
+				if ( *_startDragPos < _cursorPos ) {
+					emit selectedTimeRangeChanged(*_startDragPos, _cursorPos);
+				}
+				else {
+					emit selectedTimeRangeChanged(_cursorPos, *_startDragPos);
+				}
 			}
 		}
-		else
+		else {
 			event->ignore();
+		}
 	}
 
 	/*
@@ -3997,9 +4143,9 @@ bool RecordWidget::isRecordFilteringEnabled(int slot) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setGridSpacing(double large, double _small, double ofs) {
+void RecordWidget::setGridSpacing(double large, double small, double ofs) {
 	_gridHSpacing[0] = large;
-	_gridHSpacing[1] = _small;
+	_gridHSpacing[1] = small;
 	_gridHOffset = ofs;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4008,9 +4154,9 @@ void RecordWidget::setGridSpacing(double large, double _small, double ofs) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setGridVSpacing(double large, double _small, double ofs) {
+void RecordWidget::setGridVSpacing(double large, double small, double ofs) {
 	_gridVSpacing[0] = large;
-	_gridVSpacing[1] = _small;
+	_gridVSpacing[1] = small;
 	_gridVOffset = ofs;
 	update();
 }
@@ -4063,10 +4209,18 @@ void RecordWidget::setAutoMaxScale(bool e) {
 	if ( _autoMaxScale == e ) return;
 
 	_autoMaxScale = e;
-	if ( _autoMaxScale )
+	if ( _autoMaxScale ) {
 		setNormalizationWindow(visibleTimeWindow());
-	else
+	}
+	else {
+		for ( Stream *s : qAsConst(_streams) ) {
+			if ( s ) {
+				s->traces[Stream::Raw].dirtyData = true;
+				s->traces[Stream::Filtered].dirtyData = true;
+			}
+		}
 		setNormalizationWindow(Core::TimeWindow());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4076,17 +4230,6 @@ void RecordWidget::setAutoMaxScale(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_normalizationWindow = tw;
-	setDirty();
-	update();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setOffsetWindow(const Seiscomp::Core::TimeWindow &tw) {
-	_offsetWindow = tw;
 	setDirty();
 	update();
 }
@@ -4113,10 +4256,16 @@ bool RecordWidget::createFilter() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::createFilter(int slot) {
 	Stream* s = getStream(slot);
-	if ( s == nullptr ) return false;
-	if ( _shadowWidgetFlags & Filtered ) return true;
 
-	if (!s->filter) {
+	if ( !s ) {
+		return false;
+	}
+
+	if ( _shadowWidgetFlags & Filtered ) {
+		return true;
+	}
+
+	if ( !s->filter ) {
 		setRecordFilter(slot, nullptr);
 		return true;
 	}
@@ -4175,6 +4324,8 @@ void RecordWidget::setFilter(Filter *filter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::filterRecords(Stream *s) {
 	s->records[Stream::Filtered] = s->records[Stream::Raw]->clone();
+	s->traces[Stream::Filtered].dirtyData = true;
+
 	RecordPtr lastRec;
 	for ( RecordSequence::const_iterator it = s->records[Stream::Raw]->begin();
 	      it != s->records[Stream::Raw]->end(); ++it) {
@@ -4339,10 +4490,10 @@ void RecordWidget::ensureVisibility(const Core::Time &time,
 	double offset = 0;
 
 	if ( right > rightTime() ) {
-		offset = right - rightTime();
+		offset = static_cast<double>(right - rightTime());
 	}
 	else if ( left < leftTime() ) {
-		offset = left - leftTime();
+		offset = static_cast<double>(left - leftTime());
 	}
 
 	if ( offset != 0 ) {
@@ -4358,16 +4509,20 @@ void RecordWidget::ensureVisibility(const Core::Time &time,
 void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	bool newlyCreated = false;
 
-	if ( (slot < 0) || (slot >= _streams.size()) ) return;
+	if ( (slot < 0) || (slot >= _streams.size()) ) {
+		return;
+	}
 
 	Stream *s = _streams[slot];
 
 	s->axisDirty = true;
 	s->traces[Stream::Raw].dirty = true;
+	s->traces[Stream::Raw].dirtyData = true;
 
 	if ( rec->timingQuality() >= 0 ) {
-		if ( s->traces[Stream::Raw].timingQualityCount == 0 )
+		if ( s->traces[Stream::Raw].timingQualityCount == 0 ) {
 			s->traces[Stream::Raw].timingQuality = rec->timingQuality();
+		}
 		else
 			s->traces[Stream::Raw].timingQuality =
 				(s->traces[Stream::Raw].timingQuality * s->traces[Stream::Raw].timingQualityCount +
@@ -4378,12 +4533,12 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 
 	_drawRecords = true;
 
-	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter != nullptr) ) {
+	if ( !(_shadowWidgetFlags & Filtered) && (s->filtering || s->filter) ) {
 		newlyCreated = createFilter(slot);
 
-		if ( _shadowWidget  ) {
+		if ( _shadowWidget ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
+			      !_shadowWidget->_streams[slot]->records[Stream::Filtered]) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
@@ -4392,17 +4547,20 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 	else {
 		if ( _shadowWidget  ) {
 			if ( (_shadowWidget->_shadowWidgetFlags & Filtered) &&
-			      _shadowWidget->_streams[slot]->records[Stream::Filtered]== nullptr) {
+			      !_shadowWidget->_streams[slot]->records[Stream::Filtered]) {
 				_shadowWidget->setFilteredRecords(slot, s->records[Stream::Filtered], false);
 			}
 			_shadowWidget->fed(slot, rec);
 		}
 
 		s->traces[Stream::Filtered].dirty = true;
+		s->traces[Stream::Filtered].dirtyData = true;
 		return;
 	}
 
-	if (!s->records[Stream::Filtered] || !s->filter) return;
+	if ( !s->records[Stream::Filtered] || !s->filter ) {
+		return;
+	}
 
 	if ( !newlyCreated ) {
 		try {
@@ -4413,6 +4571,7 @@ void RecordWidget::fed(int slot, const Seiscomp::Record *rec) {
 			if ( frec ) {
 				s->records[Stream::Filtered]->feed(frec.get());
 				s->traces[Stream::Filtered].dirty = true;
+				s->traces[Stream::Filtered].dirtyData = true;
 			}
 		}
 		catch ( std::exception &e ) {
@@ -4433,8 +4592,9 @@ bool RecordWidget::addMarker(RecordMarker* marker) {
 	if ( marker == nullptr ) return false;
 
 	if ( marker->parent() != this ) {
-		if ( marker->parent() )
+		if ( marker->parent() ) {
 			marker->parent()->takeMarker(marker);
+		}
 	}
 
 	marker->setParent(this);
@@ -4677,8 +4837,9 @@ RecordMarker* RecordWidget::markerAt(int x, int y, bool movableOnly, int maxDist
 	RecordMarker *m = nullptr;
 	for ( int i = markerCount()-1; i >= 0; --i ) {
 		RecordMarker *cm = marker(i);
-		if ( movableOnly && !cm->isMovable() )
+		if ( !cm->isVisible() || (movableOnly && !cm->isMovable()) ) {
 			continue;
+		}
 
 		int startY = 0, endY = h;
 
@@ -4691,7 +4852,9 @@ RecordMarker* RecordWidget::markerAt(int x, int y, bool movableOnly, int maxDist
 				break;
 		}
 
-		if ( y < startY || y > endY ) continue;
+		if ( y < startY || y > endY ) {
+			continue;
+		}
 
 		int x0 = mapTime(cm->correctedTime());
 		int dist = abs(x-x0);
@@ -4715,6 +4878,9 @@ RecordMarker* RecordWidget::lastMarker(const Seiscomp::Core::Time& t) {
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
 		double delta = (double)(t - marker(i)->correctedTime());
 		if ( delta > 0 && (delta < minT || minT < 0) ) {
 			minT = delta;
@@ -4739,6 +4905,9 @@ RecordMarker* RecordWidget::nextMarker(const Seiscomp::Core::Time& t) {
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
 		double delta = (double)(marker(i)->correctedTime() - t);
 		if ( delta > 0 && (delta < minT || minT < 0) ) {
 			minT = delta;
@@ -4757,12 +4926,15 @@ RecordMarker* RecordWidget::nextMarker(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
+RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time &t,
                                           int maxDist) {
 	int minI = -1;
 	double minT = -1;
 	for ( int i = 0; i < markerCount(); ++i ) {
-		double delta = fabs(marker(i)->correctedTime() - t);
+		if ( !marker(i)->isVisible() ) {
+			continue;
+		}
+		double delta = fabs((marker(i)->correctedTime() - t).length());
 		if ( delta < minT || minT < 0 ) {
 			minT = delta;
 			minI = i;
@@ -4786,8 +4958,11 @@ RecordMarker* RecordWidget::nearestMarker(const Seiscomp::Core::Time& t,
 bool RecordWidget::hasMovableMarkers() const {
 	if ( _markerSourceWidget ) return _markerSourceWidget->hasMovableMarkers();
 
-	foreach(RecordMarker* m, _marker)
-		if ( m->isMovable() && m->isEnabled() ) return true;
+	foreach(RecordMarker* m, _marker) {
+		if ( m->isMovable() && m->isEnabled() ) {
+			return true;
+		}
+	}
 
 	return false;
 }

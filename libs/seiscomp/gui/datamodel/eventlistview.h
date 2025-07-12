@@ -18,15 +18,17 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_EVENTLISTVIEW_H
+#define SEISCOMP_GUI_EVENTLISTVIEW_H
 
-#ifndef SEISCOMP_GUI_ORIGINLISTVIEW_H
-#define SEISCOMP_GUI_ORIGINLISTVIEW_H
 
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/qt.h>
+#include <seiscomp/datamodel/databasequery.h>
+#include <seiscomp/datamodel/station.h>
+#include <seiscomp/datamodel/eventparameters_package.h>
 #ifndef Q_MOC_RUN
-#include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/geo/boundingbox.h>
 #endif
@@ -38,6 +40,7 @@
 class QTreeWidget;
 class QTreeWidgetItem;
 
+
 namespace Ui {
 	class EventListView;
 	class EventListViewRegionFilterDialog;
@@ -45,21 +48,6 @@ namespace Ui {
 
 
 namespace Seiscomp {
-
-namespace DataModel {
-
-
-DEFINE_SMARTPOINTER(Event);
-DEFINE_SMARTPOINTER(Origin);
-DEFINE_SMARTPOINTER(FocalMechanism);
-DEFINE_SMARTPOINTER(Pick);
-DEFINE_SMARTPOINTER(Station);
-DEFINE_SMARTPOINTER(Amplitude);
-class OriginReference;
-class DatabaseQuery;
-class Notifier;
-
-}
 
 namespace Client {
 
@@ -87,6 +75,7 @@ class EventFilterWidget;
 
 
 class CommandMessage;
+class EventListViewPrivate;
 
 
 class SC_GUI_API EventListView : public QWidget {
@@ -107,10 +96,19 @@ class SC_GUI_API EventListView : public QWidget {
 			OPT(float)               minLongitude, maxLongitude;
 			OPT(float)               minDepth, maxDepth;
 			OPT(float)               minMagnitude, maxMagnitude;
+			OPT(int)                 minPhaseCount, maxPhaseCount;
 			std::string              eventID;
 
 			bool isNull() const;
 		};
+
+		struct Region {
+			QString                name;
+			Geo::GeoBoundingBox    bbox;
+			const Geo::GeoFeature *poly{nullptr};
+		};
+
+		using FilterRegions = QList<Region>;
 
 
 	// ------------------------------------------------------------------
@@ -142,8 +140,8 @@ class SC_GUI_API EventListView : public QWidget {
 
 		QList<Seiscomp::DataModel::Event*> selectedEvents();
 
-		QTreeWidget *eventTree() { return _treeWidget; }
-		Seiscomp::DataModel::Event *eventFromTreeItem(QTreeWidgetItem *item) const;
+		QTreeWidget *eventTree();
+		static Seiscomp::DataModel::Event *eventFromTreeItem(QTreeWidgetItem *item);
 
 		int eventCount() const;
 
@@ -236,6 +234,8 @@ class SC_GUI_API EventListView : public QWidget {
 		void onShowOtherEvents(int checked);
 		void onShowForeignEvents(int checked);
 		void onHideOutsideRegion(int checked);
+		void onHideFinalRejectedEvents(int checked);
+		void onHideNewEvents(int checked);
 		void onFilterRegionModeChanged(int mode);
 
 		void updateAgencyState();
@@ -263,6 +263,8 @@ class SC_GUI_API EventListView : public QWidget {
 		                     const QString &script,
 		                     int error);
 
+		//! \since 17.0.0
+		void updateOTimeAgo();
 
 	protected:
 		bool eventFilter(QObject *obj, QEvent *event);
@@ -291,72 +293,11 @@ class SC_GUI_API EventListView : public QWidget {
 
 		void loadItem(QTreeWidgetItem*);
 
-
-	public:
-		struct ProcessColumn {
-			int     pos;
-			QString script;
-		};
-
-		struct ItemConfig {
-			ItemConfig() : createFMLink(false) {}
-
-			QColor                    disabledColor;
-
-			bool                      createFMLink;
-			QStringList               header;
-			QVector<int>              columnMap;
-			int                       customColumn;
-			std::string               originCommentID;
-			std::string               eventCommentID;
-			QString                   customDefaultText;
-			QMap<std::string, QColor> customColorMap;
-			QVector<ProcessColumn>    originScriptColumns;
-			QVector<ProcessColumn>    eventScriptColumns;
-			QSet<int>                 eventScriptPositions;
-			QHash<QString, int>       originScriptColumnMap;
-			QHash<QString, int>       eventScriptColumnMap;
-			QSet<int>                 hiddenEventTypes;
-			QSet<QString>             preferredAgencies;
-		};
-
-		struct Region {
-			QString                name;
-			Geo::GeoBoundingBox    bbox;
-			const Geo::GeoFeature *poly{nullptr};
-		};
-
-		typedef QList<Region> FilterRegions;
+		//! \since 17.0.0
+		void updateOTimeAgoTimer();
 
 	private:
-		::Ui::EventListView                *_ui;
-		Private::EventFilterWidget         *_filterWidget;
-		ItemConfig                          _itemConfig;
-		FilterRegions                       _filterRegions;
-		QTreeWidget                        *_treeWidget;
-		QTreeWidgetItem                    *_unassociatedEventItem;
-		QWidget                            *_commandWaitDialog;
-		QMovie                             *_busyIndicator;
-		QLabel                             *_busyIndicatorLabel;
-		//StationMap                        _associatedStations;
-		Seiscomp::DataModel::DatabaseQuery *_reader;
-		Seiscomp::Core::TimeSpan            _timeAgo;
-		Filter                              _filter;
-		bool                                _autoSelect;
-		bool                                _withOrigins;
-		bool                                _withFocalMechanisms;
-		bool                                _updateLocalEPInstance;
-		//bool                              _withComments;
-		bool                                _blockSelection;
-		bool                                _blockRemovingOfExpiredEvents;
-		bool                                _blockCountSignal;
-		bool                                _hideOtherEvents;
-		bool                                _hideForeignEvents;
-		bool                                _hideOutsideRegion;
-		bool                                _checkEventAgency;
-		bool                                _showOnlyLatestPerAgency;
-		int                                 _regionIndex;
-		mutable int                         _visibleEventCount;
+		EventListViewPrivate *_d_ptr;
 };
 
 
@@ -383,7 +324,7 @@ class SC_GUI_API EventListViewRegionFilterDialog : public QDialog {
 	//  Slots
 	// ------------------------------------------------------------------
 	private slots:
-		void regionSelectionChanged(const QString &);
+		void regionSelectionChanged(int idx);
 		void showError(const QString &);
 
 

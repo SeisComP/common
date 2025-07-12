@@ -441,10 +441,9 @@ bool TabValues::interpolate(double &interpolatedValue,
 		jleft = bracket(z, nz, yPos);
 
 		if ( jleft < 0 ) { // depth < min. table depth
-			if ( yPos == z[0] ) // Check if exactly equal
-				jleft = 0;
-			else
+			if ( yPos != z[0] ) { // Check if exactly equal
 				--idepth;
+			}
 			itop    = 0;
 			ibottom	= nz_req-1;
 		}
@@ -464,10 +463,9 @@ bool TabValues::interpolate(double &interpolatedValue,
 	ileft = bracket(x, nx, xPos);
 
 	if ( ileft < 0 ) { // dist < minimum table dist
-		if ( xPos == x[0] ) /* Check if exactly equal */
-			ileft = 0;
-		else
+		if ( xPos != x[0] ) { // Check if exactly equal
 			--idist;
+		}
 		ilow  = 0;
 		ihigh = nx_req-1;
 	}
@@ -488,15 +486,15 @@ bool TabValues::interpolate(double &interpolatedValue,
 		// in the 2-D (x-z) array.
 
 		ihigh = min(ileft + (nx_req/2), nx-1);
-		if ( ihigh == nx-1 )
-			ilow = nx-nx_req;
 		ilow = max(ihigh-nx_req+1, 0);
-		if ( ilow == 0 )
+		if ( ilow == 0 ) {
 			ihigh = nx_req-1;
+		}
 	}
 
-	if ( (idist != 0 || idepth != 0 || inHole) && !extrapolation )
+	if ( ((idist != 0 )|| (idepth != 0) || inHole) && !extrapolation ) {
 		goto done;
+	}
 
 	// If requested distance sample is within table bounds, then we
 	// need to find as many valid samples as possible.  If none exists
@@ -827,26 +825,36 @@ bool TabValues::interpolate(double &interpolatedValue,
 done:
 	// All done here! Set interpolation error flags, as necessary.
 	if ( interp_err ) {
-		if ( inHole )
+		if ( inHole ) {
 			*interp_err = 11;
-		else if ( idist < 0 && idepth == 0 )
+		}
+		else if ( (idist < 0) && (idepth == 0) ) {
 			*interp_err = 12;
-		else if ( idist > 0 && idepth == 0 )
+		}
+		else if ( (idist > 0) && (idepth == 0) ) {
 			*interp_err = 13;
-		else if ( idist == 0 && idepth < 0 )
+		}
+		else if ( (idist == 0) && (idepth < 0) ) {
 			*interp_err = 14;
-		else if ( idist == 0 && idepth > 0 )
+		}
+		else if ( (idist == 0) && (idepth > 0) ) {
 			*interp_err = 15;
-		else if ( idist < 0 && idepth < 0 )
+		}
+		else if ( (idist < 0) && (idepth < 0) ) {
 			*interp_err = 16;
-		else if ( idist > 0 && idepth < 0 )
+		}
+		else if ( (idist > 0) && (idepth < 0) ) {
 			*interp_err = 17;
-		else if ( idist < 0 && idepth > 0 )
+		}
+		else if ( (idist < 0) && (idepth > 0) ) {
 			*interp_err = 18;
-		else if ( idist > 0 && idepth > 0 )
+		}
+		else if ( (idist > 0) && (idepth > 0) ) {
 			*interp_err = 19;
-		else
+		}
+		else {
 			*interp_err = 0;
+		}
 	}
 
 	return true;

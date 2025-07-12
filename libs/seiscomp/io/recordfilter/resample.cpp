@@ -26,8 +26,9 @@
 #include <seiscomp/io/recordstream/remez/remez.h>
 #include <seiscomp/io/recordfilter/resample.h>
 
-#include <limits.h>
-#include <string.h>
+#include <climits>
+#include <cstring>
+#include <cmath>
 #include <ctype.h>
 
 
@@ -341,7 +342,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	}
 
 	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+		double diff = (rec->startTime() - stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap
@@ -357,10 +358,10 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 	ArrayPtr tmp_ar;
 	const TypedArray<T> *ar = TypedArray<T>::ConstCast(rec->data());
-	if ( ar == nullptr ) {
-		tmp_ar = rec->data()->copy(dataType<T>());
+	if ( !ar ) {
+		tmp_ar = rec->data() ? rec->data()->copy(dataType<T>()) : nullptr;
 		ar = TypedArray<T>::ConstCast(tmp_ar);
-		if ( ar == nullptr ) {
+		if ( !ar ) {
 			SEISCOMP_ERROR("[dec] internal error: wrong converted type received");
 			return nullptr;
 		}
@@ -368,13 +369,13 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 	size_t data_len = (size_t)ar->size();
 	const T *data = ar->typedData();
-	T *buffer = &stage->buffer[0];
+	T *buffer = stage->buffer.data();
 
 	if ( stage->missingSamples > 0 ) {
 		if ( !stage->startTime.valid() ) {
 			Core::Time firstNewSampleStart = rec->startTime() + Core::TimeSpan(stage->dt*stage->N2);
 			double targetDt = 1.0 / stage->targetRate;
-			double mod = fmod((double)firstNewSampleStart, targetDt);
+			double mod = fmod(firstNewSampleStart.epoch(), targetDt);
 			double skip = targetDt - mod;
 			stage->samplesToSkip = int(skip*stage->sampleRate+0.5);
 			stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->missingSamples+stage->samplesToSkip)-stage->N2-1)*stage->dt+5E-7);
@@ -414,19 +415,21 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	if ( !data_len ) return nullptr;
 
 	// Ring buffer is filled at this point.
-	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
+	Core::SmartPointer< TypedArray<T> > resampled_data;
 	Core::Time startTime;
 
 	do {
 		if ( stage->samplesToSkip == 0 ) {
 			// Calculate scalar product of coefficients and ring buffer
-			double *coeff = &((*stage->coefficients)[0]);
+			double *coeff = stage->coefficients->data();
 			double weightedSum = 0;
 
-			for ( size_t i = stage->front; i < stage->buffer.size(); ++i )
+			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {
 				weightedSum += buffer[i] * *(coeff++);
-			for ( size_t i = 0; i < stage->front; ++i )
+			}
+			for ( size_t i = 0; i < stage->front; ++i ) {
 				weightedSum += buffer[i] * *(coeff++);
+			}
 
 			if ( !resampled_data ) {
 				startTime = stage->startTime;
@@ -435,8 +438,9 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 
 			T sample = (T)weightedSum;
 			resampled_data->append(1, &sample);
-			if ( Math::isNaN(sample) )
+			if ( Math::isNaN(sample) ) {
 				SEISCOMP_WARNING("[dec] produced NaN sample");
+			}
 
 			// Still need to wait until N samples have been fed.
 			stage->samplesToSkip = stage->N;
@@ -512,7 +516,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	}
 
 	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+		double diff = (rec->startTime() - stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			SEISCOMP_DEBUG("[ups] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -537,7 +541,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	if ( data_len == 0 ) return nullptr;
 
 	const T *data = ar->typedData();
-	T *buffer = &stage->buffer[0];
+	T *buffer = stage->buffer.data();
 	Core::Time startTime;
 
 	if ( stage->missingSamples > 0 ) {
@@ -562,7 +566,7 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		startTime = stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
 
 	// Ring buffer is filled at this point.
-	typename Core::SmartPointer< TypedArray<T> >::Impl resampled_data;
+	Core::SmartPointer< TypedArray<T> > resampled_data;
 
 	if ( !data_len ) return nullptr;
 
@@ -646,10 +650,25 @@ Record *RecordResampler<T>::feed(const Record *record) {
 	if ( _currentRate != rate ) {
 		// Init up/downsample stages
 		int num, den;
-		if ( !getFraction(num, den, _targetRate/rate) ) {
+		double scale = _targetRate / rate;
+		if ( !getFraction(num, den, scale) ) {
 			SEISCOMP_WARNING("[resample] incompatible sampling frequency %f -> %f",
 			                 rate, _targetRate);
 			return nullptr;
+		}
+
+		{
+			int num2, den2;
+			scale = rate / _targetRate;
+
+			if ( getFraction(num2, den2, scale) ) {
+				if ( den2 < num && num2 < den ) {
+					SEISCOMP_DEBUG("[resample] improved ratio from %d/%d to %d/%d",
+					               num, den, den2, num2);
+					num = den2;
+					den = num2;
+				}
+			}
 		}
 
 		_currentRate = rate;
@@ -793,6 +812,14 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 		}
 
 		if ( stage->coefficients == nullptr ) {
+			if ( stage->N > _maxN ) {
+				SEISCOMP_WARNING("[dec] invalid downsample factor: %d > %d",
+				                 stage->N, _maxN);
+				stage->valid = false;
+				_coefficientMutex.unlock();
+				return;
+			}
+
 			// Create and cache coefficients for N
 			int Ncoeff = stage->N*_coeffScale*2+1;
 
@@ -802,7 +829,7 @@ void RecordResampler<T>::initCoefficients(DownsampleStage *stage) {
 			double weights[2] = {1,1};
 			double desired[2] = {1,0};
 
-			if ( remez(&((*coeff)[0]), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
+			if ( remez(coeff->data(), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
 				SEISCOMP_WARNING("[dec] failed to build coefficients for N=%d, ignore stream", stage->N);
 				stage->valid = false;
 				delete coeff;

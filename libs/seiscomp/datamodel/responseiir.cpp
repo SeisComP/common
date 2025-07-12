@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ResponseIIR, PublicObject, "ResponseIIR");
 
 
-ResponseIIR::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ResponseIIR::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseIIR::setName, &ResponseIIR::name));
 	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &ResponseIIR::setType, &ResponseIIR::type));
 	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseIIR::setGain, &ResponseIIR::gain));
@@ -69,7 +69,7 @@ ResponseIIRIndex::ResponseIIRIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIRIndex::ResponseIIRIndex(const ResponseIIRIndex& idx) {
+ResponseIIRIndex::ResponseIIRIndex(const ResponseIIRIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -78,7 +78,7 @@ ResponseIIRIndex::ResponseIIRIndex(const ResponseIIRIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIRIndex::operator==(const ResponseIIRIndex& idx) const {
+bool ResponseIIRIndex::operator==(const ResponseIIRIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -87,7 +87,7 @@ bool ResponseIIRIndex::operator==(const ResponseIIRIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIRIndex::operator!=(const ResponseIIRIndex& idx) const {
+bool ResponseIIRIndex::operator!=(const ResponseIIRIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ ResponseIIR::ResponseIIR() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR::ResponseIIR(const ResponseIIR& other)
+ResponseIIR::ResponseIIR(const ResponseIIR &other)
 : PublicObject() {
 	*this = other;
 }
@@ -131,8 +131,8 @@ ResponseIIR::~ResponseIIR() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* ResponseIIR::Create() {
-	ResponseIIR* object = new ResponseIIR();
+ResponseIIR *ResponseIIR::Create() {
+	ResponseIIR *object = new ResponseIIR();
 	return static_cast<ResponseIIR*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -141,7 +141,7 @@ ResponseIIR* ResponseIIR::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* ResponseIIR::Create(const std::string& publicID) {
+ResponseIIR *ResponseIIR::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -158,7 +158,7 @@ ResponseIIR* ResponseIIR::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR* ResponseIIR::Find(const std::string& publicID) {
+ResponseIIR *ResponseIIR::Find(const std::string& publicID) {
 	return ResponseIIR::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ ResponseIIR* ResponseIIR::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::operator==(const ResponseIIR& rhs) const {
+bool ResponseIIR::operator==(const ResponseIIR &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _type != rhs._type ) return false;
 	if ( _gain != rhs._gain ) return false;
@@ -188,7 +188,7 @@ bool ResponseIIR::operator==(const ResponseIIR& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::operator!=(const ResponseIIR& rhs) const {
+bool ResponseIIR::operator!=(const ResponseIIR &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -197,7 +197,7 @@ bool ResponseIIR::operator!=(const ResponseIIR& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::equal(const ResponseIIR& other) const {
+bool ResponseIIR::equal(const ResponseIIR &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -475,7 +475,7 @@ const Blob& ResponseIIR::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ResponseIIRIndex& ResponseIIR::index() const {
+const ResponseIIRIndex &ResponseIIR::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -484,8 +484,11 @@ const ResponseIIRIndex& ResponseIIR::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::equalIndex(const ResponseIIR* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ResponseIIR::equalIndex(const ResponseIIR *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -494,7 +497,7 @@ bool ResponseIIR::equalIndex(const ResponseIIR* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* ResponseIIR::inventory() const {
+Inventory *ResponseIIR::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -503,7 +506,7 @@ Inventory* ResponseIIR::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseIIR& ResponseIIR::operator=(const ResponseIIR& other) {
+ResponseIIR &ResponseIIR::operator=(const ResponseIIR &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_type = other._type;
@@ -525,10 +528,11 @@ ResponseIIR& ResponseIIR::operator=(const ResponseIIR& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::assign(Object* other) {
-	ResponseIIR* otherResponseIIR = ResponseIIR::Cast(other);
-	if ( other == nullptr )
+bool ResponseIIR::assign(Object *other) {
+	ResponseIIR *otherResponseIIR = ResponseIIR::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherResponseIIR;
 
@@ -540,11 +544,13 @@ bool ResponseIIR::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ResponseIIR::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -557,11 +563,13 @@ bool ResponseIIR::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ResponseIIR::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -569,7 +577,7 @@ bool ResponseIIR::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ResponseIIR* child = inventory->findResponseIIR(publicID());
+			ResponseIIR *child = inventory->findResponseIIR(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -589,8 +597,9 @@ bool ResponseIIR::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseIIR::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -600,8 +609,8 @@ bool ResponseIIR::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ResponseIIR::clone() const {
-	ResponseIIR* clonee = new ResponseIIR();
+Object *ResponseIIR::clone() const {
+	ResponseIIR *clonee = new ResponseIIR();
 	*clonee = *this;
 	return clonee;
 }
@@ -611,7 +620,7 @@ Object* ResponseIIR::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseIIR::updateChild(Object* child) {
+bool ResponseIIR::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -620,7 +629,7 @@ bool ResponseIIR::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseIIR::accept(Visitor* visitor) {
+void ResponseIIR::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -637,7 +646,7 @@ void ResponseIIR::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseIIR::serialize(Archive& ar) {
+void ResponseIIR::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

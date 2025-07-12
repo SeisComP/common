@@ -1,244 +1,121 @@
-/***************************************************************************
- * Copyright (C) gempa GmbH                                                *
- * All rights reserved.                                                    *
- * Contact: gempa GmbH (seiscomp-dev@gempa.de)                             *
- *                                                                         *
- * GNU Affero General Public License Usage                                 *
- * This file may be used under the terms of the GNU Affero                 *
- * Public License version 3.0 as published by the Free Software Foundation *
- * and appearing in the file LICENSE included in the packaging of this     *
- * file. Please review the following information to ensure the GNU Affero  *
- * Public License version 3.0 requirements will be met:                    *
- * https://www.gnu.org/licenses/agpl-3.0.html.                             *
- *                                                                         *
- * Other Usage                                                             *
- * Alternatively, this file may be used in accordance with the terms and   *
- * conditions contained in a signed written agreement between you and      *
- * gempa GmbH.                                                             *
- ***************************************************************************/
+#include "datetime.h"
+#include "exceptions.h"
+#include "strings.h"
 
+// Disable remote time zone database API
+#define HAS_REMOTE_API 0
+// Use the OS provided time zone database
+#define USE_OS_TZDB 1
+// Only use C locales
+#define ONLY_C_LOCALE 1
 
-#define SEISCOMP_COMPONENT Core
+#include "date/date.h"
+#include "date/tz.h"
 
-#include <seiscomp/logging/log.h>
-#include <seiscomp/core/datetime.h>
-#include <seiscomp/core/exceptions.h>
-
-#include <sstream>
-#include <cmath>
-#include <ctype.h>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
 #include <iostream>
 
 
-#ifdef WIN32
-#include <time.h>
-#endif
-
-
-using namespace Seiscomp::Core;
-
-
-const double TimeSpan::MinTime = -(double)0x80000000;
-const double TimeSpan::MaxTime =  (double)0x7fffffff;
-
-
-/* We are linking against the multithreaded versions
-   of the Microsoft runtimes - this makes gmtime
-   equiv to gmtime_r in that Windows gmtime is threadsafe
-*/
-#if defined (WIN32)
-static struct tm* gmtime_r(const time_t *timep, struct tm* result)
-{
-        struct tm *local;
-
-        local = gmtime(timep);
-        memcpy(result,local,sizeof(struct tm));
-        return result;
-}
-#endif
-
-
-#if defined(WIN32)
-
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
-#else
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
-#endif
-
-
-struct timezone
-{
-  int  tz_minuteswest; /* minutes W of Greenwich */
-  int  tz_dsttime;     /* type of dst correction */
-};
-
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-  FILETIME ft;
-  unsigned __int64 tmpres = 0;
-  static int tzflag;
-
-  if (nullptr != tv)
-  {
-    GetSystemTimeAsFileTime(&ft);
-
-    tmpres |= ft.dwHighDateTime;
-    tmpres <<= 32;
-    tmpres |= ft.dwLowDateTime;
-
-    /*converting file time to unix epoch*/
-    tmpres /= 10;  /*convert into microseconds*/
-    tmpres -= DELTA_EPOCH_IN_MICROSECS;
-    tv->tv_sec = (long)(tmpres / 1000000UL);
-    tv->tv_usec = (long)(tmpres % 1000000UL);
-  }
-
-  if (nullptr != tz)
-  {
-    if (!tzflag)
-    {
-      _tzset();
-      tzflag++;
-    }
-    tz->tz_minuteswest = _timezone / 60;
-    tz->tz_dsttime = _daylight;
-  }
-
-  return 0;
-}
-#endif
-
-
-#if defined(WIN32)
-extern "C" {
-#include <seiscomp/core/strptime.h>
-}
-#endif
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#define MICROS 1000000
+namespace Seiscomp {
+namespace Core {
 
 namespace {
-
-#ifdef __sun__
-#define NO_COMPACT_DATE
-#endif
-
-
-#if defined(__SUNPRO_CC) || defined(__sun__) || defined(WIN32)
-time_t timegm(struct tm *t) {
-	time_t tl, tb;
-	struct tm tg;
-
-	t->tm_isdst = 0;
-
-	tl = mktime (t);
-	if (tl == -1) {
-		t->tm_hour--;
-		tl = mktime (t);
-		if (tl == -1)
-			return -1; /* can't deal with output from strptime */
-		tl += 3600;
-	}
-
-	gmtime_r(&tl, &tg);
-	tg.tm_isdst = 0;
-	tb = mktime (tg);
-	if (tb == -1) {
-		--tg.tm_hour;
-		tb = mktime(&tg);
-		if (tb == -1)
-			return -1; /* can't deal with output from gmtime */
-		tb += 3600;
-	}
-
-	return (tl - (tb - tl));
-}
-#endif
-
-
-template <typename T, typename U>
-inline void normalize(T &sec, U &usec) {
-	if ( usec < 0 ) {
-		if ( sec > 0 || usec <= -MICROS ) {
-			usec += MICROS;
-			sec -= 1;
-		}
-	}
-	else if ( usec > 0 ) {
-		if ( sec < 0 || usec >= MICROS ) {
-			usec -= MICROS;
-			sec += 1;
-		}
-	}
-}
 
 
 const char *timeFormats[] = {
 	"%FT%T.%fZ",    // YYYY-MM-DDThh:mm:ss.ssssssZ
 	"%FT%T.%f",     // YYYY-MM-DDThh:mm:ss.ssssss
 	"%FT%TZ",       // YYYY-MM-DDThh:mm:ssZ
+	"%FT%T.%f%z",   // YYYY-MM-DDThh:mm:ss.ssssss+hh:mm
+	"%FT%T%z",      // YYYY-MM-DDThh:mm:ss+hh:mm
 	"%FT%T",        // YYYY-MM-DDThh:mm:ss
 	"%FT%R",        // YYYY-MM-DDThh:mm
 	"%FT%H",        // YYYY-MM-DDThh
-	"%Y-%jT%T.%f",  // YYYY-DDDThh:mm:ss.ssssss
-	"%Y-%jT%T",     // YYYY-DDDThh:mm:ss
-	"%Y-%jT%R",     // YYYY-DDDThh:mm
-	"%Y-%jT%H",     // YYYY-DDDThh
+	"%6Y-%jT%T.%f", // YYYY-DDDThh:mm:ss.ssssss
+	"%6Y-%jT%T",    // YYYY-DDDThh:mm:ss
+	"%6Y-%jT%R",    // YYYY-DDDThh:mm
+	"%6Y-%jT%H",    // YYYY-DDDThh
 	"%F %T.%f",     // YYYY-MM-DD hh:mm:ss.ssssss
 	"%F %T",        // YYYY-MM-DD hh:mm:ss
 	"%F %R",        // YYYY-MM-DD hh:mm
 	"%F %H",        // YYYY-MM-DD hh
 	"%F",           // YYYY-MM-DD
-	"%Y-%j",        // YYYY-DDD
-	"%Y",           // YYYY
+	"%6Y-%j",       // YYYY-DDD
+	"%6Y",          // YYYY
 };
 
 
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+OPT(const date::time_zone*) current_zone = None;
 
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan() {
-	_timeval.tv_sec = 0;
-	_timeval.tv_usec = 0;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan(struct timeval* t) {
-	if ( t != nullptr ) {
-		_timeval.tv_sec = t->tv_sec;
-		_timeval.tv_usec = t->tv_usec;
-	}
-	else {
-		_timeval.tv_sec = 0;
-		_timeval.tv_usec = 0;
+void fetch_current_zone() {
+	if ( !current_zone ) {
+		try {
+			current_zone = date::current_zone();
+		}
+		catch ( std::exception &e ) {
+			std::cerr << "[datetime] warning: " << e.what() << ", setting timezone to UTC" << std::endl;
+			current_zone = nullptr;
+		}
 	}
 }
+
+
+}
+
+
+const double TimeSpan::MinSpan = static_cast<double>(std::numeric_limits<TimeSpan::Storage>::min()) * 1E-6;
+const double TimeSpan::MaxSpan = static_cast<double>(std::numeric_limits<TimeSpan::Storage>::max()) * 1E-6;
+const TimeSpan::Storage TimeSpan::MinSeconds = std::chrono::duration_cast<TimeSpan::Seconds>(TimeSpan::MicroSeconds(std::numeric_limits<TimeSpan::Storage>::min())).count();
+const TimeSpan::Storage TimeSpan::MaxSeconds = std::chrono::duration_cast<TimeSpan::Seconds>(TimeSpan::MicroSeconds(std::numeric_limits<TimeSpan::Storage>::max())).count();
+const double Time::MinTime = static_cast<double>(std::numeric_limits<Time::Storage>::min()) * 1E-6;
+const double Time::MaxTime = static_cast<double>(std::numeric_limits<Time::Storage>::max()) * 1E-6;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan(const struct timeval& t) {
-	_timeval.tv_sec = t.tv_sec;
-	_timeval.tv_usec = t.tv_usec;
+std::ostream &operator<<(std::ostream &os, const TimeSpan &ts) {
+	TimeSpan::Duration d = ts.repr();
+	if ( !d.count() ) {
+		return os << "0";
+	}
+
+	int64_t days = std::chrono::duration_cast<TimeSpan::Days>(d).count();
+	if ( days ) {
+		os << days << "d";
+	}
+	d -= TimeSpan::Days(days);
+
+	if ( d.count() ) {
+		int64_t hours = std::chrono::duration_cast<TimeSpan::Hours>(d).count();
+		if ( hours ) {
+			os << hours << "h";
+		}
+		d -= TimeSpan::Hours(hours);
+
+		if ( d.count() ) {
+			int64_t minutes = std::chrono::duration_cast<TimeSpan::Minutes>(d).count();
+			if ( minutes ) {
+				os << minutes << "m";
+			}
+			d -= TimeSpan::Minutes(minutes);
+
+			if ( d.count() ) {
+				int64_t seconds = std::chrono::duration_cast<TimeSpan::Seconds>(d).count();
+				if ( seconds ) {
+					os << seconds << "s";
+				}
+				d -= TimeSpan::Seconds(seconds);
+
+				if ( d.count() ) {
+					os << d.count() << "us";
+				}
+			}
+		}
+	}
+
+	return os;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -246,130 +123,9 @@ TimeSpan::TimeSpan(const struct timeval& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan(double t) {
-	*this = t;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan(long secs, long usecs) {
-	_timeval.tv_sec = secs + (usecs / MICROS);
-	_timeval.tv_usec = usecs % MICROS;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::TimeSpan(const TimeSpan& ts) {
-	_timeval.tv_sec = ts._timeval.tv_sec;
-	_timeval.tv_usec = ts._timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator==(const TimeSpan& t) const {
-	return _timeval.tv_sec == t._timeval.tv_sec &&
-	       _timeval.tv_usec == t._timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator!=(const TimeSpan& t) const {
-	return !(*this == t);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator< (const TimeSpan& t) const {
-	if ( _timeval.tv_sec > t._timeval.tv_sec )
-		return false;
-	if ( _timeval.tv_sec < t._timeval.tv_sec )
-		return true;
-	return _timeval.tv_usec < t._timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator<=(const TimeSpan& t) const {
-	if ( _timeval.tv_sec > t._timeval.tv_sec )
-		return false;
-	if ( _timeval.tv_sec < t._timeval.tv_sec )
-		return true;
-	return _timeval.tv_usec <= t._timeval.tv_usec;
-
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator> (const TimeSpan& t) const {
-	if ( _timeval.tv_sec < t._timeval.tv_sec )
-		return false;
-	if ( _timeval.tv_sec > t._timeval.tv_sec )
-		return true;
-	return _timeval.tv_usec > t._timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeSpan::operator>=(const TimeSpan& t) const {
-	if ( _timeval.tv_sec < t._timeval.tv_sec )
-		return false;
-	if ( _timeval.tv_sec > t._timeval.tv_sec )
-		return true;
-	return _timeval.tv_usec >= t._timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::operator double() const {
-	return (double)_timeval.tv_sec +
-	       (double)_timeval.tv_usec * 0.000001;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan::operator const timeval&() const {
-	return _timeval;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::operator=(long t) {
-	_timeval.tv_sec = t;
-	_timeval.tv_usec = 0;
-
+TimeSpan &TimeSpan::operator=(int ts) {
+	// Integer values cannot overflow as storage is signed 64bit.
+	_repr = std::chrono::duration_cast<Duration>(Seconds(ts));
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -378,12 +134,12 @@ TimeSpan& TimeSpan::operator=(long t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::operator=(double t) {
-	if( t > MaxTime || t < MinTime )
-		throw Core::OverflowException("TimeSpan::operator=(): double doesn't fit into int");
-	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = (long)((t-_timeval.tv_sec)*MICROS + 0.5);
+TimeSpan &TimeSpan::operator=(Storage ts) {
+	if ( ts < MinSeconds || ts > MaxSeconds ) {
+		throw OverflowException("Integer span not fit into TimeSpan storage");
+	}
 
+	_repr = std::chrono::duration_cast<Duration>(Seconds(ts));
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -392,106 +148,13 @@ TimeSpan& TimeSpan::operator=(double t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::operator=(const TimeSpan& t) {
-	_timeval = t._timeval;
+TimeSpan &TimeSpan::operator=(double ts) {
+	if ( ts < MinSpan || ts > MaxSpan ) {
+		throw OverflowException("Double span does not fit into TimeSpan storage");
+	}
 
+	_repr = std::chrono::duration_cast<Duration>(MicroSeconds(static_cast<Storage>(std::round(ts * 1E6))));
 	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan TimeSpan::operator+(const TimeSpan& t) const {
-	long diff_usec = _timeval.tv_usec + t._timeval.tv_usec;
-	long int sec = _timeval.tv_sec + t._timeval.tv_sec;
-
-	normalize(sec, diff_usec);
-
-	return TimeSpan(sec, diff_usec);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan TimeSpan::operator-(const TimeSpan& t) const {
-	long diff_usec = _timeval.tv_usec - t._timeval.tv_usec;
-	long int sec = _timeval.tv_sec - t._timeval.tv_sec;
-
-	normalize(sec, diff_usec);
-
-	return TimeSpan(sec, diff_usec);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::operator+=(const TimeSpan& t) {
-	_timeval.tv_sec += t._timeval.tv_sec;
-	_timeval.tv_usec += t._timeval.tv_usec;
-
-	normalize(_timeval.tv_sec, _timeval.tv_usec);
-
-	return *this;
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-TimeSpan& TimeSpan::operator-=(const TimeSpan& t) {
-	_timeval.tv_usec -= t._timeval.tv_usec;
-	_timeval.tv_sec -= t._timeval.tv_sec;
-
-	normalize(_timeval.tv_sec, _timeval.tv_usec);
-
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::set(long secs) {
-	_timeval.tv_sec = secs;
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan& TimeSpan::setUSecs(long usecs) {
-	_timeval.tv_usec = usecs % MICROS;
-	_timeval.tv_sec += usecs / MICROS;
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<
-void TimeSpan::elapsedTime(int* days, int* hours,
-                           int* minutes, int* seconds) const
-{
-	int elapsed = TimeSpan::seconds();
-	if (days)
-		*days = elapsed / 86400;
-	if (hours)
-		*hours = (elapsed % 86400) / 3600;
-	if (minutes)
-		*minutes = ((elapsed % 86400) % 3600) / 60;
-	if (seconds)
-		*seconds = ((elapsed % 86400) % 3600) % 60;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -500,22 +163,7 @@ void TimeSpan::elapsedTime(int* days, int* hours,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan TimeSpan::abs() const {
-	return TimeSpan(::abs(_timeval.tv_sec), ::abs(_timeval.tv_usec));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double TimeSpan::length() const {
-	return double(*this);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-long TimeSpan::seconds() const {
-	return _timeval.tv_sec;
+	return Duration(std::abs(_repr.count()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -523,31 +171,21 @@ long TimeSpan::seconds() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-long TimeSpan::microseconds() const {
-	return _timeval.tv_usec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Time Time::Null(0.0);
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time() : TimeSpan() {
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(const TimeSpan& ts)
- : TimeSpan(ts) {
+void TimeSpan::get(int* days, int* hours,
+                   int* minutes, int* seconds) const {
+	Storage elapsed = this->seconds();
+	if ( days ) {
+		*days = elapsed / 86400;
+	}
+	if ( hours ) {
+		*hours = (elapsed % 86400) / 3600;
+	}
+	if ( minutes ) {
+		*minutes = ((elapsed % 86400) % 3600) / 60;
+	}
+	if ( seconds ) {
+		*seconds = ((elapsed % 86400) % 3600) % 60;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -555,8 +193,10 @@ Time::Time(const TimeSpan& ts)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(const struct timeval& t)
- : TimeSpan(t) {
+std::string TimeSpan::toString() const {
+	std::ostringstream oss;
+	oss << *this;
+	return oss.str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -564,8 +204,18 @@ Time::Time(const struct timeval& t)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(struct timeval* t)
- : TimeSpan(t) {
+bool TimeSpan::fromString(std::string_view sv) {
+	double secs;
+	if ( !Core::fromString(secs, sv) ) {
+		return false;
+	}
+	try {
+		*this = secs;
+		return true;
+	}
+	catch ( OverflowException & ) {
+		return false;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -573,8 +223,15 @@ Time::Time(struct timeval* t)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(double t) {
-	*this = t;
+Time Time::Null(Time::TimePoint{Time::Duration{0}});
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time::Time(double epoch) {
+	*this = epoch;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -593,44 +250,16 @@ Time::Time(int year, int month, int day,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(const Time& t)
- : TimeSpan(t) {
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Time &Time::operator=(double epoch) {
+	if ( epoch < MinTime || epoch > MaxTime ) {
+		throw OverflowException("Double epoch does not fit into Time storage");
+	}
 
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::Time(long secs, long usecs)
- : TimeSpan(secs, usecs) {
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::operator bool() const {
-	return valid();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time::operator time_t() const {
-	return (time_t)_timeval.tv_sec;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator=(const struct timeval& t) {
-	_timeval = t;
+	_repr = TimePoint(
+		std::chrono::duration_cast<Duration>(
+			TimeSpan::MicroSeconds(static_cast<Storage>(std::round(epoch * 1E6)))
+		)
+	);
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -639,105 +268,14 @@ Time& Time::operator=(const struct timeval& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator=(struct timeval* t) {
-	_timeval = *t;
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator=(time_t t) {
-	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = 0;
-
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator=(double t) {
-	if( t > MaxTime || t < MinTime )
-		throw Core::OverflowException("Time::operator=(): double doesn't fit into int");
-	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = (long)((t-(double)_timeval.tv_sec)*MICROS + 0.5);
-
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::operator+(const TimeSpan& t) const {
-	return Time((TimeSpan&)*this + t);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::operator-(const TimeSpan& ts) const {
-	return Time(TimeSpan::operator- (ts));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator+=(const TimeSpan& ts) {
-	TimeSpan::operator+=(ts);
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::operator-=(const TimeSpan& ts) {
-	TimeSpan::operator-=(ts);
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan Time::operator-(const Time& ts) const {
-	return TimeSpan::operator-(ts);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::set(int year, int month, int day,
+Time &Time::set(int year, int month, int day,
                 int hour, int min, int sec,
                 int usec) {
-	tm t;
-
-	t.tm_year = year - 1900;
-	t.tm_mon = month - 1;
-	t.tm_mday = day;
-	t.tm_hour = hour;
-	t.tm_min = min;
-	t.tm_sec = sec;
-	t.tm_isdst = -1;
-
-	_timeval.tv_sec = (long)timegm(&t);
-	setUSecs(usec);
-
+	_repr = date::sys_days{date::year{year}/month/day} +
+	        std::chrono::hours{hour} +
+	        std::chrono::minutes{min} +
+	        std::chrono::seconds{sec} +
+	        std::chrono::microseconds(usec);
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -746,26 +284,15 @@ Time& Time::set(int year, int month, int day,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::set2(int year, int yday,
+Time &Time::set2(int year, int yday,
                  int hour, int min, int sec,
                  int usec) {
-	tm t;
-
-	// Like mktime, timegm will not read tm_yday nor tm_wday when contructing a
-	// time_t object. However, it does normalize other tm values. As a work
-	// arround we convert yday to the yday+1th January. E.g.,
-	// yday 32 = January 33th = February 2nd.
-	t.tm_year = year - 1900;
-	t.tm_mon = 0; // January
-	t.tm_mday = yday + 1;
-	t.tm_hour = hour;
-	t.tm_min = min;
-	t.tm_sec = sec;
-	t.tm_isdst = -1;
-
-	_timeval.tv_sec = (long)timegm(&t);
-	setUSecs(usec);
-
+	_repr = static_cast<date::sys_days>(date::year_month_day{date::local_days(date::year{year}/1/1) +
+	        date::days{yday}}) +
+	        std::chrono::hours{hour} +
+	        std::chrono::minutes{min} +
+	        std::chrono::seconds{sec} +
+	        std::chrono::microseconds(usec);
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -777,20 +304,28 @@ Time& Time::set2(int year, int yday,
 bool Time::get(int *year, int *month, int *day,
                int *hour, int *min, int *sec,
                int *usec) const {
-	time_t time = (time_t)_timeval.tv_sec;
-	struct tm t;
-	gmtime_r(&time, &t);
-
-	if ( year )  *year = t.tm_year + 1900;
-	if ( month ) *month = t.tm_mon + 1;
-	if ( day )   *day = t.tm_mday;
-
-	if ( hour )  *hour = t.tm_hour;
-	if ( min )   *min = t.tm_min;
-	if ( sec )   *sec = t.tm_sec;
-
-	if ( usec )  *usec = _timeval.tv_usec;
-
+	auto dp = date::floor<date::days>(_repr);
+	auto ymd = date::year_month_day{dp};
+	*year = static_cast<int>(ymd.year());
+	if ( month ) {
+		*month = static_cast<unsigned>(ymd.month());
+	}
+	if ( day ) {
+		*day = static_cast<unsigned>(ymd.day());
+	}
+	auto time = date::make_time(_repr-dp);
+	if ( hour ) {
+		*hour = time.hours().count();
+	}
+	if ( min ) {
+		*min = time.minutes().count();
+	}
+	if ( sec ) {
+		*sec = time.seconds().count();
+	}
+	if ( usec ) {
+		*usec = time.subseconds().count();
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -799,21 +334,28 @@ bool Time::get(int *year, int *month, int *day,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::get2(int *year, int *yday, int *hour, int *min, int *sec,
+bool Time::get2(int *year, int *yday,
+                int *hour , int *min, int *sec,
                 int *usec) const {
-	time_t time = (time_t)_timeval.tv_sec;
-	struct tm t;
-	gmtime_r(&time, &t);
-
-	if ( year )  *year = t.tm_year + 1900;
-	if ( yday )  *yday = t.tm_yday;
-
-	if ( hour )  *hour = t.tm_hour;
-	if ( min )   *min = t.tm_min;
-	if ( sec )   *sec = t.tm_sec;
-
-	if ( usec )  *usec = _timeval.tv_usec;
-
+	auto dp = date::floor<date::days>(_repr);
+	auto ymd = date::year_month_day{dp};
+	*year = (int)ymd.year();
+	if ( yday ) {
+		*yday = (dp - date::sys_days{ymd.year()/date::January/1}).count();
+	}
+	auto time = date::make_time(_repr-dp);
+	if ( hour ) {
+		*hour = time.hours().count();
+	}
+	if ( min ) {
+		*min = time.minutes().count();
+	}
+	if ( sec ) {
+		*sec = time.seconds().count();
+	}
+	if ( usec ) {
+		*usec = time.subseconds().count();
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -822,10 +364,8 @@ bool Time::get2(int *year, int *yday, int *hour, int *min, int *sec,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::LocalTime() {
-	Time t;
-	t.localtime();
-	return t;
+Time &Time::now() {
+	return utc();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -833,70 +373,8 @@ Time Time::LocalTime() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Time::LocalTimeZone() {
-	time_t t;
-	struct tm *tm_;
-	char tz[40];
-	::time(&t);
-	tm_ = ::localtime(&t);
-	strftime(tz, sizeof(tz)-1, "%Z", tm_);
-	tz[sizeof(tz)-1] = '\0';
-	return tz;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::UTC() {
-	Time t;
-	t.utc();
-	return t;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::GMT() {
-	Time t;
-	t.gmt();
-	return t;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::FromYearDay(int year, int year_day) {
-	std::stringstream ss;
-	ss << year << " " << year_day;
-	return FromString(ss.str().c_str(), "%Y %j");
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeSpan Time::localTimeZoneOffset() const {
-	return *this - toUTC();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::localtime() {
-	gettimeofday(&_timeval, nullptr);
-	time_t secs = (time_t)_timeval.tv_sec;
-	struct tm _tm;
-	_timeval.tv_sec = (long)timegm(::localtime_r(&secs, &_tm));
-
+Time &Time::utc() {
+	_repr = std::chrono::time_point_cast<Duration>(std::chrono::system_clock::now());
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -905,13 +383,8 @@ Time& Time::localtime() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::utc() {
-	gettimeofday(&_timeval, nullptr);
-	time_t secs = (time_t)_timeval.tv_sec;
-	struct tm _tm;
-	_timeval.tv_sec = (long)mktime(::localtime_r(&secs, &_tm));
-
-	return *this;
+Time Time::FromEpoch(Storage seconds, Storage microseconds) {
+	return Time(seconds, microseconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -919,159 +392,14 @@ Time& Time::utc() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time& Time::gmt() {
-	gettimeofday(&_timeval, nullptr);
-	time_t secs = (time_t)_timeval.tv_sec;
-	struct tm _tm;
-	_timeval.tv_sec = (long)mktime(::localtime_r(&secs, &_tm));
-
-	return *this;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::toLocalTime() const {
-	Time ret;
-	time_t secs = _timeval.tv_sec;
-	struct tm _tm;
-	ret._timeval.tv_sec = (long)timegm(::localtime_r(&secs, &_tm));
-	ret._timeval.tv_usec = _timeval.tv_usec;
-
-	return ret;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::toUTC() const {
-	Time ret;
-	time_t secs = _timeval.tv_sec;
-	struct tm _tm;
-	ret._timeval.tv_sec = _timeval.tv_sec - ((long)timegm(::localtime_r(&secs, &_tm)) - _timeval.tv_sec);
-	ret._timeval.tv_usec = _timeval.tv_usec;
-
-	return ret;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::toGMT() const {
-	Time ret;
-	time_t secs = _timeval.tv_sec;
-	struct tm _tm;
-	ret._timeval.tv_sec = _timeval.tv_sec - ((long)timegm(::localtime_r(&secs, &_tm)) - _timeval.tv_sec);
-	ret._timeval.tv_usec = _timeval.tv_usec;
-
-	return ret;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::valid() const {
-	return _timeval.tv_sec != 0 || _timeval.tv_usec != 0;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Time::toString(const char* fmt) const {
-#define BUFFER_SIZE 64
-	char data[BUFFER_SIZE];
-	char predata[BUFFER_SIZE];
-
-	time_t secs = (time_t)_timeval.tv_sec, usecs = _timeval.tv_usec;
-	while ( usecs < 0 ) {
-		secs -= 1;
-		usecs += MICROS;
-	}
-
-	tm t;
-	gmtime_r(&secs, &t);
-	const char *f = fmt, *last = fmt;
-	char *tgt = predata;
-
-	while ( (f = strchr(f, '%')) != nullptr ) {
-		int specSize = 3;
-
-		char spec = *(f+1);
-		if ( spec == '\0' ) break;
-		char type = *(f+2);
-
-		if ( (spec >= 'a' && spec <= 'z') || (spec >= 'A' && spec <= 'Z') ) {
-			specSize = 2;
-			type = spec;
-		}
-
-		if ( type == 'f' ) {
-			int width = -1;
-			if ( spec >= '0' && spec <= '6' )
-				width = spec - '0';
-
-			memcpy(tgt, last, f-last);
-			tgt += f-last;
-
-			char number[32];
-			size_t numberOfDigits;
-			if ( usecs > 0 ) {
-				numberOfDigits = sprintf(number, "%06ld", usecs);
-				if ( width != -1 )
-					numberOfDigits = width;
-				else {
-					while ( number[numberOfDigits-1] == '0' ) --numberOfDigits;
-				}
-			}
-			else {
-				if ( width == -1 )
-					numberOfDigits = 4;
-				else
-					numberOfDigits = width;
-				sprintf(number, "%0*d", (int)numberOfDigits, 0);
-			}
-
-			memcpy(tgt, number, numberOfDigits);
-			tgt += numberOfDigits;
-
-			last = f+specSize;
-		}
-#if defined(WIN32) || defined(NO_COMPACT_DATE)
-		else if ( type == 'F' ) {
-			memcpy(tgt, last, f-last);
-			tgt += f-last;
-			memcpy(tgt, "%Y-%m-%d", 8);
-			tgt += 8;
-			last = f+specSize;
-		}
-#endif
-#if defined(WIN32)
-		else if ( type == 'T' ) {
-			memcpy(tgt, last, f-last);
-			tgt += f-last;
-			memcpy(tgt, "%H:%M:%S", 8);
-			tgt += 8;
-			last = f+specSize;
-		}
-#endif
-
-		++f;
-	}
-
-	strcpy(tgt, last);
-	strftime(data, BUFFER_SIZE-1, predata, &t);
-
-	return data;
+Time Time::FromEpoch(double seconds) {
+	return Time(
+		TimePoint(
+			std::chrono::duration_cast<Duration>(
+				std::chrono::duration<double, std::ratio<1>>(seconds)
+			)
+		)
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1088,114 +416,10 @@ std::string Time::iso() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::fromString(const char* str, const char* fmt) {
-	struct tm t;
-	char data[BUFFER_SIZE];
-	char tmpFmt[BUFFER_SIZE];
-	long usec = 0;
-
-	const char* microSeconds = strstr(fmt, "%f");
-	if ( microSeconds != nullptr ) {
-		const char* start = str;
-		if ( microSeconds != fmt ) {
-			start = strrchr(str, *(microSeconds-1));
-			if ( start == nullptr )
-				return false;
-			++start;
-		}
-
-		const char* end = start;
-		while ( *end >= '0' && *end <= '9' )
-			++end;
-
-		int size = end-start;
-		if ( size > 6 ) size = 6;
-
-		int multiplier = 100000;
-		char *startNumber, *endNumber;
-
-		memcpy(data, start, size);
-		data[size] = '\0';
-
-		for ( startNumber = data; *startNumber == '0' && *startNumber != '\0'; ++startNumber )
-			multiplier /= 10;
-
-		for ( endNumber = data + size-1; *endNumber == '0' && endNumber > startNumber; --endNumber )
-			*endNumber = '\0';
-
-		while ( endNumber-- > startNumber )
-			multiplier /= 10;
-
-		usec = atoi(data) * multiplier;
-
-		int len = start - str;
-		if ( len > BUFFER_SIZE-1 ) {
-			SEISCOMP_ERROR("Time::fromString: buffer size exceeded: %d > %d",
-			               len, BUFFER_SIZE-1);
-			return false;
-		}
-
-		memcpy(data, str, len);
-		data[len] = '\0';
-
-		strcat(data, "%");
-		++len;
-
-		if ( len + strlen(end) > BUFFER_SIZE-1 ) {
-			SEISCOMP_ERROR("Time::fromString: buffer size exceeded: %d > %d",
-			               int(len + strlen(end)), BUFFER_SIZE);
-			return false;
-		}
-
-		strcat(data, end);
-		str = data;
-
-		tmpFmt[BUFFER_SIZE-1] = '\0';
-		strncpy(tmpFmt, fmt, BUFFER_SIZE);
-		if ( tmpFmt[BUFFER_SIZE-1] != '\0' ) {
-			SEISCOMP_ERROR("Time::fromString: format buffer size exceeded: %d > %d",
-			               int(strlen(fmt)), BUFFER_SIZE-1);
-			return false;
-		}
-
-		tmpFmt[microSeconds - fmt + 1] = '%';
-		fmt = tmpFmt;
-	}
-
-#ifdef NO_COMPACT_DATE
-	char tmpFmtDate[BUFFER_SIZE];
-	const char* compactDate = strstr(fmt, "%F");
-	if ( compactDate != nullptr ) {
-		char *dst = tmpFmtDate;
-		while ( fmt != compactDate ) { *dst++ = *fmt++; }
-		strcpy(dst, "%Y-%m-%d");
-		dst += 8;
-		fmt += 2;
-		while ( *fmt != '\0' ) { *dst++ = *fmt++; }
-		*dst = '\0';
-		fmt = tmpFmtDate;
-	}
-#endif
-
-	time_t tmp_t = 0;
-	gmtime_r(&tmp_t, &t);
-	const char *remainder = strptime(str, fmt, &t);
-	if ( !remainder || *remainder ) {
-		/*
-		if ( remainder ) {
-			std::cerr << "'" << str << "' : '" << fmt << "' -> '" << remainder << "'" << std::endl;
-		}
-		*/
-		*this = (time_t)0;
-		return false;
-	}
-	else {
-		*this = timegm(&t);
-		setUSecs(usec);
-	}
-
-	return true;
-#undef BUFFER_SIZE
+std::string Time::toString(const char *format) const {
+	std::ostringstream oss;
+	oss << date::format(format, _repr);
+	return oss.str();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1203,9 +427,84 @@ bool Time::fromString(const char* str, const char* fmt) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::fromString(const char* str) {
+std::string Time::toLocalString(const char *format) const {
+	std::ostringstream oss;
+	fetch_current_zone();
+	if ( *current_zone ) {
+		oss << date::format(format, date::make_zoned(*current_zone, _repr));
+	}
+	else {
+		oss << date::format(format, _repr);
+	}
+	return oss.str();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Time::toZonedString(const char *format, const std::string &tz) const {
+	if ( tz.empty() ) {
+		return toString(format);
+	}
+
+	const auto *zone = date::locate_zone(tz);
+	if ( !zone ) {
+		throw std::runtime_error(tz + " not found in time zone database");
+	}
+
+	std::ostringstream oss;
+	oss << date::format(format, date::make_zoned(zone, _repr));
+	return oss.str();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Time::fromString(std::string_view sv, const char *format) {
+	std::chrono::time_point<date::local_t, Duration> lt;
+	std::string tz_name;
+	std::chrono::minutes offset(0);
+	InputStringViewStream in{sv};
+
+	in >> date::parse(format, lt, tz_name, offset);
+	if ( in.fail() ) {
+		// Invalid parser state
+		return false;
+	}
+
+	if ( (in.tellg() < static_cast<std::streamoff>(sv.size())) && !in.eof() ) {
+		// Not all characters read from string
+		return false;
+	}
+
+	if ( !tz_name.empty() ) {
+		try {
+			_repr = make_zoned(tz_name, lt).get_sys_time();
+		}
+		catch ( ... ) {
+			return false;
+		}
+	}
+	else {
+		static const date::time_zone *zone_utc = date::locate_zone("UTC");
+		_repr = make_zoned(zone_utc, lt - offset).get_sys_time();
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Time::fromString(std::string_view sv) {
 	for ( size_t i = 0; i < sizeof(timeFormats) / sizeof(const char*); ++i ) {
-		if ( fromString(str, timeFormats[i]) ) {
+		if ( fromString(sv, timeFormats[i]) ) {
 			return true;
 		}
 	}
@@ -1217,32 +516,12 @@ bool Time::fromString(const char* str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Time::fromString(const std::string &str) {
-	return fromString(str.c_str());
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time Time::FromString(const char* str, const char* fmt) {
+Time Time::FromString(const std::string &str) {
 	Time t;
-	t.fromString(str, fmt);
-	return t;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OPT(Time) Time::FromString(const char* str) {
-	Time tmp;
-	if ( tmp.fromString(str) ) {
-		return tmp;
+	if ( t.fromString(str) ) {
+		return t;
 	}
-	return None;
+	throw std::runtime_error("Invalid datetime string '" + str + "'");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1250,7 +529,93 @@ OPT(Time) Time::FromString(const char* str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OPT(Time) Time::FromString(const std::string &str) {
-	return FromString(str.c_str());
+Time Time::FromString(const std::string &str, const char *format) {
+	Time t;
+	if ( t.fromString(str, format) ) {
+		return t;
+	}
+	throw std::runtime_error(std::string("Datetime string '") + str + "' does not match format '" + format + "'");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Time Time::FromYearDay(int year, int yday) {
+	return Time(
+		TimePoint(
+			static_cast<date::sys_days>(
+				date::year_month_day{date::local_days(date::year{year}/1/1) + date::days{yday - 1}}
+			)
+		)
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Time::LocalTimeZone() {
+	fetch_current_zone();
+	const auto *zone = *current_zone;
+	return zone ? zone->name() : std::string("UTC");
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TimeSpan Time::localTimeZoneOffset() const {
+	fetch_current_zone();
+	if ( *current_zone ) {
+		auto i = (*current_zone)->get_info(_repr);
+		return std::chrono::duration_cast<TimeSpan::Duration>(i.offset);
+	}
+	else {
+		return TimeSpan(0, 0);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TimeSpan Time::timeZoneOffset(const std::string &tzName) const {
+	const date::time_zone *zone = date::locate_zone(tzName);
+	if ( !zone ) {
+		if ( tzName == "UTC" ) {
+			return TimeSpan(0, 0);
+		}
+		throw std::runtime_error(tzName + " not found in time zone database");
+	}
+
+	auto i = zone->get_info(_repr);
+	return std::chrono::duration_cast<Duration>(i.offset);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::ostream &operator<<(std::ostream &os, const Time &time) {
+	os << date::format("%F %T.%f", time.repr());
+	return os;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+#include "date/tz.cpp"

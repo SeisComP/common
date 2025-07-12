@@ -32,9 +32,11 @@ namespace Math {
 
 template <typename T>
 struct Matrix3 {
+	using Type = T;
+
 	Matrix3() {}
 	Matrix3(const Matrix3<T> &other) {
-		memcpy(d, other.d, sizeof(d));
+		*this = other;
 	}
 
 	Matrix3<T> &identity();
@@ -57,10 +59,29 @@ struct Matrix3 {
 	Vector3<T> &transform(Vector3<T> &dst, const Vector3<T> &v) const;
 	Vector3<T> &invTransform(Vector3<T> &dst, const Vector3<T> &v) const;
 
+	Matrix3<T> &operator=(const Matrix3<T> &other) {
+		memcpy(d, other.d, sizeof(d));
+		return *this;
+	}
+
 	operator T *() { return (T*)this; }
 	operator const T *() const { return (const T*)this; }
 
+	T *operator[](size_t row) {
+		return d[row];
+	}
+
+	const T *operator[](size_t row) const {
+		return d[row];
+	}
+
+	Matrix3<T> operator*(const Matrix3<T> &m) const;
 	Vector3<T> operator*(const Vector3<T> &v) const;
+
+	static Matrix3<T> RotationX(T theta);
+	static Matrix3<T> RotationY(T theta);
+	static Matrix3<T> RotationZ(T theta);
+
 
 	// Coefficients
 	union {
@@ -75,11 +96,15 @@ struct Matrix3 {
 };
 
 
-typedef Matrix3<float>  Matrix3f;
-typedef Matrix3<double> Matrix3d;
+using Matrix3f = Matrix3<float>;
+using Matrix3d = Matrix3<double>;
 
 
 #include <seiscomp/math/matrix3.ipp>
+
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Matrix3<T> &v);
 
 
 } // namespace Math

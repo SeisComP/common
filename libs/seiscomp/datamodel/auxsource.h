@@ -82,7 +82,7 @@ class SC_SYSTEM_CORE_API AuxSource : public Object {
 		AuxSource();
 
 		//! Copy constructor
-		AuxSource(const AuxSource& other);
+		AuxSource(const AuxSource &other);
 
 		//! Custom constructor
 		AuxSource(const std::string& name);
@@ -96,21 +96,21 @@ class SC_SYSTEM_CORE_API AuxSource : public Object {
 
 		//! Destructor
 		~AuxSource() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		AuxSource& operator=(const AuxSource& other);
+		AuxSource &operator=(const AuxSource &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const AuxSource& other) const;
-		bool operator!=(const AuxSource& other) const;
+		bool operator==(const AuxSource &other) const;
+		bool operator!=(const AuxSource &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const AuxSource& other) const;
+		bool equal(const AuxSource &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -153,17 +153,17 @@ class SC_SYSTEM_CORE_API AuxSource : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const AuxSourceIndex& index() const;
+		const AuxSourceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const AuxSource* lhs) const;
+		bool equalIndex(const AuxSource *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		AuxDevice* auxDevice() const;
+		AuxDevice *auxDevice() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

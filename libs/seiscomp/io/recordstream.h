@@ -135,8 +135,8 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
 		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime) = 0;
+		                       const OPT(Core::Time) &startTime,
+		                       const OPT(Core::Time) &endTime) = 0;
 
 		/**
 		 * @brief Sets the start time for all streams that haven't been
@@ -144,7 +144,7 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		 * @param startTime The start time.
 		 * @return Status flag
 		 */
-		virtual bool setStartTime(const Seiscomp::Core::Time &startTime) = 0;
+		virtual bool setStartTime(const OPT(Core::Time) &startTime) = 0;
 
 		/**
 		 * @brief Sets the end time for all streams that haven't been
@@ -153,14 +153,14 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 		 *                end time and will return as much data as is available.
 		 * @return Status flag
 		 */
-		virtual bool setEndTime(const Seiscomp::Core::Time &endTime) = 0;
+		virtual bool setEndTime(const OPT(Core::Time) &endTime) = 0;
 
 		/**
 		 * @brief Convenience function to set start time and end time.
 		 * @param timeWindow The time window
 		 * @return Status flag
 		 */
-		virtual bool setTimeWindow(const Seiscomp::Core::TimeWindow &timeWindow);
+		virtual bool setTimeWindow(const Core::TimeWindow &timeWindow);
 
 		/**
 		 * @brief Sets an optional timeout for data retrieval. If within \p seconds
@@ -247,7 +247,7 @@ class SC_SYSTEM_CORE_API RecordStream : public Core::InterruptibleObject {
 	// ------------------------------------------------------------------
 	protected:
 		// Does nothing
-		virtual void handleInterrupt(int);
+		virtual void handleInterrupt(int) override;
 
 		/**
 		 * @brief Helper function to set up a created record. Basically

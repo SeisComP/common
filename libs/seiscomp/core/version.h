@@ -47,9 +47,69 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "17.0.0"   0x110000
+   - Added Seiscomp::Client::Application::handleSOH
    - Added Seiscomp::Processing::MagnitudeProcessor_MLc _c6, _H and _minDepth.
    - Added Seiscomp::Processing::AmplitudeProcessor::parameter
    - Made Seiscomp::IO::DatabaseInterface::escape a const method
+   - Increased TILESTORE_API version to 5
+   - Added Seiscomp::Processing::WaveformProcessor::Status enumeration PeriodOutOfRange
+   - Renamed Seiscomp::Core::Time::seconds() to Time::epochSeconds()
+   - Added Seiscomp::Core::Time::epoch()
+   - Deprecated Seiscomp::Core::Time::valid()
+   - Removed implicit Seiscomp::Core::TimeSpan and Seiscomp::Core::Time double cast
+   - Removed Seiscomp::System::CommandLine::parse(inv argc, char **argv, *)
+   - Added Seiscomp::System::CommandLine::parse(std::vector<std::string>, *)
+   - Changed Seiscomp::Core::Time in Seiscomp::IO::RecordStream::addStream,
+     Seiscomp::IO::RecordStream::setStartTime and
+     Seiscomp::IO::RecordStream::setEndTime to OPT(Seiscomp::Core::Time)
+   - Changed Seiscomp::Core::Time in Seiscomp::Client::StreamApplication::setStartTime
+     and Seiscomp::Client::StreamApplication::setEndTime to OPT(Seiscomp::Core::Time)
+   - Rename Seiscomp::Wired::ClientSession::inAvail to outputBufferSize and
+     remove virtual declaration
+   - Added abstract virtual function MagnitudeProcessor::setDefaults() which must
+     be implemented by all derived classes.
+   - Changed Seiscomp::Core::TimeWindow cast to bool semantic
+   - Changed Seiscomp::Core::TimeWindow::length return type, from double to
+     Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::setLength length argument from double
+     to Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::equals tolerance argument from double
+     to Seiscomp::Core::TimeSpan
+   - Changed Seiscomp::Core::TimeWindow::contiguous tolerance argument from double
+     to Seiscomp::Core::TimeSpan
+   - Added Seiscomp::Core::metaValueCast
+   - Removed typedef Seiscomp::Core::SmartPointer::Impl
+   - Added Seiscomp::Core::SmartPointer as typedef for boost::instrusive_ptr
+   - Removed typedef Seiscomp::Core::Optional::Impl
+   - Added Seiscomp::Core::Optional as typedef for boost::optional
+   - Added Seiscomp::Math::Geo::WGS84_MEAN_RADIUS
+   - Added Seiscomp::Math::Geo::WGS84_KM_OF_DEGREE
+   - Added Seiscomp::Math::Geo::WGS84_SEMI_MAJOR_AXIS
+   - Added Seiscomp::Math::Geo::WGS84_FLATTENING
+   - Removed defined KM_OF_DEGREE
+   - Renamed Seiscomp::ellipcorr to Seiscomp::ellipticityCorrection
+   - Removed Seiscomp::DataModel::DatabaseQuery::getStation
+   - Added Seiscomp::Geo::readFEP
+   - Added Seiscomp::Geo::writeGeoJSON
+
+ "16.4.0"   0x100400
+   - Add Seiscomp::Math::Matrix3<T> ostream output operator
+   - Add Seiscomp::Math::Vector3<T> ostream output operator
+   - Add Seiscomp::Math::Matrix3<T>::operator*
+   - Add Seiscomp::Math::Matrix3<T>::operator=
+   - Add static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
+   - Add unary Seiscomp::Math::Vector3<T>::operator+
+   - Add unary Seiscomp::Math::Vector3<T>::operator-
+   - Add Seiscomp::Math::Vector3<T>::normalized
+
+ "16.3.0"   0x100300
+   - Added Seiscomp::Gui::Application::createCSV(view, header)
+   - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3)
+   - Added Seiscomp::Gui::RecordView::sortByText(item1, item2, item3, item4)
+
+ "16.2.0"   0x100200
+   - Added Seiscomp::DataModel::PublicObject::Lock
+   - Added Seiscomp::DataModel::PublicObject::UnLock
 
  "16.1.0"   0x100100
    - Added Seiscomp::DataModel::numberOfComponents

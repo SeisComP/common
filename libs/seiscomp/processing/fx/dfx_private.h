@@ -59,7 +59,7 @@ class DFX : public Processing::FX {
 	//  Processor interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setup(const Processing::Settings &settings);
+		virtual bool setup(const Processing::Settings &settings) override;
 
 
 	// ----------------------------------------------------------------------
@@ -68,14 +68,14 @@ class DFX : public Processing::FX {
 	public:
 		//! Intercepts feeding records and sorts each record into the
 		//! corresponding component slot.
-		virtual bool feed(const Record *rec);
+		virtual bool feed(const Record *rec) override;
 
 
 	// ----------------------------------------------------------------------
 	//  FX interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void finalizePick(DataModel::Pick *pick) const;
+		virtual void finalizePick(DataModel::Pick *pick) const override;
 
 
 	// ----------------------------------------------------------------------

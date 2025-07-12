@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 			ptr2 = ptr1;
 		}
 
-		elapsed1 = stopWatch.elapsed();
+		elapsed1 = stopWatch.elapsed().length();
 	}
 
 	{
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 			ptr2 = ptr1;
 		}
 
-		elapsed2 = stopWatch.elapsed();
+		elapsed2 = stopWatch.elapsed().length();
 	}
 
 	{
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 			ptr2 = ptr1;
 		}
 
-		elapsed3 = stopWatch.elapsed();
+		elapsed3 = stopWatch.elapsed().length();
 	}
 
 	cerr << "basic version: " << elapsed1 << "s" << endl;

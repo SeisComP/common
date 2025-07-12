@@ -37,7 +37,7 @@ static Seiscomp::Core::MetaEnumImpl<SourceTimeFunctionType> metaSourceTimeFuncti
 }
 
 
-SourceTimeFunction::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+SourceTimeFunction::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("type", "SourceTimeFunctionType", false, false, &metaSourceTimeFunctionType, &SourceTimeFunction::setType, &SourceTimeFunction::type));
 	addProperty(Core::simpleProperty("duration", "float", false, false, false, false, false, false, nullptr, &SourceTimeFunction::setDuration, &SourceTimeFunction::duration));
 	addProperty(Core::simpleProperty("riseTime", "float", false, false, false, false, true, false, nullptr, &SourceTimeFunction::setRiseTime, &SourceTimeFunction::riseTime));
@@ -57,7 +57,7 @@ SourceTimeFunction::SourceTimeFunction() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SourceTimeFunction::SourceTimeFunction(const SourceTimeFunction& other)
+SourceTimeFunction::SourceTimeFunction(const SourceTimeFunction &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -75,7 +75,7 @@ SourceTimeFunction::~SourceTimeFunction() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SourceTimeFunction::operator==(const SourceTimeFunction& rhs) const {
+bool SourceTimeFunction::operator==(const SourceTimeFunction &rhs) const {
 	if ( !(_type == rhs._type) )
 		return false;
 	if ( !(_duration == rhs._duration) )
@@ -92,7 +92,7 @@ bool SourceTimeFunction::operator==(const SourceTimeFunction& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SourceTimeFunction::operator!=(const SourceTimeFunction& rhs) const {
+bool SourceTimeFunction::operator!=(const SourceTimeFunction &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,7 +101,7 @@ bool SourceTimeFunction::operator!=(const SourceTimeFunction& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SourceTimeFunction::equal(const SourceTimeFunction& other) const {
+bool SourceTimeFunction::equal(const SourceTimeFunction &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +186,7 @@ double SourceTimeFunction::decayTime() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SourceTimeFunction& SourceTimeFunction::operator=(const SourceTimeFunction& other) {
+SourceTimeFunction &SourceTimeFunction::operator=(const SourceTimeFunction &other) {
 	_type = other._type;
 	_duration = other._duration;
 	_riseTime = other._riseTime;
@@ -199,7 +199,7 @@ SourceTimeFunction& SourceTimeFunction::operator=(const SourceTimeFunction& othe
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SourceTimeFunction::serialize(Archive& ar) {
+void SourceTimeFunction::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

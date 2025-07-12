@@ -19,6 +19,7 @@
 
 
 
+#include <seiscomp/system/application.h>
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/math/geo.h>
@@ -117,22 +118,33 @@ double computeDistance(double lat1, double lon1,
 bool Homogeneous::setModel(const string &model) {
 
 	// load global configuration
-	Config::Config cfg;
-	if ( ! Environment::Instance()->initConfig(&cfg, "") ) {
-		return false;
+	auto app = Seiscomp::System::Application::Instance();
+	const Config::Config *cfg;
+	Config::Config tmp;
+
+	if ( app ) {
+		cfg = &app->configuration();
+	}
+	else {
+		if ( !Environment::Instance()->initConfig(&tmp, "") ) {
+			return false;
+		}
+		else {
+			cfg = &tmp;
+		}
 	}
 
 	string base = "ttt.homogeneous." + model + ".";
 	vector<string> origin;
 	try {
-		_pVel      = cfg.getDouble(base + "P-velocity");
-		_sVel      = cfg.getDouble(base + "S-velocity");
-		_radius    = cfg.getDouble(base + "radius");
-		_minDepth  = cfg.getDouble(base + "minDepth");
-		_maxDepth  = cfg.getDouble(base + "maxDepth");
-		origin = cfg.getStrings(base + "origin");
+		_pVel      = cfg->getDouble(base + "P-velocity");
+		_sVel      = cfg->getDouble(base + "S-velocity");
+		_radius    = cfg->getDouble(base + "radius");
+		_minDepth  = cfg->getDouble(base + "minDepth");
+		_maxDepth  = cfg->getDouble(base + "maxDepth");
+		origin = cfg->getStrings(base + "origin");
 	}
-	catch (...) {
+	catch ( ... ) {
 		return false;
 	}
 
@@ -201,7 +213,10 @@ Homogeneous::compute(const char *phase,
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
-		throw NoPhaseError();
+		throw std::out_of_range(
+			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
+			                _model.c_str(), lat1, lon1, dep1)
+		);
 	}
 
 	// straight ray path since we are in a homogeneous media
@@ -240,7 +255,10 @@ Homogeneous::computeTime(const char *phase,
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
-		throw NoPhaseError();
+		throw std::out_of_range(
+			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
+			                _model.c_str(), lat1, lon1, dep1)
+		);
 	}
 
 	// straight ray path since we are in a homogeneous media

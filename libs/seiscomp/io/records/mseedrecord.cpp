@@ -107,7 +107,6 @@ MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
 , _reclen(0)
 , _nframes(0)
 , _leap(0)
-, _etime(Seiscomp::Core::Time(0,0))
 , _encodingFlag(true)
 {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -118,8 +117,8 @@ MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 : Record(dt, h, rec->network, rec->station, rec->location, rec->channel,
-         Seiscomp::Core::Time(hptime_t(rec->starttime / HPTMODULUS),
-                              hptime_t(rec->starttime % HPTMODULUS)),
+         Seiscomp::Core::Time::FromEpoch(hptime_t(rec->starttime / HPTMODULUS),
+                                         hptime_t(rec->starttime % HPTMODULUS)),
          int(rec->samplecnt), rec->samprate, rec->Blkt1001 ? rec->Blkt1001->timing_qual : -1)
 , _data(0)
 , _seqno(rec->sequence_number)
@@ -180,7 +179,7 @@ MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 	}
 
 	hptime_t hptime = msr_endtime(rec);
-	_etime = Seiscomp::Core::Time(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
+	_etime = Seiscomp::Core::Time::FromEpoch(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -311,7 +310,7 @@ void MSeedRecord::setChannelCode(std::string cha) {
 void MSeedRecord::setStartTime(const Core::Time& time) {
 	if ( _hint == SAVE_RAW ) {
 		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		hptime_t hptime = hptime_t(time.seconds() * HPTMODULUS) + hptime_t(time.microseconds());
+		hptime_t hptime = hptime_t(time.epochSeconds() * HPTMODULUS) + hptime_t(time.microseconds());
 		ms_hptime2btime(hptime, &header->start_time);
 		MS_SWAPBTIME(&header->start_time);
 	}

@@ -6,8 +6,10 @@ SET(TESTS
 	georegions.cpp
 	geolib.cpp
 	intrusive_list.cpp
+	recordsequence.cpp
 	refcounts.cpp
 	strings.cpp
+	timewindow.cpp
  	version.cpp
 	xml.cpp
 )
@@ -17,7 +19,11 @@ FOREACH(testSrc ${TESTS})
 	SET(testName test_core_${testName})
 	ADD_EXECUTABLE(${testName} ${testSrc})
 	SC_LINK_LIBRARIES_INTERNAL(${testName} unittest core)
-	SC_LINK_LIBRARIES(${testName})
+
+	TARGET_COMPILE_DEFINITIONS(${testName} PRIVATE
+		SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+		BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}"
+	)
 
 	ADD_TEST(
 		NAME ${testName}

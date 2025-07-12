@@ -63,13 +63,10 @@ bool Application::init() {
 
 	Wired::IPACL globalAllow, globalDeny;
 
-	if ( global.arclink.port > 0 )
-		_server.addEndpoint(Wired::Socket::IPAddress(), global.arclink.port, false,
-		                    new ArclinkListener(globalAllow, globalDeny));
-
-	if ( global.fdsnws.port > 0 )
+	if ( global.fdsnws.port > 0 ) {
 		_server.addEndpoint(Wired::Socket::IPAddress(), global.fdsnws.port, false,
 		                    new FDSNWSListener(globalAllow, globalDeny));
+	}
 
 	return true;
 }
@@ -80,14 +77,13 @@ bool Application::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	if ( global.arclink.port > 0 )
-		SEISCOMP_INFO("Starting Arclink server on port %d", global.arclink.port);
-
-	if ( global.fdsnws.port > 0 )
+	if ( global.fdsnws.port > 0 ) {
 		SEISCOMP_INFO("Starting FDSNWS server on port %d", global.fdsnws.port);
+	}
 
-	if ( !_server.init() )
+	if ( !_server.init() ) {
 		return false;
+	}
 
 	return _server.run();
 }

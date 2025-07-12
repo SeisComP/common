@@ -81,25 +81,25 @@ class SC_SYSTEM_CORE_API RouteSeedlink : public Object {
 		RouteSeedlink();
 
 		//! Copy constructor
-		RouteSeedlink(const RouteSeedlink& other);
+		RouteSeedlink(const RouteSeedlink &other);
 
 		//! Destructor
 		~RouteSeedlink() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		RouteSeedlink& operator=(const RouteSeedlink& other);
+		RouteSeedlink &operator=(const RouteSeedlink &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const RouteSeedlink& other) const;
-		bool operator!=(const RouteSeedlink& other) const;
+		bool operator==(const RouteSeedlink &other) const;
+		bool operator!=(const RouteSeedlink &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const RouteSeedlink& other) const;
+		bool equal(const RouteSeedlink &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -120,17 +120,17 @@ class SC_SYSTEM_CORE_API RouteSeedlink : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const RouteSeedlinkIndex& index() const;
+		const RouteSeedlinkIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const RouteSeedlink* lhs) const;
+		bool equalIndex(const RouteSeedlink *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Route* route() const;
+		Route *route() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

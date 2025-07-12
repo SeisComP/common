@@ -43,7 +43,7 @@ namespace _private {
 struct Resolver : public Util::VariableResolver {
 	Resolver(PublicObject* po) : _po(po) {}
 
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		if ( Util::VariableResolver::resolve(variable) )
 			return true;
 
@@ -57,9 +57,9 @@ struct Resolver : public Util::VariableResolver {
 			std::string::size_type seperator;
 			seperator = variable.find('/');
 			if ( seperator != std::string::npos )
-				variable = Core::Time::GMT().toString(variable.substr(seperator+1).c_str());
+				variable = Core::Time::UTC().toString(variable.substr(seperator+1).c_str());
 			else
-				variable = Core::toString(Core::Time::GMT());
+				variable = Core::toString(Core::Time::UTC());
 		}
 		else
 			return false;
@@ -269,6 +269,24 @@ PublicObject::Iterator PublicObject::Begin() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject::Iterator PublicObject::End() {
 	return _publicObjects.end();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PublicObject::Lock() {
+	cacheMutex.lock();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PublicObject::Unlock() {
+	cacheMutex.unlock();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

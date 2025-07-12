@@ -95,7 +95,7 @@ void RecordIIRFilter<T>::setIIR(Math::Filtering::InPlaceFilter<T> *f) {
 	if ( _filter != nullptr )
 		delete _filter;
 
-	_lastEndTime = Core::Time();
+	_lastEndTime = Core::None;
 	_filter = f;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -141,7 +141,7 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 		throw Core::TypeConversionException("RecordFilter::IIR: wrong data type");
 	}
 
-	if ( _lastEndTime.valid() ) {
+	if ( _lastEndTime ) {
 		// If the sampling frequency changed, reset the filter
 		if ( _samplingFrequency != rec->samplingFrequency() ) {
 			SEISCOMP_WARNING("[%s] sps change (%f != %f): reset filter",
@@ -150,10 +150,10 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 			reset();
 		}
 		else {
-			Core::TimeSpan diff = rec->startTime() - _lastEndTime;
+			Core::TimeSpan diff = rec->startTime() - *_lastEndTime;
 			// Overlap or gap does not matter, we need to reset the filter
 			// for non-continuous records
-			if ( fabs(diff) > (0.5/_samplingFrequency) ) {
+			if ( std::abs(static_cast<double>(diff)) > (0.5 / _samplingFrequency) ) {
 //				SEISCOMP_DEBUG("[%s] discontinuity of %fs: reset filter",
 //				               rec->streamID().c_str(), (double)diff);
 				reset();
@@ -161,7 +161,7 @@ bool RecordIIRFilter<T>::apply(GenericRecord *rec) {
 		}
 	}
 
-	if ( !_lastEndTime.valid() ) {
+	if ( !_lastEndTime ) {
 		// First call after construction or reset: initialize
 		_samplingFrequency = rec->samplingFrequency();
 		try {
@@ -210,7 +210,7 @@ void RecordIIRFilter<T>::reset() {
 	}
 
 	// Reset last end time
-	_lastEndTime = Core::Time();
+	_lastEndTime = Core::None;
 	_lastError = std::string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

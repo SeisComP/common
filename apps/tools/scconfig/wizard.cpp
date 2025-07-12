@@ -17,7 +17,9 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+#include "gui.h"
 #include "wizard.h"
+
 #include <seiscomp/config/config.h>
 #include <seiscomp/system/environment.h>
 
@@ -93,7 +95,7 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	_buttonCancel = new QPushButton(tr("Cancel"));
 
 	QHBoxLayout *buttonLayout = new QHBoxLayout;
-	buttonLayout->setMargin(6);
+	buttonLayout->setContentsMargins(6, 6, 6, 6);
 	buttonLayout->addStretch();
 	buttonLayout->addWidget(_buttonBack);
 	buttonLayout->addWidget(_buttonNext);
@@ -109,13 +111,13 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	QVBoxLayout *headerLayout = new QVBoxLayout;
 	headerLayout->addWidget(_titleLabel);
 	headerLayout->addWidget(_subtitleLabel);
-	headerLayout->setMargin(fontMetrics().ascent());
+	setMargin(headerLayout, fontMetrics().ascent());
 	_header->setLayout(headerLayout);
 	_header->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
 	_content = new QWidget;
 	_contentLayout = new QVBoxLayout;
-	_contentLayout->setMargin(fontMetrics().ascent());
+	setMargin(_contentLayout, fontMetrics().ascent());
 	_content->setLayout(_contentLayout);
 
 	_headerBreak = new QFrame;
@@ -126,7 +128,7 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 
 	QVBoxLayout *pageLayout = new QVBoxLayout;
 	pageLayout->setSpacing(0);
-	pageLayout->setMargin(0);
+	setMargin(pageLayout, 0);
 	pageLayout->addWidget(_header);
 	pageLayout->addWidget(_headerBreak);
 	pageLayout->addWidget(_content);
@@ -461,7 +463,7 @@ WizardPage *WizardWidget::createIntroPage() {
 	w->setTitle(tr("Introduction"));
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	w->setLayout(l);
 
 	QLabel *text = new QLabel;
@@ -484,7 +486,7 @@ WizardPage *WizardWidget::createExtroPage() {
 	w->setTitle(tr("Finished"));
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	w->setLayout(l);
 
 	QLabel *text = new QLabel;
@@ -506,7 +508,7 @@ WizardPage *WizardWidget::createOutputPage() {
 	w->setSubTitle(tr("Running seiscomp setup"));
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	w->setLayout(l);
 
 	_procStatus = new QLabel;
@@ -529,7 +531,7 @@ WizardPage *WizardWidget::createCurrentPage() {
 	w->setSubTitle(_currentNode->group->name.c_str());
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	w->setLayout(l);
 
 	_currentInput = nullptr;

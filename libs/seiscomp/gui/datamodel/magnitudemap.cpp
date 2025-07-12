@@ -368,22 +368,28 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 	_magnitudes.clear();
 
 	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
-		SYMBOLLAYER->stations[i]->isActive = true;
+		SYMBOLLAYER->stations[i]->isActive = false;
 		SYMBOLLAYER->stations[i]->isMagnitude = false;
 		SYMBOLLAYER->stations[i]->magnitudeId = -1;
 	}
 
 	if ( _magnitude ) {
 		for ( size_t i = 0; i < _magnitude->stationMagnitudeContributionCount(); ++i ) {
-			StationMagnitude* staMag = StationMagnitude::Find(_magnitude->stationMagnitudeContribution(i)->stationMagnitudeID());
+			auto contrib = _magnitude->stationMagnitudeContribution(i);
+
+			StationMagnitude* staMag = StationMagnitude::Find(contrib->stationMagnitudeID());
 			if ( !staMag ) {
-				SEISCOMP_DEBUG("StationMagnitude '%s' not found", _magnitude->stationMagnitudeContribution(i)->stationMagnitudeID().c_str());
+				SEISCOMP_DEBUG("StationMagnitude '%s' not found", contrib->stationMagnitudeID().c_str());
 				continue;
 			}
 
 			double residual = staMag->magnitude().value() - _magnitude->magnitude().value();
 			addStationMagnitude(staMag, i);
 			setMagnitudeResidual(i, residual);
+			try {
+				setMagnitudeState(i, contrib->weight() > 0.0);
+			}
+			catch ( ... ) {}
 		}
 
 		for ( auto symbol : SYMBOLLAYER->stations ) {
@@ -598,8 +604,7 @@ void MagnitudeMap::setDrawStationAnnotations(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int MagnitudeMap::findStation(const std::string& stationCode) const {
-	std::map<std::string, int>::const_iterator it;
-	it = _stationCodes.find(stationCode);
+	auto it = _stationCodes.find(stationCode);
 	if ( it != _stationCodes.end() )
 		return it->second;
 	return -1;

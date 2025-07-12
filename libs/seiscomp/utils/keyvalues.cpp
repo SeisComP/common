@@ -122,9 +122,7 @@ bool KeyValues::getString(std::string &value, const std::string &name) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool KeyValues::getInt(int &value, const std::string &name) const {
 	NameValueMap::const_iterator it = _nameValueMap.find(name);
-	if ( it == end() ) return false;
-	if ( !Core::fromString(value, it->second) ) return false;
-	return true;
+	return it != end() && Core::fromString(value, it->second);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -134,9 +132,7 @@ bool KeyValues::getInt(int &value, const std::string &name) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool KeyValues::getDouble(double &value, const std::string &name) const {
 	NameValueMap::const_iterator it = _nameValueMap.find(name);
-	if ( it == end() ) return false;
-	if ( !Core::fromString(value, it->second) ) return false;
-	return true;
+	return it != end() && Core::fromString(value, it->second);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -146,9 +142,7 @@ bool KeyValues::getDouble(double &value, const std::string &name) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool KeyValues::getBool(bool &value, const std::string &name) const {
 	NameValueMap::const_iterator it = _nameValueMap.find(name);
-	if ( it == end() ) return false;
-	if ( !Core::fromString(value, it->second) ) return false;
-	return true;
+	return it != end() && Core::fromString(value, it->second);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

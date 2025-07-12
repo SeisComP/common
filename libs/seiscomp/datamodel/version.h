@@ -22,8 +22,8 @@
 #define SEISCOMP_DATAMODEL_VERSION_H__
 
 
-#define SEISCOMP_DATAMODEL_XMLNS_ROOT "http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/"
-#define SEISCOMP_DATAMODEL_XMLNS SEISCOMP_DATAMODEL_XMLNS_ROOT "0.13"
+#define SEISCOMP_DATAMODEL_XMLNS_ROOT "http://geofon.gfz.de/ns/seiscomp-schema/"
+#define SEISCOMP_DATAMODEL_XMLNS SEISCOMP_DATAMODEL_XMLNS_ROOT "0.14"
 
 namespace Seiscomp {
 namespace DataModel {
@@ -32,7 +32,7 @@ namespace DataModel {
 struct Version {
 	enum {
 		Major = 0,
-		Minor = 13,
+		Minor = 14,
 		Revision = 0
 	};
 };

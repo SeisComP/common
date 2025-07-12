@@ -1,6 +1,4 @@
 import os
-import glob
-import time
 import sys
 import seiscomp.config
 import seiscomp.kernel
@@ -71,7 +69,7 @@ class Module(seiscomp.kernel.Module):
                 messagingProtocol = 'scmps'
 
         # Synchronize database configuration
-        params = [self.name, '--console', '1', '-H',
+        params = [self.name, '--module-name', self.name, '--console', '1', '-H',
                   '%s://localhost:%d/production' % (messagingProtocol, messagingPort)]
         # Create the database update app and run it
         # This app implements a seiscomp.client.Application and connects

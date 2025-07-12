@@ -1,5 +1,6 @@
 SET(TESTS
 	tileindex.cpp
+	strings.cpp
 )
 
 IF (SC_GLOBAL_GUI_QT5)
@@ -14,7 +15,7 @@ ENDIF()
 FOREACH(testSrc ${TESTS})
 	GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
 	SET(testName test_gui_${testName})
-	IF (NOT SC_GLOBAL_GUI_QT5)
+	IF (NOT SC_GLOBAL_GUI_QT5 AND NOT SC_GLOBAL_GUI_QT6)
 		INCLUDE(${QT_USE_FILE})
 	ENDIF()
 

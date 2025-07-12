@@ -84,7 +84,7 @@ AmplitudeProcessor::AmplitudeTime average(
 	const AmplitudeProcessor::AmplitudeTime &t1)
 {
 	AmplitudeProcessor::AmplitudeTime t;
-	t.reference = Core::Time((double(t0.reference) + double(t1.reference)) * 0.5);
+	t.reference = Core::Time((t0.reference.epoch() + t1.reference.epoch()) * 0.5);
 
 	// Compute lower and upper uncertainty
 	Core::Time t0b = t0.reference + Core::TimeSpan(t0.begin);
@@ -178,13 +178,6 @@ AmplitudeProcessor_MLh::AmplitudeProcessor_MLh()
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 : Processing::AmplitudeProcessor("ML") {
-	setSignalEnd("min(R / 3 + 30, 150)");
-	setMinSNR(0);
-	// Maximum distance is 8 degrees
-	setMaxDist(8);
-	// Maximum depth is 80 km
-	setMaxDepth(80);
-
 	setUsedComponent(Horizontal);
 
 	_combiner = TakeAverage;
@@ -195,9 +188,8 @@ AmplitudeProcessor_ML2h::AmplitudeProcessor_ML2h()
 	_ampE.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 	_ampN.setPublishFunction(bind(&AmplitudeProcessor_ML2h::newAmplitude, this, placeholders::_1, placeholders::_2));
 
-	// Propagate configuration to single processors
-	_ampN.setConfig(config());
-	_ampE.setConfig(config());
+	// Copy default configuration from single component
+	setConfig(_ampN.config());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -252,10 +244,12 @@ void AmplitudeProcessor_ML2h::reprocess(OPT(double) searchBegin, OPT(double) sea
 	_ampE.reprocess(searchBegin, searchEnd);
 
 	if ( !isFinished() ) {
-		if ( _ampN.status() > Finished )
+		if ( _ampN.status() > Finished ) {
 			setStatus(_ampN.status(), _ampN.statusValue());
-		else
+		}
+		else {
 			setStatus(_ampE.status(), _ampE.statusValue());
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -348,6 +342,10 @@ std::string AmplitudeProcessor_ML2h::parameter(Capability cap) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
+	// Propagate amplitude type which could have been changed due to
+	// aliasing.
+	_ampN._type = _type; _ampE._type = _type;
+
 	// Copy the stream configurations (gain, orientation, responses, ...) to
 	// the horizontal processors
 	_ampN.streamConfig(FirstHorizontalComponent) = streamConfig(FirstHorizontalComponent);
@@ -375,10 +373,14 @@ bool AmplitudeProcessor_ML2h::setup(const Settings &settings) {
 	}
 	catch ( ... ) {}
 
-	if ( !AmplitudeProcessor::setup(settings) ) return false;
+	if ( !AmplitudeProcessor::setup(settings) ) {
+		return false;
+	}
 
 	// Setup each component
-	if ( !_ampN.setup(settings) || !_ampE.setup(settings) ) return false;
+	if ( !_ampN.setup(settings) || !_ampE.setup(settings) ) {
+		return false;
+	}
 
 	return true;
 }

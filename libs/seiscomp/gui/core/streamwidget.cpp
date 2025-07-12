@@ -64,7 +64,7 @@ StreamWidget::StreamWidget(const std::string& recordStreamURL,
 	// Initialize trace widget
 	_ringBufferSize.set((long int)windowLength);
 	_recordWidget = new RecordWidget();
-		
+
 /*	Math::Filtering::InPlaceFilter<float>* filter = Util::createFilterByName<float>(parameter.filterName);
 	if (filter) {
 		_recordWidget->setFilter(filter);
@@ -78,7 +78,7 @@ StreamWidget::StreamWidget(const std::string& recordStreamURL,
 	_recordWidget->setPalette(palette);
 
 	QVBoxLayout* boxLayout = new QVBoxLayout();
-	boxLayout->setMargin(1);
+	boxLayout->setContentsMargins(1, 1, 1, 1);
 	boxLayout->addWidget(_recordWidget);
 
 	_timeScale = new TimeScale();
@@ -132,9 +132,8 @@ void StreamWidget::startWaveformDataAcquisition()
 	}
 	// _thread->addStream(station->network()->code(), station->code(), stream->locCode(), stream->code() + "Z");
 	_thread->addStream(net, sta, loc, cha);
-	Core::Time startTime = Core::Time::GMT() - _ringBufferSize;
-	Core::Time endTime/* = Core::Time::GMT()*/;
-	_thread->setTimeWindow(Core::TimeWindow(startTime, endTime));
+	Core::Time startTime = Core::Time::UTC() - _ringBufferSize;
+	_thread->setStartTime(startTime);
 
 	_recordSequence = new RingBuffer(_ringBufferSize);
 	_recordWidget->setRecords(0, _recordSequence);
@@ -142,13 +141,13 @@ void StreamWidget::startWaveformDataAcquisition()
 	        this, SLOT(updateRecordWidget(Seiscomp::Record*)));
 
 	_thread->start();
-	
+
 	_groupBox->setTitle(QString("Waveform Data: %1")
 	                    .arg((net + "." + sta + "." + loc + "." + cha).c_str()));
 	_groupBox->setVisible(!_groupBox->isVisible());
 	_recordWidget->setTimeScale(_recordWidget->width() / double(_ringBufferSize.seconds()));
 	_recordWidget->setTimeRange(-1 * _ringBufferSize.seconds(), 0);
-	_recordWidget->setAlignment(Core::Time::GMT());
+	_recordWidget->setAlignment(Core::Time::UTC());
 	_timeScale->setScale(_recordWidget->width() / double(_ringBufferSize.seconds()));
 	_timeScale->setTimeRange(-1 * _ringBufferSize.seconds(), 0);
 
@@ -197,7 +196,7 @@ void StreamWidget::updateRecordWidgetAlignment()
 	if ( !_recordWidget )
 		return;
 
-	_recordWidget->setAlignment(Core::Time::GMT());
+	_recordWidget->setAlignment(Core::Time::UTC());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -279,7 +279,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		Protocol();
+		Protocol() = default;
 		virtual ~Protocol();
 
 
@@ -305,7 +305,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		 * @brief connect
 		 * @param address The connection address, e.g. host:port/queue
 		 * @param timeoutMs The timeout in milliseconds
-		 * @param clientName The desirec client name. If it is nullptr then the
+		 * @param clientName The desired client name. If it is nullptr then the
 		 *                   server will choose a random client name.
 		 * @return
 		 */
@@ -321,6 +321,13 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		 * @return The version of the remote schema
 		 */
 		Core::Version schemaVersion() const;
+
+		/**
+		 * @brief Returns whether the backend supports the DeleteTree operation
+		 *        or not.
+		 * @return Flag indicating available support.
+		 */
+		bool isDeleteTreeSupported() const;
 
 		/**
 		 * @brief Returns configuration parameters as key-value store
@@ -534,14 +541,15 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 	protected:
 		using PacketQueue = std::deque<Packet*>;
 
-		bool               _wantMembershipInfo;
+		bool               _wantMembershipInfo{true};
 		Groups             _groups;
 		PacketQueue        _inbox;
 		std::string        _errorMessage;
 		State              _state;
 		std::string        _registeredClientName;
-		Core::Version      _schemaVersion; //!< The schema version the
-		                                   //!< server supports
+		Core::Version      _schemaVersion{0}; //!< The schema version the
+		                                      //!< server supports
+		bool               _supportsDeleteTree{false};
 		KeyValueStore      _extendedParameters;
 		std::string        _certificate;   //!< Optional client certificate
 
@@ -558,6 +566,10 @@ Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Client::Protocol, Class> __#
 
 inline Core::Version Protocol::schemaVersion() const {
 	return _schemaVersion;
+}
+
+inline bool Protocol::isDeleteTreeSupported() const {
+	return _supportsDeleteTree;
 }
 
 inline const Protocol::KeyValueStore &Protocol::extendedParameters() const {

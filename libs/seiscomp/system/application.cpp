@@ -71,7 +71,7 @@ namespace {
 class FlagCounter: public boost::program_options::untyped_value {
 	public:
 		FlagCounter(unsigned int* count);
-		void xparse(boost::any&, const vector<string>&) const;
+		void xparse(boost::any&, const vector<string>&) const override;
 
 	private:
 		unsigned int *_count;
@@ -402,28 +402,27 @@ Application::Application(int argc, char** argv) {
 
 	_logger = nullptr;
 
-	_argc = argc;
-	_argv = new char*[size_t(argc)];
-
 	_arguments.clear();
 	for ( int i = 0; i < argc; ++i ) {
 		_arguments.push_back(argv[i]);
-		_argv[i] = new char[strlen(argv[i]) + 1];
-		strcpy(_argv[i], argv[i]);
 	}
 
-	if ( argc > 0 )
-		_name = argv[0];
-	else
+	if ( !_arguments.empty() ) {
+		_name = _arguments[0];
+	}
+	else {
 		_name = "";
+	}
 
 	size_t pos = _name.rfind('/');
-	if ( pos != string::npos )
-		_name.erase(0, pos+1);
+	if ( pos != string::npos ) {
+		_name.erase(0, pos + 1);
+	}
 
 	pos = _name.rfind('\\');
-	if ( pos != string::npos )
-		_name.erase(0, pos+1);
+	if ( pos != string::npos ) {
+		_name.erase(0, pos + 1);
+	}
 
 	pos = _name.rfind('.');
 	if ( pos != string::npos )
@@ -455,13 +454,9 @@ Application::~Application() {
 
 	PluginRegistry::Reset();
 
-	if ( _instance == this )
+	if ( _instance == this ) {
 		_instance = nullptr;
-
-	for ( int i = 0; i < _argc; ++i )
-		delete[] _argv[i];
-
-	delete[] _argv;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -469,7 +464,7 @@ Application::~Application() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Application* Application::Instance() {
+Application *Application::Instance() {
 	return _instance;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -744,7 +739,7 @@ const Config::Config &Application::configuration() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const char* Application::path() const {
-	return _argv[0];
+	return _arguments[0].data();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1379,12 +1374,14 @@ void Application::createBaseCommandLineDescription() {
 	commandline().addOption("Generic", "version,V", "Show version information.");
 	commandline().addOption("Generic", "print-config-vars", "Print all available configuration variables and exit.");
 	commandline().addOption("Generic", "validate-schema-params", "Validates the applications description xml and exit.");
-	if ( !_settings.empty() )
+	if ( !_settings.empty() ) {
 		commandline().addOption("Generic", "dump-settings", "Dump the bound settings and exit.");
+	}
 	//commandline().addOption("Generic", "crash-handler", "path to crash handler script", &_crashHandler);
 
-	if ( _baseSettings.enableDaemon )
+	if ( _baseSettings.enableDaemon ) {
 		commandline().addOption("Generic", "daemon,D", "Run as daemon.");
+	}
 
 	commandline().addGroup("Verbose");
 	commandline().addCustomOption("Verbose", "v,v", "Increase verbosity level (may be repeated, eg. -vv).", new FlagCounter(&_baseSettings.logging.verbosity));
@@ -1398,9 +1395,9 @@ void Application::createBaseCommandLineDescription() {
 void Application::initCommandLine() {
 	_settingsLinker.reset();
 	_settingsLinker.proc().bind(&commandline());
-	for ( list<AbstractSettings*>::iterator it = _settings.begin();
-	      it != _settings.end(); ++it )
-		(*it)->accept(_settingsLinker);
+	for ( auto setting :_settings ) {
+		setting->accept(_settingsLinker);
+	}
 
 	createBaseCommandLineDescription();
 	createCommandLineDescription();
@@ -1437,9 +1434,30 @@ bool Application::validateParameters() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::parseCommandLine() {
-	return commandline().parse(_argc, _argv, [](const string &arg) {
-		return !arg.compare(0, 2, "--") && arg.find("=", 2) != string::npos;
-	});
+	return commandline().parse(Arguments(_arguments.begin() + 1, _arguments.end()),
+		[this](const string &arg) {
+			bool isCfgParam = !arg.compare(0, 2, "--");
+			if ( !isCfgParam ) {
+				// Option does not start with double dash
+				return false;
+			}
+
+			size_t pSep = arg.find("=", 2);
+			if ( pSep == string::npos ) {
+				// Option is not of format --param=value
+				return false;
+			}
+
+			string param = arg.substr(2, pSep - 2);
+			string value = arg.substr(pSep + 1);
+			vector<string> values;
+
+			_configuration.eval(value, values);
+			_configuration.setStrings(param, values);
+
+			return true;
+		}
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1474,13 +1492,14 @@ bool Application::initConfiguration() {
 	}
 
 	_settingsLinker.reset();
-
 	_settingsLinker.proc().get(this);
-	for ( list<AbstractSettings*>::iterator it = _settings.begin();
-	      it != _settings.end(); ++it )
-		(*it)->accept(_settingsLinker);
+
+	for ( auto &item : _settings ) {
+		item->accept(_settingsLinker);
+	}
+
 	if ( !_settingsLinker ) {
-		cerr << _settingsLinker.lastError() << endl;
+		SEISCOMP_ERROR("%s", _settingsLinker.lastError());
 		return false;
 	}
 
@@ -1496,8 +1515,9 @@ bool Application::initLogging() {
 	Logging::disableConsoleLogging();
 	closeLogging();
 
-	if ( _baseSettings.logging.quiet )
+	if ( _baseSettings.logging.quiet ) {
 		return true;
+	}
 
 	bool enableLogging = _baseSettings.logging.verbosity > 0;
 
@@ -1604,8 +1624,9 @@ bool Application::initLogging() {
 				}
 			}
 		}
-		else
+		else {
 			return false;
+		}
 	}
 
 	if ( !_baseSettings.logging.toStdout ) {
@@ -1636,8 +1657,9 @@ bool Application::forkProcess() {
 		SEISCOMP_ERROR("can't fork: %s", strerror(errno));
 		return false;
 	}
-	else if ( pid != 0 ) // parent
+	else if ( pid != 0 ) { // parent
 		::exit(0);
+	}
 
 	if ( setsid() < 0 ) {
 		SEISCOMP_ERROR("setsid: %s", strerror(errno));
@@ -1743,7 +1765,9 @@ int Application::acquireLockfile(const string &lockfile) {
 
 	if ( fcntl(fd, F_SETLK, &lock ) < 0 ) {
 		close(fd);
-		if(errno == EACCES || errno == EAGAIN) return 0; // already locked
+		if ( errno == EACCES || errno == EAGAIN ) {
+			return 0; // already locked
+		}
 
 		SEISCOMP_ERROR("could not lock %s: %s\n", lockfile.c_str(), strerror(errno));
 		return -1;

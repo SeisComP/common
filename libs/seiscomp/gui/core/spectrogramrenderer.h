@@ -211,7 +211,7 @@ class SC_GUI_API SpectrogramRenderer {
 
 		QImage::Format            _imageFormat;
 		TransferFunctionPtr       _transferFunction;
-		Core::TimeWindow          _timeWindow;
+		OPT(Core::TimeWindow)     _timeWindow;
 		Core::Time                _alignment;
 		double                    _tmin, _tmax;
 		double                    _scale;

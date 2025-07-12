@@ -103,7 +103,7 @@ class SC_SYSTEM_CLIENT_API FX : public TimeWindowProcessor {
 
 		//! This method has to be called when all configuration
 		//! settings have been set to calculate the timewindow
-		void computeTimeWindow();
+		void computeTimeWindow() override;
 
 		/**
 		 * @brief Sets the environment for the FX processor. Basically
@@ -147,7 +147,7 @@ class SC_SYSTEM_CLIENT_API FX : public TimeWindowProcessor {
 	//  Waveform processor interface
 	// ----------------------------------------------------------------------
 	public:
-		void process(const Record *record, const DoubleArray &);
+		void process(const Record *record, const DoubleArray &) override;
 
 
 	// ----------------------------------------------------------------------

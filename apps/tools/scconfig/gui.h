@@ -35,10 +35,16 @@
 #include <QLabel>
 #include <QTimer>
 #include <QSettings>
+#include <QLayout>
 
 
 class QTreeWidget;
 class QTreeWidgetItem;
+
+
+inline void setMargin(QLayout *layout, int margin) {
+	layout->setContentsMargins(margin, margin, margin, margin);
+}
 
 
 class ConfigurationTreeItemModel : public QStandardItemModel {
@@ -85,8 +91,8 @@ class ConfigurationTreeItemModel : public QStandardItemModel {
 	public:
 		Seiscomp::Environment::ConfigStage configStage() const;
 
-		bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole);
-		Qt::ItemFlags flags(const QModelIndex &index) const;
+		bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole) override;
+		Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
 	public slots:
@@ -163,7 +169,7 @@ class StatusLabel : public QLabel {
 		void setErrorText(const QString &);
 
 	protected:
-		void paintEvent(QPaintEvent *);
+		void paintEvent(QPaintEvent *) override;
 
 	private:
 		QPixmap _icon;
@@ -180,7 +186,7 @@ class ClickFilter : public QObject {
 		void clicked(QObject *);
 
 	protected:
-		bool eventFilter(QObject *obj, QEvent *event);
+		bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 
@@ -189,16 +195,16 @@ class Configurator : public QMainWindow {
 
 	public:
 		Configurator(Seiscomp::Environment::ConfigStage stage,
-		             QWidget *parent = NULL);
+		             QWidget *parent = nullptr);
 		~Configurator();
 
 		bool setModel(Seiscomp::System::Model *model);
 
 
 	protected:
-		void showEvent(QShowEvent *event);
-		void closeEvent(QCloseEvent *event);
-		void paintEvent(QPaintEvent *event);
+		void showEvent(QShowEvent *event) override;
+		void closeEvent(QCloseEvent *event) override;
+		void paintEvent(QPaintEvent *event) override;
 
 	private:
 		void updateModeLabel();

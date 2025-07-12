@@ -86,7 +86,6 @@ class SC_GUI_API StationSymbol : public Map::Symbol {
 
 	protected:
 		QPolygon generateShape(int posX, int posY, int radius);
-
 		const QPolygon &stationPolygon() const;
 
 

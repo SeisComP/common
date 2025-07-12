@@ -30,29 +30,8 @@ namespace Core {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeWindow TimeWindow::operator|(const TimeWindow &other) const {
-	TimeWindow tw(*this);
-
-	if ( !tw )
-		tw = other;
-	else if ( other ) {
-		if ( tw.startTime() > other.startTime() )
-			tw.setStartTime(other.startTime());
-	
-		if ( tw.endTime() < other.endTime() )
-			tw.setEndTime(other.endTime());
-	}
-
-	return tw;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeWindow TimeWindow::merge(const TimeWindow &other) const {
-	return *this | other;
+TimeWindow::operator bool() const {
+	return _startTime < _endTime;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -61,10 +40,12 @@ TimeWindow TimeWindow::merge(const TimeWindow &other) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool TimeWindow::overlaps(const TimeWindow &tw) const {
-	if ( contains(tw) || tw.contains(*this) )
+	if ( contains(tw) || tw.contains(*this) ) {
 		return true;
-	else if ( contains(tw._startTime) || contains(tw._endTime) )
+	}
+	else if ( contains(tw._startTime) || contains(tw._endTime) ) {
 		return true;
+	}
 
 	return false;
 }
@@ -74,18 +55,21 @@ bool TimeWindow::overlaps(const TimeWindow &tw) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeWindow TimeWindow::overlap(const TimeWindow &tw) const {
-	if ( contains(tw) )
-		return tw;
-	if ( tw.contains(*this) )
-		return *this;
+TimeWindow &TimeWindow::merge(const TimeWindow &other) {
+	if ( !*this ) {
+		*this = other;
+	}
+	else if ( other ) {
+		if ( startTime() > other.startTime() ) {
+			setStartTime(other.startTime());
+		}
 
-	if ( contains(tw._startTime) )
-		return TimeWindow(tw._startTime, _endTime);
-	if ( contains(tw._endTime) )
-		return TimeWindow(_startTime, tw._endTime);
+		if ( endTime() < other.endTime() ) {
+			setEndTime(other.endTime());
+		}
+	}
 
-	return TimeWindow();
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -93,12 +77,65 @@ TimeWindow TimeWindow::overlap(const TimeWindow &tw) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeWindow::contiguous(const TimeWindow &other, double tolerance) const {
-	double dt = static_cast<double>((other._startTime - _endTime));
+TimeWindow TimeWindow::merged(const TimeWindow &other) const {
+	return TimeWindow(*this).merge(other);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	dt = dt < 0 ? -dt : dt;
-	if ( dt > tolerance )
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TimeWindow &TimeWindow::overlap(const TimeWindow &other) {
+	if ( *this ) {
+		if ( other ) {
+			if ( startTime() < other.startTime() ) {
+				setStartTime(other.startTime());
+			}
+
+			if ( endTime() > other.endTime() ) {
+				setEndTime(other.endTime());
+			}
+		}
+		else {
+			*this = other;
+		}
+	}
+
+	return *this;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+TimeWindow TimeWindow::overlapped(const TimeWindow &other) const {
+	return TimeWindow(*this).overlap(other);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool TimeWindow::contiguous(const TimeWindow &other, TimeSpan tolerance) const {
+	return (other._startTime - _endTime).abs() <= tolerance;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool TimeWindow::equals(const TimeWindow &tw, TimeSpan tolerance) const {
+	if ( (_startTime - tw._startTime).abs() > tolerance ) {
 		return false;
+	}
+
+	if ( (_endTime - tw._endTime).abs() > tolerance ) {
+		return false;
+	}
 
 	return true;
 }
@@ -108,28 +145,8 @@ bool TimeWindow::contiguous(const TimeWindow &other, double tolerance) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimeWindow::extend(const TimeWindow &other) {
-	// FIXME
-	// if (other._endTime < _startTime)
-	//	throw ...
-	_endTime = other._endTime;	
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeWindow::equals(const TimeWindow &tw, double tolerance) const {
-	double sdt = (double)(_startTime - tw._startTime);
-	if ( (sdt < 0 ? -sdt : sdt) > tolerance )
-		return false;
-
-	double edt = (double)(_endTime - tw._endTime);
-	if ( (edt < 0 ? -edt : edt) > tolerance )
-		return false;
-
-	return true;
+std::ostream &operator<<(std::ostream &os, const TimeWindow &timeWindow) {
+	return os << timeWindow.startTime() << "~" << timeWindow.endTime();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

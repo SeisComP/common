@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <seiscomp/math/geo.h>
 #include <seiscomp/utils/units.h>
 
 
@@ -41,7 +42,7 @@ UnitConverter::ConversionMap UnitConverter::_conversionMap;
 
 const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 	if ( _conversionMap.empty() ) {
-		#define MTS_SI_UNIT "M*S"
+		#define MTS_SI_UNIT "m*s"
 		#define MTS_QML_UNIT "m*s"
 		#define MTS_SEED_UNIT "M*S"
 
@@ -53,18 +54,21 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 		REGISTER_CONVERSION("um*s", MTS_SI_UNIT, MTS_QML_UNIT, MTS_SEED_UNIT, 1E-6);
 		REGISTER_CONVERSION("nm*s", MTS_SI_UNIT, MTS_QML_UNIT, MTS_SEED_UNIT, 1E-9);
 
-		#define M_SI_UNIT "M"
+		#define M_SI_UNIT "m"
 		#define M_QML_UNIT "m"
 		#define M_SEED_UNIT "M"
-		REGISTER_CONVERSION("m",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1.0);
-		REGISTER_CONVERSION("M",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1.0);
-		REGISTER_CONVERSION("dm", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-1);
-		REGISTER_CONVERSION("cm", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-2);
-		REGISTER_CONVERSION("mm", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-3);
-		REGISTER_CONVERSION("um", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-6);
-		REGISTER_CONVERSION("nm", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-9);
+		REGISTER_CONVERSION("°", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, Math::Geo::WGS84_KM_OF_DEGREE * 1E3);
+		REGISTER_CONVERSION("deg", M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, Math::Geo::WGS84_KM_OF_DEGREE * 1E3);
+		REGISTER_CONVERSION("km",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E3);
+		REGISTER_CONVERSION("m",   M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1.0);
+		REGISTER_CONVERSION("M",   M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1.0);
+		REGISTER_CONVERSION("dm",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-1);
+		REGISTER_CONVERSION("cm",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-2);
+		REGISTER_CONVERSION("mm",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-3);
+		REGISTER_CONVERSION("um",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-6);
+		REGISTER_CONVERSION("nm",  M_SI_UNIT, M_QML_UNIT, M_SEED_UNIT, 1E-9);
 
-		#define M_S_SI_UNIT "M/S"
+		#define M_S_SI_UNIT "m/s"
 		#define M_S_QML_UNIT "m/s"
 		#define M_S_SEED_UNIT "M/S"
 		REGISTER_CONVERSION("m/s",  M_S_SI_UNIT, M_S_QML_UNIT, M_S_SEED_UNIT, 1.0);
@@ -75,9 +79,9 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 		REGISTER_CONVERSION("um/s", M_S_SI_UNIT, M_S_QML_UNIT, M_S_SEED_UNIT, 1E-6);
 		REGISTER_CONVERSION("nm/s", M_S_SI_UNIT, M_S_QML_UNIT, M_S_SEED_UNIT, 1E-9);
 
-	#define M_S2_SI_UNIT "M/S**2"
-	#define M_S2_QML_UNIT "m/(s*s)"
-	#define M_S2_SEED_UNIT "M/S**2"
+		#define M_S2_SI_UNIT "m/s**2"
+		#define M_S2_QML_UNIT "m/(s*s)"
+		#define M_S2_SEED_UNIT "M/S**2"
 		REGISTER_CONVERSION("m/s**2",    M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
 		REGISTER_CONVERSION("M/S**2",    M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
 		REGISTER_CONVERSION("m/(s*s)",   M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 1.0);
@@ -103,9 +107,10 @@ const UnitConversion *UnitConverter::get(const std::string &fromUnit) {
 		REGISTER_CONVERSION("%g",        M_S2_SI_UNIT, M_S2_QML_UNIT, M_S2_SEED_UNIT, 9.81E-2);
 	}
 
-	ConversionMap::const_iterator it = _conversionMap.find(fromUnit);
-	if ( it == _conversionMap.end() )
+	auto it = _conversionMap.find(fromUnit);
+	if ( it == _conversionMap.end() ) {
 		return nullptr;
+	}
 
 	return &it->second;
 }

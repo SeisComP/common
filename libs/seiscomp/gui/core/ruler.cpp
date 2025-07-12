@@ -737,7 +737,12 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
 	// Already in a drag mode?
 	if ( _dragMode != 0 ) return;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QPoint rp = w2rPos(e->x(), e->y());
+#else
+	QPoint rp = e->position().toPoint();
+	rp = w2rPos(rp.x(), rp.y());
+#endif
 	int rx = rp.x();
 	_iDragStart = rx;
 	_dragStart = (_pos+rx)/_scl + _min;
@@ -859,7 +864,12 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 		if ( _enableSelection ) {
 			// check if mouse is over selection handle and if so, determine best
 			// matching handle and highlight it
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 			QPoint rp = w2rPos(e->x(), e->y());
+#else
+			QPoint rp = e->position().toPoint();
+			rp = w2rPos(rp.x(), rp.y());
+#endif
 			int rx = rp.x();
 			int ry = rp.y();
 			int selHeight = _tickLong * 1.5;
@@ -886,7 +896,12 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 	}
 
 	// position on the ruler
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QPoint rPoint = w2rPos(e->x(), e->y());
+#else
+	QPoint rPoint = e->position().toPoint();
+	rPoint = w2rPos(rPoint.x(), rPoint.y());
+#endif
 	int rx = rPoint.x();
 	double p = (_pos+rx) / _scl + _min;
 	double dragOffset = _iDragStart - rx;
@@ -917,7 +932,12 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 
 			if ( idx != _currentSelectionHandle ) {
 				// Need to find another item as current
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 				QPoint rp = w2rPos(e->x(), e->y());
+#else
+				QPoint rp = e->position().toPoint();
+				rp = w2rPos(rp.x(), rp.y());
+#endif
 				int rx = rp.x();
 				int ry = rp.y();
 				int selHeight = _tickLong * 1.5;

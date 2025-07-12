@@ -249,8 +249,8 @@ bool Decimation::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Decimation::addStream(const string &net, const string &sta,
                            const string &loc, const string &cha,
-                           const Seiscomp::Core::Time &stime,
-                           const Seiscomp::Core::Time &etime) {
+                           const OPT(Core::Time) &stime,
+                           const OPT(Core::Time) &etime) {
 	return _source->addStream(net, sta, loc, cha, stime, etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -259,7 +259,7 @@ bool Decimation::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setStartTime(const Seiscomp::Core::Time &stime) {
+bool Decimation::setStartTime(const OPT(Core::Time) &stime) {
 	return _source->setStartTime(stime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -268,7 +268,7 @@ bool Decimation::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setEndTime(const Seiscomp::Core::Time &etime) {
+bool Decimation::setEndTime(const OPT(Core::Time) &etime) {
 	return _source->setEndTime(etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -277,7 +277,7 @@ bool Decimation::setEndTime(const Seiscomp::Core::Time &etime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Decimation::setTimeWindow(const Seiscomp::Core::TimeWindow &w) {
+bool Decimation::setTimeWindow(const Core::TimeWindow &w) {
 	return _source->setTimeWindow(w);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -582,8 +582,8 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 		return nullptr;
 	}
 
-	if ( stage->lastEndTime.valid() ) {
-		double diff = rec->startTime() - stage->lastEndTime;
+	if ( stage->lastEndTime ) {
+		double diff = (rec->startTime() - *stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			if ( diff < 0 )
 				// Ignore overlap
@@ -618,11 +618,14 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 		data_len -= toCopy;
 		stage->missingSamples -= toCopy;
 
-		if ( !stage->startTime.valid() )
+		if ( !stage->startTime ) {
 			stage->startTime = rec->startTime();
+		}
 
 		// Still samples missing and no more data available, return
-		if ( stage->missingSamples > 0 ) return nullptr;
+		if ( stage->missingSamples > 0 ) {
+			return nullptr;
+		}
 
 		// Resampling can start now
 		stage->samplesToSkip = 0;
@@ -638,13 +641,15 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 			double *coeff = &((*stage->coefficients)[0]);
 			double sample = 0;
 
-			for ( size_t i = stage->front; i < stage->buffer.size(); ++i )
+			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {
 				sample += buffer[i] * *(coeff++);
-			for ( size_t i = 0; i < stage->front; ++i )
+			}
+			for ( size_t i = 0; i < stage->front; ++i ) {
 				sample += buffer[i] * *(coeff++);
+			}
 
 			if ( !resampled_data ) {
-				startTime = stage->startTime + Core::TimeSpan(stage->dt*stage->N2);
+				startTime = *stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
 				resampled_data = new DoubleArray;
 			}
 
@@ -677,7 +682,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 				stage->front -= stage->buffer.size();
 		}
 
-		stage->startTime += Core::TimeSpan(stage->dt*num_samples);
+		*stage->startTime += Core::TimeSpan(stage->dt * num_samples);
 		stage->samplesToSkip -= num_samples;
 		data_len -= num_samples;
 	}

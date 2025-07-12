@@ -971,8 +971,9 @@ void JSONArchive::read(std::string &value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::read(Core::Time &value) {
 	if ( !_objectLocation->IsString() ) {
-		if ( _objectLocation->IsNull() )
+		if ( _objectLocation->IsNull() ) {
 			value = Core::Time::Null;
+		}
 		else {
 			SEISCOMP_ERROR("iso string expected, got type %d",
 			               static_cast<int>(_objectLocation->GetType()));
@@ -1090,7 +1091,7 @@ void JSONArchive::write(float value) {
 	if ( Math::isNaN(value) )
 		*_os << "\"NaN\"";
 	else
-		*_os << boost::lexical_cast<std::string>(value);
+		*_os << number(value);
 	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1105,7 +1106,7 @@ void JSONArchive::write(double value) {
 	if ( Math::isNaN(value) )
 		*_os << "\"NaN\"";
 	else
-		*_os << boost::lexical_cast<std::string>(value);
+		*_os << number(value);
 	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1122,6 +1123,24 @@ void JSONArchive::writeVector(std::vector<T> &value) {
 	for ( size_t i = 0; i < value.size(); ++i ) {
 		if ( i ) *_os << ",";
 		*_os << value[i];
+	}
+	*_os << "]";
+	postAttrib();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+void JSONArchive::writeVectorNumber(std::vector<T> &value) {
+	if ( !_buf ) return;
+	preAttrib();
+	*_os << "[";
+	for ( size_t i = 0; i < value.size(); ++i ) {
+		if ( i ) *_os << ",";
+		*_os << number(value[i]);
 	}
 	*_os << "]";
 	postAttrib();
@@ -1178,7 +1197,7 @@ void JSONArchive::write(std::vector<int64_t> &value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(std::vector<float> &value) {
-	writeVector<float>(value);
+	writeVectorNumber<float>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1187,7 +1206,7 @@ void JSONArchive::write(std::vector<float> &value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(std::vector<double> &value) {
-	writeVector<double>(value);
+	writeVectorNumber<double>(value);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1232,7 +1251,7 @@ void JSONArchive::write(std::vector<Core::Time> &value) {
 void JSONArchive::write(std::complex<float> &value) {
 	if ( !_buf ) return;
 	preAttrib();
-	*_os << "[" << value.real() << "," << value.imag() << "]";
+	*_os << "[" << number(value.real()) << "," << number(value.imag()) << "]";
 	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1244,7 +1263,7 @@ void JSONArchive::write(std::complex<float> &value) {
 void JSONArchive::write(std::complex<double> &value) {
 	if ( !_buf ) return;
 	preAttrib();
-	*_os << "[" << value.real() << "," << value.imag() << "]";
+	*_os << "[" << number(value.real()) << "," << number(value.imag()) << "]";
 	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1274,7 +1293,10 @@ void JSONArchive::write(std::vector<std::complex<double> > &value) {
 	*_os << "[";
 	for ( size_t i = 0; i < value.size(); ++i ) {
 		if ( i ) *_os << ",";
-		*_os << "[" << value[i].real() << "," << value[i].imag() << "]";
+		*_os << "["
+		     << number(value[i].real()) << ","
+		     << number(value[i].imag())
+		     << "]";
 	}
 	*_os << "]";
 	postAttrib();
@@ -1302,11 +1324,9 @@ void JSONArchive::write(std::string &value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void JSONArchive::write(Core::Time &value) {
 	if ( !_buf ) return;
-	if ( (hint() & XML_MANDATORY) || value.valid() ) {
-		preAttrib();
-		*_os << jsontime(value);
-		postAttrib();
-	}
+	preAttrib();
+	*_os << jsontime(value);
+	postAttrib();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -56,6 +56,22 @@ class CheckBox : public QCheckBox {
 };
 
 
+SC_GUI_API double elevation(const DataModel::SensorLocation *sloc);
+SC_GUI_API double elevation(const DataModel::Station *sta);
+
+
+SC_GUI_API double computeDistance(const DataModel::Origin *org,
+                                  const DataModel::Station *sta,
+                                  double defaultDepth,
+                                  double *az = nullptr, double *baz = nullptr,
+                                  double *epicentral = nullptr);
+SC_GUI_API double computeDistance(const DataModel::Origin *org,
+                                  const DataModel::SensorLocation *sloc,
+                                  double defaultDepth,
+                                  double *az = nullptr, double *baz = nullptr,
+                                  double *epicentral = nullptr);
+
+
 }
 }
 

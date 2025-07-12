@@ -26,7 +26,7 @@
 #include <seiscomp/core/plugin.h>
 #include "postgresqldatabaseinterface.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 
 
@@ -34,34 +34,25 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 IMPLEMENT_SC_CLASS_DERIVED(PostgreSQLDatabase,
                            Seiscomp::IO::DatabaseInterface,
                            "postgresql_database_interface");
-
-REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
-ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 11, 0)
 
 
 #define XFREE(ptr) \
 	do {\
 		if ( ptr ) {\
 			PQfreemem(ptr);\
-			ptr = NULL;\
+			ptr = nullptr;\
 			ptr##Size = 0;\
 		}\
 	} while (0)
 
 
 #define PG_TYPE_BYTEA 17
-
-
-PostgreSQLDatabase::PostgreSQLDatabase()
-: _handle(NULL)
-, _result(NULL)
-, _debug(false)
-, _unescapeBuffer(NULL)
-, _unescapeBufferSize(0)
-{}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -69,7 +60,7 @@ PostgreSQLDatabase::PostgreSQLDatabase()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PostgreSQLDatabase::~PostgreSQLDatabase() {
-	disconnect();
+	PostgreSQLDatabase::disconnect();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -79,11 +70,12 @@ PostgreSQLDatabase::~PostgreSQLDatabase() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
                                             const std::string &value) {
-	if ( !DatabaseInterface::handleURIParameter(name, value) ) return false;
+	if ( !DatabaseInterface::handleURIParameter(name, value) ) {
+		return false;
+	}
 
-	if ( name == "debug" ) {
-		if ( value != "0" && value != "false" )
-			_debug = true;
+	if ( name == "debug" && value != "0" && value != "false" ) {
+		_debug = true;
 	}
 
 	return true;
@@ -96,12 +88,13 @@ bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::open() {
 	std::stringstream ss;
-	if ( _port )
+	if ( _port ) {
 		ss << _port;
+	}
 
 	_handle = PQsetdbLogin(_host.c_str(), ss.str().c_str(),
-	                       NULL,
-	                       NULL,
+	                       nullptr,
+	                       nullptr,
 	                       _database.c_str(),
 	                       _user.c_str(),
 	                       _password.c_str());
@@ -127,6 +120,15 @@ bool PostgreSQLDatabase::open() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+PostgreSQLDatabase::Backend PostgreSQLDatabase::backend() const {
+	return PostgreSQL;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::connect(const char *con) {
 	_host = "localhost";
 	_user = "sysop";
@@ -145,11 +147,11 @@ bool PostgreSQLDatabase::connect(const char *con) {
 void PostgreSQLDatabase::disconnect() {
 	if ( _result ) {
 		PQclear(_result);
-		_result = NULL;
+		_result = nullptr;
 	}
 
 	PQfinish(_handle);
-	_handle = NULL;
+	_handle = nullptr;
 
 	XFREE(_unescapeBuffer);
 }
@@ -160,13 +162,16 @@ void PostgreSQLDatabase::disconnect() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::isConnected() const {
-	if ( _handle == NULL ) return false;
-	ConnStatusType stat = PQstatus(_handle);
-	if ( stat == CONNECTION_OK ) return true;
+	if ( !_handle ) {
+		return false;
+	}
 
-	SEISCOMP_ERROR("connection bad (%d) -> reconnect", static_cast<int>(stat));
-	PQreset(_handle);
-	return PQstatus(_handle) == CONNECTION_OK;
+	auto stat = PQstatus(_handle);
+	if ( stat == CONNECTION_OK ) {
+		return true;
+	}
+
+	return reconnect(stat);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -201,23 +206,51 @@ void PostgreSQLDatabase::rollback() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PostgreSQLDatabase::execute(const char* command) {
-	if ( !isConnected() || command == NULL ) return false;
+bool PostgreSQLDatabase::execute(const char *command) {
+	if ( !isConnected() || !command ) {
+		return false;
+	}
 
-	if ( _debug )
+	if ( _debug ) {
 		SEISCOMP_DEBUG("[postgresql-execute] %s", command);
+	}
 
-	PGresult *result = PQexec(_handle, command);
-	if ( result == NULL ) {
+	auto *result = PQexec(_handle, command);
+	if ( !result ) {
 		SEISCOMP_ERROR("execute(\"%s\"): %s", command, PQerrorMessage(_handle));
 		return false;
 	}
 
-	ExecStatusType stat = PQresultStatus(result);
-	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
-		SEISCOMP_ERROR("QUERY/COMMAND failed");
-		SEISCOMP_ERROR("  %s", command);
-		SEISCOMP_ERROR("  %s", PQerrorMessage(_handle));
+	// A connection problem is not detected by PQstatus used in isConnected()
+	// until PQexec is called. The following is testing the connection state
+	// again in case of a fatal result status. If a connection failure is
+	// detected a reconnect attempt is made and the command is executed a second
+	// time.
+	auto resultStatus = PQresultStatus(result);
+	if ( resultStatus == PGRES_FATAL_ERROR ) {
+		auto handleStatus = PQstatus(_handle);
+		if ( handleStatus != CONNECTION_OK ) {
+			PQclear(result);
+
+			if ( !reconnect(handleStatus) ) {
+				return false;
+			}
+
+			result = PQexec(_handle, command);
+			if ( !result ) {
+				SEISCOMP_ERROR("execute(\"%s\"): %s",
+				               command, PQerrorMessage(_handle));
+				return false;
+			}
+
+			resultStatus = PQresultStatus(result);
+		}
+	}
+
+	if ( resultStatus != PGRES_TUPLES_OK && resultStatus != PGRES_COMMAND_OK ) {
+		SEISCOMP_ERROR("Command failed\n"
+		               "  command  : %s\n"
+		               "  err msg: %s", command, PQerrorMessage(_handle));
 		PQclear(result);
 		return false;
 	}
@@ -232,32 +265,61 @@ bool PostgreSQLDatabase::execute(const char* command) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PostgreSQLDatabase::beginQuery(const char* query) {
-	if ( !isConnected() || query == NULL ) return false;
+bool PostgreSQLDatabase::beginQuery(const char *query) {
+	if ( !isConnected() || !query ) {
+		return false;
+	}
+
 	if ( _result ) {
-		SEISCOMP_ERROR("beginQuery: nested queries are not supported");
+		SEISCOMP_ERROR("beginQuery(\"%s\"): nested queries are not supported",
+		               query);
 		//SEISCOMP_DEBUG("last successfull query: %s", _lastQuery.c_str());
 		return false;
 	}
 
 	endQuery();
 
-	if ( _debug )
+	if ( _debug ) {
 		SEISCOMP_DEBUG("[postgresql-query] %s", query);
+	}
 
 	_result = PQexec(_handle, query);
-	if ( _result == NULL ) {
-		SEISCOMP_ERROR("query(\"%s\"): %s", query, PQerrorMessage(_handle));
+	if ( !_result ) {
+		SEISCOMP_ERROR("beginQuery(\"%s\"): %s", query, PQerrorMessage(_handle));
 		return false;
 	}
 
-	ExecStatusType stat = PQresultStatus(_result);
-	if ( stat != PGRES_TUPLES_OK && stat != PGRES_COMMAND_OK ) {
-		SEISCOMP_ERROR("QUERY/COMMAND failed");
-		SEISCOMP_ERROR("  %s", query);
-		SEISCOMP_ERROR("  %s", PQerrorMessage(_handle));
-		PQclear(_result);
-		_result = NULL;
+	// A connection problem is not detected by PQstatus used in isConnected()
+	// until PQexec is called. The following is testing the connection state
+	// again in case of a fatal result status. If a connection failure is
+	// detected a reconnect attempt is made and the query is executed a second
+	// time.
+	auto resultStatus = PQresultStatus(_result);
+	if ( resultStatus == PGRES_FATAL_ERROR ) {
+		auto handleStatus = PQstatus(_handle);
+		if ( handleStatus != CONNECTION_OK ) {
+			endQuery();
+
+			if ( !reconnect(handleStatus) ) {
+				return false;
+			}
+
+			_result = PQexec(_handle, query);
+			if ( !_result ) {
+				SEISCOMP_ERROR("beginQuery(\"%s\"): %s",
+				               query, PQerrorMessage(_handle));
+				return false;
+			}
+
+			resultStatus = PQresultStatus(_result);
+		}
+	}
+
+	if ( resultStatus != PGRES_TUPLES_OK && resultStatus != PGRES_COMMAND_OK ) {
+		SEISCOMP_ERROR("Query failed\n"
+		               "  query  : %s\n"
+		               "  err msg: %s", query, PQerrorMessage(_handle));
+		endQuery();
 		return false;
 	}
 
@@ -277,7 +339,7 @@ void PostgreSQLDatabase::endQuery() {
 	_nRows = -1;
 	if ( _result ) {
 		PQclear(_result);
-		_result = NULL;
+		_result = nullptr;
 		XFREE(_unescapeBuffer);
 	}
 }
@@ -288,10 +350,11 @@ void PostgreSQLDatabase::endQuery() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IO::DatabaseInterface::OID PostgreSQLDatabase::lastInsertId(const char* table) {
-	if ( !beginQuery((std::string("select currval('") + table + "_seq')").c_str()) )
+	if ( !beginQuery((std::string("select currval('") + table + "_seq')").c_str()) ) {
 		return 0;
+	}
 
-	char* value = PQgetvalue(_result, 0, 0);
+	auto *value = PQgetvalue(_result, 0, 0);
 
 	endQuery();
 
@@ -304,15 +367,17 @@ IO::DatabaseInterface::OID PostgreSQLDatabase::lastInsertId(const char* table) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 uint64_t PostgreSQLDatabase::numberOfAffectedRows() {
-	char *number = PQcmdTuples(_result);
-	if ( number == NULL || *number == '\0' )
-		return (uint64_t)~0;
+	auto *number = PQcmdTuples(_result);
+	if ( !number || *number == '\0' ) {
+		return static_cast<uint64_t>(~0);
+	}
 
 	uint64_t count;
-	if ( sscanf(number, "%lud", &count) == 1 )
+	if ( sscanf(number, "%lud", &count) == 1 ) {
 		return count;
+	}
 
-	return (uint64_t)~0;
+	return static_cast<uint64_t>(~0);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -325,7 +390,9 @@ bool PostgreSQLDatabase::fetchRow() {
 
 	++_row;
 
-	if ( _row < _nRows ) return true;
+	if ( _row < _nRows ) {
+		return true;
+	}
 
 	_row = _nRows;
 	return false;
@@ -366,8 +433,9 @@ const char *PostgreSQLDatabase::getRowFieldName(int index) {
 const void* PostgreSQLDatabase::getRowField(int index) {
 	const void *value;
 
-	if ( PQgetisnull(_result, _row, index) )
-		return NULL;
+	if ( PQgetisnull(_result, _row, index) ) {
+		return nullptr;
+	}
 
 	value = PQgetvalue(_result, _row, index);
 
@@ -403,10 +471,13 @@ size_t PostgreSQLDatabase::getRowFieldSize(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
-	if ( !_handle ) return false;
+	if ( !_handle ) {
+		return false;
+	}
+
 	int error;
 	out.resize(in.size()*2);
-	size_t l = PQescapeStringConn(_handle, &out[0], in.c_str(), in.size(), &error);
+	auto l = PQescapeStringConn(_handle, &out[0], in.c_str(), in.size(), &error);
 	out[l] = '\0';
 	out.resize(l);
 	return !error;
@@ -417,5 +488,33 @@ bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool PostgreSQLDatabase::reconnect(ConnStatusType stat) const {
+	SEISCOMP_WARNING("Connection bad (%d) -> reconnect",
+	                 static_cast<int>(stat));
+	PQreset(_handle);
+
+	stat = PQstatus(_handle);
+	if ( stat != CONNECTION_OK ) {
+		SEISCOMP_ERROR("Connection bad (%d), reconnect attempt failed",
+		               static_cast<int>(stat));
+		return false;
+	}
+
+	SEISCOMP_DEBUG("Reconnect attempt successful");
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
+
+
+REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
+ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 12, 0)
+
+
 }
 }

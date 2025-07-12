@@ -25,7 +25,6 @@
 #include <boost/version.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/filesystem/convenience.hpp>
 #include <string>
 #include <fstream>
 
@@ -51,7 +50,6 @@ IMPLEMENT_SC_CLASS(SchemaGroup, "Configuration::Group");
 IMPLEMENT_SC_CLASS(SchemaStructure, "Configuration::Struct");
 IMPLEMENT_SC_CLASS(SchemaStructExtent, "Configuration::Struct::Extent");
 IMPLEMENT_SC_CLASS(SchemaModule, "Configuration::Module");
-IMPLEMENT_SC_CLASS(SchemaPluginParameters, "Configuration::Plugin::Parameters");
 IMPLEMENT_SC_CLASS(SchemaPlugin, "Configuration::Plugin");
 IMPLEMENT_SC_CLASS(SchemaBinding, "Configuration::Binding");
 IMPLEMENT_SC_CLASS(SchemaSetupInputOption, "Configuration::SetupInputOption");
@@ -110,6 +108,7 @@ void SchemaParameter::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("description", description, Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT("values", values);
 	ar & NAMED_OBJECT("range", range);
+	ar & NAMED_OBJECT("options", options);
 	if ( ar.isReading() ) convertDoc(description);
 }
 
@@ -159,6 +158,16 @@ void SchemaParameters::serialize(Archive& ar) {
 			_structs,
 			[this](const SchemaStructurePtr &schemaStructure) {
 				return add(schemaStructure.get());
+			}
+		),
+		Archive::STATIC_TYPE
+	);
+
+	ar & NAMED_OBJECT_HINT("extend-struct",
+		Seiscomp::Core::Generic::containerMember(
+			structExtents,
+			[this](const SchemaStructExtentPtr &extension) {
+				return structExtents.push_back(extension);
 			}
 		),
 		Archive::STATIC_TYPE
@@ -303,22 +312,7 @@ void SchemaModule::serialize(Archive& ar) {
 void SchemaStructExtent::serialize(Archive& ar) {
 	ar & NAMED_OBJECT_HINT("type", type, Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT("match-name", matchName);
-	SchemaPluginParameters::serialize(ar);
-}
-
-
-void SchemaPluginParameters::serialize(Archive& ar) {
 	SchemaParameters::serialize(ar);
-
-	ar & NAMED_OBJECT_HINT("extend-struct",
-		Seiscomp::Core::Generic::containerMember(
-			structExtents,
-			[this](const SchemaStructExtentPtr &extension) {
-				return structExtents.push_back(extension);
-			}
-		),
-		Archive::STATIC_TYPE
-	);
 }
 
 
@@ -500,11 +494,13 @@ SchemaBinding *SchemaDefinitions::binding(const std::string &name) {
 bool SchemaDefinitions::add(SchemaBinding *binding) {
 	for ( size_t i = 0; i < _bindings.size(); ++i ) {
 		if ( _bindings[i]->name == binding->name &&
-		     _bindings[i]->module == binding->module )
+		     _bindings[i]->module == binding->module ) {
 			return false;
+		}
 	}
 
 	_bindings.push_back(binding);
+
 	return true;
 }
 
@@ -513,10 +509,22 @@ std::vector<SchemaPlugin*> SchemaDefinitions::pluginsForModule(const char *name)
 	std::vector<SchemaPlugin*> plugins;
 
 	for ( size_t i = 0; i < _plugins.size(); ++i ) {
-		for ( size_t j = 0; j < _plugins[i]->extends.size(); ++j )
-			if ( _plugins[i]->extends[j] == name )
+		for ( size_t j = 0; j < _plugins[i]->extends.size(); ++j ) {
+			if ( _plugins[i]->extends[j] == name ) {
 				plugins.push_back(_plugins[i].get());
+			}
+		}
 	}
+
+	std::sort(plugins.begin(), plugins.end(), [](SchemaPlugin *a, SchemaPlugin *b) {
+		if ( !a->parameters ) {
+			return b->parameters != nullptr;
+		}
+		if ( !b->parameters ) {
+			return false;
+		}
+		return a->parameters->structExtents.size() < b->parameters->structExtents.size();
+	});
 
 	return plugins;
 }
@@ -535,6 +543,7 @@ bool SchemaDefinitions::load(const char *path) {
 
 bool SchemaDefinitions::reload() {
 	IO::XMLArchive ar;
+	ar.setListDelimiter(',');
 
 	_modules.clear();
 	_plugins.clear();
@@ -547,7 +556,7 @@ bool SchemaDefinitions::reload() {
 		for ( fs::directory_iterator it(directory); it != fsDirEnd; ++it ) {
 			if ( fs::is_directory(*it) ) continue;
 			string filename = SC_FS_IT_STR(it);
-			if ( fs::extension(filename) != ".xml" ) continue;
+			if ( fs::path(filename).extension() != ".xml" ) continue;
 
 			SEISCOMP_DEBUG("Loading %s", filename.c_str());
 			if ( !ar.open(filename.c_str()) ) {
@@ -604,9 +613,20 @@ std::vector<SchemaBinding*> SchemaDefinitions::bindingsForModule(const char *nam
 	std::vector<SchemaBinding*> bindings;
 
 	for ( size_t i = 0; i < _bindings.size(); ++i ) {
-		if ( _bindings[i]->module == name )
+		if ( _bindings[i]->module == name ) {
 			bindings.push_back(_bindings[i].get());
+		}
 	}
+
+	std::sort(bindings.begin(), bindings.end(), [](SchemaBinding *a, SchemaBinding *b) {
+		if ( !a->parameters ) {
+			return b->parameters != nullptr;
+		}
+		if ( !b->parameters ) {
+			return false;
+		}
+		return a->parameters->structExtents.size() < b->parameters->structExtents.size();
+	});
 
 	return bindings;
 }

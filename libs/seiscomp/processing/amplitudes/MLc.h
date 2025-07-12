@@ -98,9 +98,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLc2h : public AmplitudeProcessor 
 		};
 
 		mutable AmplitudeProcessor_MLc _ampE, _ampN;
-		CombinerProc                   _combiner{TakeMax};
+		CombinerProc                   _combiner;
 		OPT(ComponentResult)           _results[2];
-		double                         _amplitudeScale{1.0};
+		double                         _amplitudeScale;
 };
 
 

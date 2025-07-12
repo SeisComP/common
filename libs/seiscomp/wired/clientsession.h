@@ -44,30 +44,42 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		ClientSession(Device *dev, size_t maxCharactersPerLine = 200);
 
 	public:
-		//! Flush data still in the buffer.
-		virtual void flush();
-
 		//! Update the session state including flushing and
 		//! reading available data.
 		void update() override;
 
-		//! Queue data in the outbox
-		void send(const char *data, size_t len);
-		void send(const char *data);
+		//! Sets keepReading to false
+		void close() override;
 
 		//! Queues a buffer and returns whether the queue was empty
 		bool send(Buffer *);
 
-		//! Sets keepReading to false
-		void close() override;
+		/**
+		 * @brief Sends a null-terminated character string.
+		 * If not all data could be sent then a buffer with remaining
+		 * data will be created and queued.
+		 * @param data The null-terminated string
+		 */
+		void send(const char *data);
+
+		/**
+		 * @brief Sends a memory block of bytes.
+		 * This function is faster than send(const char*) as it does not
+		 * need to run strlen().
+		 * @param data The byte array
+		 * @param size The number of bytes
+		 */
+		void send(const char *data, size_t size);
+
+		//! Returns the number of bytes currently in the output buffer
+		//! which haven't been sent yet.
+		size_t outputBufferSize() const;
 
 		bool valid() const;
 		bool erroneous() const;
 
 
 	protected:
-		virtual void outboxFlushed();
-
 		virtual void buffersFlushed();
 		virtual void bufferSent(Buffer*);
 
@@ -77,9 +89,6 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		size_t postDataSize() const;
 
 		void setMIMEUnfoldingEnabled(bool);
-
-		//! Returns the available bytes to send.
-		virtual size_t inAvail() const;
 
 		void setError(const char* msg);
 
@@ -105,7 +114,14 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 
 
 	private:
-		void flushOutbox();
+		/**
+		 * @brief Queues a buffer without the attempt to send it.
+		 * @return True, if the queue was empty, false otherwise.
+		 */
+		bool queue(Buffer *);
+
+		//! Flush data still in the buffer.
+		void flush(bool flagFlush = false);
 
 
 	protected:
@@ -117,17 +133,16 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 			//Future2     = 0x0008,
 			//Future3     = 0x0010,
 			//Future4     = 0x0020,
-			//Future5     = 0x0040,
-			//Future6     = 0x0080,
+			PendingFlush  = 0x0040,
+			AppendBuffer  = 0x0080,
 			Erroneous     = 0x0100
 		};
 
 		std::vector<char> _inbox;
-		size_t            _inboxPos;
-		std::vector<char> _outbox;
-		uint16_t          _flags;
-		size_t            _postDataSize;
-		Device::count_t   _bytesSent;
+		size_t            _inboxPos{0};
+		uint16_t          _flags{NoFlags};
+		size_t            _postDataSize{0};
+		Device::count_t   _bytesSent{0};
 
 
 	private:
@@ -135,9 +150,13 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 		size_t            _currentBufferHeaderOffset;
 		size_t            _currentBufferDataOffset;
 		BufferList        _bufferQueue;
-		size_t            _bufferBytesPending;
+		size_t            _bufferBytesPending{0};
 };
 
+
+inline size_t ClientSession::outputBufferSize() const {
+	return _bufferBytesPending;
+}
 
 inline bool ClientSession::valid() const {
 	return !erroneous();

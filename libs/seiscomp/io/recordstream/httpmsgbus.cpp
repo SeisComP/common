@@ -20,8 +20,11 @@
 
 #define SEISCOMP_COMPONENT HMBConnection
 
+
 #include <string>
 #include <set>
+#include <bson.h>
+
 
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/exceptions.h>
@@ -33,22 +36,18 @@
 
 #include "httpmsgbus.h"
 
+
 using namespace std;
+
 
 namespace Seiscomp {
 namespace RecordStream {
 
-typedef HMBConnection<IO::Socket> PlainHMBConnection;
-typedef HMBConnection<IO::SSLSocket> SSLHMBConnection;
 
-/* IMPLEMENT_SC_CLASS_DERIVED(PlainHMBConnection,
-                           Seiscomp::IO::RecordStream,
-                           "PlainHMBConnection"); */
+using PlainHMBConnection = HMBConnection<IO::Socket>;
+using SSLHMBConnection = HMBConnection<IO::SSLSocket>;
+
 REGISTER_RECORDSTREAM(PlainHMBConnection, "hmb");
-
-/* IMPLEMENT_SC_CLASS_DERIVED(SSLHMBConnection,
-                           Seiscomp::IO::RecordStream,
-                           "SSLHMBConnection"); */
 REGISTER_RECORDSTREAM(SSLHMBConnection, "hmbs");
 
 
@@ -58,16 +57,14 @@ const int SOCKET_TIMEOUT = 60;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-HMBQueue::HMBQueue(): _seq(-1) {
-}
+HMBQueue::HMBQueue(): _seq(-1) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-HMBQueue::~HMBQueue() {
-}
+HMBQueue::~HMBQueue() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -75,20 +72,20 @@ HMBQueue::~HMBQueue() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void HMBQueue::addStream(std::string loc, std::string cha,
-	const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime)
-{
+                         const OPT(Core::Time) &stime,
+                         const OPT(Core::Time) &etime) {
 	_topics.insert(loc + "_" + cha + "_D");
 
-	if ( stime.valid() ) {
-		if ( !_stime.valid() || stime < _stime ) {
-			_stime = stime;
+	if ( stime ) {
+		if ( !_stime || *stime < *_stime ) {
+			_stime = *stime;
 			_seq = 0;
 		}
 	}
 
-	if ( etime.valid() ) {
-		if ( !_etime.valid() || etime > _etime ) {
-			_etime = etime;
+	if ( etime ) {
+		if ( !_etime || *etime > *_etime ) {
+			_etime = *etime;
 		}
 	}
 }
@@ -129,11 +126,13 @@ bson_t* HMBQueue::toBSON() const
 	bson_append_array_end(b, &t);
 	bson_append_int64(b, "seq", -1, _seq);
 
-	if ( _stime.valid() )
-		bson_append_utf8(b, "starttime", -1, Core::toString(_stime).c_str(), -1);
+	if ( _stime ) {
+		bson_append_utf8(b, "starttime", -1, Core::toString(*_stime).c_str(), -1);
+	}
 
-	if ( _etime.valid() )
-		bson_append_utf8(b, "endtime", -1, Core::toString(_etime).c_str(), -1);
+	if ( _etime ) {
+		bson_append_utf8(b, "endtime", -1, Core::toString(*_etime).c_str(), -1);
+	}
 
 	return b;
 }
@@ -249,11 +248,9 @@ bool HMBConnection<SocketType>::addStream(const string &net, const string &sta,
 template <typename SocketType>
 bool HMBConnection<SocketType>::addStream(const string &net, const string &sta,
                                           const string &loc, const string &cha,
-                                          const Seiscomp::Core::Time &stime,
-                                          const Seiscomp::Core::Time &etime) {
-	std::pair<std::set<StreamIdx>::iterator, bool> result;
-	result = _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime));
-	return result.second;
+                                          const OPT(Core::Time) &stime,
+                                          const OPT(Core::Time) &etime) {
+	return _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime)).second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -262,7 +259,7 @@ bool HMBConnection<SocketType>::addStream(const string &net, const string &sta,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename SocketType>
-bool HMBConnection<SocketType>::setStartTime(const Seiscomp::Core::Time &stime) {
+bool HMBConnection<SocketType>::setStartTime(const OPT(Core::Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -273,7 +270,7 @@ bool HMBConnection<SocketType>::setStartTime(const Seiscomp::Core::Time &stime) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename SocketType>
-bool HMBConnection<SocketType>::setEndTime(const Seiscomp::Core::Time &etime) {
+bool HMBConnection<SocketType>::setEndTime(const OPT(Core::Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -626,14 +623,14 @@ Record *HMBConnection<SocketType>::next() {
 
 		for ( std::set<StreamIdx>::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
 			SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime).c_str());
-			if ( !it->startTime().valid() && !_stime.valid() ) {
+			if ( !it->startTime() && !_stime ) {
 				/* invalid time window ignore stream */
 				SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 				continue;
 			}
 
-			Core::Time stime = it->startTime().valid() ? it->startTime() : _stime;
-			Core::Time etime = it->endTime().valid() ? it->endTime() : _etime;
+			auto stime = it->startTime() ? it->startTime() : _stime;
+			auto etime = it->endTime() ? it->endTime() : _etime;
 			HMBQueue &q = _queues["WAVE_" + it->network() + "_" + it->station()];
 			q.addStream(it->location(), it->channel(), stime, etime);
 		}

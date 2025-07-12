@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(TimeWindow, "TimeWindow");
 
 
-TimeWindow::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+TimeWindow::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("reference", "datetime", false, false, false, false, false, false, nullptr, &TimeWindow::setReference, &TimeWindow::reference));
 	addProperty(Core::simpleProperty("begin", "float", false, false, false, false, false, false, nullptr, &TimeWindow::setBegin, &TimeWindow::begin));
 	addProperty(Core::simpleProperty("end", "float", false, false, false, false, false, false, nullptr, &TimeWindow::setEnd, &TimeWindow::end));
@@ -52,7 +52,7 @@ TimeWindow::TimeWindow() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeWindow::TimeWindow(const TimeWindow& other)
+TimeWindow::TimeWindow(const TimeWindow &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -110,7 +110,7 @@ TimeWindow::operator Seiscomp::Core::Time() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeWindow::operator==(const TimeWindow& rhs) const {
+bool TimeWindow::operator==(const TimeWindow &rhs) const {
 	if ( !(_reference == rhs._reference) )
 		return false;
 	if ( !(_begin == rhs._begin) )
@@ -125,7 +125,7 @@ bool TimeWindow::operator==(const TimeWindow& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeWindow::operator!=(const TimeWindow& rhs) const {
+bool TimeWindow::operator!=(const TimeWindow &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -134,7 +134,7 @@ bool TimeWindow::operator!=(const TimeWindow& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeWindow::equal(const TimeWindow& other) const {
+bool TimeWindow::equal(const TimeWindow &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -197,7 +197,7 @@ double TimeWindow::end() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeWindow& TimeWindow::operator=(const TimeWindow& other) {
+TimeWindow &TimeWindow::operator=(const TimeWindow &other) {
 	_reference = other._reference;
 	_begin = other._begin;
 	_end = other._end;
@@ -209,7 +209,7 @@ TimeWindow& TimeWindow::operator=(const TimeWindow& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimeWindow::serialize(Archive& ar) {
+void TimeWindow::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

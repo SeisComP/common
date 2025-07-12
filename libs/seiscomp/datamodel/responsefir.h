@@ -84,28 +84,28 @@ class SC_SYSTEM_CORE_API ResponseFIR : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ResponseFIR(const ResponseFIR& other);
+		ResponseFIR(const ResponseFIR &other);
 
 		//! Constructor with publicID
 		ResponseFIR(const std::string& publicID);
 
 		//! Destructor
 		~ResponseFIR() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ResponseFIR* Create();
-		static ResponseFIR* Create(const std::string& publicID);
+		static ResponseFIR *Create();
+		static ResponseFIR *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ResponseFIR* Find(const std::string& publicID);
+		static ResponseFIR *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -114,14 +114,14 @@ class SC_SYSTEM_CORE_API ResponseFIR : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ResponseFIR& operator=(const ResponseFIR& other);
+		ResponseFIR &operator=(const ResponseFIR &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ResponseFIR& other) const;
-		bool operator!=(const ResponseFIR& other) const;
+		bool operator==(const ResponseFIR &other) const;
+		bool operator!=(const ResponseFIR &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ResponseFIR& other) const;
+		bool equal(const ResponseFIR &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -175,17 +175,17 @@ class SC_SYSTEM_CORE_API ResponseFIR : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ResponseFIRIndex& index() const;
+		const ResponseFIRIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ResponseFIR* lhs) const;
+		bool equalIndex(const ResponseFIR *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

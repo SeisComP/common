@@ -71,7 +71,7 @@ class NameValidator : public QValidator {
 		NameValidator(QWidget *parent)
 		: QValidator(parent) {}
 
-		State validate(QString &txt, int &) const {
+		State validate(QString &txt, int &/*unused*/) const override {
 			txt = txt.toUpper();
 			return Acceptable;
 		}
@@ -83,9 +83,9 @@ class ProfileValidator : public QValidator {
 		ProfileValidator(QWidget *parent)
 		: QValidator(parent) {}
 
-		State validate(QString &txt, int &pos) const {
-			auto count = txt.count();
-			for ( auto i = 0; i < count; ++i ) {
+		State validate(QString &txt, int &pos) const override {
+			auto cnt = txt.size();
+			for ( auto i = 0; i < cnt; ++i ) {
 				if ( txt[i].isDigit() ) {
 					continue;
 				}
@@ -113,9 +113,9 @@ class ProfileValidator : public QValidator {
 
 class NewNameDialog : public QDialog {
 	public:
-		NewNameDialog(const QModelIndex &root, bool forceUpper, QWidget *parent = 0)
+		NewNameDialog(const QModelIndex &root, bool forceUpper, QWidget *parent = nullptr)
 			: QDialog(parent), _root(root) {
-			QVBoxLayout *layout = new QVBoxLayout;
+			auto *layout = new QVBoxLayout;
 			setLayout(layout);
 
 			_hint = new QLabel();
@@ -124,20 +124,21 @@ class NewNameDialog : public QDialog {
 			_hint->setFont(f);
 			layout->addWidget(_hint);
 
-			QHBoxLayout *hlayout = new QHBoxLayout;
-			QLabel *label = new QLabel("Name:");
+			auto *hlayout = new QHBoxLayout;
+			auto *label = new QLabel("Name:");
 			hlayout->addWidget(label);
 			_name = new QLineEdit;
-			if ( forceUpper )
+			if ( forceUpper ) {
 				_name->setValidator(new NameValidator(this));
+			}
 			hlayout->addWidget(_name);
 			layout->addLayout(hlayout);
 
 			hlayout = new QHBoxLayout;
 			hlayout->addStretch();
-			QPushButton *ok = new QPushButton("Ok");
+			auto *ok = new QPushButton("Ok");
 			hlayout->addWidget(ok);
-			QPushButton *cancel = new QPushButton("Cancel");
+			auto *cancel = new QPushButton("Cancel");
 			hlayout->addWidget(cancel);
 
 			layout->addLayout(hlayout);
@@ -146,6 +147,7 @@ class NewNameDialog : public QDialog {
 			connect(cancel, SIGNAL(clicked()), this, SLOT(reject()));
 		}
 
+		[[nodiscard]]
 		QString name() const {
 			return _name->text();
 		}
@@ -158,18 +160,18 @@ class NewNameDialog : public QDialog {
 			_hint->setText(hint);
 		}
 
-		void accept() {
+		void accept() override {
 			int rows = _root.model()->rowCount(_root);
 
 			if ( _name->text().isEmpty() ) {
-				QMessageBox::critical(NULL, "Empty name",
+				QMessageBox::critical(nullptr, "Empty name",
 				                      "Empty names are not allowed. ");
 				return;
 			}
 
 			for ( int i = 0; i < rows; ++i ) {
 				if ( _root.model()->index(i, 0, _root).data().toString() == _name->text() ) {
-					QMessageBox::critical(NULL, "Duplicate name",
+					QMessageBox::critical(nullptr, "Duplicate name",
 					                      "The name exists already and duplicate "
 					                      "names are not allowed.");
 					return;
@@ -192,11 +194,12 @@ class StationTreeView : public QTreeView {
 			setAcceptDrops(true);
 		}
 
+		[[nodiscard]]
 		Qt::DropActions supportedDropActions() const {
 			return Qt::LinkAction;
 		}
 
-		void dragEnterEvent(QDragEnterEvent *event) {
+		void dragEnterEvent(QDragEnterEvent *event) override {
 			bool accepted = false;
 
 			if ( event->mimeData() && event->mimeData()->hasText() ) {
@@ -220,38 +223,48 @@ class StationTreeView : public QTreeView {
 			event->setAccepted(accepted);
 		}
 
-		void dragMoveEvent(QDragMoveEvent *event) {
+		void dragMoveEvent(QDragMoveEvent *event) override {
 			if ( rootIndex().data(Type).toInt() == TypeStation ) {
 				event->accept();
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->pos());
+			QModelIndex idx = indexAt(QT_EVENT_POS(event));
 
 			if ( idx.isValid() ) {
 				if ( _followSelection ) {
 					selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 					event->setAccepted(true);
 				}
-				else
+				else {
 					event->setAccepted(selectionModel()->isSelected(idx));
+				}
 			}
-			else
+			else {
 				event->setAccepted(false);
+			}
 		}
 
-		void dropEvent(QDropEvent * event) {
+		void dropEvent(QDropEvent *event) override {
 			QStringList lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 			foreach ( const QString &l, lines ) {
-				if ( !l.startsWith("PROFILE ") ) continue;
-				QString module,profile;
+				if ( !l.startsWith("PROFILE ") ) {
+					continue;
+				}
+
+				QString module;
+				QString profile;
 				QStringList toks = l.mid(8).split('/');
-				if ( toks.size() != 2 ) continue;
+				if ( toks.size() != 2 ) {
+					continue;
+				}
+
 				module = toks[0];
 				profile = toks[1];
 
-				foreach ( const QModelIndex &i, selectionModel()->selectedIndexes() )
+				foreach ( const QModelIndex &i, selectionModel()->selectedIndexes() ) {
 					_panel->assignProfile(i, module, profile);
+				}
 			}
 		}
 
@@ -267,11 +280,12 @@ class StationsFolderView : public QListView {
 			setAcceptDrops(true);
 		}
 
+		[[nodiscard]]
 		Qt::DropActions supportedDropActions() const {
 			return Qt::LinkAction;
 		}
 
-		void dragEnterEvent(QDragEnterEvent *event) {
+		void dragEnterEvent(QDragEnterEvent *event) override {
 			/*
 			event->setAccepted(event->mimeData() &&
 			                   event->mimeData()->hasText() &&
@@ -293,51 +307,63 @@ class StationsFolderView : public QListView {
 					}
 				}
 
-				if ( accepted )
+				if ( accepted ) {
 					_selectedItems = selectionModel()->selectedIndexes();
+				}
 			}
 
 			event->setAccepted(accepted);
 		}
 
-		void dragLeaveEvent(QDragLeaveEvent *event) {
+		void dragLeaveEvent(QDragLeaveEvent *event) override {
 			_selectedItems.clear();
 		}
 
-		void dragMoveEvent(QDragMoveEvent *event) {
+		void dragMoveEvent(QDragMoveEvent *event) override {
 			if ( rootIndex().data(Type).toInt() == TypeStation ) {
 				event->accept();
 				return;
 			}
 
-			QModelIndex idx = indexAt(event->pos());
+			QModelIndex idx = indexAt(QT_EVENT_POS(event));
 
-			if ( idx.isValid() )
+			if ( idx.isValid() ) {
 				selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
+			}
 			else {
 				selectionModel()->clear();
-				foreach ( const QModelIndex &i, _selectedItems )
+				foreach ( const QModelIndex &i, _selectedItems ) {
 					selectionModel()->select(i, QItemSelectionModel::Select);
+				}
 			}
 
 			event->setAccepted(selectionModel()->hasSelection());
 		}
 
-		void dropEvent(QDropEvent * event) {
+		void dropEvent(QDropEvent * event) override {
 			auto lines = event->mimeData()->text().split("\n", QT_SKIP_EMPTY_PARTS);
 			foreach ( const QString &l, lines ) {
-				if ( !l.startsWith("PROFILE ") ) continue;
-				QString module,profile;
+				if ( !l.startsWith("PROFILE ") ) {
+					continue;
+				}
+
+				QString module;
+				QString profile;
 				QStringList toks = l.mid(8).split('/');
-				if ( toks.size() != 2 ) continue;
+				if ( toks.size() != 2 ) {
+					continue;
+				}
+
 				module = toks[0];
 				profile = toks[1];
 
-				if ( rootIndex().data(Type).toInt() == TypeStation )
+				if ( rootIndex().data(Type).toInt() == TypeStation ) {
 					_panel->assignProfile(rootIndex(), module, profile);
+				}
 				else {
-					foreach ( const QModelIndex &i, selectionModel()->selectedIndexes() )
+					foreach ( const QModelIndex &i, selectionModel()->selectedIndexes() ) {
 						_panel->assignProfile(i, module, profile);
+					}
 				}
 			}
 
@@ -353,26 +379,30 @@ class StationsFolderView : public QListView {
 
 class ProfilesModel : public QStandardItemModel {
 	public:
-		ProfilesModel(QObject *parent = 0) : QStandardItemModel(parent) {
-		}
+		ProfilesModel(QObject *parent = nullptr) : QStandardItemModel(parent) {}
 
-	public:
-		QMimeData *mimeData(const QModelIndexList &indexes) const {
+		[[nodiscard]]
+		QMimeData *mimeData(const QModelIndexList &indexes) const override {
 			QString text;
 			foreach ( const QModelIndex &i, indexes ) {
-				if ( i.data(Type).toInt() != TypeProfile ) continue;
-				ModuleBinding *b = getLink<ModuleBinding>(i);
-				Module *mod = (Module*)b->parent;
+				if ( i.data(Type).toInt() != TypeProfile ) {
+					continue;
+				}
+				auto *b = getLink<ModuleBinding>(i);
+				auto *mod = static_cast<Module*>(b->parent);
 
-				if ( !text.isEmpty() ) text += "\n";
+				if ( !text.isEmpty() ) {
+					text += "\n";
+				}
 				text += QString("PROFILE %1/%2")
-				        .arg(mod->definition->name.c_str())
-				        .arg(b->name.c_str());
+				        .arg(mod->definition->name.c_str(), b->name.c_str());
 			}
 
-			if ( text.isEmpty() ) return NULL;
+			if ( text.isEmpty() ) {
+				return nullptr;
+			}
 
-			QMimeData *data = new QMimeData;
+			auto *data = new QMimeData;
 			data->setText(text);
 			return data;
 		}
@@ -388,54 +418,61 @@ BindingsViewDelegate::BindingsViewDelegate(QObject *parent) : QItemDelegate(pare
 QWidget *BindingsViewDelegate::createEditor(QWidget *parent,
                                             const QStyleOptionViewItem &option,
                                             const QModelIndex &index) const {
-	if ( index.column() != 1 ) return NULL;
-	if ( index.data(Type).toInt() != TypeProfile ) return NULL;
+	if ( index.column() != 1 || index.data(Type).toInt() != TypeProfile ) {
+		return nullptr;
+	}
 
-	ModuleBinding *binding = getLink<ModuleBinding>(index.sibling(index.row(),0));
-	if ( binding == NULL ) return NULL;
+	auto *binding = getLink<ModuleBinding>(index.sibling(index.row(),0));
+	if ( !binding ) {
+		return nullptr;
+	}
 
-	Module *mod = static_cast<Module*>(binding->parent);
-	if ( mod == NULL ) return NULL;
+	auto *mod = static_cast<Module*>(binding->parent);
+	if ( !mod ) {
+		return nullptr;
+	}
 
-	QComboBox *editor = new QComboBox(parent);
+	auto *editor = new QComboBox(parent);
 	editor->addItem("");
 
 	Module::Profiles::iterator it;
-	for ( it = mod->profiles.begin(); it != mod->profiles.end(); ++it )
+	for ( it = mod->profiles.begin(); it != mod->profiles.end(); ++it ) {
 		editor->addItem((*it)->name.c_str());
+	}
 
-	connect(editor, SIGNAL(currentIndexChanged(const QString &)),
-	        this, SLOT(profileChanged(const QString &)));
+	connect(editor, SIGNAL(currentIndexChanged(QString)),
+	        this, SLOT(profileChanged(QString)));
 
 	return editor;
 }
 
 void BindingsViewDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
 	QString value = index.model()->data(index, Qt::EditRole).toString();
-	QComboBox *cBox = static_cast<QComboBox*>(editor);
+	auto *cBox = static_cast<QComboBox*>(editor);
 	cBox->setCurrentIndex(cBox->findText(value));
 }
 
 void BindingsViewDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                         const QModelIndex &index) const {
-	QComboBox *cBox = static_cast<QComboBox*>(editor);
+	auto *cBox = static_cast<QComboBox*>(editor);
 	QString value = cBox->currentText();
 
 	QModelIndex sibling = index.sibling(index.row(),0);
-	ModuleBinding *binding = getLink<ModuleBinding>(sibling);
-	Module *mod = static_cast<Module*>(binding->parent);
+	auto *binding = getLink<ModuleBinding>(sibling);
+	auto *mod = static_cast<Module*>(binding->parent);
 
 	StationID id(sibling.data(Net).toString().toStdString(),
 	             sibling.data(Sta).toString().toStdString());
 
 	// Skip, if we changed nothing
-	if ( binding && binding->name == value.toStdString() )
+	if ( binding && binding->name == value.toStdString() ) {
 		return;
+	}
 
 	binding = mod->bind(id, value.toStdString());
-	if ( binding == NULL ) {
+	if ( !binding ) {
 		setEditorData(cBox, index);
-		QMessageBox::critical(NULL, "Change profile",
+		QMessageBox::critical(nullptr, "Change profile",
 		                            "Changing the profile failed.");
 		return;
 	}
@@ -448,11 +485,11 @@ QSize BindingsViewDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index ) const {
 	QSize hint = QItemDelegate::sizeHint(option, index);
 
-	if ( index.column() != 1 ) return hint;
+	if ( index.column() != 1 || index.data(Type).toInt() != TypeProfile ) {
+		return hint;
+	}
 
-	if ( index.data(Type).toInt() != TypeProfile ) return hint;
-
-	return QSize(hint.width(), hint.height()*150/100);
+	return {hint.width(), hint.height()*150/100};
 }
 
 void BindingsViewDelegate::updateEditorGeometry(QWidget *editor,
@@ -468,7 +505,7 @@ void BindingsViewDelegate::profileChanged(const QString &text) {
 }
 
 
-BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
+BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(nullptr) {
 	_bindingModel = new ConfigurationTreeItemModel(this);
 	_view = new FancyView(this);
 	_view->setAutoFillBackground(true);
@@ -481,33 +518,32 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 
 	_searchWidget = new QWidget;
 	_searchWidget->setAutoFillBackground(true);
-	QHBoxLayout *searchLayout = new QHBoxLayout;
+	auto *searchLayout = new QHBoxLayout;
 	_searchWidget->setLayout(searchLayout);
-	QLabel *labelSearch = new QLabel;
+	auto *labelSearch = new QLabel;
 	labelSearch->setText("Search parameter:");
 	labelSearch->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Preferred));
-	QLineEdit *search = new QLineEdit;
-	connect(search, SIGNAL(textEdited(const QString &)),
-	        this, SLOT(search(const QString &)));
+	auto *search = new QLineEdit;
+	connect(search, SIGNAL(textEdited(QString)), this, SLOT(search(QString)));
 	connect(search, SIGNAL(returnPressed()), this, SLOT(search()));
-	QPushButton *searchClose = new QPushButton;
+	auto *searchClose = new QPushButton;
 	searchClose->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
 	searchClose->setFixedSize(18,18);
 
 	connect(searchClose, SIGNAL(clicked()), this, SLOT(closeSearch()));
 
-	searchLayout->setMargin(8);
+	searchLayout->setContentsMargins(8, 8, 8, 8);
 	searchLayout->addWidget(labelSearch);
 	searchLayout->addWidget(search);
 	searchLayout->addWidget(searchClose);
 
-	QAction *activateSearch = new QAction(this);
+	auto *activateSearch = new QAction(this);
 	activateSearch->setShortcut(QKeySequence("Ctrl+f"));
 	addAction(activateSearch);
 	connect(activateSearch, SIGNAL(triggered()), _searchWidget, SLOT(show()));
 	connect(activateSearch, SIGNAL(triggered()), search, SLOT(setFocus()));
 
-	QAction *closeSearch = new QAction(_searchWidget);
+	auto *closeSearch = new QAction(_searchWidget);
 	closeSearch->setShortcut(QKeySequence("Esc"));
 	closeSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	_searchWidget->addAction(closeSearch);
@@ -523,7 +559,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 	_header->setAutoFillBackground(true);
 	_header->hide();
 
-	QHBoxLayout *hlayout = new QHBoxLayout;
+	auto *hlayout = new QHBoxLayout;
 	_header->setLayout(hlayout);
 
 	_icon = new QLabel;
@@ -533,8 +569,8 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 	_label = new QLabel;
 	hlayout->addWidget(_label);
 
-	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	auto *l = new QVBoxLayout;
+	l->setContentsMargins(0, 0, 0, 0);
 	l->setSpacing(1);
 	setLayout(l);
 	l->addWidget(_header);
@@ -545,7 +581,7 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(NULL) {
 
 void BindingView::clear() {
 	_bindingModel->clear();
-	_view->setModel(NULL);
+	_view->setModel(nullptr);
 	_label->setText("");
 	_icon->setPixmap(QPixmap());
 	_rootIndex = QModelIndex();
@@ -555,25 +591,29 @@ void BindingView::clear() {
 
 void BindingView::setModel(ConfigurationTreeItemModel *base,
                            QAbstractItemModel *model) {
-	if ( model == _model ) return;
+	if ( model == _model ) {
+		return;
+	}
 
-	if ( _model )
+	if ( _model ) {
 		_model->disconnect(this);
+	}
 
 	_bindingModel->disconnect();
 
 	_model = model;
 
 	if ( _model ) {
-		connect(_model, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+		connect(_model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
 		        this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-		connect(_model, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-		        this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
+		connect(_model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+		        this, SLOT(rowsRemoved(QModelIndex,int,int)));
 	}
 
-	if ( base )
+	if ( base ) {
 		connect(_bindingModel, SIGNAL(modificationChanged(bool)),
 		        base, SLOT(setModified(bool)));
+	}
 }
 
 
@@ -585,40 +625,45 @@ void BindingView::setRootIndex(const QModelIndex &index) {
 
 	_rootIndex = index;
 
-	ModuleBinding *b = getLink<ModuleBinding>(index);
-	Module *mod = (Module*)b->parent;
+	auto *b = getLink<ModuleBinding>(index);
+	auto *mod = static_cast<Module*>(b->parent);
 	_bindingModel->setModel(b);
 	_view->setModel(_bindingModel);
 	_view->setRootIndex(_bindingModel->index(0,0));
 
-	QIcon icon = _rootIndex.data(Qt::DecorationRole).value<QIcon>();
+	auto icon = _rootIndex.data(Qt::DecorationRole).value<QIcon>();
 	_icon->setPixmap(icon.pixmap(32,32));
 
-	if ( b->name.empty() )
-		_label->setText(QString("%1/%2.%3")
-		                .arg(mod->definition->name.c_str())
-		                .arg(index.data(Net).toString())
-		                .arg(index.data(Sta).toString()));
-	else
+	if ( b->name.empty() ) {
+		_label->setText(QString("%1/%2.%3").arg(
+		                    mod->definition->name.c_str(),
+		                    index.data(Net).toString(),
+		                    index.data(Sta).toString()));
+	}
+	else {
 		_label->setText(QString("%1/%2")
-		                .arg(mod->definition->name.c_str())
-		                .arg(b->name.c_str()));
+		                .arg(mod->definition->name.c_str(), b->name.c_str()));
+	}
 
 	_header->show();
 }
 
 
-void BindingView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight) {
+void BindingView::dataChanged(const QModelIndex &topLeft,
+                              const QModelIndex &bottomRight) {
 	if ( _rootIndex.parent() == topLeft.parent() &&
 	     _rootIndex.row() == topLeft.row() &&
-	     topLeft.data(Type).toInt() == TypeProfile )
+	     topLeft.data(Type).toInt() == TypeProfile ) {
 		// Profile changed to my binding
 		setRootIndex(topLeft.sibling(topLeft.row(), 0));
+	}
 }
 
 
 void BindingView::rowsRemoved(const QModelIndex &parent, int start, int end) {
-	if ( !_rootIndex.isValid() ) return;
+	if ( !_rootIndex.isValid() ) {
+		return;
+	}
 
 	QModelIndex p = _rootIndex.parent();
 	QModelIndex i = _rootIndex;
@@ -639,7 +684,7 @@ void BindingView::search(const QString &text) {
 	QModelIndexList hits;
 
 	QModelIndex idx = _view->rootIndex();
-	QAbstractItemModel *model = _view->model();
+	auto *model = _view->model();
 
 	if ( text.isEmpty() ) {
 		_view->scrollTo(idx);
@@ -655,7 +700,10 @@ void BindingView::search(const QString &text) {
 		                    Qt::MatchRecursive |
 		                    Qt::MatchWrap);
 
-		if ( hits.isEmpty() ) continue;
+		if ( hits.isEmpty() ) {
+			continue;
+		}
+
 		_view->scrollTo(hits.first());
 		_view->setCurrentIndex(hits.first());
 		break;
@@ -675,7 +723,7 @@ void BindingView::closeSearch() {
 
 
 BindingsPanel::BindingsPanel(QWidget *parent)
-: ConfiguratorPanel(false, parent), _bindingsModel(NULL), _profilesModel(NULL) {
+: ConfiguratorPanel(false, parent), _bindingsModel(nullptr), _profilesModel(nullptr) {
 	_name = "Bindings";
 	_icon = QIcon(":/res/icons/bindings.png");
 	setHeadline("Bindings");
@@ -685,11 +733,11 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_linkIcon = QIcon(":/res/icons/document_link.png");
 	_docFolder = QIcon(":/res/icons/document_folder.png");
 
-	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	auto *l = new QVBoxLayout;
+	l->setContentsMargins(0, 0, 0, 0);
 	setLayout(l);
 
-	QSplitter *splitter = new QSplitter;
+	auto *splitter = new QSplitter;
 	splitter->setHandleWidth(1);
 	splitter->setChildrenCollapsible(false);
 	l->addWidget(splitter);
@@ -702,10 +750,10 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_stationsTreeView->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
 	_stationsTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-	QWidget *folderView = new QWidget(this);
+	auto *folderView = new QWidget(this);
 	folderView->setAutoFillBackground(true);
-	QVBoxLayout *fl = new QVBoxLayout;
-	fl->setMargin(0);
+	auto *fl = new QVBoxLayout;
+	fl->setContentsMargins(0, 0, 0, 0);
 	fl->setSpacing(0);
 	folderView->setLayout(fl);
 
@@ -717,10 +765,10 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 
 	switchToStationsIconView();
 
-	connect(_stationsFolderView, SIGNAL(customContextMenuRequested(const QPoint&)),
-	        this, SLOT(folderViewContextMenu(const QPoint&)));
+	connect(_stationsFolderView, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(folderViewContextMenu(QPoint)));
 
-	QToolBar *folderViewTools = new QToolBar;
+	auto *folderViewTools = new QToolBar;
 	folderViewTools->setIconSize(QSize(16,16));
 	folderViewTools->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
@@ -733,7 +781,7 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_deleteItem->setIcon(style()->standardIcon(QStyle::SP_TrashIcon));
 	connect(_deleteItem, SIGNAL(triggered(bool)), this, SLOT(deleteItem()));
 
-	QAction *a = folderViewTools->addAction("Icons");
+	auto *a = folderViewTools->addAction("Icons");
 	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToStationsIconView()));
 	a = folderViewTools->addAction("List");
@@ -743,9 +791,9 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	fl->addWidget(folderViewTools);
 	fl->addWidget(_stationsFolderView);
 
-	QWidget *container = new QWidget;
-	QVBoxLayout *modulesFolderLayout = new QVBoxLayout;
-	modulesFolderLayout->setMargin(0);
+	auto *container = new QWidget;
+	auto *modulesFolderLayout = new QVBoxLayout;
+	modulesFolderLayout->setContentsMargins(0, 0, 0, 0);
 	modulesFolderLayout->setSpacing(0);
 	container->setAutoFillBackground(true);
 	container->setLayout(modulesFolderLayout);
@@ -776,12 +824,12 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToProfileListView()));
 
-	QSplitter *splitter2 = new QSplitter(Qt::Vertical);
+	auto *splitter2 = new QSplitter(Qt::Vertical);
 	splitter2->setHandleWidth(1);
 	splitter2->addWidget(_stationsTreeView);
 	splitter2->addWidget(folderView);
 
-	QTreeView *tree = new QTreeView;
+	auto *tree = new QTreeView;
 	//tree->header()->hide();
 	_modulesView = tree;
 	_modulesView->setAutoFillBackground(true);
@@ -791,8 +839,8 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_modulesView->setContextMenuPolicy(Qt::CustomContextMenu);
 	_modulesView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-	connect(_modulesView, SIGNAL(customContextMenuRequested(const QPoint&)),
-	        this, SLOT(modulesViewContextMenu(const QPoint&)));
+	connect(_modulesView, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(modulesViewContextMenu(QPoint)));
 
 	_modulesFolderView = new QListView;
 	_modulesFolderView->setResizeMode(QListView::Adjust);
@@ -801,15 +849,15 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	_modulesFolderView->setContextMenuPolicy(Qt::CustomContextMenu);
 	_modulesFolderView->setEnabled(false);
 
-	connect(_modulesFolderView, SIGNAL(customContextMenuRequested(const QPoint&)),
-	        this, SLOT(modulesFolderViewContextMenu(const QPoint&)));
+	connect(_modulesFolderView, SIGNAL(customContextMenuRequested(QPoint)),
+	        this, SLOT(modulesFolderViewContextMenu(QPoint)));
 
 	switchToProfileIconView();
 
 	modulesFolderLayout->addWidget(folderViewTools);
 	modulesFolderLayout->addWidget(_modulesFolderView);
 
-	QSplitter *splitter3 = new QSplitter(Qt::Vertical);
+	auto *splitter3 = new QSplitter(Qt::Vertical);
 	splitter3->setHandleWidth(1);
 	splitter3->addWidget(_modulesView);
 	splitter3->addWidget(container);
@@ -818,39 +866,41 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	splitter->addWidget(_bindingView);
 	splitter->addWidget(splitter3);
 
-	connect(_stationsTreeView, SIGNAL(clicked(const QModelIndex &)),
-	        this, SLOT(bindingActivated(const QModelIndex &)));
-	connect(_stationsTreeView, SIGNAL(doubleClicked(const QModelIndex &)),
-	        this, SLOT(bindingDoubleClicked(const QModelIndex &)));
+	connect(_stationsTreeView, SIGNAL(clicked(QModelIndex)),
+	        this, SLOT(bindingActivated(QModelIndex)));
+	connect(_stationsTreeView, SIGNAL(doubleClicked(QModelIndex)),
+	        this, SLOT(bindingDoubleClicked(QModelIndex)));
 
-	connect(_stationsFolderView, SIGNAL(activated(const QModelIndex &)),
-	        this, SLOT(changeFolder(const QModelIndex &)));
-	connect(_stationsFolderView, SIGNAL(doubleClicked(const QModelIndex &)),
-	        this, SLOT(bindingDoubleClicked(const QModelIndex &)));
+	connect(_stationsFolderView, SIGNAL(activated(QModelIndex)),
+	        this, SLOT(changeFolder(QModelIndex)));
+	connect(_stationsFolderView, SIGNAL(doubleClicked(QModelIndex)),
+	        this, SLOT(bindingDoubleClicked(QModelIndex)));
 
-	connect(_modulesView, SIGNAL(activated(const QModelIndex &)),
-	        this, SLOT(profileActivated(const QModelIndex &)));
+	connect(_modulesView, SIGNAL(activated(QModelIndex)),
+	        this, SLOT(profileActivated(QModelIndex)));
 
-	connect(_modulesView, SIGNAL(doubleClicked(const QModelIndex &)),
-	        this, SLOT(profileDoubleClicked(const QModelIndex &)));
-	connect(_modulesFolderView, SIGNAL(doubleClicked(const QModelIndex &)),
-	        this, SLOT(profileDoubleClicked(const QModelIndex &)));
+	connect(_modulesView, SIGNAL(doubleClicked(QModelIndex)),
+	        this, SLOT(profileDoubleClicked(QModelIndex)));
+	connect(_modulesFolderView, SIGNAL(doubleClicked(QModelIndex)),
+	        this, SLOT(profileDoubleClicked(QModelIndex)));
 }
 
 
 void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	ConfiguratorPanel::setModel(model);
 
-	_bindingView->setModel(NULL, NULL);
-	_stationsTreeView->setModel(NULL);
-	_stationsFolderView->setModel(NULL);
-	_modulesView->setModel(NULL);
-	_modulesFolderView->setModel(NULL);
+	_bindingView->setModel(nullptr, nullptr);
+	_stationsTreeView->setModel(nullptr);
+	_stationsFolderView->setModel(nullptr);
+	_modulesView->setModel(nullptr);
+	_modulesFolderView->setModel(nullptr);
 
-	if ( _bindingsModel ) delete _bindingsModel;
-	if ( _profilesModel ) delete _profilesModel;
+	delete _bindingsModel;
+	delete _profilesModel;
 
-	if ( model == NULL ) return;
+	if ( !model ) {
+		return;
+	}
 
 	// -------------------------------
 	// Create bindings model
@@ -860,32 +910,28 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	_bindingsModel->setHeaderData(0, Qt::Horizontal, "Name");
 	_bindingsModel->setHeaderData(1, Qt::Horizontal, "Profile");
 
-	connect(_bindingsModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-	        this, SLOT(moduleBindingsChanged(const QModelIndex &, const QModelIndex &)));
+	connect(_bindingsModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+	        this, SLOT(moduleBindingsChanged(QModelIndex,QModelIndex)));
 
-	QStandardItem *root = _bindingsModel->invisibleRootItem();
+	auto *root = _bindingsModel->invisibleRootItem();
 
-	Model *base = model->model();
+	auto *base = model->model();
 
-	typedef QVector<ModuleBinding*> Bindings;
-	typedef QMap<QString, Bindings> Stations;
-	typedef QMap<QString, Stations> Networks;
+	using Bindings = QVector<ModuleBinding*>;
+	using Stations = QMap<QString, Bindings>;
+	using Networks = QMap<QString, Stations>;
 	Networks networks;
 
-	Model::Stations::iterator it;
-	for ( it = base->stations.begin(); it != base->stations.end(); ++it ) {
-		networks[it->first.networkCode.c_str()]
-		        [it->first.stationCode.c_str()].clear();
+	for ( const auto &[id, ptr] : base->stations ) {
+		networks[id.networkCode.c_str()]
+		        [id.stationCode.c_str()].clear();
 	}
 
-	for ( size_t i = 0; i < base->modules.size(); ++i ) {
-		Module *mod = base->modules[i].get();
-
-		Module::BindingMap::iterator it;
-		for ( it = mod->bindings.begin(); it != mod->bindings.end(); ++it ) {
+	for ( const auto &mod : base->modules ) {
+		for ( const auto &[id, binding] : mod->bindings ) {
 			// Build binding map
-			networks[it->first.networkCode.c_str()]
-			        [it->first.stationCode.c_str()].append(it->second.get());
+			networks[id.networkCode.c_str()]
+			        [id.stationCode.c_str()].append(binding.get());
 		}
 	}
 
@@ -893,7 +939,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	Stations::iterator sit;
 	Bindings::iterator bit;
 
-	QStandardItem *rootItem = new QStandardItem("Networks");
+	auto *rootItem = new QStandardItem("Networks");
 	rootItem->setColumnCount(2);
 	rootItem->setData(TypeRoot, Type);
 	root->appendRow(rootItem);
@@ -901,8 +947,8 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 
 	for ( nit = networks.begin(); nit != networks.end(); ++nit ) {
-		QString networkCode = nit.key();
-		QStandardItem *netItem = new QStandardItem(networkCode);
+		const QString &networkCode = nit.key();
+		auto *netItem = new QStandardItem(networkCode);
 		netItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled/* | Qt::ItemIsDropEnabled*/);
 		netItem->setData(TypeNetwork, Type);
 		netItem->setData(_docFolder, Qt::DecorationRole);
@@ -910,8 +956,8 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 		rootItem->appendRow(netItem);
 
 		for ( sit = nit.value().begin(); sit != nit.value().end(); ++sit ) {
-			QString stationCode = sit.key();
-			QStandardItem *staItem = new QStandardItem(stationCode);
+			const QString &stationCode = sit.key();
+			auto *staItem = new QStandardItem(stationCode);
 			staItem->setData(TypeStation, Type);
 			staItem->setData(_docFolder, Qt::DecorationRole);
 
@@ -931,22 +977,24 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 			netItem->appendRow(staItem);
 
 			for ( bit = sit.value().begin(); bit != sit.value().end(); ++bit ) {
-				ModuleBinding *binding = *bit;
+				auto *binding = *bit;
 
-				Module *mod = static_cast<Module*>(binding->parent);
-				QStandardItem *bindItem = new QStandardItem(mod->definition->name.c_str());
+				auto *mod = static_cast<Module*>(binding->parent);
+				auto *bindItem = new QStandardItem(mod->definition->name.c_str());
 				bindItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled/* | Qt::ItemIsDropEnabled*/);
 				bindItem->setData(networkCode, Net);
 				bindItem->setData(stationCode, Sta);
 				bindItem->setData(TypeModule, Type);
 				bindItem->setData(QVariant::fromValue((void*)binding), Link);
 
-				if ( binding->name.empty() )
+				if ( binding->name.empty() ) {
 					bindItem->setData(_docIcon, Qt::DecorationRole);
-				else
+				}
+				else {
 					bindItem->setData(_linkIcon, Qt::DecorationRole);
+				}
 
-				QStandardItem *profileItem = new QStandardItem(binding->name.c_str());
+				auto *profileItem = new QStandardItem(binding->name.c_str());
 				profileItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable/* | Qt::ItemIsDropEnabled*/);
 				profileItem->setData(TypeProfile, Type);
 				//profileItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -979,32 +1027,33 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	rootItem->setData(TypeRoot, Type);
 	root->appendRow(rootItem);
 
-	for ( size_t i = 0; i < base->modules.size(); ++i ) {
-		Module *mod = base->modules[i].get();
-		if ( !mod->supportsBindings() ) continue;
-		QStandardItem *modItem = new QStandardItem(mod->definition->name.c_str());
+	for ( const auto &mod : base->modules ) {
+		if ( !mod->supportsBindings() ) {
+			continue;
+		}
+
+		auto *modItem = new QStandardItem(mod->definition->name.c_str());
 		modItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 		modItem->setData(TypeModule, Type);
-		modItem->setData(QVariant::fromValue((void*)mod), Link);
+		modItem->setData(QVariant::fromValue(static_cast<void*>(mod.get())), Link);
 		modItem->setData(_docFolder, Qt::DecorationRole);
 		rootItem->appendRow(modItem);
 
-		for ( size_t j = 0; j < mod->profiles.size(); ++j ) {
-			ModuleBinding *profile = mod->profiles[j].get();
-			QStandardItem *profItem = new QStandardItem(profile->name.c_str());
+		for ( const auto &profile : mod->profiles ) {
+			auto *profItem = new QStandardItem(profile->name.c_str());
 			profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 			profItem->setData(TypeProfile, Type);
-			profItem->setData(QVariant::fromValue((void*)profile), Link);
+			profItem->setData(QVariant::fromValue(static_cast<void*>(profile.get())), Link);
 			profItem->setData(_docIcon, Qt::DecorationRole);
 			modItem->appendRow(profItem);
 		}
 	}
 
-	_modulesFolderView->setModel(NULL);
+	_modulesFolderView->setModel(nullptr);
 	_modulesView->setModel(_profilesModel);
 	_modulesView->setRootIndex(rootItem->index());
-	connect(_modulesView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-	        this, SLOT(moduleTreeCurrentChanged(const QModelIndex &, const QModelIndex &)));
+	connect(_modulesView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+	        this, SLOT(moduleTreeCurrentChanged(QModelIndex,QModelIndex)));
 
 	changeFolder(_stationsFolderView->rootIndex());
 }
@@ -1036,7 +1085,7 @@ void BindingsPanel::moduleTreeCurrentChanged(const QModelIndex &curr, const QMod
 			_addProfile->setEnabled(false);
 			_deleteProfile->setEnabled(false);
 			_modulesFolderView->setEnabled(false);
-			_modulesFolderView->setModel(NULL);
+			_modulesFolderView->setModel(nullptr);
 	}
 }
 
@@ -1048,10 +1097,12 @@ void BindingsPanel::moduleBindingsChanged(const QModelIndex &topLeft,
 
 	if ( type == TypeProfile ) {
 		// Update icon
-		if ( topLeft.data().toString().isEmpty() )
+		if ( topLeft.data().toString().isEmpty() ) {
 			_bindingsModel->setData(topLeft.sibling(topLeft.row(),0), _docIcon, Qt::DecorationRole);
-		else
+		}
+		else {
 			_bindingsModel->setData(topLeft.sibling(topLeft.row(),0), _linkIcon, Qt::DecorationRole);
+		}
 		_model->setModified();
 		return;
 	}
@@ -1066,15 +1117,18 @@ void BindingsPanel::bindingActivated(const QModelIndex &idx) {
 void BindingsPanel::bindingDoubleClicked(const QModelIndex &idx) {
 	int type = idx.data(Type).toInt();
 
-	if ( type != TypeModule ) return;
+	if ( type != TypeModule ) {
+		return;
+	}
 
 	if ( !idx.sibling(idx.row(), 1).data().toString().isEmpty() ) {
 		if ( QMessageBox::question(this, tr("Warning"),
 		                           tr("The binding you are about to open is a profile and "
 		                              "can potentially affect many stations. "
 		                              "Do you want to continue?"),
-		                           QMessageBox::Yes, QMessageBox::No) == QMessageBox::No )
+		                           QMessageBox::Yes, QMessageBox::No) == QMessageBox::No ) {
 			return;
+		}
 	}
 
 	_bindingView->setModel(_model, _bindingsModel);
@@ -1115,7 +1169,9 @@ void BindingsPanel::profileDoubleClicked(const QModelIndex &idx) {
 	*/
 
 	int type = idx.data(Type).toInt();
-	if ( type != TypeProfile ) return;
+	if ( type != TypeProfile ) {
+		return;
+	}
 
 	_modulesView->setCurrentIndex(idx.sibling(idx.row(),0));
 	_modulesFolderView->setCurrentIndex(idx.sibling(idx.row(),0));
@@ -1131,8 +1187,9 @@ void BindingsPanel::selectBindings(QItemSelectionModel *selectionModel,
 	for ( int i = 0; i < rows; ++i ) {
 		QModelIndex idx = _bindingsModel->index(i, 0, parent);
 		if ( idx.data(Type).toInt() == TypeModule ) {
-			if ( link == idx.data(Link).value<void*>() )
+			if ( link == idx.data(Link).value<void*>() ) {
 				selectionModel->select(idx, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+			}
 		}
 
 		selectBindings(selectionModel, link, idx);
@@ -1141,13 +1198,17 @@ void BindingsPanel::selectBindings(QItemSelectionModel *selectionModel,
 
 
 void BindingsPanel::changeFolder(const QModelIndex &idx_) {
-	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) return;
+	if ( QApplication::keyboardModifiers() != Qt::NoModifier ) {
+		return;
+	}
 
 	QModelIndex idx = idx_.sibling(idx_.row(), 0);
 
 	int type = idx.data(Type).toInt();
 
-	if ( type >= TypeModule ) return;
+	if ( type >= TypeModule ) {
+		return;
+	}
 
 	_stationsTreeView->setCurrentIndex(idx_);
 	_stationsFolderView->setRootIndex(idx);
@@ -1161,7 +1222,7 @@ void BindingsPanel::collectModuleBindings(ModuleBindingMap &map,
                                           const QModelIndex &idx) {
 	int type = idx.data(Type).toInt();
 	if ( type == TypeNetwork || type == TypeStation ) {
-		auto model = _stationsFolderView->model();
+		auto *model = _stationsFolderView->model();
 		int rowCount = model->rowCount(idx);
 		for ( int i = 0; i < rowCount; ++i ) {
 			collectModuleBindings(map, model->index(i, 0, idx));
@@ -1170,8 +1231,8 @@ void BindingsPanel::collectModuleBindings(ModuleBindingMap &map,
 	}
 
 	if ( type == TypeModule ) {
-		ModuleBinding *b = getLink<ModuleBinding>(idx);
-		Module *mod = (Module*)b->parent;
+		auto *b = getLink<ModuleBinding>(idx);
+		auto *mod = (Module*)b->parent;
 		map[QString(mod->definition->name.c_str())].insert(QString(b->name.c_str()));
 		return;
 	}
@@ -1180,7 +1241,7 @@ void BindingsPanel::collectModuleBindings(ModuleBindingMap &map,
 
 void BindingsPanel::clearModuleBindings(const QModelIndex &idx) {
 	int type = idx.data(Type).toInt();
-	auto model = _stationsFolderView->model();
+	auto *model = _stationsFolderView->model();
 	if ( type == TypeRoot || type == TypeNetwork ) {
 		int rowCount = model->rowCount(idx);
 		for ( int i = 0; i < rowCount; ++i ) {
@@ -1198,16 +1259,19 @@ void BindingsPanel::clearModuleBindings(const QModelIndex &idx) {
 		}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
-			if ( !i.isValid() ) continue;
+			if ( !i.isValid() ) {
+				continue;
+			}
 
 			StationID id(qPrintable(i.data(Net).toString()),
 			             qPrintable(i.data(Sta).toString()));
 
-			ModuleBinding *b = getLink<ModuleBinding>(i);
-			Module *mod = (Module*)b->parent;
+			auto *b = getLink<ModuleBinding>(i);
+			auto *mod = (Module*)b->parent;
 
-			if ( mod->removeStation(id) )
+			if ( mod->removeStation(id) ) {
 				_stationsFolderView->model()->removeRow(i.row(), idx);
+			}
 		}
 
 		_model->setModified();
@@ -1221,7 +1285,7 @@ void BindingsPanel::removeModuleBindings(const QModelIndex &idx,
                                          const QString &modName,
                                          const QString *name) {
 	int type = idx.data(Type).toInt();
-	auto model = _stationsFolderView->model();
+	auto *model = _stationsFolderView->model();
 	if ( type == TypeRoot || type == TypeNetwork ) {
 		int rowCount = model->rowCount(idx);
 		for ( int i = 0; i < rowCount; ++i ) {
@@ -1233,26 +1297,31 @@ void BindingsPanel::removeModuleBindings(const QModelIndex &idx,
 	if ( type == TypeStation ) {
 		// Collect all childs (bindings)
 		QList<QPersistentModelIndex> indexes;
-		auto model = _stationsFolderView->model();
+		auto *model = _stationsFolderView->model();
 		int rowCount = model->rowCount(idx);
 		for ( int i = 0; i < rowCount; ++i ) {
 			indexes.append(model->index(i, 0, idx));
 		}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
-			if ( !i.isValid() ) continue;
+			if ( !i.isValid() ) {
+				continue;
+			}
 
 			StationID id(qPrintable(i.data(Net).toString()),
 			             qPrintable(i.data(Sta).toString()));
 
-			ModuleBinding *b = getLink<ModuleBinding>(i);
-			Module *mod = (Module*)b->parent;
+			auto *b = getLink<ModuleBinding>(i);
+			auto *mod = static_cast<Module*>(b->parent);
 
-			if ( modName != mod->definition->name.c_str() ) continue;
-			if ( name != NULL && *name != b->name.c_str() ) continue;
+			if ( modName != mod->definition->name.c_str() ||
+			     (name && *name != b->name.c_str()) ) {
+				continue;
+			}
 
-			if ( mod->removeStation(id) )
+			if ( mod->removeStation(id) ) {
 				_stationsFolderView->model()->removeRow(i.row(), idx);
+			}
 		}
 
 		_model->setModified();
@@ -1267,7 +1336,9 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 	QModelIndex hoveredIdx = _stationsFolderView->indexAt(p);
 	QAction *a;
 
-	if ( !idx.isValid() ) return;
+	if ( !idx.isValid() ) {
+		return;
+	}
 
 	if ( hoveredIdx.isValid() ) {
 		hoveredIdx = hoveredIdx.sibling(hoveredIdx.row(), 0);
@@ -1275,28 +1346,31 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 
 		if ( type == TypeNetwork || type == TypeStation ) {
 			QMenu menu;
-			QAction *clearAction = menu.addAction("Clear all module bindings");
-			QAction *deleteAction = menu.addAction("Delete");
-			QMenu *removeBinding = NULL;
+			auto *clearAction = menu.addAction("Clear all module bindings");
+			auto *deleteAction = menu.addAction("Delete");
+			QMenu *removeBinding = nullptr;
 
-			QItemSelectionModel *sel = _stationsFolderView->selectionModel();
+			auto *sel = _stationsFolderView->selectionModel();
 
 			ModuleBindingMap bindingMap;
-			foreach ( const QModelIndex &idx, sel->selectedIndexes() )
+			foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 				collectModuleBindings(bindingMap, idx);
+			}
 
 			if ( !bindingMap.empty() ) {
 				removeBinding = menu.addMenu("Remove module binding");
 				ModuleBindingMap::iterator it;
 				for ( it = bindingMap.begin(); it != bindingMap.end(); ++it ) {
-					QMenu *sub = removeBinding->addMenu(it.key());
+					auto *sub = removeBinding->addMenu(it.key());
 					sub->setObjectName(it.key());
 					foreach ( const QString &name, it.value() ) {
 						QAction *action;
-						if ( name.isEmpty() )
+						if ( name.isEmpty() ) {
 							action = sub->addAction("station");
-						else
+						}
+						else {
 							action = sub->addAction(QString("profile_%1").arg(name));
+						}
 
 						action->setData(name);
 					}
@@ -1311,80 +1385,91 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 			a = menu.exec(_stationsFolderView->mapToGlobal(p));
 			if ( a == clearAction ) {
 				if ( sel->selectedIndexes().count() > 0 ) {
-					if ( QMessageBox::question(NULL, "Clear bindings",
+					if ( QMessageBox::question(nullptr, "Clear bindings",
 					       QString("Do you really want to remove all module\n"
 					               "bindings of %1 selected %2?")
 					       .arg(sel->selectedIndexes().count())
 					       .arg(type == TypeNetwork?"network(s)":"station(s)"),
 					       QMessageBox::Yes | QMessageBox::No
-					     ) != QMessageBox::Yes )
+					     ) != QMessageBox::Yes ) {
 						return;
+					}
 				}
 
-				foreach ( const QModelIndex &idx, sel->selectedIndexes() )
+				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					clearModuleBindings(idx);
+				}
 			}
-			else if ( a == deleteAction )
+			else if ( a == deleteAction ) {
 				deleteItem();
-			else if ( a != NULL && removeBinding != NULL &&
-			          a->parentWidget() != NULL &&
-			          a->parentWidget()->parentWidget() == removeBinding ) {
+			}
+			else if ( a && removeBinding && a->parent()
+			       && (a->parent()->parent() == removeBinding) ) {
 				QString bindingName = a->data().toString();
-				QString moduleName = a->parentWidget()->objectName();
+				QString moduleName = a->parent()->objectName();
 
-				QString *bindingNameFilter = NULL;
-				if ( a->data().isValid() )
+				QString *bindingNameFilter = nullptr;
+				if ( a->data().isValid() ) {
 					bindingNameFilter = &bindingName;
+				}
 
-				foreach ( const QModelIndex &idx, sel->selectedIndexes() )
+				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					removeModuleBindings(idx, moduleName, bindingNameFilter);
+				}
 			}
 		}
 		else if ( type == TypeModule ) {
 			QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 			QMenu menu;
-			QMenu *menuProfile = NULL;
-			Module *mod = NULL;
+			QMenu *menuProfile = nullptr;
+			Module *mod = nullptr;
 
 			if ( sel->isSelected(hoveredIdx) &&
 			     sel->selectedIndexes().count() == 1 ) {
 				menuProfile = menu.addMenu("Change profile");
-				ModuleBinding *b = getLink<ModuleBinding>(hoveredIdx);
+				auto *b = getLink<ModuleBinding>(hoveredIdx);
 				mod = (Module*)b->parent;
 				a = menuProfile->addAction("None");
 				a->setEnabled(!b->name.empty());
-				a->setData(QVariant::fromValue((void*)NULL));
-				for ( size_t i = 0; i < mod->profiles.size(); ++i ) {
-					a = menuProfile->addAction(mod->profiles[i]->name.c_str());
-					a->setData(QVariant::fromValue((void*)mod->profiles[i].get()));
+				a->setData(QVariant::fromValue(nullptr));
+				for ( const auto &profile : mod->profiles ) {
+					a = menuProfile->addAction(profile->name.c_str());
+					a->setData(QVariant::fromValue(static_cast<void*>(profile.get())));
 					QFont f = a->font();
 					f.setBold(true);
 					a->setFont(f);
-					if ( mod->profiles[i] == b )
+					if ( profile == b ) {
 						a->setEnabled(false);
+					}
 				}
 			}
 
 			QAction *deleteAction = menu.addAction("Delete");
 
 			a = menu.exec(_stationsFolderView->mapToGlobal(p));
-			if ( a == NULL ) return;
+			if ( !a ) {
+				return;
+			}
 
-			if ( a == deleteAction )
+			if ( a == deleteAction ) {
 				deleteItem();
+			}
 			else if ( a->parent() == menuProfile ) {
 				StationID id(qPrintable(hoveredIdx.data(Net).toString()),
 				             qPrintable(hoveredIdx.data(Sta).toString()));
 
-				ModuleBinding *b = reinterpret_cast<ModuleBinding*>(a->data().value<void*>());
+				auto *b = reinterpret_cast<ModuleBinding*>(a->data().value<void*>());
 				if ( b ) {
-					if ( !mod->bind(id, b) ) b = NULL;
+					if ( !mod->bind(id, b) ) {
+						b = nullptr;
+					}
 				}
-				else
+				else {
 					b = mod->bind(id, "");
+				}
 
 				if ( !b ) {
-					QMessageBox::critical(NULL, "Change profile",
+					QMessageBox::critical(nullptr, "Change profile",
 					                            "Changing the profile failed.");
 					return;
 				}
@@ -1404,21 +1489,24 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 		case TypeRoot:
 		{
 		QMenu menu;
-		QAction *addNetwork = menu.addAction("Add network");
+		auto *addNetwork = menu.addAction("Add network");
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( !a ) {
+			return;
+		}
 
 		if ( a == addNetwork ) {
 			NewNameDialog dlg(idx, true, this);
 			dlg.setWindowTitle("New network name");
-			if ( dlg.exec() != QDialog::Accepted )
+			if ( dlg.exec() != QDialog::Accepted ) {
 				return;
+			}
 
-			QStandardItem *netItem = new QStandardItem(dlg.name());
+			auto *netItem = new QStandardItem(dlg.name());
 			netItem->setData(TypeNetwork, Type);
 			netItem->setData(_docFolder, Qt::DecorationRole);
 			netItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-			QStandardItem *rootItem = _bindingsModel->itemFromIndex(idx);
+			auto *rootItem = _bindingsModel->itemFromIndex(idx);
 			rootItem->appendRow(netItem);
 			_stationsFolderView->selectionModel()->setCurrentIndex(
 				netItem->index(), QItemSelectionModel::ClearAndSelect
@@ -1433,13 +1521,16 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 		QMenu menu;
 		QAction *addStation = menu.addAction("Add station");
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( !a ) {
+			return;
+		}
 
 		if ( a == addStation ) {
 			NewNameDialog dlg(idx, true, this);
 			dlg.setWindowTitle("New station name");
-			if ( dlg.exec() != QDialog::Accepted )
+			if ( dlg.exec() != QDialog::Accepted ) {
 				return;
+			}
 
 			StationID id(qPrintable(idx.data().toString()),
 			             qPrintable(dlg.name()));
@@ -1450,7 +1541,7 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				return;
 			}
 
-			QStandardItem *staItem = new QStandardItem(dlg.name());
+			auto *staItem = new QStandardItem(dlg.name());
 			staItem->setData(TypeStation, Type);
 			staItem->setData(_docFolder, Qt::DecorationRole);
 			staItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -1467,52 +1558,55 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 		case TypeStation:
 		{
 		QMenu menu;
-		QMenu *bindingMenu = menu.addMenu("Add binding");
-		Module *mod;
+		auto *bindingMenu = menu.addMenu("Add binding");
 
 		StationID id(qPrintable(idx.parent().data().toString()),
 		             qPrintable(idx.data().toString()));
-		Model *model = _model->model();
+		auto *model = _model->model();
 
-		for ( size_t i = 0; i < model->modules.size(); ++i ) {
-			mod = model->modules[i].get();
-			if ( mod->supportsBindings() && mod->getBinding(id) == NULL ) {
+		for ( const auto &mod : model->modules ) {
+			if ( mod->supportsBindings() && mod->getBinding(id) == nullptr ) {
 				a = bindingMenu->addAction(mod->definition->name.c_str());
-				a->setData(QVariant::fromValue((void*)mod));
+				a->setData(QVariant::fromValue(static_cast<void*>(mod.get())));
 			}
 		}
 
-		if ( bindingMenu->isEmpty() )
+		if ( bindingMenu->isEmpty() ) {
 			bindingMenu->setEnabled(false);
+		}
 
 		a = menu.exec(_stationsFolderView->mapToGlobal(p));
-		if ( a == NULL ) return;
+		if ( a == nullptr ) {
+			return;
+		}
 
 		if ( a->parent() == bindingMenu ) {
-			Module *mod = reinterpret_cast<Module*>(a->data().value<void*>());
+			auto *mod = reinterpret_cast<Module*>(a->data().value<void*>());
 			ModuleBinding *binding = mod->bind(id, "");
-			if ( binding == NULL ) {
-				QMessageBox::critical(NULL, "Add binding",
+			if ( binding == nullptr ) {
+				QMessageBox::critical(nullptr, "Add binding",
 				                      "Creation of binding failed.");
 				return;
 			}
 
-			QStandardItem *bindItem = new QStandardItem(mod->definition->name.c_str());
+			auto *bindItem = new QStandardItem(mod->definition->name.c_str());
 			bindItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			bindItem->setData(id.networkCode.c_str(), Net);
 			bindItem->setData(id.stationCode.c_str(), Sta);
 			bindItem->setData(TypeModule, Type);
 			bindItem->setData(QVariant::fromValue((void*)binding), Link);
 
-			if ( binding->name.empty() )
+			if ( binding->name.empty() ) {
 				bindItem->setData(_docIcon, Qt::DecorationRole);
-			else
+			}
+			else {
 				bindItem->setData(_linkIcon, Qt::DecorationRole);
+			}
 
-			QStandardItem *profileItem = new QStandardItem(binding->name.c_str());
+			auto *profileItem = new QStandardItem(binding->name.c_str());
 			profileItem->setData(TypeProfile, Type);
 
-			QStandardItem *item = _bindingsModel->itemFromIndex(idx);
+			auto *item = _bindingsModel->itemFromIndex(idx);
 			item->appendRow(QList<QStandardItem*>() << bindItem << profileItem);
 			_stationsFolderView->selectionModel()->setCurrentIndex(
 				bindItem->index(), QItemSelectionModel::ClearAndSelect
@@ -1531,16 +1625,21 @@ void BindingsPanel::modulesViewContextMenu(const QPoint &p) {
 	QModelIndex idx = _modulesView->rootIndex();
 	QModelIndex hoveredIdx = _modulesView->indexAt(p);
 
-	if ( !idx.isValid() ) return;
+	if ( !idx.isValid() ) {
+		return;
+	}
 
-	if ( hoveredIdx.data(Type).toInt() != TypeModule ) return;
+	if ( hoveredIdx.data(Type).toInt() != TypeModule ) {
+		return;
+	}
 
 	QMenu menu;
 	QAction *addAction = menu.addAction(tr("Add %1 profile").arg(hoveredIdx.data().toString()));
 	QAction *res = menu.exec(_modulesView->mapToGlobal(p));
 
-	if ( res == addAction )
+	if ( res == addAction ) {
 		addProfile();
+	}
 }
 
 
@@ -1548,27 +1647,33 @@ void BindingsPanel::modulesFolderViewContextMenu(const QPoint &p) {
 	QModelIndex idx = _modulesFolderView->rootIndex();
 	//QModelIndex hoveredIdx = _modulesFolderView->indexAt(p);
 
-	if ( !idx.isValid() ) return;
+	if ( !idx.isValid() ) {
+		return;
+	}
 
 	QMenu menu;
 
-	QAction *addAction = menu.addAction(tr("Add profile"));
-	QAction *delAction = NULL;
+	auto *addAction = menu.addAction(tr("Add profile"));
+	QAction *delAction = nullptr;
 
-	if ( !_modulesFolderView->selectionModel()->selectedIndexes().empty() )
+	if ( !_modulesFolderView->selectionModel()->selectedIndexes().empty() ) {
 		delAction = menu.addAction(tr("Delete selected profiles"));
+	}
 
 	QAction *res = menu.exec(_modulesFolderView->mapToGlobal(p));
-	if ( res == addAction )
+	if ( res == addAction ) {
 		addProfile();
-	else if ( res == delAction )
+	}
+	else if ( res == delAction ) {
 		deleteProfile();
+	}
 }
 
 
 void BindingsPanel::folderLevelUp() {
-	if ( _stationsFolderView->rootIndex().parent().isValid() )
+	if ( _stationsFolderView->rootIndex().parent().isValid() ) {
 		changeFolder(_stationsFolderView->rootIndex().parent());
+	}
 }
 
 
@@ -1580,20 +1685,25 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 network(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
-			     ) != QMessageBox::Yes )
+			     ) != QMessageBox::Yes ) {
 				return;
+			}
 		}
 
 		QList<QPersistentModelIndex> indexes;
 		foreach ( const QModelIndex &i, selection )
-			if ( i.column() == 0 ) indexes.append(i);
+			if ( i.column() == 0 ) {
+				indexes.append(i);
+			}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
-			if ( !i.isValid() ) continue;
+			if ( !i.isValid() ) {
+				continue;
+			}
 
 			while ( i.model()->rowCount(i) > 0 ) {
 				deleteStation(i.model()->index(0, 0, i));
@@ -1606,20 +1716,25 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 station(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
-			     ) != QMessageBox::Yes )
+			     ) != QMessageBox::Yes ) {
 				return;
+			}
 		}
 
 		QList<QPersistentModelIndex> indexes;
 		foreach ( const QModelIndex &i, selection )
-			if ( i.column() == 0 ) indexes.append(i);
+			if ( i.column() == 0 ) {
+				indexes.append(i);
+			}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
-			if ( !i.isValid() ) continue;
+			if ( !i.isValid() ) {
+				continue;
+			}
 			deleteStation(i);
 		}
 	}
@@ -1627,26 +1742,31 @@ void BindingsPanel::deleteItem() {
 		QItemSelectionModel *sel = _stationsFolderView->selectionModel();
 		QModelIndexList selection = sel->selectedIndexes();
 		if ( selection.count() > 0 ) {
-			if ( QMessageBox::question(NULL, "Delete",
+			if ( QMessageBox::question(nullptr, "Delete",
 			       QString("Do you really want to delete %1 binding(s)?")
 			       .arg(selection.count()),
 			       QMessageBox::Yes | QMessageBox::No
-			     ) != QMessageBox::Yes )
+			     ) != QMessageBox::Yes ) {
 				return;
+			}
 		}
 
 		QList<QPersistentModelIndex> indexes;
 		foreach ( const QModelIndex &i, selection )
-			if ( i.column() == 0 ) indexes.append(i);
+			if ( i.column() == 0 ) {
+				indexes.append(i);
+			}
 
 		foreach ( const QPersistentModelIndex &i, indexes ) {
-			if ( !i.isValid() ) continue;
+			if ( !i.isValid() ) {
+				continue;
+			}
 
 			StationID id(qPrintable(i.data(Net).toString()),
 			             qPrintable(i.data(Sta).toString()));
 
-			ModuleBinding *b = getLink<ModuleBinding>(i);
-			Module *mod = (Module*)b->parent;
+			auto *b = getLink<ModuleBinding>(i);
+			auto *mod = (Module*)b->parent;
 
 			if ( mod->removeStation(id) ) {
 				_stationsFolderView->model()->removeRow(i.row(), idx);
@@ -1668,8 +1788,8 @@ void BindingsPanel::deleteStation(const QModelIndex &idx) {
 
 
 void BindingsPanel::deleteProfile(const QModelIndex &idx) {
-	ModuleBinding *binding = getLink<ModuleBinding>(idx);
-	Module *mod = (Module*)binding->parent;
+	auto *binding = getLink<ModuleBinding>(idx);
+	auto *mod = (Module*)binding->parent;
 	mod->removeProfile(binding);
 	syncProfileRemoval(_bindingsModel, binding);
 	_model->setModified();
@@ -1716,10 +1836,15 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 		case TypeStation:
 		{
 			// Get module
-			Module *mod = _model->model()->module(qPrintable(module));
-			if ( mod == NULL ) return false;
-			ModuleBinding *prof = mod->getProfile(qPrintable(profile));
-			if ( prof == NULL ) return false;
+			auto *mod = _model->model()->module(qPrintable(module));
+			if ( mod == nullptr ) {
+				return false;
+			}
+
+			auto *prof = mod->getProfile(qPrintable(profile));
+			if ( prof == nullptr ) {
+				return false;
+			}
 
 			StationID id(qPrintable(idx.parent().data().toString()),
 			             qPrintable(idx.data().toString()));
@@ -1727,16 +1852,18 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 			int rows = _bindingsModel->rowCount(idx);
 			for ( int i = 0; i < rows; ++i ) {
 				auto child = _bindingsModel->index(i, 0, idx);
-				if ( mod->definition->name != qPrintable(child.data().toString()) )
+				if ( mod->definition->name != qPrintable(child.data().toString()) ) {
 					continue;
+				}
 
 				if ( mod->bind(id, prof) ) {
 					// Update an available binding
 					_bindingsModel->setData(child, QVariant::fromValue((void*)prof), Link);
 					_bindingsModel->setData(child.sibling(child.row(), 1), prof->name.c_str(), Qt::EditRole);
 				}
-				else
+				else {
 					cerr << "ERROR: could not assign binding" << endl;
+				}
 
 				_model->setModified();
 				return true;
@@ -1748,22 +1875,24 @@ bool BindingsPanel::assignProfile(const QModelIndex &idx, const QString &module,
 				return false;
 			}
 
-			QStandardItem *bindItem = new QStandardItem(mod->definition->name.c_str());
+			auto *bindItem = new QStandardItem(mod->definition->name.c_str());
 			bindItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			bindItem->setData(id.networkCode.c_str(), Net);
 			bindItem->setData(id.stationCode.c_str(), Sta);
 			bindItem->setData(TypeModule, Type);
 			bindItem->setData(QVariant::fromValue((void*)prof), Link);
 
-			if ( prof->name.empty() )
+			if ( prof->name.empty() ) {
 				bindItem->setData(_docIcon, Qt::DecorationRole);
-			else
+			}
+			else {
 				bindItem->setData(_linkIcon, Qt::DecorationRole);
+			}
 
-			QStandardItem *profileItem = new QStandardItem(prof->name.c_str());
+			auto *profileItem = new QStandardItem(prof->name.c_str());
 			profileItem->setData(TypeProfile, Type);
 
-			QStandardItem *item = _bindingsModel->itemFromIndex(idx);
+			auto *item = _bindingsModel->itemFromIndex(idx);
 			item->appendRow(QList<QStandardItem*>() << bindItem << profileItem);
 
 			_model->setModified();
@@ -1809,57 +1938,71 @@ void BindingsPanel::switchToProfileListView() {
 
 
 void BindingsPanel::addProfile() {
-	if ( _modulesFolderView->rootIndex().data(Type) != TypeModule ) return;
+	if ( _modulesFolderView->rootIndex().data(Type) != TypeModule ) {
+		return;
+	}
 
 	NewNameDialog dlg(_modulesFolderView->rootIndex(), false, this);
 	dlg.setWindowTitle(QString("New %1 profile").arg(_modulesFolderView->rootIndex().data().toString()));
 	dlg.setHint("Only alphanumeric characters, underscore and dash are supported.");
 	dlg.setValidator(new ProfileValidator(&dlg));
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
 
-	Module *mod = getLink<Module>(_modulesFolderView->rootIndex());
+	auto *mod = getLink<Module>(_modulesFolderView->rootIndex());
 
 	ModuleBinding *profile = mod->createProfile(dlg.name().toStdString());
 
-	if ( profile == NULL ) {
+	if ( profile == nullptr ) {
 		QMessageBox::critical(this, "Add profile",
 		                      "Adding the profile failed.");
 		return;
 	}
 
-	QStandardItem *profItem = new QStandardItem(profile->name.c_str());
+	auto *profItem = new QStandardItem(profile->name.c_str());
 	profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 	profItem->setData(TypeProfile, Type);
 	profItem->setData(QVariant::fromValue((void*)profile), Link);
 	profItem->setData(_docIcon, Qt::DecorationRole);
 
-	QStandardItem *item = _profilesModel->itemFromIndex(_modulesFolderView->rootIndex());
+	auto *item = _profilesModel->itemFromIndex(_modulesFolderView->rootIndex());
 	item->appendRow(profItem);
 }
 
 
 void BindingsPanel::deleteProfile() {
-	if ( _modulesFolderView->rootIndex().data(Type) != TypeModule ) return;
+	if ( _modulesFolderView->rootIndex().data(Type) != TypeModule ) {
+		return;
+	}
 
 	QItemSelectionModel *sel = _modulesFolderView->selectionModel();
 	QModelIndexList selection = sel->selectedIndexes();
-	if ( selection.isEmpty() ) return;
+	if ( selection.isEmpty() ) {
+		return;
+	}
 
-	if ( QMessageBox::question(NULL, "Delete",
+	if ( QMessageBox::question(nullptr, "Delete",
 	           QString("Do you really want to delete %1 profile(s)?\n"
 	                   "Each active binding that is using one of the "
 	                   "selected profiles will be removed as well.")
 	           .arg(selection.count()),
 	           QMessageBox::Yes | QMessageBox::No
-	     ) != QMessageBox::Yes )
+	     ) != QMessageBox::Yes ) {
 		return;
+	}
 
 	QList<QPersistentModelIndex> indexes;
 	foreach ( const QModelIndex &i, selection )
-		if ( i.column() == 0 ) indexes.append(i);
+		if ( i.column() == 0 ) {
+			indexes.append(i);
+		}
 
 	foreach ( const QPersistentModelIndex &i, indexes ) {
-		if ( !i.isValid() ) continue;
+		if ( !i.isValid() ) {
+			continue;
+		}
+
 		deleteProfile(i);
 		_modulesFolderView->model()->removeRow(i.row(), i.parent());
 	}

@@ -7,11 +7,5 @@ SDS archive via different protocols. Currently there are two implementations:
   * dataselect/1/version
   * dataselect/1/application.wadl
 
-* Arclink (deprecated)
-
-This application is meant to share data with trusted computers in a fast and
-efficient way. It does not require inventory information and supports wildcards
-on each level.
-
 All data are forwarded unrestricted. There are no options to add restriction
 checks or user authentication.

@@ -34,7 +34,7 @@ namespace Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
 : QLayout(parent), _hSpace(hSpacing), _vSpace(vSpacing) {
-	setMargin(margin);
+	setContentsMargins(margin, margin, margin, margin);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -44,7 +44,7 @@ FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FlowLayout::FlowLayout(int margin, int hSpacing, int vSpacing)
 : _hSpace(hSpacing), _vSpace(vSpacing) {
-	setMargin(margin);
+	setContentsMargins(margin, margin, margin, margin);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -185,11 +185,13 @@ QSize FlowLayout::sizeHint() const {
 QSize FlowLayout::minimumSize() const {
 	QSize size;
 	QLayoutItem *item;
+
 	foreach (item, _itemList) {
 		size = size.expandedTo(item->minimumSize());
 	}
 
-	size += QSize(2 * margin(), 2 * margin());
+	size += QSize(contentsMargins().left() + contentsMargins().right(),
+	              contentsMargins().top() + contentsMargins().bottom());
 	return size;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -200,7 +202,10 @@ QSize FlowLayout::minimumSize() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
 	int left, top, right, bottom;
-	left = top = right = bottom = margin();
+	left = contentsMargins().left();
+	right = contentsMargins().right();
+	top = contentsMargins().top();
+	bottom = contentsMargins().bottom();
 	QRect effectiveRect = rect.adjusted(+left, +top, -right, -bottom);
 	int x = effectiveRect.x();
 	int y = effectiveRect.y();

@@ -54,25 +54,25 @@ class SC_SYSTEM_CORE_API OriginQuality : public Core::BaseObject {
 		OriginQuality();
 
 		//! Copy constructor
-		OriginQuality(const OriginQuality& other);
+		OriginQuality(const OriginQuality &other);
 
 		//! Destructor
 		~OriginQuality() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		OriginQuality& operator=(const OriginQuality& other);
+		OriginQuality &operator=(const OriginQuality &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const OriginQuality& other) const;
-		bool operator!=(const OriginQuality& other) const;
+		bool operator==(const OriginQuality &other) const;
+		bool operator!=(const OriginQuality &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const OriginQuality& other) const;
+		bool equal(const OriginQuality &other) const;
 
 
 	// ------------------------------------------------------------------

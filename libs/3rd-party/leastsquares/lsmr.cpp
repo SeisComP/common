@@ -545,9 +545,6 @@ void lsmrBase::Solve(unsigned int m, unsigned int n, const double *b,
 }
 
 void lsmrBase::TerminationPrintOut() {
-  if (this->damped && this->istop == 2)
-    this->istop = 3;
-
   if (this->nout) {
     (*this->nout) << " Exit  LSMR.       istop  = " << this->istop
                   << "     ,itn    = " << this->itn << std::endl

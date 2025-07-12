@@ -24,6 +24,7 @@
 
 #include <seiscomp/core.h>
 #include <seiscomp/geo/feature.h>
+#include <seiscomp/geo/featureset.h>
 #include <vector>
 
 
@@ -35,7 +36,7 @@ class SC_SYSTEM_CORE_API PolyRegions {
 	public:
 		PolyRegions() = default;
 		PolyRegions(const std::string &location);
-		~PolyRegions();
+		~PolyRegions() = default;
 
 	public:
 		void print();
@@ -53,10 +54,7 @@ class SC_SYSTEM_CORE_API PolyRegions {
 		const std::string& dataDir() const { return _dataDir; }
 
 	private:
-		bool readFepBoundaries(const std::string& filename);
-
-	private:
-		std::vector<GeoFeature*> _regions;
+		GeoFeatureSet _regions;
 		std::string _dataDir;
 };
 

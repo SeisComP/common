@@ -90,13 +90,15 @@ inline const char* Enum<ENUMTYPE, END, NAMES>::toString() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
 inline bool
-Enum<ENUMTYPE, END, NAMES>::fromString(const std::string& str) {
+Enum<ENUMTYPE, END, NAMES>::fromString(std::string_view sv) {
 	int index = int(0);
 
-	while( str != std::string(NAMES::name(index-0)) ) {
+	while ( sv != NAMES::name(index - 0) ) {
 		++index;
-		if ( index >= int(END) )
+
+		if ( index >= int(END) ) {
 			return false;
+		}
 	}
 
 	_value = static_cast<ENUMTYPE>(index);

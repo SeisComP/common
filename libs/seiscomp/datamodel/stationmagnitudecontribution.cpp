@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(StationMagnitudeContribution, Object, "StationMagnitudeContribution");
 
 
-StationMagnitudeContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+StationMagnitudeContribution::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("stationMagnitudeID", "string", false, false, true, true, false, false, nullptr, &StationMagnitudeContribution::setStationMagnitudeID, &StationMagnitudeContribution::stationMagnitudeID));
 	addProperty(Core::simpleProperty("residual", "float", false, false, false, false, true, false, nullptr, &StationMagnitudeContribution::setResidual, &StationMagnitudeContribution::residual));
 	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, true, false, nullptr, &StationMagnitudeContribution::setWeight, &StationMagnitudeContribution::weight));
@@ -60,7 +60,7 @@ StationMagnitudeContributionIndex::StationMagnitudeContributionIndex(const std::
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitudeContributionIndex::StationMagnitudeContributionIndex(const StationMagnitudeContributionIndex& idx) {
+StationMagnitudeContributionIndex::StationMagnitudeContributionIndex(const StationMagnitudeContributionIndex &idx) {
 	stationMagnitudeID = idx.stationMagnitudeID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -69,7 +69,7 @@ StationMagnitudeContributionIndex::StationMagnitudeContributionIndex(const Stati
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContributionIndex::operator==(const StationMagnitudeContributionIndex& idx) const {
+bool StationMagnitudeContributionIndex::operator==(const StationMagnitudeContributionIndex &idx) const {
 	return stationMagnitudeID == idx.stationMagnitudeID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -78,7 +78,7 @@ bool StationMagnitudeContributionIndex::operator==(const StationMagnitudeContrib
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContributionIndex::operator!=(const StationMagnitudeContributionIndex& idx) const {
+bool StationMagnitudeContributionIndex::operator!=(const StationMagnitudeContributionIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -95,7 +95,7 @@ StationMagnitudeContribution::StationMagnitudeContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitudeContribution::StationMagnitudeContribution(const StationMagnitudeContribution& other)
+StationMagnitudeContribution::StationMagnitudeContribution(const StationMagnitudeContribution &other)
 : Object() {
 	*this = other;
 }
@@ -126,7 +126,7 @@ StationMagnitudeContribution::~StationMagnitudeContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::operator==(const StationMagnitudeContribution& rhs) const {
+bool StationMagnitudeContribution::operator==(const StationMagnitudeContribution &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _residual != rhs._residual ) return false;
 	if ( _weight != rhs._weight ) return false;
@@ -138,7 +138,7 @@ bool StationMagnitudeContribution::operator==(const StationMagnitudeContribution
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::operator!=(const StationMagnitudeContribution& rhs) const {
+bool StationMagnitudeContribution::operator!=(const StationMagnitudeContribution &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -147,7 +147,7 @@ bool StationMagnitudeContribution::operator!=(const StationMagnitudeContribution
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::equal(const StationMagnitudeContribution& other) const {
+bool StationMagnitudeContribution::equal(const StationMagnitudeContribution &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -214,7 +214,7 @@ double StationMagnitudeContribution::weight() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const StationMagnitudeContributionIndex& StationMagnitudeContribution::index() const {
+const StationMagnitudeContributionIndex &StationMagnitudeContribution::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -223,8 +223,11 @@ const StationMagnitudeContributionIndex& StationMagnitudeContribution::index() c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::equalIndex(const StationMagnitudeContribution* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool StationMagnitudeContribution::equalIndex(const StationMagnitudeContribution *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -233,7 +236,7 @@ bool StationMagnitudeContribution::equalIndex(const StationMagnitudeContribution
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Magnitude* StationMagnitudeContribution::magnitude() const {
+Magnitude *StationMagnitudeContribution::magnitude() const {
 	return static_cast<Magnitude*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -242,7 +245,7 @@ Magnitude* StationMagnitudeContribution::magnitude() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitudeContribution& StationMagnitudeContribution::operator=(const StationMagnitudeContribution& other) {
+StationMagnitudeContribution &StationMagnitudeContribution::operator=(const StationMagnitudeContribution &other) {
 	_index = other._index;
 	_residual = other._residual;
 	_weight = other._weight;
@@ -254,10 +257,11 @@ StationMagnitudeContribution& StationMagnitudeContribution::operator=(const Stat
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::assign(Object* other) {
-	StationMagnitudeContribution* otherStationMagnitudeContribution = StationMagnitudeContribution::Cast(other);
-	if ( other == nullptr )
+bool StationMagnitudeContribution::assign(Object *other) {
+	StationMagnitudeContribution *otherStationMagnitudeContribution = StationMagnitudeContribution::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStationMagnitudeContribution;
 
@@ -269,11 +273,13 @@ bool StationMagnitudeContribution::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool StationMagnitudeContribution::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Magnitude* magnitude = Magnitude::Cast(parent);
+	Magnitude *magnitude = Magnitude::Cast(parent);
 	if ( magnitude != nullptr )
 		return magnitude->add(this);
 
@@ -286,11 +292,13 @@ bool StationMagnitudeContribution::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool StationMagnitudeContribution::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Magnitude* magnitude = Magnitude::Cast(object);
+	Magnitude *magnitude = Magnitude::Cast(object);
 	if ( magnitude != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -298,7 +306,7 @@ bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
 			return magnitude->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			StationMagnitudeContribution* child = magnitude->stationMagnitudeContribution(index());
+			StationMagnitudeContribution *child = magnitude->stationMagnitudeContribution(index());
 			if ( child != nullptr )
 				return magnitude->remove(child);
 			else {
@@ -318,8 +326,9 @@ bool StationMagnitudeContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitudeContribution::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -329,8 +338,8 @@ bool StationMagnitudeContribution::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* StationMagnitudeContribution::clone() const {
-	StationMagnitudeContribution* clonee = new StationMagnitudeContribution();
+Object *StationMagnitudeContribution::clone() const {
+	StationMagnitudeContribution *clonee = new StationMagnitudeContribution();
 	*clonee = *this;
 	return clonee;
 }
@@ -340,7 +349,7 @@ Object* StationMagnitudeContribution::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationMagnitudeContribution::accept(Visitor* visitor) {
+void StationMagnitudeContribution::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -349,7 +358,7 @@ void StationMagnitudeContribution::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationMagnitudeContribution::serialize(Archive& ar) {
+void StationMagnitudeContribution::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

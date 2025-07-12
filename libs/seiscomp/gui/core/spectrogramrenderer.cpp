@@ -143,14 +143,16 @@ bool SpectrogramRenderer::feed(const Record *rec) {
 		return false;
 	}
 
-	// Record clipped
-	if ( _timeWindow.startTime().valid() && rec->endTime() <= _timeWindow.startTime() ) {
-		return false;
-	}
+	if ( _timeWindow ) {
+		// Record clipped
+		if ( rec->endTime() <= _timeWindow->startTime() ) {
+			return false;
+		}
 
-	// Record clipped
-	if ( _timeWindow.endTime().valid() && rec->startTime() >= _timeWindow.endTime() ) {
-		return false;
+		// Record clipped
+		if ( rec->startTime() >= _timeWindow->endTime() ) {
+			return false;
+		}
 	}
 
 	if ( _spectralizer->push(rec) ) {
@@ -233,18 +235,18 @@ void SpectrogramRenderer::setTimeRange(double tmin, double tmax) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow& tw) {
+void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow &tw) {
 	_timeWindow = tw;
 
 	bool needUpdate = false;
 
 	// Trim front
-	if ( _timeWindow.startTime().valid() && !_spectra.empty() ) {
+	if ( _timeWindow && !_spectra.empty() ) {
 		auto it = _spectra.begin();
 
 		while ( it != _spectra.end() ) {
 			auto spec = it->get();
-			if ( spec->endTime <= _timeWindow.startTime() ) {
+			if ( spec->endTime <= _timeWindow->startTime() ) {
 				it = _spectra.erase(it);
 				needUpdate = true;
 			}
@@ -252,16 +254,14 @@ void SpectrogramRenderer::setTimeWindow(const Core::TimeWindow& tw) {
 				break;
 			}
 		}
-	}
 
-	// Trim back
-	if ( _timeWindow.endTime().valid() && !_spectra.empty() ) {
-		auto it = _spectra.end();
+		// Trim back
+		it = _spectra.end();
 
 		while ( it != _spectra.begin() ) {
 			--it;
 			auto spec = it->get();
-			if ( spec->startTime >= _timeWindow.endTime() ) {
+			if ( spec->startTime >= _timeWindow->endTime() ) {
 				it = _spectra.erase(it);
 				needUpdate = true;
 			}
@@ -738,7 +738,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
 
-	double xlen = t1-t0;
+	double xlen = static_cast<double>(t1 - t0);
 
 	// Nothing to draw
 	if ( xlen <= 0 ) return;
@@ -768,8 +768,8 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 		// Clip by end time
 		if ( endTime <= t0 ) continue;
 
-		double x0 = startTime - t0;
-		double x1 = endTime - t0;
+		double x0 = static_cast<double>(startTime - t0);
+		double x1 = static_cast<double>(endTime - t0);
 
 		// Convert start and end time into widget coordinates
 		int ix0 = (int)(x0*dx*w);

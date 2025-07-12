@@ -86,28 +86,28 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 
 	public:
 		//! Copy constructor
-		ConfigStation(const ConfigStation& other);
+		ConfigStation(const ConfigStation &other);
 
 		//! Constructor with publicID
 		ConfigStation(const std::string& publicID);
 
 		//! Destructor
 		~ConfigStation() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static ConfigStation* Create();
-		static ConfigStation* Create(const std::string& publicID);
+		static ConfigStation *Create();
+		static ConfigStation *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static ConfigStation* Find(const std::string& publicID);
+		static ConfigStation *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -116,14 +116,14 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		ConfigStation& operator=(const ConfigStation& other);
+		ConfigStation &operator=(const ConfigStation &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ConfigStation& other) const;
-		bool operator!=(const ConfigStation& other) const;
+		bool operator==(const ConfigStation &other) const;
+		bool operator!=(const ConfigStation &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ConfigStation& other) const;
+		bool equal(const ConfigStation &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -150,12 +150,12 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ConfigStationIndex& index() const;
+		const ConfigStationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ConfigStation* lhs) const;
+		bool equalIndex(const ConfigStation *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -168,7 +168,7 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Setup* obj);
+		bool add(Setup *obj);
 
 		/**
 		 * Removes an object.
@@ -177,7 +177,7 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Setup* obj);
+		bool remove(Setup *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -186,19 +186,19 @@ class SC_SYSTEM_CORE_API ConfigStation : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeSetup(size_t i);
-		bool removeSetup(const SetupIndex& i);
+		bool removeSetup(const SetupIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t setupCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		Setup* setup(size_t i) const;
-		Setup* setup(const SetupIndex& i) const;
+		Setup *setup(size_t i) const;
+		Setup *setup(const SetupIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		ConfigModule* configModule() const;
+		ConfigModule *configModule() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

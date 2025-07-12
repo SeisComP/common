@@ -64,7 +64,7 @@ OptionalDoubleSpinBox::OptionalDoubleSpinBox(QWidget *parent)
 	_resetButton->setStyleSheet(styleSheet);
 
 	QVBoxLayout *vl = new QVBoxLayout;
-	vl->setMargin(0);
+	vl->setContentsMargins(0, 0, 0, 0);
 	vl->addStretch();
 	vl->addWidget(_resetButton);
 	vl->addStretch();

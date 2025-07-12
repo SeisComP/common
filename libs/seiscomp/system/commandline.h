@@ -48,31 +48,31 @@ class SC_SYSTEM_CORE_API CommandLine {
 	//  Public interface
 	// ----------------------------------------------------------------------
 	public:
-		void addGroup(const char*);
+		bool addGroup(const char*);
 
-		void addOption(const char* group, const char* option,
-		               const char* description);
+		bool addOption(const char *group, const char *option,
+		               const char *description);
 
 		template <typename T>
-		void addOption(const char* group, const char* option,
-		               const char* description, T* storage,
+		bool addOption(const char *group, const char *option,
+		               const char *description, T *storage,
 		               bool storageAsDefault = true);
 
 		template <typename T>
-		void addOption(const char* group, const char* option,
-		               const char* description, std::vector<T>* storage);
+		bool addOption(const char *group, const char *option,
+		               const char *description, std::vector<T> *storage);
 
 		template <typename T, typename DT>
-		void addOption(const char* group, const char* option,
-		               const char* description, T* storage,
-		               const DT& defaultValue);
+		bool addOption(const char *group, const char *option,
+		               const char *description, T *storage,
+		               const DT &defaultValue);
 
 		template <typename T>
-		void addCustomOption(const char* group, const char* option,
-		                     const char* description, T* customValidator);
+		bool addCustomOption(const char *group, const char *option,
+		                     const char *description, T *customValidator);
 
-		bool parse(int argc, char** argv);
-		bool parse(int argc, char** argv, std::function<bool(const std::string &)> unknownArgumentFilter);
+		bool parse(const std::vector<std::string> &args);
+		bool parse(const std::vector<std::string> &args, std::function<bool(const std::string &)> unknownArgumentFilter);
 
 		void printOptions() const;
 
@@ -81,10 +81,10 @@ class SC_SYSTEM_CORE_API CommandLine {
 		 * This does not apply to mapped parameters from the
 		 * configuration file.
 		 */
-		bool hasOption(const std::string& option) const;
+		bool hasOption(const std::string &option) const;
 
 		template <typename T>
-		T option(const std::string& option) const;
+		T option(const std::string &option) const;
 
 		template <typename T, int LEN>
 		T option(const char (&option)[LEN]) const;
@@ -101,8 +101,8 @@ class SC_SYSTEM_CORE_API CommandLine {
 		typedef boost::program_options::options_description options_description;
 		typedef boost::program_options::variables_map variables_map;
 
-		options_description* findGroup(const char* group,
-		                               const char* option = nullptr) const;
+		options_description* findGroup(const char *group,
+		                               const char *option = nullptr) const;
 
 
 	// ----------------------------------------------------------------------

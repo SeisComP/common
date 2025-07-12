@@ -57,6 +57,7 @@ template<typename TYPE>
 void
 maeda_aic(int n, const TYPE *data, int &kmin, double &snr, int margin=10) {
 	// expects a properly filtered and demeaned trace
+	kmin = 0;
 
 	// windowed sum for variance computation
 	double sumwin1 = 0, sumwin2 = 0, minaic = 0;
@@ -87,9 +88,8 @@ maeda_aic(int n, const TYPE *data, int &kmin, double &snr, int margin=10) {
 	snr = maeda_aic_snr_const(n, data, kmin, margin);
 }
 
+
 }
-
-
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -224,7 +224,7 @@ bool SAICPicker::applyConfig() {
 		setFilter(nullptr);
 
 	WaveformOperatorPtr op( createFilterOperator(_compFilter) );
-	setOperator(op.get()); 
+	setOperator(op.get());
 
 	_initialized = true;
 	return true;
@@ -279,11 +279,11 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 	setStatus(InProgress, progress);
 
 	// Active trigger but AIC time window not filled during last call?
-	if ( _result.time.valid() && _aicConfig.margin > 0 ) {
+	if ( _result && _aicConfig.margin > 0 ) {
 		int kmin;
 		double snr;
-		double trigger = _result.time - _trigger.onset;
-		int ti = (int)(double(_result.time - dataTimeWindow().startTime()) * _stream.fsamp);
+		double trigger = (_result->time - _trigger.onset).length();
+		int ti = (int)(double(_result->time - dataTimeWindow().startTime()) * _stream.fsamp);
 		int ri = (int)(double(_trigger.onset - dataTimeWindow().startTime()) * _stream.fsamp);
 		int ai = ti - (int)(_aicConfig.margin*_stream.fsamp);
 		int ae = ti + (int)(_aicConfig.margin*_stream.fsamp);
@@ -308,40 +308,40 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 		SEISCOMP_DEBUG("[S-%s] %s: AIC [%d;%d] = %d, ref: %d, si: %d, ri: %d, sb: %f",
 		               _methodID.c_str(), rec->streamID().c_str(), ai, ae, kmin+ai, ti, si, ri, _config.signalBegin);
 
-		double t = (double)(kmin+ai)/(double)continuousData().size();
-		_result.time = dataTimeWindow().startTime() + Core::TimeSpan(t*dataTimeWindow().length());
-		_state.pick = _result.time;
+		double t = (double)(kmin + ai) / (double)continuousData().size();
+		_result->time = dataTimeWindow().startTime() + dataTimeWindow().length() * t;
+		_state.pick = _result->time;
 		_state.snr = snr;
 
 		if ( snr < _aicConfig.minSNR ) {
 			_initialized = false;
 			SEISCOMP_DEBUG("[S-%s] %s: snr %f too low at %s, need %f",
 			                _methodID.c_str(), rec->streamID().c_str(), snr,
-			               _result.time.iso().c_str(), _aicConfig.minSNR);
+			               _result->time.iso().c_str(), _aicConfig.minSNR);
 			setStatus(LowSNR, snr);
-			_result = Result();
+			_result = Core::None;
 			return;
 		}
 
-		if ( _result.time <= _trigger.onset ) {
+		if ( _result->time <= _trigger.onset ) {
 			_initialized = false;
 			SEISCOMP_DEBUG("[S-%s] %s: pick at %s is before trigger at %s: rejected",
 			               _methodID.c_str(), rec->streamID().c_str(),
-			               _result.time.iso().c_str(),
+			               _result->time.iso().c_str(),
 			               _trigger.onset.iso().c_str());
 			setStatus(Terminated, 1);
-			_result = Result();
+			_result = Core::None;
 			return;
 		}
 
-		_result.snr = snr;
+		_result->snr = snr;
 	}
 
 	size_t idx = si;
 	//std::cerr << n << " " << idx << "  " << ni << std::endl;
 
 	// If no pick has been found, check the data
-	if ( !_result.time.valid() ) {
+	if ( !_result ) {
 		if ( (si > 0) && _stream.filter ) {
 			size_t m = idx>n?n:idx;
 			//std::cerr << "Filter " << m-ni << " samples" << std::endl;
@@ -369,20 +369,24 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 			// Trigger detected
 			if ( fv >= _aicConfig.threshold ) {
 				double t = (double)idx/(double)n;
-				_result.time = rec->startTime() + Core::TimeSpan(rec->timeWindow().length() * t) + Core::TimeSpan(_aicConfig.timeCorr);
-				_result.timeLowerUncertainty = _result.timeUpperUncertainty = -1;
-				_result.snr = -1;
-				_state.detection = _result.time;
+				if ( !_result ) {
+					_result = Result();
+				}
+
+				_result->time = rec->startTime() + Core::TimeSpan(rec->timeWindow().length() * t) + Core::TimeSpan(_aicConfig.timeCorr);
+				_result->timeLowerUncertainty = _result->timeUpperUncertainty = -1;
+				_result->snr = -1;
+				_state.detection = _result->time;
 
 				SEISCOMP_DEBUG("[S-%s] %s: detection at %s with value %f",
 				               _methodID.c_str(), rec->streamID().c_str(),
-				               _result.time.iso().c_str(), fv);
+				               _result->time.iso().c_str(), fv);
 
 				if ( _aicConfig.margin > 0 ) {
 					int kmin;
 					double snr;
-					double trigger = _result.time - _trigger.onset;
-					int ti = (int)(double(_result.time - dataTimeWindow().startTime()) * _stream.fsamp);;
+					double trigger = (_result->time - _trigger.onset).length();
+					int ti = (int)(double(_result->time - dataTimeWindow().startTime()) * _stream.fsamp);;
 					int ri = (int)(double(_trigger.onset - dataTimeWindow().startTime()) * _stream.fsamp);
 					int ai = ti - (int)(_aicConfig.margin*_stream.fsamp);
 					int ae = ti + (int)(_aicConfig.margin*_stream.fsamp);
@@ -401,38 +405,38 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 					// Clip to signal begin
 					if ( ai < si ) ai = si;
 
-					SEISCOMP_DEBUG("[S-%s] %s: AIC [%d;%d] = %d, ref: %d",
-					               _methodID.c_str(), rec->streamID().c_str(),
-					               ai, ae, kmin+ai, ti);
-
 					maeda_aic(ae-ai, continuousData().typedData()+ai, kmin, snr);
 
-					t = (double)(kmin+ai)/(double)continuousData().size();
-					_result.time = dataTimeWindow().startTime() + Core::TimeSpan(t*dataTimeWindow().length());
-					_state.pick = _result.time;
+					SEISCOMP_DEBUG("[S-%s] %s: AIC [%d;%d] = %d, ref: %d",
+					               _methodID.c_str(), rec->streamID().c_str(),
+					               ai, ae, kmin + ai, ti);
+
+					t = (double)(kmin + ai) / (double)continuousData().size();
+					_result->time = dataTimeWindow().startTime() + dataTimeWindow().length() * t;
+					_state.pick = _result->time;
 					_state.snr = snr;
 
 					if ( snr < _aicConfig.minSNR ) {
-						_result = Result();
+						_result = Core::None;
 						_initialized = false;
 						SEISCOMP_DEBUG("[S-%s] %s: snr %f too low at %s, need %f",
 						               _methodID.c_str(), rec->streamID().c_str(),
-						               snr, _result.time.iso().c_str(),
+						               snr, _result->time.iso().c_str(),
 						               _aicConfig.minSNR);
 						setStatus(LowSNR, snr);
 						return;
 					}
 
-					_result.snr = snr;
+					_result->snr = snr;
 				}
 
-				if ( _result.time <= _trigger.onset ) {
-					_result = Result();
-					_initialized = false;
+				if ( _result->time <= _trigger.onset ) {
 					SEISCOMP_DEBUG("[S-%s] %s: pick at %s is before trigger at %s: rejected",
 					               _methodID.c_str(), rec->streamID().c_str(),
-					               _result.time.iso().c_str(),
+					               _result->time.iso().c_str(),
 					               _trigger.onset.iso().c_str());
+					_result = Core::None;
+					_initialized = false;
 					setStatus(Terminated, 1);
 					return;
 				}
@@ -443,19 +447,19 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 	}
 
 	// Time still valid, emit pick
-	if ( _result.time.valid() ) {
-		_result.phaseCode = "S";
-		_result.record = rec;
+	if ( _result ) {
+		_result->phaseCode = "S";
+		_result->record = rec;
 		SEISCOMP_DEBUG("[S-%s] %s: %s pick at %s with snr=%f",_methodID.c_str(),
-		               rec->streamID().c_str(), _result.phaseCode.c_str(),
-		               _result.time.iso().c_str(),
-		               _result.snr);
+		               rec->streamID().c_str(), _result->phaseCode.c_str(),
+		               _result->time.iso().c_str(),
+		               _result->snr);
 		setStatus(Finished, 100);
 		_initialized = false;
-		emitPick(_result);
+		emitPick(*_result);
 
 		// Reset result
-		_result = Result();
+		_result = Core::None;
 
 		return;
 	}

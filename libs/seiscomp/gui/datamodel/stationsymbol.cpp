@@ -211,9 +211,44 @@ void StationSymbol::init() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPolygon StationSymbol::generateShape(int posX, int posY, int radius) {
 	QPolygon polygon;
-	polygon << QPoint(posX, posY - radius) <<
-	QPoint(posX + int(0.867 * radius), posY + int(0.5 * radius)) <<
-	QPoint(posX - int(0.867 * radius), posY + int(0.5 * radius));
+
+	switch ( SCScheme.map.stationSymbol ) {
+		default:
+		case Gui::Scheme::Map::StationSymbol::Triangle:
+			polygon
+				<< QPoint(posX, posY - radius)
+				<< QPoint(posX + int(0.867 * radius), posY + int(0.5 * radius))
+				<< QPoint(posX - int(0.867 * radius), posY + int(0.5 * radius));
+			break;
+		case Gui::Scheme::Map::StationSymbol::Diamond:
+		{
+			int radius1 = radius / 2;
+			int radius2 = radius / 4;
+			polygon
+				<< QPoint(posX, posY - radius - radius1 - radius2)
+				<< QPoint(posX + int(0.867 * radius), posY - radius - radius1)
+				<< QPoint(posX, posY)
+				<< QPoint(posX - int(0.867 * radius), posY - radius - radius1);
+			break;
+		}
+		case Gui::Scheme::Map::StationSymbol::Box:
+		{
+			int radius1 = radius;
+			int radius2 = radius / 3;
+			int halfWidth = radius1;
+			int height = radius * 2 * 3 / 4;
+			polygon
+				<< QPoint(posX, posY)
+				<< QPoint(posX - radius2, posY - radius2)
+				<< QPoint(posX - halfWidth, posY - radius2)
+				<< QPoint(posX - halfWidth, posY - radius2 - height)
+				<< QPoint(posX + halfWidth, posY - radius2 - height)
+				<< QPoint(posX + halfWidth, posY - radius2)
+				<< QPoint(posX + radius2, posY - radius2);
+			break;
+		}
+	}
+
 	return polygon;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -222,7 +257,7 @@ QPolygon StationSymbol::generateShape(int posX, int posY, int radius) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const QPolygon& StationSymbol::stationPolygon() const {
+const QPolygon &StationSymbol::stationPolygon() const {
 	return _stationPolygon;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

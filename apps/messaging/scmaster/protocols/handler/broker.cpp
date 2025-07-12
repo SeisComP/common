@@ -311,22 +311,11 @@ void BrokerHandler::handleFrame(Websocket::Frame &frame) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BrokerHandler::buffersFlushed() {
-	// If we have sent less than 4kb this turn keep on sending otherwise
-	// return control to other sessions to not starve slow clients
-	if ( _bytesSent < 4096 )
-		outboxFlushed();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BrokerHandler::outboxFlushed() {
 	Broker::Message *msg;
 
-	if ( !_continueWithSeqNo )
+	if ( !_continueWithSeqNo ) {
 		return;
+	}
 
 	// If there aren't any more messages, allow real-time
 	msg = _queue->getMessage(*_continueWithSeqNo, this);
@@ -370,18 +359,24 @@ Socket::IPAddress BrokerHandler::IPAddress() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t BrokerHandler::publish(Broker::Client *sender, Broker::Message *msg) {
-	if ( _session->request().state == HttpRequest::FINISHED )
+	if ( _session->request().state == HttpRequest::FINISHED ) {
 		return 0;
+	}
 
-	if ( discardSelf() && msg->selfDiscard && this == sender )
+	if ( statusOnly() && (msg->type != Broker::Message::Type::Status) ) {
 		return 0;
+	}
+
+	if ( discardSelf() && msg->selfDiscard && this == sender ) {
+		return 0;
+	}
 
 	if ( msg->sequenceNumber != INVALID_SEQUENCE_NUMBER ) {
 		if ( _continueWithSeqNo ) {
 			++_messageBacklog;
 			return 0;
 		}
-		else if ( _session->bufferdOutgoingBytes() ) {
+		else if ( _session->outputBufferSize() ) {
 			// Remember that there are new messages queued for us. We don't
 			// queue more messages if our output buffer still contains some
 			// bytes
@@ -613,8 +608,9 @@ void BrokerHandler::replyWithError(const char *msg, size_t len) {
 		      SCMP_PROTO_REPLY_ERROR_HEADER_SEQ_NUMBER ":" << _sequenceNumber << "\n\n";
 	}
 
-	if ( msg )
+	if ( msg ) {
 		resp->data.append(msg, msg + len);
+	}
 
 	Websocket::Frame::finalizeBuffer(resp.get(), Websocket::Frame::TextFrame);
 	_session->send(resp.get());
@@ -664,6 +660,10 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 			return;
 		}
 	}
+	else {
+		replyWithError(str(ERR_QUEUE_DOES_NOT_EXIST));
+		return;
+	}
 
 	FrameHeaders headers(frame, static_cast<size_t>(len));
 	while ( headers.next() ) {
@@ -704,15 +704,27 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_MEMBERSHIP_INFO) ) {
 			if ( !strncmp(headers.val_start, "1", headers.val_len) ||
-			     !strncmp(headers.val_start, "true", headers.val_len) )
+			     !strncmp(headers.val_start, "true", headers.val_len) ) {
 				setMembershipInformationEnabled(true);
+			}
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_SELF_DISCARD) ) {
 			if ( !strncmp(headers.val_start, "1", headers.val_len) ||
-			     !strncmp(headers.val_start, "true", headers.val_len) )
+			     !strncmp(headers.val_start, "true", headers.val_len) ) {
 				setDiscardSelf(true);
-			else
+			}
+			else {
 				setDiscardSelf(false);
+			}
+		}
+		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_STATUS_ONLY) ) {
+			if ( !strncmp(headers.val_start, "1", headers.val_len) ||
+			     !strncmp(headers.val_start, "true", headers.val_len) ) {
+				setStatusOnly(true);
+			}
+			else {
+				setStatusOnly(false);
+			}
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_ACK_WINDOW) ) {
 			char *end;

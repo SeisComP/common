@@ -78,7 +78,7 @@ class SC_SYSTEM_CORE_API MomentTensorPhaseSetting : public Object {
 		MomentTensorPhaseSetting();
 
 		//! Copy constructor
-		MomentTensorPhaseSetting(const MomentTensorPhaseSetting& other);
+		MomentTensorPhaseSetting(const MomentTensorPhaseSetting &other);
 
 		//! Custom constructor
 		MomentTensorPhaseSetting(const std::string& code);
@@ -90,21 +90,21 @@ class SC_SYSTEM_CORE_API MomentTensorPhaseSetting : public Object {
 
 		//! Destructor
 		~MomentTensorPhaseSetting() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		MomentTensorPhaseSetting& operator=(const MomentTensorPhaseSetting& other);
+		MomentTensorPhaseSetting &operator=(const MomentTensorPhaseSetting &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const MomentTensorPhaseSetting& other) const;
-		bool operator!=(const MomentTensorPhaseSetting& other) const;
+		bool operator==(const MomentTensorPhaseSetting &other) const;
+		bool operator!=(const MomentTensorPhaseSetting &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const MomentTensorPhaseSetting& other) const;
+		bool equal(const MomentTensorPhaseSetting &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -132,17 +132,17 @@ class SC_SYSTEM_CORE_API MomentTensorPhaseSetting : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const MomentTensorPhaseSettingIndex& index() const;
+		const MomentTensorPhaseSettingIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const MomentTensorPhaseSetting* lhs) const;
+		bool equalIndex(const MomentTensorPhaseSetting *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		MomentTensor* momentTensor() const;
+		MomentTensor *momentTensor() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

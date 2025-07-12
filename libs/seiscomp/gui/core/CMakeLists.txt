@@ -6,6 +6,7 @@ SET(
 		connectiondialog.cpp
 		connectionstatelabel.cpp
 		flowlayout.cpp
+		fontawesome6.cpp
 		questionbox.cpp
 		infotext.cpp
 		diagramwidget.cpp
@@ -20,6 +21,7 @@ SET(
 		recordwidget.cpp
 		streamwidget.cpp
 		ruler.cpp
+		vruler.cpp
 		scheme.cpp
 		timescale.cpp
 		xmlview.cpp
@@ -43,6 +45,7 @@ ENDIF(MACOSX)
 
 SET(
 	GUI_CORE_HEADERS
+		fontawesome6.h
 		maps.h
 		messages.h
 		scheme.h
@@ -72,6 +75,7 @@ SET(
 		recordwidget.h
 		streamwidget.h
 		ruler.h
+		vruler.h
 		timescale.h
 		xmlview.h
 		inspector.h

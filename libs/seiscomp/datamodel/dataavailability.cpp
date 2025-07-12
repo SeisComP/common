@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(DataAvailability, PublicObject, "DataAvailability");
 
 
-DataAvailability::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+DataAvailability::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayObjectProperty("extent", "DataExtent", &DataAvailability::dataExtentCount, &DataAvailability::dataExtent, static_cast<bool (DataAvailability::*)(DataExtent*)>(&DataAvailability::add), &DataAvailability::removeDataExtent, static_cast<bool (DataAvailability::*)(DataExtent*)>(&DataAvailability::remove)));
 }
 
@@ -49,7 +49,7 @@ DataAvailability::DataAvailability(): PublicObject("DataAvailability") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataAvailability::DataAvailability(const DataAvailability& other)
+DataAvailability::DataAvailability(const DataAvailability &other)
 : PublicObject() {
 	*this = other;
 }
@@ -70,7 +70,7 @@ DataAvailability::~DataAvailability() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::operator==(const DataAvailability& rhs) const {
+bool DataAvailability::operator==(const DataAvailability &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -79,7 +79,7 @@ bool DataAvailability::operator==(const DataAvailability& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::operator!=(const DataAvailability& rhs) const {
+bool DataAvailability::operator!=(const DataAvailability &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -88,7 +88,7 @@ bool DataAvailability::operator!=(const DataAvailability& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::equal(const DataAvailability& other) const {
+bool DataAvailability::equal(const DataAvailability &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -97,7 +97,7 @@ bool DataAvailability::equal(const DataAvailability& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataAvailability& DataAvailability::operator=(const DataAvailability& other) {
+DataAvailability &DataAvailability::operator=(const DataAvailability &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -107,10 +107,11 @@ DataAvailability& DataAvailability::operator=(const DataAvailability& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::assign(Object* other) {
-	DataAvailability* otherDataAvailability = DataAvailability::Cast(other);
-	if ( other == nullptr )
+bool DataAvailability::assign(Object *other) {
+	DataAvailability *otherDataAvailability = DataAvailability::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDataAvailability;
 
@@ -122,7 +123,7 @@ bool DataAvailability::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::attachTo(PublicObject* parent) {
+bool DataAvailability::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -131,7 +132,7 @@ bool DataAvailability::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::detachFrom(PublicObject* object) {
+bool DataAvailability::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -149,8 +150,8 @@ bool DataAvailability::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* DataAvailability::clone() const {
-	DataAvailability* clonee = new DataAvailability();
+Object *DataAvailability::clone() const {
+	DataAvailability *clonee = new DataAvailability();
 	*clonee = *this;
 	return clonee;
 }
@@ -160,10 +161,10 @@ Object* DataAvailability::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::updateChild(Object* child) {
-	DataExtent* dataExtentChild = DataExtent::Cast(child);
+bool DataAvailability::updateChild(Object *child) {
+	DataExtent *dataExtentChild = DataExtent::Cast(child);
 	if ( dataExtentChild != nullptr ) {
-		DataExtent* dataExtentElement
+		DataExtent *dataExtentElement
 			= DataExtent::Cast(PublicObject::Find(dataExtentChild->publicID()));
 		if ( dataExtentElement && dataExtentElement->parent() == this ) {
 			*dataExtentElement = *dataExtentChild;
@@ -181,7 +182,7 @@ bool DataAvailability::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataAvailability::accept(Visitor* visitor) {
+void DataAvailability::accept(Visitor *visitor) {
 	for ( auto &&elem : _dataExtents )
 		elem->accept(visitor);
 }
@@ -200,7 +201,7 @@ size_t DataAvailability::dataExtentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataExtent* DataAvailability::dataExtent(size_t i) const {
+DataExtent *DataAvailability::dataExtent(size_t i) const {
 	return _dataExtents[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -209,10 +210,12 @@ DataExtent* DataAvailability::dataExtent(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataExtent* DataAvailability::dataExtent(const DataExtentIndex& i) const {
-	for ( std::vector<DataExtentPtr>::const_iterator it = _dataExtents.begin(); it != _dataExtents.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+DataExtent *DataAvailability::dataExtent(const DataExtentIndex &i) const {
+	for ( const auto &elem : _dataExtents ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -222,10 +225,12 @@ DataExtent* DataAvailability::dataExtent(const DataExtentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataExtent* DataAvailability::findDataExtent(const std::string& publicID) const {
-	for ( std::vector<DataExtentPtr>::const_iterator it = _dataExtents.begin(); it != _dataExtents.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+DataExtent *DataAvailability::findDataExtent(const std::string& publicID) const {
+	for ( const auto &elem : _dataExtents ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -235,9 +240,10 @@ DataExtent* DataAvailability::findDataExtent(const std::string& publicID) const 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::add(DataExtent* dataExtent) {
-	if ( dataExtent == nullptr )
+bool DataAvailability::add(DataExtent *dataExtent) {
+	if ( !dataExtent ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( dataExtent->parent() != nullptr ) {
@@ -246,17 +252,20 @@ bool DataAvailability::add(DataExtent* dataExtent) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		DataExtent* dataExtentCached = DataExtent::Find(dataExtent->publicID());
+		DataExtent *dataExtentCached = DataExtent::Find(dataExtent->publicID());
 		if ( dataExtentCached ) {
 			if ( dataExtentCached->parent() ) {
-				if ( dataExtentCached->parent() == this )
+				if ( dataExtentCached->parent() == this ) {
 					SEISCOMP_ERROR("DataAvailability::add(DataExtent*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("DataAvailability::add(DataExtent*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				dataExtent = dataExtentCached;
+			}
 		}
 	}
 
@@ -281,9 +290,10 @@ bool DataAvailability::add(DataExtent* dataExtent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::remove(DataExtent* dataExtent) {
-	if ( dataExtent == nullptr )
+bool DataAvailability::remove(DataExtent *dataExtent) {
+	if ( !dataExtent ) {
 		return false;
+	}
 
 	if ( dataExtent->parent() != this ) {
 		SEISCOMP_ERROR("DataAvailability::remove(DataExtent*) -> element has another parent");
@@ -299,8 +309,7 @@ bool DataAvailability::remove(DataExtent* dataExtent) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -323,8 +332,7 @@ bool DataAvailability::removeDataExtent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataExtents[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataExtents[i].get());
 	}
 
 	_dataExtents[i]->setParent(nullptr);
@@ -340,9 +348,12 @@ bool DataAvailability::removeDataExtent(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataAvailability::removeDataExtent(const DataExtentIndex& i) {
-	DataExtent* object = dataExtent(i);
-	if ( object == nullptr ) return false;
+bool DataAvailability::removeDataExtent(const DataExtentIndex &i) {
+	DataExtent *object = dataExtent(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -351,7 +362,7 @@ bool DataAvailability::removeDataExtent(const DataExtentIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataAvailability::serialize(Archive& ar) {
+void DataAvailability::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

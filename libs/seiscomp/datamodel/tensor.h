@@ -58,25 +58,25 @@ class SC_SYSTEM_CORE_API Tensor : public Core::BaseObject {
 		Tensor();
 
 		//! Copy constructor
-		Tensor(const Tensor& other);
+		Tensor(const Tensor &other);
 
 		//! Destructor
 		~Tensor() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Tensor& operator=(const Tensor& other);
+		Tensor &operator=(const Tensor &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Tensor& other) const;
-		bool operator!=(const Tensor& other) const;
+		bool operator==(const Tensor &other) const;
+		bool operator!=(const Tensor &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Tensor& other) const;
+		bool equal(const Tensor &other) const;
 
 
 	// ------------------------------------------------------------------

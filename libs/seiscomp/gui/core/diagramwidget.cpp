@@ -676,26 +676,35 @@ void DiagramWidget::paintSpherical(QPainter &painter) {
 	paintSphericalBackground(painter);
 
 	for ( int id = 0; id < _values.size(); ++id ) {
-		const ValueItem& v = _values[id];
+		const ValueItem &v = _values[id];
 
-		if ( v.ptx(_xIndex) >= _displayRect.right() )
+		if ( v.ptx(_xIndex) > _displayRect.right() ) {
 			continue;
+		}
 
-		if ( !v.isVisible ) continue;
+		if ( !v.isVisible ) {
+			continue;
+		}
 
 		QColor c;
-		if ( v.isActive )
+		if ( v.isActive ) {
 			c = v.cols[_yIndex].color;
-		else
+		}
+		else {
 			c = _disabledColor;
+		}
 
 		painter.setPen(QColor(c.red()/2, c.green()/2, c.blue()/2));
 		if ( !v.isEnabled ) {
-			if ( _hideDisabledValues ) continue;
+			if ( _hideDisabledValues ) {
+				continue;
+			}
+
 			painter.setBrush(Qt::NoBrush);
 		}
-		else
+		else {
 			painter.setBrush(c);
+		}
 
 		drawValue(id, painter, (this->*project)(v.pt(_xIndex,_yIndex)),
 		          v.type, v.valid(_xIndex,_yIndex));

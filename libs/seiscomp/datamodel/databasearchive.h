@@ -241,10 +241,10 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		//! Implements derived  method
 		//! @param dataSource user:password@host:port/database
-		bool open(const char* dataSource);
+		bool open(const char* dataSource) override;
 
 		//! Implements derived  method
-		void close();
+		void close() override;
 
 		//! Returns the used database driver
 		Seiscomp::IO::DatabaseInterface* driver() const;
@@ -262,6 +262,22 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		void benchmarkQueries(int count);
 
 		/**
+		 * @brief Returns the query to fetch objects of a particular type.
+		 * @param parentID The publicID of the parent object. When empty then
+		 *                 it won't be included in the query.
+		 * @param classType The type of the object to be read.
+		 * @param ignorePublicObject If true then the PublicObject table will
+		 *                           not be joined. That might be important if
+		 *                           during a schema evolution an objectsturned
+		 *                           into a PublicObject but an old version
+		 *                           should be read.
+		 * @return The query and a flag if a where clause is present.
+		 */
+		std::pair<std::string,bool> getObjectsQuery(const std::string &parentID,
+		                                            const Seiscomp::Core::RTTI &classType,
+		                                            bool ignorePublicObject = false);
+
+		/**
 		 * Reads a public object from the database.
 		 * @param classType The type of the object to be read. The type has
 		 *                  to be derived from PublicObject
@@ -269,8 +285,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @return An unmanaged object pointer. The ownership goes over
 		 *         to the caller.
 		 */
-		PublicObject* getObject(const Seiscomp::Core::RTTI& classType,
-		                        const std::string& publicID);
+		PublicObject* getObject(const Seiscomp::Core::RTTI &classType,
+		                        const std::string &publicID);
 
 		/**
 		 * Returns an iterator over all objects of a given type.
@@ -285,8 +301,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                           should be read.
 		 * @return The database iterator
 		 */
-		DatabaseIterator getObjects(const std::string& parentID,
-		                            const Seiscomp::Core::RTTI& classType,
+		DatabaseIterator getObjects(const std::string &parentID,
+		                            const Seiscomp::Core::RTTI &classType,
 		                            bool ignorePublicObject = false);
 
 		/**
@@ -302,8 +318,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 *                           should be read.
 		 * @return The database iterator
 		 */
-		DatabaseIterator getObjects(const PublicObject* parent,
-		                            const Seiscomp::Core::RTTI& classType,
+		DatabaseIterator getObjects(const PublicObject *parent,
+		                            const Seiscomp::Core::RTTI &classType,
 		                            bool ignorePublicObject = false);
 
 		/**
@@ -314,8 +330,8 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param classType The type of the objects to iterate over.
 		 * @return The object count
 		 */
-		size_t getObjectCount(const std::string& parentID,
-		                      const Seiscomp::Core::RTTI& classType);
+		size_t getObjectCount(const std::string &parentID,
+		                      const Seiscomp::Core::RTTI &classType);
 
 		/**
 		 * Returns the number of objects of a given type for a parent
@@ -325,7 +341,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param classType The type of the objects to iterate over.
 		 * @return The object count
 		 */
-		size_t getObjectCount(const PublicObject* parent,
+		size_t getObjectCount(const PublicObject *parent,
 		                      const Seiscomp::Core::RTTI &classType);
 
 
@@ -338,7 +354,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		 * @param object The PublicObject whose parent is queried.
 		 * @return The publicID of the parent or an empty string.
 		 */
-		std::string parentPublicID(const PublicObject* object);
+		std::string parentPublicID(const PublicObject *object);
 
 		/**
 		 * Inserts an object into the database.
@@ -390,7 +406,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ----------------------------------------------------------------------
 	protected:
 		//! Implements derived  method
-		bool create(const char* dataSource);
+		bool create(const char* dataSource) override;
 
 
 	// ----------------------------------------------------------------------
@@ -398,40 +414,40 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ----------------------------------------------------------------------
 	protected:
 		//! Reads an integer
-		virtual void read(std::int8_t& value);
-		virtual void read(std::int16_t& value);
-		virtual void read(std::int32_t& value);
-		virtual void read(std::int64_t& value);
+		virtual void read(std::int8_t& value) override;
+		virtual void read(std::int16_t& value) override;
+		virtual void read(std::int32_t& value) override;
+		virtual void read(std::int64_t& value) override;
 		//! Reads a float
-		virtual void read(float& value);
+		virtual void read(float& value) override;
 		//! Reads a double
-		virtual void read(double& value);
+		virtual void read(double& value) override;
 		//! Reads a float complex
-		virtual void read(std::complex<float>& value);
+		virtual void read(std::complex<float>& value) override;
 		//! Reads a double complex
-		virtual void read(std::complex<double>& value);
+		virtual void read(std::complex<double>& value) override;
 		//! Reads a boolean
-		virtual void read(bool& value);
+		virtual void read(bool& value) override;
 
 		//! Reads a vector of native types
-		virtual void read(std::vector<char>& value);
-		virtual void read(std::vector<int8_t>& value);
-		virtual void read(std::vector<int16_t>& value);
-		virtual void read(std::vector<int32_t>& value);
-		virtual void read(std::vector<int64_t>& value);
-		virtual void read(std::vector<float>& value);
-		virtual void read(std::vector<double>& value);
-		virtual void read(std::vector<std::string>& value);
-		virtual void read(std::vector<Core::Time>& value);
+		virtual void read(std::vector<char>& value) override;
+		virtual void read(std::vector<int8_t>& value) override;
+		virtual void read(std::vector<int16_t>& value) override;
+		virtual void read(std::vector<int32_t>& value) override;
+		virtual void read(std::vector<int64_t>& value) override;
+		virtual void read(std::vector<float>& value) override;
+		virtual void read(std::vector<double>& value) override;
+		virtual void read(std::vector<std::string>& value) override;
+		virtual void read(std::vector<Core::Time>& value) override;
 
 		//! Reads a vector of complex doubles
-		virtual void read(std::vector<std::complex<double> >& value);
+		virtual void read(std::vector<std::complex<double> >& value) override;
 
 		//! Reads a string
-		virtual void read(std::string& value);
+		virtual void read(std::string& value) override;
 
 		//! Reads a time
-		virtual void read(Seiscomp::Core::Time& value);
+		virtual void read(Seiscomp::Core::Time& value) override;
 
 
 	// ------------------------------------------------------------------
@@ -439,47 +455,47 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ------------------------------------------------------------------
 	protected:
 		//! Writes an integer
-		virtual void write(std::int8_t value);
-		virtual void write(std::int16_t value);
-		virtual void write(std::int32_t value);
-		virtual void write(std::int64_t value);
+		virtual void write(std::int8_t value) override;
+		virtual void write(std::int16_t value) override;
+		virtual void write(std::int32_t value) override;
+		virtual void write(std::int64_t value) override;
 		//! Writes a float
-		virtual void write(float value);
+		virtual void write(float value) override;
 		//! Writes a double
-		virtual void write(double value);
+		virtual void write(double value) override;
 		//! Writes a float complex
-		virtual void write(std::complex<float>& value);
+		virtual void write(std::complex<float>& value) override;
 		//! Writes a double complex
-		virtual void write(std::complex<double>& value);
+		virtual void write(std::complex<double>& value) override;
 		//! Writes a boolean
-		virtual void write(bool value);
+		virtual void write(bool value) override;
 
 		//! Writes a vector of native types
-		virtual void write(std::vector<char>& value);
-		virtual void write(std::vector<int8_t>& value);
-		virtual void write(std::vector<int16_t>& value);
-		virtual void write(std::vector<int32_t>& value);
-		virtual void write(std::vector<int64_t>& value);
-		virtual void write(std::vector<float>& value);
-		virtual void write(std::vector<double>& value);
-		virtual void write(std::vector<std::string>& value);
-		virtual void write(std::vector<Core::Time>& value);
+		virtual void write(std::vector<char>& value) override;
+		virtual void write(std::vector<int8_t>& value) override;
+		virtual void write(std::vector<int16_t>& value) override;
+		virtual void write(std::vector<int32_t>& value) override;
+		virtual void write(std::vector<int64_t>& value) override;
+		virtual void write(std::vector<float>& value) override;
+		virtual void write(std::vector<double>& value) override;
+		virtual void write(std::vector<std::string>& value) override;
+		virtual void write(std::vector<Core::Time>& value) override;
 
 		//! Writes a vector of complex doubles
-		virtual void write(std::vector<std::complex<double> >& value);
+		virtual void write(std::vector<std::complex<double> >& value) override;
 
 		//! Writes a string
-		virtual void write(std::string& value);
+		virtual void write(std::string& value) override;
 
 		//! Writes a time
-		virtual void write(Seiscomp::Core::Time& value);
+		virtual void write(Seiscomp::Core::Time& value) override;
 
 
 	// ------------------------------------------------------------------
 	//  Protected observer interface
 	// ------------------------------------------------------------------
 	protected:
-		virtual void onObjectDestroyed(Object* object);
+		virtual void onObjectDestroyed(Object* object) override;
 
 
 	// ------------------------------------------------------------------
@@ -487,23 +503,23 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ------------------------------------------------------------------
 	protected:
 		//! Implements derived  method
-		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable);
+		virtual bool locateObjectByName(const char* name, const char* targetClass, bool nullable) override;
 		//! Implements derived  method
-		virtual bool locateNextObjectByName(const char* name, const char* targetClass);
+		virtual bool locateNextObjectByName(const char* name, const char* targetClass) override;
 		//! Implements derived  method
-		virtual void locateNullObjectByName(const char* name, const char* targetClass, bool first);
+		virtual void locateNullObjectByName(const char* name, const char* targetClass, bool first) override;
 
 		//! Implements derived  method
-		virtual std::string determineClassName();
+		virtual std::string determineClassName() override;
 
 		//! Implements derived  method
-		virtual void setClassName(const char*);
+		virtual void setClassName(const char*) override;
 
 		//! Implements derived  method
-		void serialize(RootType* object);
+		void serialize(RootType* object) override;
 
 		//! Implements derived  method
-		void serialize(SerializeDispatcher&);
+		void serialize(SerializeDispatcher&) override;
 
 		std::string buildQuery(const std::string& table,
 		                       const std::string& filter = "");
@@ -546,7 +562,7 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		//! Removes an objects from the id cache
 		void removeId(Object*);
-		
+
 		//! Returns the current field content
 		const char* cfield() const { return _field; }
 

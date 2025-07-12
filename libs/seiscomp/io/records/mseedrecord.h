@@ -146,7 +146,7 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		void saveSpace() const override;
 
 		//! Returns a deep copy of the calling object.
-		Record* copy() const;
+		Record* copy() const override;
 
 		//! Sets flag specifying the encoding type of the write routine.
 		//! true(default) -> use the encoding of the original record; false -> use the type of the data
@@ -156,10 +156,10 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		void setOutputRecordLength(int reclen);
 
 		//! Extract the packed MSeedRecord attributes from the given stream
-		void read(std::istream &in);
+		void read(std::istream &in) override;
 
 		//! Encode the record into the given stream
-		void write(std::ostream& out);
+		void write(std::ostream& out) override;
 
 	private:
 		void _setDataAttributes(int reclen, char *data) const;

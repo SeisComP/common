@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#include <vector> 
-#include <algorithm> 
+#include <vector>
+#include <algorithm>
 
 #include <seiscomp/qc/qcprocessor_spike.h>
 #include <seiscomp/math/filter/butterworth.h>
@@ -28,7 +28,7 @@
 namespace Seiscomp {
 namespace Processing {
 
-	
+
 IMPLEMENT_SC_CLASS_DERIVED(QcProcessorSpike, QcProcessor, "QcProcessorSpike");
 
 
@@ -39,8 +39,9 @@ QcProcessorSpike::QcProcessorSpike() : QcProcessor() {
 QcProcessorSpike::~QcProcessorSpike() {}
 
 bool QcProcessorSpike::feed(const Record *record) {
-	if (_initFilter)
+	if ( _initFilter ) {
 		_setFilter(record->samplingFrequency());
+	}
 
 	return WaveformProcessor::feed(record);
 }
@@ -48,8 +49,7 @@ bool QcProcessorSpike::feed(const Record *record) {
 void QcProcessorSpike::_setFilter(double fsamp) {
 	_initFilter = false;
 
-	Math::Filtering::InPlaceFilter<double>* f =
-		new Math::Filtering::IIR::ButterworthHighpass<double>(2, (fsamp / 2.0) * 0.8);
+	auto f = new Math::Filtering::IIR::ButterworthHighpass<double>(2, (fsamp / 2.0) * 0.8);
 
 	setFilter(f);
 	initFilter(fsamp);
@@ -62,8 +62,9 @@ bool QcProcessorSpike::setState(const Record *rec, const DoubleArray &data) {
 	int size = data.size();
 	double fsamp = rec->samplingFrequency();
 
-	if (size < 3 || fsamp <= 0.0)
+	if ( size < 3 || fsamp <= 0.0 ) {
 		return false;
+	}
 
 	Spikes spikes;
 
@@ -76,24 +77,28 @@ bool QcProcessorSpike::setState(const Record *rec, const DoubleArray &data) {
 
 	for ( int i = 0; i < size; i++ ) {
 
-		if (i != 0) _stream.lastSample = data[i-1];
+		if ( i != 0 ) {
+			_stream.lastSample = data[i-1];
+		}
 
-		if (i < size -1) {
+		if ( i < size -1 ) {
 			p1 = (_stream.lastSample-mean) - (data[i]-mean);
 			p2 = (data[i]-mean) - (data[i+1]-mean);
 		}
-		else p1 = p2 = 0.0;
+		else {
+			p1 = p2 = 0.0;
+		}
 
 		//! use heuristic limits ...
-		if (p1*p2 < -1e6 && (data[i]-mean) > 5.0*rms &&(i - last_i) > (int)(fsamp/2)) {
-			spikes[rec->startTime() + Core::TimeSpan((double)(i/fsamp))] = data[i];
+		if ( p1 * p2 < -1e6 && (data[i]-mean) > 5.0 * rms && (i - last_i) > static_cast<int>(fsamp / 2) ) {
+			spikes[rec->startTime() + Core::TimeSpan(static_cast<double>(i/fsamp))] = data[i];
 			last_i = i;
 		}
 	}
 
 	_stream.lastSample = data[size-1];
 
-	if (!spikes.empty()) {
+	if ( !spikes.empty() ) {
 		_qcp->parameter = spikes;
 		return true;
 	}
@@ -101,7 +106,7 @@ bool QcProcessorSpike::setState(const Record *rec, const DoubleArray &data) {
 	return false;
 }
 
-QcProcessorSpike::Spikes QcProcessorSpike::getSpikes(){
+QcProcessorSpike::Spikes QcProcessorSpike::getSpikes() {
 	try {
 		return boost::any_cast<Spikes>(_qcp->parameter);
 	}

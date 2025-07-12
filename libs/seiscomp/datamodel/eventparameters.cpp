@@ -25,6 +25,7 @@
 #include <seiscomp/datamodel/reading.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/focalmechanism.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/event.h>
 #include <algorithm>
 #include <seiscomp/datamodel/version.h>
@@ -39,12 +40,13 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(EventParameters, PublicObject, "EventParameters");
 
 
-EventParameters::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+EventParameters::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayObjectProperty("pick", "Pick", &EventParameters::pickCount, &EventParameters::pick, static_cast<bool (EventParameters::*)(Pick*)>(&EventParameters::add), &EventParameters::removePick, static_cast<bool (EventParameters::*)(Pick*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("amplitude", "Amplitude", &EventParameters::amplitudeCount, &EventParameters::amplitude, static_cast<bool (EventParameters::*)(Amplitude*)>(&EventParameters::add), &EventParameters::removeAmplitude, static_cast<bool (EventParameters::*)(Amplitude*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("reading", "Reading", &EventParameters::readingCount, &EventParameters::reading, static_cast<bool (EventParameters::*)(Reading*)>(&EventParameters::add), &EventParameters::removeReading, static_cast<bool (EventParameters::*)(Reading*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("origin", "Origin", &EventParameters::originCount, &EventParameters::origin, static_cast<bool (EventParameters::*)(Origin*)>(&EventParameters::add), &EventParameters::removeOrigin, static_cast<bool (EventParameters::*)(Origin*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("focalMechanism", "FocalMechanism", &EventParameters::focalMechanismCount, &EventParameters::focalMechanism, static_cast<bool (EventParameters::*)(FocalMechanism*)>(&EventParameters::add), &EventParameters::removeFocalMechanism, static_cast<bool (EventParameters::*)(FocalMechanism*)>(&EventParameters::remove)));
+	addProperty(arrayObjectProperty("catalog", "Catalog", &EventParameters::catalogCount, &EventParameters::catalog, static_cast<bool (EventParameters::*)(Catalog*)>(&EventParameters::add), &EventParameters::removeCatalog, static_cast<bool (EventParameters::*)(Catalog*)>(&EventParameters::remove)));
 	addProperty(arrayObjectProperty("event", "Event", &EventParameters::eventCount, &EventParameters::event, static_cast<bool (EventParameters::*)(Event*)>(&EventParameters::add), &EventParameters::removeEvent, static_cast<bool (EventParameters::*)(Event*)>(&EventParameters::remove)));
 }
 
@@ -60,7 +62,7 @@ EventParameters::EventParameters(): PublicObject("EventParameters") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters::EventParameters(const EventParameters& other)
+EventParameters::EventParameters(const EventParameters &other)
 : PublicObject() {
 	*this = other;
 }
@@ -86,6 +88,9 @@ EventParameters::~EventParameters() {
 	for ( auto &focalMechanism : _focalMechanisms ) {
 		focalMechanism->setParent(nullptr);
 	}
+	for ( auto &catalog : _catalogs ) {
+		catalog->setParent(nullptr);
+	}
 	for ( auto &event : _events ) {
 		event->setParent(nullptr);
 	}
@@ -96,7 +101,7 @@ EventParameters::~EventParameters() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::operator==(const EventParameters& rhs) const {
+bool EventParameters::operator==(const EventParameters &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -105,7 +110,7 @@ bool EventParameters::operator==(const EventParameters& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::operator!=(const EventParameters& rhs) const {
+bool EventParameters::operator!=(const EventParameters &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -114,7 +119,7 @@ bool EventParameters::operator!=(const EventParameters& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::equal(const EventParameters& other) const {
+bool EventParameters::equal(const EventParameters &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -123,7 +128,7 @@ bool EventParameters::equal(const EventParameters& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters& EventParameters::operator=(const EventParameters& other) {
+EventParameters &EventParameters::operator=(const EventParameters &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -133,10 +138,11 @@ EventParameters& EventParameters::operator=(const EventParameters& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::assign(Object* other) {
-	EventParameters* otherEventParameters = EventParameters::Cast(other);
-	if ( other == nullptr )
+bool EventParameters::assign(Object *other) {
+	EventParameters *otherEventParameters = EventParameters::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherEventParameters;
 
@@ -148,7 +154,7 @@ bool EventParameters::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::attachTo(PublicObject* parent) {
+bool EventParameters::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -157,7 +163,7 @@ bool EventParameters::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::detachFrom(PublicObject* object) {
+bool EventParameters::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -175,8 +181,8 @@ bool EventParameters::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* EventParameters::clone() const {
-	EventParameters* clonee = new EventParameters();
+Object *EventParameters::clone() const {
+	EventParameters *clonee = new EventParameters();
 	*clonee = *this;
 	return clonee;
 }
@@ -186,10 +192,10 @@ Object* EventParameters::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::updateChild(Object* child) {
-	Pick* pickChild = Pick::Cast(child);
+bool EventParameters::updateChild(Object *child) {
+	Pick *pickChild = Pick::Cast(child);
 	if ( pickChild != nullptr ) {
-		Pick* pickElement
+		Pick *pickElement
 			= Pick::Cast(PublicObject::Find(pickChild->publicID()));
 		if ( pickElement && pickElement->parent() == this ) {
 			*pickElement = *pickChild;
@@ -199,9 +205,9 @@ bool EventParameters::updateChild(Object* child) {
 		return false;
 	}
 
-	Amplitude* amplitudeChild = Amplitude::Cast(child);
+	Amplitude *amplitudeChild = Amplitude::Cast(child);
 	if ( amplitudeChild != nullptr ) {
-		Amplitude* amplitudeElement
+		Amplitude *amplitudeElement
 			= Amplitude::Cast(PublicObject::Find(amplitudeChild->publicID()));
 		if ( amplitudeElement && amplitudeElement->parent() == this ) {
 			*amplitudeElement = *amplitudeChild;
@@ -211,9 +217,9 @@ bool EventParameters::updateChild(Object* child) {
 		return false;
 	}
 
-	Reading* readingChild = Reading::Cast(child);
+	Reading *readingChild = Reading::Cast(child);
 	if ( readingChild != nullptr ) {
-		Reading* readingElement
+		Reading *readingElement
 			= Reading::Cast(PublicObject::Find(readingChild->publicID()));
 		if ( readingElement && readingElement->parent() == this ) {
 			*readingElement = *readingChild;
@@ -223,9 +229,9 @@ bool EventParameters::updateChild(Object* child) {
 		return false;
 	}
 
-	Origin* originChild = Origin::Cast(child);
+	Origin *originChild = Origin::Cast(child);
 	if ( originChild != nullptr ) {
-		Origin* originElement
+		Origin *originElement
 			= Origin::Cast(PublicObject::Find(originChild->publicID()));
 		if ( originElement && originElement->parent() == this ) {
 			*originElement = *originChild;
@@ -235,9 +241,9 @@ bool EventParameters::updateChild(Object* child) {
 		return false;
 	}
 
-	FocalMechanism* focalMechanismChild = FocalMechanism::Cast(child);
+	FocalMechanism *focalMechanismChild = FocalMechanism::Cast(child);
 	if ( focalMechanismChild != nullptr ) {
-		FocalMechanism* focalMechanismElement
+		FocalMechanism *focalMechanismElement
 			= FocalMechanism::Cast(PublicObject::Find(focalMechanismChild->publicID()));
 		if ( focalMechanismElement && focalMechanismElement->parent() == this ) {
 			*focalMechanismElement = *focalMechanismChild;
@@ -247,9 +253,21 @@ bool EventParameters::updateChild(Object* child) {
 		return false;
 	}
 
-	Event* eventChild = Event::Cast(child);
+	Catalog *catalogChild = Catalog::Cast(child);
+	if ( catalogChild != nullptr ) {
+		Catalog *catalogElement
+			= Catalog::Cast(PublicObject::Find(catalogChild->publicID()));
+		if ( catalogElement && catalogElement->parent() == this ) {
+			*catalogElement = *catalogChild;
+			catalogElement->update();
+			return true;
+		}
+		return false;
+	}
+
+	Event *eventChild = Event::Cast(child);
 	if ( eventChild != nullptr ) {
-		Event* eventElement
+		Event *eventElement
 			= Event::Cast(PublicObject::Find(eventChild->publicID()));
 		if ( eventElement && eventElement->parent() == this ) {
 			*eventElement = *eventChild;
@@ -267,7 +285,7 @@ bool EventParameters::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventParameters::accept(Visitor* visitor) {
+void EventParameters::accept(Visitor *visitor) {
 	for ( auto &&elem : _picks )
 		elem->accept(visitor);
 	for ( auto &&elem : _amplitudes )
@@ -277,6 +295,8 @@ void EventParameters::accept(Visitor* visitor) {
 	for ( auto &&elem : _origins )
 		elem->accept(visitor);
 	for ( auto &&elem : _focalMechanisms )
+		elem->accept(visitor);
+	for ( auto &&elem : _catalogs )
 		elem->accept(visitor);
 	for ( auto &&elem : _events )
 		elem->accept(visitor);
@@ -296,7 +316,7 @@ size_t EventParameters::pickCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* EventParameters::pick(size_t i) const {
+Pick *EventParameters::pick(size_t i) const {
 	return _picks[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -305,10 +325,12 @@ Pick* EventParameters::pick(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* EventParameters::findPick(const std::string& publicID) const {
-	for ( std::vector<PickPtr>::const_iterator it = _picks.begin(); it != _picks.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Pick *EventParameters::findPick(const std::string& publicID) const {
+	for ( const auto &elem : _picks ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -318,9 +340,10 @@ Pick* EventParameters::findPick(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(Pick* pick) {
-	if ( pick == nullptr )
+bool EventParameters::add(Pick *pick) {
+	if ( !pick ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( pick->parent() != nullptr ) {
@@ -329,17 +352,20 @@ bool EventParameters::add(Pick* pick) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Pick* pickCached = Pick::Find(pick->publicID());
+		Pick *pickCached = Pick::Find(pick->publicID());
 		if ( pickCached ) {
 			if ( pickCached->parent() ) {
-				if ( pickCached->parent() == this )
+				if ( pickCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(Pick*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(Pick*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				pick = pickCached;
+			}
 		}
 	}
 
@@ -364,9 +390,10 @@ bool EventParameters::add(Pick* pick) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(Pick* pick) {
-	if ( pick == nullptr )
+bool EventParameters::remove(Pick *pick) {
+	if ( !pick ) {
 		return false;
+	}
 
 	if ( pick->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Pick*) -> element has another parent");
@@ -382,8 +409,7 @@ bool EventParameters::remove(Pick* pick) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -406,8 +432,7 @@ bool EventParameters::removePick(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_picks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _picks[i].get());
 	}
 
 	_picks[i]->setParent(nullptr);
@@ -432,7 +457,7 @@ size_t EventParameters::amplitudeCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Amplitude* EventParameters::amplitude(size_t i) const {
+Amplitude *EventParameters::amplitude(size_t i) const {
 	return _amplitudes[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -441,10 +466,12 @@ Amplitude* EventParameters::amplitude(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Amplitude* EventParameters::findAmplitude(const std::string& publicID) const {
-	for ( std::vector<AmplitudePtr>::const_iterator it = _amplitudes.begin(); it != _amplitudes.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Amplitude *EventParameters::findAmplitude(const std::string& publicID) const {
+	for ( const auto &elem : _amplitudes ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -454,9 +481,10 @@ Amplitude* EventParameters::findAmplitude(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(Amplitude* amplitude) {
-	if ( amplitude == nullptr )
+bool EventParameters::add(Amplitude *amplitude) {
+	if ( !amplitude ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( amplitude->parent() != nullptr ) {
@@ -465,17 +493,20 @@ bool EventParameters::add(Amplitude* amplitude) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Amplitude* amplitudeCached = Amplitude::Find(amplitude->publicID());
+		Amplitude *amplitudeCached = Amplitude::Find(amplitude->publicID());
 		if ( amplitudeCached ) {
 			if ( amplitudeCached->parent() ) {
-				if ( amplitudeCached->parent() == this )
+				if ( amplitudeCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(Amplitude*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(Amplitude*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				amplitude = amplitudeCached;
+			}
 		}
 	}
 
@@ -500,9 +531,10 @@ bool EventParameters::add(Amplitude* amplitude) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(Amplitude* amplitude) {
-	if ( amplitude == nullptr )
+bool EventParameters::remove(Amplitude *amplitude) {
+	if ( !amplitude ) {
 		return false;
+	}
 
 	if ( amplitude->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Amplitude*) -> element has another parent");
@@ -518,8 +550,7 @@ bool EventParameters::remove(Amplitude* amplitude) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -542,8 +573,7 @@ bool EventParameters::removeAmplitude(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudes[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudes[i].get());
 	}
 
 	_amplitudes[i]->setParent(nullptr);
@@ -568,7 +598,7 @@ size_t EventParameters::readingCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* EventParameters::reading(size_t i) const {
+Reading *EventParameters::reading(size_t i) const {
 	return _readings[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -577,10 +607,12 @@ Reading* EventParameters::reading(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* EventParameters::findReading(const std::string& publicID) const {
-	for ( std::vector<ReadingPtr>::const_iterator it = _readings.begin(); it != _readings.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Reading *EventParameters::findReading(const std::string& publicID) const {
+	for ( const auto &elem : _readings ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -590,9 +622,10 @@ Reading* EventParameters::findReading(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(Reading* reading) {
-	if ( reading == nullptr )
+bool EventParameters::add(Reading *reading) {
+	if ( !reading ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( reading->parent() != nullptr ) {
@@ -601,17 +634,20 @@ bool EventParameters::add(Reading* reading) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Reading* readingCached = Reading::Find(reading->publicID());
+		Reading *readingCached = Reading::Find(reading->publicID());
 		if ( readingCached ) {
 			if ( readingCached->parent() ) {
-				if ( readingCached->parent() == this )
+				if ( readingCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(Reading*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(Reading*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				reading = readingCached;
+			}
 		}
 	}
 
@@ -636,9 +672,10 @@ bool EventParameters::add(Reading* reading) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(Reading* reading) {
-	if ( reading == nullptr )
+bool EventParameters::remove(Reading *reading) {
+	if ( !reading ) {
 		return false;
+	}
 
 	if ( reading->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Reading*) -> element has another parent");
@@ -654,8 +691,7 @@ bool EventParameters::remove(Reading* reading) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -678,8 +714,7 @@ bool EventParameters::removeReading(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_readings[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _readings[i].get());
 	}
 
 	_readings[i]->setParent(nullptr);
@@ -704,7 +739,7 @@ size_t EventParameters::originCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* EventParameters::origin(size_t i) const {
+Origin *EventParameters::origin(size_t i) const {
 	return _origins[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -713,10 +748,12 @@ Origin* EventParameters::origin(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* EventParameters::findOrigin(const std::string& publicID) const {
-	for ( std::vector<OriginPtr>::const_iterator it = _origins.begin(); it != _origins.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Origin *EventParameters::findOrigin(const std::string& publicID) const {
+	for ( const auto &elem : _origins ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -726,9 +763,10 @@ Origin* EventParameters::findOrigin(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(Origin* origin) {
-	if ( origin == nullptr )
+bool EventParameters::add(Origin *origin) {
+	if ( !origin ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( origin->parent() != nullptr ) {
@@ -737,17 +775,20 @@ bool EventParameters::add(Origin* origin) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Origin* originCached = Origin::Find(origin->publicID());
+		Origin *originCached = Origin::Find(origin->publicID());
 		if ( originCached ) {
 			if ( originCached->parent() ) {
-				if ( originCached->parent() == this )
+				if ( originCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(Origin*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(Origin*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				origin = originCached;
+			}
 		}
 	}
 
@@ -772,9 +813,10 @@ bool EventParameters::add(Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(Origin* origin) {
-	if ( origin == nullptr )
+bool EventParameters::remove(Origin *origin) {
+	if ( !origin ) {
 		return false;
+	}
 
 	if ( origin->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Origin*) -> element has another parent");
@@ -790,8 +832,7 @@ bool EventParameters::remove(Origin* origin) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -814,8 +855,7 @@ bool EventParameters::removeOrigin(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_origins[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _origins[i].get());
 	}
 
 	_origins[i]->setParent(nullptr);
@@ -840,7 +880,7 @@ size_t EventParameters::focalMechanismCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* EventParameters::focalMechanism(size_t i) const {
+FocalMechanism *EventParameters::focalMechanism(size_t i) const {
 	return _focalMechanisms[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -849,10 +889,12 @@ FocalMechanism* EventParameters::focalMechanism(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* EventParameters::findFocalMechanism(const std::string& publicID) const {
-	for ( std::vector<FocalMechanismPtr>::const_iterator it = _focalMechanisms.begin(); it != _focalMechanisms.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+FocalMechanism *EventParameters::findFocalMechanism(const std::string& publicID) const {
+	for ( const auto &elem : _focalMechanisms ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -862,9 +904,10 @@ FocalMechanism* EventParameters::findFocalMechanism(const std::string& publicID)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(FocalMechanism* focalMechanism) {
-	if ( focalMechanism == nullptr )
+bool EventParameters::add(FocalMechanism *focalMechanism) {
+	if ( !focalMechanism ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( focalMechanism->parent() != nullptr ) {
@@ -873,17 +916,20 @@ bool EventParameters::add(FocalMechanism* focalMechanism) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		FocalMechanism* focalMechanismCached = FocalMechanism::Find(focalMechanism->publicID());
+		FocalMechanism *focalMechanismCached = FocalMechanism::Find(focalMechanism->publicID());
 		if ( focalMechanismCached ) {
 			if ( focalMechanismCached->parent() ) {
-				if ( focalMechanismCached->parent() == this )
+				if ( focalMechanismCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(FocalMechanism*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(FocalMechanism*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				focalMechanism = focalMechanismCached;
+			}
 		}
 	}
 
@@ -908,9 +954,10 @@ bool EventParameters::add(FocalMechanism* focalMechanism) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(FocalMechanism* focalMechanism) {
-	if ( focalMechanism == nullptr )
+bool EventParameters::remove(FocalMechanism *focalMechanism) {
+	if ( !focalMechanism ) {
 		return false;
+	}
 
 	if ( focalMechanism->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(FocalMechanism*) -> element has another parent");
@@ -926,8 +973,7 @@ bool EventParameters::remove(FocalMechanism* focalMechanism) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -950,14 +996,154 @@ bool EventParameters::removeFocalMechanism(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_focalMechanisms[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _focalMechanisms[i].get());
 	}
 
 	_focalMechanisms[i]->setParent(nullptr);
 	childRemoved(_focalMechanisms[i].get());
 
 	_focalMechanisms.erase(_focalMechanisms.begin() + i);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+size_t EventParameters::catalogCount() const {
+	return _catalogs.size();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *EventParameters::catalog(size_t i) const {
+	return _catalogs[i].get();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Catalog *EventParameters::findCatalog(const std::string& publicID) const {
+	for ( const auto &elem : _catalogs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
+
+	return nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::add(Catalog *catalog) {
+	if ( !catalog ) {
+		return false;
+	}
+
+	// Element has already a parent
+	if ( catalog->parent() != nullptr ) {
+		SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element has already a parent");
+		return false;
+	}
+
+	if ( PublicObject::IsRegistrationEnabled() ) {
+		Catalog *catalogCached = Catalog::Find(catalog->publicID());
+		if ( catalogCached ) {
+			if ( catalogCached->parent() ) {
+				if ( catalogCached->parent() == this ) {
+					SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element with same publicID has been added already");
+				}
+				else {
+					SEISCOMP_ERROR("EventParameters::add(Catalog*) -> element with same publicID has been added already to another object");
+				}
+				return false;
+			}
+			else {
+				catalog = catalogCached;
+			}
+		}
+	}
+
+	// Add the element
+	_catalogs.push_back(catalog);
+	catalog->setParent(this);
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		NotifierCreator nc(OP_ADD);
+		catalog->accept(&nc);
+	}
+
+	// Notify registered observers
+	childAdded(catalog);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::remove(Catalog *catalog) {
+	if ( !catalog ) {
+		return false;
+	}
+
+	if ( catalog->parent() != this ) {
+		SEISCOMP_ERROR("EventParameters::remove(Catalog*) -> element has another parent");
+		return false;
+	}
+
+	auto it = std::find(_catalogs.begin(), _catalogs.end(), catalog);
+	// Element has not been found
+	if ( it == _catalogs.end() ) {
+		SEISCOMP_ERROR("EventParameters::remove(Catalog*) -> child object has not been found although the parent pointer matches???");
+		return false;
+	}
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		Notifier::Create(this, OP_REMOVE, it->get());
+	}
+
+	(*it)->setParent(nullptr);
+	childRemoved((*it).get());
+
+	_catalogs.erase(it);
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool EventParameters::removeCatalog(size_t i) {
+	// index out of bounds
+	if ( i >= _catalogs.size() )
+		return false;
+
+	// Create the notifiers
+	if ( Notifier::IsEnabled() ) {
+		Notifier::Create(this, OP_REMOVE, _catalogs[i].get());
+	}
+
+	_catalogs[i]->setParent(nullptr);
+	childRemoved(_catalogs[i].get());
+
+	_catalogs.erase(_catalogs.begin() + i);
 
 	return true;
 }
@@ -976,7 +1162,7 @@ size_t EventParameters::eventCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* EventParameters::event(size_t i) const {
+Event *EventParameters::event(size_t i) const {
 	return _events[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -985,10 +1171,12 @@ Event* EventParameters::event(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* EventParameters::findEvent(const std::string& publicID) const {
-	for ( std::vector<EventPtr>::const_iterator it = _events.begin(); it != _events.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+Event *EventParameters::findEvent(const std::string& publicID) const {
+	for ( const auto &elem : _events ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -998,9 +1186,10 @@ Event* EventParameters::findEvent(const std::string& publicID) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::add(Event* event) {
-	if ( event == nullptr )
+bool EventParameters::add(Event *event) {
+	if ( !event ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( event->parent() != nullptr ) {
@@ -1009,17 +1198,20 @@ bool EventParameters::add(Event* event) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		Event* eventCached = Event::Find(event->publicID());
+		Event *eventCached = Event::Find(event->publicID());
 		if ( eventCached ) {
 			if ( eventCached->parent() ) {
-				if ( eventCached->parent() == this )
+				if ( eventCached->parent() == this ) {
 					SEISCOMP_ERROR("EventParameters::add(Event*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("EventParameters::add(Event*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				event = eventCached;
+			}
 		}
 	}
 
@@ -1044,9 +1236,10 @@ bool EventParameters::add(Event* event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool EventParameters::remove(Event* event) {
-	if ( event == nullptr )
+bool EventParameters::remove(Event *event) {
+	if ( !event ) {
 		return false;
+	}
 
 	if ( event->parent() != this ) {
 		SEISCOMP_ERROR("EventParameters::remove(Event*) -> element has another parent");
@@ -1062,8 +1255,7 @@ bool EventParameters::remove(Event* event) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1086,8 +1278,7 @@ bool EventParameters::removeEvent(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_events[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _events[i].get());
 	}
 
 	_events[i]->setParent(nullptr);
@@ -1103,7 +1294,7 @@ bool EventParameters::removeEvent(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventParameters::serialize(Archive& ar) {
+void EventParameters::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {
@@ -1159,6 +1350,16 @@ void EventParameters::serialize(Archive& ar) {
 		),
 		Archive::STATIC_TYPE
 	);
+	if ( ar.supportsVersion<0,14>() )
+		ar & NAMED_OBJECT_HINT("catalog",
+			Seiscomp::Core::Generic::containerMember(
+				_catalogs,
+				[this](const CatalogPtr &catalog) {
+					return add(catalog.get());
+				}
+			),
+			Archive::STATIC_TYPE
+		);
 	ar & NAMED_OBJECT_HINT("event",
 		Seiscomp::Core::Generic::containerMember(
 			_events,

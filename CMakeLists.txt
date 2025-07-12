@@ -6,12 +6,6 @@ OPTION(SC_TRUNK_DB_POSTGRESQL "Add PostgreSQL support" OFF)
 
 SET(PROJECT_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test/data)
 
-IF(CMAKE_COMPILER_IS_GNUCC)
-	IF(GCC_VERSION VERSION_LESS "4.7")
-		MESSAGE(FATAL_ERROR "GCC version ${GCC_VERSION} found but 4.7 required as minimum")
-	ENDIF()
-ENDIF()
-
 #SET(Boost_DEBUG ON)
 
 # Static Boost libs are not compiled with -fPIC on some
@@ -19,13 +13,14 @@ ENDIF()
 # Disabled it so far.
 #SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_DETAILED_FAILURE_MSG ON)
-FIND_PACKAGE(Boost REQUIRED COMPONENTS program_options thread filesystem iostreams regex)
+FIND_PACKAGE(Boost REQUIRED COMPONENTS program_options thread filesystem iostreams regex container)
 IF (WIN32)
 	ADD_DEFINITIONS("-DBOOST_ALL_NO_LIB")
 	ADD_DEFINITIONS("-DBOOST_LIB_DIAGNOSTIC")
 ENDIF (WIN32)
 
 FIND_PACKAGE(OpenSSL REQUIRED)
+FIND_PACKAGE(bson-1.0 1.14 REQUIRED)
 
 IF (SC_TRUNK_DB_MYSQL)
 	FIND_PACKAGE(MySQL REQUIRED)

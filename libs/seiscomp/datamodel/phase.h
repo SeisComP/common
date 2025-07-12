@@ -52,14 +52,14 @@ class SC_SYSTEM_CORE_API Phase : public Core::BaseObject {
 		Phase();
 
 		//! Copy constructor
-		Phase(const Phase& other);
+		Phase(const Phase &other);
 
 		//! Custom constructor
 		Phase(const std::string& code);
 
 		//! Destructor
 		~Phase() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -69,14 +69,14 @@ class SC_SYSTEM_CORE_API Phase : public Core::BaseObject {
 		operator const std::string&() const;
 
 		//! Copies the metadata of other to this
-		Phase& operator=(const Phase& other);
+		Phase &operator=(const Phase &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Phase& other) const;
-		bool operator!=(const Phase& other) const;
+		bool operator==(const Phase &other) const;
+		bool operator!=(const Phase &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Phase& other) const;
+		bool equal(const Phase &other) const;
 
 
 	// ------------------------------------------------------------------

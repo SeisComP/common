@@ -30,13 +30,7 @@ namespace Map {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Legend::Legend(QObject *parent)
-: QObject(parent)
-, _margin(9)
-, _spacing(4)
-, _layer(nullptr)
-, _alignment(Qt::AlignLeft | Qt::AlignTop)
-, _enabled(true)
-, _visible(true) {}
+: QObject(parent) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -45,13 +39,7 @@ Legend::Legend(QObject *parent)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Legend::Legend(const QString& title, QObject *parent)
 : QObject(parent)
-, _margin(9)
-, _spacing(4)
-, _layer(nullptr)
-, _title(title)
-, _alignment(Qt::AlignLeft | Qt::AlignTop)
-, _enabled(true)
-,_visible(true) {}
+, _title(title) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

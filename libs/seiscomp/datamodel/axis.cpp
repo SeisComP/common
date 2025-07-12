@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(Axis, "Axis");
 
 
-Axis::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Axis::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<RealQuantity>("azimuth", "RealQuantity", false, false, false, &Axis::setAzimuth, &Axis::azimuth));
 	addProperty(objectProperty<RealQuantity>("plunge", "RealQuantity", false, false, false, &Axis::setPlunge, &Axis::plunge));
 	addProperty(objectProperty<RealQuantity>("length", "RealQuantity", false, false, false, &Axis::setLength, &Axis::length));
@@ -50,7 +50,7 @@ Axis::Axis() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Axis::Axis(const Axis& other)
+Axis::Axis(const Axis &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -68,7 +68,7 @@ Axis::~Axis() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Axis::operator==(const Axis& rhs) const {
+bool Axis::operator==(const Axis &rhs) const {
 	if ( !(_azimuth == rhs._azimuth) )
 		return false;
 	if ( !(_plunge == rhs._plunge) )
@@ -83,7 +83,7 @@ bool Axis::operator==(const Axis& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Axis::operator!=(const Axis& rhs) const {
+bool Axis::operator!=(const Axis &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ bool Axis::operator!=(const Axis& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Axis::equal(const Axis& other) const {
+bool Axis::equal(const Axis &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -182,7 +182,7 @@ const RealQuantity& Axis::length() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Axis& Axis::operator=(const Axis& other) {
+Axis &Axis::operator=(const Axis &other) {
 	_azimuth = other._azimuth;
 	_plunge = other._plunge;
 	_length = other._length;
@@ -194,7 +194,7 @@ Axis& Axis::operator=(const Axis& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Axis::serialize(Archive& ar) {
+void Axis::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

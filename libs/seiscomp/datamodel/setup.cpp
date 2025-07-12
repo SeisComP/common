@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Setup, Object, "Setup");
 
 
-Setup::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Setup::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &Setup::setName, &Setup::name));
 	addProperty(Core::simpleProperty("parameterSetID", "string", false, false, false, true, false, false, nullptr, &Setup::setParameterSetID, &Setup::parameterSetID));
 	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, nullptr, &Setup::setEnabled, &Setup::enabled));
@@ -60,7 +60,7 @@ SetupIndex::SetupIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SetupIndex::SetupIndex(const SetupIndex& idx) {
+SetupIndex::SetupIndex(const SetupIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -69,7 +69,7 @@ SetupIndex::SetupIndex(const SetupIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SetupIndex::operator==(const SetupIndex& idx) const {
+bool SetupIndex::operator==(const SetupIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -78,7 +78,7 @@ bool SetupIndex::operator==(const SetupIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SetupIndex::operator!=(const SetupIndex& idx) const {
+bool SetupIndex::operator!=(const SetupIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,7 +96,7 @@ Setup::Setup() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Setup::Setup(const Setup& other)
+Setup::Setup(const Setup &other)
 : Object() {
 	*this = other;
 }
@@ -114,7 +114,7 @@ Setup::~Setup() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::operator==(const Setup& rhs) const {
+bool Setup::operator==(const Setup &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _parameterSetID != rhs._parameterSetID ) return false;
 	if ( _enabled != rhs._enabled ) return false;
@@ -126,7 +126,7 @@ bool Setup::operator==(const Setup& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::operator!=(const Setup& rhs) const {
+bool Setup::operator!=(const Setup &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -135,7 +135,7 @@ bool Setup::operator!=(const Setup& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::equal(const Setup& other) const {
+bool Setup::equal(const Setup &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -198,7 +198,7 @@ bool Setup::enabled() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const SetupIndex& Setup::index() const {
+const SetupIndex &Setup::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -207,8 +207,11 @@ const SetupIndex& Setup::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::equalIndex(const Setup* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Setup::equalIndex(const Setup *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -217,7 +220,7 @@ bool Setup::equalIndex(const Setup* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation* Setup::configStation() const {
+ConfigStation *Setup::configStation() const {
 	return static_cast<ConfigStation*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -226,7 +229,7 @@ ConfigStation* Setup::configStation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Setup& Setup::operator=(const Setup& other) {
+Setup &Setup::operator=(const Setup &other) {
 	_index = other._index;
 	_parameterSetID = other._parameterSetID;
 	_enabled = other._enabled;
@@ -238,10 +241,11 @@ Setup& Setup::operator=(const Setup& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::assign(Object* other) {
-	Setup* otherSetup = Setup::Cast(other);
-	if ( other == nullptr )
+bool Setup::assign(Object *other) {
+	Setup *otherSetup = Setup::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherSetup;
 
@@ -253,11 +257,13 @@ bool Setup::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Setup::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ConfigStation* configStation = ConfigStation::Cast(parent);
+	ConfigStation *configStation = ConfigStation::Cast(parent);
 	if ( configStation != nullptr )
 		return configStation->add(this);
 
@@ -270,11 +276,13 @@ bool Setup::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Setup::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Setup::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ConfigStation* configStation = ConfigStation::Cast(object);
+	ConfigStation *configStation = ConfigStation::Cast(object);
 	if ( configStation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -282,7 +290,7 @@ bool Setup::detachFrom(PublicObject* object) {
 			return configStation->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Setup* child = configStation->setup(index());
+			Setup *child = configStation->setup(index());
 			if ( child != nullptr )
 				return configStation->remove(child);
 			else {
@@ -302,8 +310,9 @@ bool Setup::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Setup::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -313,8 +322,8 @@ bool Setup::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Setup::clone() const {
-	Setup* clonee = new Setup();
+Object *Setup::clone() const {
+	Setup *clonee = new Setup();
 	*clonee = *this;
 	return clonee;
 }
@@ -324,7 +333,7 @@ Object* Setup::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Setup::accept(Visitor* visitor) {
+void Setup::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -333,7 +342,7 @@ void Setup::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Setup::serialize(Archive& ar) {
+void Setup::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

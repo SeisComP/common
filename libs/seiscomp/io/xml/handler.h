@@ -35,8 +35,8 @@ namespace IO {
 namespace XML {
 
 
-typedef std::vector<Core::BaseObject *> ChildList;
-typedef std::set<std::string> TagSet;
+using ChildList = std::vector<Core::BaseObject*>;
+using TagSet = std::set<std::string>;
 
 
 struct SC_SYSTEM_CORE_API NodeHandler;
@@ -113,7 +113,7 @@ class PropertyHandler : public MemberHandler {
 		PropertyHandler(const Core::MetaProperty *prop)
 		 : _property(prop) {}
 
-		std::string value(Core::BaseObject *obj) {
+		std::string value(Core::BaseObject *obj) override {
 			try {
 				return _property->readString(obj);
 			}
@@ -123,7 +123,7 @@ class PropertyHandler : public MemberHandler {
 		}
 
 		bool put(Core::BaseObject *object, const char *tag, const char *ns,
-		         bool opt, OutputHandler *output, NodeHandler *h) {
+		         bool opt, OutputHandler *output, NodeHandler *h) override {
 			if ( _property->isClass() ) {
 				try {
 					output->handle(boost::any_cast<Core::BaseObject*>(_property->read(object)), tag, ns);
@@ -137,8 +137,8 @@ class PropertyHandler : public MemberHandler {
 			return false;
 		}
 
-		bool get(Core::BaseObject *object, void *, NodeHandler *);
-		bool finalize(Core::BaseObject *parent, Core::BaseObject *member);
+		bool get(Core::BaseObject *object, void *, NodeHandler *) override;
+		bool finalize(Core::BaseObject *parent, Core::BaseObject *member) override;
 
 	private:
 		const Core::MetaProperty *_property;
@@ -150,10 +150,10 @@ class ChildPropertyHandler : public MemberHandler {
 		ChildPropertyHandler(const Core::MetaProperty *prop)
 		 : _property(prop) {}
 
-		std::string value(Core::BaseObject *obj) { return ""; }
+		std::string value(Core::BaseObject *obj) override { return ""; }
 
 		bool put(Core::BaseObject *object, const char *tag, const char *ns,
-		         bool opt, OutputHandler *output, NodeHandler *h) {
+		         bool opt, OutputHandler *output, NodeHandler *h) override {
 			size_t count = _property->arrayElementCount(object);
 			for ( size_t i = 0; i < count; ++i ) {
 				output->handle(_property->arrayObject(object, i), tag, ns);
@@ -161,12 +161,12 @@ class ChildPropertyHandler : public MemberHandler {
 			return true;
 		}
 
-		bool get(Core::BaseObject *object, void *, NodeHandler *h) {
+		bool get(Core::BaseObject *object, void *, NodeHandler *h) override {
 			h->propagate(_property->createClass(), true, true);
 			return true;
 		}
 
-		bool finalize(Core::BaseObject *parent, Core::BaseObject *child) {
+		bool finalize(Core::BaseObject *parent, Core::BaseObject *child) override {
 			if ( child )
 				return _property->arrayAddObject(parent, child);
 			return false;
@@ -193,11 +193,11 @@ struct SC_SYSTEM_CORE_API TypeNameHandler : public TypeHandler {
 	TypeNameHandler(NodeHandler *nh, const char *cn)
 	 : TypeHandler(nh), classname(cn) {}
 
-	Core::BaseObject *createClass() {
+	Core::BaseObject *createClass() override {
 		return Core::ClassFactory::Create(classname.c_str());
 	}
 
-	const char *className() {
+	const char *className() override {
 		return classname.c_str();
 	}
 
@@ -209,11 +209,11 @@ template <typename T>
 struct TypeStaticHandler : public TypeHandler {
 	TypeStaticHandler(NodeHandler *nh) : TypeHandler(nh) {}
 
-	Core::BaseObject *createClass() {
+	Core::BaseObject *createClass() override {
 		return new T();
 	}
 
-	const char *className() {
+	const char *className() override {
 		return T::ClassName();
 	}
 };
@@ -282,14 +282,14 @@ struct SC_SYSTEM_CORE_API MemberNodeHandler {
 
 
 struct SC_SYSTEM_CORE_API NoneHandler : public NodeHandler {
-	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output);
-	bool get(Core::BaseObject *obj, void *n);
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output) override;
+	bool get(Core::BaseObject *obj, void *n) override;
 };
 
 
 struct SC_SYSTEM_CORE_API GenericHandler : public NodeHandler {
-	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output);
-	bool get(Core::BaseObject *, void *n);
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output) override;
+	bool get(Core::BaseObject *, void *n) override;
 
 	TypeMap *mapper;
 };
@@ -321,9 +321,9 @@ struct SC_SYSTEM_CORE_API ClassHandler : public NodeHandler {
 	void addMember(const char *t, const char *ns, Type opt, Location l, MemberHandler *s);
 	void addChild(const char *t, const char *ns, MemberHandler *s);
 
-	bool init(Core::BaseObject *obj, void *n, TagSet &mandatoryTags);
-	bool get(Core::BaseObject *obj, void *n);
-	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output);
+	bool init(Core::BaseObject *obj, void *n, TagSet &mandatoryTags) override;
+	bool get(Core::BaseObject *obj, void *n) override;
+	bool put(Core::BaseObject *obj, const char *tag, const char *ns, OutputHandler *output) override;
 
 	MemberRefList orderedMembers;
 	MemberList attributes;

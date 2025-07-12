@@ -32,8 +32,8 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(TimeArray, "TimeArray");
 
 
-TimeArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "datetime", true, false, false, false, true, false, nullptr, &TimeArray::setContent, (const std::vector< Seiscomp::Core::Time >& (TimeArray::*)() const)&TimeArray::content));
+TimeArray::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
+	addProperty(Core::simpleProperty("content", "datetime", true, false, false, false, true, false, nullptr, &TimeArray::setContent, (const std::vector< Seiscomp::Core::Time > &(TimeArray::*)() const)&TimeArray::content));
 }
 
 
@@ -48,7 +48,7 @@ TimeArray::TimeArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeArray::TimeArray(const TimeArray& other)
+TimeArray::TimeArray(const TimeArray &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -66,7 +66,7 @@ TimeArray::~TimeArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeArray::operator==(const TimeArray& rhs) const {
+bool TimeArray::operator==(const TimeArray &rhs) const {
 	if ( !(_content == rhs._content) )
 		return false;
 	return true;
@@ -77,7 +77,7 @@ bool TimeArray::operator==(const TimeArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeArray::operator!=(const TimeArray& rhs) const {
+bool TimeArray::operator!=(const TimeArray &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -86,7 +86,7 @@ bool TimeArray::operator!=(const TimeArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimeArray::equal(const TimeArray& other) const {
+bool TimeArray::equal(const TimeArray &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ void TimeArray::setContent(const std::vector< Seiscomp::Core::Time > &content) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::vector< Seiscomp::Core::Time >& TimeArray::content() const {
+const std::vector< Seiscomp::Core::Time > &TimeArray::content() const {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ const std::vector< Seiscomp::Core::Time >& TimeArray::content() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector< Seiscomp::Core::Time >& TimeArray::content() {
+std::vector< Seiscomp::Core::Time > &TimeArray::content() {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -122,7 +122,7 @@ std::vector< Seiscomp::Core::Time >& TimeArray::content() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimeArray& TimeArray::operator=(const TimeArray& other) {
+TimeArray &TimeArray::operator=(const TimeArray &other) {
 	_content = other._content;
 	return *this;
 }
@@ -132,7 +132,7 @@ TimeArray& TimeArray::operator=(const TimeArray& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimeArray::serialize(Archive& ar) {
+void TimeArray::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

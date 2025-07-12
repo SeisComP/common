@@ -143,7 +143,7 @@ MagList::MagList(QWidget* parent)
 
 	_mainLayout = new QGridLayout(this);
 	_mainLayout->setSpacing(0);
-	_mainLayout->setMargin(0);
+	_mainLayout->setContentsMargins(0, 0, 0, 0);
 // 	setLayout(_mainLayout);
 
 // 	setWidget(_widget);
@@ -248,7 +248,7 @@ void MagList::addMag(const std::string& type, bool bold, bool visible) {
 	}
 	else
 		magRow->setBold(bold);
-	
+
 	magRow->setVisible(visible);
 }
 
@@ -406,12 +406,12 @@ void MagRow::init() {
 
 	_rowsLayout = new QHBoxLayout(this);
 	_rowsLayout->setSpacing(0);
-	_rowsLayout->setMargin(0);
+	_rowsLayout->setContentsMargins(0, 0, 0, 0);
 	_rowsLayout->addWidget(_type);
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_magnitude);
 		//l->addWidget(_magnitudeReference);
 		_rowsLayout->addLayout(l);
@@ -422,7 +422,7 @@ void MagRow::init() {
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_stdev);
 		//l->addWidget(_stdevReference);
 		_rowsLayout->addLayout(l);
@@ -433,7 +433,7 @@ void MagRow::init() {
 
 	if ( !_header ) {
 		QHBoxLayout *l = new QHBoxLayout;
-		l->setMargin(0);
+		l->setContentsMargins(0, 0, 0, 0);
 		l->addWidget(_quality);
 		//l->addWidget(_qualityReference);
 		_rowsLayout->addLayout(l);
@@ -655,12 +655,12 @@ EventSummaryView::~EventSummaryView(){
 #define DISABLE_FRAME(f) \
 	f->setFrameShape(QFrame::NoFrame); \
 	if ( f->layout() ) \
-		f->layout()->setMargin(0)
+		f->layout()->setContentsMargins(0, 0, 0, 0)
 
 
 #define ENABLE_FRAME(f) \
 	f->setFrameStyle(QFrame::StyledPanel | QFrame::Raised); \
-	if ( f->layout() ) f->layout()->setMargin(4); \
+	if ( f->layout() ) f->layout()->setContentsMargins(4, 4, 4, 4); \
 	if ( f->layout() ) f->layout()->setSpacing(4)
 
 
@@ -714,7 +714,7 @@ void EventSummaryView::init() {
 	infoPanel->setSizePolicy(sp);
 
 	QVBoxLayout *l = new QVBoxLayout(infoPanel);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 
 	QWidget *hypoCenterInfo = new QWidget(infoPanel);
 	_uiHypocenter->setupUi(hypoCenterInfo);
@@ -735,11 +735,12 @@ void EventSummaryView::init() {
 	area->setWidgetResizable(true);
 	//area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	area->setFrameShape(QFrame::NoFrame);
-	if ( area->layout() )
-		area->layout()->setMargin(0);
+	if ( area->layout() ) {
+		area->layout()->setContentsMargins(0, 0, 0, 0);
+	}
 
 	l = new QVBoxLayout(_ui->frameEpicenterInformation);
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->addWidget(area);
 
 	_automaticOriginEnabledColor = Qt::darkRed;
@@ -1052,7 +1053,7 @@ void EventSummaryView::init() {
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
 	hboxLayout->setObjectName("hboxLayoutMap");
 	hboxLayout->setSpacing(6);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	hboxLayout->addWidget(_map);
 
 	QAction* refreshAction = new QAction(this);
@@ -1577,17 +1578,21 @@ void EventSummaryView::updateEventName() {
 }
 
 
-static void elapsedTimeString(const Core::TimeSpan &dt, QString &str)
-{
-	int d=0, h=0, m=0, s=0;
+static void elapsedTimeString(const Core::TimeSpan &dt, QString &str) {
+	int d{0}, h{0}, m{0}, s{0};
 	QLatin1Char fill('0');
-	dt.elapsedTime(&d, &h, &m, &s);
-	if (d)
+
+	dt.get(&d, &h, &m, &s);
+
+	if ( d ) {
 		str = QString("O.T. +%1d %2h").arg(d,2).arg(h, 2, 10, fill);
-	else if (h)
+	}
+	else if ( h ) {
 		str = QString("O.T. +%1h %2m").arg(h,2).arg(m, 2, 10, fill);
-	else
+	}
+	else {
 		str = QString("O.T. +%1m %2s").arg(m,2).arg(s, 2, 10, fill);
+	}
 }
 
 
@@ -1721,7 +1726,7 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 	try {
 		DataModel::OriginQuality quality = _currentOrigin->quality();
 		try{
-			_uiHypocenter->_lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhases->setText(QString("%1").arg(quality.usedPhaseCount()));
 		}
 		catch(Core::ValueException&) {
 			_uiHypocenter->_lbNoPhases->setText("--");
@@ -1900,7 +1905,7 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 	try {
 		DataModel::OriginQuality quality = origin->quality();
 		try{
-			_uiHypocenter->_lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount(), 0, 'd', 0, ' '));
+			_uiHypocenter->_lbNoPhasesAutomatic->setText(QString("%1").arg(quality.usedPhaseCount()));
 		}
 		catch(Core::ValueException&) {
 			_uiHypocenter->_lbNoPhasesAutomatic->setText("--");
@@ -2027,7 +2032,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelMw->setText("-");
 
 		try {
-			_uiHypocenter->labelMoment->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMoment->setText(QString("%1").arg(mt->scalarMoment().value(), 0, 'E', 2));
 		}
 		catch ( ... ) {
 			_uiHypocenter->labelMoment->setText("-");
@@ -2061,7 +2066,7 @@ void EventSummaryView::setFM(DataModel::FocalMechanism *fm) {
 		catch ( ... ) {
 			_uiHypocenter->labelLongitudeError->setText(QString());
 		}
-		
+
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
@@ -2243,7 +2248,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 			_uiHypocenter->labelMwAutomatic->setText("-");
 
 		try {
-			_uiHypocenter->labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment(), 0, 'E', 2));
+			_uiHypocenter->labelMomentAutomatic->setText(QString("%1").arg(mt->scalarMoment().value(), 0, 'E', 2));
 		}
 		catch ( ... ) {
 			_uiHypocenter->labelMomentAutomatic->setText("-");
@@ -2275,7 +2280,7 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 		catch ( ... ) {
 			_uiHypocenter->labelLongitudeErrorAutomatic->setText(QString());
 		}
-		
+
 		try { // depth error
 			double err_z = quantityUncertainty(derivedOrigin->depth());
 			if (err_z == 0.0)
@@ -2740,28 +2745,28 @@ void EventSummaryView::updateTimeAgoLabel(){
 
 	int sec = ts.seconds();
 	int days = sec / 86400;
-	int hours = (sec - days*86400) / 3600;
-	int minutes = (sec - days*86400 - hours*3600) / 60;
-	int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+	int hours = (sec - days * 86400) / 3600;
+	int minutes = (sec - days * 86400 - hours * 3600) / 60;
+	int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 	QString text;
 
 	if ( days > 0 ) {
-		text = QString("%1 days and %2 hours ago").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ');
+		text = QString("%1 days and %2 hours ago").arg(days).arg(hours);
 	}
-	else if ( (days == 0) && (hours > 0) ) {
-		text = QString("%1 hours and %2 minutes ago").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ');
+	else if ( !days && (hours > 0) ) {
+		text = QString("%1 hours and %2 minutes ago").arg(hours).arg(minutes);
 	}
-	else if ( (days == 0) && (hours == 0) && (minutes > 0) ) {
+	else if ( !days && !hours && (minutes > 0) ) {
 		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay ) {
-			text = QString("%1 minutes").arg(minutes, 0, 'd', 0, ' ');
+			text = QString("%1 minutes").arg(minutes);
 		}
 		else {
-			text = QString("%1 minutes and %2 seconds ago").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ');
+			text = QString("%1 minutes and %2 seconds ago").arg(minutes).arg(seconds);
 		}
 	}
-	else if ((days == 0) && (hours == 0) && (minutes == 0) && (seconds > 0) ) {
-		text = QString("%1 seconds ago").arg(seconds, 0, 'd', 0, ' ');
+	else if ( !days && !hours && !minutes && (seconds > 0) ) {
+		text = QString("%1 seconds ago").arg(seconds);
 	}
 
 	if ( text != _ui->_lbTimeAgo->text() ) {
@@ -2901,7 +2906,7 @@ void EventSummaryView::switchToAutomaticPressed() {
 	entry->setAction("EvPrefOrgEvalMode");
 	entry->setParameters("automatic");
 	entry->setSender(SCApp->name() + "@" + System::HostInfo().name());
-	entry->setCreated(Core::Time::GMT());
+	entry->setCreated(Core::Time::UTC());
 
 	NotifierPtr n = new Notifier("Journaling", OP_ADD, entry.get());
 	NotifierMessagePtr nm = new NotifierMessage;

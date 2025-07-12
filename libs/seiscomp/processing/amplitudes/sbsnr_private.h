@@ -39,7 +39,7 @@ class AmplitudeSBSNR : public Seiscomp::Processing::AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
 	protected:
 		const bool _demean;

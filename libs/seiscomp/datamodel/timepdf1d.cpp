@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(TimePDF1D, "TimePDF1D");
 
 
-TimePDF1D::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+TimePDF1D::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<TimeArray>("variable", "TimeArray", false, false, false, &TimePDF1D::setVariable, &TimePDF1D::variable));
 	addProperty(objectProperty<RealArray>("probability", "RealArray", false, false, false, &TimePDF1D::setProbability, &TimePDF1D::probability));
 }
@@ -49,7 +49,7 @@ TimePDF1D::TimePDF1D() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimePDF1D::TimePDF1D(const TimePDF1D& other)
+TimePDF1D::TimePDF1D(const TimePDF1D &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -67,7 +67,7 @@ TimePDF1D::~TimePDF1D() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimePDF1D::operator==(const TimePDF1D& rhs) const {
+bool TimePDF1D::operator==(const TimePDF1D &rhs) const {
 	if ( !(_variable == rhs._variable) )
 		return false;
 	if ( !(_probability == rhs._probability) )
@@ -80,7 +80,7 @@ bool TimePDF1D::operator==(const TimePDF1D& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimePDF1D::operator!=(const TimePDF1D& rhs) const {
+bool TimePDF1D::operator!=(const TimePDF1D &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -89,7 +89,7 @@ bool TimePDF1D::operator!=(const TimePDF1D& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool TimePDF1D::equal(const TimePDF1D& other) const {
+bool TimePDF1D::equal(const TimePDF1D &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -152,7 +152,7 @@ const RealArray& TimePDF1D::probability() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-TimePDF1D& TimePDF1D::operator=(const TimePDF1D& other) {
+TimePDF1D &TimePDF1D::operator=(const TimePDF1D &other) {
 	_variable = other._variable;
 	_probability = other._probability;
 	return *this;
@@ -163,7 +163,7 @@ TimePDF1D& TimePDF1D::operator=(const TimePDF1D& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void TimePDF1D::serialize(Archive& ar) {
+void TimePDF1D::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

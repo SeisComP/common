@@ -111,19 +111,14 @@ int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
 }
 #endif
 
-} // ns anonymous
-
 
 IMPLEMENT_SC_CLASS_DERIVED(SQLiteDatabase,
                            Seiscomp::IO::DatabaseInterface,
                            "sqlite3_database_interface");
 
-REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
-ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
-
 
 SQLiteDatabase::~SQLiteDatabase() {
-	disconnect();
+	SQLiteDatabase::disconnect();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -137,12 +132,30 @@ bool SQLiteDatabase::handleURIParameter(const std::string &name,
 		return false;
 	}
 
-	if ( name == "debug" && value != "0" && value != "false" ) {
-		if ( value.empty() || value == "true" ) {
+	if ( (name == "debug") && (value != "0") && (value != "false") ) {
+		if ( value.empty() || (value == "true") ) {
 			_debugUMask = SQLITE_TRACE_STMT;
 		}
 		else if ( !Core::fromString(_debugUMask, value) ) {
 			SEISCOMP_ERROR("Invalid debug value: %s", value.c_str());
+			return false;
+		}
+	}
+	else if ( name == "sync" ) {
+		if ( value == "false" || value == "off" || value == "0" ) {
+			_sync = 0;
+		}
+		else if ( value == "normal" || value == "on" || value == "1" ) {
+			_sync = 1;
+		}
+		else if ( value == "full" || value == "2" ) {
+			_sync = 2;
+		}
+		else if ( value == "extra" || value == "3" ) {
+			_sync = 3;
+		}
+		else {
+			SEISCOMP_ERROR("Invalid sync value: %s", value.c_str());
 			return false;
 		}
 	}
@@ -188,7 +201,36 @@ bool SQLiteDatabase::open() {
 #endif
 	}
 
+	if ( _sync != 1 ) {
+		switch ( _sync ) {
+			case 0:
+				SEISCOMP_DEBUG("Disable disc synchronization");
+				execute("PRAGMA synchronous = OFF");
+				break;
+			case 2:
+				SEISCOMP_DEBUG("Set disc synchronization to 'full'");
+				execute("PRAGMA synchronous = FULL");
+				break;
+			case 3:
+				SEISCOMP_DEBUG("Set disc synchronization to 'extra'");
+				execute("PRAGMA synchronous = EXTRA");
+				break;
+			default:
+				SEISCOMP_WARNING("Unknown sync mode: %d", _sync);
+				break;
+		}
+	}
+
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SQLiteDatabase::Backend SQLiteDatabase::backend() const {
+	return SQLite3;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -199,6 +241,7 @@ bool SQLiteDatabase::open() {
 bool SQLiteDatabase::connect(const char *con) {
 	_host = con;
 	_columnPrefix = "";
+	_sync = 1;
 
 	string params;
 	size_t pos = _host.find('?');
@@ -286,6 +329,10 @@ bool SQLiteDatabase::execute(const char* command) {
 		sqlite3_free(errmsg);
 	}
 
+	if ( _debugUMask ) {
+		SEISCOMP_DEBUG("%s", command);
+	}
+
 	return result == SQLITE_OK;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -308,6 +355,10 @@ bool SQLiteDatabase::beginQuery(const char* query) {
 	int res = sqlite3_prepare(_handle, query, -1, &_stmt, &tail);
 	if ( res != SQLITE_OK || !_stmt ) {
 		return false;
+	}
+
+	if ( _debugUMask ) {
+		SEISCOMP_DEBUG("%s", query);
 	}
 
 	_columnCount = sqlite3_column_count(_stmt);
@@ -450,5 +501,12 @@ bool SQLiteDatabase::escape(string &out, const string &in) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns anonymous
+
+
+REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
+ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
+
+
 }
 }

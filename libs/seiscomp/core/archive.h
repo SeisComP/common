@@ -61,7 +61,7 @@ namespace Generic {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 /** \brief A template archive interface
 
-    An archive offers an interface to read from and write to datasources. 
+    An archive offers an interface to read from and write to datasources.
  */
 template <typename ROOT_TYPE>
 class Archive {
@@ -130,7 +130,7 @@ class Archive {
 
 		//! Creates a new archive
 		virtual bool create(const char* dataSource);
-		
+
 		virtual void close() = 0;
 
 		/**
@@ -279,7 +279,7 @@ class Archive {
 		void read(::boost::intrusive_ptr<T> &object);
 
 		template <typename T>
-		void read(::boost::optional<T> &object);
+		void read(Optional<T> &object);
 
 
 	// ------------------------------------------------------------------
@@ -347,7 +347,7 @@ class Archive {
 		void write(::boost::intrusive_ptr<T>&);
 
 		template <typename T>
-		void write(::boost::optional<T>&);
+		void write(Optional<T>&);
 
 
 	// ------------------------------------------------------------------
@@ -361,7 +361,7 @@ class Archive {
 		//! Writes a smartpointer into the archive
 		template <typename T>
 		Archive& operator<<(::boost::intrusive_ptr<T>&);
-		
+
 		//! Writes a named object into the archive
 		template <typename T>
 		Archive& operator<<(const ObjectNamer<T>&);
@@ -416,12 +416,12 @@ class Archive {
 		//! Reads a list from the archive
 		template <typename T>
 		Archive& operator>>(const ObjectNamer<std::list<T> >&);
-		
+
 		//! Stream operator that decides by means of the _isReading flag
 		//! whether a the object has to be written or to be read.
 		template <typename T>
 		Archive& operator&(ObjectNamer<T>);
-		
+
 
 
 	// ------------------------------------------------------------------
@@ -436,15 +436,15 @@ class Archive {
 		template <typename T>
 		struct TypedSerializeDispatcher : SerializeDispatcher {
 			TypedSerializeDispatcher(T* t = nullptr) : target(t) {}
-			
+
 			TypedSerializeDispatcher& operator=(T* t) {
 				target = t;
 				return *this;
 			}
 
 			TypedSerializeDispatcher* operator->() { return this; }
-		
-			virtual void operator()(Archive<ROOT_TYPE>& ar) {
+
+			virtual void operator()(Archive<ROOT_TYPE>& ar) override {
 				target->serialize(ar);
 			}
 
@@ -454,7 +454,7 @@ class Archive {
 		};
 
 		bool findObject(const char *name, const char *targetClass, bool nullable);
-	
+
 		//! Locates an object inside the archive. A derived class
 		//! must provide its specific location code.
 		virtual bool locateObjectByName(const char *name, const char *targetClass, bool nullable) = 0;
@@ -510,7 +510,7 @@ class Archive {
 
 		template <typename T>
 		void readPtr(void*, T *&object);
-		
+
 		//! Helper function to distinguish between pointer and non pointer
 		//! types to avoid nullptr pointer serialization.
 		template <typename T>
@@ -523,8 +523,8 @@ class Archive {
 		void read(const char *name, ::boost::intrusive_ptr<T> &object, const char *targetClass);
 
 		template <typename T>
-		void read(const char *name, ::boost::optional<T> &object, const char *targetClass);
-		
+		void read(const char *name, Optional<T> &object, const char *targetClass);
+
 		template <typename T>
 		void write(const char *name, T &object, const char *targetClass);
 
@@ -538,7 +538,7 @@ class Archive {
 
 		//! Helper function to distinguish between C pointer and Optionals
 		template <typename T>
-		void write(const char *name, ::boost::optional<T> &object, const char *targetClass);
+		void write(const char *name, Optional<T> &object, const char *targetClass);
 
 		int setChildHint(int h);
 

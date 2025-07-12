@@ -136,6 +136,24 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		bool setTriggerMode(TriggerMode);
 		TriggerMode triggerMode() const;
 
+		/**
+		 * @brief Sets the number of bytes a session can read in one
+		 *        turn without passing operation to other sessions.
+		 * The default value of 4096 limit has been chosen to not let clients
+		 * starve when many connections are active.
+		 * @param limit The number of limit allowed. Default is 4096.
+		 */
+		void setReadQuota(size_t limit);
+
+		/**
+		 * @brief Sets the number of bytes a session can write in one
+		 *        turn without passing operation to other sessions.
+		 * The default value of 4096 limit has been chosen to not let clients
+		 * starve when many connections are active.
+		 * @param limit The number of limit allowed. Default is 4096.
+		 */
+		void setWriteQuota(size_t limit);
+
 		const SessionList &sessions() const;
 
 		const DeviceGroup *devices() const;
@@ -144,9 +162,9 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		 * @brief getBuffer returns a temporary buffer that sessions can use
 		 *        to read from device.
 		 * @param buf Address that is populated with the buffer address
-		 * @param len Length will hold the length of the buffer
+		 * @return The buffer size
 		 */
-		void getBuffer(char *&buf, size_t &len);
+		size_t getBuffer(char *&buf);
 
 
 	// ----------------------------------------------------------------------
@@ -167,6 +185,9 @@ class SC_SYSTEM_CORE_API Reactor : public Seiscomp::Core::BaseObject {
 		std::vector<char>  _buffer;
 		bool               _shouldRun;
 		bool               _isRunning;
+		size_t             _sessionBytesAllocated;
+		size_t             _readQuota{4096};
+		size_t             _writeQuota{4096};
 		SessionList        _sessions;
 		SessionList        _deferredSession;
 		DeviceGroup        _devices;

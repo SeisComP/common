@@ -23,6 +23,7 @@
 
 
 #include <seiscomp/datamodel/eventdescription.h>
+#include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/dataused.h>
 #include <seiscomp/datamodel/compositetime.h>
 #include <seiscomp/datamodel/pickreference.h>
@@ -41,6 +42,7 @@
 #include <seiscomp/datamodel/originreference.h>
 #include <seiscomp/datamodel/focalmechanismreference.h>
 #include <seiscomp/datamodel/event.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/arrival.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/eventparameters.h>

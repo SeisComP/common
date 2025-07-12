@@ -19,7 +19,7 @@
 
 
 template <typename T>
-T value(const boost::optional<T>& v) {
+T value(const Optional<T>& v) {
 	if ( v )
 		return *v;
 

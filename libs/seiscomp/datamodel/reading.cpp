@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Reading, PublicObject, "Reading");
 
 
-Reading::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Reading::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayClassProperty<PickReference>("pickReference", "PickReference", &Reading::pickReferenceCount, &Reading::pickReference, static_cast<bool (Reading::*)(PickReference*)>(&Reading::add), &Reading::removePickReference, static_cast<bool (Reading::*)(PickReference*)>(&Reading::remove)));
 	addProperty(arrayClassProperty<AmplitudeReference>("amplitudeReference", "AmplitudeReference", &Reading::amplitudeReferenceCount, &Reading::amplitudeReference, static_cast<bool (Reading::*)(AmplitudeReference*)>(&Reading::add), &Reading::removeAmplitudeReference, static_cast<bool (Reading::*)(AmplitudeReference*)>(&Reading::remove)));
 }
@@ -51,7 +51,7 @@ Reading::Reading() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading::Reading(const Reading& other)
+Reading::Reading(const Reading &other)
 : PublicObject() {
 	*this = other;
 }
@@ -84,8 +84,8 @@ Reading::~Reading() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* Reading::Create() {
-	Reading* object = new Reading();
+Reading *Reading::Create() {
+	Reading *object = new Reading();
 	return static_cast<Reading*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -94,7 +94,7 @@ Reading* Reading::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* Reading::Create(const std::string& publicID) {
+Reading *Reading::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -111,7 +111,7 @@ Reading* Reading::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading* Reading::Find(const std::string& publicID) {
+Reading *Reading::Find(const std::string& publicID) {
 	return Reading::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -120,7 +120,7 @@ Reading* Reading::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::operator==(const Reading& rhs) const {
+bool Reading::operator==(const Reading &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -129,7 +129,7 @@ bool Reading::operator==(const Reading& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::operator!=(const Reading& rhs) const {
+bool Reading::operator!=(const Reading &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -138,7 +138,7 @@ bool Reading::operator!=(const Reading& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::equal(const Reading& other) const {
+bool Reading::equal(const Reading &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -147,7 +147,7 @@ bool Reading::equal(const Reading& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EventParameters* Reading::eventParameters() const {
+EventParameters *Reading::eventParameters() const {
 	return static_cast<EventParameters*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -156,7 +156,7 @@ EventParameters* Reading::eventParameters() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Reading& Reading::operator=(const Reading& other) {
+Reading &Reading::operator=(const Reading &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -166,10 +166,11 @@ Reading& Reading::operator=(const Reading& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::assign(Object* other) {
-	Reading* otherReading = Reading::Cast(other);
-	if ( other == nullptr )
+bool Reading::assign(Object *other) {
+	Reading *otherReading = Reading::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherReading;
 
@@ -181,11 +182,13 @@ bool Reading::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Reading::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(parent);
+	EventParameters *eventParameters = EventParameters::Cast(parent);
 	if ( eventParameters != nullptr )
 		return eventParameters->add(this);
 
@@ -198,11 +201,13 @@ bool Reading::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Reading::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	EventParameters* eventParameters = EventParameters::Cast(object);
+	EventParameters *eventParameters = EventParameters::Cast(object);
 	if ( eventParameters != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -210,7 +215,7 @@ bool Reading::detachFrom(PublicObject* object) {
 			return eventParameters->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Reading* child = eventParameters->findReading(publicID());
+			Reading *child = eventParameters->findReading(publicID());
 			if ( child != nullptr )
 				return eventParameters->remove(child);
 			else {
@@ -230,8 +235,9 @@ bool Reading::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Reading::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -241,8 +247,8 @@ bool Reading::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Reading::clone() const {
-	Reading* clonee = new Reading();
+Object *Reading::clone() const {
+	Reading *clonee = new Reading();
 	*clonee = *this;
 	return clonee;
 }
@@ -252,10 +258,10 @@ Object* Reading::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::updateChild(Object* child) {
-	PickReference* pickReferenceChild = PickReference::Cast(child);
+bool Reading::updateChild(Object *child) {
+	PickReference *pickReferenceChild = PickReference::Cast(child);
 	if ( pickReferenceChild != nullptr ) {
-		PickReference* pickReferenceElement = pickReference(pickReferenceChild->index());
+		PickReference *pickReferenceElement = pickReference(pickReferenceChild->index());
 		if ( pickReferenceElement != nullptr ) {
 			*pickReferenceElement = *pickReferenceChild;
 			pickReferenceElement->update();
@@ -264,9 +270,9 @@ bool Reading::updateChild(Object* child) {
 		return false;
 	}
 
-	AmplitudeReference* amplitudeReferenceChild = AmplitudeReference::Cast(child);
+	AmplitudeReference *amplitudeReferenceChild = AmplitudeReference::Cast(child);
 	if ( amplitudeReferenceChild != nullptr ) {
-		AmplitudeReference* amplitudeReferenceElement = amplitudeReference(amplitudeReferenceChild->index());
+		AmplitudeReference *amplitudeReferenceElement = amplitudeReference(amplitudeReferenceChild->index());
 		if ( amplitudeReferenceElement != nullptr ) {
 			*amplitudeReferenceElement = *amplitudeReferenceChild;
 			amplitudeReferenceElement->update();
@@ -283,7 +289,7 @@ bool Reading::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reading::accept(Visitor* visitor) {
+void Reading::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -313,7 +319,7 @@ size_t Reading::pickReferenceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickReference* Reading::pickReference(size_t i) const {
+PickReference *Reading::pickReference(size_t i) const {
 	return _pickReferences[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,10 +328,12 @@ PickReference* Reading::pickReference(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PickReference* Reading::pickReference(const PickReferenceIndex& i) const {
-	for ( std::vector<PickReferencePtr>::const_iterator it = _pickReferences.begin(); it != _pickReferences.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+PickReference *Reading::pickReference(const PickReferenceIndex &i) const {
+	for ( const auto &elem : _pickReferences ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -335,9 +343,10 @@ PickReference* Reading::pickReference(const PickReferenceIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::add(PickReference* pickReference) {
-	if ( pickReference == nullptr )
+bool Reading::add(PickReference *pickReference) {
+	if ( !pickReference ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( pickReference->parent() != nullptr ) {
@@ -374,9 +383,10 @@ bool Reading::add(PickReference* pickReference) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::remove(PickReference* pickReference) {
-	if ( pickReference == nullptr )
+bool Reading::remove(PickReference *pickReference) {
+	if ( !pickReference ) {
 		return false;
+	}
 
 	if ( pickReference->parent() != this ) {
 		SEISCOMP_ERROR("Reading::remove(PickReference*) -> element has another parent");
@@ -392,8 +402,7 @@ bool Reading::remove(PickReference* pickReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -416,8 +425,7 @@ bool Reading::removePickReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_pickReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _pickReferences[i].get());
 	}
 
 	_pickReferences[i]->setParent(nullptr);
@@ -433,9 +441,12 @@ bool Reading::removePickReference(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::removePickReference(const PickReferenceIndex& i) {
-	PickReference* object = pickReference(i);
-	if ( object == nullptr ) return false;
+bool Reading::removePickReference(const PickReferenceIndex &i) {
+	PickReference *object = pickReference(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -453,7 +464,7 @@ size_t Reading::amplitudeReferenceCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeReference* Reading::amplitudeReference(size_t i) const {
+AmplitudeReference *Reading::amplitudeReference(size_t i) const {
 	return _amplitudeReferences[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -462,10 +473,12 @@ AmplitudeReference* Reading::amplitudeReference(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeReference* Reading::amplitudeReference(const AmplitudeReferenceIndex& i) const {
-	for ( std::vector<AmplitudeReferencePtr>::const_iterator it = _amplitudeReferences.begin(); it != _amplitudeReferences.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+AmplitudeReference *Reading::amplitudeReference(const AmplitudeReferenceIndex &i) const {
+	for ( const auto &elem : _amplitudeReferences ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -475,9 +488,10 @@ AmplitudeReference* Reading::amplitudeReference(const AmplitudeReferenceIndex& i
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::add(AmplitudeReference* amplitudeReference) {
-	if ( amplitudeReference == nullptr )
+bool Reading::add(AmplitudeReference *amplitudeReference) {
+	if ( !amplitudeReference ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( amplitudeReference->parent() != nullptr ) {
@@ -514,9 +528,10 @@ bool Reading::add(AmplitudeReference* amplitudeReference) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::remove(AmplitudeReference* amplitudeReference) {
-	if ( amplitudeReference == nullptr )
+bool Reading::remove(AmplitudeReference *amplitudeReference) {
+	if ( !amplitudeReference ) {
 		return false;
+	}
 
 	if ( amplitudeReference->parent() != this ) {
 		SEISCOMP_ERROR("Reading::remove(AmplitudeReference*) -> element has another parent");
@@ -532,8 +547,7 @@ bool Reading::remove(AmplitudeReference* amplitudeReference) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -556,8 +570,7 @@ bool Reading::removeAmplitudeReference(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_amplitudeReferences[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _amplitudeReferences[i].get());
 	}
 
 	_amplitudeReferences[i]->setParent(nullptr);
@@ -573,9 +586,12 @@ bool Reading::removeAmplitudeReference(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex& i) {
-	AmplitudeReference* object = amplitudeReference(i);
-	if ( object == nullptr ) return false;
+bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex &i) {
+	AmplitudeReference *object = amplitudeReference(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -584,7 +600,7 @@ bool Reading::removeAmplitudeReference(const AmplitudeReferenceIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Reading::serialize(Archive& ar) {
+void Reading::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

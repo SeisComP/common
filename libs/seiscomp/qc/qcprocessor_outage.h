@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorOutage : public QcProcessor {
 	public:
 		QcProcessorOutage();
 		void setThreshold(int threshold);
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 		double getOutage();
 
 	private:

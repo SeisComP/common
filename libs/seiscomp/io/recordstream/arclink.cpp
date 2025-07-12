@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT ArclinkConnection
 
+
 #include <string>
 #include <set>
 #include <utility>
@@ -48,32 +49,69 @@ typedef int ssize_t;
 #define posix_read read
 #endif
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace RecordStream {
 namespace Arclink {
-namespace _private {
+
 
 using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 
+
 const string DefaultHost = "localhost";
 const string DefaultPort = "18001";
 
+
+namespace {
+
+
+class SC_SYSTEM_CORE_API ArclinkException: public Seiscomp::IO::RecordStreamException {
+	public:
+		ArclinkException(): RecordStreamException("ArcLink exception") {}
+		ArclinkException(const std::string& what): RecordStreamException(what) {}
+};
+
+class SC_SYSTEM_CORE_API ArclinkCommandException: public ArclinkException {
+	public:
+		ArclinkCommandException(): ArclinkException("command not accepted") {}
+		ArclinkCommandException(const std::string& what): ArclinkException(what) {}
+};
+
+
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IMPLEMENT_SC_CLASS_DERIVED(ArclinkConnection,
 			   Seiscomp::IO::RecordStream,
 			   "ArclinkConnection");
 
 REGISTER_RECORDSTREAM(ArclinkConnection, "arclink");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ArclinkConnection::ArclinkConnection()
 : RecordStream()
 , _user("guest@anywhere")
 , _readingData(false)
 , _chunkMode(false)
 , _remainingBytes(0) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ArclinkConnection::ArclinkConnection(std::string source)
 : RecordStream()
 , _user("guest@anywhere")
@@ -82,10 +120,19 @@ ArclinkConnection::ArclinkConnection(std::string source)
 , _remainingBytes(0) {
 	setSource(source);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-ArclinkConnection::~ArclinkConnection() {
-}
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ArclinkConnection::~ArclinkConnection() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::setSource(const string &serverloc) {
 	size_t pos = serverloc.find('?');
 	if ( pos != std::string::npos ) {
@@ -136,17 +183,32 @@ bool ArclinkConnection::setSource(const string &serverloc) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::setRecordType(const char* type) {
 	return !strcmp(type, "mseed");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::setUser(std::string name, std::string password) {
 	_user = name;
 	_passwd = password;
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::addStream(const std::string &net, const std::string &sta,
                                   const std::string &loc, const std::string &cha) {
 	pair<set<StreamIdx>::iterator, bool> result;
@@ -154,44 +216,80 @@ bool ArclinkConnection::addStream(const std::string &net, const std::string &sta
 	if ( result.second ) _ordered.push_back(*result.first);
 	return result.second;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::addStream(const std::string &net, const std::string &sta,
                                   const std::string &loc, const std::string &cha,
-	const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime) {
+                                  const OPT(Seiscomp::Core::Time) &stime,
+                                  const OPT(Seiscomp::Core::Time) &etime) {
 	pair<set<StreamIdx>::iterator, bool> result;
 	result = _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime));
 	if ( result.second ) _ordered.push_back(*result.first);
 	return result.second;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-bool ArclinkConnection::setStartTime(const Seiscomp::Core::Time &stime) {
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ArclinkConnection::setStartTime(const OPT(Seiscomp::Core::Time) &stime) {
 	_stime = stime;
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-bool ArclinkConnection::setEndTime(const Seiscomp::Core::Time &etime) {
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ArclinkConnection::setEndTime(const OPT(Seiscomp::Core::Time) &etime) {
 	_etime = etime;
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::setTimeout(int seconds) {
 	_sock.setTimeout(seconds);
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::clear() {
 	this->~ArclinkConnection();
 	new(this) ArclinkConnection(_serverloc);
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Hopefully safe to be called from another thread
 void ArclinkConnection::close() {
 	_sock.interrupt();
 
 	_dump.close();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkConnection::reconnect() {
 	if ( _sock.isOpen() )
 		_sock.close();
@@ -199,7 +297,12 @@ bool ArclinkConnection::reconnect() {
 	_readingData = false;
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ArclinkConnection::handshake() {
 	_sock.sendRequest("HELLO", false);
 	string r = _sock.readline();
@@ -214,20 +317,21 @@ void ArclinkConnection::handshake() {
 	SEISCOMP_DEBUG("%s running at %s", _software.c_str(),
 	               _organization.c_str());
 
-	if ( _passwd.length() )
+	if ( _passwd.length() ) {
 		_sock.sendRequest("USER " + _user + " " + _passwd, true);
-	else
+	}
+	else {
 		_sock.sendRequest("USER " + _user, true);
+	}
 
 	_sock.sendRequest("REQUEST WAVEFORM format=MSEED", true);
 
-	Core::Time endTime = _etime;
-	if ( !endTime.valid() ) endTime = Core::Time::GMT();
+	Core::Time endTime = _etime ? *_etime : Core::Time::UTC();
 
 	for ( list<StreamIdx>::iterator it = _ordered.begin(); it != _ordered.end(); ++it ) {
 		SEISCOMP_DEBUG("Arclink request: %s", it->str(_stime, endTime).c_str());
-		if ((it->startTime() == Time() && _stime == Time()) ||
-			(it->endTime() == Time() && endTime == Time())) {
+		if ((!it->startTime() && !_stime) ||
+			(!it->endTime() && !endTime)) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 		}
@@ -267,11 +371,21 @@ void ArclinkConnection::handshake() {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ArclinkConnection::cleanup() {
 	_sock.sendRequest("PURGE " + _reqID, true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *ArclinkConnection::next() {
 	if ( _readingData && !_sock.isOpen() ) {
 		return nullptr;
@@ -356,9 +470,13 @@ Record *ArclinkConnection::next() {
 
 	return nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-} // namespace _private
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace Arclink
 } // namespace RecordStream
 } // namespace Seiscomp
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT DataModel
 #include <seiscomp/datamodel/qualitycontrol.h>
+#include <seiscomp/datamodel/qclog.h>
 #include <algorithm>
 #include <seiscomp/datamodel/version.h>
 #include <seiscomp/datamodel/metadata.h>
@@ -33,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(QualityControl, PublicObject, "QualityControl");
 
 
-QualityControl::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+QualityControl::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(arrayObjectProperty("log", "QCLog", &QualityControl::qCLogCount, &QualityControl::qCLog, static_cast<bool (QualityControl::*)(QCLog*)>(&QualityControl::add), &QualityControl::removeQCLog, static_cast<bool (QualityControl::*)(QCLog*)>(&QualityControl::remove)));
 	addProperty(arrayClassProperty<WaveformQuality>("waveformQuality", "WaveformQuality", &QualityControl::waveformQualityCount, &QualityControl::waveformQuality, static_cast<bool (QualityControl::*)(WaveformQuality*)>(&QualityControl::add), &QualityControl::removeWaveformQuality, static_cast<bool (QualityControl::*)(WaveformQuality*)>(&QualityControl::remove)));
 	addProperty(arrayClassProperty<Outage>("outage", "Outage", &QualityControl::outageCount, &QualityControl::outage, static_cast<bool (QualityControl::*)(Outage*)>(&QualityControl::add), &QualityControl::removeOutage, static_cast<bool (QualityControl::*)(Outage*)>(&QualityControl::remove)));
@@ -51,7 +52,7 @@ QualityControl::QualityControl(): PublicObject("QualityControl") {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QualityControl::QualityControl(const QualityControl& other)
+QualityControl::QualityControl(const QualityControl &other)
 : PublicObject() {
 	*this = other;
 }
@@ -78,7 +79,7 @@ QualityControl::~QualityControl() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::operator==(const QualityControl& rhs) const {
+bool QualityControl::operator==(const QualityControl &rhs) const {
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -87,7 +88,7 @@ bool QualityControl::operator==(const QualityControl& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::operator!=(const QualityControl& rhs) const {
+bool QualityControl::operator!=(const QualityControl &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,7 +97,7 @@ bool QualityControl::operator!=(const QualityControl& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::equal(const QualityControl& other) const {
+bool QualityControl::equal(const QualityControl &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -105,7 +106,7 @@ bool QualityControl::equal(const QualityControl& other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QualityControl& QualityControl::operator=(const QualityControl& other) {
+QualityControl &QualityControl::operator=(const QualityControl &other) {
 	PublicObject::operator=(other);
 	return *this;
 }
@@ -115,10 +116,11 @@ QualityControl& QualityControl::operator=(const QualityControl& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::assign(Object* other) {
-	QualityControl* otherQualityControl = QualityControl::Cast(other);
-	if ( other == nullptr )
+bool QualityControl::assign(Object *other) {
+	QualityControl *otherQualityControl = QualityControl::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherQualityControl;
 
@@ -130,7 +132,7 @@ bool QualityControl::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::attachTo(PublicObject* parent) {
+bool QualityControl::attachTo(PublicObject *parent) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -139,7 +141,7 @@ bool QualityControl::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::detachFrom(PublicObject* object) {
+bool QualityControl::detachFrom(PublicObject *object) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -157,8 +159,8 @@ bool QualityControl::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* QualityControl::clone() const {
-	QualityControl* clonee = new QualityControl();
+Object *QualityControl::clone() const {
+	QualityControl *clonee = new QualityControl();
 	*clonee = *this;
 	return clonee;
 }
@@ -168,10 +170,10 @@ Object* QualityControl::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::updateChild(Object* child) {
-	QCLog* qCLogChild = QCLog::Cast(child);
+bool QualityControl::updateChild(Object *child) {
+	QCLog *qCLogChild = QCLog::Cast(child);
 	if ( qCLogChild != nullptr ) {
-		QCLog* qCLogElement
+		QCLog *qCLogElement
 			= QCLog::Cast(PublicObject::Find(qCLogChild->publicID()));
 		if ( qCLogElement && qCLogElement->parent() == this ) {
 			*qCLogElement = *qCLogChild;
@@ -181,9 +183,9 @@ bool QualityControl::updateChild(Object* child) {
 		return false;
 	}
 
-	WaveformQuality* waveformQualityChild = WaveformQuality::Cast(child);
+	WaveformQuality *waveformQualityChild = WaveformQuality::Cast(child);
 	if ( waveformQualityChild != nullptr ) {
-		WaveformQuality* waveformQualityElement = waveformQuality(waveformQualityChild->index());
+		WaveformQuality *waveformQualityElement = waveformQuality(waveformQualityChild->index());
 		if ( waveformQualityElement != nullptr ) {
 			*waveformQualityElement = *waveformQualityChild;
 			waveformQualityElement->update();
@@ -192,9 +194,9 @@ bool QualityControl::updateChild(Object* child) {
 		return false;
 	}
 
-	Outage* outageChild = Outage::Cast(child);
+	Outage *outageChild = Outage::Cast(child);
 	if ( outageChild != nullptr ) {
-		Outage* outageElement = outage(outageChild->index());
+		Outage *outageElement = outage(outageChild->index());
 		if ( outageElement != nullptr ) {
 			*outageElement = *outageChild;
 			outageElement->update();
@@ -211,7 +213,7 @@ bool QualityControl::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void QualityControl::accept(Visitor* visitor) {
+void QualityControl::accept(Visitor *visitor) {
 	for ( auto &&elem : _qCLogs )
 		elem->accept(visitor);
 	for ( auto &&elem : _waveformQualitys )
@@ -234,7 +236,7 @@ size_t QualityControl::qCLogCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QualityControl::qCLog(size_t i) const {
+QCLog *QualityControl::qCLog(size_t i) const {
 	return _qCLogs[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -243,10 +245,12 @@ QCLog* QualityControl::qCLog(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QualityControl::qCLog(const QCLogIndex& i) const {
-	for ( std::vector<QCLogPtr>::const_iterator it = _qCLogs.begin(); it != _qCLogs.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+QCLog *QualityControl::findQCLog(const std::string& publicID) const {
+	for ( const auto &elem : _qCLogs ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -256,22 +260,10 @@ QCLog* QualityControl::qCLog(const QCLogIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QCLog* QualityControl::findQCLog(const std::string& publicID) const {
-	for ( std::vector<QCLogPtr>::const_iterator it = _qCLogs.begin(); it != _qCLogs.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
-
-	return nullptr;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::add(QCLog* qCLog) {
-	if ( qCLog == nullptr )
+bool QualityControl::add(QCLog *qCLog) {
+	if ( !qCLog ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( qCLog->parent() != nullptr ) {
@@ -280,17 +272,20 @@ bool QualityControl::add(QCLog* qCLog) {
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		QCLog* qCLogCached = QCLog::Find(qCLog->publicID());
+		QCLog *qCLogCached = QCLog::Find(qCLog->publicID());
 		if ( qCLogCached ) {
 			if ( qCLogCached->parent() ) {
-				if ( qCLogCached->parent() == this )
+				if ( qCLogCached->parent() == this ) {
 					SEISCOMP_ERROR("QualityControl::add(QCLog*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("QualityControl::add(QCLog*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				qCLog = qCLogCached;
+			}
 		}
 	}
 
@@ -315,9 +310,10 @@ bool QualityControl::add(QCLog* qCLog) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::remove(QCLog* qCLog) {
-	if ( qCLog == nullptr )
+bool QualityControl::remove(QCLog *qCLog) {
+	if ( !qCLog ) {
 		return false;
+	}
 
 	if ( qCLog->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(QCLog*) -> element has another parent");
@@ -333,8 +329,7 @@ bool QualityControl::remove(QCLog* qCLog) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -357,8 +352,7 @@ bool QualityControl::removeQCLog(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_qCLogs[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _qCLogs[i].get());
 	}
 
 	_qCLogs[i]->setParent(nullptr);
@@ -367,17 +361,6 @@ bool QualityControl::removeQCLog(size_t i) {
 	_qCLogs.erase(_qCLogs.begin() + i);
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::removeQCLog(const QCLogIndex& i) {
-	QCLog* object = qCLog(i);
-	if ( object == nullptr ) return false;
-	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -394,7 +377,7 @@ size_t QualityControl::waveformQualityCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformQuality* QualityControl::waveformQuality(size_t i) const {
+WaveformQuality *QualityControl::waveformQuality(size_t i) const {
 	return _waveformQualitys[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -403,10 +386,12 @@ WaveformQuality* QualityControl::waveformQuality(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformQuality* QualityControl::waveformQuality(const WaveformQualityIndex& i) const {
-	for ( std::vector<WaveformQualityPtr>::const_iterator it = _waveformQualitys.begin(); it != _waveformQualitys.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+WaveformQuality *QualityControl::waveformQuality(const WaveformQualityIndex &i) const {
+	for ( const auto &elem : _waveformQualitys ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -416,9 +401,10 @@ WaveformQuality* QualityControl::waveformQuality(const WaveformQualityIndex& i) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::add(WaveformQuality* waveformQuality) {
-	if ( waveformQuality == nullptr )
+bool QualityControl::add(WaveformQuality *waveformQuality) {
+	if ( !waveformQuality ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( waveformQuality->parent() != nullptr ) {
@@ -455,9 +441,10 @@ bool QualityControl::add(WaveformQuality* waveformQuality) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::remove(WaveformQuality* waveformQuality) {
-	if ( waveformQuality == nullptr )
+bool QualityControl::remove(WaveformQuality *waveformQuality) {
+	if ( !waveformQuality ) {
 		return false;
+	}
 
 	if ( waveformQuality->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(WaveformQuality*) -> element has another parent");
@@ -473,8 +460,7 @@ bool QualityControl::remove(WaveformQuality* waveformQuality) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -497,8 +483,7 @@ bool QualityControl::removeWaveformQuality(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_waveformQualitys[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _waveformQualitys[i].get());
 	}
 
 	_waveformQualitys[i]->setParent(nullptr);
@@ -514,9 +499,12 @@ bool QualityControl::removeWaveformQuality(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::removeWaveformQuality(const WaveformQualityIndex& i) {
-	WaveformQuality* object = waveformQuality(i);
-	if ( object == nullptr ) return false;
+bool QualityControl::removeWaveformQuality(const WaveformQualityIndex &i) {
+	WaveformQuality *object = waveformQuality(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -534,7 +522,7 @@ size_t QualityControl::outageCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Outage* QualityControl::outage(size_t i) const {
+Outage *QualityControl::outage(size_t i) const {
 	return _outages[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -543,10 +531,12 @@ Outage* QualityControl::outage(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Outage* QualityControl::outage(const OutageIndex& i) const {
-	for ( std::vector<OutagePtr>::const_iterator it = _outages.begin(); it != _outages.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Outage *QualityControl::outage(const OutageIndex &i) const {
+	for ( const auto &elem : _outages ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -556,9 +546,10 @@ Outage* QualityControl::outage(const OutageIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::add(Outage* outage) {
-	if ( outage == nullptr )
+bool QualityControl::add(Outage *outage) {
+	if ( !outage ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( outage->parent() != nullptr ) {
@@ -595,9 +586,10 @@ bool QualityControl::add(Outage* outage) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::remove(Outage* outage) {
-	if ( outage == nullptr )
+bool QualityControl::remove(Outage *outage) {
+	if ( !outage ) {
 		return false;
+	}
 
 	if ( outage->parent() != this ) {
 		SEISCOMP_ERROR("QualityControl::remove(Outage*) -> element has another parent");
@@ -613,8 +605,7 @@ bool QualityControl::remove(Outage* outage) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -637,8 +628,7 @@ bool QualityControl::removeOutage(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_outages[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _outages[i].get());
 	}
 
 	_outages[i]->setParent(nullptr);
@@ -654,9 +644,12 @@ bool QualityControl::removeOutage(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool QualityControl::removeOutage(const OutageIndex& i) {
-	Outage* object = outage(i);
-	if ( object == nullptr ) return false;
+bool QualityControl::removeOutage(const OutageIndex &i) {
+	Outage *object = outage(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -665,7 +658,7 @@ bool QualityControl::removeOutage(const OutageIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void QualityControl::serialize(Archive& ar) {
+void QualityControl::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

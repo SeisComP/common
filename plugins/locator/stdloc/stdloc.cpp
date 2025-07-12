@@ -33,11 +33,14 @@
 #include <seiscomp/math/mean.h>
 #include <seiscomp/seismology/locatorinterface.h>
 #include <seiscomp/seismology/ttt.h>
+#include <seiscomp/utils/misc.h>
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <array>
+#include <tuple>
+#include <set>
 
 #include "solver.h"
 #include "stdloc.h"
@@ -56,7 +59,7 @@ using StationNotFoundException = Seiscomp::Seismology::StationNotFoundException;
 using PickNotFoundException = Seiscomp::Seismology::PickNotFoundException;
 
 
-namespace { // Utility functions 
+namespace { // Utility functions
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -176,7 +179,7 @@ double computePickWeight(DataModel::Pick *pick,
 }
 
 
-bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in, 
+bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in,
                      std::array<std::array<double,4>,4> &out) {
 	//
 	// generated using github.com/willnode/N-Matrix-Programmer
@@ -237,7 +240,7 @@ bool invertMatrix4x4(const std::array<std::array<double,4>,4> &in,
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-namespace { // StdLoc implementation 
+namespace { // StdLoc implementation
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -254,7 +257,7 @@ REGISTER_LOCATOR(StdLoc, "StdLoc");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int StdLoc::capabilities() const {
-	return InitialLocation | FixedDepth;
+	return InitialLocation | FixedDepth | IgnoreInitialLocation;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -272,13 +275,13 @@ const IDList StdLoc::_allowedParameters = {
     "enableConfidenceEllipsoid",
     "confLevel",
     "GridSearch.center",
-    "GridSearch.autoLatLon",
     "GridSearch.size",
-    "GridSearch.cellSize",
+    "GridSearch.numPoints",
     "GridSearch.misfitType",
     "GridSearch.travelTimeError",
     "OctTree.maxIterations",
     "OctTree.minCellSize",
+    "LeastSquares.depthInit",
     "LeastSquares.iterations",
     "LeastSquares.dampingFactor",
     "LeastSquares.solverType",
@@ -298,29 +301,32 @@ bool StdLoc::init(const Config::Config &config) {
 
 	Profile defaultProf;
 	defaultProf.name = "";
-	defaultProf.method = Profile::Method::GridAndLsqr;
+	defaultProf.method = Profile::Method::LeastSquares;
 	defaultProf.tttType = "LOCSAT";
 	defaultProf.tttModel = "iasp91";
 	defaultProf.PSTableOnly = true;
 	defaultProf.usePickUncertainties = false;
 	defaultProf.pickUncertaintyClasses = {0.000, 0.025, 0.050,
 	                                      0.100, 0.200, 0.400};
-	defaultProf.enableConfidenceEllipsoid = true;
+	defaultProf.enableConfidenceEllipsoid = false;
 	defaultProf.confLevel = 0.9;
-	defaultProf.gridSearch.autoLatLon = true;
 	defaultProf.gridSearch.originLat = 0.;
 	defaultProf.gridSearch.originLon = 0.;
-	defaultProf.gridSearch.originDepth = 5.;
-	defaultProf.gridSearch.xExtent = 20.;
-	defaultProf.gridSearch.yExtent = 20.;
-	defaultProf.gridSearch.zExtent = 5.;
-	defaultProf.gridSearch.cellXExtent = 2.5;
-	defaultProf.gridSearch.cellYExtent = 2.5;
-	defaultProf.gridSearch.cellZExtent = 5.0;
+	defaultProf.gridSearch.originDepth = 20.;
+	defaultProf.gridSearch.autoOriginLon   = true;
+	defaultProf.gridSearch.autoOriginLat   = true;
+	defaultProf.gridSearch.autoOriginDepth = false;
+	defaultProf.gridSearch.xExtent = 40.;
+	defaultProf.gridSearch.yExtent = 40.;
+	defaultProf.gridSearch.zExtent = 30.;
+	defaultProf.gridSearch.numXPoints = 0;
+	defaultProf.gridSearch.numYPoints = 0;
+	defaultProf.gridSearch.numZPoints = 0;
 	defaultProf.gridSearch.misfitType = "L1";
 	defaultProf.gridSearch.travelTimeError = 0.25;
 	defaultProf.octTree.maxIterations = 50000;
 	defaultProf.octTree.minCellSize = 0.1;
+	defaultProf.leastSquares.depthInit = 20.;
 	defaultProf.leastSquares.iterations = 20;
 	defaultProf.leastSquares.dampingFactor = 0;
 	defaultProf.leastSquares.solverType = "LSMR";
@@ -411,34 +417,53 @@ bool StdLoc::init(const Config::Config &config) {
 		catch ( ... ) {}
 
 		try {
-			prof.gridSearch.autoLatLon =
-			    config.getBool(prefix + "GridSearch.autoLatLon");
-		}
-		catch ( ... ) {}
-
-		try {
 			vector<string> tokens =
 			    config.getStrings(prefix + "GridSearch.center");
-			if ( tokens.size() != 3 ||
-			     !Core::fromString(prof.gridSearch.originDepth,
-			                       tokens.at(2)) ) {
+			if ( tokens.size() != 3 ) {
 				SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
 				               prof.name.c_str());
 				return false;
 			}
 
-			if ( prof.gridSearch.autoLatLon ) {
+			if ( tokens.at(0) == "auto" ) {
 				prof.gridSearch.originLat = 0.0;
-				prof.gridSearch.originLon = 0.0;
+				prof.gridSearch.autoOriginLat = true;
 			}
-			else if ( !Core::fromString(prof.gridSearch.originLat,
-			                            tokens.at(0)) ||
-			          !Core::fromString(prof.gridSearch.originLon,
-			                            tokens.at(1)) ) {
-				SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
+			else if ( Core::fromString(prof.gridSearch.originLat, tokens.at(0)) ) {
+				prof.gridSearch.autoOriginLat = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center lat is invalid",
 				               prof.name.c_str());
 				return false;
 			}
+
+			if ( tokens.at(1) == "auto" ) {
+				prof.gridSearch.originLon = 0.0;
+				prof.gridSearch.autoOriginLon = true;
+			}
+			else if ( Core::fromString(prof.gridSearch.originLon, tokens.at(1)) ) {
+				prof.gridSearch.autoOriginLon = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center lon is invalid",
+				               prof.name.c_str());
+				return false;
+			}
+
+			if ( tokens.at(2) == "auto" ) {
+				prof.gridSearch.originDepth = 0.0;
+				prof.gridSearch.autoOriginDepth = true;
+			}
+			else if ( Core::fromString(prof.gridSearch.originDepth, tokens.at(2)) ) {
+				prof.gridSearch.autoOriginDepth = false;
+			}
+			else {
+				SEISCOMP_ERROR("Profile %s: GridSearch.center depth is invalid",
+				               prof.name.c_str());
+				return false;
+			}
+
 		}
 		catch ( ... ) {}
 
@@ -458,13 +483,13 @@ bool StdLoc::init(const Config::Config &config) {
 
 		try {
 			vector<string> tokens =
-			    config.getStrings(prefix + "GridSearch.cellSize");
+			    config.getStrings(prefix + "GridSearch.numPoints");
 			if ( tokens.size() != 3 ||
-			     !Core::fromString(prof.gridSearch.cellXExtent, tokens.at(0)) ||
-			     !Core::fromString(prof.gridSearch.cellYExtent, tokens.at(1)) ||
-			     !Core::fromString(prof.gridSearch.cellZExtent,
+			     !Core::fromString(prof.gridSearch.numXPoints, tokens.at(0)) ||
+			     !Core::fromString(prof.gridSearch.numYPoints, tokens.at(1)) ||
+			     !Core::fromString(prof.gridSearch.numZPoints,
 			                       tokens.at(2)) ) {
-				SEISCOMP_ERROR("Profile %s: GridSearch.cellSize is invalid",
+				SEISCOMP_ERROR("Profile %s: GridSearch.numPoints is invalid",
 				               prof.name.c_str());
 				return false;
 			}
@@ -498,6 +523,12 @@ bool StdLoc::init(const Config::Config &config) {
 		try {
 			prof.octTree.minCellSize =
 			    config.getDouble(prefix + "OctTree.minCellSize");
+		}
+		catch ( ... ) {}
+
+		try {
+			prof.leastSquares.depthInit =
+			    config.getDouble(prefix + "LeastSquares.depthInit");
 		}
 		catch ( ... ) {}
 
@@ -614,6 +645,9 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "confLevel" ) {
 		return Core::toString(_currentProfile.confLevel);
 	}
+	else if ( name == "LeastSquares.depthInit" ) {
+		return Core::toString(_currentProfile.leastSquares.depthInit);
+	}
 	else if ( name == "LeastSquares.iterations" ) {
 		return Core::toString(_currentProfile.leastSquares.iterations);
 	}
@@ -623,29 +657,24 @@ string StdLoc::parameter(const string &name) const {
 	else if ( name == "LeastSquares.solverType" ) {
 		return _currentProfile.leastSquares.solverType;
 	}
-	else if ( name == "GridSearch.autoLatLon" ) {
-		return _currentProfile.gridSearch.autoLatLon ? "y" : "n";
-	}
 	else if ( name == "GridSearch.center" ) {
-		if ( _currentProfile.gridSearch.autoLatLon ) {
-			return "auto,auto," +
-			       Core::toString(_currentProfile.gridSearch.originDepth);
-		}
-		else {
-			return Core::toString(_currentProfile.gridSearch.originLat) + "," +
-			       Core::toString(_currentProfile.gridSearch.originLon) + "," +
-			       Core::toString(_currentProfile.gridSearch.originDepth);
-		}
+		string lat = _currentProfile.gridSearch.autoOriginLat ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originLat);
+		string lon = _currentProfile.gridSearch.autoOriginLon ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originLon);
+		string dep = _currentProfile.gridSearch.autoOriginDepth ? "auto"
+		           : Core::toString(_currentProfile.gridSearch.originDepth);
+		return lat + "," + lon + "," + dep;
 	}
 	else if ( name == "GridSearch.size" ) {
 		return Core::toString(_currentProfile.gridSearch.xExtent) + "," +
 		       Core::toString(_currentProfile.gridSearch.yExtent) + "," +
 		       Core::toString(_currentProfile.gridSearch.zExtent);
 	}
-	else if ( name == "GridSearch.cellSize" ) {
-		return Core::toString(_currentProfile.gridSearch.cellXExtent) + "," +
-		       Core::toString(_currentProfile.gridSearch.cellYExtent) + "," +
-		       Core::toString(_currentProfile.gridSearch.cellZExtent);
+	else if ( name == "GridSearch.numPoints" ) {
+		return Core::toString(_currentProfile.gridSearch.numXPoints) + "," +
+		       Core::toString(_currentProfile.gridSearch.numYPoints) + "," +
+		       Core::toString(_currentProfile.gridSearch.numZPoints);
 	}
 	else if ( name == "GridSearch.misfitType" ) {
 		return _currentProfile.gridSearch.misfitType;
@@ -745,6 +774,14 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.confLevel = tmp;
 		return true;
 	}
+	else if ( name == "LeastSquares.depthInit" ) {
+		double tmp;
+		if ( !Core::fromString(tmp, value) ) {
+			return false;
+		}
+		_currentProfile.leastSquares.depthInit = tmp;
+		return true;
+	}
 	else if ( name == "LeastSquares.iterations" ) {
 		int tmp;
 		if ( !Core::fromString(tmp, value) ) {
@@ -768,32 +805,45 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		_currentProfile.leastSquares.solverType = value;
 		return true;
 	}
-	else if ( name == "GridSearch.autoLatLon" ) {
-		_currentProfile.gridSearch.autoLatLon = (value == "y");
-		return true;
-	}
 	else if ( name == "GridSearch.center" ) {
 		vector<string> tokens = splitString(value);
-		if ( tokens.size() != 3 ||
-		     !Core::fromString(_currentProfile.gridSearch.originDepth,
-		                       tokens.at(2)) ) {
-			SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
-			               _currentProfile.name.c_str());
+		if ( tokens.size() != 3 ) {
 			return false;
 		}
 
-		if ( _currentProfile.gridSearch.autoLatLon ) {
+		if ( tokens.at(0) == "auto" ) {
 			_currentProfile.gridSearch.originLat = 0.0;
-			_currentProfile.gridSearch.originLon = 0.0;
+			_currentProfile.gridSearch.autoOriginLat = true;
 		}
-		else if ( !Core::fromString(_currentProfile.gridSearch.originLat,
-		                            tokens.at(0)) ||
-		          !Core::fromString(_currentProfile.gridSearch.originLon,
-		                            tokens.at(1)) ) {
-			SEISCOMP_ERROR("Profile %s: GridSearch.center is invalid",
-			               _currentProfile.name.c_str());
+		else if ( Core::fromString(_currentProfile.gridSearch.originLat, tokens.at(0)) ) {
+			_currentProfile.gridSearch.autoOriginLat = false;
+		}
+		else {
 			return false;
 		}
+
+		if ( tokens.at(1) == "auto" ) {
+			_currentProfile.gridSearch.originLon = 0.0;
+			_currentProfile.gridSearch.autoOriginLon = true;
+		}
+		else if ( Core::fromString(_currentProfile.gridSearch.originLon, tokens.at(1)) ) {
+			_currentProfile.gridSearch.autoOriginLon = false;
+		}
+		else {
+			return false;
+		}
+
+		if ( tokens.at(2) == "auto" ) {
+			_currentProfile.gridSearch.originDepth = 0.0;
+			_currentProfile.gridSearch.autoOriginDepth = true;
+		}
+		else if ( Core::fromString(_currentProfile.gridSearch.originDepth, tokens.at(2)) ) {
+			_currentProfile.gridSearch.autoOriginDepth = false;
+		}
+		else {
+			return false;
+		}
+
 		return true;
 	}
 	else if ( name == "GridSearch.size" ) {
@@ -809,14 +859,14 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 		}
 		return true;
 	}
-	else if ( name == "GridSearch.cellSize" ) {
+	else if ( name == "GridSearch.numPoints" ) {
 		vector<string> tokens = splitString(value);
 		if ( tokens.size() != 3 ||
-		     !Core::fromString(_currentProfile.gridSearch.cellXExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numXPoints,
 		                       tokens.at(0)) ||
-		     !Core::fromString(_currentProfile.gridSearch.cellYExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numYPoints,
 		                       tokens.at(1)) ||
-		     !Core::fromString(_currentProfile.gridSearch.cellZExtent,
+		     !Core::fromString(_currentProfile.gridSearch.numZPoints,
 		                       tokens.at(2)) ) {
 			return false;
 		}
@@ -895,14 +945,24 @@ bool StdLoc::loadTTT() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string StdLoc::lastMessage(MessageType type) const {
+	if ( type == Warning )
+		return _rejectionMsg;
+
+	return "";
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *StdLoc::locate(PickList &pickList) {
 	SEISCOMP_DEBUG("Locating Origin using PickList with profile '%s'",
 	               _currentProfile.name.c_str());
 
-	if ( _currentProfile.method == Profile::Method::LeastSquares ) {
-		throw LocatorException(
-		    "LeastSquares method requires an initial location");
-	}
+	_rejectLocation = false;
+	_rejectionMsg = "";
 
 	loadTTT();
 
@@ -935,11 +995,17 @@ Origin *StdLoc::locate(PickList &pickList) {
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
+			_rejectLocation = false; // skip OctTree check of grid boundary
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
 			                   originTime, travelTimes, covm, computeCovMtrx);
 		}
+	}
+	else if ( _currentProfile.method == Profile::Method::LeastSquares ) {
+		locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
+		                   originLat, originLon, originDepth, originTime,
+		                   travelTimes, covm, computeCovMtrx);
 	}
 
 	return createOrigin(pickList, weights, sensorLat, sensorLon, sensorElev,
@@ -954,6 +1020,13 @@ Origin *StdLoc::locate(PickList &pickList) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
                        double initDepth, const Core::Time &initTime) {
+
+	if ( isInitialLocationIgnored() ) {
+		return locate(pickList);
+	}
+
+	_rejectLocation = false;
+	_rejectionMsg = "";
 
 	loadTTT();
 
@@ -991,6 +1064,7 @@ Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
 		              (computeCovMtrx &&
 		               _currentProfile.method == Profile::Method::OctTree));
 		if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
+			_rejectLocation = false; // skip OctTree check of grid boundary
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
@@ -1145,8 +1219,8 @@ void StdLoc::computeAdditionlPickInfo(const PickList &pickList,
 		++activeArrivals;
 	}
 
-	if ( activeArrivals <= 0 ) {
-		throw LocatorException("Empty set of active arrivals");
+	if ( activeArrivals < 4 ) {
+		throw LocatorException("At least 4 arrivals are required");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1159,7 +1233,7 @@ void StdLoc::computeProbDensity(const PickList &pickList,
                                 const vector<double> &weights,
                                 const vector<double> &travelTimes,
                                 const Core::Time &originTime,
-                                double &probDensity, double &rms) const {
+                                double &probDensity) const {
 
 	if ( _currentProfile.gridSearch.misfitType != "L1" &&
 	     _currentProfile.gridSearch.misfitType != "L2" ) {
@@ -1173,17 +1247,17 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		throw LocatorException("Interna logic error");
 	}
 
-	rms = 0.0;
+	double sigma = _currentProfile.gridSearch.travelTimeError;
 
 	double l1SumWeightedResiduals = 0.0;
 	double l2SumWeightedResiduals = 0.0;
-	double sumSquaredWeights = 0.0;
+	double sumWeights = 0.0;
 
 	for ( size_t i = 0; i < pickList.size(); ++i ) {
 		const PickItem &pi = pickList[i];
 		const PickPtr pick = pi.pick;
 
-		if ( weights[i] <= 0 ) {
+		if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 			continue;
 		}
 
@@ -1191,20 +1265,33 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 		double residual =
 		    (pickTime - (originTime + Core::TimeSpan(travelTimes[i]))).length();
 		l1SumWeightedResiduals += abs(residual * weights[i]);
-		l2SumWeightedResiduals +=
-		    (residual * weights[i]) * (residual * weights[i]);
-		sumSquaredWeights += weights[i] * weights[i];
+		l2SumWeightedResiduals += residual * residual * weights[i];
+		sumWeights += weights[i];
 	}
 
-	rms = sqrt(l2SumWeightedResiduals / sumSquaredWeights);
+	if ( sumWeights == 0 ) {
+		throw LocatorException("Cannot compute probability density without "
+		                       "valid picks and/or travel times");
+	}
 
-	double sigma = _currentProfile.gridSearch.travelTimeError;
+	//
+	// Compute the non-normalized probability density (likelihood function)
+	//
 	if ( _currentProfile.gridSearch.misfitType == "L1" ) {
-		probDensity = std::exp(-1.0 * l1SumWeightedResiduals / sigma);
+		probDensity = -1.0 * (l1SumWeightedResiduals / sumWeights)
+		     / sigma;
 	}
 	else if ( _currentProfile.gridSearch.misfitType == "L2" ) {
-		probDensity = std::exp(-0.5 * l2SumWeightedResiduals / (sigma * sigma));
+		probDensity = -0.5 * (l2SumWeightedResiduals / sumWeights)
+		     / (sigma * sigma);
 	}
+	//
+	// Note that we actually return the natural log of the likelihood function
+	// to avoid severe precision loss (that is we do not compute std::exp).
+	// std::exp would returns 0 for the vast majoriy of cells, making the
+	// comparison of the likelihood between cells impossible
+	//
+	// probDensity = std::exp(probDensity);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1236,8 +1323,9 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 		const PickItem &pi = pickList[i];
 		const PickPtr pick = pi.pick;
 
+		travelTimes[i] = -1.0;
+
 		if ( weights[i] <= 0 ) {
-			travelTimes[i] = 0;
 			continue;
 		}
 
@@ -1246,15 +1334,15 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 		try {
 			const char *phaseName = pick->phaseHint().code().c_str();
 			if ( _currentProfile.PSTableOnly ) {
-				if ( *pick->phaseHint().code().begin() == 'P' ) {
+				if ( Util::getShortPhaseName(pick->phaseHint().code()) == 'P' ) {
 					phaseName = "P";
 				}
-				else if ( *pick->phaseHint().code().begin() == 'S' ) {
+				else if ( Util::getShortPhaseName(pick->phaseHint().code()) == 'S' ) {
 					phaseName = "S";
 				}
 			}
 			ttime = _ttt->computeTime(phaseName, lat, lon, depth, sensorLat[i],
-			                                sensorLon[i], sensorElev[i]);
+			                          sensorLon[i], sensorElev[i]);
 		}
 		catch ( exception &e ) {
 			SEISCOMP_WARNING("Travel Time Table error for %s@%s.%s.%s and lat "
@@ -1264,27 +1352,18 @@ bool StdLoc::computeOriginTime(const PickList &pickList,
 			                 pick->waveformID().stationCode().c_str(),
 			                 pick->waveformID().locationCode().c_str(), lat,
 			                 lon, depth, e.what());
-			return false;
-		}
-
-		if ( ttime < 0 ) {
-			SEISCOMP_WARNING("Travel Time Table error: data not returned for "
-			                 "%s@%s.%s.%s and lat %g lon %g depth %g",
-			                 pick->phaseHint().code().c_str(),
-			                 pick->waveformID().networkCode().c_str(),
-			                 pick->waveformID().stationCode().c_str(),
-			                 pick->waveformID().locationCode().c_str(), lat,
-			                 lon, depth);
-			return false;
+			continue;
 		}
 
 		travelTimes[i] = ttime;
-		double pickTime = double(pick->time().value());
+		double pickTime = pick->time().value().epoch();
 		originTimes.push_back(pickTime - travelTimes[i]);
 		timeWeights.push_back(weights[i]);
 	}
 
 	if ( originTimes.size() == 0 ) {
+		SEISCOMP_DEBUG("Unable to compute origin time: no valid picks and/or "
+		               "travel times");
 		return false;
 	}
 
@@ -1308,7 +1387,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
                            const vector<double> &sensorElev,
                            double &newLat,double &newLon, double &newDepth,
                            Core::Time &newTime, vector<double> &travelTimes,
-                           CovMtrx &covm, bool computeCovMtrx) const {
+                           CovMtrx &covm, bool computeCovMtrx) {
 	SEISCOMP_DEBUG("Start OctTree Search: maxIterations %d minCellSize %g [km]",
 	               _currentProfile.octTree.maxIterations,
 	               _currentProfile.octTree.minCellSize);
@@ -1335,32 +1414,52 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		    "Either octTree.maxIterations or octTree.minCellSize must be used");
 	}
 
+	if ( _currentProfile.gridSearch.numXPoints < 2 ||
+	     _currentProfile.gridSearch.numYPoints < 2 ||
+	     _currentProfile.gridSearch.numZPoints < 2 ) {
+		throw LocatorException("At least 2 points per dimension should be given");
+	}
+
 	covm.valid = false;
 
 	double xExtent = _currentProfile.gridSearch.xExtent;
 	double yExtent = _currentProfile.gridSearch.yExtent;
 	double zExtent = _currentProfile.gridSearch.zExtent;
-	double cellXExtent = _currentProfile.gridSearch.cellXExtent;
-	double cellYExtent = _currentProfile.gridSearch.cellYExtent;
-	double cellZExtent = _currentProfile.gridSearch.cellZExtent;
 	double gridOriginLat = _currentProfile.gridSearch.originLat;
 	double gridOriginLon = _currentProfile.gridSearch.originLon;
 	double gridOriginDepth = _currentProfile.gridSearch.originDepth;
 
+	double cellXExtent = xExtent / (_currentProfile.gridSearch.numXPoints -1);
+	double cellYExtent = yExtent / (_currentProfile.gridSearch.numYPoints -1);
+	double cellZExtent = zExtent / (_currentProfile.gridSearch.numZPoints -1);
+
+	SEISCOMP_DEBUG("OctTree cell size X x Y x Z = %gx%gx%g [km]",
+	               cellXExtent, cellYExtent, cellZExtent);
+
+	//
 	// Auto-position the grid center
-	if ( _currentProfile.gridSearch.autoLatLon ) {
+	//
+	if ( _currentProfile.gridSearch.autoOriginLat ) {
 		gridOriginLat = computeMean(sensorLat);
+		SEISCOMP_DEBUG("GridSearch.center auto latitude %g", gridOriginLat);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginLon ) {
 		gridOriginLon = Geo::GeoCoordinate::normalizeLon(
 		    computeCircularMean(sensorLon, false));
-		SEISCOMP_DEBUG("GridSearch.center latitude %f longitude %f",
-		               gridOriginLat, gridOriginLon);
+		SEISCOMP_DEBUG("GridSearch.center auto longitude %g", gridOriginLon);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginDepth ) {
+		gridOriginDepth = -computeMean(sensorElev)/1000.;
+		SEISCOMP_DEBUG("GridSearch.center auto depth %g", gridOriginDepth);
 	}
 
 	// fix depth
 	if ( usingFixedDepth() ) {
 		gridOriginDepth = fixedDepth();
-		cellZExtent = cellXExtent < cellYExtent ? cellXExtent : cellYExtent;
 		zExtent = cellZExtent;
+		SEISCOMP_DEBUG("Using fixed depth %g [km]", gridOriginDepth);
 	}
 
 	vector<Cell> unknownPriorityList;
@@ -1392,12 +1491,9 @@ void StdLoc::locateOctTree(const PickList &pickList,
 
 	multimap<double, Cell> priorityList;
 	vector<double> cellTravelTimes(pickList.size());
-	int processedCells = 0;
-	struct {
-			Cell cell;
-			double prob;
-	} best;
-	best.cell.valid = false;
+	set<tuple<float, float, float>> processedCells;
+	Cell bestCell;
+	bestCell.valid = false;
 
 	//
 	// Process each cell by its priority
@@ -1406,10 +1502,19 @@ void StdLoc::locateOctTree(const PickList &pickList,
 
 		// before fetching the next cell with the highest priority make
 		// sure to have processed all the cells in the unknownPriorityList
-		// and put them in the priority list
+		// and put them in the priority list, ordered by their priority
 		for ( Cell &cell : unknownPriorityList ) {
 
-			processedCells++;
+			//
+			// Avoid processing the same cell twice
+			//
+			tuple<float, float, float> toProcess =
+			    std::make_tuple(cell.x, cell.y, cell.z);
+
+			if ( processedCells.count(toProcess) > 0 ) {
+				continue;
+			}
+			processedCells.insert(toProcess);
 
 			cell.org.depth = gridOriginDepth + cell.z;
 
@@ -1424,12 +1529,6 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			computeCoordinates(distance, azimuth, gridOriginLat, gridOriginLon,
 			                   cell.org.lat, cell.org.lon);
 
-			SEISCOMP_DEBUG(
-			    "Processing cell (size %g %g %g) x %g y %g z %g -> "
-			    "lon %g lat %g depth %g",
-			    cell.size.x, cell.size.y, cell.size.z, cell.x, cell.y, cell.z,
-			    cell.org.lon, cell.org.lat, cell.org.depth);
-
 			// Compute origin time
 			bool ok = computeOriginTime(pickList, weights, sensorLat, sensorLon,
 			                            sensorElev, cell.org.lat, cell.org.lon,
@@ -1437,145 +1536,131 @@ void StdLoc::locateOctTree(const PickList &pickList,
 			                            cellTravelTimes);
 
 			if ( !ok ) {
-				SEISCOMP_DEBUG("Skip cell: unable to compute origin time");
 				continue;
 			}
 
-			// Compute the probability density
+			// Compute the prob density (log) and from there the cell
+			// probability considering its volume
 			computeProbDensity(pickList, weights, cellTravelTimes,
-			                   cell.org.time, cell.org.probDensity,
-			                   cell.org.rms);
-
-			cell.valid = true;
+			                   cell.org.time, cell.org.probDensity);
 
 			// add cell to the priority list
 			double volume = cell.size.x * cell.size.y * cell.size.z;
-			double prob = volume * cell.org.probDensity; // unnormalized
+			double logProb = std::log(volume) + cell.org.probDensity;
 
-			SEISCOMP_DEBUG("  + prob %g RMS %g (prob density %g volume %g)",
-			               prob, cell.org.rms, cell.org.probDensity, volume);
+			if ( !isfinite(logProb) ) {
+				continue;
+			}
 
-			priorityList.emplace(prob, cell);
+			cell.valid = true;
+			priorityList.emplace(logProb, cell);
 		}
 		// all done
 		unknownPriorityList.clear();
 
 		//
-		// Fetch and split next 8 cells with the highest priority
-		// In theory we could just fetch the next cell, but with
-		// 8 the search is more thorough.
-		// In NonLinLoc the search if done on the highest priority
-		// cell plus its 6 direct neighbours (the 6 faces of the
-		// cell cube)
+		// Fetch and split the highest priority cell
 		//
-		bool completed = false;
-		for ( int i = 0; i < 8; i++ ) {
+		if ( priorityList.empty() ) {
+			break;
+		}
+		const Cell &topCell = priorityList.crbegin()->second;
 
-			if ( priorityList.empty() || completed ) {
-				break;
-			}
+		//
+		// Keep track of the best solution, which is not the highest
+		// probability cell but the one with highest probability density
+		//
+		if ( !bestCell.valid ||
+		     bestCell.org.probDensity < topCell.org.probDensity ) {
+			bestCell = topCell;
+		}
 
-			// Fetch next cell with the highest priority
-			double topCellProb = priorityList.crbegin()->first;
-			const Cell &topCell = priorityList.crbegin()->second;
+		//
+		// Check for completion
+		//
+		if ( _currentProfile.octTree.maxIterations > 0 &&
+		     processedCells.size() >= static_cast<size_t>(_currentProfile.octTree.maxIterations) ) {
+			SEISCOMP_DEBUG("Maximum number of iteration reached");
+			break;
+		}
 
-			SEISCOMP_DEBUG("Processed %d cells. Next best cell (size %g %g %g) "
-			               "x %g y %g z %g prob %g RMS %f prob density %g",
-			               processedCells, topCell.size.x, topCell.size.y,
-			               topCell.size.z, topCell.x, topCell.y, topCell.z,
-			               topCellProb, topCell.org.rms,
-			               topCell.org.probDensity);
+		if ( _currentProfile.octTree.minCellSize > 0 &&
+		     (bestCell.size.x <= _currentProfile.octTree.minCellSize ||
+		      bestCell.size.y <= _currentProfile.octTree.minCellSize ||
+		      bestCell.size.z <= _currentProfile.octTree.minCellSize) ) {
+			SEISCOMP_DEBUG("Minimum cell size reached");
+			break;
+		}
 
+		//
+		// Split current cell in 8 and add them to the unknownPriorityList,
+		// but also, as in NonLinLoc, search the direct neighbouring cells
+		// too, the ones adjiacent to the 6 faces of the current cell cube
+		//
+		auto newCellToProcess = [&unknownPriorityList, &topCell, &xExtent,
+		                         &yExtent, &zExtent](int xOffset, int yOffset,
+		                                             int zOffset) {
+			Cell cell;
+			cell.valid = false;
+			cell.size.x = topCell.size.x / 2.;
+			cell.size.y = topCell.size.y / 2.;
+			cell.size.z = topCell.size.z / 2.;
 			//
-			// Keep track of the best solution
+			// Careful: since we use the 'processed' std::set to keep track of
+			// the already processed cells, we need to make sure the hash
+			// function of two cell locations (x,y,z) is the same. So we must be
+			// build the new x,y,z using values that end up with the x,y,z
+			// independetly of the cell father x,y,z
 			//
-			if ( !best.cell.valid ||
-			     best.cell.org.probDensity < topCell.org.probDensity ) {
-				best.cell = topCell;
-				best.prob = topCellProb;
-				SEISCOMP_DEBUG("  + preferring this as best cell");
-			}
+			cell.x = round(topCell.x / cell.size.x) * cell.size.x +
+			         xOffset * cell.size.x / 2;
+			cell.y = round(topCell.y / cell.size.y) * cell.size.y +
+			         yOffset * cell.size.y / 2;
+			cell.z = round(topCell.z / cell.size.z) * cell.size.z +
+			         zOffset * cell.size.z / 2;
 
-			//
-			// Check for completion
-			//
-			if ( _currentProfile.octTree.maxIterations > 0 &&
-			     processedCells >= _currentProfile.octTree.maxIterations ) {
-				SEISCOMP_DEBUG("Maximum number of iteration reached %d",
-				               processedCells);
-				completed = true;
-				break;
-			}
-
-			if ( _currentProfile.octTree.minCellSize > 0 &&
-			     (topCell.size.x <= _currentProfile.octTree.minCellSize ||
-			      topCell.size.y <= _currentProfile.octTree.minCellSize ||
-			      topCell.size.z <= _currentProfile.octTree.minCellSize) ) {
-				SEISCOMP_DEBUG("Minimum cell size reached: x %g y %g z %g [km]",
-				               topCell.size.x, topCell.size.y, topCell.size.z);
-				completed = true;
-				break;
-			}
-
-			//
-			// Split cell in 8 and add them to the unknownPriorityList
-			//
-			auto newCellToProcess = [&unknownPriorityList,
-			                         &topCell](double x, double y, double z) {
-				Cell cell;
-				cell.valid = false;
-				cell.x = topCell.x + x;
-				cell.y = topCell.y + y;
-				cell.z = topCell.z + z;
-				cell.size.x = topCell.size.x / 2.;
-				cell.size.y = topCell.size.y / 2.;
-				cell.size.z = topCell.size.z / 2.;
+			if ( (abs(cell.x) + cell.size.x / 2.) <= (xExtent / 2.) &&
+			     (abs(cell.y) + cell.size.y / 2.) <= (yExtent / 2.) &&
+			     (abs(cell.z) + cell.size.z / 2.) <= (zExtent / 2.) ) {
 				unknownPriorityList.push_back(cell);
-			};
-			for ( double x = -topCell.size.x / 4.;
-			             x <= topCell.size.x / 4.;
-			             x += topCell.size.x / 2. ) {
-				for ( double y = -topCell.size.y / 4.;
-				             y <= topCell.size.y / 4.;
-				             y += topCell.size.y / 2. ) {
-					if ( usingFixedDepth() ) {
-							newCellToProcess(x, y, 0);
-					} else {
-						for ( double z = -topCell.size.z / 4.;
-						             z <= topCell.size.z / 4.;
-						             z += topCell.size.z / 2. ) {
-							newCellToProcess(x, y, z);
-						}
+			}
+		};
+		// offsets -1 and 1 -> 8 sub cells of current cell
+		// offsets -3 and 3 -> neighbouring cells
+		for ( int xOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
+			for ( int yOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
+				if ( usingFixedDepth() ) {
+					newCellToProcess(xOffset, yOffset, 0);
+				}
+				else {
+					for ( int zOffset : std::array<int, 4>{-3, -1, 1, 3} ) {
+						newCellToProcess(xOffset, yOffset, zOffset);
 					}
 				}
 			}
-
-			// Remove the current cell from priorityList since its
-			// children will be added at the next loop
-			priorityList.erase(std::prev(priorityList.end()));
 		}
 
-		if ( completed ) {
-			break;
-		}
+		// Remove the current cell from priorityList since its
+		// children will be added at the next loop
+		priorityList.erase(std::prev(priorityList.end()));
 	}
-
-	if ( priorityList.empty() ) {
-		throw LocatorException("Couldn't find a solution");
-	}
-
-	double bestCellProb = best.prob;
-	const Cell &bestCell = best.cell;
 
 	if ( !bestCell.valid ) {
 		throw LocatorException("Couldn't find a solution");
 	}
 
-	SEISCOMP_DEBUG("Solution: cell size %g %g %g x %g y %g z %g prob %g "
-	               "RMS %f prob density %g",
-	               bestCell.size.x, bestCell.size.y, bestCell.size.z,
-	               bestCell.x, bestCell.y, bestCell.z, bestCellProb,
-	               bestCell.org.rms, bestCell.org.probDensity);
+	// check the solutiond doesn't lie on the grid boundary
+	if ( (xExtent / 2. - std::abs(bestCell.x)) < bestCell.size.x ||
+	     (yExtent / 2. - std::abs(bestCell.y)) < bestCell.size.y ||
+	     ((zExtent / 2. - std::abs(bestCell.z)) < bestCell.size.z &&
+	      !usingFixedDepth()) ) {
+		_rejectLocation = true;
+		_rejectionMsg = "The location lies on the grid boundary: rejecting it";
+	}
+
+	SEISCOMP_DEBUG("Iterations %zu min cell size %g %g %g x %g y %g z %g",
+	               processedCells.size(), bestCell.size.x, bestCell.size.y,
+	               bestCell.size.z, bestCell.x, bestCell.y, bestCell.z);
 
 	newLat = bestCell.org.lat;
 	newLon = bestCell.org.lon;
@@ -1602,10 +1687,8 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               });
 		computeCovarianceMatrix(cells, bestCell, false, covm);
 	}
-	SEISCOMP_DEBUG("OctTree solution RMS %g lat %g lon %g depth %g time %s "
-	               "(num iterations %d)",
-	               bestCell.org.rms, newLat, newLon, newDepth,
-	               newTime.iso().c_str(), processedCells);
+	SEISCOMP_DEBUG("OctTree solution lat %g lon %g depth %g time %s ",
+	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1620,7 +1703,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
                               double &newLat, double &newLon, double &newDepth,
                               Core::Time &newTime, vector<double> &travelTimes,
                               CovMtrx &covm, bool computeCovMtrx,
-                              bool enablePerCellLeastSquares) const {
+                              bool enablePerCellLeastSquares) {
 	SEISCOMP_DEBUG("Start Grid Search");
 
 	if ( !_ttt ) {
@@ -1639,32 +1722,78 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		throw LocatorException("Interna logic error");
 	}
 
+	if ( _currentProfile.gridSearch.numXPoints < 1 ||
+	     _currentProfile.gridSearch.numYPoints < 1 ||
+	     _currentProfile.gridSearch.numZPoints < 1 ) {
+		throw LocatorException("At least 1 point per dimension should be given");
+	}
+
 	covm.valid = false;
 
 	double xExtent = _currentProfile.gridSearch.xExtent;
 	double yExtent = _currentProfile.gridSearch.yExtent;
 	double zExtent = _currentProfile.gridSearch.zExtent;
-	double cellXExtent = _currentProfile.gridSearch.cellXExtent;
-	double cellYExtent = _currentProfile.gridSearch.cellYExtent;
-	double cellZExtent = _currentProfile.gridSearch.cellZExtent;
+
+	double numXPoints = _currentProfile.gridSearch.numXPoints;
+	double numYPoints = _currentProfile.gridSearch.numYPoints;
+	double numZPoints = _currentProfile.gridSearch.numZPoints;
+
 	double gridOriginLat = _currentProfile.gridSearch.originLat;
 	double gridOriginLon = _currentProfile.gridSearch.originLon;
 	double gridOriginDepth = _currentProfile.gridSearch.originDepth;
 
+	//
 	// Auto-position the grid center
-	if ( _currentProfile.gridSearch.autoLatLon ) {
+	//
+	if ( _currentProfile.gridSearch.autoOriginLat ) {
 		gridOriginLat = computeMean(sensorLat);
+		SEISCOMP_DEBUG("GridSearch.center auto latitude %g", gridOriginLat);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginLon ) {
 		gridOriginLon = Geo::GeoCoordinate::normalizeLon(
 		    computeCircularMean(sensorLon, false));
-		SEISCOMP_DEBUG("GridSearch.center latitude %f longitude %f",
-		               gridOriginLat, gridOriginLon);
+		SEISCOMP_DEBUG("GridSearch.center auto longitude %g", gridOriginLon);
+	}
+
+	if ( _currentProfile.gridSearch.autoOriginDepth ) {
+		gridOriginDepth = -computeMean(sensorElev)/1000.;
+		SEISCOMP_DEBUG("GridSearch.center auto depth %g", gridOriginDepth);
 	}
 
 	// fix depth
 	if ( usingFixedDepth() ) {
 		gridOriginDepth = fixedDepth();
-		cellZExtent = cellXExtent < cellYExtent ? cellXExtent : cellYExtent;
-		zExtent = cellZExtent;
+		numZPoints = 1;
+		SEISCOMP_DEBUG("Using fixed depth %g [km]", gridOriginDepth);
+	}
+
+	double cellXExtent;
+	double cellYExtent;
+	double cellZExtent;
+
+	if ( numXPoints > 1 ) {
+		cellXExtent = xExtent / (numXPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellXExtent = xExtent;
+		xExtent = 0;
+	}
+
+	if ( numYPoints > 1 ) {
+		cellYExtent = yExtent / (numYPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellYExtent = yExtent;
+		yExtent = 0;
+	}
+
+	if ( numZPoints > 1 ) {
+		cellZExtent = zExtent / (numZPoints -1);
+	}
+	else { // force the single point to the grid center
+		cellZExtent = zExtent;
+		zExtent = 0;
 	}
 
 	vector<Cell> cells;
@@ -1672,30 +1801,24 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	//
 	// Build the list of cells withing the grid
 	//
-	for ( double x = -xExtent / 2. + cellXExtent / 2.;
-	             x < xExtent / 2.;
-	             x += cellXExtent ) {
-		for ( double y = -yExtent / 2. + cellYExtent / 2;
-		             y < yExtent / 2.;
-		             y += cellYExtent ) {
-			for ( double z = -zExtent / 2. + cellZExtent / 2;
-			             z < zExtent / 2.;
-			             z += cellZExtent ) { 
+	for ( int ix = 0; ix < numXPoints; ix++ ) {
+		for ( int iy = 0; iy < numYPoints; iy++ ) {
+			for ( int iz = 0; iz < numZPoints; iz++ ) {
 				Cell cell;
 				cell.valid = false;
-				cell.x = x;
-				cell.y = y;
-				cell.z = z;
+				cell.x = -xExtent/2 + ix * cellXExtent;
+				cell.y = -yExtent/2 + iy * cellYExtent;
+				cell.z = -zExtent/2 + iz * cellZExtent;
 				cell.size.x = cellXExtent;
 				cell.size.y = cellYExtent;
 				cell.size.z = cellZExtent;
 
-				cell.org.depth = gridOriginDepth + z;
+				cell.org.depth = gridOriginDepth + cell.z;
 
 				// compute distance and azimuth of the cell centroid to the grid
 				// origin
-				double distance = sqrt(y * y + x * x); // km
-				double azimuth = rad2deg(atan2(x, y));
+				double distance = sqrt(cell.y * cell.y + cell.x * cell.x); // km
+				double azimuth = rad2deg(atan2(cell.x, cell.y));
 
 				// Computes the coordinates (lat, lon) of the point which is at
 				// a degree azimuth and km distance as seen from the other point
@@ -1721,9 +1844,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 	//
 	for ( Cell &cell : cells ) {
 
-		SEISCOMP_DEBUG(
-		    "Processing cell x %g y %g z %g -> lon %g lat %g depth %g", cell.x,
-		    cell.y, cell.z, cell.org.lon, cell.org.lat, cell.org.depth);
 		//
 		// Compute origin time
 		//
@@ -1732,7 +1852,6 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		    cell.org.lon, cell.org.depth, cell.org.time, cellTravelTimes);
 
 		if ( !ok ) {
-			SEISCOMP_DEBUG("Skip cell: unable to compute origin time");
 			continue;
 		}
 
@@ -1749,23 +1868,22 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 				                   cellTravelTimes, covm, computeCovMtrx);
 			}
 			catch ( exception &e ) {
-				SEISCOMP_DEBUG(
-				    "Could not get a Least Square solution (%s): skip cell",
-				    e.what());
+				continue;
+			}
+			if ( _rejectLocation ) {
+				// rejecting this cell doesn't mean we reject the whole location
+				_rejectLocation = false;
 				continue;
 			}
 		}
 
 		//
-		// Compute cell probability density
+		// Compute cell probability density (log)
 		//
 		computeProbDensity(pickList, weights, cellTravelTimes, cell.org.time,
-		                   cell.org.probDensity, cell.org.rms);
+		                   cell.org.probDensity);
 
 		cell.valid = true;
-
-		SEISCOMP_DEBUG("Prob density %g RMS %g", cell.org.probDensity,
-		               cell.org.rms);
 
 		//
 		// Keep track of the best solution
@@ -1775,12 +1893,23 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 			best.cell = cell;
 			best.travelTimes = cellTravelTimes;
 			best.covm = covm;
-			SEISCOMP_DEBUG("Preferring this as best cell");
 		}
 	}
 
 	if ( !best.cell.valid ) {
 		throw LocatorException("Couldn't find a solution");
+	}
+
+	if ( !enablePerCellLeastSquares ) {
+		// check the solutiond doesn't lie on the grid boundary
+		if ( (xExtent / 2. - std::abs(best.cell.x)) < best.cell.size.x ||
+		     (yExtent / 2. - std::abs(best.cell.y)) < best.cell.size.y ||
+		     ((zExtent / 2. - std::abs(best.cell.z)) < best.cell.size.z &&
+		      !usingFixedDepth()) ) {
+			_rejectLocation = true;
+			_rejectionMsg =
+			    "The location lies on the grid boundary: rejecting it";
+		}
 	}
 
 	newLat = best.cell.org.lat;
@@ -1799,13 +1928,43 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 		covm = best.covm;
 	}
 
-	SEISCOMP_DEBUG("Grid Search solution prob density %g RMS %g "
-	               "lat %g lon %g depth %g time %s",
-	               best.cell.org.probDensity, best.cell.org.rms, newLat, newLon,
-	               newDepth, newTime.iso().c_str());
+	SEISCOMP_DEBUG("Grid Search solution lat %g lon %g depth %g time %s",
+	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void StdLoc::locateLeastSquares(
+    const PickList &pickList, const vector<double> &weights,
+    const vector<double> &sensorLat, const vector<double> &sensorLon,
+    const vector<double> &sensorElev, double &newLat, double &newLon,
+    double &newDepth, Core::Time &newTime, vector<double> &travelTimes,
+    CovMtrx &covm, bool computeCovMtrx) const {
+
+	double initDepth = _currentProfile.leastSquares.depthInit;
+	if ( usingFixedDepth() ) {
+		initDepth = fixedDepth();
+	}
+
+	double initLat = computeMean(sensorLat);
+	double initLon = Geo::GeoCoordinate::normalizeLon(
+	                      computeCircularMean(sensorLon, false));
+	Core::Time initTime;
+	bool ok = computeOriginTime(pickList, weights, sensorLat, sensorLon, sensorElev,
+	                            initLat, initLon, initDepth, initTime, travelTimes);
+	if ( !ok ) {
+		throw LocatorException("Couldn't find a solution");
+	}
+
+	locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
+	                   initLat, initLon, initDepth, initTime,
+	                   newLat, newLon, newDepth, newTime,
+	                   travelTimes, covm, computeCovMtrx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
@@ -1847,52 +2006,68 @@ void StdLoc::locateLeastSquares(
 
 	travelTimes.resize(pickList.size());
 
+	vector<double> residuals(pickList.size());
 	vector<double> backazis(pickList.size());
 	vector<double> dtdds(pickList.size());
 	vector<double> dtdhs(pickList.size());
 
-	double prevLat, prevLon, prevDepth;
-	Core::Time prevTime;
+	// loop variables for current and previous loop
+	struct {
+		double lat, lon, depth;
+		Core::Time time;
+		double residuals;
+	} curr, prev;
 
-	prevLat = newLat = initLat;
-	prevLon = newLon = initLon;
-	prevDepth = newDepth = initDepth;
-	prevTime = newTime = initTime;
+	curr.lat = initLat;
+	curr.lon = initLon;
+	curr.depth = initDepth;
+	curr.time = initTime;
 
 	bool revertToPrevIteration = false;
+	int convergence = 0;
 
+	//
+	// Solve the system via least squares multiple times. Each time
+	// improve the previous solution
+	//
 	for ( int iteration = 0;
-	      iteration <= _currentProfile.leastSquares.iterations; ++iteration ) {
+	      iteration <= _currentProfile.leastSquares.iterations;
+	      ++iteration ) {
 
 		// the last additional iteration is for final stats (no inversion)
 		bool lastIteration =
 		    (iteration == _currentProfile.leastSquares.iterations);
 
-		// allow to recover an error
+		// recover an error by reverting to the last valid solution
+		// E.g. the location moves outside the ttt boundary but we keep
+		// the last solution that was withing the limits
 		if ( revertToPrevIteration ) {
-			if (iteration <= 1) {
+			if ( iteration <= 1 ) {
 				throw LocatorException("Unable to find a location");
 			}
+			if ( convergence < 3 ) {
+				throw LocatorException("Unable to find a stable solution");
+			}
 			lastIteration = true;
-			newLat   = prevLat;
-			newLon   = prevLon;
-			newDepth = prevDepth;
-			newTime  = prevTime;
-			SEISCOMP_WARNING("Locator stopped early, at iteration %d", iteration);
+			curr = prev;
 		}
 
 		//
 		// Load the information we need to build the Equation System
 		//
-		bool unableToComputeTT = false;
+		bool unableToComputeTT = true;
+		curr.residuals = 0;
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
 			const PickItem &pi = pickList[i];
 			const PickPtr pick = pi.pick;
+
+			travelTimes[i] = -1.0;
 
 			if ( weights[i] <= 0 ) {
 				continue;
 			}
 
+			// Query ttt
 			TravelTime tt;
 
 			try {
@@ -1906,7 +2081,7 @@ void StdLoc::locateLeastSquares(
 					}
 				}
 
-				tt = _ttt->compute(phaseName, newLat, newLon, newDepth,
+				tt = _ttt->compute(phaseName, curr.lat, curr.lon, curr.depth,
 				                   sensorLat[i], sensorLon[i], sensorElev[i]);
 			}
 			catch ( exception &e ) {
@@ -1917,39 +2092,48 @@ void StdLoc::locateLeastSquares(
 				    pick->waveformID().networkCode().c_str(),
 				    pick->waveformID().stationCode().c_str(),
 				    pick->waveformID().locationCode().c_str(),
-				    newLat, newLon, newDepth, e.what());
-				    unableToComputeTT = true;
-				    break;
+				    curr.lat, curr.lon, curr.depth, e.what());
+				continue;
 			}
 
-			if ( tt.time < 0 ||
-			     (tt.time > 0 && tt.dtdd == 0 && tt.dtdh == 0) ) {
-				SEISCOMP_WARNING(
-				    "Travel Time Table error: data not returned for "
-				    "%s@%s.%s.%s and lat %g lon %g depth %g",
-				    pick->phaseHint().code().c_str(),
-				    pick->waveformID().networkCode().c_str(),
-				    pick->waveformID().stationCode().c_str(),
-				    pick->waveformID().locationCode().c_str(),
-				    newLat, newLon, newDepth);
-				    unableToComputeTT = true;
-				    break;
-			}
-
+			// Store the ttt and derived info
 			travelTimes[i] = tt.time;
 			dtdds[i] = tt.dtdd;
 			dtdhs[i] = tt.dtdh;
 			if ( tt.azi ) { // 3D model
 				backazis[i] = *tt.azi;
-			} else {
-				computeDistance(newLat, newLon, sensorLat[i], sensorLon[i],
+			}
+			else {
+				computeDistance(curr.lat, curr.lon, sensorLat[i], sensorLon[i],
 				                nullptr, &backazis[i]);
 			}
+			residuals[i] =
+			    (pick->time().value() - (curr.time + Core::TimeSpan(travelTimes[i])))
+			    .length();
+			curr.residuals += std::fabs(residuals[i]);
+			unableToComputeTT = false;
 		}
 
 		if ( unableToComputeTT ) {
+			SEISCOMP_WARNING("No travel times available: stop here");
 			revertToPrevIteration = true;
+			if ( lastIteration ) iteration--;
 			continue;
+		}
+
+		//
+		// Check for convergence of the solution (now we know the residuals)
+		//
+		if ( iteration > 1 && !revertToPrevIteration) {
+			double resChange = std::fabs(curr.residuals / prev.residuals);
+			if ( resChange < 1.0 ) { // improved solution
+				convergence++;
+			} else if ( resChange > 1.1 ) { // 10% worse
+				convergence--;
+			}
+			if ( convergence < -3 ) {
+				throw LocatorException("Unable to find a stable solution");
+			}
 		}
 
 		//
@@ -1958,29 +2142,22 @@ void StdLoc::locateLeastSquares(
 		System eq(pickList.size());
 
 		for ( size_t i = 0; i < pickList.size(); ++i ) {
-			const PickItem &pi = pickList[i];
-			const PickPtr pick = pi.pick;
-
 			eq.W[i] = weights[i];
 
-			if ( weights[i] <= 0 ) {
+			if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 				eq.W[i] = 0;
 				continue;
 			}
 
-			Core::Time pickTime = pick->time().value();
-			double residual =
-			    (pickTime - (newTime + Core::TimeSpan(travelTimes[i])))
-			        .length();
-			eq.r[i] = residual;
+			eq.r[i] = residuals[i];
 
 			const double bazi = deg2rad(backazis[i]);
-			eq.G[i][0] = dtdds[i] * sin(bazi); // dx [sec/deg]
-			eq.G[i][1] = dtdds[i] * cos(bazi); // dy [sec/deg]
-			eq.G[i][2] = dtdhs[i];             // dz [sec/km]
-			eq.G[i][3] = 1.;                   // dtime [sec]
+			eq.G[i][0] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
+			eq.G[i][1] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * cos(bazi); // dy [sec/deg-> sec/km]
+			eq.G[i][2] = dtdhs[i];                            // dz [sec/km]
+			eq.G[i][3] = 1.;                                  // dtime [sec]
 
-			if ( usingFixedDepth() ) {
+			if ( usingFixedDepth() && !(lastIteration && computeCovMtrx) ) {
 				eq.G[i][2] = 0;                  // dz [sec/km]
 			}
 		}
@@ -1997,80 +2174,85 @@ void StdLoc::locateLeastSquares(
 		//
 		// Solve the system
 		//
-		try {
-			ostringstream solverLogs;
+		if ( _currentProfile.leastSquares.solverType == "LSMR" ) {
+			Adapter<lsmrBase> solver =
+			   solve<lsmrBase>(eq, nullptr,
+			                   _currentProfile.leastSquares.dampingFactor);
 
-			if ( _currentProfile.leastSquares.solverType == "LSMR" ) {
-				Adapter<lsmrBase> solver =
-				    solve<lsmrBase>(eq, &solverLogs,
-				                    _currentProfile.leastSquares.dampingFactor);
-				SEISCOMP_DEBUG(
-				    "Solver stopped because %u : %s (used %u iterations)",
-				    solver.GetStoppingReason(),
-				    solver.GetStoppingReasonMessage().c_str(),
-				    solver.GetNumberOfIterationsPerformed());
-			}
-			else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
-				Adapter<lsqrBase> solver =
-				    solve<lsqrBase>(eq, &solverLogs,
-				                    _currentProfile.leastSquares.dampingFactor);
-				SEISCOMP_DEBUG(
-				    "Solver stopped because %u : %s (used %u iterations)",
-				    solver.GetStoppingReason(),
-				    solver.GetStoppingReasonMessage().c_str(),
-				    solver.GetNumberOfIterationsPerformed());
-			}
-			else {
-				throw LocatorException(
-				    "Solver type can only be LSMR or LSQR, but it is set to" +
-				    _currentProfile.leastSquares.solverType);
-			}
+			//SEISCOMP_DEBUG(
+			//    "Solver stopped because %u : %s (used %u iterations)",
+			//    solver.GetStoppingReason(),
+			//    solver.GetStoppingReasonMessage().c_str(),
+			//    solver.GetNumberOfIterationsPerformed());
 
-			//SEISCOMP_DEBUG("Solver logs:\n%s", solverLogs.str().c_str());
+			if (solver.GetStoppingReason() == 4) {
+				revertToPrevIteration = true;
+				continue;
+			}
 		}
-		catch ( exception &e ) {
-			SEISCOMP_WARNING("%s", e.what());
-			revertToPrevIteration = true;
-			continue;
+		else if ( _currentProfile.leastSquares.solverType == "LSQR" ) {
+			Adapter<lsqrBase> solver =
+			    solve<lsqrBase>(eq, nullptr,
+			                    _currentProfile.leastSquares.dampingFactor);
+
+			//SEISCOMP_DEBUG(
+			//    "Solver stopped because %u : %s (used %u iterations)",
+			//    solver.GetStoppingReason(),
+			//    solver.GetStoppingReasonMessage().c_str(),
+			//    solver.GetNumberOfIterationsPerformed());
+
+			if (solver.GetStoppingReason() == 3 ||
+			    solver.GetStoppingReason() == 6 ) {
+				revertToPrevIteration = true;
+				continue;
+			}
+		}
+		else {
+			throw LocatorException(
+					"Solver type can only be LSMR or LSQR, but it is set to" +
+					_currentProfile.leastSquares.solverType);
 		}
 
-		//
-		// Load the solution
-		//
-		double lonCorrection = eq.m[0];   // deg
-		double latCorrection = eq.m[1];   // deg
-		double depthCorrection = eq.m[2]; // km
-		double timeCorrection = eq.m[3];  // sec
-
-		if ( !isfinite(lonCorrection) || !isfinite(latCorrection) ||
-		     !isfinite(depthCorrection) || !isfinite(timeCorrection) ) {
+		if ( !isfinite(eq.m[0]) || !isfinite(eq.m[1]) ||
+		     !isfinite(eq.m[2]) || !isfinite(eq.m[3]) ) {
 			SEISCOMP_WARNING("Couldn't find a solution to the equation system");
 			revertToPrevIteration = true;
 			continue;
 		}
 
-		// save old values in case the next iteration fails
-		prevLat = newLat;
-		prevLon = newLon;
-		prevDepth = newDepth;
-		prevTime = newTime;
+		// save current loop values
+		prev = curr;
 
-		// prepare values for next iteration
-		newLat += latCorrection;
-		newLon += lonCorrection;
-		newDepth += depthCorrection;
-		newTime += Core::TimeSpan(timeCorrection);
+		//
+		// Load the solution
+		//
+		double lonCorrection   = eq.m[0]; // km
+		double latCorrection   = eq.m[1]; // km
+		double depthCorrection = eq.m[2]; // km
+		double timeCorrection  = eq.m[3]; // sec
 
-		SEISCOMP_DEBUG(
-		    "Least Square iteration %d: corrections lat %f [km] lon %f [km] "
-		    "depth %f [km] time %f [sec]. New source parameters lat %g "
-		    "lon %g depth %g time %s",
-		    iteration, latCorrection, lonCorrection, depthCorrection,
-		    timeCorrection, newLat, newLon, newDepth, newTime.iso().c_str());
+		//
+		// update source parameters, which will be used in the next iteration
+		//
+		curr.depth += depthCorrection;
+		curr.time += Core::TimeSpan(timeCorrection);
+
+		// compute distance and azimuth of the event to the new location
+		double distance = sqrt(lonCorrection * lonCorrection +
+		                       latCorrection * latCorrection); // km
+		double azimuth = rad2deg(atan2(lonCorrection, latCorrection));
+
+		// Computes the coordinates (lat, lon) of the point which is at a degree
+		// azimuth and km distance as seen from the original event location
+		computeCoordinates(distance, azimuth, curr.lat, curr.lon, curr.lat, curr.lon);
 	}
 
-	SEISCOMP_DEBUG("Least Square final solution lat %g lon %g "
-	               "depth %g time %s",
+	newLat   = curr.lat;
+	newLon   = curr.lon;
+	newDepth = curr.depth;
+	newTime  = curr.time;
+
+	SEISCOMP_DEBUG("Least Square solution lat %g lon %g depth %g time %s",
 	               newLat, newLon, newDepth, newTime.iso().c_str());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2085,8 +2267,23 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
                                      CovMtrx &covm) const {
 	covm.valid = false;
 
-	auto normalize = [&bestCell](const Cell &cell) {
-		return cell.org.probDensity / bestCell.org.probDensity;
+	if ( !isfinite(bestCell.org.probDensity) ) {
+		return;
+	}
+
+	//
+	// Remember that we stored the log of the probability density, so we need
+	// to std:exp(logProb) to obtain the actual probability density.
+	// Then to transform the probability density to probability we have to
+	// multiply it by the cell volume.
+	// This is a relative probability, to normalize it we need to divide it
+	// by the integral over all the processed cell probabilities (sum of all
+	// cell probabilities)
+	//
+	auto relativeProbability = [&bestCell](const Cell &cell) {
+		double volume = cell.size.x * cell.size.y * cell.size.z;
+		return std::exp(cell.org.probDensity - bestCell.org.probDensity) *
+		       volume;
 	};
 
 	//
@@ -2107,11 +2304,11 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 			if ( !cell.valid ) {
 				continue;
 			}
-			double weight = normalize(cell);
+			double weight = relativeProbability(cell);
 			weightSum += weight;
 			wmeanLat += cell.org.lat * weight;
 			wmeanDepth += cell.org.depth * weight;
-			wmeanTime += static_cast<double>(cell.org.time) * weight;
+			wmeanTime += cell.org.time.epoch() * weight;
 			longitudes.push_back(cell.org.lon);
 			weights.push_back(weight);
 		}
@@ -2125,7 +2322,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		wmeanLat = bestCell.org.lat;
 		wmeanLon = bestCell.org.lon;
 		wmeanDepth = bestCell.org.depth;
-		wmeanTime = static_cast<double>(bestCell.org.time);
+		wmeanTime = bestCell.org.time.epoch();
 	}
 
 	weightSum = 0.0;
@@ -2134,7 +2331,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		if ( !cell.valid ) {
 			continue;
 		}
-		double weight = normalize(cell);
+		double weight = relativeProbability(cell);
 		weightSum += weight;
 		double rLon =
 		    computeDistance(cell.org.lat, cell.org.lon, cell.org.lat, wmeanLon);
@@ -2215,18 +2412,24 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	//  covm = sigma^2 * inverse_matrix(G.T * G)
 	//
-	// sigma^2 is the variance of the arrival times multiplied by the
-	// identity matrix defined as:
-	//
-	//   sigma^2 = 1/nfd * sum(residual^2)
-	//
-	// nfd is the degrees of freedom (numer of phases - 4) and the
-	// residuals are computed on the best fitting hypocenter
-	//
 	// G is the matrix of the partial derivatives of the slowness vector
 	// with respect to event/station location in the 3 directions and
 	// 1 in the last column corresponding to the source time correction
 	// term and G.T is G transposed
+	//
+	// sigma^2 is the variance of the arrival times multiplied by the
+	// identity matrix. The arrival-time variance is a critical variable in
+	// the error analysis. Most location programs estimates it from the
+	// residuals, like this:
+	//
+	//   sigma^2 = 1/nfd * sum(residual^2)
+	//
+	// nfd is the degrees of freedom (numer of phases - 4). Division by ndf rather
+	// than by n compensates for the improvement in fit resulting from the use
+	// of the arrival times from the data. However, this only partly works and
+	// some programs allow setting an a priori value which is used only if the
+	// number of observations is small. For small networks this can be a critical
+	// parameter.
 	//
 	// Note: the resulting confidence ellipsoid seems in the same order
 	// of magnitude of NonLinLoc. LOCSAT seems to be using sigma^2 = 1,
@@ -2234,24 +2437,36 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	covm.valid = false;
 
-	if ( eq.numRowsG <= 4 ) {
+	//
+	// Compute sigma^2
+	//
+	int validArrivals = 0;
+	double sigma2 = 0;
+	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
+		if ( eq.W[ob] == 0 ) continue;
+		validArrivals++;
+		sigma2 += eq.r[ob] * eq.r[ob];
+	}
+
+	if ( validArrivals <= (usingFixedDepth() ? 3 : 4) ) {
 		SEISCOMP_DEBUG(
 		    "Cannot compute covariance matrix: less than 5 arrivals");
 		return;
 	}
+	sigma2 /= validArrivals - (usingFixedDepth() ? 3 : 4);
 
-	double sigma2 = 0;
-	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
-		sigma2 += eq.r[ob] * eq.r[ob];
-	}
-	sigma2 /= eq.numRowsG - 4;
-
+	//
+	// Compute G.T * G
+	//
 	std::array<std::array<double, 4>, 4> GtG = {}; // G.T * G
 	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
-		double gLon = eq.G[ob][0] / KM_OF_DEGREE;
-		double gLat = eq.G[ob][1] / KM_OF_DEGREE;
-		double gDepth = eq.G[ob][2];
-		double gTime = eq.G[ob][3];
+
+		if ( eq.W[ob] == 0 ) continue;
+
+		double gLon = eq.G[ob][0];  // dx [sec/km]
+		double gLat = eq.G[ob][1];  // dy [sec/km]
+		double gDepth = eq.G[ob][2];// dz [sec/km]
+		double gTime = eq.G[ob][3]; // 1  [sec]
 		GtG[0][0] += gLon   * gLon;
 		GtG[0][1] += gLon   * gLat;
 		GtG[0][2] += gLon   * gDepth;
@@ -2270,6 +2485,9 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		GtG[3][3] += gTime  * gTime;
 	}
 
+	//
+	// Compute inverse_matrix(G.T * G)
+	//
 	std::array<std::array<double, 4>, 4> inverseGtG;
 	if ( !invertMatrix4x4(GtG, inverseGtG) ) {
 		SEISCOMP_DEBUG(
@@ -2277,6 +2495,9 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		return;
 	}
 
+	//
+	// Compute covm
+	//
 	covm.sxx = inverseGtG[0][0] * sigma2;
 	covm.sxy = inverseGtG[0][1] * sigma2;
 	covm.sxz = inverseGtG[0][2] * sigma2;
@@ -2306,7 +2527,7 @@ Origin *StdLoc::createOrigin(
 	}
 
 	DataModel::CreationInfo ci;
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 
 	Origin *origin = Origin::Create();
 	SEISCOMP_DEBUG("New origin publicID: %s", origin->publicID().c_str());
@@ -2353,12 +2574,8 @@ Origin *StdLoc::createOrigin(
 		                          pick->waveformID().locationCode());
 
 		double azimuth = 0;
-		double Hdist = computeDistance(originLat, originLon, sensorLat[i],
-		                               sensorLon[i], &azimuth);
-		Hdist = Math::Geo::deg2km(Hdist);
-		double Vdist = abs(originDepth + sensorElev[i] / 1000);
-		double distance =
-		    Math::Geo::km2deg(sqrt(Hdist * Hdist + Vdist * Vdist));
+		double distance = computeDistance(originLat, originLon, sensorLat[i],
+		                                  sensorLon[i], &azimuth);
 
 		// prepare the new arrival
 		DataModel::Arrival *newArr = new DataModel::Arrival();
@@ -2370,7 +2587,7 @@ Origin *StdLoc::createOrigin(
 		newArr->setAzimuth(azimuth);
 		newArr->setDistance(distance);
 
-		if ( weights[i] <= 0 ) {
+		if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
 			// Not used
 			newArr->setTimeUsed(false);
 			newArr->setWeight(0.0);
@@ -2616,6 +2833,10 @@ Origin *StdLoc::createOrigin(
 				    "Confidence ellipsoid will be computed");
 			}
 		}
+	}
+
+	if ( _rejectLocation ) {
+		origin->setEvaluationStatus(EvaluationStatus(REJECTED));
 	}
 
 	return origin;

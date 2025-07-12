@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ResponseFIR, PublicObject, "ResponseFIR");
 
 
-ResponseFIR::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ResponseFIR::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ResponseFIR::setName, &ResponseFIR::name));
 	addProperty(Core::simpleProperty("gain", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setGain, &ResponseFIR::gain));
 	addProperty(Core::simpleProperty("gainFrequency", "float", false, false, false, false, true, false, nullptr, &ResponseFIR::setGainFrequency, &ResponseFIR::gainFrequency));
@@ -67,7 +67,7 @@ ResponseFIRIndex::ResponseFIRIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIRIndex::ResponseFIRIndex(const ResponseFIRIndex& idx) {
+ResponseFIRIndex::ResponseFIRIndex(const ResponseFIRIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ ResponseFIRIndex::ResponseFIRIndex(const ResponseFIRIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIRIndex::operator==(const ResponseFIRIndex& idx) const {
+bool ResponseFIRIndex::operator==(const ResponseFIRIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -85,7 +85,7 @@ bool ResponseFIRIndex::operator==(const ResponseFIRIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIRIndex::operator!=(const ResponseFIRIndex& idx) const {
+bool ResponseFIRIndex::operator!=(const ResponseFIRIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -102,7 +102,7 @@ ResponseFIR::ResponseFIR() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR::ResponseFIR(const ResponseFIR& other)
+ResponseFIR::ResponseFIR(const ResponseFIR &other)
 : PublicObject() {
 	*this = other;
 }
@@ -129,8 +129,8 @@ ResponseFIR::~ResponseFIR() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* ResponseFIR::Create() {
-	ResponseFIR* object = new ResponseFIR();
+ResponseFIR *ResponseFIR::Create() {
+	ResponseFIR *object = new ResponseFIR();
 	return static_cast<ResponseFIR*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -139,7 +139,7 @@ ResponseFIR* ResponseFIR::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* ResponseFIR::Create(const std::string& publicID) {
+ResponseFIR *ResponseFIR::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -156,7 +156,7 @@ ResponseFIR* ResponseFIR::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR* ResponseFIR::Find(const std::string& publicID) {
+ResponseFIR *ResponseFIR::Find(const std::string& publicID) {
 	return ResponseFIR::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -165,7 +165,7 @@ ResponseFIR* ResponseFIR::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::operator==(const ResponseFIR& rhs) const {
+bool ResponseFIR::operator==(const ResponseFIR &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _gain != rhs._gain ) return false;
 	if ( _gainFrequency != rhs._gainFrequency ) return false;
@@ -184,7 +184,7 @@ bool ResponseFIR::operator==(const ResponseFIR& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::operator!=(const ResponseFIR& rhs) const {
+bool ResponseFIR::operator!=(const ResponseFIR &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -193,7 +193,7 @@ bool ResponseFIR::operator!=(const ResponseFIR& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::equal(const ResponseFIR& other) const {
+bool ResponseFIR::equal(const ResponseFIR &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -420,7 +420,7 @@ const Blob& ResponseFIR::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ResponseFIRIndex& ResponseFIR::index() const {
+const ResponseFIRIndex &ResponseFIR::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -429,8 +429,11 @@ const ResponseFIRIndex& ResponseFIR::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::equalIndex(const ResponseFIR* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ResponseFIR::equalIndex(const ResponseFIR *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -439,7 +442,7 @@ bool ResponseFIR::equalIndex(const ResponseFIR* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* ResponseFIR::inventory() const {
+Inventory *ResponseFIR::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -448,7 +451,7 @@ Inventory* ResponseFIR::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ResponseFIR& ResponseFIR::operator=(const ResponseFIR& other) {
+ResponseFIR &ResponseFIR::operator=(const ResponseFIR &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_gain = other._gain;
@@ -468,10 +471,11 @@ ResponseFIR& ResponseFIR::operator=(const ResponseFIR& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::assign(Object* other) {
-	ResponseFIR* otherResponseFIR = ResponseFIR::Cast(other);
-	if ( other == nullptr )
+bool ResponseFIR::assign(Object *other) {
+	ResponseFIR *otherResponseFIR = ResponseFIR::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherResponseFIR;
 
@@ -483,11 +487,13 @@ bool ResponseFIR::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ResponseFIR::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -500,11 +506,13 @@ bool ResponseFIR::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ResponseFIR::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -512,7 +520,7 @@ bool ResponseFIR::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ResponseFIR* child = inventory->findResponseFIR(publicID());
+			ResponseFIR *child = inventory->findResponseFIR(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -532,8 +540,9 @@ bool ResponseFIR::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ResponseFIR::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -543,8 +552,8 @@ bool ResponseFIR::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ResponseFIR::clone() const {
-	ResponseFIR* clonee = new ResponseFIR();
+Object *ResponseFIR::clone() const {
+	ResponseFIR *clonee = new ResponseFIR();
 	*clonee = *this;
 	return clonee;
 }
@@ -554,7 +563,7 @@ Object* ResponseFIR::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ResponseFIR::updateChild(Object* child) {
+bool ResponseFIR::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -563,7 +572,7 @@ bool ResponseFIR::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseFIR::accept(Visitor* visitor) {
+void ResponseFIR::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -580,7 +589,7 @@ void ResponseFIR::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ResponseFIR::serialize(Archive& ar) {
+void ResponseFIR::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

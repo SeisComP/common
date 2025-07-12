@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ArclinkRequest, PublicObject, "ArclinkRequest");
 
 
-ArclinkRequest::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ArclinkRequest::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("requestID", "string", false, false, true, false, false, false, nullptr, &ArclinkRequest::setRequestID, &ArclinkRequest::requestID));
 	addProperty(Core::simpleProperty("userID", "string", false, false, true, false, false, false, nullptr, &ArclinkRequest::setUserID, &ArclinkRequest::userID));
 	addProperty(Core::simpleProperty("userIP", "string", false, false, false, false, false, false, nullptr, &ArclinkRequest::setUserIP, &ArclinkRequest::userIP));
@@ -76,7 +76,7 @@ ArclinkRequestIndex::ArclinkRequestIndex(Seiscomp::Core::Time created_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestIndex::ArclinkRequestIndex(const ArclinkRequestIndex& idx) {
+ArclinkRequestIndex::ArclinkRequestIndex(const ArclinkRequestIndex &idx) {
 	created = idx.created;
 	requestID = idx.requestID;
 	userID = idx.userID;
@@ -87,7 +87,7 @@ ArclinkRequestIndex::ArclinkRequestIndex(const ArclinkRequestIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestIndex::operator==(const ArclinkRequestIndex& idx) const {
+bool ArclinkRequestIndex::operator==(const ArclinkRequestIndex &idx) const {
 	return created == idx.created &&
 	       requestID == idx.requestID &&
 	       userID == idx.userID;
@@ -98,7 +98,7 @@ bool ArclinkRequestIndex::operator==(const ArclinkRequestIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequestIndex::operator!=(const ArclinkRequestIndex& idx) const {
+bool ArclinkRequestIndex::operator!=(const ArclinkRequestIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -115,7 +115,7 @@ ArclinkRequest::ArclinkRequest() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest::ArclinkRequest(const ArclinkRequest& other)
+ArclinkRequest::ArclinkRequest(const ArclinkRequest &other)
 : PublicObject() {
 	*this = other;
 }
@@ -148,8 +148,8 @@ ArclinkRequest::~ArclinkRequest() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest* ArclinkRequest::Create() {
-	ArclinkRequest* object = new ArclinkRequest();
+ArclinkRequest *ArclinkRequest::Create() {
+	ArclinkRequest *object = new ArclinkRequest();
 	return static_cast<ArclinkRequest*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -158,7 +158,7 @@ ArclinkRequest* ArclinkRequest::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest* ArclinkRequest::Create(const std::string& publicID) {
+ArclinkRequest *ArclinkRequest::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -175,7 +175,7 @@ ArclinkRequest* ArclinkRequest::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest* ArclinkRequest::Find(const std::string& publicID) {
+ArclinkRequest *ArclinkRequest::Find(const std::string& publicID) {
 	return ArclinkRequest::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -184,7 +184,7 @@ ArclinkRequest* ArclinkRequest::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::operator==(const ArclinkRequest& rhs) const {
+bool ArclinkRequest::operator==(const ArclinkRequest &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _userIP != rhs._userIP ) return false;
 	if ( _clientID != rhs._clientID ) return false;
@@ -203,7 +203,7 @@ bool ArclinkRequest::operator==(const ArclinkRequest& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::operator!=(const ArclinkRequest& rhs) const {
+bool ArclinkRequest::operator!=(const ArclinkRequest &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -212,7 +212,7 @@ bool ArclinkRequest::operator!=(const ArclinkRequest& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::equal(const ArclinkRequest& other) const {
+bool ArclinkRequest::equal(const ArclinkRequest &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -450,7 +450,7 @@ const ArclinkRequestSummary& ArclinkRequest::summary() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ArclinkRequestIndex& ArclinkRequest::index() const {
+const ArclinkRequestIndex &ArclinkRequest::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -459,8 +459,11 @@ const ArclinkRequestIndex& ArclinkRequest::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::equalIndex(const ArclinkRequest* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ArclinkRequest::equalIndex(const ArclinkRequest *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -469,7 +472,7 @@ bool ArclinkRequest::equalIndex(const ArclinkRequest* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkLog* ArclinkRequest::arclinkLog() const {
+ArclinkLog *ArclinkRequest::arclinkLog() const {
 	return static_cast<ArclinkLog*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -478,7 +481,7 @@ ArclinkLog* ArclinkRequest::arclinkLog() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest& ArclinkRequest::operator=(const ArclinkRequest& other) {
+ArclinkRequest &ArclinkRequest::operator=(const ArclinkRequest &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_userIP = other._userIP;
@@ -498,10 +501,11 @@ ArclinkRequest& ArclinkRequest::operator=(const ArclinkRequest& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::assign(Object* other) {
-	ArclinkRequest* otherArclinkRequest = ArclinkRequest::Cast(other);
-	if ( other == nullptr )
+bool ArclinkRequest::assign(Object *other) {
+	ArclinkRequest *otherArclinkRequest = ArclinkRequest::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherArclinkRequest;
 
@@ -513,11 +517,13 @@ bool ArclinkRequest::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ArclinkRequest::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkLog* arclinkLog = ArclinkLog::Cast(parent);
+	ArclinkLog *arclinkLog = ArclinkLog::Cast(parent);
 	if ( arclinkLog != nullptr )
 		return arclinkLog->add(this);
 
@@ -530,11 +536,13 @@ bool ArclinkRequest::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ArclinkRequest::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkLog* arclinkLog = ArclinkLog::Cast(object);
+	ArclinkLog *arclinkLog = ArclinkLog::Cast(object);
 	if ( arclinkLog != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -542,7 +550,7 @@ bool ArclinkRequest::detachFrom(PublicObject* object) {
 			return arclinkLog->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ArclinkRequest* child = arclinkLog->findArclinkRequest(publicID());
+			ArclinkRequest *child = arclinkLog->findArclinkRequest(publicID());
 			if ( child != nullptr )
 				return arclinkLog->remove(child);
 			else {
@@ -562,8 +570,9 @@ bool ArclinkRequest::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkRequest::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -573,8 +582,8 @@ bool ArclinkRequest::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ArclinkRequest::clone() const {
-	ArclinkRequest* clonee = new ArclinkRequest();
+Object *ArclinkRequest::clone() const {
+	ArclinkRequest *clonee = new ArclinkRequest();
 	*clonee = *this;
 	return clonee;
 }
@@ -584,10 +593,10 @@ Object* ArclinkRequest::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::updateChild(Object* child) {
-	ArclinkStatusLine* arclinkStatusLineChild = ArclinkStatusLine::Cast(child);
+bool ArclinkRequest::updateChild(Object *child) {
+	ArclinkStatusLine *arclinkStatusLineChild = ArclinkStatusLine::Cast(child);
 	if ( arclinkStatusLineChild != nullptr ) {
-		ArclinkStatusLine* arclinkStatusLineElement = arclinkStatusLine(arclinkStatusLineChild->index());
+		ArclinkStatusLine *arclinkStatusLineElement = arclinkStatusLine(arclinkStatusLineChild->index());
 		if ( arclinkStatusLineElement != nullptr ) {
 			*arclinkStatusLineElement = *arclinkStatusLineChild;
 			arclinkStatusLineElement->update();
@@ -596,9 +605,9 @@ bool ArclinkRequest::updateChild(Object* child) {
 		return false;
 	}
 
-	ArclinkRequestLine* arclinkRequestLineChild = ArclinkRequestLine::Cast(child);
+	ArclinkRequestLine *arclinkRequestLineChild = ArclinkRequestLine::Cast(child);
 	if ( arclinkRequestLineChild != nullptr ) {
-		ArclinkRequestLine* arclinkRequestLineElement = arclinkRequestLine(arclinkRequestLineChild->index());
+		ArclinkRequestLine *arclinkRequestLineElement = arclinkRequestLine(arclinkRequestLineChild->index());
 		if ( arclinkRequestLineElement != nullptr ) {
 			*arclinkRequestLineElement = *arclinkRequestLineChild;
 			arclinkRequestLineElement->update();
@@ -615,7 +624,7 @@ bool ArclinkRequest::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkRequest::accept(Visitor* visitor) {
+void ArclinkRequest::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -645,7 +654,7 @@ size_t ArclinkRequest::arclinkStatusLineCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkStatusLine* ArclinkRequest::arclinkStatusLine(size_t i) const {
+ArclinkStatusLine *ArclinkRequest::arclinkStatusLine(size_t i) const {
 	return _arclinkStatusLines[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -654,10 +663,12 @@ ArclinkStatusLine* ArclinkRequest::arclinkStatusLine(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkStatusLine* ArclinkRequest::arclinkStatusLine(const ArclinkStatusLineIndex& i) const {
-	for ( std::vector<ArclinkStatusLinePtr>::const_iterator it = _arclinkStatusLines.begin(); it != _arclinkStatusLines.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ArclinkStatusLine *ArclinkRequest::arclinkStatusLine(const ArclinkStatusLineIndex &i) const {
+	for ( const auto &elem : _arclinkStatusLines ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -667,9 +678,10 @@ ArclinkStatusLine* ArclinkRequest::arclinkStatusLine(const ArclinkStatusLineInde
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::add(ArclinkStatusLine* arclinkStatusLine) {
-	if ( arclinkStatusLine == nullptr )
+bool ArclinkRequest::add(ArclinkStatusLine *arclinkStatusLine) {
+	if ( !arclinkStatusLine ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( arclinkStatusLine->parent() != nullptr ) {
@@ -706,9 +718,10 @@ bool ArclinkRequest::add(ArclinkStatusLine* arclinkStatusLine) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::remove(ArclinkStatusLine* arclinkStatusLine) {
-	if ( arclinkStatusLine == nullptr )
+bool ArclinkRequest::remove(ArclinkStatusLine *arclinkStatusLine) {
+	if ( !arclinkStatusLine ) {
 		return false;
+	}
 
 	if ( arclinkStatusLine->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkRequest::remove(ArclinkStatusLine*) -> element has another parent");
@@ -724,8 +737,7 @@ bool ArclinkRequest::remove(ArclinkStatusLine* arclinkStatusLine) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -748,8 +760,7 @@ bool ArclinkRequest::removeArclinkStatusLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkStatusLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkStatusLines[i].get());
 	}
 
 	_arclinkStatusLines[i]->setParent(nullptr);
@@ -765,9 +776,12 @@ bool ArclinkRequest::removeArclinkStatusLine(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::removeArclinkStatusLine(const ArclinkStatusLineIndex& i) {
-	ArclinkStatusLine* object = arclinkStatusLine(i);
-	if ( object == nullptr ) return false;
+bool ArclinkRequest::removeArclinkStatusLine(const ArclinkStatusLineIndex &i) {
+	ArclinkStatusLine *object = arclinkStatusLine(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -785,7 +799,7 @@ size_t ArclinkRequest::arclinkRequestLineCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestLine* ArclinkRequest::arclinkRequestLine(size_t i) const {
+ArclinkRequestLine *ArclinkRequest::arclinkRequestLine(size_t i) const {
 	return _arclinkRequestLines[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -794,10 +808,12 @@ ArclinkRequestLine* ArclinkRequest::arclinkRequestLine(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequestLine* ArclinkRequest::arclinkRequestLine(const ArclinkRequestLineIndex& i) const {
-	for ( std::vector<ArclinkRequestLinePtr>::const_iterator it = _arclinkRequestLines.begin(); it != _arclinkRequestLines.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+ArclinkRequestLine *ArclinkRequest::arclinkRequestLine(const ArclinkRequestLineIndex &i) const {
+	for ( const auto &elem : _arclinkRequestLines ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -807,9 +823,10 @@ ArclinkRequestLine* ArclinkRequest::arclinkRequestLine(const ArclinkRequestLineI
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::add(ArclinkRequestLine* arclinkRequestLine) {
-	if ( arclinkRequestLine == nullptr )
+bool ArclinkRequest::add(ArclinkRequestLine *arclinkRequestLine) {
+	if ( !arclinkRequestLine ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( arclinkRequestLine->parent() != nullptr ) {
@@ -846,9 +863,10 @@ bool ArclinkRequest::add(ArclinkRequestLine* arclinkRequestLine) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::remove(ArclinkRequestLine* arclinkRequestLine) {
-	if ( arclinkRequestLine == nullptr )
+bool ArclinkRequest::remove(ArclinkRequestLine *arclinkRequestLine) {
+	if ( !arclinkRequestLine ) {
 		return false;
+	}
 
 	if ( arclinkRequestLine->parent() != this ) {
 		SEISCOMP_ERROR("ArclinkRequest::remove(ArclinkRequestLine*) -> element has another parent");
@@ -864,8 +882,7 @@ bool ArclinkRequest::remove(ArclinkRequestLine* arclinkRequestLine) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -888,8 +905,7 @@ bool ArclinkRequest::removeArclinkRequestLine(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_arclinkRequestLines[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _arclinkRequestLines[i].get());
 	}
 
 	_arclinkRequestLines[i]->setParent(nullptr);
@@ -905,9 +921,12 @@ bool ArclinkRequest::removeArclinkRequestLine(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkRequest::removeArclinkRequestLine(const ArclinkRequestLineIndex& i) {
-	ArclinkRequestLine* object = arclinkRequestLine(i);
-	if ( object == nullptr ) return false;
+bool ArclinkRequest::removeArclinkRequestLine(const ArclinkRequestLineIndex &i) {
+	ArclinkRequestLine *object = arclinkRequestLine(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -916,7 +935,7 @@ bool ArclinkRequest::removeArclinkRequestLine(const ArclinkRequestLineIndex& i) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkRequest::serialize(Archive& ar) {
+void ArclinkRequest::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

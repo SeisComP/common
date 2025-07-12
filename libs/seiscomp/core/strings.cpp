@@ -28,16 +28,18 @@
 #include <boost/algorithm/string.hpp>
 
 #include <cctype>
-#include <sstream>
-#include <iostream>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <charconv>
+#include <cstdint>
 #include <cerrno>
 #include <cmath>
 #include <limits>
 #include <type_traits>
+
+#if defined __GLIBCXX__ && _GLIBCXX_RELEASE < 11 && __cplusplus >= 201703L
+// gcc < 11 does not fully support from_chars for floating point
+// values. So a backported implementation has to be used instead.
+#include <seiscomp/core/backports/charconv/charconv-float.h>
+#endif
 
 
 #define AUTO_FLOAT_PRECISION 1
@@ -188,110 +190,84 @@ std::string toString(const Enumeration& value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
-template <typename T, int UNSIGNED>
-struct Converter {};
-
-// Signed conversion
 template <typename T>
-struct Converter<T, 0> {
-	static inline bool convert(T &value, const std::string &str) {
-		char* endptr = nullptr;
-		errno = 0;
-		long long retval = strtoll(str.c_str(), &endptr, 10);
-		if ( errno != 0 )
-			return false;
+inline bool convertFromString(T &value, std::string_view &sv) {
+	if ( sv.empty() ) {
+		return false;
+	}
 
-		if ( endptr && (&str[0] + str.size() != endptr) )
-			return false;
+	auto first = sv.data();
+	auto last = first + sv.size();
 
-		if ( retval < std::numeric_limits<T>::min()
-		  || retval > std::numeric_limits<T>::max() ) {
-			errno = ERANGE;
+	if ( *first == '+' ) {
+		++first;
+	}
+
+	auto r = std::from_chars(first, last, value, 10);
+	if ( r.ec == std::errc() ) {
+		if ( r.ptr != last ) {
+			// Not all characters consumed
+			errno = EINVAL;
 			return false;
 		}
 
-		value = static_cast<T>(retval);
 		return true;
 	}
-};
-
-// Unsigned conversion
-template <typename T>
-struct Converter<T, 1> {
-	static inline bool convert(T &value, const std::string &str) {
-		char* endptr = nullptr;
-		errno = 0;
-		long long retval = strtoll(str.c_str(), &endptr, 10);
-		if ( errno != 0 )
-			return false;
-
-		if ( endptr && (&str[0] + str.size() != endptr) )
-			return false;
-
-		if ( retval < 0 )
-			return false;
-
-		if ( static_cast<unsigned long long>(retval) > std::numeric_limits<T>::max() ) {
-			errno = ERANGE;
-			return false;
-		}
-
-		value = static_cast<T>(retval);
-		return true;
+	else if ( r.ec == std::errc::result_out_of_range ) {
+		errno = ERANGE;
 	}
-};
+	else if ( r.ec == std::errc::invalid_argument ) {
+		errno = EINVAL;
+	}
 
-template <typename T>
-inline bool convertFromString(T &value, const std::string &str) {
-	if ( str.empty() ) return false;
-	return Converter<T, std::is_unsigned<T>::value>::convert(value, str);
-}
-
+	return false;
 }
 
+}
+
 template <>
-bool fromString(char &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(char &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(signed char &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(signed char &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(unsigned char &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(unsigned char &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(short &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(short &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(unsigned short &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(unsigned short &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(int &value, const std::string& str) {
-	return convertFromString(value, str);
+bool fromString(int &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(unsigned int &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(unsigned int &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(long &value, const std::string& str) {
-	return convertFromString(value, str);
+bool fromString(long &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(unsigned long &value, const std::string& str) {
-	return convertFromString(value, str);
+bool fromString(unsigned long &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(long long &value, const std::string &str) {
-	return convertFromString(value, str);
+bool fromString(long long &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 template <>
-bool fromString(unsigned long long &value, const std::string& str) {
-	return convertFromString(value, str);
+bool fromString(unsigned long long &value, std::string_view sv) {
+	return convertFromString(value, sv);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -300,31 +276,61 @@ bool fromString(unsigned long long &value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-bool fromString(float &value, const std::string &str) {
-	char* endptr = nullptr;
-
-	if ( str.empty() )
+bool fromString(double &value, std::string_view sv) {
+	if ( sv.empty() ) {
 		return false;
+	}
 
-	errno = 0;
-	double retval = strtod(str.c_str(), &endptr);
 
-	if ( errno != 0 )
+		auto first = sv.data();
+		auto last = first + sv.size();
+
+		if ( *first == '+' ) {
+			// from_chars does not support a leading '+'
+			++first;
+		}
+
+#if defined __GLIBCXX__ && _GLIBCXX_RELEASE < 11 && __cplusplus >= 201703L
+		auto r = std::backports::from_chars(first, last, value);
+#else
+	    auto r = std::from_chars(first, last, value);
+#endif
+
+		if ( r.ec == std::errc() ) {
+			return r.ptr == last;
+		}
+		else if ( r.ec == std::errc::result_out_of_range ) {
+			errno = ERANGE;
+		}
+		else if ( r.ec == std::errc::invalid_argument ) {
+			errno = EINVAL;
+		}
 		return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	if ( endptr && (&str[0] + str.size() != endptr) )
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <>
+bool fromString(float &value, std::string_view sv) {
+	double tmp;
+
+	if ( !fromString(tmp, sv) ) {
 		return false;
+	}
 
-	if ( std::isnormal(retval) ) {
-		double aretval = std::fabs(retval);
-		if ( aretval < static_cast<double>(std::numeric_limits<float>::min())
-		  || aretval > static_cast<double>(std::numeric_limits<float>::max()) ) {
+	if ( std::isnormal(tmp) ) {
+		auto atmp = std::fabs(tmp);
+		if ( atmp < static_cast<double>(std::numeric_limits<float>::min())
+		  || atmp > static_cast<double>(std::numeric_limits<float>::max()) ) {
 			errno = ERANGE;
 			return false;
 		}
 	}
 
-	value = static_cast<float>(retval);
+	value = static_cast<float>(tmp);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -334,54 +340,24 @@ bool fromString(float &value, const std::string &str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <>
-bool fromString(double &value, const std::string &str) {
-	char* endptr = nullptr;
-
-	if ( str.empty() )
+bool fromString(bool &value, std::string_view sv) {
+	if ( sv.empty() )
 		return false;
 
-	errno = 0;
-	value = strtod(str.c_str(), &endptr);
-
-	if ( errno != 0 )
-		return false;
-
-	if ( endptr && (&str[0] + str.size() != endptr) )
-		return false;
-
-	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <>
-bool fromString(bool &value, const std::string &str) {
-	char* endptr = nullptr;
-	errno = 0;
-
-	if ( str.empty() )
-		return false;
-
-	if ( compareNoCase(str, "true") == 0 ) {
+	if ( compareNoCase(sv, "true") == 0 ) {
 		value = true;
 		return true;
 	}
 
-	if ( compareNoCase(str, "false") == 0 ) {
+	if ( compareNoCase(sv, "false") == 0 ) {
 		value = false;
 		return true;
 	}
 
-	long int retval = strtol(str.c_str(), &endptr, 10);
-
-	if ( errno != 0 )
+	long int retval;
+	if ( !fromString(retval, sv) ) {
 		return false;
-
-	if ( endptr && (&str[0] + str.size() != endptr) )
-		return false;
+	}
 
 	value = retval ? true : false;
 	return true;
@@ -392,8 +368,9 @@ bool fromString(bool &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(Time &value, const std::string &str) {
-	return value.fromString(str);
+template <>
+bool fromString(TimeSpan &value, std::string_view sv) {
+	return value.fromString(sv);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -401,8 +378,9 @@ bool fromString(Time &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(Enumeration &value, const std::string &str) {
-	return value.fromString(str);
+template <>
+bool fromString(Time &value, std::string_view sv) {
+	return value.fromString(sv);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -410,8 +388,19 @@ bool fromString(Enumeration &value, const std::string &str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool fromString(std::string &value, const std::string &str) {
-	value.assign(str);
+template <>
+bool fromString(Enumeration &value, std::string_view sv) {
+	return value.fromString(sv);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <>
+bool fromString(std::string &value, std::string_view sv) {
+	value.assign(sv);
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -432,9 +421,11 @@ int split(std::vector<std::string> &tokens, const char *source,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int split(std::vector<std::string> &tokens, const std::string &source,
+int split(std::vector<std::string> &tokens, std::string_view source,
           const char *delimiter, bool compressOn) {
-	return split(tokens, source.c_str(), delimiter, compressOn);
+	boost::split(tokens, source, boost::is_any_of(delimiter),
+	             ((compressOn) ? boost::token_compress_on : boost::token_compress_off));
+	return static_cast<int>(tokens.size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -687,15 +678,17 @@ bool isEmpty(const char* str) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int compareNoCase(const std::string& a, const std::string& b) {
-	std::string::const_iterator it_a = a.begin(), it_b = b.begin();
+int compareNoCase(std::string_view a, std::string_view b) {
+	auto it_a = a.begin(), it_b = b.begin();
 	while ( it_a != a.end() && it_b != b.end() ) {
 		char upper_a = static_cast<char>(toupper(*it_a));
 		char upper_b = static_cast<char>(toupper(*it_b));
-		if ( upper_a < upper_b )
+		if ( upper_a < upper_b ) {
 			return -1;
-		else if ( upper_a > upper_b )
+		}
+		else if ( upper_a > upper_b ) {
 			return 1;
+		}
 
 		++it_a; ++it_b;
 	}
@@ -708,18 +701,73 @@ int compareNoCase(const std::string& a, const std::string& b) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string& trim(std::string& str) {
-	/*
-	const char whitespace[] = "\t\n\v\f\r ";
+std::string_view trimFront(std::string_view sv) {
+	auto pos = sv.find_first_not_of(WHITESPACE);
+	if ( pos == std::string::npos ) {
+		// All whitespace characters
+		return { sv.data(), 0 };
+	}
 
-	std::string::size_type pos;
-	pos = str.find_first_not_of(whitespace);
-	if (pos != 0) str.erase(0, pos);
+	// Remove leading whitespaces
+	return sv.substr(pos);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	pos = str.find_last_not_of(whitespace);
-	if (pos != std::string::npos) str.erase(pos + 1, std::string::npos);
-	*/
-	boost::trim(str);
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view trimBack(std::string_view sv) {
+	auto pos = sv.find_last_not_of(WHITESPACE);
+	if ( pos != std::string::npos ) {
+		sv = sv.substr(0, pos + 1);
+	}
+
+	return sv;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view trim(std::string_view sv) {
+	auto pos = sv.find_first_not_of(WHITESPACE);
+	if ( pos == std::string::npos ) {
+		// All whitespace characters
+		return { sv.data(), 0 };
+	}
+
+	// Remove leading whitespaces
+	sv = sv.substr(pos);
+
+	pos = sv.find_last_not_of(WHITESPACE);
+	if ( pos != std::string::npos ) {
+		sv = sv.substr(0, pos + 1);
+	}
+
+	return sv;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string &trim(std::string &str) {
+	auto pos = str.find_first_not_of(WHITESPACE);
+	if ( pos == std::string::npos ) {
+		// All whitespace characters
+		str = std::string();
+		return str;
+	}
+
+	str.erase(str.begin(), str.begin() + pos);
+	pos = str.find_last_not_of(WHITESPACE);
+	if ( pos != std::string::npos ) {
+		str.erase(str.begin() + pos + 1, str.end());
+	}
+
 	return str;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -838,6 +886,53 @@ starCheck:
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool wildicmp(const std::string &wild, const std::string &str) {
 	return wildicmp(wild.c_str(), str.c_str());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view tokenize(std::string_view &sv, const char *delim) {
+	std::string_view tok;
+
+	size_t p0 = sv.find_first_not_of(delim, 0);
+	if ( p0 == std::string::npos ) {
+		return tok;
+	}
+
+	size_t p1 = sv.find_first_of(delim, p0 + 1);
+	if ( p1 != std::string::npos ) {
+		tok = sv.substr(p0, p1 - p0);
+		sv = sv.substr(p1);
+	}
+	else {
+		tok = sv.substr(p0);
+		sv = std::string_view();
+	}
+
+	return tok;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string_view tokenize2(std::string_view &sv, const char *delim) {
+	std::string_view tok;
+
+	size_t p0 = sv.find_first_of(delim, 0);
+	if ( p0 == std::string::npos ) {
+		tok = sv;
+		sv = {};
+	}
+	else {
+		tok = sv.substr(0, p0);
+		sv = sv.substr(p0 + 1);
+	}
+
+	return tok;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

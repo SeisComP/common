@@ -53,8 +53,20 @@ class SC_GUI_API ImportPicksDialog : public QDialog {
 
 
 	private:
+		enum CBSelection {
+			CBUndefined = -1,
+			CBNone = 0,
+			CBImportAllPicks = 1 << 0,
+			CBImportAllPhases = 1 << 1,
+			CBPreferTargetPhases = 1 << 2,
+		};
+
+		int currentCBSelection() const;
+
+	private:
 		::Ui::ImportPicks _ui;
 		static Selection _lastSelection;
+		static int _lastCBSelection;
 };
 
 

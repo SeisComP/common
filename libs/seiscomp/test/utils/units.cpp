@@ -57,22 +57,44 @@ BOOST_AUTO_TEST_SUITE(seiscomp_utils_units)
 
 
 BOOST_AUTO_TEST_CASE(units) {
-	EXPECT_SI_UNIT("m*s", "M*S", 1.0);
+	EXPECT_SI_UNIT("m*s", "m*s", 1.0);
 	EXPECT_QML_UNIT("m*s", "m*s", 1.0);
-	EXPECT_SI_UNIT("M*S", "M*S", 1.0);
+	EXPECT_SI_UNIT("M*S", "m*s", 1.0);
 	EXPECT_QML_UNIT("M*S", "m*s", 1.0);
-	EXPECT_SI_UNIT("M", "M", 1.0);
+	EXPECT_SI_UNIT("M", "m", 1.0);
 	EXPECT_QML_UNIT("M", "m", 1.0);
-	EXPECT_SI_UNIT("nm", "M", 1E-9);
+	EXPECT_SI_UNIT("nm", "m", 1E-9);
 	EXPECT_QML_UNIT("nm", "m", 1E-9);
-	EXPECT_SI_UNIT("cm", "M", 1E-2);
+	EXPECT_SI_UNIT("cm", "m", 1E-2);
 	EXPECT_QML_UNIT("cm", "m", 1E-2);
-	EXPECT_SI_UNIT("m/s", "M/S", 1.0);
+	EXPECT_SI_UNIT("m/s", "m/s", 1.0);
 	EXPECT_QML_UNIT("m/s", "m/s", 1.0);
-	EXPECT_SI_UNIT("um/s", "M/S", 1E-6);
+	EXPECT_SI_UNIT("um/s", "m/s", 1E-6);
 	EXPECT_QML_UNIT("um/s", "m/s", 1E-6);
-	EXPECT_SI_UNIT("m/s/s", "M/S**2", 1.0);
+	EXPECT_SI_UNIT("m/s/s", "m/s**2", 1.0);
 	EXPECT_QML_UNIT("m/s**2", "m/(s*s)", 1.0);
+}
+
+
+BOOST_AUTO_TEST_CASE(strings) {
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.23", "deg"), 1.23);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1234 m", "km"), 1.234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1234m", "km"), 1.234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.234 km", "m"), 1234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1.234km", "m"), 1234);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2 cm", "km"), 0.00002);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2cm", "km"), 0.00002);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2 km", "cm"), 200000);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("2km", "cm"), 200000);
+
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("111.195079734632 km", "deg"), 1);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1 deg", "km"), 111.195079734632);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1°", "km"), 111.195079734632);
+	BOOST_CHECK_EQUAL(Util::UnitConverter::parse<double>("1°", "deg"), 1);
+
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1°", "m/s"), std::invalid_argument);
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1°", "ABC"), std::invalid_argument);
+	BOOST_CHECK_THROW(Util::UnitConverter::parse<double>("1 m/s", "m/s**2"), std::invalid_argument);
 }
 
 

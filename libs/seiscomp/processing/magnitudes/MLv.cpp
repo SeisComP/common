@@ -51,7 +51,6 @@ class ExtraLocale : public Core::BaseObject {
 }
 
 
-IMPLEMENT_SC_CLASS_DERIVED(MagnitudeProcessor_MLv, MagnitudeProcessor, "MagnitudeProcessor_MLv");
 REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_MLv, "MLv");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -61,6 +60,17 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_MLv, "MLv");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_MLv::MagnitudeProcessor_MLv()
  : MagnitudeProcessor("MLv") {
+	MagnitudeProcessor_MLv::setDefaults();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeProcessor_MLv::setDefaults() {
+	_maximumDistanceDeg = 8.0;
+	_maximumDepthKm = 1000.0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -78,7 +88,6 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 
 	// This is the default
 	defLogA0 = "0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85";
-	_maxDistanceKm = -1; // distance according to the logA0 range
 
 	try {
 		defLogA0 = settings.getString("magnitudes." + type() + ".logA0");
@@ -105,24 +114,6 @@ bool MagnitudeProcessor_MLv::setup(const Settings &settings) {
 		               settings.networkCode, settings.stationCode,
 		               type(), Core::toString(_logA0));
 	}
-
-	try {
-		_maxDistanceKm = settings.getDouble("magnitudes." + type() + ".maxDistanceKm");
-		SEISCOMP_DEBUG("%s.%s: %s: max distance from bindings = %f",
-		               settings.networkCode, settings.stationCode,
-		               type(), _maxDistanceKm);
-	}
-	catch ( ... ) {}
-
-	try {
-		_maxDistanceKm = settings.getDouble(type() + ".maxDistanceKm");
-		SEISCOMP_WARNING("%s.maxDistanceKm is deprecated", type().c_str());
-		SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.maxDistanceKm", type().c_str());
-		SEISCOMP_DEBUG("%s.%s: %s: max distance from bindings = %f",
-		               settings.networkCode, settings.stationCode,
-		               type(), _maxDistanceKm);
-	}
-	catch ( ... ) {}
 
 	return true;
 }
@@ -182,7 +173,7 @@ bool MagnitudeProcessor_MLv::initLocale(Locale *locale,
 MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 	double amplitude, const std::string &unit,
 	double, double,
-	double delta, double depth,
+	double delta, double,
 	const DataModel::Origin *,
 	const DataModel::SensorLocation *,
 	const DataModel::Amplitude *,
@@ -193,13 +184,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLv::computeMagnitude(
 		return AmplitudeOutOfRange;
 	}
 
-	// Clip depth to 0
-	if ( depth < 0 ) {
-		depth = 0;
-	}
 	double distanceKm = Math::Geo::deg2km(delta);
-	if ( _maxDistanceKm > 0 and distanceKm > _maxDistanceKm )
-		return DistanceOutOfRange;
 
 	if ( !convertAmplitude(amplitude, unit, ExpectedAmplitudeUnit) ) {
 		return InvalidAmplitudeUnit;

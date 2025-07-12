@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(RealQuantity, "RealQuantity");
 
 
-RealQuantity::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+RealQuantity::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("value", "float", false, false, false, false, false, false, nullptr, &RealQuantity::setValue, &RealQuantity::value));
 	addProperty(Core::simpleProperty("uncertainty", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setUncertainty, &RealQuantity::uncertainty));
 	addProperty(Core::simpleProperty("lowerUncertainty", "float", false, false, false, false, true, false, nullptr, &RealQuantity::setLowerUncertainty, &RealQuantity::lowerUncertainty));
@@ -54,7 +54,7 @@ RealQuantity::RealQuantity() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealQuantity::RealQuantity(const RealQuantity& other)
+RealQuantity::RealQuantity(const RealQuantity &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -109,7 +109,7 @@ RealQuantity::operator double() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealQuantity::operator==(const RealQuantity& rhs) const {
+bool RealQuantity::operator==(const RealQuantity &rhs) const {
 	if ( !(_value == rhs._value) )
 		return false;
 	if ( !(_uncertainty == rhs._uncertainty) )
@@ -130,7 +130,7 @@ bool RealQuantity::operator==(const RealQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealQuantity::operator!=(const RealQuantity& rhs) const {
+bool RealQuantity::operator!=(const RealQuantity &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -139,7 +139,7 @@ bool RealQuantity::operator!=(const RealQuantity& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealQuantity::equal(const RealQuantity& other) const {
+bool RealQuantity::equal(const RealQuantity &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -277,7 +277,7 @@ const RealPDF1D& RealQuantity::pdf() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealQuantity& RealQuantity::operator=(const RealQuantity& other) {
+RealQuantity &RealQuantity::operator=(const RealQuantity &other) {
 	_value = other._value;
 	_uncertainty = other._uncertainty;
 	_lowerUncertainty = other._lowerUncertainty;
@@ -292,7 +292,7 @@ RealQuantity& RealQuantity::operator=(const RealQuantity& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RealQuantity::serialize(Archive& ar) {
+void RealQuantity::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

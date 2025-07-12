@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_GUI_EVENTEDIT_H
 #define SEISCOMP_GUI_EVENTEDIT_H
 
+
 #include <QWidget>
 #include <string>
 #include <list>
@@ -36,16 +37,25 @@
 #endif
 #include <seiscomp/gui/qt.h>
 #include <seiscomp/gui/datamodel/originsymbol.h>
+#include <seiscomp/gui/datamodel/stationsymbol.h>
 #include <seiscomp/gui/datamodel/tensorsymbol.h>
 #include <seiscomp/gui/map/mapwidget.h>
 
 #include <seiscomp/gui/datamodel/ui_eventedit.h>
 
+
 namespace Seiscomp {
 namespace Gui {
 
+namespace Map {
+
+class AnnotationLayer;
+
+}
+
+
 // Extends tensor symbol by label and reference position
-class SC_GUI_API ExtTensorSymbol  : public TensorSymbol {
+class SC_GUI_API ExtTensorSymbol : public TensorSymbol {
 	public:
 		ExtTensorSymbol(const Math::Tensor2Sd &t,
 		                const DataModel::FocalMechanism *fm,
@@ -57,28 +67,29 @@ class SC_GUI_API ExtTensorSymbol  : public TensorSymbol {
 		void setDrawAgency(bool enabled) { _drawAgency = enabled; }
 		void setDrawMagnitude(bool enabled) { _drawMagnitude = enabled; }
 		void setDrawDepth(bool enabled) { _drawDepth = enabled; }
-		void setReferencePositionEnabled(bool enabled) { _refPosEnabled = enabled; }
 		void setReferencePosition(const QPointF &refPos) { _refPos = refPos; }
+		QPointF referencePosition() const { return _refPos; }
 
-		const QString& agencyID() const { return _agency; }
-		const Core::Time& created() const { return _created; }
+		const DataModel::FocalMechanism *model() const { return _fm.get(); }
+		const QString &agencyID() const { return _agency; }
+		OPT(Core::Time) created() const { return _created; }
 
 	protected:
 		virtual void customDraw(const Map::Canvas *canvas, QPainter &painter);
 
 	private:
-		bool            _selected;
-		bool            _refPosEnabled;
-		QPointF         _refPos;
+		DataModel::FocalMechanismCPtr _fm;
+		bool                          _selected;
+		QPointF                       _refPos;
 
-		QString         _agency;
-		QString         _magnitude;
-		QString         _depth;
-		Core::Time      _created;
+		QString                       _agency;
+		QString                       _magnitude;
+		QString                       _depth;
+		OPT(Core::Time)               _created;
 
-		bool            _drawAgency;
-		bool            _drawMagnitude;
-		bool            _drawDepth;
+		bool                          _drawAgency;
+		bool                          _drawMagnitude;
+		bool                          _drawDepth;
 };
 
 
@@ -102,23 +113,29 @@ class SC_GUI_API FMMap : public MapWidget {
 		void setCurrentFM(const std::string &id);
 		void setEvent(const DataModel::Event *event);
 
+		void setDrawStations(bool draw);
+		void setDrawStationAnnotations(bool draw);
 
 	protected:
 		void contextMenuEvent(QContextMenuEvent *e);
 
 	private:
 		void init();
-		void updateSmartLayout();
+		void updateStations(const DataModel::FocalMechanism *fm);
 
 	private:
-		typedef std::map<std::string, ExtTensorSymbol*> FMSymbols;
+		using FMSymbols = std::map<std::string, ExtTensorSymbol*>;
 
 		FMSymbols                   _fmSymbols;
 		OriginSymbol               *_originSymbol;
+		Map::Layer                 *_symbolLayer;
+		Map::AnnotationLayer       *_annotationLayer;
+		std::string                 _currentFMID;
 
 		bool                        _drawAgency;
 		bool                        _drawMagnitude;
 		bool                        _drawDepth;
+		bool                        _drawStations;
 		bool                        _smartLayout;
 		bool                        _groupByAgency;
 
@@ -163,6 +180,8 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 		void updateFM(Seiscomp::DataModel::FocalMechanism*);
 
 		void showTab(int);
+		void drawStations(bool);
+		void drawStationAnnotations(bool);
 
 
 	private slots:
@@ -319,5 +338,6 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 }
 }
+
 
 #endif

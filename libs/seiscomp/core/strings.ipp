@@ -18,11 +18,8 @@
  ***************************************************************************/
 
 
-#include <seiscomp/core/enumeration.h>
-
 #include <cctype>
 #include <sstream>
-#include <complex>
 
 
 namespace Seiscomp {
@@ -92,18 +89,20 @@ std::string toString(const Enum<ENUMTYPE, END, NAMES>& value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline std::string toString(const std::vector<T>& v) {
-	typename std::vector<T>::const_iterator it = v.begin();
+inline std::string toString(const std::vector<T>& v, char delimiter) {
+	auto it = v.begin();
 	std::string str;
-	if ( it != v.end() )
+	if ( it != v.end() ) {
 		str += toString(*it);
-	else
+	}
+	else {
 		return "";
+	}
 
 	++it;
-	
+
 	while ( it != v.end() ) {
-		str += " ";
+		str += delimiter;
 		str += toString(*it);
 		++it;
 	}
@@ -117,11 +116,41 @@ inline std::string toString(const std::vector<T>& v) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline std::string toString(const ::boost::optional<T>& v) {
+inline std::string toString(const Seiscomp::Core::Optional<T> &v) {
 	if ( !v )
 		return "None";
 
 	return toString(*v);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#if __cplusplus >= 201703L
+template <typename T>
+bool fromString(boost::optional<T> &value, const std::string &str) {
+	static_assert(
+		False<T>::value,
+		"String conversion for boost optional values is not supported"
+	);
+	return false;
+}
+#endif
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+bool fromString(Optional<T> &value, const std::string &str) {
+	static_assert(
+		False<T>::value,
+		"String conversion for optional values is not supported"
+	);
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -154,7 +183,7 @@ inline bool fromString(std::complex<T>& value, const std::string& str) {
 		return false;
 
 	T realPart, imgPart;
-	
+
 	if ( !fromString(realPart, str.substr(s+1, delimPos-s-1)) ) return false;
 	if ( !fromString(imgPart, str.substr(delimPos+1, e-delimPos-1)) ) return false;
 
@@ -169,13 +198,16 @@ inline bool fromString(std::complex<T>& value, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool fromString(std::vector<T>& vec, const std::string& str) {
+inline bool fromString(std::vector<T>& vec, std::string_view sv, char delimiter) {
 	std::vector<std::string> tokens;
-	split(tokens, str.c_str(), " ");
+	char tmp[2] = { delimiter, '\0' };
+	split(tokens, sv, tmp);
+	vec.clear();
 	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		T v;
-		if ( !fromString(v, tokens[i]) )
+		if ( !fromString(v, tokens[i]) ) {
 			return false;
+		}
 		vec.push_back(v);
 	}
 
@@ -188,28 +220,39 @@ inline bool fromString(std::vector<T>& vec, const std::string& str) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-inline bool fromString(std::vector<std::complex<T> >& vec, const std::string& str) {
+inline bool fromString(std::vector<std::complex<T> >& vec, std::string_view sv, char delimiter) {
 	std::vector<std::string> tokens;
-	split(tokens, str.c_str(), " ");
+	char tmp[2] = { delimiter, '\0' };
+	split(tokens, sv, tmp);
+	vec.clear();
 	for ( size_t i = 0; i < tokens.size(); ++i ) {
 		std::complex<T> v;
 		int count = 1;
 
-		size_t countPos = tokens[i].find_first_not_of(' ');
+		size_t countPos = tokens[i].find_first_not_of(delimiter);
 		if ( countPos != std::string::npos ) {
 			if ( tokens[i][countPos] != '(' ) {
 				size_t bracketPos = tokens[i].find('(', countPos);
 				// Invalid complex string
-				if ( bracketPos == std::string::npos ) continue;
-				if ( !fromString(count, tokens[i].substr(countPos, bracketPos-countPos)) )
+				if ( bracketPos == std::string::npos ) {
+					continue;
+				}
+
+				if ( !fromString(count, tokens[i].substr(countPos, bracketPos-countPos)) ) {
 					return false;
+				}
+
 				tokens[i] = tokens[i].substr(bracketPos);
 			}
 		}
-		
-		if ( !fromString(v, tokens[i]) ) return false;
-		for ( int i = 0; i < count; ++i )
+
+		if ( !fromString(v, tokens[i]) ) {
+			return false;
+		}
+
+		for ( int c = 0; c < count; ++c ) {
 			vec.push_back(v);
+		}
 	}
 
 	return true;
@@ -428,7 +471,7 @@ std::string join(const CONT &tokens, const std::string &separator) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename S, typename... Args>
 inline std::string stringify(const S &format, Args &&...args) {
-	return fmt::vsprintf(format, fmt::make_printf_args(args...));
+	return fmt::sprintf(format, args...);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

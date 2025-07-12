@@ -54,7 +54,7 @@ class LogDialog : public QTextEdit {
 			escape_number1 = -1;
 			escape_number_seperator = false;
 			escape_number2 = -1;
-			escape_code = 0;
+			escape_code = QChar();
 		}
 
 		LogDialog(const QString &text, QWidget * parent = 0)
@@ -65,7 +65,7 @@ class LogDialog : public QTextEdit {
 			escape_number1 = -1;
 			escape_number_seperator = false;
 			escape_number2 = -1;
-			escape_code = 0;
+			escape_code = QChar();
 		}
 
 
@@ -105,7 +105,7 @@ class LogDialog : public QTextEdit {
 					else if ( c == ';' ) {
 						escape_number_seperator = true;
 					}
-					else if ( escape_OSC && c==7 ) {
+					else if ( escape_OSC && c == QChar(7) ) {
 						//Throw away any letters that are not OSC
 						escape_code = c;
 					}
@@ -158,7 +158,7 @@ class LogDialog : public QTextEdit {
 						}
 					}
 
-					escape_code = 0;
+					escape_code = QChar();
 					escape_number1 = -1;
 					escape_number2 = -1;
 					escape_CSI = false;
@@ -167,23 +167,23 @@ class LogDialog : public QTextEdit {
 					escape_number_seperator = false;
 				}
 			}
-			else if ( c == 0x0d )
+			else if ( c == QChar(0x0d) )
 				insertPlainText(QChar('\n'));
 			else if ( c.isPrint() || c == '\n' )
 				insertPlainText(QChar(c));
 			else if ( true /* parse ansi */ ) {
-				if ( c == 127 || c == 8 )
+				if ( c == QChar(127) || c == QChar(8) )
 					// delete or backspace, respectively
 					textCursor().deletePreviousChar();
-				else if ( c == 27 )
+				else if ( c == QChar(27) )
 					// escape key
 					escape_sequence = true;
-				else if ( c == 0x9b ) {
+				else if ( c == QChar(0x9b) ) {
 					// CSI - equivalent to esc [
 					escape_sequence = true;
 					escape_CSI = true;
 				}
-				else if ( c == 0x9d ) {
+				else if ( c == QChar(0x9d) ) {
 					// OSC - equivalent to esc ]
 					escape_sequence = true;
 					escape_OSC = true;
@@ -517,7 +517,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	}
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	setMargin(l, 0);
 	l->setSpacing(0);
 	setLayout(l);
 

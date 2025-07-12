@@ -117,7 +117,7 @@ Time getStartTime(const string &file) {
 
 	int retcode = ms_readmsr_r(&pfp,&prec,const_cast<char*>(file.c_str()),0,nullptr,nullptr,1,0,0);
 	if ( retcode == MS_NOERROR ) {
-		Time start((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
+		Time start{Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS)};
 		ms_readmsr_r(&pfp,&prec,nullptr,-1,nullptr,nullptr,0,0,0);
 		return start;
 	}
@@ -152,8 +152,8 @@ SDSArchive::Index::Index(const string& n, const string& s,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SDSArchive::Index::Index(const string& n, const string& s,
-                  const string& l, const string& c,
-                  const Time& st, const Time& et)
+                         const string& l, const string& c,
+                         const OPT(Time) &st, const OPT(Time) &et)
 : net(n), sta(s), loc(l), cha(c), stime(st), etime(et) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -293,12 +293,14 @@ bool SDSArchive::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::addStream(const string &net, const string &sta,
                     const string &loc, const string &cha,
-                    const Time &stime, const Time &etime) {
+                    const OPT(Time) &stime, const OPT(Time) &etime) {
 	pair<IndexSet::iterator, bool> result;
 
 	try {
-		result = _streamSet.insert(Index(net,sta,loc,cha,stime,etime));
-		if ( result.second ) _orderedRequests.push_back(*result.first);
+		result = _streamSet.insert(Index(net, sta, loc, cha, stime, etime));
+		if ( result.second ) {
+			_orderedRequests.push_back(*result.first);
+		}
 	}
 	catch(...) {
 		return false;
@@ -312,7 +314,7 @@ bool SDSArchive::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SDSArchive::setStartTime(const Time &stime) {
+bool SDSArchive::setStartTime(const OPT(Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -322,7 +324,7 @@ bool SDSArchive::setStartTime(const Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SDSArchive::setEndTime(const Time &etime) {
+bool SDSArchive::setEndTime(const OPT(Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -357,7 +359,7 @@ void SDSArchive::close() {
 	_streamSet.clear();
 	_orderedRequests.clear();
 	_curiter = _orderedRequests.begin();
-	_stime = _etime = Time();
+	_stime = _etime = None;
 	_curidx = nullptr;
 	_closeRequested = true;
 }
@@ -371,9 +373,11 @@ int SDSArchive::getDoy(const Time &time) {
 	int year;
 
 	time.get(&year);
-	if ( (year%4==0 && year%100!=0) || year%400==0 )
-		return (366-((int)(Time(year,12,31,23,59,59)-time)/86400));
-	return (365-((int)(Time(year,12,31,23,59,59)-time)/86400));
+	if ( (year%4==0 && year%100!=0) || year%400==0 ) {
+		return (366 - ((int)(Time(year, 12, 31, 23, 59, 59) - time).seconds() / 86400));
+	}
+
+	return (365 - ((int)(Time(year, 12, 31, 23, 59, 59) - time).seconds() / 86400));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -590,17 +594,19 @@ bool SDSArchive::resolveFiles(const string &net, const string &sta,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SDSArchive::resolveRequest() {
-	Time stime = _curidx->stime;
-	Time etime = _curidx->etime;
+	Time stime = _curidx->stime.value_or(Time());
+	Time etime = _curidx->etime.value_or(Time());
+
 	int sdoy = getDoy(stime);
 	int edoy = getDoy(etime);
 	int syear, eyear, tmpdoy;
 
 	stime.get(&syear);
 	etime.get(&eyear);
+
 	bool first = true;
 	for ( int year = syear; year <= eyear; ++year ) {
-		tmpdoy = (year == eyear)?edoy:getDoy(Time(year,12,31,23,59,59));
+		tmpdoy = (year == eyear) ? edoy : getDoy(Time(year, 12, 31, 23, 59, 59));
 		for ( int doy = sdoy; doy <= tmpdoy; ++doy ) {
 			resolveFiles(_curidx->net, _curidx->sta, _curidx->loc, _curidx->cha,
 			             stime, doy, year, first);
@@ -621,7 +627,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	double samprate = 0.0;
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
-	Time stime = (_curidx->stime == Time())?_stime:_curidx->stime;
+	Time stime = !_curidx->stime ? _stime.value_or(Time()) : *_curidx->stime;
 	off_t fpos;
 	int retcode;
 	long int offset = 0;
@@ -638,7 +644,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 		retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, nullptr, nullptr, 1, 0, 0);
 		if ( retcode == MS_NOERROR ) {
 			samprate = prec->samprate;
-			physFirstStartTime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
+			physFirstStartTime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
 			if ( samprate > 0. )
 				physFirstEndTime = physFirstStartTime + TimeSpan((double)(prec->samplecnt / samprate));
 			else {
@@ -663,7 +669,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 				//lmp_fseeko(pfp->fp, half*reclen, 0);
 				if ( (retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, &fpos, nullptr, 1, 0, 0)) == MS_NOERROR ) {
 					samprate = prec->samprate;
-					recstime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
+					recstime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
 					if ( samprate > 0. )
 						recetime = recstime + TimeSpan((double)(prec->samplecnt / samprate));
 					else {
@@ -702,17 +708,19 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	else {
 		while ( (retcode = ms_readmsr_r(&pfp,&prec,const_cast<char *>(fname.c_str()),0,nullptr,nullptr,1,0,0)) == MS_NOERROR ) {
 			samprate = prec->samprate;
-			recstime = Time((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
+			recstime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
 
 			if ( recstime > stime )
 				break;
 			else {
 				if ( samprate > 0. ) {
-					recetime = recstime + Time(prec->samplecnt / samprate);
-					if ( recetime > stime )
+					recetime = recstime + TimeSpan(prec->samplecnt / samprate);
+					if ( recetime > stime ) {
 						break;
-					else
+					}
+					else {
 						offset += prec->reclen;
+					}
 				}
 				else {
 					SEISCOMP_WARNING("SDS: [%s@%ld] Wrong sampling frequency %.2f!", fname.c_str(), offset, samprate);
@@ -776,22 +784,27 @@ Seiscomp::Record *SDSArchive::next() {
 
 		_file.close();
 	}
-	else
+	else {
 		_curiter = _orderedRequests.begin();
+	}
 
 	while ( !_fnames.empty() || _curiter != _orderedRequests.end() ) {
 		while ( _fnames.empty() && _curiter != _orderedRequests.end() ) {
-			if ( _etime == Time() )
-				_etime = Time::GMT();
-			if ( (_curiter->stime == Time() && _stime == Time()) ) {
+			if ( !_etime )
+				_etime = Time::UTC();
+			if ( !_curiter->stime && !_stime ) {
 				SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 				++_curiter;
 			}
 			else {
 				_curidx = &*_curiter;
 				// Check start/end times and set globals if not set
-				if ( _curidx->stime == Time() ) _curidx->stime = _stime;
-				if ( _curidx->etime == Time() ) _curidx->etime = _etime;
+				if ( !_curidx->stime ) {
+					_curidx->stime = _stime;
+				}
+				if ( !_curidx->etime ) {
+					_curidx->etime = _etime;
+				}
 				++_curiter;
 				resolveRequest();
 				break;

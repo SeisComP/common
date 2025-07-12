@@ -41,11 +41,11 @@ class QSpinBox;
 namespace Seiscomp {
 namespace Gui {
 
-class SaveBNADialog : public QDialog {
+class SaveGeoFeatureDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		SaveBNADialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+		SaveGeoFeatureDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 	public:
 		QLineEdit *name;
@@ -63,8 +63,9 @@ class SC_GUI_API MapWidget : public QWidget {
 		MapWidget(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		MapWidget(const MapsDesc &meta, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 		MapWidget(Map::ImageTree *mapTree, QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
-		virtual ~MapWidget();
 
+
+	public:
 		Map::Canvas &canvas() { return _canvas; }
 		const Map::Canvas &canvas() const { return _canvas; }
 
@@ -134,15 +135,18 @@ class SC_GUI_API MapWidget : public QWidget {
 
 		std::string _currentProjection;
 
-		bool     _firstDrag;
-		bool     _isDragging;
-		bool     _isMeasuring;
-		bool     _filterMap;
-		bool     _forceGrayScale;
+		bool     _firstDrag{false};
+		bool     _isDragging{false};
+		bool     _isZooming{false};
+		bool     _isMeasuring{false};
+		bool     _filterMap{false};
+		bool     _forceGrayScale{false};
 
-		QVector<QPointF> _measurePoints;
-		QString          _measureText;
-		SaveBNADialog   *_measureBNADialog;
+		QVector<QPointF>      _measurePoints;
+		QString               _measureText;
+		SaveGeoFeatureDialog *_measureSaveDialog;
+
+		QPoint   _firstDraggingPosition;
 		QPoint   _lastDraggingPosition;
 
 		QMenu   *_contextProjectionMenu;

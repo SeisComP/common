@@ -57,14 +57,18 @@ void Timeout() {
 
 	lock_guard<mutex> l(Mutex);
 
-	Core::Time timestamp = Core::Time::GMT();
+	Core::Time timestamp = Core::Time::UTC();
 
 	// Send state-of-health messages
 	for ( auto &&connection : Pool ) {
-		if ( !connection->protocol() ) continue;
+		if ( !connection->protocol() ) {
+			continue;
+		}
 
 		double usedCPU = floor(HostInfo.getCurrentCpuUsage() * 1E4) * 1E-4;
-		if ( usedCPU < 0 ) usedCPU = 0;
+		if ( usedCPU < 0 ) {
+			usedCPU = 0;
+		}
 
 		string content;
 		{
@@ -97,10 +101,11 @@ void Timeout() {
 		                                     Protocol::Status,
 		                                     Protocol::ContentEncoding(Protocol::Identity),
 		                                     Protocol::ContentType(Protocol::Text));
-		if ( !r && r.code() != NotConnected )
+		if ( !r && r.code() != NotConnected ) {
 			SEISCOMP_ERROR("Failed to send status message to %s: %d: %s",
 			               Protocol::STATUS_GROUP.c_str(),
 			               r.toInt(), r.toString());
+		}
 	}
 }
 
@@ -158,8 +163,9 @@ Result Connection::setSource(const char *URL) {
 		return InvalidURL;
 
 	string protoType = url.scheme();
-	if ( protoType.empty() && !_protocol )
+	if ( protoType.empty() && !_protocol ) {
 		protoType = "scmp";
+	}
 
 	if ( !protoType.empty() ) {
 		ProtocolPtr proto = ProtocolFactory::Create(protoType.c_str());
@@ -472,6 +478,16 @@ const string &Connection::clientName() const {
 	static string EmptyClientName;
 	if ( !_protocol ) return EmptyClientName;
 	return _protocol->clientName();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Connection::isDeleteTreeSupported() const {
+	if ( !_protocol ) return false;
+	return _protocol->isDeleteTreeSupported();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

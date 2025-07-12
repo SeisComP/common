@@ -38,7 +38,7 @@ static Seiscomp::Core::MetaEnumImpl<DataUsedWaveType> metaDataUsedWaveType;
 }
 
 
-DataUsed::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+DataUsed::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(enumProperty("waveType", "DataUsedWaveType", false, false, &metaDataUsedWaveType, &DataUsed::setWaveType, &DataUsed::waveType));
 	addProperty(Core::simpleProperty("stationCount", "int", false, false, false, false, false, false, nullptr, &DataUsed::setStationCount, &DataUsed::stationCount));
 	addProperty(Core::simpleProperty("componentCount", "int", false, false, false, false, false, false, nullptr, &DataUsed::setComponentCount, &DataUsed::componentCount));
@@ -59,7 +59,7 @@ DataUsed::DataUsed() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataUsed::DataUsed(const DataUsed& other)
+DataUsed::DataUsed(const DataUsed &other)
 : Object() {
 	*this = other;
 }
@@ -77,7 +77,7 @@ DataUsed::~DataUsed() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::operator==(const DataUsed& rhs) const {
+bool DataUsed::operator==(const DataUsed &rhs) const {
 	if ( !(_waveType == rhs._waveType) )
 		return false;
 	if ( !(_stationCount == rhs._stationCount) )
@@ -94,7 +94,7 @@ bool DataUsed::operator==(const DataUsed& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::operator!=(const DataUsed& rhs) const {
+bool DataUsed::operator!=(const DataUsed &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ bool DataUsed::operator!=(const DataUsed& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::equal(const DataUsed& other) const {
+bool DataUsed::equal(const DataUsed &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +186,7 @@ double DataUsed::shortestPeriod() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* DataUsed::momentTensor() const {
+MomentTensor *DataUsed::momentTensor() const {
 	return static_cast<MomentTensor*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +195,7 @@ MomentTensor* DataUsed::momentTensor() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataUsed& DataUsed::operator=(const DataUsed& other) {
+DataUsed &DataUsed::operator=(const DataUsed &other) {
 	_waveType = other._waveType;
 	_stationCount = other._stationCount;
 	_componentCount = other._componentCount;
@@ -208,10 +208,11 @@ DataUsed& DataUsed::operator=(const DataUsed& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::assign(Object* other) {
-	DataUsed* otherDataUsed = DataUsed::Cast(other);
-	if ( other == nullptr )
+bool DataUsed::assign(Object *other) {
+	DataUsed *otherDataUsed = DataUsed::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherDataUsed;
 
@@ -223,11 +224,13 @@ bool DataUsed::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool DataUsed::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(parent);
+	MomentTensor *momentTensor = MomentTensor::Cast(parent);
 	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
 
@@ -240,11 +243,13 @@ bool DataUsed::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool DataUsed::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool DataUsed::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(object);
+	MomentTensor *momentTensor = MomentTensor::Cast(object);
 	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -252,7 +257,7 @@ bool DataUsed::detachFrom(PublicObject* object) {
 			return momentTensor->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			DataUsed* child = momentTensor->findDataUsed(this);
+			DataUsed *child = momentTensor->findDataUsed(this);
 			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
@@ -272,8 +277,9 @@ bool DataUsed::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DataUsed::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -283,8 +289,8 @@ bool DataUsed::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* DataUsed::clone() const {
-	DataUsed* clonee = new DataUsed();
+Object *DataUsed::clone() const {
+	DataUsed *clonee = new DataUsed();
 	*clonee = *this;
 	return clonee;
 }
@@ -294,7 +300,7 @@ Object* DataUsed::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataUsed::accept(Visitor* visitor) {
+void DataUsed::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -303,7 +309,7 @@ void DataUsed::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void DataUsed::serialize(Archive& ar) {
+void DataUsed::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

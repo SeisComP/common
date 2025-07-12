@@ -25,12 +25,13 @@
 #include <seiscomp/core.h>
 #include <seiscomp/geo/feature.h>
 
-#include <vector>
 #include <boost/filesystem/path.hpp>
 
+#include <ostream>
+#include <vector>
 
-namespace Seiscomp {
-namespace Geo {
+
+namespace Seiscomp::Geo {
 
 
 class GeoFeatureSet;
@@ -54,12 +55,15 @@ class SC_SYSTEM_CORE_API GeoFeatureSetObserver {
 class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 	public:
 		/** Default constructor */
-		GeoFeatureSet();
+		GeoFeatureSet() = default;
 		/** Destructor */
 		virtual ~GeoFeatureSet();
 
 		/** Copy operator, intentionally left undefined */
 		GeoFeatureSet & operator=(const GeoFeatureSet &);
+
+		using Features = std::vector<GeoFeature*>;
+		using Categories = std::vector<Category*>;
 
 
 	public:
@@ -68,6 +72,11 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 
 
 	public:
+		/** Comparison operator */
+		bool operator==(const GeoFeatureSet &other) const;
+		/** Comparison operator */
+		bool operator!=(const GeoFeatureSet &other) const;
+
 		/**
 		 * Removes and destructs all elements from the _features and
 		 * _categories vectors
@@ -117,17 +126,17 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		 * @return Number of features read. If a negative number is returned
 		 *         then this file was ignored because its file extension is
 		 *         unknown.
-		 * @since SeisComP ABI version 14.3.0
+		 * @since SeisComP API version 14.3.0
 		 */
 		ssize_t readFile(const std::string& filename, const Category* category);
 
 		bool addFeature(GeoFeature *feature);
 
 		/** Returns reference to GeoFeature vector */
-		const std::vector<GeoFeature*> &features() const { return _features; };
+		const Features &features() const { return _features; };
 
 		/** Returns reference to Category vector */
-		const std::vector<Category*> &categories() const { return _categories; };
+		const Categories &categories() const { return _categories; };
 
 
 	private:
@@ -143,8 +152,8 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		                        Category *category);
 
 		/** Prints the number of polygons read */
-		const std::string initStatus(const std::string &directory,
-		                             unsigned int fileCount) const;
+		std::string initStatus(const std::string &directory,
+		                       unsigned int fileCount) const;
 
 		/** Compares two GeoFeatures by their rank */
 		static bool compareByRank(const GeoFeature* gf1, const GeoFeature* gf2);
@@ -160,14 +169,16 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 
 	private:
 		/** Vector of GeoFeatures */
-		std::vector<GeoFeature*> _features;
+		Features _features;
 
 		/** Vector of Categories */
-		std::vector<Category*> _categories;
+		Categories _categories;
 
 		typedef std::vector<GeoFeatureSetObserver*> ObserverList;
 		ObserverList _observers;
 };
+
+std::ostream& operator<<(std::ostream& os, const GeoFeatureSet &gfs);
 
 
 class SC_SYSTEM_CORE_API GeoFeatureSetSingleton {
@@ -184,8 +195,7 @@ class SC_SYSTEM_CORE_API GeoFeatureSetSingleton {
 };
 
 
-} // of ns Geo
-} // of ns Seiscomp
+} // ns Seiscomp::Geo
 
 
 #endif // SEISCOMP_GEO_FEATURESET_H__

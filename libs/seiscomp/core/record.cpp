@@ -39,7 +39,7 @@ IMPLEMENT_INTERFACE_FACTORY(Record, SC_SYSTEM_CORE_API);
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record::Record(Array::DataType datatype, Hint h)
 : _net(""), _sta(""), _loc(""), _cha("")
-, _stime(Core::Time(0,0)), _datatype(datatype)
+, _datatype(datatype)
 , _hint(h), _nsamp(0), _fsamp(0), _timequal(-1)
 , _authenticationStatus(NOT_SIGNED) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -199,12 +199,14 @@ void Record::setStartTime(const Core::Time &time) {
 Core::Time Record::endTime() const {
 	double span = 0;
 
-	if (_fsamp > 0.)
+	if (_fsamp > 0.) {
 		span = sampleCount() / _fsamp;
-	else
+	}
+	else {
 		throw Core::ValueException("Record::endTime(): _fsamp out of range");
+	}
 
-	return _stime + Core::Time(span);
+	return _stime + Core::TimeSpan(span);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

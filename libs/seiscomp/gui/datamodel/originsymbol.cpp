@@ -180,7 +180,10 @@ bool OriginSymbol::isInside(int px, int py) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int OriginSymbol::getSize(double mag) {
-	return std::max(SCScheme.map.originSymbolMinSize, int(4.9*(mag-1.2)));
+	return std::max(
+		SCScheme.map.originSymbolMinSize,
+		int(SCScheme.map.originSymbolScaleMag * (mag - SCScheme.map.originSymbolMinMag))
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

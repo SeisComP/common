@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(StationMagnitude, PublicObject, "StationMagnitude");
 
 
-StationMagnitude::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+StationMagnitude::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("originID", "string", false, false, false, true, false, false, nullptr, &StationMagnitude::setOriginID, &StationMagnitude::originID));
 	addProperty(objectProperty<RealQuantity>("magnitude", "RealQuantity", false, false, false, &StationMagnitude::setMagnitude, &StationMagnitude::magnitude));
 	addProperty(Core::simpleProperty("type", "string", false, false, false, false, false, false, nullptr, &StationMagnitude::setType, &StationMagnitude::type));
@@ -58,7 +58,7 @@ StationMagnitude::StationMagnitude() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude::StationMagnitude(const StationMagnitude& other)
+StationMagnitude::StationMagnitude(const StationMagnitude &other)
 : PublicObject() {
 	*this = other;
 }
@@ -88,8 +88,8 @@ StationMagnitude::~StationMagnitude() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* StationMagnitude::Create() {
-	StationMagnitude* object = new StationMagnitude();
+StationMagnitude *StationMagnitude::Create() {
+	StationMagnitude *object = new StationMagnitude();
 	return static_cast<StationMagnitude*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -98,7 +98,7 @@ StationMagnitude* StationMagnitude::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* StationMagnitude::Create(const std::string& publicID) {
+StationMagnitude *StationMagnitude::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -115,7 +115,7 @@ StationMagnitude* StationMagnitude::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* StationMagnitude::Find(const std::string& publicID) {
+StationMagnitude *StationMagnitude::Find(const std::string& publicID) {
 	return StationMagnitude::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -124,7 +124,7 @@ StationMagnitude* StationMagnitude::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::operator==(const StationMagnitude& rhs) const {
+bool StationMagnitude::operator==(const StationMagnitude &rhs) const {
 	if ( _originID != rhs._originID ) return false;
 	if ( _magnitude != rhs._magnitude ) return false;
 	if ( _type != rhs._type ) return false;
@@ -141,7 +141,7 @@ bool StationMagnitude::operator==(const StationMagnitude& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::operator!=(const StationMagnitude& rhs) const {
+bool StationMagnitude::operator!=(const StationMagnitude &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +150,7 @@ bool StationMagnitude::operator!=(const StationMagnitude& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::equal(const StationMagnitude& other) const {
+bool StationMagnitude::equal(const StationMagnitude &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -340,7 +340,7 @@ const CreationInfo& StationMagnitude::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* StationMagnitude::origin() const {
+Origin *StationMagnitude::origin() const {
 	return static_cast<Origin*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -349,7 +349,7 @@ Origin* StationMagnitude::origin() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude& StationMagnitude::operator=(const StationMagnitude& other) {
+StationMagnitude &StationMagnitude::operator=(const StationMagnitude &other) {
 	PublicObject::operator=(other);
 	_originID = other._originID;
 	_magnitude = other._magnitude;
@@ -367,10 +367,11 @@ StationMagnitude& StationMagnitude::operator=(const StationMagnitude& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::assign(Object* other) {
-	StationMagnitude* otherStationMagnitude = StationMagnitude::Cast(other);
-	if ( other == nullptr )
+bool StationMagnitude::assign(Object *other) {
+	StationMagnitude *otherStationMagnitude = StationMagnitude::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStationMagnitude;
 
@@ -382,11 +383,13 @@ bool StationMagnitude::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool StationMagnitude::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(parent);
+	Origin *origin = Origin::Cast(parent);
 	if ( origin != nullptr )
 		return origin->add(this);
 
@@ -399,11 +402,13 @@ bool StationMagnitude::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool StationMagnitude::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Origin* origin = Origin::Cast(object);
+	Origin *origin = Origin::Cast(object);
 	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -411,7 +416,7 @@ bool StationMagnitude::detachFrom(PublicObject* object) {
 			return origin->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			StationMagnitude* child = origin->findStationMagnitude(publicID());
+			StationMagnitude *child = origin->findStationMagnitude(publicID());
 			if ( child != nullptr )
 				return origin->remove(child);
 			else {
@@ -431,8 +436,9 @@ bool StationMagnitude::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool StationMagnitude::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -442,8 +448,8 @@ bool StationMagnitude::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* StationMagnitude::clone() const {
-	StationMagnitude* clonee = new StationMagnitude();
+Object *StationMagnitude::clone() const {
+	StationMagnitude *clonee = new StationMagnitude();
 	*clonee = *this;
 	return clonee;
 }
@@ -453,10 +459,10 @@ Object* StationMagnitude::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool StationMagnitude::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -473,7 +479,7 @@ bool StationMagnitude::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationMagnitude::accept(Visitor* visitor) {
+void StationMagnitude::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -501,7 +507,7 @@ size_t StationMagnitude::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* StationMagnitude::comment(size_t i) const {
+Comment *StationMagnitude::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -510,10 +516,12 @@ Comment* StationMagnitude::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* StationMagnitude::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *StationMagnitude::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -523,9 +531,10 @@ Comment* StationMagnitude::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::add(Comment* comment) {
-	if ( comment == nullptr )
+bool StationMagnitude::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -562,9 +571,10 @@ bool StationMagnitude::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool StationMagnitude::remove(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("StationMagnitude::remove(Comment*) -> element has another parent");
@@ -580,8 +590,7 @@ bool StationMagnitude::remove(Comment* comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -604,8 +613,7 @@ bool StationMagnitude::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -621,9 +629,12 @@ bool StationMagnitude::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitude::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool StationMagnitude::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -632,7 +643,7 @@ bool StationMagnitude::removeComment(const CommentIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void StationMagnitude::serialize(Archive& ar) {
+void StationMagnitude::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

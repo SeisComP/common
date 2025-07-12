@@ -61,21 +61,22 @@ class SC_SYSTEM_CORE_API Exporter : public IO::Exporter, public OutputHandler {
 		virtual void collectNamespaces(Core::BaseObject *);
 
 		//! Interface method that must be implemented by real exporters.
-		virtual bool put(std::streambuf* buf, Core::BaseObject *);
-		virtual bool put(std::streambuf* buf, const ExportObjectList &);
+		virtual bool put(std::streambuf* buf, Core::BaseObject *) override;
+		virtual bool put(std::streambuf* buf, const ExportObjectList &) override;
 
 
 	// ------------------------------------------------------------------
 	//  Private interface
 	// ------------------------------------------------------------------
 	private:
-		void handle(Core::BaseObject *, const char *tag, const char *ns, NodeHandler *);
-		bool openElement(const char *name, const char *ns);
-		void addAttribute(const char *name, const char *ns, const char *value);
-		void closeElement(const char *name, const char *ns);
+		void handle(Core::BaseObject *, const char *tag, const char *ns, NodeHandler *) override;
+		bool openElement(const char *name, const char *ns) override;
+		void addAttribute(const char *name, const char *ns, const char *value) override;
+		void closeElement(const char *name, const char *ns) override;
 
-		void put(const char *content);
+		void put(const char *content) override;
 
+		void writeAttrString(const char *str);
 		void writeString(const char *str);
 
 

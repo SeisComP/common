@@ -18,7 +18,14 @@ phases, epicentral distance, soure depth and station elevation.
 Locator Interface
 =================
 
-LOCSAT provides the hypocenter parameters through the locator interface.
+LOCSAT provides the hypocenter parameters through the locator interface. Instead
+of specifying an Earth model, LOCSAT queries travel times via the
+:ref:`LOCSAT travel-time interface <locsat_tti>` which makes use of
+:ref:`pre-defined travel-time tables <locsat_ttt>`. Note the
+:ref:`limitations <locsat_tt>`.
+
+Use "LOCSAT" as a value for the locator interface along with a profile when
+configurable, e.g., by :ref:`scolv`, :ref:`scautoloc` or :ref:`screloc`.
 
 
 .. _locsat_tti:
@@ -26,12 +33,16 @@ LOCSAT provides the hypocenter parameters through the locator interface.
 Travel-Time Interface
 =====================
 
-LOCSAT provides an interface for computing travel times based on coordinates and
-depth. The times are plotted on waveforms, e.g., blue marks in
-:ref:`scolv picker window <scolv-sec-waveform-review>`.
+LOCSAT provides an interface for computing travel times based on station and
+source coordinates with non-negative source depths. Note the
+:ref:`limitations <locsat_tt>`.
+
+The travel times are used for predicting phase arrival times in various
+applications such as :ref:`scautoloc` or :ref:`scolv`. The times are visualized,
+e.g., as blue marks in the :ref:`scolv picker window <scolv-sec-waveform-review>`.
 
 Use "LOCSAT" as a value for the travel-time interface when configurable, e.g.,
-by :ref:`global_fixedhypocenter`.
+by :ref:`global_fixedhypocenter` or :ref:`global_stdloc`.
 
 
 .. _locsat_ttt:
@@ -58,6 +69,7 @@ your |scname| modules.
 Limitations
 -----------
 
+#. The source depth is limited to non-negative values up to 800 km.
 #. Only phases for which a travel-time table exists can be considered.
 #. LOCSAT currently considers travel-time tables for phases which are hard-coded
 

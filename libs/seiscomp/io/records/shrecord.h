@@ -70,9 +70,9 @@ class SC_SYSTEM_CORE_API SHRecord : public Record {
 	Array* data();
 
 	//! Returns the data samples if the data is available; otherwise 0
-	const Array* data() const;
+	const Array* data() const override;
 
-	const Array* raw() const;
+	const Array* raw() const override;
 
 	//! Sets the data sample array. The ownership goes over to the record.
 	void setData(Array* data);
@@ -81,13 +81,13 @@ class SC_SYSTEM_CORE_API SHRecord : public Record {
 	void setData(int size, const void *data, Array::DataType datatype);
 
 	//! Frees the memory allocated for the data samples.
-	void saveSpace() const {}
+	void saveSpace() const override {}
 
 	//! Returns a deep copy of the calling object.
-	SHRecord* copy() const;
+	SHRecord* copy() const override;
 
-	void read(std::istream &in);
-	void write(std::ostream &out);
+	void read(std::istream &in) override;
+	void write(std::ostream &out) override;
 
 
     private:
@@ -102,7 +102,7 @@ class SC_SYSTEM_CORE_API SHOutput {
 		SHOutput(const Record *rec);
 
 		~SHOutput();
-		
+
 		bool put(const SHRecord *rec);
 
 	private:

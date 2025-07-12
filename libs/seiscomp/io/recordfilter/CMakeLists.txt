@@ -1,10 +1,12 @@
 SET(RECORDFILTER_SOURCES
+	encoder/mseed/format.cpp
 	pipe.cpp
 	iirfilter.cpp
 	resample.cpp
 	demux.cpp
 	spectralizer.cpp
 	crop.cpp
+	mseedencoder.cpp
 )
 
 SET(RECORDFILTER_HEADERS
@@ -14,6 +16,7 @@ SET(RECORDFILTER_HEADERS
 	demux.h
 	spectralizer.h
 	crop.h
+	mseedencoder.h
 )
 
 SC_SETUP_LIB_SUBDIR(RECORDFILTER)

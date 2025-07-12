@@ -59,7 +59,7 @@ class MagnitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInt
 		, _source(source)
 		, _ampType(ampType) {}
 
-		MagnitudeProcessor *create() const {
+		MagnitudeProcessor *create() const override {
 			auto proc = _source->create();
 			if ( proc->type() != serviceName() ) {
 				proc->_type = serviceName();
@@ -159,12 +159,29 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 
 
 map<string, OPT(TableXY<double>)> MwTables;
-
-
 AliasFactories aliasFactories;
-
-
 mutex globalParameterMutex;
+
+
+template <typename T, typename CFG>
+void readValue(T &value, const CFG *cfg, const std::string &var, const string &unit) {
+	try {
+		auto s = cfg->getString(var);
+		try {
+			value = Util::UnitConverter::parse<double>(s, unit);
+		}
+		catch ( exception &e ) {
+			SEISCOMP_ERROR("%s: invalid value: %s", var, e.what());
+			throw e;
+		}
+	}
+	catch ( ... ) {}
+}
+
+
+std::string toString(const OPT(double) &value, const char *format) {
+	return value ? Core::stringify(format, *value) : std::string("unlimited");
+}
 
 
 }
@@ -233,11 +250,30 @@ std::string MagnitudeProcessor::amplitudeType() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::setup(const Settings &settings) {
-	if ( !Processor::setup(settings) )
+	SEISCOMP_DEBUG("%s.%s.%s.%s - %s magnitude configuration:",
+	               settings.networkCode.c_str(),
+	               settings.stationCode.c_str(),
+	               settings.locationCode.c_str(),
+	               settings.channelCode.c_str(),
+	               _type.c_str());
+
+	_minimumDistanceDeg = Core::None;
+	_maximumDistanceDeg = Core::None;
+	_minimumDepthKm = Core::None;
+	_maximumDepthKm = Core::None;
+	_minimumSNR = Core::None;
+	_minimumPeriod = Core::None;
+	_maximumPeriod = Core::None;
+
+	setDefaults();
+
+	if ( !Processor::setup(settings) ) {
 		return false;
+	}
 
 	_networkCode = settings.networkCode;
 	_stationCode = settings.stationCode;
+	_locationCode = settings.locationCode;
 
 	if ( !initRegionalization(settings) )
 		return false;
@@ -403,8 +439,9 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				auto it1 = linearCorrections.find(cfg.name);
 				auto it2 = constantCorrections.find(cfg.name);
 
-				if ( it1 == linearCorrections.end() and it2 == constantCorrections.end() )
+				if ( it1 == linearCorrections.end() and it2 == constantCorrections.end() ) {
 					continue;
+				}
 
 				Correction::A c(cfg.multiplier, cfg.offset);
 				if ( it1 != linearCorrections.end() ) {
@@ -421,6 +458,32 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 			}
 		}
 	}
+
+	try { readValue(_minimumDistanceDeg, &settings, "magnitudes." + type() + ".minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(_maximumDistanceDeg, &settings, "magnitudes." + type() + ".maxDist", "deg"); }
+	catch ( ... ) { return false; }
+
+	try { readValue(_minimumDepthKm, &settings, "magnitudes." + type() + ".minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(_maximumDepthKm, &settings, "magnitudes." + type() + ".maxDepth", "km"); }
+	catch ( ... ) { return false; }
+
+	try { _minimumSNR = settings.getDouble("magnitudes." + type() + ".minSNR"); }
+	catch ( ... ) {}
+
+	try { _minimumPeriod = settings.getDouble("magnitudes." + type() + ".minPeriod"); }
+	catch ( ... ) {}
+	try { _maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod"); }
+	catch ( ... ) {}
+
+	SEISCOMP_DEBUG("  + minimum distance = %s deg", toString(_minimumDistanceDeg, "%.5f"));
+	SEISCOMP_DEBUG("  + maximum distance = %s deg", toString(_maximumDistanceDeg, "%.5f"));
+	SEISCOMP_DEBUG("  + minimum depth = %s km", toString(_minimumDepthKm, "%.3f"));
+	SEISCOMP_DEBUG("  + maximum depth = %s km", toString(_maximumDepthKm, "%.3f"));
+	SEISCOMP_DEBUG("  + minimum SNR = %s", toString(_minimumSNR, "%f"));
+	SEISCOMP_DEBUG("  + minimum period = %ss", toString(_minimumPeriod, "%f"));
+	SEISCOMP_DEBUG("  + maximum period = %ss", toString(_maximumPeriod, "%f"));
 
 	return true;
 }
@@ -448,10 +511,15 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 
 	const Config::Config *cfg = settings.localConfiguration;
 
-	try { locale->minimumDistance  = cfg->getDouble(cfgPrefix + "minDist"); } catch ( ... ) {}
-	try { locale->maximumDistance  = cfg->getDouble(cfgPrefix + "maxDist"); } catch ( ... ) {}
-	try { locale->minimumDepth = cfg->getDouble(cfgPrefix + "minDepth"); } catch ( ... ) {}
-	try { locale->maximumDepth = cfg->getDouble(cfgPrefix + "maxDepth"); } catch ( ... ) {}
+	try { readValue(locale->minimumDistanceDeg, cfg, cfgPrefix + "minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(locale->maximumDistanceDeg, cfg, cfgPrefix + "maxDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(locale->minimumDepthKm, cfg, cfgPrefix + "minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(locale->maximumDepthKm, cfg, cfgPrefix + "maxDepth", "km"); }
+	catch ( ... ) { return false; }
+
 	try { locale->multiplier = cfg->getDouble(cfgPrefix + "multiplier"); } catch ( ... ) {}
 	try { locale->offset = cfg->getDouble(cfgPrefix + "offset"); } catch ( ... ) {}
 
@@ -480,17 +548,17 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 
 	SEISCOMP_DEBUG("%s (locale)", _type.c_str());
 	SEISCOMP_DEBUG("  + region: %s", locale->name.c_str());
-	if ( locale->minimumDistance ) {
-		SEISCOMP_DEBUG("  + minimum distance: %.3f", *locale->minimumDistance);
+	if ( locale->minimumDistanceDeg ) {
+		SEISCOMP_DEBUG("  + minimum distance: %.3f", *locale->minimumDistanceDeg);
 	}
-	if ( locale->maximumDistance ) {
-		SEISCOMP_DEBUG("  + maximum distance: %.3f", *locale->maximumDistance);
+	if ( locale->maximumDistanceDeg ) {
+		SEISCOMP_DEBUG("  + maximum distance: %.3f", *locale->maximumDistanceDeg);
 	}
-	if ( locale->minimumDepth ) {
-		SEISCOMP_DEBUG("  + minimum depth: %.3f", *locale->minimumDepth);
+	if ( locale->minimumDepthKm ) {
+		SEISCOMP_DEBUG("  + minimum depth: %.3f", *locale->minimumDepthKm);
 	}
-	if ( locale->maximumDepth ) {
-		SEISCOMP_DEBUG("  + maximum depth: %.3f", *locale->maximumDepth);
+	if ( locale->maximumDepthKm ) {
+		SEISCOMP_DEBUG("  + maximum depth: %.3f", *locale->maximumDepthKm);
 	}
 	SEISCOMP_DEBUG("  + multiplier: %.3f", locale->multiplier);
 	SEISCOMP_DEBUG("  + offset: %.3f", locale->offset);
@@ -562,8 +630,9 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 					config.name = feature->name();
 					config.feature = feature;
 
-					if ( !readLocale(&config, settings, cfgPrefix) )
+					if ( !readLocale(&config, settings, cfgPrefix) ) {
 						return false;
+					}
 
 					regionalizedSettings->regionalization.push_back(config);
 				}
@@ -588,8 +657,9 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 
 		regionalizationRegistry[type()] = regionalizedSettings;
 	}
-	else
+	else {
 		regionalizedSettings = it->second;
+	}
 
 	return regionalizedSettings ? true : false;
 }
@@ -609,6 +679,21 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
                                      const DataModel::Amplitude *amplitude,
                                      double &value) {
 	const Locale *locale = nullptr;
+	_treatAsValidMagnitude = false;
+
+	if ( _minimumDepthKm && (depth < *_minimumDepthKm) ) {
+		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f < %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               depth, *_minimumDepthKm);
+		return DepthOutOfRange;
+	}
+
+	if ( _maximumDepthKm && (depth > *_maximumDepthKm) ) {
+		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f > %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               depth, *_maximumDepthKm);
+		return DepthOutOfRange;
+	}
 
 	// Check if regionalization is desired
 	{
@@ -680,11 +765,11 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 						}
 					}
 
-					if ( profile.minimumDepth and depth < *profile.minimumDepth ) {
+					if ( profile.minimumDepthKm && depth < *profile.minimumDepthKm ) {
 						notFoundStatus = DepthOutOfRange;
 						continue;
 					}
-					if ( profile.maximumDepth and depth > *profile.maximumDepth ) {
+					if ( profile.maximumDepthKm && depth > *profile.maximumDepthKm ) {
 						notFoundStatus = DepthOutOfRange;
 						continue;
 					}
@@ -692,10 +777,10 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 					// Found region
 					locale = &profile;
 
-					if ( locale->minimumDistance and delta < *locale->minimumDistance ) {
+					if ( locale->minimumDistanceDeg && delta < *locale->minimumDistanceDeg ) {
 						return DistanceOutOfRange;
 					}
-					if ( locale->maximumDistance and delta > *locale->maximumDistance ) {
+					if ( locale->maximumDistanceDeg && delta > *locale->maximumDistanceDeg ) {
 						return DistanceOutOfRange;
 					}
 
@@ -709,16 +794,45 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 		}
 	}
 
-	if ( locale )
+	if ( locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: locale = '%s'",
 		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
 		               locale->name.c_str());
+	}
 
 	auto r = computeMagnitude(amplitudeValue, unit, period, snr, delta, depth,
 	                          hypocenter, receiver, amplitude, locale, value);
 
-	if ( r != OK )
+	if ( r != OK ) {
 		return r;
+	}
+
+	/**
+	 * ------------------------------------------------------------------------
+	 * Station specific distance and depth checks
+	 * ------------------------------------------------------------------------
+	 *
+	 * The distance checks will be performed after computing the magnitude so
+	 * that a concrete implementation can still decide if it wants to keep the
+	 * computed magnitude but with weight 0 and with passedQC flag set to
+	 * false (_treatAsValidMagnitude = true).
+	 * An example is to compute and keep all magnitudes at close distances
+	 * but to not let them contribute to the network magnitude.
+	 */
+
+	if ( _minimumDistanceDeg && delta < *_minimumDistanceDeg ) {
+		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f < %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               delta, *_minimumDistanceDeg);
+		return DistanceOutOfRange;
+	}
+
+	if ( _maximumDistanceDeg && delta > *_maximumDistanceDeg ) {
+		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f > %f",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               delta, *_maximumDistanceDeg);
+		return DistanceOutOfRange;
+	}
 
 	if ( !locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: effective correction (no locale) = %.2f:%.2f",
@@ -739,6 +853,40 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 			               locale->multiplier, locale->offset);
 			value = locale->multiplier * value + locale->offset;
 		}
+	}
+
+	/**
+	 * ------------------------------------------------------------------------
+	 * Quality checks
+	 * ------------------------------------------------------------------------
+	 *
+	 * All quality checks will keep the computed magnitude but associated with
+	 * weight 0 and with passedQC flag set to false. If amplitudes and
+	 * magnitudes should be omitted completely then the corresponding amplitude
+	 * should be configured to check those thresholds already.
+	 */
+
+	if ( _minimumSNR && snr < *_minimumSNR ) {
+		r = SNROutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: SNR out of range: %f > %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               snr, *_minimumSNR);
+		_treatAsValidMagnitude = true;
+	}
+
+	if ( _minimumPeriod && period < *_minimumPeriod ) {
+		r = PeriodOutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f < %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               period, *_minimumPeriod);
+		_treatAsValidMagnitude = true;
+	}
+	else if ( _maximumPeriod && period > *_maximumPeriod ) {
+		r = PeriodOutOfRange;
+		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f > %f: qc failed",
+		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               period, *_maximumPeriod);
+		_treatAsValidMagnitude = true;
 	}
 
 	return r;
@@ -827,7 +975,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	}
 
 	const Util::UnitConversion *uc = Util::UnitConverter::get(amplitudeUnit);
-	if ( uc == nullptr ) {
+	if ( !uc ) {
 		// No conversion known, invalid amplitude unit
 		return false;
 	}
@@ -836,7 +984,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	double amplitudeSI = uc->convert(amplitude);
 
 	uc = Util::UnitConverter::get(desiredAmplitudeUnit);
-	if ( uc == nullptr ) {
+	if ( !uc ) {
 		SEISCOMP_ERROR("This must not happen: no converter for amplitude target unit '%s'",
 		               desiredAmplitudeUnit.c_str());
 		// This must not happen. The desired amplitude unit should always
@@ -861,7 +1009,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::treatAsValidMagnitude() const {
-	return false;
+	return _treatAsValidMagnitude;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

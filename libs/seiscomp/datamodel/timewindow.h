@@ -54,7 +54,7 @@ class SC_SYSTEM_CORE_API TimeWindow : public Core::BaseObject {
 		TimeWindow();
 
 		//! Copy constructor
-		TimeWindow(const TimeWindow& other);
+		TimeWindow(const TimeWindow &other);
 
 		//! Custom constructor
 		TimeWindow(Seiscomp::Core::Time reference);
@@ -64,7 +64,7 @@ class SC_SYSTEM_CORE_API TimeWindow : public Core::BaseObject {
 
 		//! Destructor
 		~TimeWindow() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -74,14 +74,14 @@ class SC_SYSTEM_CORE_API TimeWindow : public Core::BaseObject {
 		operator Seiscomp::Core::Time() const;
 
 		//! Copies the metadata of other to this
-		TimeWindow& operator=(const TimeWindow& other);
+		TimeWindow &operator=(const TimeWindow &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const TimeWindow& other) const;
-		bool operator!=(const TimeWindow& other) const;
+		bool operator==(const TimeWindow &other) const;
+		bool operator!=(const TimeWindow &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const TimeWindow& other) const;
+		bool equal(const TimeWindow &other) const;
 
 
 	// ------------------------------------------------------------------

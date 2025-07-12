@@ -92,28 +92,28 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Station(const Station& other);
+		Station(const Station &other);
 
 		//! Constructor with publicID
 		Station(const std::string& publicID);
 
 		//! Destructor
 		~Station() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Station* Create();
-		static Station* Create(const std::string& publicID);
+		static Station *Create();
+		static Station *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Station* Find(const std::string& publicID);
+		static Station *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -122,14 +122,14 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Station& operator=(const Station& other);
+		Station &operator=(const Station &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Station& other) const;
-		bool operator!=(const Station& other) const;
+		bool operator==(const Station &other) const;
+		bool operator!=(const Station &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Station& other) const;
+		bool equal(const Station &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -219,12 +219,12 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const StationIndex& index() const;
+		const StationIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Station* lhs) const;
+		bool equalIndex(const Station *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -237,8 +237,8 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
-		bool add(SensorLocation* obj);
+		bool add(Comment *obj);
+		bool add(SensorLocation *obj);
 
 		/**
 		 * Removes an object.
@@ -247,8 +247,8 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
-		bool remove(SensorLocation* obj);
+		bool remove(Comment *obj);
+		bool remove(SensorLocation *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -257,9 +257,9 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeSensorLocation(size_t i);
-		bool removeSensorLocation(const SensorLocationIndex& i);
+		bool removeSensorLocation(const SensorLocationIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t commentCount() const;
@@ -267,16 +267,16 @@ class SC_SYSTEM_CORE_API Station : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
-		SensorLocation* sensorLocation(size_t i) const;
-		SensorLocation* sensorLocation(const SensorLocationIndex& i) const;
+		SensorLocation *sensorLocation(size_t i) const;
+		SensorLocation *sensorLocation(const SensorLocationIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		SensorLocation* findSensorLocation(const std::string& publicID) const;
+		SensorLocation *findSensorLocation(const std::string& publicID) const;
 
-		Network* network() const;
+		Network *network() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/fontawesome6.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/map/layers/geofeaturelayer.h>
 #include <seiscomp/gui/map/canvas.h>
@@ -32,9 +33,7 @@
 
 using namespace std;
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 namespace {
 
@@ -331,11 +330,29 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 
 	// read and scale symbol icon
 	if ( !symbolIconPath.empty() ) {
-		if ( symbolIconPath[0] == '/' ) {
-			symbolIcon = QImage(symbolIconPath.c_str());
+		QUrl iconUrl(symbolIconPath.c_str());
+		QString scheme = iconUrl.scheme();
+
+		if ( scheme.isEmpty() || scheme == "file" ) {
+			QImage img;
+			QString path = iconUrl.path();
+			if ( dataDir.empty() || path.isEmpty() || path[0] == '/' ) {
+				img = QImage(path);
+			}
+			else {
+				img = QImage((dataDir + '/' + path.toStdString()).c_str());
+			}
+			symbolIcon = QPixmap::fromImage(img);
 		}
-		else {
-			symbolIcon = QImage((dataDir + '/' + symbolIconPath).c_str());
+		else if ( scheme == "qrc" ) {
+			symbolIcon = QPixmap::fromImage(QImage(":" + iconUrl.path()));
+		}
+		else if ( scheme == "fa" || scheme == "far" ||
+		          scheme == "fa6" || scheme == "far6" ) {
+			symbolIcon = FontAwesome6::icon(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
+		}
+		else if ( scheme == "fas" || scheme == "fas6" ) {
+			symbolIcon = FontAwesome6::iconSolid(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
 		}
 
 		// symbol could not be loaded: fall back to empty symbol shape
@@ -351,14 +368,14 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 			                     symbolIconHotspot.y() * symbolIcon.size().height() / oldSize.height());
 			symbolRect = symbolIcon.rect();
 			symbolRect.moveTo(-scaledHotspot);
-			return;
 		}
 		// use original icon and hotspot dimension
 		else {
 			symbolRect = symbolIcon.rect();
 			symbolRect.moveTo(-symbolIconHotspot);
-			return;
 		}
+
+		return;
 	}
 
 	if ( symbolShape == Disabled ) {
@@ -677,16 +694,16 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 			if ( name.isEmpty() ) {
 				for ( const auto &v : f->vertices() ) {
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
-						painter->drawImage(props->symbolRect.translated(p),
-						                   props->symbolIcon);
+						painter->drawPixmap(props->symbolRect.translated(p),
+						                    props->symbolIcon);
 					}
 				}
 			}
 			else {
 				for ( const auto &v : f->vertices() ) {
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
-						painter->drawImage(props->symbolRect.translated(p),
-						                   props->symbolIcon);
+						painter->drawPixmap(props->symbolRect.translated(p),
+						                    props->symbolIcon);
 						painter->drawText(textRect.translated(p),
 						                  props->symbolNameAlignment, name);
 					}
@@ -745,7 +762,7 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 					if ( proj->project(p, QPointF(v.lon, v.lat)) ) {
 						painter->drawRect(props->symbolRect.translated(p));
 						painter->drawText(textRect.translated(p),
-										  props->symbolNameAlignment, name);
+						                  props->symbolNameAlignment, name);
 					}
 				}
 			}
@@ -768,24 +785,18 @@ bool GeoFeatureLayer::drawFeature(Canvas *canvas, QPainter *painter,
 
 		// Draw the name if requested and if there is enough space
 		if ( props->drawName ) {
-			QPoint p1;
-			QPoint p2;
-			qreal lonMin = bbox.west;
-			qreal lonMax = bbox.east;
-
-			if ( fabs(lonMax-lonMin) > 180 ) {
-				qSwap(lonMin, lonMax);
-			}
-
-			if ( proj->project(p1, QPointF(lonMin, bbox.north))
-			     && proj->project(p2, QPointF(lonMax, bbox.south)) ) {
-				QRect bboxRect = QRect(p1, p2);
+			// project the center of the bounding box
+			Geo::GeoCoordinate center = bbox.center();
+			QPoint c;
+			if ( proj->project(c, QPointF(center.lon, center.lat)) ) {
 				QString name = f->name().c_str();
 				QRect textRect = painter->fontMetrics().boundingRect(name);
-				int maxBBoxEdge = max(bboxRect.width(), bboxRect.height());
-				if ( textRect.width()*100 < maxBBoxEdge*80 ) {
-					textRect.moveCenter(bboxRect.center());
-					painter->drawText(bboxRect.united(textRect), Qt::AlignCenter, name);
+				float textGeoWidth = textRect.width() / proj->pixelPerDegree();
+				float maxBBoxEdge = max(bbox.width(), bbox.height());
+				if ( textGeoWidth < maxBBoxEdge * 0.8 ) {
+					textRect.moveTo(c.x() - textRect.width()/2,
+					                c.y() - textRect.height()/2);
+					painter->drawText(textRect, Qt::AlignLeft | Qt::AlignTop, name);
 				}
 			}
 		}
@@ -977,16 +988,50 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 
 		sort(items.begin(), items.end(), compareByIndex);
 
-		for ( const auto &item : items ) {
-			if ( item->filled ) {
-				legend->addItem(new StandardLegendItem(item->pen,
-				                                       item->brush,
-				                                       item->label.c_str()));
+		for ( const auto &item : std::as_const(items) ) {
+			StandardLegendItem *li;
+			QString label = item->label.c_str();
+			// Symbol
+			if ( !item->symbolIcon.isNull() ) {
+				li = new StandardLegendItem(item->symbolIcon, label);
 			}
+			// Shape
+			else if ( item->symbolShape != LayerProperties::Disabled ) {
+				const auto &rect = item->symbolRect;
+				QImage img(rect.size(), QImage::Format_ARGB32);
+				img.fill(Qt::transparent);
+				QPainter painter(&img);
+				painter.translate(-rect.topLeft());
+				painter.setPen(item->pen);
+				painter.setBrush(item->brush);
+				painter.setRenderHint(QPainter::Antialiasing, true);
+
+				// Preprocessed polygon
+				if ( !item->symbolPolygon.isEmpty() ) {
+					painter.drawPolygon(item->symbolPolygon);
+				}
+				// Circle
+				else if ( item->symbolShape == LayerProperties::Circle ) {
+					painter.drawEllipse(rect);
+				}
+				// Square
+				else if ( item->symbolShape == LayerProperties::Square ) {
+					painter.drawRect(rect);
+				}
+				// else LayerProperties::None - Nothing to draw
+
+				painter.end();
+				li = new StandardLegendItem(QPixmap::fromImage(img), label);
+			}
+			// filled polygon
+			else if ( item->filled ) {
+				li = new StandardLegendItem(item->pen, item->brush, label);
+			}
+			// polyline of un-filled polygon
 			else {
-				legend->addItem(new StandardLegendItem(item->pen,
-				                                       item->label.c_str()));
+				li = new StandardLegendItem(item->pen, label);
 			}
+			legend->addItem(li);
 		}
 
 		addLegend(legend);
@@ -1033,11 +1078,16 @@ QMenu *GeoFeatureLayer::buildMenu(CategoryNode *node, QMenu *parentMenu) const {
 		}
 	}
 
+	if ( node->childs.empty() ) {
+		return menu;
+	}
+
 	// Add "Select all" and "Select none" options if more than 1 property
 	// is available
-	auto *firstPropertyAction = menu->actions().first();
+	auto actions = menu->actions();
+	auto *firstPropertyAction = actions.empty() ? nullptr : actions.first();
 
-	if ( (node != _root) && !node->childs.empty() ) {
+	if ( node != _root ) {
 		// Toggle layer
 		auto *toggleAction = new QAction(tr("Hide layer"), menu);
 		toggleAction->setData(QVariant::fromValue<void*>(node->properties));
@@ -1158,9 +1208,11 @@ void GeoFeatureLayer::initLayerProperites() {
 
 	const auto &fepRegions = Regions::polyRegions();
 	if ( fepRegions.regionCount() > 0 ) {
+		// Ensure root node is initialized
+		createOrGetNodeForCategory(nullptr);
+
 		// Add fep properties
 		auto *fepNode = new CategoryNode(nullptr);
-		createOrGetNodeForCategory(nullptr)->childs.push_back(fepNode);
 		fepNode->properties = new LayerProperties("fep", _root->properties);
 		fepNode->properties->read(fepRegions.dataDir());
 
@@ -1168,6 +1220,9 @@ void GeoFeatureLayer::initLayerProperites() {
 			//fepNode->features.push_back(fepRegions.region(i));
 			fepNode->quadtree.addItem(fepRegions.region(i));
 		}
+
+		_root->childs.push_back(fepNode);
+		_root->childsByName.push_back(fepNode);
 	}
 
 	if ( _root ) {
@@ -1292,6 +1347,4 @@ bool GeoFeatureLayer::compareNodeByName(const GeoFeatureLayer::CategoryNode *n1,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
-}
+} // ns Seiscomp::Gui::Map

@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS Pick;
 DROP TABLE IF EXISTS OriginReference;
 DROP TABLE IF EXISTS FocalMechanismReference;
 DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS Arrival;
 DROP TABLE IF EXISTS Origin;
 DROP TABLE IF EXISTS Parameter;
@@ -79,13 +80,10 @@ CREATE TABLE PublicObject (
 	_oid INTEGER NOT NULL,
 	publicID VARCHAR(255) NOT NULL,
 	PRIMARY KEY(_oid),
-	UNIQUE(publicID),
-	FOREIGN KEY(_oid)
-	  REFERENCES Object(_oid)
-	  ON DELETE CASCADE
+	UNIQUE(publicID)
 );
 
-INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.13.0');
+INSERT INTO Meta(name,value) VALUES ('Schema-Version', '0.14.0');
 INSERT INTO Meta(name,value) VALUES ('Creation-Time', CURRENT_TIMESTAMP);
 
 INSERT INTO Object(_oid) VALUES (NULL);
@@ -112,9 +110,6 @@ CREATE TABLE EventDescription (
 	text VARCHAR NOT NULL,
 	type VARCHAR(64) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,type)
 );
 
@@ -129,7 +124,7 @@ CREATE TABLE Comment (
 	_oid INTEGER NOT NULL,
 	_parent_oid INTEGER NOT NULL,
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	text BLOB NOT NULL,
+	text TEXT NOT NULL,
 	id VARCHAR,
 	start DATETIME,
 	start_ms INTEGER,
@@ -146,9 +141,6 @@ CREATE TABLE Comment (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,id)
 );
 
@@ -167,10 +159,7 @@ CREATE TABLE DataUsed (
 	stationCount INT UNSIGNED NOT NULL,
 	componentCount INT UNSIGNED NOT NULL,
 	shortestPeriod DOUBLE,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX DataUsed__parent_oid ON DataUsed(_parent_oid);
@@ -219,14 +208,11 @@ CREATE TABLE CompositeTime (
 	second_lowerUncertainty DOUBLE UNSIGNED,
 	second_upperUncertainty DOUBLE UNSIGNED,
 	second_confidenceLevel DOUBLE UNSIGNED,
-	second_pdf_variable_content BLOB,
-	second_pdf_probability_content BLOB,
+	second_pdf_variable_content TEXT,
+	second_pdf_probability_content TEXT,
 	second_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	second_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX CompositeTime__parent_oid ON CompositeTime(_parent_oid);
@@ -242,9 +228,6 @@ CREATE TABLE PickReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	pickID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,pickID)
 );
 
@@ -262,9 +245,6 @@ CREATE TABLE AmplitudeReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	amplitudeID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,amplitudeID)
 );
 
@@ -279,10 +259,7 @@ END;
 CREATE TABLE Reading (
 	_oid INTEGER NOT NULL,
 	_parent_oid INTEGER NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Reading__parent_oid ON Reading(_parent_oid);
@@ -301,13 +278,10 @@ CREATE TABLE MomentTensorComponentContribution (
 	active INTEGER(1) NOT NULL,
 	weight DOUBLE NOT NULL,
 	timeShift DOUBLE NOT NULL,
-	dataTimeWindow BLOB NOT NULL,
+	dataTimeWindow TEXT NOT NULL,
 	misfit DOUBLE,
 	snr DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,phaseCode,component)
 );
 
@@ -331,10 +305,7 @@ CREATE TABLE MomentTensorStationContribution (
 	waveformID_used INTEGER(1) NOT NULL DEFAULT '0',
 	weight DOUBLE,
 	timeShift DOUBLE,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensorStationContribution__parent_oid ON MomentTensorStationContribution(_parent_oid);
@@ -354,9 +325,6 @@ CREATE TABLE MomentTensorPhaseSetting (
 	minimumSNR DOUBLE,
 	maximumTimeShift DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code)
 );
 
@@ -378,8 +346,8 @@ CREATE TABLE MomentTensor (
 	scalarMoment_lowerUncertainty DOUBLE UNSIGNED,
 	scalarMoment_upperUncertainty DOUBLE UNSIGNED,
 	scalarMoment_confidenceLevel DOUBLE UNSIGNED,
-	scalarMoment_pdf_variable_content BLOB,
-	scalarMoment_pdf_probability_content BLOB,
+	scalarMoment_pdf_variable_content TEXT,
+	scalarMoment_pdf_probability_content TEXT,
 	scalarMoment_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	scalarMoment_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mrr_value DOUBLE,
@@ -387,48 +355,48 @@ CREATE TABLE MomentTensor (
 	tensor_Mrr_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mrr_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mrr_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mrr_pdf_variable_content BLOB,
-	tensor_Mrr_pdf_probability_content BLOB,
+	tensor_Mrr_pdf_variable_content TEXT,
+	tensor_Mrr_pdf_probability_content TEXT,
 	tensor_Mrr_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mtt_value DOUBLE,
 	tensor_Mtt_uncertainty DOUBLE UNSIGNED,
 	tensor_Mtt_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mtt_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mtt_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mtt_pdf_variable_content BLOB,
-	tensor_Mtt_pdf_probability_content BLOB,
+	tensor_Mtt_pdf_variable_content TEXT,
+	tensor_Mtt_pdf_probability_content TEXT,
 	tensor_Mtt_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mpp_value DOUBLE,
 	tensor_Mpp_uncertainty DOUBLE UNSIGNED,
 	tensor_Mpp_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mpp_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mpp_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mpp_pdf_variable_content BLOB,
-	tensor_Mpp_pdf_probability_content BLOB,
+	tensor_Mpp_pdf_variable_content TEXT,
+	tensor_Mpp_pdf_probability_content TEXT,
 	tensor_Mpp_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mrt_value DOUBLE,
 	tensor_Mrt_uncertainty DOUBLE UNSIGNED,
 	tensor_Mrt_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mrt_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mrt_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mrt_pdf_variable_content BLOB,
-	tensor_Mrt_pdf_probability_content BLOB,
+	tensor_Mrt_pdf_variable_content TEXT,
+	tensor_Mrt_pdf_probability_content TEXT,
 	tensor_Mrt_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mrp_value DOUBLE,
 	tensor_Mrp_uncertainty DOUBLE UNSIGNED,
 	tensor_Mrp_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mrp_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mrp_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mrp_pdf_variable_content BLOB,
-	tensor_Mrp_pdf_probability_content BLOB,
+	tensor_Mrp_pdf_variable_content TEXT,
+	tensor_Mrp_pdf_probability_content TEXT,
 	tensor_Mrp_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_Mtp_value DOUBLE,
 	tensor_Mtp_uncertainty DOUBLE UNSIGNED,
 	tensor_Mtp_lowerUncertainty DOUBLE UNSIGNED,
 	tensor_Mtp_upperUncertainty DOUBLE UNSIGNED,
 	tensor_Mtp_confidenceLevel DOUBLE UNSIGNED,
-	tensor_Mtp_pdf_variable_content BLOB,
-	tensor_Mtp_pdf_probability_content BLOB,
+	tensor_Mtp_pdf_variable_content TEXT,
+	tensor_Mtp_pdf_probability_content TEXT,
 	tensor_Mtp_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	tensor_used INTEGER(1) NOT NULL DEFAULT '0',
 	variance DOUBLE,
@@ -458,10 +426,7 @@ CREATE TABLE MomentTensor (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX MomentTensor__parent_oid ON MomentTensor(_parent_oid);
@@ -482,24 +447,24 @@ CREATE TABLE FocalMechanism (
 	nodalPlanes_nodalPlane1_strike_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_strike_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_strike_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane1_strike_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane1_strike_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane1_strike_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane1_strike_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane1_strike_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane1_dip_value DOUBLE,
 	nodalPlanes_nodalPlane1_dip_uncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_dip_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_dip_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_dip_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane1_dip_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane1_dip_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane1_dip_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane1_dip_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane1_dip_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane1_rake_value DOUBLE,
 	nodalPlanes_nodalPlane1_rake_uncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_rake_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_rake_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane1_rake_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane1_rake_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane1_rake_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane1_rake_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane1_rake_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane1_rake_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane1_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane2_strike_value DOUBLE,
@@ -507,24 +472,24 @@ CREATE TABLE FocalMechanism (
 	nodalPlanes_nodalPlane2_strike_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_strike_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_strike_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane2_strike_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane2_strike_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane2_strike_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane2_strike_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane2_strike_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane2_dip_value DOUBLE,
 	nodalPlanes_nodalPlane2_dip_uncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_dip_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_dip_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_dip_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane2_dip_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane2_dip_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane2_dip_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane2_dip_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane2_dip_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane2_rake_value DOUBLE,
 	nodalPlanes_nodalPlane2_rake_uncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_rake_lowerUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_rake_upperUncertainty DOUBLE UNSIGNED,
 	nodalPlanes_nodalPlane2_rake_confidenceLevel DOUBLE UNSIGNED,
-	nodalPlanes_nodalPlane2_rake_pdf_variable_content BLOB,
-	nodalPlanes_nodalPlane2_rake_pdf_probability_content BLOB,
+	nodalPlanes_nodalPlane2_rake_pdf_variable_content TEXT,
+	nodalPlanes_nodalPlane2_rake_pdf_probability_content TEXT,
 	nodalPlanes_nodalPlane2_rake_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_nodalPlane2_used INTEGER(1) NOT NULL DEFAULT '0',
 	nodalPlanes_preferredPlane INT,
@@ -534,72 +499,72 @@ CREATE TABLE FocalMechanism (
 	principalAxes_tAxis_azimuth_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_azimuth_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_azimuth_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_tAxis_azimuth_pdf_variable_content BLOB,
-	principalAxes_tAxis_azimuth_pdf_probability_content BLOB,
+	principalAxes_tAxis_azimuth_pdf_variable_content TEXT,
+	principalAxes_tAxis_azimuth_pdf_probability_content TEXT,
 	principalAxes_tAxis_azimuth_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_tAxis_plunge_value DOUBLE,
 	principalAxes_tAxis_plunge_uncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_plunge_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_plunge_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_plunge_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_tAxis_plunge_pdf_variable_content BLOB,
-	principalAxes_tAxis_plunge_pdf_probability_content BLOB,
+	principalAxes_tAxis_plunge_pdf_variable_content TEXT,
+	principalAxes_tAxis_plunge_pdf_probability_content TEXT,
 	principalAxes_tAxis_plunge_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_tAxis_length_value DOUBLE,
 	principalAxes_tAxis_length_uncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_length_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_length_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_tAxis_length_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_tAxis_length_pdf_variable_content BLOB,
-	principalAxes_tAxis_length_pdf_probability_content BLOB,
+	principalAxes_tAxis_length_pdf_variable_content TEXT,
+	principalAxes_tAxis_length_pdf_probability_content TEXT,
 	principalAxes_tAxis_length_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_pAxis_azimuth_value DOUBLE,
 	principalAxes_pAxis_azimuth_uncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_azimuth_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_azimuth_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_azimuth_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_pAxis_azimuth_pdf_variable_content BLOB,
-	principalAxes_pAxis_azimuth_pdf_probability_content BLOB,
+	principalAxes_pAxis_azimuth_pdf_variable_content TEXT,
+	principalAxes_pAxis_azimuth_pdf_probability_content TEXT,
 	principalAxes_pAxis_azimuth_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_pAxis_plunge_value DOUBLE,
 	principalAxes_pAxis_plunge_uncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_plunge_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_plunge_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_plunge_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_pAxis_plunge_pdf_variable_content BLOB,
-	principalAxes_pAxis_plunge_pdf_probability_content BLOB,
+	principalAxes_pAxis_plunge_pdf_variable_content TEXT,
+	principalAxes_pAxis_plunge_pdf_probability_content TEXT,
 	principalAxes_pAxis_plunge_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_pAxis_length_value DOUBLE,
 	principalAxes_pAxis_length_uncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_length_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_length_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_pAxis_length_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_pAxis_length_pdf_variable_content BLOB,
-	principalAxes_pAxis_length_pdf_probability_content BLOB,
+	principalAxes_pAxis_length_pdf_variable_content TEXT,
+	principalAxes_pAxis_length_pdf_probability_content TEXT,
 	principalAxes_pAxis_length_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_nAxis_azimuth_value DOUBLE,
 	principalAxes_nAxis_azimuth_uncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_azimuth_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_azimuth_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_azimuth_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_nAxis_azimuth_pdf_variable_content BLOB,
-	principalAxes_nAxis_azimuth_pdf_probability_content BLOB,
+	principalAxes_nAxis_azimuth_pdf_variable_content TEXT,
+	principalAxes_nAxis_azimuth_pdf_probability_content TEXT,
 	principalAxes_nAxis_azimuth_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_nAxis_plunge_value DOUBLE,
 	principalAxes_nAxis_plunge_uncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_plunge_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_plunge_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_plunge_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_nAxis_plunge_pdf_variable_content BLOB,
-	principalAxes_nAxis_plunge_pdf_probability_content BLOB,
+	principalAxes_nAxis_plunge_pdf_variable_content TEXT,
+	principalAxes_nAxis_plunge_pdf_probability_content TEXT,
 	principalAxes_nAxis_plunge_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_nAxis_length_value DOUBLE,
 	principalAxes_nAxis_length_uncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_length_lowerUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_length_upperUncertainty DOUBLE UNSIGNED,
 	principalAxes_nAxis_length_confidenceLevel DOUBLE UNSIGNED,
-	principalAxes_nAxis_length_pdf_variable_content BLOB,
-	principalAxes_nAxis_length_pdf_probability_content BLOB,
+	principalAxes_nAxis_length_pdf_variable_content TEXT,
+	principalAxes_nAxis_length_pdf_probability_content TEXT,
 	principalAxes_nAxis_length_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_nAxis_used INTEGER(1) NOT NULL DEFAULT '0',
 	principalAxes_used INTEGER(1) NOT NULL DEFAULT '0',
@@ -620,10 +585,7 @@ CREATE TABLE FocalMechanism (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX FocalMechanism__parent_oid ON FocalMechanism(_parent_oid);
@@ -644,8 +606,8 @@ CREATE TABLE Amplitude (
 	amplitude_lowerUncertainty DOUBLE UNSIGNED,
 	amplitude_upperUncertainty DOUBLE UNSIGNED,
 	amplitude_confidenceLevel DOUBLE UNSIGNED,
-	amplitude_pdf_variable_content BLOB,
-	amplitude_pdf_probability_content BLOB,
+	amplitude_pdf_variable_content TEXT,
+	amplitude_pdf_probability_content TEXT,
 	amplitude_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	amplitude_used INTEGER(1) NOT NULL DEFAULT '0',
 	timeWindow_reference DATETIME,
@@ -658,8 +620,8 @@ CREATE TABLE Amplitude (
 	period_lowerUncertainty DOUBLE UNSIGNED,
 	period_upperUncertainty DOUBLE UNSIGNED,
 	period_confidenceLevel DOUBLE UNSIGNED,
-	period_pdf_variable_content BLOB,
-	period_pdf_probability_content BLOB,
+	period_pdf_variable_content TEXT,
+	period_pdf_probability_content TEXT,
 	period_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	period_used INTEGER(1) NOT NULL DEFAULT '0',
 	snr DOUBLE,
@@ -679,8 +641,8 @@ CREATE TABLE Amplitude (
 	scalingTime_lowerUncertainty DOUBLE UNSIGNED,
 	scalingTime_upperUncertainty DOUBLE UNSIGNED,
 	scalingTime_confidenceLevel DOUBLE UNSIGNED,
-	scalingTime_pdf_variable_content BLOB,
-	scalingTime_pdf_probability_content BLOB,
+	scalingTime_pdf_variable_content TEXT,
+	scalingTime_pdf_probability_content TEXT,
 	scalingTime_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	scalingTime_used INTEGER(1) NOT NULL DEFAULT '0',
 	magnitudeHint CHAR,
@@ -695,10 +657,7 @@ CREATE TABLE Amplitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Amplitude__parent_oid ON Amplitude(_parent_oid);
@@ -718,9 +677,6 @@ CREATE TABLE StationMagnitudeContribution (
 	residual DOUBLE,
 	weight DOUBLE UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,stationMagnitudeID)
 );
 
@@ -741,8 +697,8 @@ CREATE TABLE Magnitude (
 	magnitude_lowerUncertainty DOUBLE UNSIGNED,
 	magnitude_upperUncertainty DOUBLE UNSIGNED,
 	magnitude_confidenceLevel DOUBLE UNSIGNED,
-	magnitude_pdf_variable_content BLOB,
-	magnitude_pdf_probability_content BLOB,
+	magnitude_pdf_variable_content TEXT,
+	magnitude_pdf_probability_content TEXT,
 	magnitude_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	type CHAR COLLATE BINARY,
 	originID VARCHAR,
@@ -760,10 +716,7 @@ CREATE TABLE Magnitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Magnitude__parent_oid ON Magnitude(_parent_oid);
@@ -783,8 +736,8 @@ CREATE TABLE StationMagnitude (
 	magnitude_lowerUncertainty DOUBLE UNSIGNED,
 	magnitude_upperUncertainty DOUBLE UNSIGNED,
 	magnitude_confidenceLevel DOUBLE UNSIGNED,
-	magnitude_pdf_variable_content BLOB,
-	magnitude_pdf_probability_content BLOB,
+	magnitude_pdf_variable_content TEXT,
+	magnitude_pdf_probability_content TEXT,
 	magnitude_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	type CHAR COLLATE BINARY,
 	amplitudeID VARCHAR,
@@ -806,10 +759,7 @@ CREATE TABLE StationMagnitude (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX StationMagnitude__parent_oid ON StationMagnitude(_parent_oid);
@@ -830,8 +780,8 @@ CREATE TABLE Pick (
 	time_lowerUncertainty DOUBLE UNSIGNED,
 	time_upperUncertainty DOUBLE UNSIGNED,
 	time_confidenceLevel DOUBLE UNSIGNED,
-	time_pdf_variable_content BLOB,
-	time_pdf_probability_content BLOB,
+	time_pdf_variable_content TEXT,
+	time_pdf_probability_content TEXT,
 	time_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	waveformID_networkCode CHAR NOT NULL,
 	waveformID_stationCode CHAR NOT NULL,
@@ -845,8 +795,8 @@ CREATE TABLE Pick (
 	horizontalSlowness_lowerUncertainty DOUBLE UNSIGNED,
 	horizontalSlowness_upperUncertainty DOUBLE UNSIGNED,
 	horizontalSlowness_confidenceLevel DOUBLE UNSIGNED,
-	horizontalSlowness_pdf_variable_content BLOB,
-	horizontalSlowness_pdf_probability_content BLOB,
+	horizontalSlowness_pdf_variable_content TEXT,
+	horizontalSlowness_pdf_probability_content TEXT,
 	horizontalSlowness_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	horizontalSlowness_used INTEGER(1) NOT NULL DEFAULT '0',
 	backazimuth_value DOUBLE,
@@ -854,8 +804,8 @@ CREATE TABLE Pick (
 	backazimuth_lowerUncertainty DOUBLE UNSIGNED,
 	backazimuth_upperUncertainty DOUBLE UNSIGNED,
 	backazimuth_confidenceLevel DOUBLE UNSIGNED,
-	backazimuth_pdf_variable_content BLOB,
-	backazimuth_pdf_probability_content BLOB,
+	backazimuth_pdf_variable_content TEXT,
+	backazimuth_pdf_probability_content TEXT,
 	backazimuth_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	backazimuth_used INTEGER(1) NOT NULL DEFAULT '0',
 	slownessMethodID VARCHAR,
@@ -875,10 +825,7 @@ CREATE TABLE Pick (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Pick__parent_oid ON Pick(_parent_oid);
@@ -895,9 +842,6 @@ CREATE TABLE OriginReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	originID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,originID)
 );
 
@@ -915,9 +859,6 @@ CREATE TABLE FocalMechanismReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	focalMechanismID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,focalMechanismID)
 );
 
@@ -948,10 +889,7 @@ CREATE TABLE Event (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Event__parent_oid ON Event(_parent_oid);
@@ -962,6 +900,37 @@ CREATE INDEX Event_preferredFocalMechanismID ON Event(preferredFocalMechanismID)
 CREATE TRIGGER EventUpdate UPDATE ON Event
 BEGIN
 	UPDATE Event SET _last_modified=CURRENT_TIMESTAMP WHERE _oid=old._oid;
+END;
+
+CREATE TABLE Catalog (
+	_oid INTEGER NOT NULL,
+	_parent_oid INTEGER NOT NULL,
+	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	name VARCHAR NOT NULL,
+	description TEXT,
+	creationInfo_agencyID VARCHAR,
+	creationInfo_agencyURI VARCHAR,
+	creationInfo_author VARCHAR,
+	creationInfo_authorURI VARCHAR,
+	creationInfo_creationTime DATETIME,
+	creationInfo_creationTime_ms INTEGER,
+	creationInfo_modificationTime DATETIME,
+	creationInfo_modificationTime_ms INTEGER,
+	creationInfo_version VARCHAR,
+	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
+	start DATETIME NOT NULL,
+	start_ms INTEGER NOT NULL,
+	end DATETIME,
+	end_ms INTEGER,
+	dynamic INTEGER(1) NOT NULL,
+	PRIMARY KEY(_oid)
+);
+
+CREATE INDEX Catalog__parent_oid ON Catalog(_parent_oid);
+
+CREATE TRIGGER CatalogUpdate UPDATE ON Catalog
+BEGIN
+	UPDATE Catalog SET _last_modified=CURRENT_TIMESTAMP WHERE _oid=old._oid;
 END;
 
 CREATE TABLE Arrival (
@@ -994,9 +963,6 @@ CREATE TABLE Arrival (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,pickID)
 );
 
@@ -1018,32 +984,32 @@ CREATE TABLE Origin (
 	time_lowerUncertainty DOUBLE UNSIGNED,
 	time_upperUncertainty DOUBLE UNSIGNED,
 	time_confidenceLevel DOUBLE UNSIGNED,
-	time_pdf_variable_content BLOB,
-	time_pdf_probability_content BLOB,
+	time_pdf_variable_content TEXT,
+	time_pdf_probability_content TEXT,
 	time_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	latitude_value DOUBLE NOT NULL,
 	latitude_uncertainty DOUBLE UNSIGNED,
 	latitude_lowerUncertainty DOUBLE UNSIGNED,
 	latitude_upperUncertainty DOUBLE UNSIGNED,
 	latitude_confidenceLevel DOUBLE UNSIGNED,
-	latitude_pdf_variable_content BLOB,
-	latitude_pdf_probability_content BLOB,
+	latitude_pdf_variable_content TEXT,
+	latitude_pdf_probability_content TEXT,
 	latitude_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	longitude_value DOUBLE NOT NULL,
 	longitude_uncertainty DOUBLE UNSIGNED,
 	longitude_lowerUncertainty DOUBLE UNSIGNED,
 	longitude_upperUncertainty DOUBLE UNSIGNED,
 	longitude_confidenceLevel DOUBLE UNSIGNED,
-	longitude_pdf_variable_content BLOB,
-	longitude_pdf_probability_content BLOB,
+	longitude_pdf_variable_content TEXT,
+	longitude_pdf_probability_content TEXT,
 	longitude_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	depth_value DOUBLE,
 	depth_uncertainty DOUBLE UNSIGNED,
 	depth_lowerUncertainty DOUBLE UNSIGNED,
 	depth_upperUncertainty DOUBLE UNSIGNED,
 	depth_confidenceLevel DOUBLE UNSIGNED,
-	depth_pdf_variable_content BLOB,
-	depth_pdf_probability_content BLOB,
+	depth_pdf_variable_content TEXT,
+	depth_pdf_probability_content TEXT,
 	depth_pdf_used INTEGER(1) NOT NULL DEFAULT '0',
 	depth_used INTEGER(1) NOT NULL DEFAULT '0',
 	depthType VARCHAR(64),
@@ -1092,10 +1058,7 @@ CREATE TABLE Origin (
 	creationInfo_modificationTime_ms INTEGER,
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Origin__parent_oid ON Origin(_parent_oid);
@@ -1111,11 +1074,8 @@ CREATE TABLE Parameter (
 	_parent_oid INTEGER NOT NULL,
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	name VARCHAR NOT NULL,
-	value BLOB,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	value TEXT,
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX Parameter__parent_oid ON Parameter(_parent_oid);
@@ -1133,10 +1093,7 @@ CREATE TABLE ParameterSet (
 	moduleID VARCHAR,
 	created DATETIME,
 	created_ms INTEGER,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ParameterSet__parent_oid ON ParameterSet(_parent_oid);
@@ -1155,9 +1112,6 @@ CREATE TABLE Setup (
 	parameterSetID VARCHAR,
 	enabled INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1187,9 +1141,6 @@ CREATE TABLE ConfigStation (
 	creationInfo_version VARCHAR,
 	creationInfo_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode)
 );
 
@@ -1207,10 +1158,7 @@ CREATE TABLE ConfigModule (
 	name VARCHAR NOT NULL,
 	parameterSetID VARCHAR,
 	enabled INTEGER(1) NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX ConfigModule__parent_oid ON ConfigModule(_parent_oid);
@@ -1237,15 +1185,14 @@ CREATE TABLE QCLog (
 	start_ms INTEGER NOT NULL,
 	end DATETIME NOT NULL,
 	end_ms INTEGER NOT NULL,
-	message BLOB NOT NULL,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
-	UNIQUE(_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
+	message TEXT NOT NULL,
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX QCLog__parent_oid ON QCLog(_parent_oid);
+CREATE INDEX QCLog_id ON QCLog(waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI);
+CREATE INDEX QCLog_start_start_ms ON QCLog(start,start_ms);
+CREATE INDEX QCLog_end_end_ms ON QCLog(end,end_ms);
 
 CREATE TRIGGER QCLogUpdate UPDATE ON QCLog
 BEGIN
@@ -1275,9 +1222,6 @@ CREATE TABLE WaveformQuality (
 	upperUncertainty DOUBLE,
 	windowLength DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,type,parameter)
 );
 
@@ -1307,9 +1251,6 @@ CREATE TABLE Outage (
 	end DATETIME,
 	end_ms INTEGER,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI,start,start_ms)
 );
 
@@ -1326,9 +1267,6 @@ CREATE TABLE StationReference (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	stationID VARCHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,stationID)
 );
 
@@ -1355,9 +1293,6 @@ CREATE TABLE StationGroup (
 	longitude DOUBLE,
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code)
 );
 
@@ -1378,12 +1313,9 @@ CREATE TABLE AuxSource (
 	conversion VARCHAR,
 	sampleRateNumerator INT UNSIGNED,
 	sampleRateDenominator INT UNSIGNED,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1402,12 +1334,9 @@ CREATE TABLE AuxDevice (
 	description VARCHAR,
 	model VARCHAR,
 	manufacturer VARCHAR,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1430,12 +1359,9 @@ CREATE TABLE SensorCalibration (
 	end_ms INTEGER,
 	gain DOUBLE,
 	gainFrequency DOUBLE UNSIGNED,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,serialNumber,channel,start,start_ms)
 );
 
@@ -1459,12 +1385,9 @@ CREATE TABLE Sensor (
 	lowFrequency DOUBLE UNSIGNED,
 	highFrequency DOUBLE UNSIGNED,
 	response VARCHAR,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1487,19 +1410,16 @@ CREATE TABLE ResponsePAZ (
 	normalizationFrequency DOUBLE,
 	numberOfZeros TINYINT UNSIGNED,
 	numberOfPoles TINYINT UNSIGNED,
-	zeros_content BLOB,
+	zeros_content TEXT,
 	zeros_used INTEGER(1) NOT NULL DEFAULT '0',
-	poles_content BLOB,
+	poles_content TEXT,
 	poles_used INTEGER(1) NOT NULL DEFAULT '0',
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	decimationFactor SMALLINT UNSIGNED,
 	delay DOUBLE UNSIGNED,
 	correction DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1523,14 +1443,11 @@ CREATE TABLE ResponsePolynomial (
 	approximationUpperBound DOUBLE,
 	approximationError DOUBLE UNSIGNED,
 	numberOfCoefficients SMALLINT UNSIGNED,
-	coefficients_content BLOB,
+	coefficients_content TEXT,
 	coefficients_used INTEGER(1) NOT NULL DEFAULT '0',
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1549,14 +1466,11 @@ CREATE TABLE ResponseFAP (
 	gain DOUBLE,
 	gainFrequency DOUBLE UNSIGNED,
 	numberOfTuples SMALLINT UNSIGNED,
-	tuples_content BLOB,
+	tuples_content TEXT,
 	tuples_used INTEGER(1) NOT NULL DEFAULT '0',
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1579,14 +1493,11 @@ CREATE TABLE ResponseFIR (
 	correction DOUBLE,
 	numberOfCoefficients SMALLINT UNSIGNED,
 	symmetry CHAR,
-	coefficients_content BLOB,
+	coefficients_content TEXT,
 	coefficients_used INTEGER(1) NOT NULL DEFAULT '0',
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1610,16 +1521,13 @@ CREATE TABLE ResponseIIR (
 	correction DOUBLE,
 	numberOfNumerators TINYINT UNSIGNED,
 	numberOfDenominators TINYINT UNSIGNED,
-	numerators_content BLOB,
+	numerators_content TEXT,
 	numerators_used INTEGER(1) NOT NULL DEFAULT '0',
-	denominators_content BLOB,
+	denominators_content TEXT,
 	denominators_used INTEGER(1) NOT NULL DEFAULT '0',
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1642,12 +1550,9 @@ CREATE TABLE DataloggerCalibration (
 	end_ms INTEGER,
 	gain DOUBLE,
 	gainFrequency DOUBLE UNSIGNED,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,serialNumber,channel,start,start_ms)
 );
 
@@ -1664,14 +1569,11 @@ CREATE TABLE Decimation (
 	_last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	sampleRateNumerator INT UNSIGNED NOT NULL,
 	sampleRateDenominator INT UNSIGNED NOT NULL,
-	analogueFilterChain_content BLOB,
+	analogueFilterChain_content TEXT,
 	analogueFilterChain_used INTEGER(1) NOT NULL DEFAULT '0',
-	digitalFilterChain_content BLOB,
+	digitalFilterChain_content TEXT,
 	digitalFilterChain_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,sampleRateNumerator,sampleRateDenominator)
 );
 
@@ -1697,12 +1599,9 @@ CREATE TABLE Datalogger (
 	clockType VARCHAR,
 	gain DOUBLE,
 	maxClockDrift DOUBLE UNSIGNED,
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name)
 );
 
@@ -1730,9 +1629,6 @@ CREATE TABLE AuxStream (
 	restricted INTEGER(1),
 	shared INTEGER(1),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1772,9 +1668,6 @@ CREATE TABLE Stream (
 	restricted INTEGER(1),
 	shared INTEGER(1),
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1798,9 +1691,6 @@ CREATE TABLE SensorLocation (
 	longitude DOUBLE,
 	elevation DOUBLE,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1832,12 +1722,9 @@ CREATE TABLE Station (
 	archiveNetworkCode CHAR,
 	restricted INTEGER(1),
 	shared INTEGER(1),
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1865,12 +1752,9 @@ CREATE TABLE Network (
 	archive VARCHAR,
 	restricted INTEGER(1),
 	shared INTEGER(1),
-	remark_content BLOB,
+	remark_content TEXT,
 	remark_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,code,start,start_ms)
 );
 
@@ -1890,9 +1774,6 @@ CREATE TABLE RouteArclink (
 	end DATETIME,
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,address,start)
 );
 
@@ -1910,9 +1791,6 @@ CREATE TABLE RouteSeedlink (
 	address VARCHAR NOT NULL,
 	priority TINYINT UNSIGNED,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,address)
 );
 
@@ -1932,9 +1810,6 @@ CREATE TABLE Route (
 	locationCode CHAR NOT NULL,
 	streamCode CHAR NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode,locationCode,streamCode)
 );
 
@@ -1957,9 +1832,6 @@ CREATE TABLE Access (
 	start DATETIME NOT NULL,
 	end DATETIME,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,networkCode,stationCode,locationCode,streamCode,user,start)
 );
 
@@ -1979,11 +1851,8 @@ CREATE TABLE JournalEntry (
 	objectID VARCHAR NOT NULL,
 	sender VARCHAR NOT NULL,
 	action VARCHAR NOT NULL,
-	parameters BLOB,
-	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE
+	parameters TEXT,
+	PRIMARY KEY(_oid)
 );
 
 CREATE INDEX JournalEntry__parent_oid ON JournalEntry(_parent_oid);
@@ -2002,9 +1871,6 @@ CREATE TABLE ArclinkUser (
 	email VARCHAR,
 	password VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,name,email)
 );
 
@@ -2025,9 +1891,6 @@ CREATE TABLE ArclinkStatusLine (
 	message VARCHAR,
 	volumeID VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,volumeID,type,status)
 );
 
@@ -2061,9 +1924,6 @@ CREATE TABLE ArclinkRequestLine (
 	status_message VARCHAR,
 	status_volumeID VARCHAR,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms,end,end_ms,streamID_networkCode,streamID_stationCode,streamID_locationCode,streamID_channelCode,streamID_resourceURI)
 );
 
@@ -2095,9 +1955,6 @@ CREATE TABLE ArclinkRequest (
 	summary_averageTimeWindow INT UNSIGNED,
 	summary_used INTEGER(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,created,created_ms,requestID,userID)
 );
 
@@ -2122,9 +1979,6 @@ CREATE TABLE DataSegment (
 	quality VARCHAR NOT NULL,
 	outOfOrder INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,start,start_ms)
 );
 
@@ -2152,9 +2006,6 @@ CREATE TABLE DataAttributeExtent (
 	updated_ms INTEGER NOT NULL,
 	segmentCount INT UNSIGNED NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,sampleRate,quality)
 );
 
@@ -2187,9 +2038,6 @@ CREATE TABLE DataExtent (
 	lastScan_ms INTEGER NOT NULL,
 	segmentOverflow INTEGER(1) NOT NULL,
 	PRIMARY KEY(_oid),
-	FOREIGN KEY(_oid)
-		REFERENCES Object(_oid)
-		ON DELETE CASCADE,
 	UNIQUE(_parent_oid,waveformID_networkCode,waveformID_stationCode,waveformID_locationCode,waveformID_channelCode,waveformID_resourceURI)
 );
 

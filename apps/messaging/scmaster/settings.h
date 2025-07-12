@@ -28,26 +28,13 @@
 #include <seiscomp/system/application.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/wired/ipacl.h>
+#include <seiscomp/wired/server.h>
 
 #include <functional>
 
 
 // Maximum 1 megabyte of message size
 #define DEFAULT_MAX_WS_PAYLOAD_SIZE 1*1024*1024
-
-
-struct BindAddress {
-	BindAddress() = default;
-	BindAddress(const Seiscomp::Wired::Socket::IPAddress &addr, int port)
-	: address(addr), port(port) {}
-
-	Seiscomp::Wired::Socket::IPAddress address;
-	int                                port{-1};
-};
-
-
-std::string toString(const BindAddress &bind);
-bool fromString(BindAddress &bind, const std::string &str);
 
 
 // Define default configuration
@@ -91,19 +78,19 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 		: bind(Seiscomp::Wired::Socket::IPAddress(0,0,0,0), 18180)
 		, socketPortReuse(true) {}
 
-		BindAddress            bind;
-		Seiscomp::Wired::IPACL acl; // Default empty
-		bool                   socketPortReuse;
+		Seiscomp::Wired::BindAddress bind;
+		Seiscomp::Wired::IPACL       acl; // Default empty
+		bool                         socketPortReuse;
 
 		struct SSL {
 			SSL() {}
 
-			BindAddress            bind;
-			Seiscomp::Wired::IPACL acl;
-			bool                   socketPortReuse{true};
-			std::string            key;
-			std::string            certificate;
-			bool                   verifyPeer{false};
+			Seiscomp::Wired::BindAddress bind;
+			Seiscomp::Wired::IPACL       acl;
+			bool                         socketPortReuse{true};
+			std::string                  key;
+			std::string                  certificate;
+			bool                         verifyPeer{false};
 
 			void accept(Seiscomp::System::Application::SettingsLinker &linker) {
 				linker

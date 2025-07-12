@@ -74,10 +74,6 @@ class SC_SYSTEM_CORE_API DatabaseQuery : public DatabaseReader {
 	//  Query interface
 	// ----------------------------------------------------------------------
 	public:
-		Station* getStation(const std::string& network_code,
-		                    const std::string& station_code,
-		                    Seiscomp::Core::Time time);
-
 		/**
 		 * Returns the Event referencing a particular Origin.
 		 * @param originID The publicID of the Origin
@@ -322,6 +318,17 @@ class SC_SYSTEM_CORE_API DatabaseQuery : public DatabaseReader {
 		 * @return An iterator to iterate over the events
 		 */
 		DatabaseIterator getEvents(Seiscomp::Core::Time startTime,
+		                           Seiscomp::Core::Time endTime);
+
+		/**
+		 * Returns events in a given time range
+		 * @param catalogID the publicID of the parent catalog
+		 * @param startTime start time
+		 * @param endTime end time
+		 * @return An iterator to iterate over the events
+		 */
+		DatabaseIterator getEvents(const std::string& catalogID,
+		                           Seiscomp::Core::Time startTime,
 		                           Seiscomp::Core::Time endTime);
 
 		/**

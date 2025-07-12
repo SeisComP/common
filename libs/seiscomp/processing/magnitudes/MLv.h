@@ -33,13 +33,12 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_MLv);
-
 	public:
 		MagnitudeProcessor_MLv();
 
 
 	public:
+		void setDefaults() override;
 		bool setup(const Settings &settings) override;
 
 
@@ -60,7 +59,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_MLv : public MagnitudeProcessor {
 
 	private:
 		LogA0  _logA0;
-		double _maxDistanceKm;
 };
 
 

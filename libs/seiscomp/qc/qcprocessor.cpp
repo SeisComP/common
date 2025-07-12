@@ -20,63 +20,91 @@
 
 #include <seiscomp/qc/qcprocessor.h>
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Processing {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IMPLEMENT_SC_ABSTRACT_CLASS(QcProcessorObserver, "QcProcessorObserver");
 QcProcessorObserver::QcProcessorObserver() {}
 
 
 IMPLEMENT_SC_CLASS(QcParameter, "QcParameter");
 IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(QcProcessor, WaveformProcessor, "QcProcessor");
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QcProcessor::QcProcessor(const Core::TimeSpan &deadTime,
-						const Core::TimeSpan &gapThreshold) 
-	: WaveformProcessor(deadTime, gapThreshold),
-	_setFlag(false), _validFlag(false) {}
+                         const Core::TimeSpan &gapThreshold)
+: WaveformProcessor(deadTime, gapThreshold),
+	_setFlag(false), _validFlag(false) {
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QcProcessor::~QcProcessor() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QcProcessor::subscribe(QcProcessorObserver *obs) {
-	std::deque<QcProcessorObserver *>::iterator it = std::find(_observers.begin(),_observers.end(),obs);
-	
-	if (it != _observers.end())
+	auto it = std::find(_observers.begin(),_observers.end(),obs);
+
+	if ( it != _observers.end() ) {
 		return false;
-	
+	}
+
 	_observers.push_back(obs);
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QcProcessor::unsubscribe(QcProcessorObserver *obs) {
-	std::deque<QcProcessorObserver *>::iterator it = std::find(_observers.begin(),_observers.end(),obs);
-	
-	if (it == _observers.end())
+	auto it = std::find(_observers.begin(),_observers.end(),obs);
+
+	if ( it == _observers.end() ) {
 		return false;
+	}
 
 	_observers.erase(it);
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QcParameter* QcProcessor::getState() const {
 	return _qcp.get();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void QcProcessor::process(const Record *record, const DoubleArray &data) {
-	if ( !record ) return;
+	if ( !record ) {
+		return;
+	}
 
 	_qcp = new QcParameter;
 	_setFlag = false;
@@ -87,29 +115,37 @@ void QcProcessor::process(const Record *record, const DoubleArray &data) {
 		_qcp->recordSamplingFrequency = record->samplingFrequency();
 
 		_setFlag = true;
-		_validFlag = setState(record,data);
+		_validFlag = setState(record, data);
 	}
-	
-	for ( std::deque<QcProcessorObserver *>::iterator it = _observers.begin();
-	      it != _observers.end(); ++it )
-		(*it)->update();
+
+	for ( auto &obs : _observers ) {
+		obs->update();
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QcProcessor::isSet() const {
 	return _setFlag;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool QcProcessor::isValid() const {
 	return _validFlag;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

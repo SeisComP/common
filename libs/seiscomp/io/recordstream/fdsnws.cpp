@@ -128,8 +128,8 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
                                      const string &loc, const string &cha,
-                                     const Seiscomp::Core::Time &stime,
-                                     const Seiscomp::Core::Time &etime) {
+                                     const OPT(Time) &stime,
+                                     const OPT(Time) &etime) {
 	pair<set<StreamIdx>::iterator, bool> result;
 	result = _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime));
 	return result.second;
@@ -140,7 +140,7 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setStartTime(const Seiscomp::Core::Time &stime) {
+bool FDSNWSConnectionBase::setStartTime(const OPT(Time) &stime) {
 	_stime = stime;
 	return true;
 }
@@ -150,7 +150,7 @@ bool FDSNWSConnectionBase::setStartTime(const Seiscomp::Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setEndTime(const Seiscomp::Core::Time &etime) {
+bool FDSNWSConnectionBase::setEndTime(const OPT(Time) &etime) {
 	_etime = etime;
 	return true;
 }
@@ -293,7 +293,7 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 			}
 		}
 
-		size_t port = url.port() == size_t(-1) ? 3128 : url.port();
+		size_t port = url.port() ? *url.port() : 3128;
 
 		if ( url.username().empty() || url.password().empty() )
 			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%d",
@@ -382,34 +382,39 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 void FDSNWSConnectionBase::handshake() {
 	string request;
 
-	for ( set<StreamIdx>::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
+	for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
 		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime).c_str());
-		if ( (it->startTime() == Time() && _stime == Time()) ||
-			 (it->endTime() == Time() && _etime == Time()) ) {
+		if ( (!it->startTime() && !_stime) || (!it->endTime() && !_etime) ) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 			continue;
 		}
 
 		request += it->network() + " " + it->station() + " ";
-		if ( it->location().empty() )
+		if ( it->location().empty() ) {
 			request += "--";
-		else
+		}
+		else {
 			request += it->location();
+		}
 
 		request += " ";
 		request += it->channel();
 		request += " ";
 
-		if ( it->startTime().valid() )
-			request += it->startTime().toString("%FT%T.%f");
-		else
-			request += _stime.toString("%FT%T.%f");
+		if ( it->startTime() ) {
+			request += it->startTime()->toString("%FT%T.%f");
+		}
+		else {
+			request += (_stime ? *_stime : Time()).toString("%FT%T.%f");
+		}
 		request += " ";
-		if ( it->endTime().valid() )
-			request += it->endTime().toString("%FT%T.%f");
-		else
-			request += _etime.toString("%FT%T.%f");
+		if ( it->endTime() ) {
+			request += it->endTime()->toString("%FT%T.%f");
+		}
+		else {
+			request += (_etime ? *_etime : Time()).toString("%FT%T.%f");
+		}
 		request += "\r\n";
 	}
 
@@ -602,12 +607,13 @@ Record *FDSNWSConnectionBase::next() {
 				if ( !data.empty() ) {
 					int reclen = ms_detect(data.c_str(), RECSIZE);
 					std::istringstream stream(std::istringstream::in|std::istringstream::binary);
-					if ( reclen > RECSIZE )
+					if ( reclen > RECSIZE ) {
 						stream.str(data + readBinary(reclen - RECSIZE));
+					}
 					else {
-						if ( reclen <= 0 )
+						if ( reclen <= 0 ) {
 							SEISCOMP_ERROR("Retrieving the record length failed (try 512 Byte)!");
-						reclen = RECSIZE;
+						}
 						stream.str(data);
 					}
 

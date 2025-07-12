@@ -219,7 +219,7 @@ bool DFX::feed(const Record *rec) {
 			GenericRecordPtr recs[NCOMPS];
 			double samplingRate = -1;
 			for ( size_t i = 0; i < NCOMPS; ++i ) {
-				recs[i] = _threeC[i].buffer.continuousRecord<double>();
+				recs[i] = _threeC[i].buffer.contiguousRecord<double>();
 				if ( !recs[i] ) {
 					setStatus(QCError, -1.0);
 					return false;
@@ -241,7 +241,7 @@ bool DFX::feed(const Record *rec) {
 			}
 
 			// Get common time window and cut data
-			size_t commonNumberOfSamples = size_t(safetyTimeWindow().length() * samplingRate) + 1;
+			size_t commonNumberOfSamples = size_t(static_cast<double>(safetyTimeWindow().length()) * samplingRate) + 1;
 			double *commonData[NCOMPS];
 
 			for ( size_t i = 0; i < NCOMPS; ++i ) {

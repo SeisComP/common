@@ -45,7 +45,7 @@ class ExporterCSV : public IO::Exporter {
 	//  Exporter interface
 	// ------------------------------------------------------------------
 	protected:
-		bool put(std::streambuf* buf, Core::BaseObject *);
+		bool put(std::streambuf* buf, Core::BaseObject *) override;
 
 	private:
 		std::string _delim;

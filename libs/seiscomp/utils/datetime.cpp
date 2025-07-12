@@ -39,7 +39,7 @@ double timeOfDay(const Seiscomp::Core::Time& time) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double timeOfDay() {
-	return timeOfDay(Seiscomp::Core::Time::LocalTime());
+	return timeOfDay(Seiscomp::Core::Time::Now().toLocalTime());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

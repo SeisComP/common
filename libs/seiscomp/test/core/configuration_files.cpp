@@ -43,25 +43,19 @@ class SimpleApp : public Seiscomp::System::Application {
 		: Seiscomp::System::Application(argc, argv) {}
 
 	public:
-		bool run() {
+		bool run() override {
 			return true;
 		}
 };
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(write_and_read) {
-	std::string file = "./data/config.cfg";
-
+BOOST_AUTO_TEST_CASE(read_chain) {
 	Config config;
+
+	std::string file = "./data/config.cfg";
 	bool test = config.readConfig(file);
 	BOOST_CHECK_EQUAL(test, true);
-
-	test = config.writeConfig(file);
-	BOOST_CHECK_EQUAL(test,true);
-
-	test = config.writeConfig();
-	BOOST_CHECK_EQUAL(test,true);
 
 	std::string checkText = config.visitedFilesToString();
 	BOOST_CHECK_EQUAL(checkText, "./data/config.cfg\n");
@@ -74,9 +68,6 @@ BOOST_AUTO_TEST_CASE(write_and_read) {
 	test = config.readConfig(file);
 	BOOST_CHECK(test == true);
 
-	test = config.writeConfig(file);
-	BOOST_CHECK(test == true);
-
 	checkText = config.visitedFilesToString();
 	BOOST_CHECK_EQUAL(checkText, "./data/config.cfg\n./data/config2.cfg\n");
 
@@ -84,8 +75,6 @@ BOOST_AUTO_TEST_CASE(write_and_read) {
 
 	file = "./data/config3.cfg";
 	test = config.readConfig(file);
-	BOOST_CHECK(test == true);
-	test = config.writeConfig(file);
 	BOOST_CHECK(test == true);
 
 	checkText = config.visitedFilesToString();
@@ -323,7 +312,6 @@ BOOST_AUTO_TEST_CASE(tools) {
 	Config config;
 	config.readConfig(file);
 
-
 	std::vector<std::string> vec = config.names();
 	BOOST_CHECK_EQUAL(vec.size(), 26);
 	for ( int i = 0; i < (int)vec.size(); i++ ) {
@@ -364,10 +352,13 @@ BOOST_AUTO_TEST_CASE(tools) {
 	/*************************include new file*******************************/
 
 	file = "./data/config2.cfg";
-	config.readConfig(file);
+	BOOST_CHECK_EQUAL(config.readConfig(file), true);
 
-	std::string get = config.getString("holiday.Spain");
-	BOOST_CHECK_EQUAL(get, "dance, swim");
+	auto get = config.getString("holiday.Spain");
+	BOOST_CHECK_EQUAL(get, "dance");
+	auto vget = config.getStrings("holiday.Spain");
+	BOOST_CHECK_EQUAL(vget[0], "dance");
+	BOOST_CHECK_EQUAL(vget[1], "swim");
 	proof = config.getBool("holiday.Spain.dance");
 	BOOST_CHECK_EQUAL(proof, true);
 	proof = config.getBool("holiday.Spain.swim.warm");
@@ -375,8 +366,10 @@ BOOST_AUTO_TEST_CASE(tools) {
 	proof = config.getBool("holiday.Spain.swim.cold");
 	BOOST_CHECK_EQUAL(proof, false);
 
-	get = config.getString("earth.continent");
-	BOOST_CHECK_EQUAL(get, "Asia, Europe, Africa");
+	vget = config.getStrings("earth.continent");
+	BOOST_CHECK_EQUAL(vget[0], "Asia");
+	BOOST_CHECK_EQUAL(vget[1], "Europe");
+	BOOST_CHECK_EQUAL(vget[2], "Africa");
 	get = config.getString("earth.Asia.China");
 	BOOST_CHECK_EQUAL(get, "Peking");
 	get = config.getString("earth.Europe.Germany");
@@ -385,8 +378,16 @@ BOOST_AUTO_TEST_CASE(tools) {
 	BOOST_CHECK_EQUAL(get, "German");
 	get = config.getString("earth.Africa.Benin");
 	BOOST_CHECK_EQUAL(get, "PortoNovo");
-	get = config.getString("earth.Europe.Madrid.language");
-	BOOST_CHECK_EQUAL(get, "Spanish, English");
+	vget = config.getStrings("earth.Europe.Madrid.language");
+	BOOST_CHECK_EQUAL(vget[0], "Spanish");
+	BOOST_CHECK_EQUAL(vget[1], "English");
+
+	vget = config.getStrings("escaped");
+	BOOST_CHECK_EQUAL(vget[0], "ABC\\D,EFGH");
+
+	vget = config.getStrings("escaped2");
+	BOOST_CHECK_EQUAL(vget[0], "ABC\"D");
+	BOOST_CHECK_EQUAL(vget[1], "EFGH");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

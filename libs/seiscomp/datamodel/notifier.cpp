@@ -41,12 +41,13 @@ class BaseObjectProperty : public Core::MetaProperty {
 		BaseObjectProperty(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(Core::BaseObject *object, Core::MetaValue value) const {
+		bool write(Core::BaseObject *object, Core::MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
-			if ( value.empty() )
+			if ( value.empty() ) {
 				throw Core::ValueException("object must not be NULL");
+			}
 			else {
 				Core::BaseObject *v;
 				try {
@@ -69,8 +70,8 @@ class BaseObjectProperty : public Core::MetaProperty {
 			return true;
 		}
 
-		Core::MetaValue read(Core::BaseObject *object) const {
-			T *target = T::Cast(object);
+		Core::MetaValue read(const Core::BaseObject *object) const override {
+			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return static_cast<Core::BaseObject*>((target->*_getter)());
 		}
@@ -144,14 +145,16 @@ Notifier::~Notifier() {
 Notifier* Notifier::Create(const std::string& parentId,
                            Operation op,
 	                       Object* object) {
-	if ( !IsEnabled() ) return nullptr;
+	if ( !IsEnabled() ) {
+		return nullptr;
+	}
 
 	if ( parentId.empty() ) {
 		SEISCOMP_ERROR("cannot create a notifier without a publicId");
 		return nullptr;
 	}
 
-	if ( object == nullptr ) {
+	if ( !object ) {
 		SEISCOMP_ERROR("cannot create a notifier without an object");
 		return nullptr;
 	}
@@ -159,8 +162,7 @@ Notifier* Notifier::Create(const std::string& parentId,
 	NotifierPtr notifier = new Notifier(parentId, op, object);
 
 	if ( _checkOnCreate ) {
-		PoolIterator it = _notifiers.begin();
-		for ( ; it != _notifiers.end(); ++it ) {
+		for ( auto it = _notifiers.begin(); it != _notifiers.end(); ++it ) {
 			CompareResult res = (*it)->cmp(notifier.get());
 			// If there is already an equal notifier stored, discard the
 			// current one
@@ -196,7 +198,7 @@ Notifier* Notifier::Create(const std::string& parentId,
 Notifier* Notifier::Create(PublicObject* parent,
                            Operation op,
                            Object* object) {
-	if ( parent == nullptr ) {
+	if ( !parent ) {
 		SEISCOMP_ERROR("cannot create notifier (%s: %s) without parent object",
 		               op.toString(), object?object->className():"[nullptr]");
 		return nullptr;
@@ -447,19 +449,22 @@ Notifier::CompareResult Notifier::cmp(const Notifier& n) const {
 	static CompareResult ResultTable[Operation::Quantity][Operation::Quantity] =
 	{
 		{CR_DIFFERENT, CR_DIFFERENT, CR_DIFFERENT, CR_DIFFERENT},
-		{CR_DIFFERENT, CR_EQUAL,     CR_OPPOSITE,  CR_EQUAL},
-		{CR_DIFFERENT, CR_OPPOSITE,  CR_EQUAL,     CR_EQUAL},
+		{CR_DIFFERENT, CR_EQUAL,     CR_DIFFERENT, CR_EQUAL},
+		{CR_DIFFERENT, CR_DIFFERENT, CR_EQUAL,     CR_EQUAL},
 		{CR_DIFFERENT, CR_OVERRIDE,  CR_OVERRIDE,  CR_EQUAL}
 	};
 
-	if ( this == &n ) return CR_EQUAL;
+	if ( this == &n ) {
+		return CR_EQUAL;
+	}
 
 	Object *obj1 = object();
 	Object *obj2 = n.object();
 
 	// At least one notifier does not refer to an object
-	if ( obj1 == nullptr || obj2 == nullptr )
+	if ( !obj1 || !obj2 ) {
 		return CR_DIFFERENT;
+	}
 
 	if ( obj1 != obj2 ) {
 		// Referred objects are not from the same type
@@ -470,11 +475,13 @@ Notifier::CompareResult Notifier::cmp(const Notifier& n) const {
 	Operation op1 = operation();
 	Operation op2 = n.operation();
 
-	if ( op1 >= Operation::Quantity || op2 >= Operation::Quantity )
+	if ( op1 >= Operation::Quantity || op2 >= Operation::Quantity ) {
 		return CR_DIFFERENT;
+	}
 
-	if ( _parentID != n._parentID )
+	if ( _parentID != n._parentID ) {
 		return CR_DIFFERENT;
+	}
 
 	return ResultTable[op1][op2];
 }

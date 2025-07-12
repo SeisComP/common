@@ -24,6 +24,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <seiscomp/core/strings.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/seismology/ttt/libtau.h>
@@ -40,11 +41,13 @@ double takeoff_angle(double p, double zs, double vzs) {
 	// vz is the velocity at the source
 	double pv;
 
-	p  = p*180./M_PI;       // make p slowness in sec/rad
-	pv = p*vzs/(6371.-zs);
-	if (pv>1.) pv = 1.;
+	p  = p * 180. / M_PI;       // make p slowness in sec/rad
+	pv = p * vzs / (6371. - zs);
+	if ( pv > 1. ) {
+		pv = 1.;
+	}
 
-	return 180.*asin(pv)/M_PI;
+	return 180. * asin(pv) / M_PI;
 }
 
 
@@ -53,7 +56,7 @@ double takeoff_angle(double p, double zs, double vzs) {
 
 extern "C" {
 
-void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *delta, double *azi1, double *azi2);
+#include "geog.h"
 
 }
 
@@ -61,10 +64,6 @@ void distaz2_(double *lat1, double *lon1, double *lat2, double *lon2, double *de
 namespace Seiscomp {
 namespace TTT {
 
-
-LibTau::LibTau() : _initialized(false) {
-	_depth = -1;
-}
 
 
 LibTau::LibTau(const LibTau &other) {
@@ -81,7 +80,9 @@ LibTau &LibTau::operator=(const LibTau &other) {
 
 
 LibTau::~LibTau() {
-	if ( !_initialized ) return;
+	if ( !_initialized ) {
+		return;
+	}
 	tabout(&_handle);
 }
 
@@ -98,6 +99,15 @@ const std::string &LibTau::model() const {
 
 
 void LibTau::initPath(const std::string &model) {
+	std::string tablePrefix;
+	const char *tablePrefix_ = getenv("SEISCOMP_LIBTAU_TABLE_DIR");
+	if ( !tablePrefix_ ) {
+		tablePrefix = Environment::Instance()->shareDir() + "/ttt/";
+	}
+	else {
+		tablePrefix = tablePrefix_;
+	}
+
 	if ( _model != model ) {
 		if ( _initialized ) {
 			tabout(&_handle);
@@ -105,11 +115,12 @@ void LibTau::initPath(const std::string &model) {
 			_initialized = false;
 		}
 	}
-	else if ( _initialized ) return;
+	else if ( _initialized ) {
+		return;
+	}
 
 	if ( !model.empty() ) {
-		std::string tablePath = Environment::Instance()->shareDir() +
-		                        "/ttt/" + model;
+		std::string tablePath = tablePrefix + model;
 
 		// Fill the handle structure with zeros
 		memset(&_handle, 0, sizeof(_handle));
@@ -130,14 +141,13 @@ void LibTau::initPath(const std::string &model) {
 
 
 void LibTau::setDepth(double depth) {
-	if ( depth <= 0. ) depth = 0.01; // XXX Hack!!!
-
-	if ( depth <= 0. || depth > 800 ) {
-		std::ostringstream errmsg;
-		errmsg.precision(8);
-		errmsg  << "Source depth of " << depth
-			<< " km is out of range of 0 < z <= 800";
-		throw std::out_of_range(errmsg.str());
+	if ( (depth < 0.01) || (depth > 800) ) {
+		throw std::out_of_range(
+			Core::stringify(
+				"Source depth of %f km is out of range of 0 < z <= 800",
+				depth
+			)
+		);
 	}
 
 	if ( depth != _depth ) {
@@ -157,22 +167,25 @@ TravelTimeList *LibTau::compute(double delta, double depth) {
 
 	setDepth(depth);
 
-	for(int i=0; i<100; i++)
-		phase[i] = &ph[10*i];
+	for ( int i = 0; i < 100; ++i ) {
+		phase[i] = &ph[10 * i];
+	}
 
 	trtm(&_handle, delta, &n, time, p, dtdd, dtdh, dddp, phase);
-	bool has_vel = emdlv(6371-depth, &vp, &vs) == 0;
+	bool has_vel = emdlv(6371 - depth, &vp, &vs) == 0;
 
-	for(int i=0; i<n; i++) {
+	for ( int i = 0; i < n; ++i ) {
 		float takeoff;
-		if(has_vel) {
+		if ( has_vel ) {
 			float v = (phase[i][0]=='s' || phase[i][0]=='S') ? vs : vp;
 			takeoff = takeoff_angle(dtdd[i], depth, v);
-			if (dtdh[i] > 0.)
-				takeoff = 180.-takeoff;
+			if ( dtdh[i] > 0. ) {
+				takeoff = 180. - takeoff;
+			}
 		}
-		else
+		else {
 			takeoff = 0;
+		}
 
 		ttlist->push_back(
 			TravelTime(phase[i], time[i], dtdd[i], dtdh[i], dddp[i], takeoff)
@@ -188,13 +201,12 @@ TravelTimeList *LibTau::compute(double delta, double depth) {
 TravelTimeList *LibTau::compute(double lat1, double lon1, double dep1,
                                 double lat2, double lon2, double alt2,
                                 int ellc) {
-	if ( !_initialized ) setModel("iasp91");
+	if ( !_initialized ) {
+		setModel("iasp91");
+	}
 
 	double delta, azi1, azi2;
-
-//	Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
-	distaz2_(&lat1, &lon1, &lat2, &lon2, &delta, &azi1, &azi2);
-
+	sc_locsat_distaz2(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
 
 	/* TODO apply ellipticity correction */
 	TravelTimeList *ttlist = compute(delta, dep1);
@@ -204,9 +216,7 @@ TravelTimeList *LibTau::compute(double lat1, double lon1, double dep1,
 	if ( ellc ) {
 		TravelTimeList::iterator it;
 		for ( it = ttlist->begin(); it != ttlist->end(); ++it ) {
-			double ecorr = 0.;
-			if ( ellipcorr((*it).phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-				(*it).time += ecorr;
+			(*it).time += ellipticityCorrection((*it).phase, lat1, lon1, dep1, lat2, lon2);
 		}
 	}
 
@@ -221,8 +231,9 @@ TravelTime LibTau::computeFirst(double delta, double depth) {
 
 	setDepth(depth);
 
-	for ( int i = 0; i < 100; ++i )
+	for ( int i = 0; i < 100; ++i ) {
 		phase[i] = &ph[10*i];
+	}
 
 	trtm(&_handle, delta, &n, time, p, dtdd, dtdh, dddp, phase);
 	emdlv(6371-depth, &vp, &vs);
@@ -230,8 +241,9 @@ TravelTime LibTau::computeFirst(double delta, double depth) {
 	if ( n ) {
 		float v = (phase[0][0]=='s' || phase[0][0]=='S') ? vs : vp;
 		float takeoff = takeoff_angle(dtdd[0], depth, v);
-		if ( dtdh[0] > 0. )
-			takeoff = 180.-takeoff;
+		if ( dtdh[0] > 0. ) {
+			takeoff = 180. - takeoff;
+		}
 
 		return TravelTime(phase[0], time[0], dtdd[0], dtdh[0], dddp[0], takeoff);
 	}
@@ -250,9 +262,7 @@ TravelTime LibTau::computeFirst(double lat1, double lon1, double dep1,
 	TravelTime tt = computeFirst(delta, dep1);
 
 	if ( ellc ) {
-		double ecorr = 0.;
-		if ( ellipcorr(tt.phase, lat1, lon1, lat2, lon2, dep1, ecorr) )
-			tt.time += ecorr;
+		tt.time += ellipticityCorrection(tt.phase, lat1, lon1, dep1, lat2, lon2);
 	}
 
 	return tt;

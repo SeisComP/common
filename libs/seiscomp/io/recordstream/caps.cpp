@@ -26,12 +26,12 @@
 #include "caps/endianess.h"
 #include "caps/utils.h"
 
-#include <seiscomp3/logging/log.h>
-#include <seiscomp3/core/typedarray.h>
-#include <seiscomp3/core/genericrecord.h>
-#include <seiscomp3/core/plugin.h>
-#include <seiscomp3/core/strings.h>
-#include <seiscomp3/io/records/mseedrecord.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/core/typedarray.h>
+#include <seiscomp/core/genericrecord.h>
+#include <seiscomp/core/plugin.h>
+#include <seiscomp/core/strings.h>
+#include <seiscomp/io/records/mseedrecord.h>
 
 #include <libmseed.h>
 #include <ctype.h>
@@ -72,7 +72,7 @@ class CAPSRecord : public GenericRecord {
 			_nsamp = nsamp;
 		}
 
-		void read(std::istream &in) {
+		void read(std::istream &in) override {
 			ArrayPtr ar;
 			bool res = false;
 
@@ -140,7 +140,7 @@ class MSeedRecord_ : public IO::MSeedRecord {
 		MSeedRecord_() {}
 
 	public:
-		void read(std::istream &is) {
+		void read(std::istream &is) override {
 			int reclen = -1;
 			MSRecord *prec = nullptr;
 			const int LEN = 128;
@@ -236,6 +236,8 @@ bool RecordStream::setSource(const string &source) {
 	string params;
 	int timeout = 300;
 
+	_port = 18002;
+
 	{
 		size_t pos = addr.find('@');
 
@@ -278,9 +280,13 @@ bool RecordStream::setSource(const string &source) {
 		}
 	}
 
+	if ( _host.empty() ) {
+		_host = "localhost";
+	}
+
 	_realtime = true;
 	_ooo = false;
-	_minMTime = _maxMTime = sc::Time();
+	_minMTime = _maxMTime = Core::None;
 
 	if ( !params.empty() ) {
 		vector<string> toks;
@@ -317,16 +323,20 @@ bool RecordStream::setSource(const string &source) {
 					_password = value;
 				}
 				else if ( name == "min-mtime" ) {
-					if ( !sc::fromString(_minMTime, value) ) {
+					sc::Time tmp;
+					if ( !sc::fromString(tmp, value) ) {
 						SEISCOMP_ERROR("invalid min-mtime: %s", value.c_str());
 						return false;
 					}
+					_minMTime = tmp;
 				}
 				else if ( name == "max-mtime" ) {
-					if ( !sc::fromString(_maxMTime, value) ) {
+					sc::Time tmp;
+					if ( !sc::fromString(tmp, value) ) {
 						SEISCOMP_ERROR("invalid max-mtime: %s", value.c_str());
 						return false;
 					}
+					_maxMTime = tmp;
 				}
 				else if ( name == "request-file" ) {
 					ifstream ifs(value.c_str());
@@ -339,7 +349,7 @@ bool RecordStream::setSource(const string &source) {
 					int lc = 1;
 
 					vector<string> toks;
-					Core::Time startTime, endTime;
+					OPT(Core::Time) startTime, endTime;
 
 					while ( getline(ifs, line) ) {
 						Core::trim(line);
@@ -348,7 +358,7 @@ bool RecordStream::setSource(const string &source) {
 							if ( !toks.empty() ) {
 								addStream(toks[0], toks[1], toks[2], toks[3], startTime, endTime);
 								toks.clear();
-								startTime = endTime = Core::Time();
+								startTime = endTime = Core::None;
 							}
 
 							string id = line.substr(11);
@@ -370,17 +380,24 @@ bool RecordStream::setSource(const string &source) {
 								return false;
 							}
 
-							etime = stime.substr(p+1);
-							stime.erase(stime.begin()+p, stime.end());
+							etime = stime.substr(p + 1);
+							stime.erase(stime.begin() + p, stime.end());
 
-							if ( !stime.empty() && !startTime.fromString(stime.c_str(), "%Y,%m,%d,%H,%M,%S,%f") ) {
-								SEISCOMP_ERROR("invalid start time at %s:%d: %s", value.c_str(), lc, stime.c_str());
-								return false;
+							Core::Time tmp;
+							if ( !stime.empty() ) {
+								if ( !tmp.fromString(stime, "%Y,%m,%d,%H,%M,%S,%f") ) {
+									SEISCOMP_ERROR("invalid start time at %s:%d: %s", value.c_str(), lc, stime.c_str());
+									return false;
+								}
+								startTime = tmp;
 							}
 
-							if ( !etime.empty() && !endTime.fromString(etime.c_str(), "%Y,%m,%d,%H,%M,%S,%f") ) {
-								SEISCOMP_ERROR("invalid end time at %s:%d: %s", value.c_str(), lc, etime.c_str());
-								return false;
+							if ( !etime.empty() ) {
+								if ( !tmp.fromString(etime, "%Y,%m,%d,%H,%M,%S,%f") ) {
+									SEISCOMP_ERROR("invalid end time at %s:%d: %s", value.c_str(), lc, etime.c_str());
+									return false;
+								}
+								endTime = tmp;
 							}
 						}
 
@@ -482,8 +499,8 @@ bool RecordStream::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStream::addStream(const string &net, const string &sta,
                              const string &loc, const string &cha,
-                             const Core::Time &stime,
-                             const Core::Time &etime) {
+                             const OPT(Core::Time) &stime,
+                             const OPT(Core::Time) &etime) {
 	return addRequest(net, sta, loc, cha, stime, etime, false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -494,8 +511,8 @@ bool RecordStream::addStream(const string &net, const string &sta,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStream::addRequest(const string &net, const string &sta,
                               const string &loc, const string &cha,
-                              const Core::Time &stime,
-                              const Core::Time &etime,
+                              const OPT(Core::Time) &stime,
+                              const OPT(Core::Time) &etime,
                               bool receivedData) {
 	string streamID = net + "." + sta + "." + loc + "." + cha;
 	Request &req = _requests[streamID];
@@ -530,9 +547,8 @@ bool RecordStream::handshake() {
 
 	while ( !_socket->isValid() ) {
 		// Continue already started data
-		for ( SessionTable::const_iterator it = _sessionTable.begin();
-		      it != _sessionTable.end(); ++it ) {
-			if ( it->second.startTime.valid() ) {
+		for ( auto it = _sessionTable.begin(); it != _sessionTable.end(); ++it ) {
+			if ( it->second.startTime ) {
 				addRequest(it->second.net, it->second.sta,
 				           it->second.loc, it->second.cha,
 				           it->second.startTime,
@@ -570,31 +586,40 @@ bool RecordStream::handshake() {
 		}
 
 		_socket->write("BEGIN REQUEST\n", 14);
+		SEISCOMP_DEBUG("BEGIN REQUEST");
 
-		if ( !_realtime )
+		if ( !_realtime ) {
 			_socket->write("REALTIME OFF\n", 13);
+			SEISCOMP_DEBUG("REALTIME OFF");
+		}
 
-		if ( _ooo )
+		if ( _ooo ) {
 			_socket->write("OUTOFORDER ON\n", 14);
+			SEISCOMP_DEBUG("OUTOFORDER ON");
+		}
 
-		if ( _minMTime.valid() || _maxMTime.valid() ) {
+		if ( _minMTime || _maxMTime ) {
 			_socket->write("MTIME ", 6);
-			if ( _minMTime.valid() ) {
-				auto s = _minMTime.toString("%Y,%m,%d,%H,%M,%S,%f");
+			if ( _minMTime ) {
+				auto s = _minMTime->toString("%Y,%m,%d,%H,%M,%S,%f");
 				_socket->write(s.c_str(), s.size());
 			}
 			_socket->write(":", 1);
-			if ( _maxMTime.valid() ) {
-				auto s = _maxMTime.toString("%Y,%m,%d,%H,%M,%S,%f");
+			if ( _maxMTime ) {
+				auto s = _maxMTime->toString("%Y,%m,%d,%H,%M,%S,%f");
 				_socket->write(s.c_str(), s.size());
 			}
 			_socket->write("\n", 1);
+			SEISCOMP_DEBUG("MTIME %s:%s",
+			               _minMTime ? _minMTime->toString("%Y,%m,%d,%H,%M,%S,%f") : "",
+			               _maxMTime ? _maxMTime->toString("%Y,%m,%d,%H,%M,%S,%f") : "");
 		}
 
 		// First pass: continue all previous streams
-		for ( RequestList::iterator it = _requests.begin();
-		      it != _requests.end(); ++it ) {
-			if ( it->second.receivedData == false ) continue;
+		for ( auto it = _requests.begin(); it != _requests.end(); ++it ) {
+			if ( it->second.receivedData == false ) {
+				continue;
+			}
 
 			stringstream req;
 			req << "STREAM ADD " << it->first << endl;
@@ -602,26 +627,26 @@ bool RecordStream::handshake() {
 
 			int year, mon, day, hour, minute, second, microseconds;
 
-			if ( it->second.start.valid() ) {
-				it->second.start.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			if ( it->second.start ) {
+				it->second.start->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
-			else if ( _startTime.valid() ) {
-				_startTime.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			else if ( _startTime ) {
+				_startTime->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
 
 			req << ":";
 
-			if ( it->second.end.valid() ) {
-				it->second.end.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			if ( it->second.end ) {
+				it->second.end->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
-			else if ( _endTime.valid() ) {
-				_endTime.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			else if ( _endTime ) {
+				_endTime->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
@@ -644,26 +669,26 @@ bool RecordStream::handshake() {
 
 			int year, mon, day, hour, minute, second, microseconds;
 
-			if ( it->second.start.valid() ) {
-				it->second.start.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			if ( it->second.start ) {
+				it->second.start->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
-			else if ( _startTime.valid() ) {
-				_startTime.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			else if ( _startTime ) {
+				_startTime->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
 
 			req << ":";
 
-			if ( it->second.end.valid() ) {
-				it->second.end.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			if ( it->second.end ) {
+				it->second.end->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
-			else if ( _endTime.valid() ) {
-				_endTime.get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
+			else if ( _endTime ) {
+				_endTime->get(&year, &mon, &day, &hour, &minute, &second, &microseconds);
 				req << year << "," << mon << "," << day << ","
 				    << hour << "," << minute << "," << second << "," << microseconds;
 			}
@@ -676,6 +701,7 @@ bool RecordStream::handshake() {
 		}
 
 		_socket->write("END\n", 4);
+		SEISCOMP_DEBUG("END");
 
 		_buf.set_read_limit(-1);
 		gc::ResponseHeader header;
@@ -848,7 +874,7 @@ Record *RecordStream::next() {
 							time.microSeconds =
 							    gc::Endianess::Converter::FromLittleEndian(time.microSeconds);
 
-							sc::Time stime(time.seconds, time.microSeconds);
+							sc::Time stime = sc::Time::FromEpoch(time.seconds, time.microSeconds);
 
 							//SEISCOMP_DEBUG("received record: startTime = %s", stime.iso().c_str());
 
@@ -966,9 +992,10 @@ Record *RecordStream::next() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStream::setStartTime(const Core::Time &stime) {
+bool RecordStream::setStartTime(const OPT(Core::Time) &stime) {
 	_startTime = stime;
-	SEISCOMP_DEBUG("set global start time to %s", _startTime.toString("%F %T.%f").c_str());
+	SEISCOMP_DEBUG("set global start time to %s",
+	               _startTime ? _startTime->toString("%F %T.%f") : "null");
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -977,9 +1004,10 @@ bool RecordStream::setStartTime(const Core::Time &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStream::setEndTime(const Core::Time &etime) {
+bool RecordStream::setEndTime(const OPT(Core::Time) &etime) {
 	_endTime = etime;
-	SEISCOMP_DEBUG("set global end time to %s", _endTime.toString("%F %T.%f").c_str());
+	SEISCOMP_DEBUG("set global end time to %s",
+	               _endTime ? _endTime->toString("%F %T.%f") : "null");
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

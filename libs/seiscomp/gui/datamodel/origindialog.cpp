@@ -77,9 +77,9 @@ time_t OriginDialog::getTime_t() const {
 	      0);
 
 	if ( SCScheme.dateTime.useLocalTime )
-		t = t.toGMT();
+		t = t.toUTC();
 
-	return t;
+	return t.epochSeconds();
 }
 
 
@@ -283,7 +283,7 @@ void OriginDialog::init(double lon, double lat, double dep) {
 	connect(_ui.latLineEdit, SIGNAL(textEdited(QString)), this, SLOT(onTextEdited(QString)));
 	connect(_ui.lonLineEdit, SIGNAL(textEdited(QString)), this, SLOT(onTextEdited(QString)));
 
-	setTime(Core::Time::GMT());
+	setTime(Core::Time::UTC());
 	setLongitude(lon);
 	setLatitude(lat);
 	setDepth(dep);

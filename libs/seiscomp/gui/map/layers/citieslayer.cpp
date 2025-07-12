@@ -54,6 +54,9 @@ CitiesLayer::CitiesLayer(QObject* parent) : Layer(parent), _selectedCity(nullptr
 	legend->addItem(new StandardLegendItem(SCScheme.colors.map.cityOutlines,
 	                                       SCScheme.colors.map.cityCapital, tr("Capital"),
 	                                       CITY_BIG_SYMBOL_SIZE));
+
+	_penHalo = QPen(SCScheme.colors.map.cityHalo, 1 + 2 * SCScheme.map.cityHaloWidth);
+
 	addLegend(legend);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,7 +104,7 @@ void CitiesLayer::draw(const Seiscomp::Gui::Map::Canvas* canvas,
 
 	int height = canvas->height(),
 	    width = canvas->width(),
-	    fontHeight = fontMetrics.height(),
+	    fontHeight = fontMetrics.height() + SCScheme.map.cityHaloWidth * 2,
 	    gridHeight = height / fontHeight;
 
 	Grid grid(gridHeight);
@@ -150,17 +153,21 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
                            const QFontMetrics& fontMetrics,
                            int width, int rowHeight) {
 	QPoint p;
-	if ( !projection->project(p, QPointF(city.lon, city.lat)) )
+	if ( !projection->project(p, QPointF(city.lon, city.lat)) ) {
 		return false;
+	}
 
 	int gridY, gridPrevY, gridNextY;
 
 	gridY = p.y() / rowHeight;
 
-	if ( gridY < 0 || gridY >= grid.count() ) return false;
-	if ( p.x() < 0 || p.x() >= width ) return false;
+	if ( gridY < 0 || gridY >= grid.count() ) {
+		return false;
+	}
 
-	QRect labelRect(fontMetrics.boundingRect(city.name().c_str()));
+	if ( p.x() < 0 || p.x() >= width ) {
+		return false;
+	}
 
 	bool capital = (city.category() == "B" || city.category() == "C");
 	bool bold = city.population() >= 1000000;
@@ -169,15 +176,16 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 	if ( bold )
 		symbolSize = 6;
 
-	labelRect.moveTo(QPoint(p.x()+symbolSize/2, p.y()));
-	labelRect.setWidth(labelRect.width()+2);
+	QRect labelRect(fontMetrics.boundingRect(city.name().c_str()));
+	labelRect.adjust(-SCScheme.map.cityHaloWidth, -SCScheme.map.cityHaloWidth,
+	                  SCScheme.map.cityHaloWidth,  SCScheme.map.cityHaloWidth);
+	labelRect.moveTo(QPoint(p.x() + symbolSize / 2, p.y()));
 
 	QList<QRect> &gridRow = grid[gridY];
 
 	bool foundPlace = true;
-	for ( Row::iterator it = gridRow.begin();
-	      it != gridRow.end(); ++it ) {
-		if ( it->intersects(labelRect) ) {
+	for ( auto &item : gridRow ) {
+		if ( item.intersects(labelRect) ) {
 			foundPlace = false;
 			break;
 		}
@@ -187,18 +195,17 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 		labelRect.moveTo(labelRect.left() - labelRect.width() - symbolSize,
 		                 labelRect.top());
 		foundPlace = true;
-		for ( Row::iterator it = gridRow.begin();
-		      it != gridRow.end(); ++it ) {
-			if ( it->intersects(labelRect) ) {
+		for ( auto &item : gridRow ) {
+			if ( item.intersects(labelRect) ) {
 				foundPlace = false;
 				break;
 			}
 		}
 	}
 
-	if ( !foundPlace ) return false;
-
-	gridY = labelRect.top() / rowHeight;
+	if ( !foundPlace ) {
+		return false;
+	}
 
 	gridPrevY = gridY - 1;
 	gridNextY = gridY + 1;
@@ -216,10 +223,8 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 		painter.setPen(SCScheme.colors.map.cityOutlines);
 		painter.setBrush(SCScheme.colors.map.cityNormal);
 	}
-	painter.drawRect(p.x()-symbolSize/2, p.y()-symbolSize/2, symbolSize,
-	                 symbolSize);
-
-	painter.setPen(SCScheme.colors.map.cityLabels);
+	painter.drawRect(p.x() - symbolSize / 2, p.y() - symbolSize / 2,
+	                 symbolSize, symbolSize);
 
 	if ( capital != lastUnderline ) {
 		lastUnderline = capital;
@@ -233,8 +238,19 @@ bool CitiesLayer::drawCity(QPainter& painter, Grid &grid, QFont &font,
 		painter.setFont(font);
 	}
 
-	painter.drawText(labelRect, Qt::AlignLeft | Qt::AlignTop |
-	                 Qt::TextSingleLine, city.name().c_str());
+	painter.setBrush(Qt::NoBrush);
+
+	QPoint pos = labelRect.bottomLeft() + QPoint(SCScheme.map.cityHaloWidth, -SCScheme.map.cityHaloWidth - painter.fontMetrics().descent());
+	QString text = city.name().c_str();
+	if ( SCScheme.map.cityHaloWidth > 0 ) {
+		QPainterPath path;
+		path.addText(pos, font, text);
+		painter.setPen(_penHalo);
+		painter.drawPath(path);
+	}
+
+	painter.setPen(SCScheme.colors.map.cityLabels);
+	painter.drawText(pos, text);
 
 	return true;
 }

@@ -85,7 +85,7 @@ HelpPanel::HelpPanel(QWidget *parent)
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(refresh()));
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	l->setSpacing(0);
 	setLayout(l);
 

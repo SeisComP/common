@@ -20,8 +20,8 @@
 
 #define SEISCOMP_COMPONENT Core
 
-#include <iostream>
-#include <math.h>
+#include <algorithm>
+#include <cmath>
 
 #include <seiscomp/core/record.h>
 #include <seiscomp/core/arrayfactory.h>
@@ -176,15 +176,17 @@ RecordSequence::Range RecordSequence::amplitudeRange(const Core::TimeWindow *tw)
 
 				if ( tw->overlaps(rtw) ) {
 					double fs = rec->samplingFrequency();
-					double dt = tw->startTime() - rec->startTime();
+					double dt = static_cast<double>(tw->startTime() - rec->startTime());
 
-					if ( dt > 0 )
+					if ( dt > 0 ) {
 						imin = int(dt*fs);
+					}
 
-					dt = rec->endTime() - tw->endTime();
+					dt = static_cast<double>(rec->endTime() - tw->endTime());
 					imax = data->size();
-					if ( dt > 0 )
+					if ( dt > 0 ) {
 						imax -= int(dt*fs);
+					}
 				}
 				else
 					continue;
@@ -215,6 +217,28 @@ RecordSequence::Range RecordSequence::amplitudeRange(const Core::TimeWindow *tw)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+RecordSequence::const_iterator RecordSequence::lowerBound(const Core::Time &ts) const {
+	return lower_bound(begin(), end(), ts, [](const RecordCPtr &rec, const Core::Time &ts) {
+		return rec->endTime() <= ts;
+	});
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+RecordSequence::const_iterator RecordSequence::upperBound(const Core::Time &ts) const {
+	return upper_bound(begin(), end(), ts, [](const Core::Time &ts, const RecordCPtr &rec) {
+		return ts <= rec->startTime();
+	});
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordSequence::TimeWindowArray RecordSequence::windows() const {
 	RecordSequence::TimeWindowArray win;
 
@@ -232,7 +256,7 @@ RecordSequence::TimeWindowArray RecordSequence::windows() const {
 			current = tw;
 		else {
 			if ( current.contiguous(tw, _tolerance/fs) )
-				current.extend(tw);
+				current |= tw;
 			else {
 				win.push_back(current);
 				current = tw;
@@ -281,7 +305,7 @@ RecordSequence::TimeWindowArray RecordSequence::gaps() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double RecordSequence::availability(const Core::TimeWindow &tw) const {
-	if ( empty() || tw.length() == 0.0 ) return 0.0;
+	if ( empty() || tw.length() == Core::TimeSpan(0, 0) ) return 0.0;
 
 	const_iterator it = begin();
 	RecordCPtr lastRec = *it;
@@ -289,10 +313,11 @@ double RecordSequence::availability(const Core::TimeWindow &tw) const {
 
 	++it;
 
-	double missingData = 0;
+	Core::TimeSpan missingData(0, 0);
 
-	if ( lastRec->startTime() > tw.startTime() )
+	if ( lastRec->startTime() > tw.startTime() ) {
 		missingData += lastRec->startTime() - tw.startTime();
+	}
 
 	for ( ; it != end(); ++it ) {
 		RecordCPtr rec = *it;
@@ -300,22 +325,28 @@ double RecordSequence::availability(const Core::TimeWindow &tw) const {
 
 		double fs = rec->samplingFrequency();
 
-		if ( !lastTw.contiguous(tw, _tolerance/fs) )
+		if ( !lastTw.contiguous(tw, _tolerance/fs) ) {
 			missingData += tw.startTime() - lastTw.endTime();
+		}
 
 		lastTw = tw;
 		lastRec = rec;
 	}
 
-	if ( lastRec->endTime() < tw.endTime() )
+	if ( lastRec->endTime() < tw.endTime() ) {
 		missingData += tw.endTime() - lastRec->endTime();
+	}
 
-	double requiredData = tw.length();
+	auto requiredData = tw.length();
 
-	if ( missingData < 0 ) missingData = 0;
-	else if ( missingData > requiredData ) missingData = requiredData;
+	if ( !missingData ) {
+		missingData = Core::TimeSpan(0, 0);
+	}
+	else if ( missingData > requiredData ) {
+		missingData = requiredData;
+	}
 
-	return 100.0 * (1.0-missingData/requiredData);
+	return 100.0 * (1.0 - static_cast<double>(missingData) / static_cast<double>(requiredData));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -333,8 +364,8 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 
 	double samplingFrequency = 0;
 
-	typedef NumericArray<T> TArray;
-	typedef typename Core::SmartPointer<TArray>::Impl TArrayPtr;
+	using TArray = NumericArray<T>;
+	using TArrayPtr = Core::SmartPointer<TArray>;
 
 	TArrayPtr rawData = new TArray;
 	GenericRecord *rawRecord = nullptr;
@@ -410,16 +441,6 @@ GenericRecord *RecordSequence::contiguousRecord(const Core::TimeWindow *tw, bool
 		rawRecord->setData(rawData.get());
 
 	return rawRecord;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-template <typename T>
-GenericRecord *RecordSequence::continuousRecord(const Core::TimeWindow *tw, bool interpolate) const {
-	return contiguousRecord<T>(tw, interpolate);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -586,22 +607,26 @@ bool RingBuffer::feed(const Record *rec) {
 	push_back(rec);
 	*/
 	iterator it;
-	if ( !findInsertPosition(rec, &it) )
+	if ( !findInsertPosition(rec, &it) ) {
 		return false;
+	}
 
 	insert(it, rec);
 
-	if( ! recordCount())
+	if( ! recordCount()) {
 		return true;
+	}
 
 	if ( _nmax ) {
-		while( recordCount() > _nmax )
+		while( recordCount() > _nmax ) {
 			pop_front();
+		}
 	}
 	else if ( _span ) {
 		Core::Time tmin = back()->endTime() - _span;
-		while ( front()->endTime() <= tmin )
+		while ( front()->endTime() <= tmin ) {
 			pop_front();
+		}
 	}
 
 	return true;
@@ -651,16 +676,6 @@ GenericRecord *RecordSequence::contiguousRecord<float>(const Core::TimeWindow *t
 
 template
 GenericRecord *RecordSequence::contiguousRecord<double>(const Core::TimeWindow *tw, bool interpolate) const;
-
-// Specialize continuousRecord for int, float and double
-template
-GenericRecord *RecordSequence::continuousRecord<int>(const Core::TimeWindow *tw, bool interpolate) const;
-
-template
-GenericRecord *RecordSequence::continuousRecord<float>(const Core::TimeWindow *tw, bool interpolate) const;
-
-template
-GenericRecord *RecordSequence::continuousRecord<double>(const Core::TimeWindow *tw, bool interpolate) const;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

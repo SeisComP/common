@@ -82,25 +82,25 @@ class SC_SYSTEM_CORE_API Outage : public Object {
 		Outage();
 
 		//! Copy constructor
-		Outage(const Outage& other);
+		Outage(const Outage &other);
 
 		//! Destructor
 		~Outage() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Outage& operator=(const Outage& other);
+		Outage &operator=(const Outage &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Outage& other) const;
-		bool operator!=(const Outage& other) const;
+		bool operator==(const Outage &other) const;
+		bool operator!=(const Outage &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Outage& other) const;
+		bool equal(const Outage &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -129,17 +129,17 @@ class SC_SYSTEM_CORE_API Outage : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const OutageIndex& index() const;
+		const OutageIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Outage* lhs) const;
+		bool equalIndex(const Outage *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		QualityControl* qualityControl() const;
+		QualityControl *qualityControl() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

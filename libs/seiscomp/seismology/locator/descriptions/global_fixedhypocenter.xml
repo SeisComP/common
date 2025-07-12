@@ -17,6 +17,30 @@
 					documentation for the required interface name.
 					</description>
 				</parameter>
+				<parameter name="lat" type="double">
+					<description>
+					The fixed latitude to use. If not set then this
+					value is read from the input origin.
+					</description>
+				</parameter>
+				<parameter name="lon" type="double">
+					<description>
+					The fixed longitude to use. If not set then this
+					value is read from the input origin.
+					</description>
+				</parameter>
+				<parameter name="depth" type="double">
+					<description>
+					The fixed depth to use. If not set then this
+					value is read from the input origin.
+					</description>
+				</parameter>
+				<parameter name="time" type="string">
+					<description>
+					The fixed time to use. If not set then this
+					value is read from the input origin.
+					</description>
+				</parameter>
 				<parameter name="usePickUncertainties" type="boolean" default="false">
 					<description>
 					Whether to use pick time uncertainties rather than a fixed

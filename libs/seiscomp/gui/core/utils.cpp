@@ -19,13 +19,16 @@
 
 #define SEISCOMP_COMPONENT Gui::Utils
 
+#include <seiscomp/core/strings.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
+#include <seiscomp/gui/core/fontawesome6.h>
+#include <seiscomp/gui/core/utils.h>
+
 #include <cstdio>
 #include <cmath>
-#include <seiscomp/gui/core/compat.h>
-#include <seiscomp/core/strings.h>
-#include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/core/utils.h>
-#include <seiscomp/logging/log.h>
+#include <stdexcept>
 
 #include <boost/assign.hpp>
 
@@ -34,112 +37,152 @@
 #include <QPainter>
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
+
 
 QChar degrees = (ushort)0x00b0;
 std::string colorConvertError;
 
-bool fromString(QColor& value, const std::string& str) {
+
+namespace {
+
+int fromHexChar(char c) {
+	if ( c >= '0' && c <= '9' ) {
+		return c - '0';
+	}
+
+	if ( c >= 'a' && c <= 'f' ) {
+		return (c - 'a') + 10;
+	}
+
+	if ( c >= 'A' && c <= 'F' ) {
+		return (c - 'A') + 10;
+	}
+
+	throw std::invalid_argument("invalid hex character");
+}
+
+}
+
+
+bool fromString(QColor& value, std::string_view str) {
 	if ( str.empty() ) {
 		colorConvertError = "invalid color: empty string";
 		return false;
 	}
 
-	std::string col = str;
-
-	QColor tmp(str.c_str());
+	QColor tmp(QString::fromStdString(std::string(str)));
 	if ( tmp.isValid() ) {
 		value = tmp;
 		return true;
 	}
 
-	int red = 0, green = 0, blue = 0, alpha = 255;
+	int rgba[4] = { 0, 0, 0, 255 };
+	bool ok = true;
 
-	if ( col.substr(0,4) == "rgb(" ) {
-		if ( col[col.size()-1] != ')' ) {
-			colorConvertError = std::string("invalid color ") + col + ": missing closing bracket";
+	if ( str.substr(0, 4) == "rgb(" ) {
+		if ( str[str.size() - 1] != ')' ) {
+			colorConvertError = Core::stringify("invalid color %s: missing "
+			                                    "closing bracket", str);
 			return false;
 		}
-		col = col.substr(4, col.size()-4-1);
+		str = str.substr(4, str.size() - 4 - 1);
 
-		std::vector<std::string> toks;
-		Core::split(toks, col.c_str(), ",");
-		if ( toks.size() != 3 ) {
-			colorConvertError = std::string("invalid color ") + col + ": rgb() expects 3 components";
-			return false;
+		for ( int i = 0; i < 3; ++i ) {
+			auto tok = Core::tokenize(str, ",");
+			if ( !tok.data() ) {
+				colorConvertError = Core::stringify("invalid color %s: rgb() "
+				                                    "expects 3 components",
+				                                    str);
+				return false;
+			}
+
+			ok = Core::fromString(rgba[i], Core::trim(tok)) && ok;
 		}
-
-		bool ok = true;
-		ok = Core::fromString(red, toks[0]) && ok;
-		ok = Core::fromString(green, toks[1]) && ok;
-		ok = Core::fromString(blue, toks[2]) && ok;
-		alpha = 255;
 
 		if ( !ok ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format of component inside rgb()";
+			colorConvertError = Core::stringify("invalid color %s: wrong "
+			                                    "format of component inside "
+			                                    "rgb()", str);
 			return false;
 		}
 	}
-	else if ( col.substr(0,5) == "rgba(" ) {
-		if ( col[col.size()-1] != ')' ) {
-			colorConvertError = std::string("invalid color ") + col + ": missing closing bracket";
+	else if ( str.substr(0, 5) == "rgba(" ) {
+		if ( str[str.size() - 1] != ')' ) {
+			colorConvertError = Core::stringify("invalid color %s: missing "
+			                                    "closing bracket", str);
 			return false;
 		}
-		col = col.substr(5, col.size()-5-1);
+		str = str.substr(5, str.size() - 5 - 1);
 
-		std::vector<std::string> toks;
-		Core::split(toks, col.c_str(), ",");
-		if ( toks.size() != 4 ) {
-			colorConvertError = std::string("invalid color ") + col + ": rgba() expects 4 components";
-			return false;
+		for ( auto &component : rgba ) {
+			auto tok = Core::tokenize(str, ",");
+			if ( !tok.data() ) {
+				colorConvertError = Core::stringify("invalid color %s: rgba() "
+				                                    "expects 4 components",
+				                                    str);
+				return false;
+			}
+
+			ok = Core::fromString(component, Core::trim(tok)) && ok;
 		}
-
-		bool ok = true;
-		ok = Core::fromString(red, toks[0]) && ok;
-		ok = Core::fromString(green, toks[1]) && ok;
-		ok = Core::fromString(blue, toks[2]) && ok;
-		ok = Core::fromString(alpha, toks[3]) && ok;
 
 		if ( !ok ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format of component inside rgba()";
+			colorConvertError = Core::stringify("invalid color %s: wrong "
+			                                    "format of component inside "
+			                                    "rgba()", str);
 			return false;
 		}
 	}
 	else {
-		if ( col.size() != 3 && col.size() != 4
-		 && col.size() != 6 && col.size() != 8 ) {
-			colorConvertError = std::string("invalid color ") + col + ": expected 3, 4, 6 or 8 characters";
+		if ( str.size() != 3 && str.size() != 4
+		 && str.size() != 6 && str.size() != 8 ) {
+			colorConvertError = Core::stringify("invalid color %s: expected 3, "
+			                                    "4, 6 or 8 characters", str);
 			return false;
 		}
 
-		int readItems;
-
-		if ( col.size() > 4 )
-			readItems = sscanf(col.c_str(), "%2X%2X%2X%2X",
-					(unsigned int*)&red, (unsigned int*)&green,
-					(unsigned int*)&blue, (unsigned int*)&alpha);
-		else {
-			readItems = sscanf(col.c_str(), "%1X%1X%1X%1X",
-					(unsigned int*)&red, (unsigned int*)&green,
-					(unsigned int*)&blue, (unsigned int*)&alpha);
-			red = (red << 4) | red;
-			green = (green << 4) | green;
-			blue = (blue << 4) | blue;
-			if ( readItems > 3 )
-				alpha = (alpha << 4) | alpha;
+		try {
+			switch ( str.size() ) {
+				case 3:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[0]);
+					rgba[1] = (fromHexChar(str[1]) << 4) | fromHexChar(str[1]);
+					rgba[2] = (fromHexChar(str[2]) << 4) | fromHexChar(str[2]);
+					break;
+				case 4:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[0]);
+					rgba[1] = (fromHexChar(str[1]) << 4) | fromHexChar(str[1]);
+					rgba[2] = (fromHexChar(str[2]) << 4) | fromHexChar(str[2]);
+					rgba[3] = (fromHexChar(str[3]) << 4) | fromHexChar(str[3]);
+					break;
+				case 6:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[1]);
+					rgba[1] = (fromHexChar(str[2]) << 4) | fromHexChar(str[3]);
+					rgba[2] = (fromHexChar(str[4]) << 4) | fromHexChar(str[5]);
+					break;
+				case 8:
+					rgba[0] = (fromHexChar(str[0]) << 4) | fromHexChar(str[1]);
+					rgba[1] = (fromHexChar(str[2]) << 4) | fromHexChar(str[3]);
+					rgba[2] = (fromHexChar(str[4]) << 4) | fromHexChar(str[5]);
+					rgba[3] = (fromHexChar(str[6]) << 4) | fromHexChar(str[7]);
+					break;
+				default:
+					colorConvertError = Core::stringify("invalid color %s: "
+					                                    "wrong format", str);
+					return false;
+			}
 		}
-
-		if ( readItems < 3 ) {
-			colorConvertError = std::string("invalid color ") + col + ": wrong format";
+		catch ( ... ) {
+			colorConvertError = Core::stringify("invalid color %s: wrong "
+			                                    "format", str);
 			return false;
 		}
 	}
 
-	value.setRed(red);
-	value.setGreen(green);
-	value.setBlue(blue);
-	value.setAlpha(alpha);
+	value.setRed(rgba[0]);
+	value.setGreen(rgba[1]);
+	value.setBlue(rgba[2]);
+	value.setAlpha(rgba[3]);
 
 	return true;
 }
@@ -149,18 +192,24 @@ QColor readColor(const std::string &query, const std::string &str,
 	QColor r;
 	r.setNamedColor(str.c_str());
 	if ( r.isValid() ) {
-		if ( ok ) *ok = true;
+		if ( ok ) {
+			*ok = true;
+		}
 		return r;
 	}
 
 	r = base;
 
-	if ( !fromString(r, str) ) {
-		SEISCOMP_ERROR("%s: %s", query.c_str(), colorConvertError.c_str());
-		if ( ok ) *ok = false;
+	if ( fromString(r, str) ) {
+		if ( ok ) {
+			*ok = true;
+		}
 	}
 	else {
-		if ( ok ) *ok = true;
+		SEISCOMP_ERROR("%s: %s", query.c_str(), colorConvertError.c_str());
+		if ( ok ) {
+			*ok = false;
+		}
 	}
 
 	return r;
@@ -187,11 +236,15 @@ Qt::PenStyle readPenStyle(const std::string &query, const std::string &str,
 
 	try {
 		r = stringToPenStyle(str);
-		if ( ok ) *ok = true;
+		if ( ok ) {
+			*ok = true;
+		}
 	}
 	catch ( const std::out_of_range & ) {
 		SEISCOMP_ERROR("%s: invalid pen style", query.c_str());
-		if ( ok ) *ok = false;
+		if ( ok ) {
+			*ok = false;
+		}
 	}
 
 	return r;
@@ -226,49 +279,62 @@ Qt::BrushStyle readBrushStyle(const std::string &query, const std::string &str,
 
 	try {
 		r = stringToBrushStyle(str);
-		if ( ok ) *ok = true;
+		if ( ok ) {
+			*ok = true;
+		}
 	}
 	catch ( const std::out_of_range & ) {
 		SEISCOMP_ERROR("invalid brush style in %s: %s",
 		               query.c_str(), str.c_str());
-		if ( ok ) *ok = false;
+		if ( ok ) {
+			*ok = false;
+		}
 	}
 
 	return r;
 }
 
-QString latitudeToString(double lat, bool withValue, bool withUnit, int precision) {
-	if ( withValue && withUnit )
+QString latitudeToString(double lat, bool withValue, bool withUnit,
+                         int precision) {
+	if ( withValue && withUnit ) {
 		return QString("%1%2 %3")
 			.arg(fabs(lat), 0, 'f', precision)
 			.arg(degrees)
 			.arg(lat >= 0.0?"N":"S");
-	else if ( !withValue )
+	}
+
+	if ( !withValue ) {
 		return QString("%1 %2")
 			.arg(degrees)
 			.arg(lat >= 0.0?"N":"S");
-	else if ( !withUnit )
+	}
+
+	if ( !withUnit ) {
 		return QString("%1")
 			.arg(fabs(lat), 0, 'f', precision);
+	}
 
-	return "";
+	return {};
 }
 
-QString longitudeToString(double lon, bool withValue, bool withUnit, int precision) {
-	if ( withValue && withUnit )
+QString longitudeToString(double lon, bool withValue, bool withUnit,
+                          int precision) {
+	if ( withValue && withUnit ) {
 		return QString("%1%2 %3")
 			.arg(fabs(lon), 0, 'f', precision)
 			.arg(degrees)
 			.arg(lon >= 0.0?"E":"W");
-	else if ( !withValue )
-		return QString("%1 %2")
-			.arg(degrees)
-			.arg(lon >= 0.0?"E":"W");
-	else if ( !withUnit )
-		return QString("%1")
-			.arg(fabs(lon), 0, 'f', precision);
+	}
 
-	return "";
+	if ( !withValue ) {
+		return QString("%1 %2").arg(degrees, lon >= 0.0?"E":"W");
+	}
+
+	if ( !withUnit ) {
+		return QString("%1").arg(fabs(lon), 0, 'f', precision);
+	}
+
+	return {};
 }
 
 QString depthToString(double depth, int precision) {
@@ -289,33 +355,98 @@ QString timeToString(const Core::Time &t, const char *fmt, bool addTimeZone) {
 	}
 	else {
 		s = t.toString(fmt).c_str();
-		if ( addTimeZone )
+		if ( addTimeZone ) {
 			s += " UTC";
+		}
 	}
 
 	return s;
 }
 
 
-void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt, bool addTimeZone) {
-	if ( SCScheme.dateTime.useLocalTime )
-		label->setToolTip((t.toString(fmt) + " UTC").c_str());
+void timeToLabel(QLabel *label, const Core::Time &t, const char *fmt,
+                 bool addTimeZone) {
+	label->setToolTip((t.iso() + " UTC").c_str());
 	label->setText(timeToString(t, fmt, addTimeZone));
 }
 
 
 QString elapsedTimeString(const Core::TimeSpan &dt) {
-	int d=0, h=0, m=0, s=0;
+	int d{0};
+	int h{0};
+	int m{0};
+	int s{0};
 	QLatin1Char fill('0');
-	dt.elapsedTime(&d, &h, &m, &s);
-	if (d)
+	dt.get(&d, &h, &m, &s);
+
+	if ( d ) {
 		return QString("O.T. +%1d %2h").arg(d,2).arg(h, 2, 10, fill);
-	else if (h)
+	}
+
+	if ( h ) {
 		return QString("O.T. +%1h %2m").arg(h,2).arg(m, 2, 10, fill);
-	else
-		return QString("O.T. +%1m %2s").arg(m,2).arg(s, 2, 10, fill);
+	}
+
+	return QString("O.T. +%1m %2s").arg(m,2).arg(s, 2, 10, fill);
 }
 
+
+QString numberToEngineering(double value, int precision) {
+	static const char* neg_units[] = {"m", "µ", "n", "p", "f", "a", "z", "y",
+	                                  "r", "q"};
+	static const char* pos_units[] = {"k", "M", "G", "T", "P", "E", "Z", "Y",
+	                                  "R", "Q"};
+
+	if ( value == 0 ) {
+		return QString("%1 ").arg(value, 0, 'f', 1);
+	}
+
+	int fi = static_cast<int>(floor(log10(abs(value)) / 3));
+	if ( !fi ) {
+		return QString("%1 ").arg(value, 0, 'f', 1);
+	}
+
+	const char *prefix;
+
+	if ( fi < 0 ) {
+		if ( fi < -static_cast<int>(sizeof(neg_units) / sizeof(char*)) ) {
+			fi = -static_cast<int>(sizeof(neg_units) / sizeof(char*));
+		}
+		prefix = neg_units[-fi - 1];
+	}
+	else {
+		if ( fi > static_cast<int>(sizeof(pos_units) / sizeof(char*)) ) {
+			fi = static_cast<int>(sizeof(pos_units) / sizeof(char*));
+		}
+		prefix = pos_units[fi - 1];
+	}
+
+	value /= pow(10, fi * 3);
+
+	return QString("%1 %2").arg(value, 0, 'f', precision).arg(prefix);
+}
+
+
+double hypocentralDistance(double epicentral, double depth, double elev) {
+	double hDist = Math::Geo::deg2km(epicentral); // [km]
+	double vDist = depth + elev * 1E-3;           // [km]
+	return Math::Geo::km2deg(sqrt(hDist * hDist + vDist * vDist));
+}
+
+
+double computeDistance(double lat1, double lon1, double depth1,
+                       double lat2, double lon2, double elev2,
+                       double *az, double *baz, double *epicentral) {
+	double delta;
+	Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, az, baz);
+	if ( epicentral ) {
+		*epicentral = delta;
+	}
+	if ( SCScheme.distanceHypocentral ) {
+		delta = hypocentralDistance(delta, depth1, elev2);
+	}
+	return delta;
+}
 
 
 void setMaxWidth(QWidget *w, int numCharacters) {
@@ -350,7 +481,7 @@ ElideFadeDrawer::ElideFadeDrawer(QObject *parent) : QObject(parent) {}
 
 bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 	if ( event->type() == QEvent::Paint ) {
-		QLabel *q = static_cast<QLabel*>(obj);
+		auto *q = static_cast<QLabel*>(obj);
 		QPainter painter(q);
 		QFontMetrics fm(q->font());
 		QRect rect = q->contentsRect();
@@ -388,7 +519,7 @@ bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 			painter.setPen(q->palette().color(QPalette::WindowText));
 			painter.drawText(rect, flags, q->text());
 		}
-		
+
 		return true;
 	}
 
@@ -401,18 +532,21 @@ EllipsisDrawer::EllipsisDrawer(QObject *parent) : QObject(parent) {}
 
 bool EllipsisDrawer::eventFilter(QObject *obj, QEvent *event) {
 	if ( event->type() == QEvent::Paint ) {
-		QLabel *q = static_cast<QLabel*>(obj);
+		auto *q = static_cast<QLabel*>(obj);
 		QPainter painter(q);
 		QFontMetrics fm(q->font());
 		QRect rect = q->contentsRect();
 
 		if ( QT_FM_WIDTH(fm, q->text()) > rect.width() ) {
 			int eWidth = QT_FM_WIDTH(fm, "...");
-			painter.drawText(rect.adjusted(0,0,-eWidth,0), Qt::TextSingleLine, q->text());
-			painter.drawText(rect.adjusted(rect.width()-eWidth,0,0,0), Qt::TextSingleLine, "...");
+			painter.drawText(rect.adjusted(0,0,-eWidth,0), Qt::TextSingleLine,
+			                 q->text());
+			painter.drawText(rect.adjusted(rect.width()-eWidth,0,0,0),
+			                 Qt::TextSingleLine, "...");
 		}
-		else
+		else {
 			painter.drawText(rect, Qt::TextSingleLine, q->text());
+		}
 
 		return true;
 	}
@@ -422,5 +556,31 @@ bool EllipsisDrawer::eventFilter(QObject *obj, QEvent *event) {
 }
 
 
+QIcon iconFromURL(const QString &url) {
+	if ( url.isEmpty() ) {
+		return {};
+	}
+
+	QUrl urlParsed(url);
+	auto scheme = urlParsed.scheme();
+	if ( scheme == "qrc" ) {
+		return QIcon(QString(":%1").arg(urlParsed.path()));
+	}
+
+	if ( scheme == "file" ) {
+		return QIcon(urlParsed.path());
+	}
+
+	if ( scheme == "fa" || scheme == "far" ||
+	     scheme == "fa6" || scheme == "far6" ) {
+		return FontAwesome6::icon(FontAwesome6::code(urlParsed.path()));
+	}
+
+	if ( scheme == "fas" || scheme == "fas6" ) {
+		return FontAwesome6::iconSolid(FontAwesome6::code(urlParsed.path()));
+	}
+
+	return QIcon(url);
 }
-}
+
+} // ns Seiscomp::Gui

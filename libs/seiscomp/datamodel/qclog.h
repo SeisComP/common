@@ -38,37 +38,6 @@ DEFINE_SMARTPOINTER(QCLog);
 class QualityControl;
 
 
-class SC_SYSTEM_CORE_API QCLogIndex {
-	// ------------------------------------------------------------------
-	//  Xstruction
-	// ------------------------------------------------------------------
-	public:
-		//! Constructor
-		QCLogIndex();
-		QCLogIndex(Seiscomp::Core::Time start,
-		           const WaveformStreamID& waveformID);
-
-		//! Copy constructor
-		QCLogIndex(const QCLogIndex&);
-
-
-	// ------------------------------------------------------------------
-	//  Operators
-	// ------------------------------------------------------------------
-	public:
-		bool operator==(const QCLogIndex&) const;
-		bool operator!=(const QCLogIndex&) const;
-
-
-	// ------------------------------------------------------------------
-	//  Attributes
-	// ------------------------------------------------------------------
-	public:
-		Seiscomp::Core::Time start;
-		WaveformStreamID waveformID;
-};
-
-
 class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	DECLARE_SC_CLASS(QCLog)
 	DECLARE_SERIALIZATION;
@@ -83,28 +52,28 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 
 	public:
 		//! Copy constructor
-		QCLog(const QCLog& other);
+		QCLog(const QCLog &other);
 
 		//! Constructor with publicID
 		QCLog(const std::string& publicID);
 
 		//! Destructor
 		~QCLog() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static QCLog* Create();
-		static QCLog* Create(const std::string& publicID);
+		static QCLog *Create();
+		static QCLog *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static QCLog* Find(const std::string& publicID);
+		static QCLog *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -113,20 +82,24 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		QCLog& operator=(const QCLog& other);
+		QCLog &operator=(const QCLog &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const QCLog& other) const;
-		bool operator!=(const QCLog& other) const;
+		bool operator==(const QCLog &other) const;
+		bool operator!=(const QCLog &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const QCLog& other) const;
+		bool equal(const QCLog &other) const;
 
 
 	// ------------------------------------------------------------------
 	//  Setters/Getters
 	// ------------------------------------------------------------------
 	public:
+		//! The waveform identifier for which the annotation is valid.
+		//! Each component
+		//! can contain wildcards (asterisk or question mark) but no
+		//! regular expressions.
 		void setWaveformID(const WaveformStreamID& waveformID);
 		WaveformStreamID& waveformID();
 		const WaveformStreamID& waveformID() const;
@@ -148,21 +121,10 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 
 
 	// ------------------------------------------------------------------
-	//  Index management
-	// ------------------------------------------------------------------
-	public:
-		//! Returns the object's index
-		const QCLogIndex& index() const;
-
-		//! Checks two objects for equality regarding their index
-		bool equalIndex(const QCLog* lhs) const;
-
-	
-	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		QualityControl* qualityControl() const;
+		QualityControl *qualityControl() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;
@@ -183,12 +145,11 @@ class SC_SYSTEM_CORE_API QCLog : public PublicObject {
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
-		// Index
-		QCLogIndex _index;
-
 		// Attributes
+		WaveformStreamID _waveformID;
 		std::string _creatorID;
 		Seiscomp::Core::Time _created;
+		Seiscomp::Core::Time _start;
 		Seiscomp::Core::Time _end;
 		std::string _message;
 

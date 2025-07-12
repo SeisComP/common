@@ -22,10 +22,15 @@
 #include <seiscomp/math/matrix3.h>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Math {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::identity() {
 	_mat3_elem(0,0) = 1;
@@ -43,8 +48,12 @@ Matrix3<T> &Matrix3<T>::identity() {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::setRow(int row, const Vector3<T> &v) {
 	_mat3_elem(row,0) = v.x;
@@ -53,8 +62,12 @@ Matrix3<T> &Matrix3<T>::setRow(int row, const Vector3<T> &v) {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::setColumn(int col, const Vector3<T> &v) {
 	_mat3_elem(0,col) = v.x;
@@ -63,20 +76,32 @@ Matrix3<T> &Matrix3<T>::setColumn(int col, const Vector3<T> &v) {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Vector3<T> Matrix3<T>::row(int r) const {
 	return Vector3<T>(_mat3_elem(r,0), _mat3_elem(r,1), _mat3_elem(r,2));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Vector3<T> Matrix3<T>::column(int c) const {
 	return Vector3<T>(_mat3_elem(0,c), _mat3_elem(1,c), _mat3_elem(2,c));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::loadRotateX(T theta) {
 	T sintheta = sin(theta);
@@ -95,8 +120,12 @@ Matrix3<T> &Matrix3<T>::loadRotateX(T theta) {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::loadRotateY(T theta) {
 	T sintheta = sin(theta);
@@ -115,8 +144,12 @@ Matrix3<T> &Matrix3<T>::loadRotateY(T theta) {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::loadRotateZ(T theta) {
 	T sintheta = sin(theta);
@@ -135,23 +168,49 @@ Matrix3<T> &Matrix3<T>::loadRotateZ(T theta) {
 
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 Matrix3<T> &Matrix3<T>::mult(const Matrix3<T> &m1, const Matrix3<T> &m2) {
-	for ( int r = 0; r < 3; ++r )
-		for ( int col = 0; col < 3; ++col )
+	for ( int r = 0; r < 3; ++r ) {
+		for ( int col = 0; col < 3; ++col ) {
 			_mat3_elem(r,col) = m1._mat3_elem(r,0)*m2._mat3_elem(0,col) +
 			             m1._mat3_elem(r,1)*m2._mat3_elem(1,col) +
 			             m1._mat3_elem(r,2)*m2._mat3_elem(2,col);
+		}
+	}
 	return *this;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
+Matrix3<T> Matrix3<T>::operator*(const Matrix3<T> &m) const {
+	Matrix3<T> tmp;
+	tmp.mult(*this, m);
+	return tmp;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template class SC_SYSTEM_CORE_API Matrix3<float>;
 template class SC_SYSTEM_CORE_API Matrix3<double>;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

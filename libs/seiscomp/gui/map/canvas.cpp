@@ -35,6 +35,7 @@
 #include <QMouseEvent>
 #include <QMutex>
 
+#include <algorithm>
 #include <cmath>
 
 #ifdef WIN32
@@ -423,12 +424,7 @@ void Canvas::init() {
 
 	_projection->setView(_center, _zoomLevel);
 
-	/*
-	if ( _maptree )
-		_maxZoom = 1 << (_maptree->depth()*2);
-	else*/
-		_maxZoom = MAX_ZOOM;
-
+	setMaxZoomLevel(pow(2, std::min(24, std::max(0, SCScheme.map.maxZoom))));
 	setDrawLayers(SCScheme.map.showLayers);
 	setDrawLegends(SCScheme.map.showLegends);
 
@@ -654,13 +650,13 @@ const QPointF& Canvas::mapCenter() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::setZoomLevel(float l) {
 	// Assure: 1 <= l <= maxZoom
-	l = l < 1.0f ? 1.0f : l > _maxZoom ? _maxZoom : l;
+	l = std::max(std::min(l, _maxZoom), 1.0f);
 
-	if ( l == _zoomLevel )
+	if ( l == _zoomLevel ) {
 		return false;
-	else
-		_zoomLevel = l;
+	}
 
+	_zoomLevel = l;
 	_projection->setZoom(_zoomLevel);
 	updateBuffer();
 	return true;
@@ -673,6 +669,24 @@ bool Canvas::setZoomLevel(float l) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 float Canvas::zoomLevel() const {
 	return _zoomLevel;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Canvas::setMaxZoomLevel(float l) {
+	_maxZoom = std::min(l, static_cast<float>(MAX_ZOOM));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+float Canvas::maxZoomLevel() const {
+	return _maxZoom;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1015,9 +1029,17 @@ void Canvas::drawImageLayer(QPainter &painter) {
 	if ( _dirtyRasterLayer ) {
 		_projection->setBackgroundColor(_backgroundColor);
 		mapRenderMutex.lock();
-		_projection->draw(_buffer, _filterMap && !_previewMode,
-		                  _maptree?_maptree->getCache():nullptr);
+		if ( _maptree ) {
+			_maptree->lockCache();
+			_projection->draw(_buffer, _filterMap && !_previewMode,
+			                  _maptree->getCache());
+			_maptree->unlockCache();
+		}
+		else {
+			_projection->draw(_buffer, _filterMap && !_previewMode, nullptr);
+		}
 		mapRenderMutex.unlock();
+
 		_gridLayer.setGridDistance(_projection->gridDistance());
 
 		if ( _maptree ) {
@@ -1414,15 +1436,17 @@ void Canvas::translate(const QPointF &delta) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Canvas::onLegendAdded(Legend *legend) {
-	LegendAreas::iterator it = _legendAreas.find(legend->alignment());
-	if ( it == _legendAreas.end() )
+	auto it = _legendAreas.find(legend->alignment());
+	if ( it == _legendAreas.end() ) {
 		it = _legendAreas.insert(legend->alignment(), LegendArea());
+	}
 
 	LegendArea &area = *it;
 	area.append(LegendItem(legend));
 	if ( legend->layer() && legend->layer()->isVisible() &&
-	     legend->isEnabled() && area.currentIndex == -1 )
+	     legend->isEnabled() && area.currentIndex == -1 ) {
 		area.currentIndex = area.findNext();
+	}
 
 	connect(legend, SIGNAL(enabled(Seiscomp::Gui::Map::Legend*, bool)),
 	        this, SLOT(setLegendEnabled(Seiscomp::Gui::Map::Legend*, bool)));
@@ -1706,10 +1730,9 @@ bool Canvas::filterMouseDoubleClickEvent(QMouseEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::filterMousePressEvent(QMouseEvent *e) {
 	if ( _isDrawLegendsEnabled ) {
-		for ( LegendAreas::iterator it = _legendAreas.begin();
-		      it != _legendAreas.end(); ++it ) {
+		for ( auto it = _legendAreas.begin(); it != _legendAreas.end(); ++it ) {
 			if ( it->mousePressEvent(e) ) {
-				updateRequested();
+				emit updateRequested();
 				return true;
 			}
 		}
@@ -1717,8 +1740,9 @@ bool Canvas::filterMousePressEvent(QMouseEvent *e) {
 
 	if ( _hoverLayer ) {
 		QPointF geoPos;
-		if ( _projection->unproject(geoPos, e->pos()) )
+		if ( _projection->unproject(geoPos, e->pos()) ) {
 			return _hoverLayer->filterMousePressEvent(e, geoPos);
+		}
 	}
 
 	return false;

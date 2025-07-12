@@ -372,7 +372,7 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 					return false;
 				}
 
-				amax = abs(data[amp.ip2p1] - data[amp.ip2p2]);
+				amax = abs(data[amp.ip2p1] - data[amp.ip2p2]) * 0.5;
 				dt->index = IASPEI::findZeroCrossing(data.impl(), offset, amp.ip2p1, amp.ip2p2);
 				if ( dt->index < 0 ) {
 					dt->index = (amp.ip2p1 + amp.ip2p2) * 0.5;
@@ -432,7 +432,10 @@ void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
 	// Default settings
 	setSignalEnd("min(R / 3 + 30, 150)");
 	setMinSNR(0);
+	// Maximum distance is 8 degrees
 	setMaxDist(8);
+	// Maximum depth is 80 km
+	setMaxDepth(80);
 
 	_amplitudeMeasureType = AbsMax;
 	_preFilter = string();

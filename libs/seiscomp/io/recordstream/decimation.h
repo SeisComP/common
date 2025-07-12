@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_RECORDSTREAM_DECIMATION_H
 #define SEISCOMP_RECORDSTREAM_DECIMATION_H
 
+
 #include <sstream>
 #include <map>
 
@@ -28,48 +29,49 @@
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/core.h>
 
+
 namespace Seiscomp {
 namespace RecordStream {
 
-DEFINE_SMARTPOINTER(Decimation);
 
+DEFINE_SMARTPOINTER(Decimation);
 class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 	// ----------------------------------------------------------------------
 	//  Xstruction
 	// ----------------------------------------------------------------------
 	public:
 		Decimation();
-		virtual ~Decimation();
+		~Decimation() override;
 
 
 	// ----------------------------------------------------------------------
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setSource(const std::string &source);
-		virtual bool setRecordType(const char *type);
+		bool setSource(const std::string &source) override;
+		bool setRecordType(const char *type) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &stime,
-		                       const Seiscomp::Core::Time &etime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &stime,
+		               const OPT(Core::Time) &etime) override;
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
-		virtual bool setTimeWindow(const Seiscomp::Core::TimeWindow &w);
+		bool setStartTime(const OPT(Core::Time) &stime) override;
+		bool setEndTime(const OPT(Core::Time) &etime) override;
+		bool setTimeWindow(const Core::TimeWindow &w) override;
 
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
-		virtual void close();
+		void close() override;
 
-		virtual Record *next();
+		Record *next() override;
 
 
 	// ----------------------------------------------------------------------
@@ -124,10 +126,10 @@ class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 			size_t front;
 
 			// Time of front of ring buffer
-			Core::Time startTime;
+			OPT(Core::Time) startTime;
 
 			// End time of last record
-			Core::Time lastEndTime;
+			OPT(Core::Time) lastEndTime;
 
 			ResampleStage *nextStage;
 
@@ -135,10 +137,12 @@ class SC_SYSTEM_CORE_API Decimation : public Seiscomp::IO::RecordStream {
 				missingSamples = buffer.size();
 				front = 0;
 				samplesToSkip = 0;
-				startTime = Core::Time();
-				lastEndTime = Core::Time();
+				startTime = Core::None;
+				lastEndTime = Core::None;
 
-				if ( nextStage ) nextStage->reset();
+				if ( nextStage ) {
+					nextStage->reset();
+				}
 			}
 		};
 

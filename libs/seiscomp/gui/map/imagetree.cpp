@@ -309,6 +309,24 @@ TextureCache *ImageTree::getCache() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::lockCache() {
+	_cacheMutex.lock();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImageTree::unlockCache() {
+	_cacheMutex.unlock();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImageTree::refresh() {
 	if ( _store ) _store->refresh();
 	if ( _cache ) _cache->clear();
@@ -325,7 +343,11 @@ void ImageTree::finishedLoading(QImage &img, const TileIndex &tile) {
 		return;
 	}
 
-	if ( _cache->setTexture(img, tile) ) {
+	_cacheMutex.lock();
+	auto r = _cache->setTexture(img, tile);
+	_cacheMutex.unlock();
+
+	if ( r ) {
 		emit tilesUpdated();
 	}
 
@@ -346,7 +368,11 @@ void ImageTree::loadingComplete(QImage &img, TileIndex tile) {
 		return;
 	}
 
-	if ( _cache->setTextureOrLoadParent(img, tile) ) {
+	_cacheMutex.lock();
+	auto r = _cache->setTextureOrLoadParent(img, tile);
+	_cacheMutex.unlock();
+
+	if ( r ) {
 		emit tilesUpdated();
 	}
 

@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(FocalMechanismReference, Object, "FocalMechanismReference");
 
 
-FocalMechanismReference::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+FocalMechanismReference::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("focalMechanismID", "string", false, false, true, true, false, false, nullptr, &FocalMechanismReference::setFocalMechanismID, &FocalMechanismReference::focalMechanismID));
 }
 
@@ -58,7 +58,7 @@ FocalMechanismReferenceIndex::FocalMechanismReferenceIndex(const std::string& fo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismReferenceIndex::FocalMechanismReferenceIndex(const FocalMechanismReferenceIndex& idx) {
+FocalMechanismReferenceIndex::FocalMechanismReferenceIndex(const FocalMechanismReferenceIndex &idx) {
 	focalMechanismID = idx.focalMechanismID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -67,7 +67,7 @@ FocalMechanismReferenceIndex::FocalMechanismReferenceIndex(const FocalMechanismR
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReferenceIndex::operator==(const FocalMechanismReferenceIndex& idx) const {
+bool FocalMechanismReferenceIndex::operator==(const FocalMechanismReferenceIndex &idx) const {
 	return focalMechanismID == idx.focalMechanismID;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -76,7 +76,7 @@ bool FocalMechanismReferenceIndex::operator==(const FocalMechanismReferenceIndex
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReferenceIndex::operator!=(const FocalMechanismReferenceIndex& idx) const {
+bool FocalMechanismReferenceIndex::operator!=(const FocalMechanismReferenceIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +93,7 @@ FocalMechanismReference::FocalMechanismReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismReference::FocalMechanismReference(const FocalMechanismReference& other)
+FocalMechanismReference::FocalMechanismReference(const FocalMechanismReference &other)
 : Object() {
 	*this = other;
 }
@@ -121,7 +121,7 @@ FocalMechanismReference::~FocalMechanismReference() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::operator==(const FocalMechanismReference& rhs) const {
+bool FocalMechanismReference::operator==(const FocalMechanismReference &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -131,7 +131,7 @@ bool FocalMechanismReference::operator==(const FocalMechanismReference& rhs) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::operator!=(const FocalMechanismReference& rhs) const {
+bool FocalMechanismReference::operator!=(const FocalMechanismReference &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,7 +140,7 @@ bool FocalMechanismReference::operator!=(const FocalMechanismReference& rhs) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::equal(const FocalMechanismReference& other) const {
+bool FocalMechanismReference::equal(const FocalMechanismReference &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,7 +167,7 @@ const std::string& FocalMechanismReference::focalMechanismID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const FocalMechanismReferenceIndex& FocalMechanismReference::index() const {
+const FocalMechanismReferenceIndex &FocalMechanismReference::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -176,8 +176,11 @@ const FocalMechanismReferenceIndex& FocalMechanismReference::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::equalIndex(const FocalMechanismReference* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool FocalMechanismReference::equalIndex(const FocalMechanismReference *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +189,7 @@ bool FocalMechanismReference::equalIndex(const FocalMechanismReference* lhs) con
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* FocalMechanismReference::event() const {
+Event *FocalMechanismReference::event() const {
 	return static_cast<Event*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -195,7 +198,7 @@ Event* FocalMechanismReference::event() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanismReference& FocalMechanismReference::operator=(const FocalMechanismReference& other) {
+FocalMechanismReference &FocalMechanismReference::operator=(const FocalMechanismReference &other) {
 	_index = other._index;
 	return *this;
 }
@@ -205,10 +208,11 @@ FocalMechanismReference& FocalMechanismReference::operator=(const FocalMechanism
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::assign(Object* other) {
-	FocalMechanismReference* otherFocalMechanismReference = FocalMechanismReference::Cast(other);
-	if ( other == nullptr )
+bool FocalMechanismReference::assign(Object *other) {
+	FocalMechanismReference *otherFocalMechanismReference = FocalMechanismReference::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherFocalMechanismReference;
 
@@ -220,11 +224,13 @@ bool FocalMechanismReference::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool FocalMechanismReference::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(parent);
+	Event *event = Event::Cast(parent);
 	if ( event != nullptr )
 		return event->add(this);
 
@@ -237,11 +243,13 @@ bool FocalMechanismReference::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FocalMechanismReference::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool FocalMechanismReference::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Event* event = Event::Cast(object);
+	Event *event = Event::Cast(object);
 	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -249,7 +257,7 @@ bool FocalMechanismReference::detachFrom(PublicObject* object) {
 			return event->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			FocalMechanismReference* child = event->focalMechanismReference(index());
+			FocalMechanismReference *child = event->focalMechanismReference(index());
 			if ( child != nullptr )
 				return event->remove(child);
 			else {
@@ -269,8 +277,9 @@ bool FocalMechanismReference::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FocalMechanismReference::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -280,8 +289,8 @@ bool FocalMechanismReference::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* FocalMechanismReference::clone() const {
-	FocalMechanismReference* clonee = new FocalMechanismReference();
+Object *FocalMechanismReference::clone() const {
+	FocalMechanismReference *clonee = new FocalMechanismReference();
 	*clonee = *this;
 	return clonee;
 }
@@ -291,7 +300,7 @@ Object* FocalMechanismReference::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FocalMechanismReference::accept(Visitor* visitor) {
+void FocalMechanismReference::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -300,7 +309,7 @@ void FocalMechanismReference::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FocalMechanismReference::serialize(Archive& ar) {
+void FocalMechanismReference::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

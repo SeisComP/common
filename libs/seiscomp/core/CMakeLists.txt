@@ -23,6 +23,7 @@ SET(CORE_SOURCES
 	system.cpp
 	baseobject.cpp
 	version.cpp
+	backports/charconv/floating_from_chars.cpp
 )
 
 SET(CORE_HEADERS
@@ -43,6 +44,7 @@ SET(CORE_HEADERS
 	metaproperty.h
 	serialization.h
 	datetime.h
+	datetime.ipp
 	timewindow.h
 	optional.h
 	optional.inl
@@ -70,7 +72,6 @@ SET(CORE_HEADERS
 	version.h
 )
 
-
 IF(WIN32)
 	SET(CORE_SOURCES ${CORE_SOURCES} strptime.c)
 	SET(CORE_HEADERS ${CORE_HEADERS} strptime.h)
@@ -78,3 +79,5 @@ ENDIF(WIN32)
 
 SC_ADD_SUBDIR_SOURCES(CORE platform)
 SC_SETUP_LIB_SUBDIR(CORE)
+
+

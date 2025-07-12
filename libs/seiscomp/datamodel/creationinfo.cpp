@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(CreationInfo, "CreationInfo");
 
 
-CreationInfo::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+CreationInfo::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("agencyID", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAgencyID, &CreationInfo::agencyID));
 	addProperty(Core::simpleProperty("agencyURI", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAgencyURI, &CreationInfo::agencyURI));
 	addProperty(Core::simpleProperty("author", "string", false, false, false, false, false, false, nullptr, &CreationInfo::setAuthor, &CreationInfo::author));
@@ -54,7 +54,7 @@ CreationInfo::CreationInfo() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CreationInfo::CreationInfo(const CreationInfo& other)
+CreationInfo::CreationInfo(const CreationInfo &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -72,7 +72,7 @@ CreationInfo::~CreationInfo() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CreationInfo::operator==(const CreationInfo& rhs) const {
+bool CreationInfo::operator==(const CreationInfo &rhs) const {
 	if ( !(_agencyID == rhs._agencyID) )
 		return false;
 	if ( !(_agencyURI == rhs._agencyURI) )
@@ -95,7 +95,7 @@ bool CreationInfo::operator==(const CreationInfo& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CreationInfo::operator!=(const CreationInfo& rhs) const {
+bool CreationInfo::operator!=(const CreationInfo &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ bool CreationInfo::operator!=(const CreationInfo& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CreationInfo::equal(const CreationInfo& other) const {
+bool CreationInfo::equal(const CreationInfo &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -243,7 +243,7 @@ const std::string& CreationInfo::version() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CreationInfo& CreationInfo::operator=(const CreationInfo& other) {
+CreationInfo &CreationInfo::operator=(const CreationInfo &other) {
 	_agencyID = other._agencyID;
 	_agencyURI = other._agencyURI;
 	_author = other._author;
@@ -259,7 +259,7 @@ CreationInfo& CreationInfo::operator=(const CreationInfo& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void CreationInfo::serialize(Archive& ar) {
+void CreationInfo::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

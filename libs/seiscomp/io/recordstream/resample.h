@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_RECORDSTREAM_RESAMPLE_H
 #define SEISCOMP_RECORDSTREAM_RESAMPLE_H
 
+
 #include <sstream>
 #include <map>
 #include <deque>
@@ -48,30 +49,30 @@ class SC_SYSTEM_CORE_API Resample : public Seiscomp::IO::RecordStream {
 	//  Public Interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool setSource(const std::string &source);
-		virtual bool setRecordType(const char *type);
+		virtual bool setSource(const std::string &source) override;
+		virtual bool setRecordType(const char *type) override;
 
 		virtual bool addStream(const std::string &networkCode,
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		                       const std::string &channelCode) override;
 
 		virtual bool addStream(const std::string &networkCode,
 		                       const std::string &stationCode,
 		                       const std::string &locationCode,
 		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		                       const OPT(Core::Time) &startTime,
+		                       const OPT(Core::Time) &endTime) override;
 
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
-		virtual bool setTimeWindow(const Seiscomp::Core::TimeWindow &w);
+		virtual bool setStartTime(const OPT(Core::Time) &stime) override;
+		virtual bool setEndTime(const OPT(Core::Time) &etime) override;
+		virtual bool setTimeWindow(const Core::TimeWindow &w) override;
 
-		virtual bool setTimeout(int seconds);
+		virtual bool setTimeout(int seconds) override;
 
-		virtual void close();
+		virtual void close() override;
 
-		virtual Record *next();
+		virtual Record *next() override;
 
 
 	// ----------------------------------------------------------------------

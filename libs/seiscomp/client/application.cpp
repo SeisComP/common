@@ -51,6 +51,7 @@
 #include <seiscomp/datamodel/configstation.h>
 #include <seiscomp/datamodel/notifier.h>
 #include <seiscomp/datamodel/version.h>
+#include <seiscomp/processing/amplitudeprocessor.h>
 #include <seiscomp/processing/magnitudeprocessor.h>
 
 #include <seiscomp/io/archive/xmlarchive.h>
@@ -96,7 +97,7 @@ struct AppResolver : public Util::VariableResolver {
 	AppResolver(const std::string& name)
 	 : _name(name) {}
 
-	bool resolve(std::string& variable) const {
+	bool resolve(std::string& variable) const override {
 		if ( Util::VariableResolver::resolve(variable) )
 			return true;
 
@@ -367,15 +368,18 @@ void Application::AppSettings::RecordStream::accept(SettingsLinker &linker) {
 	linker
 	& cliSwitch(
 		showDrivers, "Records", "record-driver-list",
-		"List all supported record stream drivers."
+		"List all supported RecordStream drivers."
 	)
 	& cli(
 		URI, "Records", "record-url,I",
-		"The recordstream URL, format: [service://]location[#type]"
+		"The RecordStream source URL. Format: [service://]location[#type]. "
+		"'service' is the name of the RecordStream driver which can be queried "
+		"with '--record-driver-list'. If 'service' is not given, "
+		"'file://' is used and simply the name of a miniSEED file can be given."
 	)
 	& cli(
 		file, "Records", "record-file",
-		"Specify a file as recordsource."
+		"Specify a file as record source."
 	)
 	& cli(
 		fileType, "Records", "record-type",
@@ -422,6 +426,7 @@ void Application::AppSettings::accept(SettingsLinker &linker) {
 	& cfg(enableLoadRegions, "loadRegions")
 	& cfg(customPublicIDPattern, "publicIDPattern")
 	& cfg(processing, "processing")
+	& cfg(processing.amplitudeAliases, "amplitudes.aliases")
 	& cfg(processing.magnitudeAliases, "magnitudes.aliases")
 	& cfg(soh.interval, "IntervalSOH") // For backwards compatibility
 	& cfg(soh, "soh");
@@ -1071,6 +1076,21 @@ bool Application::init() {
 		return false;
 	}
 
+	for ( string &item : _settings.processing.amplitudeAliases ) {
+		StringVector toks;
+		Core::split(toks, item, ":", false);
+		if ( toks.size() != 2 ) {
+			SEISCOMP_ERROR("amplitude alias item must be of format <alias>:<source>");
+			return false;
+		}
+
+		if ( !Processing::AmplitudeProcessor::CreateAlias(toks[0], toks[1]) ) {
+			return false;
+		}
+
+		SEISCOMP_DEBUG("Create amplitude alias %s <- %s", toks[0], toks[1]);
+	}
+
 	for ( string &item : _settings.processing.magnitudeAliases ) {
 		StringVector toks;
 		Core::split(toks, item, ":", false);
@@ -1082,6 +1102,8 @@ bool Application::init() {
 		if ( !Processing::MagnitudeProcessor::CreateAlias(toks[0], toks[1], toks.size() > 2 ? toks[2] : string()) ) {
 			return false;
 		}
+
+		SEISCOMP_DEBUG("Create magnitude alias %s <- %s", toks[0], toks[1]);
 	}
 
 	if ( isLoadRegionsEnabled() ) {
@@ -1097,22 +1119,29 @@ bool Application::init() {
 
 		if ( _settings.cities.db.empty() ) {
 			foundCity = ar.open((Environment::Instance()->configDir() + "/cities.xml").c_str());
-			if ( !foundCity )
+			if ( !foundCity ) {
 				foundCity = ar.open((Environment::Instance()->shareDir() + "/cities.xml").c_str());
+			}
 		}
-		else
+		else {
 			foundCity = ar.open(Seiscomp::Environment::Instance()->absolutePath(_settings.cities.db).c_str());
+		}
 
 		if ( foundCity ) {
 			ar >> NAMED_OBJECT("City", _cities);
 
 			SEISCOMP_INFO("Found cities XML and read %lu entries",
-			              (unsigned long)_cities.size());
+			              static_cast<unsigned long>(_cities.size()));
 
 			// Sort the cities descending
 			std::sort(_cities.begin(), _cities.end(), CityGreaterThan());
 
 			ar.close();
+		}
+		else if ( !_settings.cities.db.empty() ) {
+			SEISCOMP_ERROR("Failed to open configured file for cities in %s",
+			               _settings.cities.db);
+			return false;
 		}
 	}
 
@@ -1324,7 +1353,7 @@ bool Application::run() {
 		startMessageThread();
 	}
 
-	_sohLastUpdate = Time::LocalTime();
+	_sohLastUpdate = Time::Now();
 
 	if ( _settings.soh.interval > 0 ) {
 		_sohTimer.setTimeout(_settings.soh.interval);
@@ -1516,6 +1545,7 @@ void Application::done() {
 	Inventory::Reset();
 	ConfigDB::Reset();
 	Processing::MagnitudeProcessor::RemoveAllAliases();
+	Processing::AmplitudeProcessor::RemoveAllAliases();
 
 	System::Application::done();
 
@@ -2143,10 +2173,10 @@ bool Application::readMessages() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::stateOfHealth() {
 	// Save current time
-	Core::Time now = Core::Time::LocalTime();
+	Core::Time now = Core::Time::Now();
 
-	if ( _sohLastUpdate.valid() ) {
-		double factor = double(now - _sohLastUpdate) / _settings.soh.interval;
+	if ( _sohLastUpdate ) {
+		double factor = double(now - *_sohLastUpdate) / _settings.soh.interval;
 
 		// Latency of factor 10 or higher
 		if ( factor >= 10 ) {
@@ -2170,6 +2200,8 @@ void Application::stateOfHealth() {
 			database()->endQuery();
 		}
 	}
+
+	handleSOH();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2185,14 +2217,12 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 
 	lock_guard<mutex> l(_objectLogMutex);
 
-	ObjectMonitor::const_iterator it;
-
 	_inputMonitor->update(now);
 	_outputMonitor->update(now);
 
 	bool first = true;
 
-	for ( it = _inputMonitor->begin(); it != _inputMonitor->end(); ++it ) {
+	for ( auto it = _inputMonitor->begin(); it != _inputMonitor->end(); ++it ) {
 		if ( first ) {
 			os << "&";
 			first = false;
@@ -2207,13 +2237,11 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 		os << "cnt:" << it->count << ",";
 		os << "avg:" << ((float)it->count / (float)it->test->timeSpan()) << ",";
 		os << "tw:" << it->test->timeSpan();
-
-		if ( it->test->last() )
-			os << ",last:" << it->test->last().iso();
+		os << ",last:" << it->test->last().iso();
 		os << /*"utime:" << now.iso() <<*/ ")&";
 	}
 
-	for ( it = _outputMonitor->begin(); it != _outputMonitor->end(); ++it ) {
+	for ( auto it = _outputMonitor->begin(); it != _outputMonitor->end(); ++it ) {
 		if ( first ) {
 			os << "&";
 			first = false;
@@ -2228,9 +2256,7 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 		os << "cnt:" << it->count << ",";
 		os << "avg:" << ((float)it->count / (float)it->test->timeSpan()) << ",";
 		os << "tw:" << it->test->timeSpan();
-
-		if ( it->test->last() )
-			os << ",last:" << it->test->last().iso();
+		os << ",last:" << it->test->last().iso();
 		os << /*"utime:" << now.iso() <<*/ ")&";
 	}
 }
@@ -2242,6 +2268,15 @@ void Application::monitorLog(const Core::Time &now, std::ostream &os) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::handleTimeout() {
 	std::cerr << "Unhandled Application::Timeout" << std::endl;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::handleSOH() {
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

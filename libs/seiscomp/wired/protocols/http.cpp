@@ -378,8 +378,6 @@ void HttpSession::sendResponse(HttpStatus status) {
 
 	send("\r\nContent-Length: 0");
 	send("\r\n\r\n", 4);
-
-	flush();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -391,8 +389,6 @@ void HttpSession::sendResponse(const char *content, size_t len,
                                HttpStatus status,
                                const char *contentType,
                                const char *cookie) {
-	bool empty = inAvail() == 0;
-
 	// Save status in request
 	_request.status = status;
 
@@ -433,8 +429,6 @@ void HttpSession::sendResponse(const char *content, size_t len,
 	send("\r\n\r\n", 4);
 
 	send(content, len);
-
-	if ( empty ) flush();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -459,8 +453,8 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
                                const char *cookie,
                                const char *additionalHeader) {
 	// Check modification times and send 304 is not modified
-	if ( _request.ifModifiedSince.valid() && (buf->lastModified > 0) ) {
-		if ( buf->lastModified <= _request.ifModifiedSince.seconds() ) {
+	if ( _request.ifModifiedSince && (buf->lastModified > 0) ) {
+		if ( buf->lastModified <= _request.ifModifiedSince->epochSeconds() ) {
 			sendResponse(HTTP_304);
 			return;
 		}
@@ -557,7 +551,7 @@ void HttpSession::sendResponse(Buffer* buf, HttpStatus status,
 		buf->header += tmp;
 	}
 
-	if ( send(buf) ) flush();
+	send(buf);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -698,7 +692,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 		_request.secWebsocketProtocol.clear();
 		_request.secWebsocketKey.clear();
 		_request.secWebsocketVersion = -1;
-		_request.ifModifiedSince = HttpRequest::Time();
+		_request.ifModifiedSince = Core::None;
 		_request.tx = 0;
 		// Reset data sent which is increased by ClientSession::flush
 		_bytesSent = 0;
@@ -771,7 +765,9 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 
 			data = tokenize(src_data, ":", data_len, len);
 			if ( len == 14 && strncasecmp("Content-Length", data, len) == 0 ) {
-				data = tokenize(src_data, ":", data_len, len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				string tmp;
 				tmp.assign(data, len);
 				if ( !Seiscomp::Core::fromString(_dataSize, tmp) ) {
@@ -788,30 +784,30 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				}
 			}
 			else if ( len == 12 && strncasecmp("Content-Type", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 
 				_request.contentType.assign(data, len);
 			}
 			else if ( len == 4 && strncasecmp("Host", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data,len);
 
 				_request.host.assign(data, len);
 			}
 			else if ( len == 6 && strncasecmp("Cookie", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 
 				_request.cookie.assign(data, len);
 			}
 			else if ( len == 10 && strncasecmp("User-Agent", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data,len);
 
 				_request.userAgent.assign(data,len);
 			}
@@ -820,8 +816,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				--data_len;
 
 				while ( (data = tokenize(src_data, ",", data_len, len)) != nullptr) {
-					trimFront(data,len);
-					trimBack(data,len);
+					trim(data, len);
 					if ( len == 4 && strncasecmp("gzip", data, len) == 0 ) {
 						_acceptGzip = true;
 						break;
@@ -837,8 +832,7 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				--data_len;
 
 				while ( (data = tokenize(src_data, ",", data_len, len)) != nullptr) {
-					trimFront(data,len);
-					trimBack(data,len);
+					trim(data, len);
 
 					if ( strncasecmp("Keep-Alive", data, 10) == 0 ) {
 						SEISCOMP_DEBUG("[http] Keep-Alive requested");
@@ -855,73 +849,74 @@ void HttpSession::handleInbox(const char *src_data, size_t src_len) {
 				}
 			}
 			else if ( len == 7 && strncasecmp("Referer", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.referer.assign(data, len);
 			}
 			else if ( len == 16 && strncasecmp("X-Requested-With", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.isXMLHTTP = strncasecmp("XMLHttpRequest", data, len) == 0;
 			}
 			else if ( len == 6 && strncasecmp("Origin", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.origin.assign(data, len);
 			}
 			else if ( len == 17 && strncasecmp("If-Modified-Since", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 
-				string tmp;
-				tmp.assign(data, len);
+				string_view tmp{data, len};
 
+				Core::Time timestamp;
 				// RFC 822
-				if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%a, %d %b %Y %H:%M:%S GMT") ) {
-					// RFC 850
-					if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%A, %d-%b-%y %H:%M:%S GMT") ) {
-						// ANSI C's asctime()
-						if ( !_request.ifModifiedSince.fromString(tmp.c_str(), "%a %d %e %H:%M:%S %Y") ) {
-							SEISCOMP_WARNING("Unable to parse If-Modified-Since date: %s", tmp.c_str());
-						}
-					}
+				if ( timestamp.fromString(tmp, "%a, %d %b %Y %H:%M:%S GMT")
+				  // RFC 850
+				  || timestamp.fromString(tmp, "%A, %d-%b-%y %H:%M:%S GMT")
+				  // ANSI C's asctime()
+				  || timestamp.fromString(tmp, "%a %d %e %H:%M:%S %Y") ) {
+					_request.ifModifiedSince = timestamp;
+				}
+				else {
+					SEISCOMP_WARNING("Unable to parse If-Modified-Since date: %s", tmp);
 				}
 			}
 			else if ( len == 7 && strncasecmp("Upgrade", data, len) == 0 ) {
 				// Save upgrade path
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.upgradeTo.assign(data, len);
 			}
 			else if ( len == 22 && strncasecmp("Sec-WebSocket-Protocol", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.secWebsocketProtocol.assign(data, len);
 			}
 			else if ( len == 17 && strncasecmp("Sec-WebSocket-Key", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				trimFront(data,len);
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
 				_request.secWebsocketKey.assign(data, len);
 			}
 			else if ( len == 21 && strncasecmp("Sec-WebSocket-Version", data, len) == 0 ) {
-				data = src_data+1;
-				len = data_len-1;
-				string tmp;
-				tmp.assign(data, len);
-				if ( !Seiscomp::Core::fromString(_request.secWebsocketVersion, tmp) )
+				data = src_data + 1;
+				len = data_len - 1;
+				trim(data, len);
+				if ( !Seiscomp::Core::fromString(_request.secWebsocketVersion, string_view(data, len)) ) {
 					_request.secWebsocketVersion = -1;
+				}
 			}
 			else {
 				const char *value = src_data + 1;
 				size_t vlen = data_len - 1;
-				trimFront(value, vlen);
+				trim(value, vlen);
 				handleHeader(data, len, value, vlen);
 			}
 		}
@@ -978,7 +973,7 @@ void HttpSession::handleInboxError(Error error) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void HttpSession::outboxFlushed() {
+void HttpSession::buffersFlushed() {
 	if ( _request.state == HttpRequest::FINISHED ) {
 		_request.tx = _bytesSent;
 		SEISCOMP_DEBUG("[http] request %s in session %p finished",
@@ -1101,7 +1096,6 @@ bool HttpSession::handleOPTIONSRequest(HttpRequest &req) {
 	     "Access-Control-Allow-Headers: Accept, Content-Type, X-Requested-With, Origin\r\n"
 	     "Content-Type: text/plain\r\n"
 	     "Content-Length: 0\r\n\r\n");
-	flush();
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1176,13 +1170,14 @@ void HttpSession::upgradeToWebsocket(HttpRequest &req, const char *protocol,
 	Seiscomp::Util::encodeBase64(key, sha1, SHA_DIGEST_LENGTH);
 	send(key.data(), key.size());
 	send("\r\n\r\n");
-	flush();
 
 	_upgradedToWebsocket = true;
-	if ( !_websocketFrame )
+	if ( !_websocketFrame ) {
 		_websocketFrame = new Websocket::Frame;
-	else
+	}
+	else {
 		_websocketFrame->reset();
+	}
 	_websocketFrame->setMaxPayloadSize(maxPayloadSize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1257,10 +1252,9 @@ void HttpSession::sendStatus(HttpStatus status, const string &content,
 
 	send("\r\n\r\n", 4);
 
-	if ( content.size() )
+	if ( content.size() ) {
 		send(content.data(), content.size());
-
-	flush();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

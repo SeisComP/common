@@ -407,6 +407,9 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 
 	QStandardItem *value = new QStandardItem(valueText);
 	QStandardItem *locked = new QStandardItem();
+	QStandardItem *values = new QStandardItem(Core::toString(param->definition->values).c_str());
+	QStandardItem *range = new QStandardItem(param->definition->range.c_str());
+	QStandardItem *options = new QStandardItem(Core::toString(param->definition->options).c_str());
 
 	SymbolMapItem *symbol = param->symbols[targetStage].get();
 	bool paramLocked = symbol?symbol->symbol.stage == Environment::CS_UNDEFINED:true;
@@ -418,6 +421,7 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 
 	name->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	type->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	options->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	value->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable);
 	locked->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 
@@ -425,11 +429,18 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 	if ( !param->definition->description.empty() ) {
 		descText = param->definition->description;
 	}
+
+	if ( !param->definition->type.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Type: " + param->definition->type;
+	}
 	if ( !param->definition->values.empty() ) {
 		if ( !descText.empty() ) {
 			descText = descText + "\n";
 		}
-		descText = descText + "Supported values: " + param->definition->values;
+		descText = descText + "Supported values: " + Core::toString(param->definition->values);
 	}
 	if ( !param->definition->range.empty() ) {
 		if ( !descText.empty() ) {
@@ -437,12 +448,18 @@ void addParameter(QStandardItem *item, Parameter *param, int level,
 		}
 		descText = descText + "Range: " + param->definition->range;
 	}
+	if ( !param->definition->options.empty() ) {
+		if ( !descText.empty() ) {
+			descText = descText + "\n";
+		}
+		descText = descText + "Options: " + Core::toString(param->definition->options);
+	}
 	name->setToolTip(descText.c_str());
 	type->setToolTip(name->toolTip());
 	value->setToolTip(name->toolTip());
 	locked->setToolTip(param->symbol.uri.c_str());
 
-	item->appendRow(QStandardItemList() << name << type << value << locked);
+	item->appendRow(QStandardItemList() << name << type << value << locked << values << range << options);
 
 	//for ( size_t i = 0; i < param->childs.size(); ++i )
 	//	addParameters(name, param->childs[i].get(), level+1);
@@ -600,7 +617,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 
 			QVBoxLayout *l = new QVBoxLayout;
 			l->setSpacing(0);
-			l->setMargin(0);
+			setMargin(l, 0);
 
 			headerLabel = new StatusLabel;
 			headerLabel->setWordWrap(true);
@@ -616,7 +633,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 
 			QHBoxLayout *buttonLayout = new QHBoxLayout;
 			buttonLayout->addStretch();
-			buttonLayout->setMargin(4);
+			setMargin(buttonLayout, 4);
 
 			okButton = new QPushButton;
 			cancelButton = new QPushButton;
@@ -694,7 +711,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		QDialog dlg;
 		QVBoxLayout *l = new QVBoxLayout;
 		l->setSpacing(0);
-		l->setMargin(0);
+		setMargin(l, 0);
 		dlg.setLayout(l);
 
 		StatusLabel *headerLabel = new StatusLabel;
@@ -712,7 +729,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		l->addWidget(w);
 
 		QHBoxLayout *buttonLayout = new QHBoxLayout;
-		buttonLayout->setMargin(4);
+		setMargin(buttonLayout, 4);
 
 		QPushButton *fix = new QPushButton;
 		buttonLayout->addWidget(fix);
@@ -756,7 +773,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		QDialog dlg;
 		QVBoxLayout *l = new QVBoxLayout;
 		l->setSpacing(0);
-		l->setMargin(0);
+		setMargin(l, 0);
 		dlg.setLayout(l);
 
 		StatusLabel *headerLabel = new StatusLabel;
@@ -773,7 +790,7 @@ struct QtConfigDelegate : System::ConfigDelegate {
 		l->addWidget(w);
 
 		QHBoxLayout *buttonLayout = new QHBoxLayout;
-		buttonLayout->setMargin(4);
+		setMargin(buttonLayout, 4);
 
 		QPushButton *btnReplace = new QPushButton;
 		btnReplace->setText(btnReplace->tr("Apply"));
@@ -1389,7 +1406,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	QGridLayout *centralLayout = new QGridLayout(centralWidget);
 
 	centralLayout->setSpacing(1);
-	centralLayout->setMargin(1);
+	setMargin(centralLayout, 1);
 	centralWidget->setLayout(centralLayout);
 	setCentralWidget(centralWidget);
 
@@ -1424,7 +1441,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	QVBoxLayout *vl = new QVBoxLayout;
 	vl->addWidget(_headline);
 	vl->addWidget(_description);
-	vl->setMargin(0);
+	setMargin(vl, 0);
 	vl->setSpacing(0);
 	infoWidget->setLayout(vl);
 	infoWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
@@ -1498,15 +1515,16 @@ void Configurator::updateModeLabel() {
 	switch ( _configurationStage ) {
 		case Environment::CS_USER_APP:
 			setWindowTitle(tr("SeisComP %1 - user configuration [ %2 ]")
-			               .arg(version.c_str())
-			               .arg(Environment::Instance()->configDir().c_str()));
+			               .arg(version.c_str(), Environment::Instance()->configDir().c_str()));
 			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/user-settings.png"), QSize(72,72));
 			break;
 		case Environment::CS_CONFIG_APP:
 			setWindowTitle(tr("SeisComP %1 - system configuration [ %2 ]")
-			               .arg(version.c_str())
-			               .arg(Environment::Instance()->appConfigDir().c_str()));
-			static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(QIcon(":/res/icons/system-settings.png"), QSize(72,72));
+			               .arg(version.c_str(), Environment::Instance()->appConfigDir().c_str()));
+			{
+				QIcon icon(":/res/icons/system-settings.png");
+				static_cast<MouseTrackLabel*>(_modeLabel)->setIcon(icon, QSize(72,72));
+			}
 			break;
 		default:
 			break;
@@ -1517,7 +1535,6 @@ void Configurator::updateModeLabel() {
 bool Configurator::setModel(System::Model *model) {
 	QtConfigDelegate cd(&_settings);
 	model->readConfig(Environment::CS_USER_APP, &cd);
-
 	cd.showConflicts();
 
 	if ( _configurationStage == Environment::CS_UNDEFINED ) {
@@ -1532,19 +1549,22 @@ bool Configurator::setModel(System::Model *model) {
 					break;
 			}
 		}
-		else
+		else {
 			return false;
+		}
 	}
 
-	if ( cd.hasErrors )
+	if ( cd.hasErrors ) {
 		showWarningMessage("Configuration loaded with errors");
+	}
 
 	updateModeLabel();
 
 	_model->setModel(model, _configurationStage);
 
-	foreach ( Panel p, _panels )
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
 
 	//_treeView->hideColumn(1);
 	return true;
@@ -1623,21 +1643,33 @@ void Configurator::panelDescriptionChanged(const QString &text) {
 
 
 void Configurator::switchToSystemMode() {
-	if ( _configurationStage == Environment::CS_CONFIG_APP ) return;
+	if ( _configurationStage == Environment::CS_CONFIG_APP ) {
+		return;
+	}
+
 	_configurationStage = Environment::CS_CONFIG_APP;
 	_model->setModel(_model->model(), _configurationStage);
-	foreach ( Panel p, _panels )
+
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
+
 	updateModeLabel();
 }
 
 
 void Configurator::switchToUserMode() {
-	if ( _configurationStage == Environment::CS_USER_APP ) return;
+	if ( _configurationStage == Environment::CS_USER_APP ) {
+		return;
+	}
+
 	_configurationStage = Environment::CS_USER_APP;
 	_model->setModel(_model->model(), _configurationStage);
-	foreach ( Panel p, _panels )
+
+	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
+	}
+
 	updateModeLabel();
 }
 
@@ -1662,10 +1694,12 @@ void Configurator::showWarningMessage(const QString &msg) {
 
 void Configurator::clicked(QObject *o) {
 	if ( _modeLabel == o ) {
-		if ( _configurationStage == Environment::CS_CONFIG_APP )
+		if ( _configurationStage == Environment::CS_CONFIG_APP ) {
 			switchToUserMode();
-		else
+		}
+		else {
 			switchToSystemMode();
+		}
 	}
 }
 

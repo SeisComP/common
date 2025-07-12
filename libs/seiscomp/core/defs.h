@@ -30,9 +30,7 @@ namespace Core {
 
 
 template <typename T>
-struct SmartPointer {
-	typedef ::boost::intrusive_ptr<T> Impl;
-};
+using SmartPointer = ::boost::intrusive_ptr<T>;
 
 
 template <typename B, typename D>
@@ -52,10 +50,10 @@ struct isTypeOf {
 
 
 #define TYPEDEF_SMARTPOINTER(classname) \
-    typedef Seiscomp::Core::SmartPointer<classname>::Impl classname##Ptr
+    using classname##Ptr = Seiscomp::Core::SmartPointer<classname>
 
 #define TYPEDEF_CONST_SMARTPOINTER(classname) \
-    typedef Seiscomp::Core::SmartPointer<const classname>::Impl classname##CPtr
+    using classname##CPtr = Seiscomp::Core::SmartPointer<const classname>
 
 #define DEFINE_SMARTPOINTER(classname) \
     class classname; \

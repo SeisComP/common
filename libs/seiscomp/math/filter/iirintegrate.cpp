@@ -82,8 +82,15 @@ void IIRIntegrate<T>::setSamplingFrequency(double fsamp) {
 
 template <typename T>
 int IIRIntegrate<T>::setParameters(int n, const double *params) {
-	if ( n != 1 ) return 1;
-	init(params[0]);
+	if ( n == 0 ) {
+		init(0.0);
+	}
+	else if ( n == 1 ) {
+		init(params[0]);
+	}
+	else {
+		return 1;
+	}
 	return n;
 }
 

@@ -43,8 +43,8 @@ class SC_SYSTEM_CORE_API RecordSequence : public std::deque<RecordCPtr> {
 	//  Public types
 	// ----------------------------------------------------------------------
 	public:
-		typedef std::deque<Core::TimeWindow> TimeWindowArray;
-		typedef std::pair<double,double> Range;
+		using TimeWindowArray = std::deque<Core::TimeWindow>;
+		using Range = std::pair<double,double>;
 
 
 	// ----------------------------------------------------------------------
@@ -81,20 +81,28 @@ class SC_SYSTEM_CORE_API RecordSequence : public std::deque<RecordCPtr> {
 		//! Set the time tolerance in samples
 		void setTolerance(double);
 
+		/**
+		 * @brief Returns the lowest iterator to the element which intersects
+		 *        or is after a given timestamp.
+		 * @param ts The timestamp.
+		 * @return The iterator
+		 */
+		const_iterator lowerBound(const Core::Time &ts) const;
+
+		/**
+		 * @brief Returns a highest iterator to the element which intersects
+		 *        or is before a given timestamp.
+		 * @param ts The timestamp.
+		 * @return The iterator.
+		 */
+		const_iterator upperBound(const Core::Time &ts) const;
+
 		//! Return Record's as one contiguous record. Compiled in is support for
 		//! float, double and int. If interpolation is enabled gaps will be linearly
 		//! interpolated between the last and the next sample.
 		template <typename T>
-		GenericRecord *contiguousRecord(const Seiscomp::Core::TimeWindow *tw = nullptr,
+		GenericRecord *contiguousRecord(const Core::TimeWindow *tw = nullptr,
 		                                bool interpolate = false) const;
-
-		//! DECPRECATED: For backward compatibility, does exactly the same as
-		//!              contiguousRecord. Please use contiguousRecord in your
-		//!              code. This method will be removed in future releases.
-		template <typename T>
-		GenericRecord *continuousRecord(const Seiscomp::Core::TimeWindow *tw = nullptr,
-		                                bool interpolate = false) const;
-
 
 		//! Time window currently in buffer, irrespective of gaps
 		Core::TimeWindow timeWindow() const;
@@ -102,7 +110,7 @@ class SC_SYSTEM_CORE_API RecordSequence : public std::deque<RecordCPtr> {
 		//! The amplitude range in a given time window.
 		//! Returns (0,0) if the sequence is empty or no records fall inside
 		//! the given optional time window.
-		Range amplitudeRange(const Seiscomp::Core::TimeWindow *tw = nullptr) const;
+		Range amplitudeRange(const Core::TimeWindow *tw = nullptr) const;
 
 		//! returns the continuous time windows available
 		//! This is usually one time window but may be split into
@@ -163,9 +171,9 @@ class SC_SYSTEM_CORE_API TimeWindowBuffer : public RecordSequence {
 	//  Public RecordSequence interface overrides
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool feed(const Record*);
-		virtual RecordSequence *copy() const;
-		virtual RecordSequence *clone() const;
+		virtual bool feed(const Record*) override;
+		virtual RecordSequence *copy() const override;
+		virtual RecordSequence *clone() const override;
 
 
 	// ----------------------------------------------------------------------
@@ -215,9 +223,9 @@ class SC_SYSTEM_CORE_API RingBuffer : public RecordSequence {
 	//  Public RecordSequence interface overrides
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool feed(const Record*);
-		virtual RecordSequence *copy() const;
-		virtual RecordSequence *clone() const;
+		virtual bool feed(const Record*) override;
+		virtual RecordSequence *copy() const override;
+		virtual RecordSequence *clone() const override;
 
 
 	// ----------------------------------------------------------------------
@@ -229,7 +237,7 @@ class SC_SYSTEM_CORE_API RingBuffer : public RecordSequence {
 
 		//! Return the maximum number of records the RingBuffer stores
 		unsigned int numberOfRecordsToStore() const;
-	
+
 		//! Return the TimeSpan the RingBuffer stores
 		const Core::TimeSpan &timeSpanToStore() const;
 
@@ -266,11 +274,11 @@ inline const Core::TimeWindow &TimeWindowBuffer::timeWindowToStore() const {
 inline unsigned int RingBuffer::numberOfRecordsToStore() const {
 	return _nmax;
 }
-	
+
 inline const Core::TimeSpan &RingBuffer::timeSpanToStore() const {
 	return _span;
 }
-	
+
 }
 
 #endif

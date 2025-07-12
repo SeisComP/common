@@ -136,7 +136,7 @@ bool measureAmplitudePeriod(
 	size_t iend,
 	AmplitudePeriodMeasurement &measurement)
 {
-	const double *f { &data[0] };
+	const double *f { data.data() };
 	size_t n { data.size() };
 
 	return measureAmplitudePeriod(n, f, offset, istart, iend, measurement);

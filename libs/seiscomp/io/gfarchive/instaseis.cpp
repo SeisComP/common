@@ -301,7 +301,7 @@ bool Instaseis::getInfo() const {
 		_socket.close();
 
 		rapidjson::Document doc;
-		doc.ParseInsitu(&json[0]);
+		doc.ParseInsitu(json.data());
 		if ( doc.HasParseError() ) {
 			SEISCOMP_WARNING("Received invalid JSON");
 			_socket.close();
@@ -527,8 +527,8 @@ Core::GreensFunction *Instaseis::get() {
 			if ( !_socket.isOpen() || _socket.tryReconnect() )
 				_socket.open(_host);
 
-			double ts = _defaultTimespan;
-			if ( req.timeSpan ) ts = req.timeSpan;
+			double ts = _defaultTimespan.length();
+			if ( req.timeSpan ) ts = req.timeSpan.length();
 
 			if ( (_maxLength > 0) && (ts >= _maxLength) )
 				ts = _maxLength;
@@ -605,7 +605,7 @@ Core::GreensFunction *Instaseis::get() {
 
 			while ( contentLength > 0 ) {
 				string data = _socket.read(contentLength > BUFSIZE ? BUFSIZE : contentLength);
-				ss.write(&data[0], data.size());
+				ss.write(data.data(), data.size());
 				contentLength -= (int)data.size();
 			}
 

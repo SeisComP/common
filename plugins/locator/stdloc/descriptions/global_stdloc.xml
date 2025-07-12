@@ -7,156 +7,193 @@
 		</description>
 		<configuration>
 			<group name="StdLoc">
-
+				<description>
+				Locator parameters: StdLoc. This locator requires the plugin
+				&quot;stdloc&quot; to be loaded.
+				</description>
 				<parameter name="profiles" type="list:string" default="">
 					<description>
 					Defines a list of profiles to make available to the plugin.
 					</description>
 				</parameter>
-
 				<group name="profile">
 					<struct type="stdloc profile" link = "StdLoc.profiles">
-
-						<parameter name="method" type="string" default="GridSearch+LeastSquares">
-							<description>The location method to use: LeastSquares, GridSearch, OctTree,
-							 GridSearch+LeastSquares or OctTree+LeastSquares.
+						<parameter name="method" type="string" default="LeastSquares" values="LeastSquares,GridSearch,OctTree,GridSearch+LeastSquares,OctTree+LeastSquares">
+							<description>
+							The location method to use: LeastSquares, GridSearch,
+							OctTree, GridSearch+LeastSquares or OctTree+LeastSquares.
 							</description>
 						</parameter>
-
 						<parameter name="tableType" type="string" default="LOCSAT">
-							<description>Travel time table format type.</description>
+							<description>
+							Travel time table format type. Also consider
+							&quot;tableModel&quot;!
+							</description>
 						</parameter>
 						<parameter name="tableModel" type="string" default="iasp91">
-							<description>The model to be used. The format depends on tableType.</description>
+							<description>
+							The model to be used. The format depends on
+							&quot;tableType&quot;.
+							</description>
 						</parameter>
 						<parameter name="PSTableOnly" type="boolean" default="true">
-							<description>If enabled the arrival travel time information are fetched
-							using 'P' and 'S' tables only and the user selected phase type is not
-							considered (e.g Pg, Sg, PmP, SmS, P1, S1, etc).
+							<description>
+							If enabled the arrival travel time information are fetched
+							using 'P' and 'S' tables only and the user selected
+							specific phase type is not considered (e.g. Pg, Sg,
+							PmP, SmS, P1, S1, etc).
 						</description>
 						</parameter>
-
 						<parameter name="usePickUncertainties" type="boolean" default="false">
 							<description>
-							Whether to use pick time uncertainties rather than a fixed
-							time error. If true, then the uncertainties are retrieved from
-							each individual picks and a weight associated accordingly to
-							'pickUncertaintyClasses' parameter.
+							Use pick time uncertainties rather than a fixed
+							time error of XXX s. If true, an arrival weight is
+							associated according to the uncertainty of the pick
+							and &quot;pickUncertaintyClasses&quot;.
 							</description>
 						</parameter>
-
-						<parameter name="pickUncertaintyClasses" type="list:string" unit="s" default="0.000,0.025,0.050,0.100,0.200,0.400" >
+						<parameter name="pickUncertaintyClasses" type="list:string" unit="s" default="0.000,0.025,0.050,0.100,0.200,0.400">
 							<description>
-							Define the pick time uncertainty classes from which the pick weight is computed.
-							This parameter defines a list of uncertainty time intervals: the interval
-							in which a pick time uncertainty falls defines the pick class e.g. a pick
-							wich uncertainty of 0.150 falls in the 4th interval and the pick class
-							is then 4. if pick uncertainties are absent, the lowest class will be used.
-							The pick weight then is computed as: 1 / 2^(class-1)
-							</description>
-						</parameter>
+							Comma-separated list of time limits of uncertainty
+							classes from which, along with pick time uncertainties,
+							arrival weights are computed. The first value
+							defines the lower limit of class 0.
 
-						<parameter name="confLevel" type="double" default="0.9">
-							<description>
-							Confidence level, between 0.5 and 1.0, used in computing the confidence ellipsoid.
-							</description>
-						</parameter>
-						<parameter name="enableConfidenceEllipsoid" type="boolean" default="true">
-							<description>
-							Compute the confidence ellipsoid for the location. This is optional since
-							if it is not required it can be disabled to save some computation.
-							</description>
-						</parameter>
+							The interval into which a pick time uncertainty falls
+							defines the index of the uncertainty class starting
+							with 0.
 
+							The corresponding arrival weight is computed as:
+							weight = 1 / 2^(index).
+
+							Example: A pick with a time uncertainty of 0.15 s is
+							within the 4th interval ranging from 0.1 to 0.2 s.
+							The class index is then 3.
+
+							If pick uncertainty is absent, the highest class index
+							applies.
+							</description>
+						</parameter>
+						<parameter name="confLevel" type="double" default="0.9" range="0.5:1.0">
+							<description>
+							Confidence level, between 0.5 and 1.0, used in
+							computing the hypocenter confidence ellipsoid.
+							</description>
+						</parameter>
+						<parameter name="enableConfidenceEllipsoid" type="boolean" default="false">
+							<description>
+							Compute the hypocenter confidence ellipsoid. Disable
+							this optional parameter to save some computation time.
+							</description>
+						</parameter>
 						<group name="GridSearch">
 							<description>
-								Find the source location by evaluating the hypocenter probability
-								of each grid cell and returning the maximum likelihood hypocenter.
-								The source time is derived from the weighted average of arrival
-								travel times.
-								The solution can be further improved combining it with the Least Squares
-								algorithm, which will then be run for each grid cell, using the cell
-								centroid as initial location estimate. In this case only few big cells
-								are required.
+								Parameters controlling the GridSearch and OctTree methods.
 							</description>
-							<parameter name="center" type="list:string" default="auto,auto,5">
-								<description>Latitude,longitude,depth[km]. </description>
+							<parameter name="center" type="list:string" unit="deg,deg,km" default="auto,auto,20">
+								<description>
+								Grid center defined as: latitude,longitude,depth. The
+								special value "auto" can be used and the corresponding latitude, longitude
+								 and/or depth will be automatically computed as the average of the arrival
+								station locations.
+								</description>
 							</parameter>
-							<parameter name="autoLatLon" type="boolean" default="true">
-								<description>If enabled, the grid center latitude and longitude
-								are automatically computed as the average of the arrival station
-								locations. The center depth should still be provided.
-							</description>
-							</parameter> 
-							<parameter name="size" type="list:string" unit="km" default="20,20,5">
-								<description>Grid X, Y, Z size in km</description>
+							<parameter name="size" type="list:string" unit="km" default="40,40,30">
+								<description>
+								Grid size in km defined as: X,Y,Z
+								direction extents around the &quot;GridSearch.center&quot;,
+								where X is the longitudinal extent, Y the
+								latitudinal extent and Z the vertical extent.
+								</description>
 							</parameter>
-							<parameter name="cellSize" type="list:string" unit="km" default="2.5,2.5,5">
-								<description>Cell X, Y, Z size in km</description>
+							<parameter name="numPoints" type="list:string" default="">
+								<description>
+								Number of grid points in X, Y, Z
+								direction. The first and last points are on the
+								grid boundary unless the number of points is 1
+								and the point will be in the grid center.
+
+								Format: numX,numY,numZ.
+								</description>
 							</parameter>
-							<parameter name="misfitType" type="string" default="L1">
-								<description>The type of misfit to use, from which the likelyhood function is
-									derived: L1 or L2 norm. L1 is less sensitive to outliers and so more 
-									suitable with automatic picks, L2 is the preferred choice for manual picks.
+							<parameter name="misfitType" type="string" default="L1" values="L1,L2">
+								<description>The type of misfit to use, from which
+								the likelihood function is derived: L1 or L2 norm.
+								L1 is less sensitive to outliers and so more
+								suitable with automatic picks, L2 is the preferred
+								choice for manual picks.
 								</description>
 							</parameter>
 							<parameter name="travelTimeError" type="double" unit="s" default="0.25">
 								<description>
-									Typical error in seconds for travel-time to one station. This
-									value affects the uncertainty of the location. In OctTree it also
-									influences the probability density computation: a too conservative value
-									increases the number of iterations required by OctTree to converge to a
-									high resolution solution.
+								Typical error in seconds for travel times to
+								stations. The value affects the uncertainty
+								of the location. In OctTree it also influences
+								the probability density computation: too
+								conservative values increase the number of
+								iterations required by OctTree to converge
+								to a high resolution solution.
 								</description>
 							</parameter>
 						</group>
-
 						<group name="OctTree">
 							<description>
-								Find the source location and time via OctTree search. This method uses the
-								parameters defined in GridSearch, but applies the OctTree search algorithm.
-								The solution can be further improved combining OctTree with the Least Squares
-								algorithm, which can use the OctTree solution as initial location estimate.
+								Parameters controlling the OctTree method. OctTree
+								uses the parameters defined in GridSearch, but
+								applies the OctTree search algorithm on the grid.
+								The starting cells of the OctTree search are created by
+								dividing the initial grid in equally sized cells.
+								The grid points becomes the cell vertices.
+								Resulting number of cells in each direction:
+								&quot;GridSearch.numPoints&quot; - 1.
 							</description>
 							<parameter name="maxIterations" type="int" default="50000">
 								<description>
-									Number of iterations after which the search stops. A zero or negative
-									value disable this stopping mechanism.
+								Maximum number of iterations after which the
+								search stops. Zero or negatives values disable
+								the stopping.
 								</description>
 							</parameter> 
 							<parameter name="minCellSize" type="double" unit="km" default="0.1">
 								<description>
-									Minimum cell size to be generate by the OctTree search to stop. A zero
-									or negative value disable this stopping mechanism.
+								Minimum cell size to be generate by the OctTree
+								search to stop. A zero or negative value disable
+								this stopping mechanism.
 								</description>
 							</parameter>
 						</group>
-
 						<group name="LeastSquares">
 							<description>
-								Find the source location and time via iterative Least Square.
-								However an initial location estatimate is required. if that is not
-								available then this method should be combined with GridSearch or
-								OctTree.
+							Parameters controlling the LeastSquares method.
 							</description>
+							<parameter name="depthInit" type="double" default="20">
+								<description>
+								The initial depth estimate when no initial
+								hypocenter is provided. Used only with
+								'LeastSquares'.
+								</description>
+							</parameter>
 							<parameter name="iterations" type="int" default="20">
 								<description>
-									Number of iterations. Each iteration will use the
-									location and time from the previous Least
-									Square solution.
+									Number of iterations. Each iteration will
+									use the location and time from the previous
+									Least Squares solution.
 								</description>
 							</parameter> 
-							<parameter name="dampingFactor" type="double" default="0">
+							<parameter name="dampingFactor" type="double" default="0.0">
 								<description>
-									Damping factor value to be used when solving the equation system.
-									0 menas no damping factor.
+									Damping factor to be used when solving the
+									system of equations.
+
+									0: no damping.
 								</description>
 							</parameter>
-							<parameter name="solverType" type="string" default="LSMR">
-								<description>Algorithm to use: either LSMR or LSQR</description>
+							<parameter name="solverType" type="string" default="LSMR" values="LSMR,LSQR">
+								<description>
+								Algorithm to use: either LSMR or LSQR.
+								</description>
 							</parameter>
 						</group>
-
 					</struct>
 				</group> 
 			</group>

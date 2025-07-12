@@ -47,10 +47,10 @@ namespace {
 	class IsTypeOf {
 		class No { };
 		class Yes { No no[2]; };
-	
+
 		static Yes Test(BASECLASS*); // declared, but not defined
 		static No Test(...); // declared, but not defined
-	
+
 		public:
 			enum { Value = sizeof(Test(static_cast<DERIVEDCLASS*>(0))) == sizeof(Yes) };
 	};
@@ -155,7 +155,7 @@ struct ClassQuery<T,1> {
 };
 
 template <typename ROOT_TYPE, typename TYPE>
-const char *checkClassName(const ::boost::optional<TYPE>*, const ::boost::optional<TYPE>&) {
+const char *checkClassName(const Optional<TYPE>*, const Optional<TYPE>&) {
 	ClassQuery<TYPE, boost::is_base_of<ROOT_TYPE, TYPE>::value> query;
 	return query();
 }
@@ -367,7 +367,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(T*& object) {
 		return *this;
 
 	//_validObject = true;
-	
+
 	read(classname, object, classname);
 
 	return *this;
@@ -454,13 +454,13 @@ template <typename T>
 inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<T>& namedObject) {
 	int h = setChildHint(namedObject.hint());
 	//setHint(h | namedObject.hint());
-	
+
 	//_validObject = true;
 	ContainerReader<ROOT_TYPE,T,boost::is_const<T>::value?1:0> reader;
 	reader(*this, namedObject);
 
 	setHint(h);
-	
+
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -516,7 +516,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<std:
 	//setHint(h | namedObject.hint());
 
 	typedef typename boost::remove_pointer<T>::type RAW_T;
-	
+
 	//_validObject = true;
 
 	VectorReader<ROOT_TYPE,T,
@@ -544,7 +544,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<std:
 	reader(*this, namedObject);
 
 	setHint(h);
-	
+
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -600,7 +600,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<std:
 	//setHint(h | namedObject.hint());
 
 	typedef typename boost::remove_pointer<T>::type RAW_T;
-	
+
 	//_validObject = true;
 	ListReader<ROOT_TYPE,T,
 		boost::is_class<RAW_T>::value?
@@ -626,7 +626,7 @@ inline Archive<ROOT_TYPE>& Archive<ROOT_TYPE>::operator>>(const ObjectNamer<std:
 	reader(*this, namedObject);
 
 	setHint(h);
-	
+
 	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -673,18 +673,20 @@ inline void Archive<ROOT_TYPE>::read(::boost::intrusive_ptr<T>& object) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(::boost::optional<T>& object) {
+inline void Archive<ROOT_TYPE>::read(Optional<T>& object) {
 	bool oldState = success();
 
 	object = T();
 
 	read(*object);
-	if ( !success() )
-		object = boost::none;
+	if ( !success() ) {
+		object = None;
+	}
 
 	// Restore old state if not in strict mode otherwise pass it through
-	if ( !_strict )
+	if ( !_strict ) {
 		_validObject = oldState;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -698,7 +700,7 @@ inline void Archive<ROOT_TYPE>::readPtr(ROOT_TYPE*, T*& object) {
 	if ( (hint() & STATIC_TYPE) == 0 ) {
 		std::string className = determineClassName();
 		if ( className.empty() ) return;
-		
+
 		if ( !ClassFactoryInterface<ROOT_TYPE>::IsTypeOf(T::ClassName(), className.c_str()) ) {
 			_validObject = false;
 			return;
@@ -811,12 +813,12 @@ inline void Archive<ROOT_TYPE>::read(const char *name, ::boost::intrusive_ptr<T>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::read(const char *name, ::boost::optional<T> &object, const char *targetClass) {
+inline void Archive<ROOT_TYPE>::read(const char *name, Optional<T> &object, const char *targetClass) {
 	if ( findObject(name, targetClass, true) )
 		read(object);
 	else {
 		//_validObject = false;
-		object = boost::none;
+		object = None;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -897,7 +899,7 @@ inline void Archive<ROOT_TYPE>::write(const char *name, ::boost::intrusive_ptr<T
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename ROOT_TYPE>
 template <typename T>
-inline void Archive<ROOT_TYPE>::write(const char *name, ::boost::optional<T> &object, const char *targetClass) {
-	write(name, object.get_ptr(), targetClass);
+inline void Archive<ROOT_TYPE>::write(const char *name, Optional<T> &object, const char *targetClass) {
+	write(name, object ? std::addressof(*object) : nullptr, targetClass);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -54,25 +54,25 @@ class SC_SYSTEM_CORE_API NodalPlane : public Core::BaseObject {
 		NodalPlane();
 
 		//! Copy constructor
-		NodalPlane(const NodalPlane& other);
+		NodalPlane(const NodalPlane &other);
 
 		//! Destructor
 		~NodalPlane() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		NodalPlane& operator=(const NodalPlane& other);
+		NodalPlane &operator=(const NodalPlane &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const NodalPlane& other) const;
-		bool operator!=(const NodalPlane& other) const;
+		bool operator==(const NodalPlane &other) const;
+		bool operator!=(const NodalPlane &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const NodalPlane& other) const;
+		bool equal(const NodalPlane &other) const;
 
 
 	// ------------------------------------------------------------------

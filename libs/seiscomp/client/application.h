@@ -87,7 +87,7 @@ class SC_SYSTEM_CLIENT_API ApplicationStatusMessage : public Core::Message {
 
 
 	public:
-		virtual bool empty() const;
+		virtual bool empty() const override;
 
 		const std::string &module() const;
 		const std::string &username() const;
@@ -191,7 +191,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		 * Exit the application and set the returnCode.
 		 * @param returnCode The value returned from exec()
 		 */
-		virtual void exit(int returnCode);
+		virtual void exit(int returnCode) override;
 
 		//! Returns the application's messaging connection interface
 		Client::Connection *connection() const;
@@ -544,6 +544,14 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		virtual void handleTimeout();
 
 		/**
+		 * This method is called when the internal SOH checks are performed
+		 * as an additional state-of-health callback in derived classes.
+		 * The default implementation does nothing.
+		 * This method has been added with API 17.
+		 */
+		virtual void handleSOH();
+
+		/**
 		 * This method is called when close event is sent to the application.
 		 * The default handler returns true and causes the event queue to
 		 * shutdown and to exit the application.
@@ -736,6 +744,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 				StringVector         agencyAllowlist;
 				StringVector         agencyBlocklist;
 				Util::StringFirewall firewall;
+				StringVector         amplitudeAliases;
 				StringVector         magnitudeAliases;
 
 			}                    processing;
@@ -762,7 +771,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		IO::DatabaseInterfacePtr     _database;
 		Util::Timer                  _userTimer;
 		Util::Timer                  _sohTimer;
-		Core::Time                   _sohLastUpdate;
+		OPT(Core::Time)              _sohLastUpdate;
 
 		std::mutex                   _objectLogMutex;
 };

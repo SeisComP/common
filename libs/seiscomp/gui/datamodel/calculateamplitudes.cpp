@@ -234,6 +234,7 @@ struct PickStreamEntry {
 	PickCPtr        pick;
 	double          dist;
 	SensorLocation *loc;
+	bool            used{false};
 };
 
 }
@@ -245,11 +246,27 @@ bool CalculateAmplitudes::process() {
 	_processors.clear();
 	_ui.table->setRowCount(0);
 
-	if ( !_origin || (_recomputeAmplitudes && !_thread) )
+	if ( !_origin || (_recomputeAmplitudes && !_thread) ) {
 		return false;
+	}
 
-	if ( _amplitudeTypes.empty() )
+	if ( _amplitudeTypes.empty() ) {
 		return false;
+	}
+
+	std::map<std::string, bool> considerUnusedArrivals;
+
+	for ( const auto &type : _amplitudeTypes ) {
+		bool consider = false;
+		try {
+			consider = SCApp->configGetBool(
+				fmt::format("amplitudes.{}.considerUnusedArrivals", type)
+			);
+		}
+		catch ( ... ) {}
+		considerUnusedArrivals[type] = consider;
+		SEISCOMP_DEBUG("%s: consider unused arrivals = %s", type, consider ? "true" : "false");
+	}
 
 	_timeWindow = Core::TimeWindow();
 
@@ -271,27 +288,29 @@ bool CalculateAmplitudes::process() {
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if ( _thread )
+	if ( _thread ) {
 		_thread->connect();
+	}
 
 	// Typedef a pickmap that maps a streamcode to a pick
-	typedef map<string, PickStreamEntry> PickStreamMap;
+	using PickStreamMap = map<string, PickStreamEntry>;
 
 	// This map is needed to find the earliest P pick of
 	// a certain stream
 	PickStreamMap pickStreamMap;
 
 	for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
-		Arrival *ar = _origin->arrival(i);
+		Arrival *arr = _origin->arrival(i);
 
 		double weight = 1.;
-		try { weight = ar->weight(); } catch (Seiscomp::Core::ValueException &) {}
+		try { weight = arr->weight(); }
+		catch (Seiscomp::Core::ValueException &) {}
 
-		if ( Util::getShortPhaseName(ar->phase().code()) != 'P' || weight < 0.5 ) {
+		if ( Util::getShortPhaseName(arr->phase().code()) != 'P' ) {
 			continue;
 		}
 
-		Pick *pick = Pick::Find(ar->pickID());
+		auto pick = Pick::Find(arr->pickID());
 		if ( !pick ) {
 			//cerr << " - Skipping arrival " << i << " -> no pick found" << endl;
 			continue;
@@ -300,18 +319,19 @@ bool CalculateAmplitudes::process() {
 		double dist = -1;
 		DataModel::SensorLocation *loc = nullptr;
 		loc = Client::Inventory::Instance()->getSensorLocation(pick);
-	
+
 		try {
-			dist = ar->distance();
+			dist = arr->distance();
 		}
-		catch ( Core::ValueError &e ) {
+		catch ( Core::ValueError & ) {
 			try {
 				double azi1, azi2;
 
-				if ( loc != nullptr )
+				if ( loc ) {
 					Math::Geo::delazi_wgs84(loc->latitude(), loc->longitude(),
 					                        _origin->latitude(), _origin->longitude(),
 					                        &dist, &azi1, &azi2);
+				}
 			}
 			catch ( Core::GeneralException &e ) {}
 		}
@@ -323,40 +343,48 @@ bool CalculateAmplitudes::process() {
 		wfid.setChannelCode(wfid.channelCode().substr(0,2));
 
 		string streamID = waveformIDToStdString(wfid);
-		PickStreamEntry &e = pickStreamMap[streamID];
+		auto &e = pickStreamMap[streamID];
 
 		// When there is already a pick registered for this stream which has
 		// been picked earlier, ignore the current pick
-		if ( e.pick && e.pick->time().value() < pick->time().value() )
+		if ( e.pick && e.pick->time().value() < pick->time().value() ) {
 			continue;
+		}
 
 		e.pick = pick;
 		e.dist = dist;
 		e.loc = loc;
+		if ( !e.used ) {
+			e.used = weight >= 0.5;
+		}
 	}
 
-	for ( PickStreamMap::iterator it = pickStreamMap.begin(); it != pickStreamMap.end(); ++it ) {
-		PickCPtr pick = it->second.pick;
-		SensorLocation *loc = it->second.loc;
-		double dist = it->second.dist;
+	for ( const auto &[streamID, e] : pickStreamMap ) {
+		PickCPtr pick = e.pick;
+		SensorLocation *loc = e.loc;
+		double dist = e.dist;
 
 		_ui.comboFilterType->clear();
 		_ui.comboFilterType->addItem("- Any -");
-		for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-			_ui.comboFilterType->addItem(ita->c_str());
+		for ( const auto &type : _amplitudeTypes ) {
+			_ui.comboFilterType->addItem(type.c_str());
+		}
 
 		if ( _recomputeAmplitudes ) {
-			for ( TypeSet::iterator ita = _amplitudeTypes.begin(); ita != _amplitudeTypes.end(); ++ita )
-				addProcessor(*ita, pick.get(), loc, dist);
+			for ( const auto &type : _amplitudeTypes ) {
+				if ( !e.used && !considerUnusedArrivals[type] ) {
+					continue;
+				}
+
+				addProcessor(type, pick.get(), loc, dist);
+			}
 		}
 		else {
 			string streamID = waveformIDToStdString(pick->waveformID());
-
 			TypeSet usedTypes;
 
 			if ( !_amplitudes.empty() ) {
-				iterator_range itp;
-				itp = _amplitudes.equal_range(pick->publicID());
+				auto itp = _amplitudes.equal_range(pick->publicID());
 
 				for ( iterator it = itp.first; it != itp.second; ) {
 					AmplitudePtr amp = it->second.first;
@@ -367,6 +395,15 @@ bool CalculateAmplitudes::process() {
 						continue;
 					}
 
+					// Station is disabled, check if amplitude type is overriden
+					if ( !e.used ) {
+						if ( auto ait = considerUnusedArrivals.find(amp->type());
+						     ait == considerUnusedArrivals.end() || !ait->second ) {
+							++it;
+							continue;
+						}
+					}
+
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 						++it;
@@ -374,7 +411,7 @@ bool CalculateAmplitudes::process() {
 					}
 
 					usedTypes.insert(amp->type());
-		
+
 					int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 					setMessage(row, "read from cache");
 					setValue(row, amp->amplitude().value());
@@ -385,15 +422,23 @@ bool CalculateAmplitudes::process() {
 
 			bool foundAmplitudes = false;
 			if ( _externalAmplitudeCache ) {
-				iterator_range itp;
-				itp = _externalAmplitudeCache->equal_range(pick->publicID());
+				auto itp = _externalAmplitudeCache->equal_range(pick->publicID());
 
-				for ( iterator ita = itp.first; ita != itp.second; ++ita ) {
+				for ( auto ita = itp.first; ita != itp.second; ++ita ) {
 					AmplitudePtr amp = ita->second.first;
 
 					// The amplitude type is not one of the wanted types
-					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() )
+					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
 						continue;
+					}
+
+					// Station is disabled, check if amplitude type is overriden
+					if ( !e.used ) {
+						if ( auto ait = considerUnusedArrivals.find(amp->type());
+						     ait == considerUnusedArrivals.end() || !ait->second ) {
+							continue;
+						}
+					}
 
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
@@ -412,24 +457,36 @@ bool CalculateAmplitudes::process() {
 			}
 
 			if ( _query && !foundAmplitudes ) {
-				DatabaseIterator it = _query->getAmplitudesForPick(pick->publicID());
+				auto it = _query->getAmplitudesForPick(pick->publicID());
 				for ( ; *it; ++it ) {
 					AmplitudePtr amp = Amplitude::Cast(*it);
-					if ( !amp ) continue;
+					if ( !amp ) {
+						continue;
+					}
 
 					foundAmplitudes = true;
 
 					// The amplitude type is not one of the wanted types
-					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
+					if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
+						continue;
+					}
+
+					// Station is disabled, check if amplitude type is overriden
+					if ( !e.used ) {
+						if ( auto ait = considerUnusedArrivals.find(amp->type());
+						     ait == considerUnusedArrivals.end() || !ait->second ) {
+							continue;
+						}
+					}
 
 					// Already has an amplitude of this type processed
 					if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 						checkPriority(AmplitudeEntry(amp, false));
 						continue;
 					}
-	
+
 					usedTypes.insert(amp->type());
-		
+
 					int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 					setMessage(row, "read from database");
 					setValue(row, amp->amplitude().value());
@@ -442,19 +499,31 @@ bool CalculateAmplitudes::process() {
 				if ( ep ) {
 					for ( size_t i = 0; i < ep->amplitudeCount(); ++i ) {
 						Amplitude *amp = ep->amplitude(i);
-						if ( amp->pickID() != pick->publicID() ) continue;
+						if ( amp->pickID() != pick->publicID() ) {
+							continue;
+						}
 
 						// The amplitude type is not one of the wanted types
-						if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) continue;
+						if ( _amplitudeTypes.find(amp->type()) == _amplitudeTypes.end() ) {
+							continue;
+						}
+
+						// Station is disabled, check if amplitude type is overriden
+						if ( !e.used ) {
+							if ( auto ait = considerUnusedArrivals.find(amp->type());
+							     ait == considerUnusedArrivals.end() || !ait->second ) {
+								continue;
+							}
+						}
 
 						// Already has an amplitude of this type processed
 						if ( usedTypes.find(amp->type()) != usedTypes.end() ) {
 							checkPriority(AmplitudeEntry(amp, false));
 							continue;
 						}
-				
+
 						usedTypes.insert(amp->type());
-			
+
 						int row = addProcessingRow(waveformIDToStdString(amp->waveformID()), amp->type());
 						setMessage(row, "read from memory");
 						setValue(row, amp->amplitude().value());
@@ -468,11 +537,19 @@ bool CalculateAmplitudes::process() {
 			               usedTypes.begin(), usedTypes.end(),
 			               inserter(remainingTypes, remainingTypes.begin()));
 
-			for ( TypeSet::iterator ita = remainingTypes.begin(); ita != remainingTypes.end(); ++ita ) {
-				if ( _thread )
-					addProcessor(*ita, pick.get(), loc, dist);
+			for ( const auto &type : remainingTypes ) {
+				if ( !e.used ) {
+					if ( auto ait = considerUnusedArrivals.find(type);
+					     ait == considerUnusedArrivals.end() || !ait->second ) {
+						continue;
+					}
+				}
+
+				if ( _thread ) {
+					addProcessor(type, pick.get(), loc, dist);
+				}
 				else {
-					int row = addProcessingRow(streamID, *ita);
+					int row = addProcessingRow(streamID, type);
 					setError(row, "missing");
 				}
 			}
@@ -572,7 +649,7 @@ void CalculateAmplitudes::addProcessor(
 			setError(row, "unsupported processor component");
 			return;
 	}
-	
+
 	// If initialization fails, abort
 	if ( !proc->setup(
 		Settings(
@@ -797,7 +874,7 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	amp->setAmplitude(
 		RealQuantity(
 			res.amplitude.value, Core::None,
@@ -862,7 +939,7 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 
 	for ( ProcessorSlot::iterator it = slot_it->second.begin(); it != slot_it->second.end(); ) {
 		(*it)->feed(rec);
-		
+
 		if ( (*it)->status() == WaveformProcessor::InProgress ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
@@ -956,7 +1033,7 @@ void CalculateAmplitudes::setError(int row, QString text) {
 	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
-	itemState->setData(Qt::TextColorRole, QVariant::fromValue(QColor(Qt::red)));
+	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(QColor(Qt::red)));
 	// Signal an error state
 	itemState->setData(Qt::UserRole, 1);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -970,7 +1047,7 @@ void CalculateAmplitudes::setInfo(int row, QString text) {
 	_ui.table->setCellWidget(row, 3, nullptr);
 
 	QTableWidgetItem *itemState = new QTableWidgetItem(text);
-	itemState->setData(Qt::TextColorRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
+	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
 	// Signal an info state
 	itemState->setData(Qt::UserRole, 2);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -1003,7 +1080,7 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 		QPalette pal = progressBar->palette();
 		pal.setColor(QPalette::Highlight, Qt::darkGreen);
 		progressBar->setPalette(pal);
-	
+
 		_ui.table->setCellWidget(row, 3, progressBar);
 		_ui.table->update();
 	}

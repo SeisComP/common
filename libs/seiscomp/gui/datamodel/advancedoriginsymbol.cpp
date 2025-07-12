@@ -184,7 +184,6 @@ void AdvancedOriginSymbol::setConfidenceEllipse(double major, double minor,
 	// of theta for each point
 	double theta = 0;
 	double incTheta = 2 * M_PI / _confidenceEllipse.size();
-	double radius = rad2deg(KM_OF_DEGREE); // average earth radius in km
 	for ( QVector<Geo::GeoCoordinate>::iterator it = _confidenceEllipse.begin();
 	      it != _confidenceEllipse.end(); ++it, theta += incTheta ) {
 
@@ -200,7 +199,7 @@ void AdvancedOriginSymbol::setConfidenceEllipse(double major, double minor,
 
 		// convert point to geo coordinates with delta being the angular
 		// distance from the ellipse origin
-		double delta = dist / radius;
+		double delta = dist / (Math::Geo::WGS84_MEAN_RADIUS * 0.001);
 		double sinDelta, cosDelta;
 		sincos(delta, &sinDelta, &cosDelta);
 

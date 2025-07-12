@@ -96,6 +96,7 @@ class ConfigDBUpdater(seiscomp.client.Application):
         self.setConfigModuleName("")
         self.setPrimaryMessagingGroup(seiscomp.client.Protocol.LISTENER_GROUP)
 
+        self._moduleName = None
         self._outputFile = None
         self._createNotifier = False
         self._keyDir = None
@@ -109,6 +110,9 @@ class ConfigDBUpdater(seiscomp.client.Application):
         )
         self.commandline().addGroup("Output")
         self.commandline().addStringOption(
+            "Output", "module-name", "The module name to be used for the config module. If not given then the application name is being used or 'trunk' if output to a file is enabled"
+        )
+        self.commandline().addStringOption(
             "Output", "output,o", "If given, an output XML file is generated"
         )
         self.commandline().addOption(
@@ -121,6 +125,11 @@ class ConfigDBUpdater(seiscomp.client.Application):
     def validateParameters(self):
         if not seiscomp.client.Application.validateParameters(self):
             return False
+
+        try:
+            self._moduleName = self.commandline().optionString("module-name")
+        except:
+            pass
 
         try:
             self._outputFile = self.commandline().optionString("output")
@@ -235,7 +244,8 @@ class ConfigDBUpdater(seiscomp.client.Application):
             """Usage:
   bindings2cfg [options]
 
-Dump global and module bindings configurations"""
+Synchronize bindings from key files with processing system or output as
+configuration XML file"""
         )
 
         seiscomp.client.Application.printUsage(self)
@@ -275,12 +285,15 @@ Synchronize bindings configuration from key directory to a processing system
 
         configMod = None
         obsoleteConfigMods = []
+        moduleName = self._moduleName
 
         if self._outputFile is None or self._createNotifier == True:
-            moduleName = self.name()
+            if not moduleName:
+                moduleName = self.name()
             seiscomp.datamodel.Notifier.Enable()
         else:
-            moduleName = "trunk"
+            if not moduleName:
+                moduleName = "trunk"
 
         configID = f"Config/{moduleName}"
 

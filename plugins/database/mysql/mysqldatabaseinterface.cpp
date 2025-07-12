@@ -42,20 +42,16 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 IMPLEMENT_SC_CLASS_DERIVED(MySQLDatabase,
                            Seiscomp::IO::DatabaseInterface,
                            "mysql_database_interface");
 
-REGISTER_DB_INTERFACE(MySQLDatabase, "mysql");
-ADD_SC_PLUGIN(
-	"MySQL database driver",
-	"GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>",
-	1, 0, 0
-)
-
 
 MySQLDatabase::~MySQLDatabase() {
-	disconnect();
+	MySQLDatabase::disconnect();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -114,6 +110,15 @@ bool MySQLDatabase::open() {
 	               _handle->host_info);
 
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+MySQLDatabase::Backend MySQLDatabase::backend() const {
+	return MySQL;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -429,5 +434,16 @@ bool MySQLDatabase::escape(std::string &out, const std::string &in) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
+
+
+REGISTER_DB_INTERFACE(MySQLDatabase, "mysql");
+ADD_SC_PLUGIN(
+	"MySQL database driver",
+	"GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>",
+	1, 0, 0
+)
+
+
 }
 }

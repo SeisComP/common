@@ -140,7 +140,7 @@ class SC_SYSTEM_CORE_API KeyValues : public Core::BaseObject {
 		bool getString(std::string &value, const std::string &name) const;
 
 		/**
-		 * @brief Retrieves the string value of parameter _name_.
+		 * @brief Retrieves the int value of parameter _name_.
 		 * @param value The output value. It is only touched if true is returned.
 		 * @param name The parameters name
 		 * @return False if the parameter does not exist or if it could not be
@@ -149,7 +149,7 @@ class SC_SYSTEM_CORE_API KeyValues : public Core::BaseObject {
 		bool getInt(int &value, const std::string &name) const;
 
 		/**
-		 * @brief Retrieves the string value of parameter _name_.
+		 * @brief Retrieves the double value of parameter _name_.
 		 * @param value The output value. It is only touched if true is returned.
 		 * @param name The parameters name
 		 * @return False if the parameter does not exist or if it could not be
@@ -158,7 +158,7 @@ class SC_SYSTEM_CORE_API KeyValues : public Core::BaseObject {
 		bool getDouble(double &value, const std::string &name) const;
 
 		/**
-		 * @brief Retrieves the string value of parameter _name_.
+		 * @brief Retrieves the bool value of parameter _name_.
 		 * @param value The output value. It is only touched if true is returned.
 		 * @param name The parameters name
 		 * @return False if the parameter does not exist or if it could not be

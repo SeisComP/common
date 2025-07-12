@@ -47,15 +47,15 @@ template<int N, typename T>
 struct Swapper {
 	static T Take(const T& value) {
 		T ret;
-		register int i = 0;
-		register int j = N;
+		int i = 0;
+		int j = N;
 		const unsigned char* in = reinterpret_cast<const unsigned char*>(&value);
 		unsigned char* out = reinterpret_cast<unsigned char*>(&ret);
 		while ( --j ) {
 			out[j] = in[i];
 			++i;
 		}
-	
+
 		return ret;
 	}
 };
@@ -322,7 +322,7 @@ void BinaryArchive::read(std::vector<char>& value) {
 
 	value.resize(vsize);
 	vsize = vsize * sizeof(char);
-	size = _buf->sgetn((char*)&value[0], vsize);
+	size = _buf->sgetn((char*)value.data(), vsize);
 	if ( size != vsize ) {
 		SEISCOMP_ERROR("read(char*): expected %d bytes from stream, got %d", vsize, size);
 		setValidity(false);
@@ -351,7 +351,7 @@ void BinaryArchive::readIntVector(std::vector<T>& value) {
 
 	value.resize(vsize);
 	vsize = vsize * sizeof(int);
-	size = _buf->sgetn((char*)&value[0], vsize);
+	size = _buf->sgetn((char*)value.data(), vsize);
 	if ( size != vsize ) {
 		SEISCOMP_ERROR("read(int*): expected %d bytes from stream, got %d", vsize, size);
 		setValidity(false);
@@ -415,7 +415,7 @@ void BinaryArchive::read(std::vector<float>& value) {
 
 	value.resize(vsize);
 	vsize = vsize * sizeof(float);
-	size = _buf->sgetn((char*)&value[0], vsize);
+	size = _buf->sgetn((char*)value.data(), vsize);
 	if ( size != vsize ) {
 		SEISCOMP_ERROR("read(float*): expected %d bytes from stream, got %d", vsize, size);
 		setValidity(false);
@@ -443,7 +443,7 @@ void BinaryArchive::read(std::vector<double>& value) {
 
 	value.resize(vsize);
 	vsize = vsize * sizeof(double);
-	size = _buf->sgetn((char*)&value[0], vsize);
+	size = _buf->sgetn((char*)value.data(), vsize);
 	if ( size != vsize ) {
 		SEISCOMP_ERROR("read(double*): expected %d bytes from stream, got %d", vsize, size);
 		setValidity(false);
@@ -565,7 +565,7 @@ void BinaryArchive::read(std::vector<std::complex<double> >& value) {
 
 	value.resize(vsize);
 	vsize = vsize * sizeof(std::complex<double>);
-	size = _buf->sgetn((char*)&value[0], vsize);
+	size = _buf->sgetn((char*)value.data(), vsize);
 
 	if ( size != vsize ) {
 		SEISCOMP_ERROR("read(complex<double>*): expected %d bytes from stream, got %d", vsize, size);
@@ -597,7 +597,7 @@ void BinaryArchive::read(std::string& value) {
 	else {
 		value.resize(ssize);
 		ssize = ssize * sizeof(std::string::value_type);
-		size = _buf->sgetn((char*)&value[0], ssize);
+		size = _buf->sgetn((char*)value.data(), ssize);
 		if ( size != ssize ) {
 			SEISCOMP_ERROR("read(string): expected %d bytes from stream, got %d", ssize, size);
 			setValidity(false);
@@ -618,7 +618,7 @@ void BinaryArchive::read(Seiscomp::Core::Time& value) {
 		SEISCOMP_ERROR("read(datetime): expected %d bytes from stream, got %d", int(sizeof(tmpSeconds) + sizeof(tmpUSeconds)), size);
 		setValidity(false);
 	}
-	value = Seiscomp::Core::Time(tmpSeconds, tmpUSeconds);
+	value = Seiscomp::Core::Time::FromEpoch(tmpSeconds, tmpUSeconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -698,11 +698,10 @@ void BinaryArchive::write(double value) {
 template <typename T>
 void BinaryArchive::writeVector(std::vector<T>& value) {
 	if ( !_buf ) return;
-
 	int32_t vsize = value.size();
 	writeBytes(&vsize, sizeof(int32_t));
 	vsize *= sizeof(T);
-	writeBytes(&value[0], vsize);
+	writeBytes(value.data(), vsize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -836,7 +835,7 @@ void BinaryArchive::write(std::vector<std::complex<double> >& value) {
 	int vsize = value.size();
 	writeBytes(&vsize, sizeof(int));
 	vsize *= sizeof(std::complex<double>);
-	writeBytes(&value[0], vsize);
+	writeBytes(value.data(), vsize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -849,7 +848,7 @@ void BinaryArchive::write(std::string& value) {
 	int ssize = value.size();
 	writeBytes(&ssize, sizeof(int));
 	ssize *= sizeof(std::string::value_type);
-	writeBytes(&value[0], ssize);
+	writeBytes(value.data(), ssize);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -859,7 +858,7 @@ void BinaryArchive::write(std::string& value) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BinaryArchive::write(Seiscomp::Core::Time& value) {
 	if ( !_buf ) return;
-	dateint tmpSeconds = (dateint)value.seconds();
+	dateint tmpSeconds = (dateint)value.epochSeconds();
 	dateint tmpUSeconds = (dateint)value.microseconds();
 	writeBytes(&tmpSeconds, sizeof(tmpSeconds));
 	writeBytes(&tmpUSeconds, sizeof(tmpUSeconds));
@@ -981,7 +980,7 @@ void BinaryArchive::setClassName(const char* className) {
 		_classname = className;
 
 	if ( _classname.empty() ) return;
-	
+
 	int class_id = classId(_classname);
 	write(class_id);
 	if ( class_id < 0 )

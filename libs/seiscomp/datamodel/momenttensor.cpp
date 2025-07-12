@@ -42,7 +42,7 @@ static Seiscomp::Core::MetaEnumImpl<MomentTensorStatus> metaMomentTensorStatus;
 }
 
 
-MomentTensor::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+MomentTensor::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("derivedOriginID", "string", false, false, false, true, false, false, nullptr, &MomentTensor::setDerivedOriginID, &MomentTensor::derivedOriginID));
 	addProperty(Core::simpleProperty("momentMagnitudeID", "string", false, false, false, true, false, false, nullptr, &MomentTensor::setMomentMagnitudeID, &MomentTensor::momentMagnitudeID));
 	addProperty(objectProperty<RealQuantity>("scalarMoment", "RealQuantity", false, false, true, &MomentTensor::setScalarMoment, &MomentTensor::scalarMoment));
@@ -79,7 +79,7 @@ MomentTensor::MomentTensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor::MomentTensor(const MomentTensor& other)
+MomentTensor::MomentTensor(const MomentTensor &other)
 : PublicObject() {
 	*this = other;
 }
@@ -118,8 +118,8 @@ MomentTensor::~MomentTensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* MomentTensor::Create() {
-	MomentTensor* object = new MomentTensor();
+MomentTensor *MomentTensor::Create() {
+	MomentTensor *object = new MomentTensor();
 	return static_cast<MomentTensor*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -128,7 +128,7 @@ MomentTensor* MomentTensor::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* MomentTensor::Create(const std::string& publicID) {
+MomentTensor *MomentTensor::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -145,7 +145,7 @@ MomentTensor* MomentTensor::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* MomentTensor::Find(const std::string& publicID) {
+MomentTensor *MomentTensor::Find(const std::string& publicID) {
 	return MomentTensor::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -154,7 +154,7 @@ MomentTensor* MomentTensor::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::operator==(const MomentTensor& rhs) const {
+bool MomentTensor::operator==(const MomentTensor &rhs) const {
 	if ( _derivedOriginID != rhs._derivedOriginID ) return false;
 	if ( _momentMagnitudeID != rhs._momentMagnitudeID ) return false;
 	if ( _scalarMoment != rhs._scalarMoment ) return false;
@@ -181,7 +181,7 @@ bool MomentTensor::operator==(const MomentTensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::operator!=(const MomentTensor& rhs) const {
+bool MomentTensor::operator!=(const MomentTensor &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -190,7 +190,7 @@ bool MomentTensor::operator!=(const MomentTensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::equal(const MomentTensor& other) const {
+bool MomentTensor::equal(const MomentTensor &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -589,7 +589,7 @@ const CreationInfo& MomentTensor::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* MomentTensor::focalMechanism() const {
+FocalMechanism *MomentTensor::focalMechanism() const {
 	return static_cast<FocalMechanism*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -598,7 +598,7 @@ FocalMechanism* MomentTensor::focalMechanism() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor& MomentTensor::operator=(const MomentTensor& other) {
+MomentTensor &MomentTensor::operator=(const MomentTensor &other) {
 	PublicObject::operator=(other);
 	_derivedOriginID = other._derivedOriginID;
 	_momentMagnitudeID = other._momentMagnitudeID;
@@ -626,10 +626,11 @@ MomentTensor& MomentTensor::operator=(const MomentTensor& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::assign(Object* other) {
-	MomentTensor* otherMomentTensor = MomentTensor::Cast(other);
-	if ( other == nullptr )
+bool MomentTensor::assign(Object *other) {
+	MomentTensor *otherMomentTensor = MomentTensor::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherMomentTensor;
 
@@ -641,11 +642,13 @@ bool MomentTensor::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool MomentTensor::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	FocalMechanism* focalMechanism = FocalMechanism::Cast(parent);
+	FocalMechanism *focalMechanism = FocalMechanism::Cast(parent);
 	if ( focalMechanism != nullptr )
 		return focalMechanism->add(this);
 
@@ -658,11 +661,13 @@ bool MomentTensor::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool MomentTensor::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	FocalMechanism* focalMechanism = FocalMechanism::Cast(object);
+	FocalMechanism *focalMechanism = FocalMechanism::Cast(object);
 	if ( focalMechanism != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -670,7 +675,7 @@ bool MomentTensor::detachFrom(PublicObject* object) {
 			return focalMechanism->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			MomentTensor* child = focalMechanism->findMomentTensor(publicID());
+			MomentTensor *child = focalMechanism->findMomentTensor(publicID());
 			if ( child != nullptr )
 				return focalMechanism->remove(child);
 			else {
@@ -690,8 +695,9 @@ bool MomentTensor::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensor::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -701,8 +707,8 @@ bool MomentTensor::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* MomentTensor::clone() const {
-	MomentTensor* clonee = new MomentTensor();
+Object *MomentTensor::clone() const {
+	MomentTensor *clonee = new MomentTensor();
 	*clonee = *this;
 	return clonee;
 }
@@ -712,10 +718,10 @@ Object* MomentTensor::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool MomentTensor::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -726,9 +732,9 @@ bool MomentTensor::updateChild(Object* child) {
 
 	// Do not know how to fetch child of type DataUsed without an index
 
-	MomentTensorPhaseSetting* momentTensorPhaseSettingChild = MomentTensorPhaseSetting::Cast(child);
+	MomentTensorPhaseSetting *momentTensorPhaseSettingChild = MomentTensorPhaseSetting::Cast(child);
 	if ( momentTensorPhaseSettingChild != nullptr ) {
-		MomentTensorPhaseSetting* momentTensorPhaseSettingElement = momentTensorPhaseSetting(momentTensorPhaseSettingChild->index());
+		MomentTensorPhaseSetting *momentTensorPhaseSettingElement = momentTensorPhaseSetting(momentTensorPhaseSettingChild->index());
 		if ( momentTensorPhaseSettingElement != nullptr ) {
 			*momentTensorPhaseSettingElement = *momentTensorPhaseSettingChild;
 			momentTensorPhaseSettingElement->update();
@@ -737,9 +743,9 @@ bool MomentTensor::updateChild(Object* child) {
 		return false;
 	}
 
-	MomentTensorStationContribution* momentTensorStationContributionChild = MomentTensorStationContribution::Cast(child);
+	MomentTensorStationContribution *momentTensorStationContributionChild = MomentTensorStationContribution::Cast(child);
 	if ( momentTensorStationContributionChild != nullptr ) {
-		MomentTensorStationContribution* momentTensorStationContributionElement
+		MomentTensorStationContribution *momentTensorStationContributionElement
 			= MomentTensorStationContribution::Cast(PublicObject::Find(momentTensorStationContributionChild->publicID()));
 		if ( momentTensorStationContributionElement && momentTensorStationContributionElement->parent() == this ) {
 			*momentTensorStationContributionElement = *momentTensorStationContributionChild;
@@ -757,7 +763,7 @@ bool MomentTensor::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensor::accept(Visitor* visitor) {
+void MomentTensor::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -791,7 +797,7 @@ size_t MomentTensor::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* MomentTensor::comment(size_t i) const {
+Comment *MomentTensor::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -800,10 +806,12 @@ Comment* MomentTensor::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* MomentTensor::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *MomentTensor::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -813,9 +821,10 @@ Comment* MomentTensor::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::add(Comment* comment) {
-	if ( comment == nullptr )
+bool MomentTensor::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -852,9 +861,10 @@ bool MomentTensor::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool MomentTensor::remove(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(Comment*) -> element has another parent");
@@ -870,8 +880,7 @@ bool MomentTensor::remove(Comment* comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -894,8 +903,7 @@ bool MomentTensor::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -911,9 +919,12 @@ bool MomentTensor::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool MomentTensor::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -931,7 +942,7 @@ size_t MomentTensor::dataUsedCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataUsed* MomentTensor::dataUsed(size_t i) const {
+DataUsed *MomentTensor::dataUsed(size_t i) const {
 	return _dataUseds[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -940,11 +951,11 @@ DataUsed* MomentTensor::dataUsed(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-DataUsed* MomentTensor::findDataUsed(DataUsed* dataUsed) const {
-	std::vector<DataUsedPtr>::const_iterator it;
-	for ( it = _dataUseds.begin(); it != _dataUseds.end(); ++it ) {
-		if ( *dataUsed == **it )
-			return (*it).get();
+DataUsed *MomentTensor::findDataUsed(DataUsed *dataUsed) const {
+	for ( const auto &elem : _dataUseds ) {
+		if ( *dataUsed == *elem ) {
+			return elem.get();
+		}
 	}
 
 	return nullptr;
@@ -955,9 +966,10 @@ DataUsed* MomentTensor::findDataUsed(DataUsed* dataUsed) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::add(DataUsed* dataUsed) {
-	if ( dataUsed == nullptr )
+bool MomentTensor::add(DataUsed *dataUsed) {
+	if ( !dataUsed ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( dataUsed->parent() != nullptr ) {
@@ -986,9 +998,10 @@ bool MomentTensor::add(DataUsed* dataUsed) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::remove(DataUsed* dataUsed) {
-	if ( dataUsed == nullptr )
+bool MomentTensor::remove(DataUsed *dataUsed) {
+	if ( !dataUsed ) {
 		return false;
+	}
 
 	if ( dataUsed->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(DataUsed*) -> element has another parent");
@@ -1004,8 +1017,7 @@ bool MomentTensor::remove(DataUsed* dataUsed) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1028,8 +1040,7 @@ bool MomentTensor::removeDataUsed(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_dataUseds[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _dataUseds[i].get());
 	}
 
 	_dataUseds[i]->setParent(nullptr);
@@ -1054,7 +1065,7 @@ size_t MomentTensor::momentTensorPhaseSettingCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorPhaseSetting* MomentTensor::momentTensorPhaseSetting(size_t i) const {
+MomentTensorPhaseSetting *MomentTensor::momentTensorPhaseSetting(size_t i) const {
 	return _momentTensorPhaseSettings[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1063,10 +1074,12 @@ MomentTensorPhaseSetting* MomentTensor::momentTensorPhaseSetting(size_t i) const
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorPhaseSetting* MomentTensor::momentTensorPhaseSetting(const MomentTensorPhaseSettingIndex& i) const {
-	for ( std::vector<MomentTensorPhaseSettingPtr>::const_iterator it = _momentTensorPhaseSettings.begin(); it != _momentTensorPhaseSettings.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+MomentTensorPhaseSetting *MomentTensor::momentTensorPhaseSetting(const MomentTensorPhaseSettingIndex &i) const {
+	for ( const auto &elem : _momentTensorPhaseSettings ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1076,9 +1089,10 @@ MomentTensorPhaseSetting* MomentTensor::momentTensorPhaseSetting(const MomentTen
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::add(MomentTensorPhaseSetting* momentTensorPhaseSetting) {
-	if ( momentTensorPhaseSetting == nullptr )
+bool MomentTensor::add(MomentTensorPhaseSetting *momentTensorPhaseSetting) {
+	if ( !momentTensorPhaseSetting ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( momentTensorPhaseSetting->parent() != nullptr ) {
@@ -1115,9 +1129,10 @@ bool MomentTensor::add(MomentTensorPhaseSetting* momentTensorPhaseSetting) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::remove(MomentTensorPhaseSetting* momentTensorPhaseSetting) {
-	if ( momentTensorPhaseSetting == nullptr )
+bool MomentTensor::remove(MomentTensorPhaseSetting *momentTensorPhaseSetting) {
+	if ( !momentTensorPhaseSetting ) {
 		return false;
+	}
 
 	if ( momentTensorPhaseSetting->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(MomentTensorPhaseSetting*) -> element has another parent");
@@ -1133,8 +1148,7 @@ bool MomentTensor::remove(MomentTensorPhaseSetting* momentTensorPhaseSetting) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1157,8 +1171,7 @@ bool MomentTensor::removeMomentTensorPhaseSetting(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensorPhaseSettings[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensorPhaseSettings[i].get());
 	}
 
 	_momentTensorPhaseSettings[i]->setParent(nullptr);
@@ -1174,9 +1187,12 @@ bool MomentTensor::removeMomentTensorPhaseSetting(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::removeMomentTensorPhaseSetting(const MomentTensorPhaseSettingIndex& i) {
-	MomentTensorPhaseSetting* object = momentTensorPhaseSetting(i);
-	if ( object == nullptr ) return false;
+bool MomentTensor::removeMomentTensorPhaseSetting(const MomentTensorPhaseSettingIndex &i) {
+	MomentTensorPhaseSetting *object = momentTensorPhaseSetting(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1194,7 +1210,7 @@ size_t MomentTensor::momentTensorStationContributionCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensor::momentTensorStationContribution(size_t i) const {
+MomentTensorStationContribution *MomentTensor::momentTensorStationContribution(size_t i) const {
 	return _momentTensorStationContributions[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1203,10 +1219,12 @@ MomentTensorStationContribution* MomentTensor::momentTensorStationContribution(s
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensor::findMomentTensorStationContribution(const std::string& publicID) const {
-	for ( std::vector<MomentTensorStationContributionPtr>::const_iterator it = _momentTensorStationContributions.begin(); it != _momentTensorStationContributions.end(); ++it )
-		if ( (*it)->publicID() == publicID )
-			return (*it).get();
+MomentTensorStationContribution *MomentTensor::findMomentTensorStationContribution(const std::string& publicID) const {
+	for ( const auto &elem : _momentTensorStationContributions ) {
+		if ( elem->publicID() == publicID ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -1216,9 +1234,10 @@ MomentTensorStationContribution* MomentTensor::findMomentTensorStationContributi
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::add(MomentTensorStationContribution* momentTensorStationContribution) {
-	if ( momentTensorStationContribution == nullptr )
+bool MomentTensor::add(MomentTensorStationContribution *momentTensorStationContribution) {
+	if ( !momentTensorStationContribution ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( momentTensorStationContribution->parent() != nullptr ) {
@@ -1227,17 +1246,20 @@ bool MomentTensor::add(MomentTensorStationContribution* momentTensorStationContr
 	}
 
 	if ( PublicObject::IsRegistrationEnabled() ) {
-		MomentTensorStationContribution* momentTensorStationContributionCached = MomentTensorStationContribution::Find(momentTensorStationContribution->publicID());
+		MomentTensorStationContribution *momentTensorStationContributionCached = MomentTensorStationContribution::Find(momentTensorStationContribution->publicID());
 		if ( momentTensorStationContributionCached ) {
 			if ( momentTensorStationContributionCached->parent() ) {
-				if ( momentTensorStationContributionCached->parent() == this )
+				if ( momentTensorStationContributionCached->parent() == this ) {
 					SEISCOMP_ERROR("MomentTensor::add(MomentTensorStationContribution*) -> element with same publicID has been added already");
-				else
+				}
+				else {
 					SEISCOMP_ERROR("MomentTensor::add(MomentTensorStationContribution*) -> element with same publicID has been added already to another object");
+				}
 				return false;
 			}
-			else
+			else {
 				momentTensorStationContribution = momentTensorStationContributionCached;
+			}
 		}
 	}
 
@@ -1262,9 +1284,10 @@ bool MomentTensor::add(MomentTensorStationContribution* momentTensorStationContr
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensor::remove(MomentTensorStationContribution* momentTensorStationContribution) {
-	if ( momentTensorStationContribution == nullptr )
+bool MomentTensor::remove(MomentTensorStationContribution *momentTensorStationContribution) {
+	if ( !momentTensorStationContribution ) {
 		return false;
+	}
 
 	if ( momentTensorStationContribution->parent() != this ) {
 		SEISCOMP_ERROR("MomentTensor::remove(MomentTensorStationContribution*) -> element has another parent");
@@ -1280,8 +1303,7 @@ bool MomentTensor::remove(MomentTensorStationContribution* momentTensorStationCo
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -1304,8 +1326,7 @@ bool MomentTensor::removeMomentTensorStationContribution(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_momentTensorStationContributions[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _momentTensorStationContributions[i].get());
 	}
 
 	_momentTensorStationContributions[i]->setParent(nullptr);
@@ -1321,7 +1342,7 @@ bool MomentTensor::removeMomentTensorStationContribution(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensor::serialize(Archive& ar) {
+void MomentTensor::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

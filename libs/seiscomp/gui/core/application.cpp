@@ -41,6 +41,9 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QSplashScreen>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QTextCodec>
+#endif
 
 #include <set>
 #include <iostream>
@@ -310,7 +313,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	// because it uses SCApp pointer
 	_scheme = new Scheme();
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+#endif
 
 	// Disable group separator (thousand separator) in output and input. E.g.,
 	// QLineEdits using a QDoubleValidator will no longer accept a comma.
@@ -410,31 +415,59 @@ Application::Type Application::type() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Application::copyToClipboard(const QAbstractItemView *view,
-                                  const QHeaderView *header) {
+QString Application::createCSV(const QAbstractItemView* view,
+                               const QHeaderView *header) {
 	QAbstractItemModel *model = view->model();
 	QModelIndexList items = view->selectionModel()->selectedRows();
 	QString csv;
-	int previousRow = -1;
 	int columns = model->columnCount();
 
-	for ( QModelIndexList::const_iterator it = items.constBegin();
-	      it != items.constEnd(); ++it ) {
-		if ( previousRow >= 0 )
-			csv += '\n';
-
-		int c = 0;
-		for ( int i = 0; i < columns; ++i ) {
-			if ( header && header->isSectionHidden(i) ) continue;
-			if ( c++ > 0 ) csv += ';';
-			csv += model->data(it->sibling(it->row(), i)).toString();
-		}
-
-		previousRow = it->row();
+	if ( items.empty() ) {
+		return csv;
 	}
 
+	// Add header
+	int c = 0;
+	for ( int i = 0; i < columns; ++i ) {
+		if ( header && header->isSectionHidden(i) ) {
+			continue;
+		}
+
+		csv += c++ == 0 ? "# " : ";";
+		csv += model->headerData(i, Qt::Horizontal).toString();
+	}
+
+	for ( auto it = items.constBegin(); it != items.constEnd(); ++it ) {
+		csv += '\n';
+
+		c = 0;
+		for ( int i = 0; i < columns; ++i ) {
+			if ( header && header->isSectionHidden(i) ) {
+				continue;
+			}
+
+			if ( c++ > 0 ) {
+				csv += ';';
+			}
+
+			csv += model->data(it->sibling(it->row(), i)).toString();
+		}
+	}
+
+	return csv;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::copyToClipboard(const QAbstractItemView *view,
+                                  const QHeaderView *header) {
 	QClipboard *cb = QApplication::clipboard();
-	if ( cb ) cb->setText(csv);
+	if ( cb ) {
+		cb->setText(createCSV(view, header));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -666,11 +699,13 @@ QColor Application::configGetColor(const std::string& query,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Gradient Application::configGetColorGradient(const std::string& query,
                                              const Gradient& base) const {
-	const Seiscomp::Config::Config &config = configuration();
-	bool error = false;
-
-	std::vector<std::string> colors = config.getStrings(query, &error);
-	if ( error ) return base;
+	decltype(configGetStrings(query)) colors;
+	try {
+		colors = configGetStrings(query);
+	}
+	catch ( ... ) {
+		return base;
+	}
 
 	Gradient grad;
 	for ( size_t i = 0; i < colors.size(); ++i ) {
@@ -679,24 +714,28 @@ Gradient Application::configGetColorGradient(const std::string& query,
 
 		std::vector<std::string> toks;
 		size_t size = Core::split(toks, colors[i].c_str(), ":");
-		if ( size < 2 || size > 3 ) {
+		if ( (size < 2) || (size > 3) ) {
 			SEISCOMP_ERROR("Wrong format of color entry %lu in '%s'",
-			               (unsigned long)i, query.c_str());
+			               i, query.c_str());
 			return base;
 		}
 
 		if ( !Core::fromString(value, toks[0]) ) {
 			SEISCOMP_ERROR("Wrong value format of color entry %lu in '%s'",
-			               (unsigned long)i, query.c_str());
+			               i, query.c_str());
 			return base;
 		}
 
 		bool ok;
 		color = readColor("", toks[1], color, &ok);
-		if ( !ok ) return base;
+		if ( !ok ) {
+			return base;
+		}
 
 		QString text;
-		if ( size == 3 ) text = QString::fromStdString(toks[2]);
+		if ( size == 3 ) {
+			text = QString::fromStdString(toks[2]);
+		}
 
 		grad.setColorAt(value, color, text);
 	}
@@ -1210,11 +1249,13 @@ void Application::handleInterrupt(int signal) throw() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
-	if ( _connection && _connection->isConnected() )
+	if ( _connection && _connection->isConnected() ) {
 		startMessageThread();
+	}
+
 	connect(_app, SIGNAL(lastWindowClosed()), this, SLOT(closedLastWindow()));
 	connect(&_timerSOH, SIGNAL(timeout()), this, SLOT(timerSOH()));
-	_sohLastUpdate = Core::Time::LocalTime();
+	_sohLastUpdate = Core::Time::Now();
 	_timerSOH.start();
 
 	Client::Application::exit(QApplication::exec());
@@ -1579,8 +1620,8 @@ void Application::messagesAvailable() {
 
 		CommandMessage *cmd = CommandMessage::Cast(msg);
 		if ( cmd && _filterCommands ) {
-			QRegExp re(cmd->client().c_str());
-			if ( re.exactMatch(Client::Application::_settings.messaging.user.c_str()) ) {
+			QRegularExpression re(cmd->client().c_str());
+			if ( re.match(Client::Application::_settings.messaging.user.c_str()).hasMatch() ) {
 				if ( cmd->command() == CM_SHOW_NOTIFICATION ) {
 					if ( !cmd->parameter().empty() ) {
 						NotificationLevel nl = NL_UNDEFINED;

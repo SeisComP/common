@@ -30,12 +30,11 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_msbb : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_msbb);
-
 	public:
 		MagnitudeProcessor_msbb();
 
 	protected:
+		void setDefaults() override {}
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
 		                        double delta, double depth,

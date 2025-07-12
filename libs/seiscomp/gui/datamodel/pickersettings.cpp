@@ -32,8 +32,8 @@ namespace {
 
 class FilterModel : public QAbstractListModel {
 	public:
-		typedef QPair<QString, QString> FilterEntry;
-		typedef QVector<FilterEntry> FilterList;
+		using FilterEntry = QPair<QString, QString>;
+		using FilterList = QVector<FilterEntry>;
 
 		FilterModel(FilterList &data, QObject *parent = 0)
 		: QAbstractListModel(parent), _data(data) {}
@@ -50,7 +50,7 @@ class FilterModel : public QAbstractListModel {
 		                    int role = Qt::DisplayRole) const {
 			if ( role != Qt::DisplayRole )
 				return QVariant();
-			
+
 			if ( orientation == Qt::Horizontal ) {
 				switch ( section ) {
 					case 0:
@@ -73,11 +73,13 @@ class FilterModel : public QAbstractListModel {
 		}
 
 		QVariant data(const QModelIndex &index, int role) const {
-			if ( !index.isValid() )
+			if ( !index.isValid() ) {
 				return QVariant();
+			}
 
-			if ( index.row() >= _data.size() )
+			if ( index.row() >= _data.size() ) {
 				return QVariant();
+			}
 
 			if ( role == Qt::DisplayRole || role == Qt::EditRole ) {
 				switch ( index.column() ) {
@@ -87,7 +89,7 @@ class FilterModel : public QAbstractListModel {
 						return _data[index.row()].second;
 				}
 			}
-			
+
 			return QVariant();
 		}
 
@@ -117,7 +119,7 @@ class FilterModel : public QAbstractListModel {
 
 			for ( int row = 0; row < rows; ++row )
 				_data.insert(position, FilterList::value_type());
-			
+
 			endInsertRows();
 			return true;
 		}
@@ -248,6 +250,7 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.cbIgnoreUnconfiguredStations->setChecked(_pickerConfig.ignoreUnconfiguredStations);
 	_ui.cbAllComponents->setChecked(_pickerConfig.loadAllComponents);
 	_ui.cbLoadAllPicks->setChecked(_pickerConfig.loadAllPicks);
+	_ui.cbShowSensorUnits->setChecked(_pickerConfig.showDataInSensorUnit);
 	_ui.cbStrongMotion->setChecked(_pickerConfig.loadStrongMotionData);
 	_ui.cbLimitStationCount->setChecked(_pickerConfig.limitStations);
 	_ui.spinLimitStationCount->setValue(_pickerConfig.limitStationCount);
@@ -259,11 +262,14 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.cbRemoveAllAutomaticPicks->setChecked(_pickerConfig.removeAutomaticPicks);
 
 	_ui.cbUsePerStreamTimeWindow->setChecked(_pickerConfig.usePerStreamTimeWindows);
-	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.preOffset.seconds()));
+	_ui.preTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.preTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.preOffset.seconds()).addMSecs(_pickerConfig.preOffset.microseconds() / 1000));
 	adjustPreSlider(_ui.preTimeEdit->time());
-	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()));
+	_ui.postTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.postTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.postOffset.seconds()).addMSecs(_pickerConfig.postOffset.microseconds() / 1000));
 	adjustPostSlider(_ui.postTimeEdit->time());
-	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()));
+	_ui.minimumLengthTimeEdit->setDisplayFormat("hh:mm:ss.zzz");
+	_ui.minimumLengthTimeEdit->setTime(QTime(0, 0, 0, 0).addSecs(_pickerConfig.minimumTimeWindow.seconds()).addMSecs(_pickerConfig.minimumTimeWindow.microseconds() / 1000));
 
 	_ui.slWaveformAlignment->setValue(_pickerConfig.alignmentPosition*100);
 	_ui.waveformAlignmentEdit->setValue(_pickerConfig.alignmentPosition*100);
@@ -297,8 +303,9 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 
 	PickerView::Config::UncertaintyProfiles::iterator it;
 	for ( it = _pickerConfig.uncertaintyProfiles.begin();
-	      it != _pickerConfig.uncertaintyProfiles.end(); ++it )
+	      it != _pickerConfig.uncertaintyProfiles.end(); ++it ) {
 		_ui.listPickUncertainties->addItem(it.key());
+	}
 	_ui.listPickUncertainties->setCurrentIndex(0);
 
 	_ui.listPickUncertainties->setEnabled(_ui.listPickUncertainties->count() > 0);
@@ -406,12 +413,16 @@ void PickerSettings::addPickFilter() {
 
 void PickerSettings::removePickFilter() {
 	QModelIndex index = _ui.tableFilter->currentIndex();
-	if ( !index.isValid() ) return;
+	if ( !index.isValid() ) {
+		return;
+	}
 	_pickerFilterModel->removeRows(index.row(), 1);
-	if ( index.row() >= _pickerFilterModel->rowCount() )
+	if ( index.row() >= _pickerFilterModel->rowCount() ) {
 		_ui.tableFilter->setCurrentIndex(_pickerFilterModel->index(_pickerFilterModel->rowCount()-1, index.column()));
-	else
+	}
+	else {
 		_ui.tableFilter->setCurrentIndex(index);
+	}
 }
 
 
@@ -421,7 +432,7 @@ void PickerSettings::movePickFilterUp() {
 	if ( row > 0 ) {
 		PickerView::Config::FilterList::value_type prev = _pickerConfig.filters[row-1];
 		PickerView::Config::FilterList::value_type curr = _pickerConfig.filters[row];
-		
+
 		_pickerFilterModel->setData(_pickerFilterModel->index(row-1, 0), curr.first, Qt::EditRole);
 		_pickerFilterModel->setData(_pickerFilterModel->index(row-1, 1), curr.second, Qt::EditRole);
 
@@ -439,7 +450,7 @@ void PickerSettings::movePickFilterDown() {
 	if ( row < _pickerFilterModel->rowCount()-1 ) {
 		PickerView::Config::FilterList::value_type next = _pickerConfig.filters[row+1];
 		PickerView::Config::FilterList::value_type curr = _pickerConfig.filters[row];
-		
+
 		_pickerFilterModel->setData(_pickerFilterModel->index(row+1, 0), curr.first, Qt::EditRole);
 		_pickerFilterModel->setData(_pickerFilterModel->index(row+1, 1), curr.second, Qt::EditRole);
 
@@ -459,12 +470,16 @@ void PickerSettings::addAmplitudeFilter() {
 
 void PickerSettings::removeAmplitudeFilter() {
 	QModelIndex index = _ui.tableAFilter->currentIndex();
-	if ( !index.isValid() ) return;
+	if ( !index.isValid() ) {
+		return;
+	}
 	_amplitudeFilterModel->removeRows(index.row(), 1);
-	if ( index.row() >= _amplitudeFilterModel->rowCount() )
+	if ( index.row() >= _amplitudeFilterModel->rowCount() ) {
 		_ui.tableAFilter->setCurrentIndex(_amplitudeFilterModel->index(_amplitudeFilterModel->rowCount()-1, index.column()));
-	else
+	}
+	else {
 		_ui.tableAFilter->setCurrentIndex(index);
+	}
 }
 
 
@@ -474,7 +489,7 @@ void PickerSettings::moveAmplitudeFilterUp() {
 	if ( row > 0 ) {
 		AmplitudeView::Config::FilterList::value_type prev = _amplitudeConfig.filters[row-1];
 		AmplitudeView::Config::FilterList::value_type curr = _amplitudeConfig.filters[row];
-		
+
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row-1, 0), curr.first, Qt::EditRole);
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row-1, 1), curr.second, Qt::EditRole);
 
@@ -492,7 +507,7 @@ void PickerSettings::moveAmplitudeFilterDown() {
 	if ( row < _amplitudeFilterModel->rowCount()-1 ) {
 		AmplitudeView::Config::FilterList::value_type next = _amplitudeConfig.filters[row+1];
 		AmplitudeView::Config::FilterList::value_type curr = _amplitudeConfig.filters[row];
-		
+
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row+1, 0), curr.first, Qt::EditRole);
 		_amplitudeFilterModel->setData(_amplitudeFilterModel->index(row+1, 1), curr.second, Qt::EditRole);
 
@@ -511,6 +526,7 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.ignoreUnconfiguredStations = _ui.cbIgnoreUnconfiguredStations->isChecked();
 	_pickerConfig.loadAllComponents = _ui.cbAllComponents->isChecked();
 	_pickerConfig.loadAllPicks = _ui.cbLoadAllPicks->isChecked();
+	_pickerConfig.showDataInSensorUnit = _ui.cbShowSensorUnits->isChecked();
 	_pickerConfig.loadStrongMotionData = _ui.cbStrongMotion->isChecked();
 	_pickerConfig.limitStations = _ui.cbLimitStationCount->isChecked();
 	_pickerConfig.limitStationCount = _ui.spinLimitStationCount->value();
@@ -520,15 +536,20 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.removeAutomaticPicks = _ui.cbRemoveAllAutomaticPicks->isChecked();
 
 	_pickerConfig.usePerStreamTimeWindows = _ui.cbUsePerStreamTimeWindow->isChecked();
-	_pickerConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preTimeEdit->time()));
-	_pickerConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postTimeEdit->time()));
-	_pickerConfig.minimumTimeWindow = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.minimumLengthTimeEdit->time()));
+	int msecs = QTime(0, 0, 0, 0).msecsTo(_ui.preTimeEdit->time());
+	_pickerConfig.preOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
+	msecs = QTime(0, 0, 0, 0).msecsTo(_ui.postTimeEdit->time());
+	_pickerConfig.postOffset = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);
+	msecs = QTime(0, 0, 0, 0).msecsTo(_ui.minimumLengthTimeEdit->time());
+	_pickerConfig.minimumTimeWindow = Core::TimeSpan(msecs / 1000, (msecs % 1000) * 1000);;
 
 	_pickerConfig.alignmentPosition = _ui.slWaveformAlignment->value()*0.01;
-	if ( _pickerConfig.alignmentPosition < 0 )
+	if ( _pickerConfig.alignmentPosition < 0 ) {
 		_pickerConfig.alignmentPosition = 0;
-	else if ( _pickerConfig.alignmentPosition > 1 )
+	}
+	else if ( _pickerConfig.alignmentPosition > 1 ) {
 		_pickerConfig.alignmentPosition = 1;
+	}
 
 	_pickerConfig.defaultAddStationsDistance = _ui.spinAddStationsDistance->value();
 	_pickerConfig.hideStationsWithoutData = _ui.cbHideStationsWithoutData->isChecked();
@@ -538,15 +559,19 @@ PickerView::Config PickerSettings::pickerConfig() const {
 
 	_pickerConfig.uncertaintyProfile = _ui.listPickUncertainties->currentText();
 
-	if ( _ui.cbRepickerStart->isChecked() )
+	if ( _ui.cbRepickerStart->isChecked() ) {
 		_pickerConfig.repickerSignalStart = _ui.editRepickerStart->value();
-	else
+	}
+	else {
 		_pickerConfig.repickerSignalStart = Core::None;
+	}
 
-	if ( _ui.cbRepickerEnd->isChecked() )
+	if ( _ui.cbRepickerEnd->isChecked() ) {
 		_pickerConfig.repickerSignalEnd = _ui.editRepickerEnd->value();
-	else
+	}
+	else {
 		_pickerConfig.repickerSignalEnd = Core::None;
+	}
 
 	_pickerConfig.integrationFilter = _ui.editIntegrationPreFilter->text();
 	_pickerConfig.onlyApplyIntegrationFilterOnce = _ui.checkIntegrationPreFilterOnce->isChecked();
@@ -557,12 +582,11 @@ PickerView::Config PickerSettings::pickerConfig() const {
 
 AmplitudeView::Config PickerSettings::amplitudeConfig() const {
 	_amplitudeConfig.recordURL = _ui.editRecordSource->text();
-	_amplitudeConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preAmplitudeTimeEdit->time()));
-	_amplitudeConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postAmplitudeTimeEdit->time()));
+	_amplitudeConfig.preOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.preAmplitudeTimeEdit->time()), 0);
+	_amplitudeConfig.postOffset = Core::TimeSpan(QTime(0, 0, 0, 0).secsTo(_ui.postAmplitudeTimeEdit->time()), 0);
 	_amplitudeConfig.defaultAddStationsDistance = _ui.spinAddStationsDistance->value();
 	_amplitudeConfig.hideStationsWithoutData = _ui.cbHideStationsWithoutData->isChecked();
 	_amplitudeConfig.loadStrongMotionData = _ui.cbStrongMotion->isChecked();
-
 	return _amplitudeConfig;
 }
 

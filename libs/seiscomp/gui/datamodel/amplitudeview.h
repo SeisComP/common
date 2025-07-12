@@ -164,6 +164,7 @@ class SC_GUI_API AmplitudeRecordLabel : public StandardRecordLabel {
 	public:
 		double                                  latitude;
 		double                                  longitude;
+		double                                  elevation;
 		const DataModel::SensorLocation        *location;
 
 		Core::TimeWindow                        timeWindow;
@@ -244,6 +245,9 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		bool setConfig(const Config &c, QString *error = nullptr);
 
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
+
+		void setAuxiliaryChannels(const std::vector<std::string> &patterns,
+		                          double minimumDistance, double maximumDistance);
 
 		//! Sets an origin and inserts the traces for each arrival
 		//! in the view.
@@ -390,8 +394,8 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void openConnectionInfo(const QPoint &);
 
-		void ttInterfaceChanged(QString);
-		void ttTableChanged(QString);
+		void ttInterfaceChanged(int);
+		void ttTableChanged(int);
 
 
 	protected:

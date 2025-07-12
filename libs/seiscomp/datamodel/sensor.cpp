@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Sensor, PublicObject, "Sensor");
 
 
-Sensor::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Sensor::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &Sensor::setName, &Sensor::name));
 	addProperty(Core::simpleProperty("description", "string", false, false, false, false, false, false, nullptr, &Sensor::setDescription, &Sensor::description));
 	addProperty(Core::simpleProperty("model", "string", false, false, false, false, false, false, nullptr, &Sensor::setModel, &Sensor::model));
@@ -69,7 +69,7 @@ SensorIndex::SensorIndex(const std::string& name_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorIndex::SensorIndex(const SensorIndex& idx) {
+SensorIndex::SensorIndex(const SensorIndex &idx) {
 	name = idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -78,7 +78,7 @@ SensorIndex::SensorIndex(const SensorIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorIndex::operator==(const SensorIndex& idx) const {
+bool SensorIndex::operator==(const SensorIndex &idx) const {
 	return name == idx.name;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -87,7 +87,7 @@ bool SensorIndex::operator==(const SensorIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SensorIndex::operator!=(const SensorIndex& idx) const {
+bool SensorIndex::operator!=(const SensorIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ Sensor::Sensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor::Sensor(const Sensor& other)
+Sensor::Sensor(const Sensor &other)
 : PublicObject() {
 	*this = other;
 }
@@ -134,8 +134,8 @@ Sensor::~Sensor() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Sensor::Create() {
-	Sensor* object = new Sensor();
+Sensor *Sensor::Create() {
+	Sensor *object = new Sensor();
 	return static_cast<Sensor*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ Sensor* Sensor::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Sensor::Create(const std::string& publicID) {
+Sensor *Sensor::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -161,7 +161,7 @@ Sensor* Sensor::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor* Sensor::Find(const std::string& publicID) {
+Sensor *Sensor::Find(const std::string& publicID) {
 	return Sensor::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -170,7 +170,7 @@ Sensor* Sensor::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::operator==(const Sensor& rhs) const {
+bool Sensor::operator==(const Sensor &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _description != rhs._description ) return false;
 	if ( _model != rhs._model ) return false;
@@ -189,7 +189,7 @@ bool Sensor::operator==(const Sensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::operator!=(const Sensor& rhs) const {
+bool Sensor::operator!=(const Sensor &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -198,7 +198,7 @@ bool Sensor::operator!=(const Sensor& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::equal(const Sensor& other) const {
+bool Sensor::equal(const Sensor &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -404,7 +404,7 @@ const Blob& Sensor::remark() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const SensorIndex& Sensor::index() const {
+const SensorIndex &Sensor::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -413,8 +413,11 @@ const SensorIndex& Sensor::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::equalIndex(const Sensor* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Sensor::equalIndex(const Sensor *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -423,7 +426,7 @@ bool Sensor::equalIndex(const Sensor* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Inventory* Sensor::inventory() const {
+Inventory *Sensor::inventory() const {
 	return static_cast<Inventory*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -432,7 +435,7 @@ Inventory* Sensor::inventory() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Sensor& Sensor::operator=(const Sensor& other) {
+Sensor &Sensor::operator=(const Sensor &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_description = other._description;
@@ -452,10 +455,11 @@ Sensor& Sensor::operator=(const Sensor& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::assign(Object* other) {
-	Sensor* otherSensor = Sensor::Cast(other);
-	if ( other == nullptr )
+bool Sensor::assign(Object *other) {
+	Sensor *otherSensor = Sensor::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherSensor;
 
@@ -467,11 +471,13 @@ bool Sensor::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Sensor::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(parent);
+	Inventory *inventory = Inventory::Cast(parent);
 	if ( inventory != nullptr )
 		return inventory->add(this);
 
@@ -484,11 +490,13 @@ bool Sensor::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Sensor::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Inventory* inventory = Inventory::Cast(object);
+	Inventory *inventory = Inventory::Cast(object);
 	if ( inventory != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -496,7 +504,7 @@ bool Sensor::detachFrom(PublicObject* object) {
 			return inventory->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Sensor* child = inventory->findSensor(publicID());
+			Sensor *child = inventory->findSensor(publicID());
 			if ( child != nullptr )
 				return inventory->remove(child);
 			else {
@@ -516,8 +524,9 @@ bool Sensor::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Sensor::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -527,8 +536,8 @@ bool Sensor::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Sensor::clone() const {
-	Sensor* clonee = new Sensor();
+Object *Sensor::clone() const {
+	Sensor *clonee = new Sensor();
 	*clonee = *this;
 	return clonee;
 }
@@ -538,10 +547,10 @@ Object* Sensor::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::updateChild(Object* child) {
-	SensorCalibration* sensorCalibrationChild = SensorCalibration::Cast(child);
+bool Sensor::updateChild(Object *child) {
+	SensorCalibration *sensorCalibrationChild = SensorCalibration::Cast(child);
 	if ( sensorCalibrationChild != nullptr ) {
-		SensorCalibration* sensorCalibrationElement = sensorCalibration(sensorCalibrationChild->index());
+		SensorCalibration *sensorCalibrationElement = sensorCalibration(sensorCalibrationChild->index());
 		if ( sensorCalibrationElement != nullptr ) {
 			*sensorCalibrationElement = *sensorCalibrationChild;
 			sensorCalibrationElement->update();
@@ -558,7 +567,7 @@ bool Sensor::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Sensor::accept(Visitor* visitor) {
+void Sensor::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -586,7 +595,7 @@ size_t Sensor::sensorCalibrationCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorCalibration* Sensor::sensorCalibration(size_t i) const {
+SensorCalibration *Sensor::sensorCalibration(size_t i) const {
 	return _sensorCalibrations[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -595,10 +604,12 @@ SensorCalibration* Sensor::sensorCalibration(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorCalibration* Sensor::sensorCalibration(const SensorCalibrationIndex& i) const {
-	for ( std::vector<SensorCalibrationPtr>::const_iterator it = _sensorCalibrations.begin(); it != _sensorCalibrations.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+SensorCalibration *Sensor::sensorCalibration(const SensorCalibrationIndex &i) const {
+	for ( const auto &elem : _sensorCalibrations ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -608,9 +619,10 @@ SensorCalibration* Sensor::sensorCalibration(const SensorCalibrationIndex& i) co
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::add(SensorCalibration* sensorCalibration) {
-	if ( sensorCalibration == nullptr )
+bool Sensor::add(SensorCalibration *sensorCalibration) {
+	if ( !sensorCalibration ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( sensorCalibration->parent() != nullptr ) {
@@ -647,9 +659,10 @@ bool Sensor::add(SensorCalibration* sensorCalibration) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::remove(SensorCalibration* sensorCalibration) {
-	if ( sensorCalibration == nullptr )
+bool Sensor::remove(SensorCalibration *sensorCalibration) {
+	if ( !sensorCalibration ) {
 		return false;
+	}
 
 	if ( sensorCalibration->parent() != this ) {
 		SEISCOMP_ERROR("Sensor::remove(SensorCalibration*) -> element has another parent");
@@ -665,8 +678,7 @@ bool Sensor::remove(SensorCalibration* sensorCalibration) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -689,8 +701,7 @@ bool Sensor::removeSensorCalibration(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_sensorCalibrations[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _sensorCalibrations[i].get());
 	}
 
 	_sensorCalibrations[i]->setParent(nullptr);
@@ -706,9 +717,12 @@ bool Sensor::removeSensorCalibration(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Sensor::removeSensorCalibration(const SensorCalibrationIndex& i) {
-	SensorCalibration* object = sensorCalibration(i);
-	if ( object == nullptr ) return false;
+bool Sensor::removeSensorCalibration(const SensorCalibrationIndex &i) {
+	SensorCalibration *object = sensorCalibration(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -717,7 +731,7 @@ bool Sensor::removeSensorCalibration(const SensorCalibrationIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Sensor::serialize(Archive& ar) {
+void Sensor::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

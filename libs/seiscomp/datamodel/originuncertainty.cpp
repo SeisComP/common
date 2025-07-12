@@ -37,7 +37,7 @@ static Seiscomp::Core::MetaEnumImpl<OriginUncertaintyDescription> metaOriginUnce
 }
 
 
-OriginUncertainty::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+OriginUncertainty::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("horizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setHorizontalUncertainty, &OriginUncertainty::horizontalUncertainty));
 	addProperty(Core::simpleProperty("minHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setMinHorizontalUncertainty, &OriginUncertainty::minHorizontalUncertainty));
 	addProperty(Core::simpleProperty("maxHorizontalUncertainty", "float", false, false, false, false, true, false, nullptr, &OriginUncertainty::setMaxHorizontalUncertainty, &OriginUncertainty::maxHorizontalUncertainty));
@@ -59,7 +59,7 @@ OriginUncertainty::OriginUncertainty() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginUncertainty::OriginUncertainty(const OriginUncertainty& other)
+OriginUncertainty::OriginUncertainty(const OriginUncertainty &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -77,7 +77,7 @@ OriginUncertainty::~OriginUncertainty() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginUncertainty::operator==(const OriginUncertainty& rhs) const {
+bool OriginUncertainty::operator==(const OriginUncertainty &rhs) const {
 	if ( !(_horizontalUncertainty == rhs._horizontalUncertainty) )
 		return false;
 	if ( !(_minHorizontalUncertainty == rhs._minHorizontalUncertainty) )
@@ -100,7 +100,7 @@ bool OriginUncertainty::operator==(const OriginUncertainty& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginUncertainty::operator!=(const OriginUncertainty& rhs) const {
+bool OriginUncertainty::operator!=(const OriginUncertainty &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,7 +109,7 @@ bool OriginUncertainty::operator!=(const OriginUncertainty& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OriginUncertainty::equal(const OriginUncertainty& other) const {
+bool OriginUncertainty::equal(const OriginUncertainty &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -269,7 +269,7 @@ double OriginUncertainty::confidenceLevel() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OriginUncertainty& OriginUncertainty::operator=(const OriginUncertainty& other) {
+OriginUncertainty &OriginUncertainty::operator=(const OriginUncertainty &other) {
 	_horizontalUncertainty = other._horizontalUncertainty;
 	_minHorizontalUncertainty = other._minHorizontalUncertainty;
 	_maxHorizontalUncertainty = other._maxHorizontalUncertainty;
@@ -285,7 +285,7 @@ OriginUncertainty& OriginUncertainty::operator=(const OriginUncertainty& other) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void OriginUncertainty::serialize(Archive& ar) {
+void OriginUncertainty::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

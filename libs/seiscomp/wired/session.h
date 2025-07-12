@@ -86,15 +86,16 @@ class SC_SYSTEM_CORE_API Session : public Core::BaseObject,
 	//  Protected members
 	// ----------------------------------------------------------------------
 	protected:
-		DevicePtr    _device;
-		Reactor     *_parent;
+		DevicePtr  _device;
+		Reactor   *_parent;
+		size_t     _writeQuota{0};
 
 
 	// ----------------------------------------------------------------------
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		bool         _tagged;
+		bool       _tagged;
 
 
 	// ----------------------------------------------------------------------

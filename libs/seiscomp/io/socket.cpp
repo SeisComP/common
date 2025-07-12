@@ -281,7 +281,7 @@ void Socket::fillbuf() {
 		return;
 	}
 
-	int remaining = _timeout?_timeout - int(_timer.elapsed()):1;
+	int remaining = _timeout?_timeout - _timer.elapsed().seconds() : 1;
 	if ( remaining <= 0 ) {
 		SEISCOMP_DEBUG("Timeout");
 		_reconnect = true;
@@ -362,7 +362,7 @@ void Socket::write(const string& s) {
 		if ( _interrupt )
 			throw OperationInterrupted();
 
-		int remaining = _timeout?_timeout - int(_timer.elapsed()):1;
+		int remaining = _timeout ? _timeout - _timer.elapsed().seconds() : 1;
 		if ( remaining <= 0 ) {
 			SEISCOMP_DEBUG("Timeout");
 			throw SocketTimeout();

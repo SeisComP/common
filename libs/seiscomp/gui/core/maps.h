@@ -45,8 +45,9 @@ namespace Gui {
  *     with type Tile
  * 4 - Add two new methods to notify about asynchronous tile loading
  *     success and cancellation
+ * 5 - Add ImageTree::lockCache and ImageTree::unlockCache.
  */
-#define TILESTORE_VERSION 4
+#define TILESTORE_VERSION 5
 
 
 struct SC_GUI_API MapsDesc {

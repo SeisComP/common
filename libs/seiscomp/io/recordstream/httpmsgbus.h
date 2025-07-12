@@ -32,9 +32,10 @@
 #include <seiscomp/io/httpsocket.h>
 #include <seiscomp/io/recordstream/streamidx.h>
 
-extern "C" {
-	#include "bson/bson.h"
-}
+
+struct _bson_t;
+typedef bson_t _bson_t;
+
 
 namespace Seiscomp {
 namespace RecordStream {
@@ -50,7 +51,8 @@ class SC_SYSTEM_CORE_API HMBQueue  {
 
 		//! Adds the given stream
 		void addStream(std::string loc, std::string cha,
-			const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime);
+		               const OPT(Core::Time) &stime,
+		               const OPT(Core::Time) &etime);
 
 		//! Sets the sequence number
 		void setSequenceNumber(int64_t seq);
@@ -62,9 +64,9 @@ class SC_SYSTEM_CORE_API HMBQueue  {
 		bson_t* toBSON() const;
 
 	private:
-		Core::Time _stime;
-		Core::Time _etime;
-		int64_t _seq;
+		OPT(Core::Time)       _stime;
+		OPT(Core::Time)       _etime;
+		int64_t               _seq;
 		std::set<std::string> _topics;
 };
 
@@ -81,44 +83,46 @@ class SC_SYSTEM_CORE_API HMBConnection : public Seiscomp::IO::RecordStream {
 		HMBConnection(std::string serverloc);
 
 		//! Destructor
-		virtual ~HMBConnection();
+		~HMBConnection() override;
 
 		//! The recordtype cannot be selected when using an HMB
 		//! connection. It will always create MiniSeed records
-		virtual bool setRecordType(const char *type);
+		bool setRecordType(const char *type) override;
 
 		//! Initialize the HMB connection.
-		virtual bool setSource(const std::string &source);
+		bool setSource(const std::string &source) override;
 
 		//! Supply user credentials
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &startTime,
+		               const OPT(Core::Time) &endTime) override;
 
 		//! Adds the given start time to the server connection description
-		virtual bool setStartTime(const Seiscomp::Core::Time &stime);
+		bool setStartTime(const OPT(Core::Time) &stime) override;
 
 		//! Adds the given end time to the server connection description
-		virtual bool setEndTime(const Seiscomp::Core::Time &etime);
+		bool setEndTime(const OPT(Core::Time) &etime) override;
 
 		//! Sets timeout
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
 		//! Terminates the HMB connection.
-		virtual void close();
+		void close() override;
 
-		virtual Record *next();
+		Record *next() override;
 
+
+	private:
 		//! Removes all stream list, time window, etc. -entries from the connection description object.
 		bool clear();
 
@@ -127,18 +131,18 @@ class SC_SYSTEM_CORE_API HMBConnection : public Seiscomp::IO::RecordStream {
 
 
 	private:
-		IO::HttpSocket<SocketType> _sock;
-		std::string _serverHost;
-		std::string _serverPath;
-		std::string _user;
-		std::string _password;
+		IO::HttpSocket<SocketType>                  _sock;
+		std::string                                 _serverHost;
+		std::string                                 _serverPath;
+		std::string                                 _user;
+		std::string                                 _password;
 		std::set<Seiscomp::RecordStream::StreamIdx> _streams;
-		Seiscomp::Core::Time _stime;
-		Seiscomp::Core::Time _etime;
-		std::map<std::string, HMBQueue> _queues;
-		std::string _sid;
-		std::string _cid;
-		bool _readingData;
+		OPT(Core::Time)                             _stime;
+		OPT(Core::Time)                             _etime;
+		std::map<std::string, HMBQueue>             _queues;
+		std::string                                 _sid;
+		std::string                                 _cid;
+		bool                                        _readingData;
 
 		std::string bsonGetString(const bson_t *bson, const char *key);
 		int64_t bsonGetInt(const bson_t *bson, const char *key);

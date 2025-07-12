@@ -48,8 +48,9 @@ void RunningAverage::push(const Core::Time &time, size_t count) {
 	if ( shiftBins >= _timeSpan ) {
 		_shift = _timeSpan;
 		shiftBins = _timeSpan;
-		for ( size_t i = 0; i < _timeSpan; ++i )
+		for ( size_t i = 0; i < _timeSpan; ++i ) {
 			_bins[i] = 0;
+		}
 		_front = 0;
 	}
 	else if ( shiftBins > 0 ) {
@@ -59,14 +60,17 @@ void RunningAverage::push(const Core::Time &time, size_t count) {
 
 		// Reset remaining slots
 		if ( _front >= shiftBins ) {
-			for ( size_t i = _front-shiftBins; i < _front; ++i )
+			for ( size_t i = _front-shiftBins; i < _front; ++i ) {
 				_bins[i] = 0;
+			}
 		}
 		else {
-			for ( size_t i = 0; i < _front; ++i )
+			for ( size_t i = 0; i < _front; ++i ) {
 				_bins[i] = 0;
-			for ( size_t i = _timeSpan-shiftBins+_front; i < _timeSpan; ++i )
+			}
+			for ( size_t i = _timeSpan-shiftBins+_front; i < _timeSpan; ++i ) {
 				_bins[i] = 0;
+			}
 		}
 	}
 
@@ -82,8 +86,9 @@ int RunningAverage::count(const Core::Time &time) const {
 	int count = 0;
 
 	int shiftBins = (int)(_shift + (double)(time - _last));
-	if ( shiftBins < 0 || shiftBins >= (int)_timeSpan )
+	if ( shiftBins < 0 || shiftBins >= (int)_timeSpan ) {
 		return count;
+	}
 
 	/*
 	for ( size_t i = shiftBins; i < _timeSpan; ++i ) {
@@ -94,15 +99,18 @@ int RunningAverage::count(const Core::Time &time) const {
 	}
 	*/
 
-	for ( size_t i = _front + shiftBins; i < _timeSpan; ++i )
+	for ( size_t i = _front + shiftBins; i < _timeSpan; ++i ) {
 		count += _bins[i];
+	}
 
 	size_t i = 0;
-	if ( _front > _timeSpan-shiftBins )
+	if ( _front > _timeSpan-shiftBins ) {
 		i = _front - (_timeSpan-shiftBins);
+	}
 
-	for ( ; i < _front; ++i )
+	for ( ; i < _front; ++i ) {
 		count += _bins[i];
+	}
 
 	return count;
 }

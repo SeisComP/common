@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_IO_RECORDSTREAM_SLINK_H
 #define SEISCOMP_IO_RECORDSTREAM_SLINK_H
 
+
 #include <string>
 #include <set>
 #include <iostream>
@@ -58,14 +59,16 @@ class SC_SYSTEM_CORE_API SLStreamIdx {
 
 		SLStreamIdx(const std::string &net, const std::string &sta,
 		            const std::string &loc, const std::string &cha,
-		            const Seiscomp::Core::Time &stime,
-		            const Seiscomp::Core::Time &etime);
+		            const OPT(Core::Time) &stime,
+		            const OPT(Core::Time) &etime);
 
+	public:
 		SLStreamIdx& operator=(const SLStreamIdx &other);
 
 		bool operator<(const SLStreamIdx &other) const;
 		bool operator==(const SLStreamIdx &other) const;
 
+	public:
 		//! Returns the network code
 		const std::string &network() const;
 
@@ -83,30 +86,29 @@ class SC_SYSTEM_CORE_API SLStreamIdx {
 		std::string selector() const;
 
 		//! Returns the start time
-		Core::Time startTime() const;
+		const OPT(Core::Time) &startTime() const;
 
 		//! Returns the end time
-		Core::Time endTime() const;
+		const OPT(Core::Time) &endTime() const;
 
 		//! Returns the most recent record end time
-		Seiscomp::Core::Time timestamp() const;
+		const OPT(Core::Time) &timestamp() const;
 
 		//! Sets the time stamp
-		void setTimestamp(Seiscomp::Core::Time &rectime) const;
+		void setTimestamp(const OPT(Core::Time) &rectime) const;
 
 	private:
-		const std::string  _net;
-		const std::string  _sta;
-		const std::string  _loc;
-		const std::string  _cha;
-		const Core::Time   _stime;
-		const Core::Time   _etime;
-		mutable Core::Time _timestamp;
+		const std::string       _net;
+		const std::string       _sta;
+		const std::string       _loc;
+		const std::string       _cha;
+		const OPT(Core::Time)   _stime;
+		const OPT(Core::Time)   _etime;
+		mutable OPT(Core::Time) _timestamp;
 };
 
 
 DEFINE_SMARTPOINTER(SLConnection);
-
 class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 	DECLARE_SC_CLASS(SLConnection);
 
@@ -118,44 +120,46 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 		SLConnection(std::string serverloc);
 
 		//! Destructor
-		virtual ~SLConnection();
+		~SLConnection() override;
 
 	public:
 		//! The recordtype cannot be selected when using a seedlink
 		//! connection. It will always create MiniSeed records
-		virtual bool setRecordType(const char*);
+		bool setRecordType(const char*) override;
 
 		//! Initialize the seedlink connection.
-		virtual bool setSource(const std::string &source);
+		bool setSource(const std::string &source) override;
 
 		//! Adds the given stream to the server connection description
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode) override;
 
 		//! Adds a seismic stream request to the record stream (not implemented)
-		virtual bool addStream(const std::string &networkCode,
-		                       const std::string &stationCode,
-		                       const std::string &locationCode,
-		                       const std::string &channelCode,
-		                       const Seiscomp::Core::Time &startTime,
-		                       const Seiscomp::Core::Time &endTime);
+		bool addStream(const std::string &networkCode,
+		               const std::string &stationCode,
+		               const std::string &locationCode,
+		               const std::string &channelCode,
+		               const OPT(Core::Time) &startTime,
+		               const OPT(Core::Time) &endTime) override;
 
 		//! Adds the given start time to the server connection description
-		virtual bool setStartTime(const Seiscomp::Core::Time &startTime);
+		bool setStartTime(const OPT(Core::Time) &startTime) override;
 
 		//! Adds the given end time to the server connection description
-		virtual bool setEndTime(const Seiscomp::Core::Time &endTime);
+		bool setEndTime(const OPT(Core::Time) &endTime) override;
 
 		//! Sets timeout
-		virtual bool setTimeout(int seconds);
+		bool setTimeout(int seconds) override;
 
 		//! Disconnects and terminates (!) the seedlink connection.
-		virtual void close();
+		void close() override;
 
+
+	private:
 		//! Reads the data stream
-		virtual Record *next();
+		virtual Record *next() override;
 
 		//! Removes all stream list, time window, etc. -entries from the connection description object.
 		bool clear();
@@ -163,8 +167,6 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 		//! Reconnects a terminated seedlink connection.
 		bool reconnect();
 
-
-	private:
 		void handshake();
 
 
@@ -172,7 +174,7 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 		class StreamBuffer : public std::streambuf {
 			public:
 				StreamBuffer();
-				std::streambuf *setbuf(char *s, std::streamsize n);
+				std::streambuf *setbuf(char *s, std::streamsize n) override;
 		};
 
 		StreamBuffer          _streambuf;
@@ -180,8 +182,8 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 		std::string           _slrecord;
 		IO::Socket            _sock;
 		std::set<SLStreamIdx> _streams;
-		Core::Time            _stime;
-		Core::Time            _etime;
+		OPT(Core::Time)       _stime;
+		OPT(Core::Time)       _etime;
 		bool                  _readingData;
 		bool                  _useBatch;
 		int                   _maxRetries;
@@ -192,4 +194,5 @@ class SC_SYSTEM_CORE_API SLConnection : public Seiscomp::IO::RecordStream {
 }
 }
 
-#endif 
+
+#endif

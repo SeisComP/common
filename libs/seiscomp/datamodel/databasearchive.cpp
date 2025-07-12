@@ -111,8 +111,8 @@ std::ostream &operator<<(std::ostream &os, const ValueMapper &m) {
 }
 
 
-const std::string &toSQL(IO::DatabaseInterface *db, const std::string &str) {
-	static std::string converted;
+std::string toSQL(IO::DatabaseInterface *db, const std::string &str) {
+	std::string converted;
 
 	if ( !db->escape(converted, str) ) {
 		converted = "";
@@ -903,6 +903,61 @@ size_t DatabaseArchive::getObjectCount(const PublicObject *parent,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::pair<std::string,bool>
+DatabaseArchive::getObjectsQuery(const std::string &parentID,
+                                 const Seiscomp::Core::RTTI &classType,
+                                 bool ignorePublicObject)  {
+	if ( !validInterface() ) {
+		SEISCOMP_ERROR("no valid database interface");
+		return {{}, false};
+	}
+
+	std::string query;
+	bool ignorePOTable = ignorePublicObject || !classType.isTypeOf(PublicObject::TypeInfo());
+	bool hasWhereClause = false;
+
+	if ( ignorePOTable ) {
+		query = std::string("select * from ") + classType.className();
+	}
+	else {
+		std::stringstream ss;
+		ss << "select " << PublicObject::ClassName() << "." << _publicIDColumn << ","
+		   << classType.className() << ".* from "
+		   << PublicObject::ClassName() << "," << classType.className()
+		   << " where " << PublicObject::ClassName() << "._oid="
+		   << classType.className() << "._oid";
+
+		query = ss.str();
+		hasWhereClause = true;
+	}
+
+	if ( !parentID.empty() ) {
+		OID parentOID = publicObjectId(parentID);
+		if ( parentOID == IO::DatabaseInterface::INVALID_OID ) {
+			SEISCOMP_INFO("parent object with id '%s' not found in database", parentID.c_str());
+			return {{}, false};
+		}
+
+		if ( !ignorePOTable ) {
+			query += " and ";
+		}
+		else {
+			query += " where ";
+			hasWhereClause = true;
+		}
+
+		query += classType.className();
+		query += "._parent_oid=" + toString(parentOID);
+	}
+
+	return {query, hasWhereClause};
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator DatabaseArchive::getObjectIterator(OID parentID,
                                                     const RTTI &classType,
                                                     bool ignorePublicObject) {
@@ -1483,7 +1538,7 @@ DatabaseArchive::OID DatabaseArchive::objectId(Object *object, const std::string
 	_indexAttributes.clear();
 	_childTables.clear();
 	_childDepth = 0;
-	
+
 	_ignoreIndexAttributes = true;
 
 	resetAttributePrefix();
@@ -1782,7 +1837,7 @@ bool DatabaseArchive::update(Object *object, const std::string &parentID) {
 	_childDepth = 0;
 
 	PublicObject *po = PublicObject::Cast(object);
-	
+
 	_ignoreIndexAttributes = (po == nullptr);
 
 	resetAttributePrefix();
@@ -2043,7 +2098,7 @@ bool DatabaseArchive::locateObjectByName(const char *name, const char *targetCla
 		fromString(childId, _field);
 		SEISCOMP_DEBUG("should read child table '%s' with _oid=%" PRIu64, targetClass, childId);
 	}
-	
+
 	return _field != nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2155,14 +2210,14 @@ void DatabaseArchive::serialize(SerializeDispatcher &disp) {
 			_currentAttributePrefix = backupPrefix;
 			_currentAttributeName = CHILD_ID_POSTFIX;
 			--_childDepth;
-	
+
 			if ( !_childDepth )
 				_objectAttributes = &_rootAttributes;
 			else {
 				--_currentChildTable;
 				_objectAttributes = &_currentChildTable->second;
 			}
-	
+
 			if ( !insertRow(_currentChildTable->first,
 			                _currentChildTable->second) )
 				return;

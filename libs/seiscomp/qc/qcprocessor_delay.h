@@ -42,7 +42,7 @@ class SC_SYSTEM_CLIENT_API QcProcessorDelay : public QcProcessor {
 		QcProcessorDelay();
 
 		double getDelay();
-		bool setState(const Record* record, const DoubleArray& data);
+		bool setState(const Record* record, const DoubleArray& data) override;
 };
 
 

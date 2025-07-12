@@ -22,8 +22,8 @@
 #define SEISCOMP_PROCESSING_MAGNITUDEPROCESSOR_MB_IDC_H
 
 
-#include <seiscomp3/processing/magnitudeprocessor.h>
-#include <seiscomp3/utils/tabvalues.h>
+#include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/utils/tabvalues.h>
 
 
 using namespace Seiscomp;
@@ -38,18 +38,17 @@ class SC_SYSTEM_CLIENT_API Magnitude_mb_idc : public MagnitudeProcessor {
 		Magnitude_mb_idc();
 
 	public:
-		virtual std::string amplitudeType() const;
+		void setDefaults() override;
+		bool setup(const Settings &settings) override;
 
-		virtual bool setup(const Settings &settings);
-
-		virtual Status computeMagnitude(double amplitude, const std::string &unit,
-		                                double period, double snr,
-		                                double delta, double depth,
-		                                const DataModel::Origin *hypocenter,
-		                                const DataModel::SensorLocation *receiver,
-		                                const DataModel::Amplitude *,
-		                                const Locale *locale,
-		                                double &value);
+		Status computeMagnitude(double amplitude, const std::string &unit,
+		                        double period, double snr,
+		                        double delta, double depth,
+		                        const DataModel::Origin *hypocenter,
+		                        const DataModel::SensorLocation *receiver,
+		                        const DataModel::Amplitude *,
+		                        const Locale *locale,
+		                        double &value) override;
 
 	private:
 		Util::TabValuesPtr _Q;

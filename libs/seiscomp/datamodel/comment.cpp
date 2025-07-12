@@ -27,6 +27,7 @@
 #include <seiscomp/datamodel/stationmagnitude.h>
 #include <seiscomp/datamodel/pick.h>
 #include <seiscomp/datamodel/event.h>
+#include <seiscomp/datamodel/catalog.h>
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/parameter.h>
 #include <seiscomp/datamodel/parameterset.h>
@@ -46,7 +47,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Comment, Object, "Comment");
 
 
-Comment::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Comment::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("text", "string", false, false, false, false, false, false, nullptr, &Comment::setText, &Comment::text));
 	addProperty(Core::simpleProperty("id", "string", false, false, true, false, false, false, nullptr, &Comment::setId, &Comment::id));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, false, false, true, false, nullptr, &Comment::setStart, &Comment::start));
@@ -75,7 +76,7 @@ CommentIndex::CommentIndex(const std::string& id_) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CommentIndex::CommentIndex(const CommentIndex& idx) {
+CommentIndex::CommentIndex(const CommentIndex &idx) {
 	id = idx.id;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -84,7 +85,7 @@ CommentIndex::CommentIndex(const CommentIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CommentIndex::operator==(const CommentIndex& idx) const {
+bool CommentIndex::operator==(const CommentIndex &idx) const {
 	return id == idx.id;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -93,7 +94,7 @@ bool CommentIndex::operator==(const CommentIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CommentIndex::operator!=(const CommentIndex& idx) const {
+bool CommentIndex::operator!=(const CommentIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -110,7 +111,7 @@ Comment::Comment() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment::Comment(const Comment& other)
+Comment::Comment(const Comment &other)
 : Object() {
 	*this = other;
 }
@@ -128,7 +129,7 @@ Comment::~Comment() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::operator==(const Comment& rhs) const {
+bool Comment::operator==(const Comment &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _text != rhs._text ) return false;
 	if ( _start != rhs._start ) return false;
@@ -142,7 +143,7 @@ bool Comment::operator==(const Comment& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::operator!=(const Comment& rhs) const {
+bool Comment::operator!=(const Comment &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -151,7 +152,7 @@ bool Comment::operator!=(const Comment& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::equal(const Comment& other) const {
+bool Comment::equal(const Comment &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -267,7 +268,7 @@ const CreationInfo& Comment::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const CommentIndex& Comment::index() const {
+const CommentIndex &Comment::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -276,8 +277,11 @@ const CommentIndex& Comment::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::equalIndex(const Comment* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Comment::equalIndex(const Comment *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -286,7 +290,7 @@ bool Comment::equalIndex(const Comment* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensor* Comment::momentTensor() const {
+MomentTensor *Comment::momentTensor() const {
 	return MomentTensor::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -295,7 +299,7 @@ MomentTensor* Comment::momentTensor() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FocalMechanism* Comment::focalMechanism() const {
+FocalMechanism *Comment::focalMechanism() const {
 	return FocalMechanism::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -304,7 +308,7 @@ FocalMechanism* Comment::focalMechanism() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Amplitude* Comment::amplitude() const {
+Amplitude *Comment::amplitude() const {
 	return Amplitude::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -313,7 +317,7 @@ Amplitude* Comment::amplitude() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Magnitude* Comment::magnitude() const {
+Magnitude *Comment::magnitude() const {
 	return Magnitude::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -322,7 +326,7 @@ Magnitude* Comment::magnitude() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitude* Comment::stationMagnitude() const {
+StationMagnitude *Comment::stationMagnitude() const {
 	return StationMagnitude::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -331,7 +335,7 @@ StationMagnitude* Comment::stationMagnitude() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Pick* Comment::pick() const {
+Pick *Comment::pick() const {
 	return Pick::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -340,7 +344,7 @@ Pick* Comment::pick() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Event* Comment::event() const {
+Event *Comment::event() const {
 	return Event::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -349,7 +353,16 @@ Event* Comment::event() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Origin* Comment::origin() const {
+Catalog *Comment::catalog() const {
+	return Catalog::Cast(parent());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Origin *Comment::origin() const {
 	return Origin::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -358,7 +371,7 @@ Origin* Comment::origin() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Parameter* Comment::parameter() const {
+Parameter *Comment::parameter() const {
 	return Parameter::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -367,7 +380,7 @@ Parameter* Comment::parameter() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ParameterSet* Comment::parameterSet() const {
+ParameterSet *Comment::parameterSet() const {
 	return ParameterSet::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -376,7 +389,7 @@ ParameterSet* Comment::parameterSet() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream* Comment::stream() const {
+Stream *Comment::stream() const {
 	return Stream::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -385,7 +398,7 @@ Stream* Comment::stream() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* Comment::sensorLocation() const {
+SensorLocation *Comment::sensorLocation() const {
 	return SensorLocation::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -394,7 +407,7 @@ SensorLocation* Comment::sensorLocation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Station* Comment::station() const {
+Station *Comment::station() const {
 	return Station::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -403,7 +416,7 @@ Station* Comment::station() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Network* Comment::network() const {
+Network *Comment::network() const {
 	return Network::Cast(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -412,7 +425,7 @@ Network* Comment::network() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment& Comment::operator=(const Comment& other) {
+Comment &Comment::operator=(const Comment &other) {
 	_index = other._index;
 	_text = other._text;
 	_start = other._start;
@@ -426,10 +439,11 @@ Comment& Comment::operator=(const Comment& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::assign(Object* other) {
-	Comment* otherComment = Comment::Cast(other);
-	if ( other == nullptr )
+bool Comment::assign(Object *other) {
+	Comment *otherComment = Comment::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherComment;
 
@@ -441,50 +455,55 @@ bool Comment::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Comment::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(parent);
+	MomentTensor *momentTensor = MomentTensor::Cast(parent);
 	if ( momentTensor != nullptr )
 		return momentTensor->add(this);
-	FocalMechanism* focalMechanism = FocalMechanism::Cast(parent);
+	FocalMechanism *focalMechanism = FocalMechanism::Cast(parent);
 	if ( focalMechanism != nullptr )
 		return focalMechanism->add(this);
-	Amplitude* amplitude = Amplitude::Cast(parent);
+	Amplitude *amplitude = Amplitude::Cast(parent);
 	if ( amplitude != nullptr )
 		return amplitude->add(this);
-	Magnitude* magnitude = Magnitude::Cast(parent);
+	Magnitude *magnitude = Magnitude::Cast(parent);
 	if ( magnitude != nullptr )
 		return magnitude->add(this);
-	StationMagnitude* stationMagnitude = StationMagnitude::Cast(parent);
+	StationMagnitude *stationMagnitude = StationMagnitude::Cast(parent);
 	if ( stationMagnitude != nullptr )
 		return stationMagnitude->add(this);
-	Pick* pick = Pick::Cast(parent);
+	Pick *pick = Pick::Cast(parent);
 	if ( pick != nullptr )
 		return pick->add(this);
-	Event* event = Event::Cast(parent);
+	Event *event = Event::Cast(parent);
 	if ( event != nullptr )
 		return event->add(this);
-	Origin* origin = Origin::Cast(parent);
+	Catalog *catalog = Catalog::Cast(parent);
+	if ( catalog != nullptr )
+		return catalog->add(this);
+	Origin *origin = Origin::Cast(parent);
 	if ( origin != nullptr )
 		return origin->add(this);
-	Parameter* parameter = Parameter::Cast(parent);
+	Parameter *parameter = Parameter::Cast(parent);
 	if ( parameter != nullptr )
 		return parameter->add(this);
-	ParameterSet* parameterSet = ParameterSet::Cast(parent);
+	ParameterSet *parameterSet = ParameterSet::Cast(parent);
 	if ( parameterSet != nullptr )
 		return parameterSet->add(this);
-	Stream* stream = Stream::Cast(parent);
+	Stream *stream = Stream::Cast(parent);
 	if ( stream != nullptr )
 		return stream->add(this);
-	SensorLocation* sensorLocation = SensorLocation::Cast(parent);
+	SensorLocation *sensorLocation = SensorLocation::Cast(parent);
 	if ( sensorLocation != nullptr )
 		return sensorLocation->add(this);
-	Station* station = Station::Cast(parent);
+	Station *station = Station::Cast(parent);
 	if ( station != nullptr )
 		return station->add(this);
-	Network* network = Network::Cast(parent);
+	Network *network = Network::Cast(parent);
 	if ( network != nullptr )
 		return network->add(this);
 
@@ -497,11 +516,13 @@ bool Comment::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Comment::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Comment::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensor* momentTensor = MomentTensor::Cast(object);
+	MomentTensor *momentTensor = MomentTensor::Cast(object);
 	if ( momentTensor != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -509,7 +530,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return momentTensor->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = momentTensor->comment(index());
+			Comment *child = momentTensor->comment(index());
 			if ( child != nullptr )
 				return momentTensor->remove(child);
 			else {
@@ -518,7 +539,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	FocalMechanism* focalMechanism = FocalMechanism::Cast(object);
+	FocalMechanism *focalMechanism = FocalMechanism::Cast(object);
 	if ( focalMechanism != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -526,7 +547,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return focalMechanism->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = focalMechanism->comment(index());
+			Comment *child = focalMechanism->comment(index());
 			if ( child != nullptr )
 				return focalMechanism->remove(child);
 			else {
@@ -535,7 +556,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Amplitude* amplitude = Amplitude::Cast(object);
+	Amplitude *amplitude = Amplitude::Cast(object);
 	if ( amplitude != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -543,7 +564,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return amplitude->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = amplitude->comment(index());
+			Comment *child = amplitude->comment(index());
 			if ( child != nullptr )
 				return amplitude->remove(child);
 			else {
@@ -552,7 +573,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Magnitude* magnitude = Magnitude::Cast(object);
+	Magnitude *magnitude = Magnitude::Cast(object);
 	if ( magnitude != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -560,7 +581,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return magnitude->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = magnitude->comment(index());
+			Comment *child = magnitude->comment(index());
 			if ( child != nullptr )
 				return magnitude->remove(child);
 			else {
@@ -569,7 +590,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	StationMagnitude* stationMagnitude = StationMagnitude::Cast(object);
+	StationMagnitude *stationMagnitude = StationMagnitude::Cast(object);
 	if ( stationMagnitude != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -577,7 +598,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return stationMagnitude->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = stationMagnitude->comment(index());
+			Comment *child = stationMagnitude->comment(index());
 			if ( child != nullptr )
 				return stationMagnitude->remove(child);
 			else {
@@ -586,7 +607,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Pick* pick = Pick::Cast(object);
+	Pick *pick = Pick::Cast(object);
 	if ( pick != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -594,7 +615,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return pick->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = pick->comment(index());
+			Comment *child = pick->comment(index());
 			if ( child != nullptr )
 				return pick->remove(child);
 			else {
@@ -603,7 +624,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Event* event = Event::Cast(object);
+	Event *event = Event::Cast(object);
 	if ( event != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -611,7 +632,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return event->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = event->comment(index());
+			Comment *child = event->comment(index());
 			if ( child != nullptr )
 				return event->remove(child);
 			else {
@@ -620,7 +641,24 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Origin* origin = Origin::Cast(object);
+	Catalog *catalog = Catalog::Cast(object);
+	if ( catalog != nullptr ) {
+		// If the object has been added already to the parent locally
+		// just remove it by pointer
+		if ( object == parent() )
+			return catalog->remove(this);
+		// The object has not been added locally so it must be looked up
+		else {
+			Comment *child = catalog->comment(index());
+			if ( child != nullptr )
+				return catalog->remove(child);
+			else {
+				SEISCOMP_DEBUG("Comment::detachFrom(Catalog): comment has not been found");
+				return false;
+			}
+		}
+	}
+	Origin *origin = Origin::Cast(object);
 	if ( origin != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -628,7 +666,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return origin->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = origin->comment(index());
+			Comment *child = origin->comment(index());
 			if ( child != nullptr )
 				return origin->remove(child);
 			else {
@@ -637,7 +675,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Parameter* parameter = Parameter::Cast(object);
+	Parameter *parameter = Parameter::Cast(object);
 	if ( parameter != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -645,7 +683,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return parameter->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = parameter->comment(index());
+			Comment *child = parameter->comment(index());
 			if ( child != nullptr )
 				return parameter->remove(child);
 			else {
@@ -654,7 +692,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	ParameterSet* parameterSet = ParameterSet::Cast(object);
+	ParameterSet *parameterSet = ParameterSet::Cast(object);
 	if ( parameterSet != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -662,7 +700,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return parameterSet->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = parameterSet->comment(index());
+			Comment *child = parameterSet->comment(index());
 			if ( child != nullptr )
 				return parameterSet->remove(child);
 			else {
@@ -671,7 +709,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Stream* stream = Stream::Cast(object);
+	Stream *stream = Stream::Cast(object);
 	if ( stream != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -679,7 +717,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return stream->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = stream->comment(index());
+			Comment *child = stream->comment(index());
 			if ( child != nullptr )
 				return stream->remove(child);
 			else {
@@ -688,7 +726,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	SensorLocation* sensorLocation = SensorLocation::Cast(object);
+	SensorLocation *sensorLocation = SensorLocation::Cast(object);
 	if ( sensorLocation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -696,7 +734,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return sensorLocation->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = sensorLocation->comment(index());
+			Comment *child = sensorLocation->comment(index());
 			if ( child != nullptr )
 				return sensorLocation->remove(child);
 			else {
@@ -705,7 +743,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Station* station = Station::Cast(object);
+	Station *station = Station::Cast(object);
 	if ( station != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -713,7 +751,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return station->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = station->comment(index());
+			Comment *child = station->comment(index());
 			if ( child != nullptr )
 				return station->remove(child);
 			else {
@@ -722,7 +760,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			}
 		}
 	}
-	Network* network = Network::Cast(object);
+	Network *network = Network::Cast(object);
 	if ( network != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -730,7 +768,7 @@ bool Comment::detachFrom(PublicObject* object) {
 			return network->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Comment* child = network->comment(index());
+			Comment *child = network->comment(index());
 			if ( child != nullptr )
 				return network->remove(child);
 			else {
@@ -750,8 +788,9 @@ bool Comment::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Comment::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -761,8 +800,8 @@ bool Comment::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Comment::clone() const {
-	Comment* clonee = new Comment();
+Object *Comment::clone() const {
+	Comment *clonee = new Comment();
 	*clonee = *this;
 	return clonee;
 }
@@ -772,7 +811,7 @@ Object* Comment::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Comment::accept(Visitor* visitor) {
+void Comment::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -781,7 +820,7 @@ void Comment::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Comment::serialize(Archive& ar) {
+void Comment::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

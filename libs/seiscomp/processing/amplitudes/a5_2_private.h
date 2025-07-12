@@ -38,7 +38,7 @@ class AmplitudeA5_2 : public Seiscomp::Processing::AmplitudeProcessor {
 		                      double offset,
 		                      AmplitudeIndex *dt,
 		                      AmplitudeValue *amplitude,
-		                      double *period, double *snr);
+		                      double *period, double *snr) override;
 
 	protected:
 		const double _tiLead;

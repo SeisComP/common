@@ -56,9 +56,9 @@ struct VectorChunk : Chunk {
 	VectorChunk(std::vector<char> &d, int sampleOfs, int sampleCount);
 	virtual ~VectorChunk() {}
 
-	int chunkSize() const;
+	int chunkSize() const override;
 
-	bool get(std::streambuf &input, int size);
+	bool get(std::streambuf &input, int size) override;
 
 	int startOfs;
 	int len;

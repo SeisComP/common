@@ -25,11 +25,16 @@
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/math/mean.h>
+#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/chainfilter.h>
 #include <seiscomp/math/filter/iirdifferentiate.h>
+#include <seiscomp/math/filter/iirintegrate.h>
+#include <seiscomp/math/filter/rmhp.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/seismology/ttt.h>
+#include <seiscomp/utils/units.h>
 
 #include <cmath>
 #include <functional>
@@ -66,7 +71,34 @@ namespace Processing {
 IMPLEMENT_SC_ABSTRACT_CLASS_DERIVED(AmplitudeProcessor, TimeWindowProcessor, "AmplitudeProcessor");
 
 
+class AmplitudeProcessorAliasFactory : public Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> {
+	public:
+		AmplitudeProcessorAliasFactory(
+			const std::string &service,
+			const Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> *source
+		)
+		: Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor>(service.c_str())
+		, _source(source) {}
+
+		AmplitudeProcessor *create() const override {
+			auto proc = _source->create();
+			if ( proc->type() != serviceName() ) {
+				proc->_type = serviceName();
+			}
+			return proc;
+		}
+
+	private:
+		const Core::Generic::InterfaceFactoryInterface<AmplitudeProcessor> *_source;
+};
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+
 
 typedef vector<AmplitudeProcessor::Locale> Regionalization;
 
@@ -77,7 +109,70 @@ class TypeSpecificRegionalization : public Core::BaseObject {
 		Regionalization  regionalization;
 };
 
-typedef map<string, TypeSpecificRegionalizationPtr> RegionalizationRegistry;
+
+class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
+	public:
+		~AliasFactories() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+		}
+
+		bool createAlias(const std::string &aliasType,
+		                 const std::string &sourceType) {
+			auto sourceFactory = AmplitudeProcessorFactory::Find(sourceType);
+			if ( !sourceFactory ) {
+				SEISCOMP_ERROR("alias: amplitude source factory '%s' does not exist",
+				               sourceType.c_str());
+				return false;
+			}
+
+			auto factory = AmplitudeProcessorFactory::Find(aliasType);
+			if ( factory ) {
+				SEISCOMP_ERROR("alias: amplitude alias type '%s' is already registered",
+				               aliasType.c_str());
+				return false;
+			}
+
+			push_back(
+				new AmplitudeProcessorAliasFactory(
+					aliasType, sourceFactory
+				)
+			);
+
+			return true;
+		}
+
+		bool removeAlias(const std::string &aliasType) {
+			auto factory = AmplitudeProcessorFactory::Find(aliasType);
+			if ( !factory ) {
+				SEISCOMP_ERROR("alias: amplitude alias type '%s' does not exist",
+				               aliasType.c_str());
+				return false;
+			}
+
+			delete factory;
+
+			auto it = find(begin(), end(), factory);
+			if ( it != end() ) {
+				erase(it);
+			}
+
+			return true;
+		}
+
+		void clear() {
+			for ( auto f : *this ) {
+				delete f;
+			}
+			std::vector<AmplitudeProcessorAliasFactory*>::clear();
+		}
+};
+
+
+using RegionalizationRegistry = map<string, TypeSpecificRegionalizationPtr>;
+
+AliasFactories aliasFactories;
 RegionalizationRegistry regionalizationRegistry;
 mutex regionalizationRegistryMutex;
 
@@ -507,7 +602,7 @@ class ParamOriginTime : public Interface {
 				throw StatusException(WaveformProcessor::MissingHypocenter, 60);
 			}
 
-			return env.hypocenter->time().value() - ctx.proc()->trigger();
+			return (env.hypocenter->time().value() - ctx.proc()->trigger()).length();
 		}
 
 		std::string toString() const override {
@@ -524,7 +619,7 @@ class ParamTrigger : public Interface {
 				throw StatusException(WaveformProcessor::MissingHypocenter, 50);
 			}
 
-			return ctx.proc()->trigger() - env.hypocenter->time().value();
+			return (ctx.proc()->trigger() - env.hypocenter->time().value()).length();
 		}
 
 		std::string toString() const override {
@@ -1023,6 +1118,22 @@ Expression::InterfacePtr Expression::Interface::parse(const std::string &text, s
 }
 
 
+template <typename T, typename CFG>
+void readValue(T &value, const CFG *cfg, const std::string &var, const string &unit) {
+	try {
+		auto s = cfg->getString(var);
+		try {
+			value = Util::UnitConverter::parse<double>(s, unit);
+		}
+		catch ( exception &e ) {
+			SEISCOMP_ERROR("%s: invalid value: %s", var, e.what());
+			throw e;
+		}
+	}
+	catch ( ... ) {}
+}
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1208,24 +1319,7 @@ void AmplitudeProcessor::init() {
 	_enableUpdates = false;
 	_enableResponses = false;
 	_responseApplied = false;
-
-	_config.noiseBegin = -35;
-	_config.noiseEnd = -5;
-	_config.signalBegin = -5;
-	_config.signalEnd = 30;
-
-	_config.snrMin = 3;
-
-	_config.minimumDistance = 0;
-	_config.maximumDistance = 180;
-	_config.minimumDepth = -1E6;
-	_config.maximumDepth = 1E6;
-
-	_config.respTaper = 5.0;
-	_config.respMinFreq = 0.00833333; // 120 secs
-	_config.respMaxFreq = 0;
-
-	_config.iaspeiAmplitudes = false;
+	_config = Config();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1496,7 +1590,31 @@ const std::string& AmplitudeProcessor::unit() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::computeTimeWindow() {
-	if ( !(bool)_trigger ) {
+	if ( !_trigger ) {
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.noiseBegin.isValid() ) {
+		setStatus(ConfigurationError, -1);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.noiseEnd.isValid() ) {
+		setStatus(ConfigurationError, -2);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalBegin.isValid() ) {
+		setStatus(ConfigurationError, -3);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
+	if ( !_config.signalEnd.isValid() ) {
+		setStatus(ConfigurationError, -4);
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
@@ -1514,8 +1632,8 @@ void AmplitudeProcessor::computeTimeWindow() {
 		return;
 	}
 
-	Core::Time startTime = _trigger + Core::TimeSpan(_config.noiseBegin);
-	Core::Time   endTime = _trigger + Core::TimeSpan(_config.signalEnd);
+	Core::Time startTime = *_trigger + Core::TimeSpan(_config.noiseBegin);
+	Core::Time   endTime = *_trigger + Core::TimeSpan(_config.signalEnd);
 
 	// Add the taper length to the requested time window otherwise
 	// amplitudes are damped
@@ -1610,10 +1728,10 @@ void AmplitudeProcessor::reprocess(OPT(double) searchBegin,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::reset() {
 	TimeWindowProcessor::reset();
+	_trigger = Core::None;
 	_noiseAmplitude = Core::None;
 	_noiseOffset = Core::None;
 	_responseApplied = false;
-	_trigger = Core::Time();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1632,15 +1750,16 @@ void AmplitudeProcessor::process(const Record *record, const DoubleArray &) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::process(const Record *record) {
 	// Sampling frequency has not been set yet
-	if ( _stream.fsamp == 0.0 )
+	if ( !_trigger || (_stream.fsamp == 0.0) ) {
 		return;
+	}
 
 	int n = static_cast<int>(_data.size());
 
 	// signal and noise window relative to _continuous->startTime()
-	double dt0  = _trigger - dataTimeWindow().startTime();
-	double dt1  = dataTimeWindow().endTime() - dataTimeWindow().startTime();
-	double dtw1  = timeWindow().endTime() - dataTimeWindow().startTime();
+	double dt0  = (*_trigger - dataTimeWindow().startTime()).length();
+	double dt1  = (dataTimeWindow().endTime() - dataTimeWindow().startTime()).length();
+	double dtw1  = (timeWindow().endTime() - dataTimeWindow().startTime()).length();
 	double dtn1 = dt0 + _config.noiseBegin;
 	double dtn2 = dt0 + _config.noiseEnd;
 	double dts1 = dt0 + _config.signalBegin;
@@ -1791,7 +1910,21 @@ void AmplitudeProcessor::process(const Record *record) {
 			res.period = -1;
 		}
 
-		if ( index.begin > index.end ) std::swap(index.begin, index.end);
+		if ( res.period > 0 ) {
+			if ( _config.minimumPeriod > 0 && res.period < _config.minimumPeriod ) {
+				setStatus(PeriodOutOfRange, res.period);
+				return;
+			}
+
+			if ( _config.maximumPeriod > 0 && res.period > _config.maximumPeriod ) {
+				setStatus(PeriodOutOfRange, res.period);
+				return;
+			}
+		}
+
+		if ( index.begin > index.end ) {
+			std::swap(index.begin, index.end);
+		}
 
 		// Update status information
 		res.time.reference = dataTimeWindow().startTime() + Core::TimeSpan(dt);
@@ -1814,11 +1947,60 @@ void AmplitudeProcessor::process(const Record *record) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::initFilter(double fsamp) {
+	if ( _enableResponses ) {
+		TimeWindowProcessor::initFilter(fsamp);
+		return;
+	}
+
+	SignalUnit unit;
+	// Valid value already checked in setup()
+	unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str());
+
+	Filter *filter{nullptr};
+	Math::Filtering::ChainFilter<double> *chain{nullptr};
+
+	if ( unit == Meter ) {
+		SEISCOMP_DEBUG("Add derivation of data for amplitude computation");
+		filter = new Math::Filtering::IIRDifferentiate<double>;
+	}
+	else if ( unit == MeterPerSecondSquared ) {
+		SEISCOMP_DEBUG("Add integration of data for amplitude computation");
+		if ( _config.respMinFreq > 0 ) {
+			chain = new Math::Filtering::ChainFilter<double>;
+			chain->add(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+		}
+		filter = new Math::Filtering::IIRIntegrate<double>;
+	}
+
+	if ( filter ) {
+		if ( _stream.filter || chain ) {
+			if ( !chain ) {
+				chain = new Math::Filtering::ChainFilter<double>;
+			}
+			chain->add(filter);
+			if ( _stream.filter ) {
+				chain->add(_stream.filter);
+			}
+			filter = chain;
+		}
+
+		_stream.filter = filter;
+	}
+
+	TimeWindowProcessor::initFilter(fsamp);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
                                    double, double, size_t) {
-	if ( _stream.dataTimeWindow.endTime()+span < timeWindow().startTime() ) {
+	if ( _stream.dataTimeWindow.endTime() + span < timeWindow().startTime() ) {
 		// Save trigger, because reset will unset it
-		Core::Time t = _trigger;
+		auto t = _trigger;
 		reset();
 		_trigger = t;
 		return true;
@@ -1883,44 +2065,6 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 		if ( !deconvolveData(sensor->response(), _data, intSteps) ) {
 			setStatus(DeconvolutionFailed, 0);
 			return;
-		}
-	}
-	else {
-		// If the sensor is known then check the unit and skip
-		// non velocity streams. Otherwise simply use the data
-		// to be compatible to the old version. This will be
-		// changed in the future and checked more strictly.
-		if ( sensor ) {
-			SignalUnit unit;
-			if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
-				// Invalid unit string
-				setStatus(IncompatibleUnit, 4);
-				return;
-			}
-
-			switch ( unit ) {
-				case Meter:
-					if ( _enableUpdates ) {
-						// Updates with differentiation are not yet supported.
-						setStatus(IncompatibleUnit, 5);
-						return;
-					}
-
-					// Derive to m/s
-					{
-						Math::Filtering::IIRDifferentiate<double> diff;
-						diff.setSamplingFrequency(_stream.fsamp);
-						diff.apply(data.size(), data.typedData());
-					}
-					break;
-
-				case MeterPerSecond:
-					break;
-
-				default:
-					setStatus(IncompatibleUnit, 3);
-					return;
-			}
 		}
 	}
 }
@@ -2041,6 +2185,15 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.woodAndersonResponse.T0, "amplitudes.WoodAnderson.T0");
 	settings.getValue(_config.woodAndersonResponse.h, "amplitudes.WoodAnderson.h");
 
+	int safetyMargin = -1;
+	if ( !settings.getValue(safetyMargin, "amplitudes." + _type + ".safetyMargin") ) {
+		settings.getValue(safetyMargin, "amplitudes.safetyMargin");
+	}
+
+	if ( safetyMargin >= 0 ) {
+		setMargin(Core::TimeSpan(safetyMargin, 0));
+	}
+
 	if ( !parseSaturationThreshold(settings, "amplitudes.saturationThreshold") ) {
 		return false;
 	}
@@ -2141,10 +2294,16 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	settings.getValue(_config.ttModel, "amplitudes.ttt.model");
 
 	settings.getValue(_config.snrMin, "amplitudes." + _type + ".minSNR");
-	settings.getValue(_config.minimumDistance, "amplitudes." + _type + ".minDist");
-	settings.getValue(_config.maximumDistance, "amplitudes." + _type + ".maxDist");
-	settings.getValue(_config.minimumDepth, "amplitudes." + _type + ".minDepth");
-	settings.getValue(_config.maximumDepth, "amplitudes." + _type + ".maxDepth");
+	settings.getValue(_config.minimumPeriod, "amplitudes." + _type + ".minPeriod");
+	settings.getValue(_config.maximumPeriod, "amplitudes." + _type + ".maxPeriod");
+	try { readValue(_config.minimumDistance, &settings, "amplitudes." + _type + ".minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.maximumDistance, &settings, "amplitudes." + _type + ".maxDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.minimumDepth, &settings, "amplitudes." + _type + ".minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(_config.maximumDepth, &settings, "amplitudes." + _type + ".maxDepth", "km"); }
+	catch ( ... ) { return false; }
 
 	SEISCOMP_DEBUG("  + WA.gain = %f", _config.woodAndersonResponse.gain);
 	SEISCOMP_DEBUG("  + WA.T0 = %f", _config.woodAndersonResponse.T0);
@@ -2158,6 +2317,8 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString().c_str());
 	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString().c_str());
 	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
+	SEISCOMP_DEBUG("  + minimum period = %.3f", _config.minimumPeriod);
+	SEISCOMP_DEBUG("  + maximum period = %.3f", _config.maximumPeriod);
 	SEISCOMP_DEBUG("  + response correction = %i", _enableResponses);
 
 	if ( !settings.getValue(_config.respTaper, "amplitudes." + _type + ".resp.taper") ) {
@@ -2184,6 +2345,17 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	try { _config.iaspeiAmplitudes = cfg->getBool("amplitudes.iaspei"); }
 	catch ( ... ) {}
 
+	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.iaspeiAmplitudes);
+
+	if ( _usedComponent >= Vertical && _usedComponent <= SecondHorizontal ) {
+		SignalUnit unit;
+		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+			// Invalid unit string
+			setStatus(IncompatibleUnit, 0);
+			return false;
+		}
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2207,10 +2379,14 @@ bool AmplitudeProcessor::readLocale(Locale *locale,
 	OPT(double) minDist, maxDist, minDepth, maxDepth;
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 
-	try { minDist  = cfg->getDouble(cfgPrefix + "minDist"); } catch ( ... ) {}
-	try { maxDist  = cfg->getDouble(cfgPrefix + "maxDist"); } catch ( ... ) {}
-	try { minDepth = cfg->getDouble(cfgPrefix + "minDepth"); } catch ( ... ) {}
-	try { maxDepth = cfg->getDouble(cfgPrefix + "maxDepth"); } catch ( ... ) {}
+	try { readValue(minDist, cfg, cfgPrefix + "minDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(maxDist, cfg, cfgPrefix + "maxDist", "deg"); }
+	catch ( ... ) { return false; }
+	try { readValue(minDepth, cfg, cfgPrefix + "minDepth", "km"); }
+	catch ( ... ) { return false; }
+	try { readValue(maxDepth, cfg, cfgPrefix + "maxDepth", "km"); }
+	catch ( ... ) { return false; }
 
 	locale->check = Locale::Source;
 	locale->minimumDistance = minDist ? *minDist : _config.minimumDistance;
@@ -2360,8 +2536,9 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::setTrigger(const Core::Time& trigger) {
-	if ( _trigger )
+	if ( _trigger ) {
 		throw Core::ValueException("The trigger has been set already");
+	}
 
 	_trigger = trigger;
 }
@@ -2372,7 +2549,11 @@ void AmplitudeProcessor::setTrigger(const Core::Time& trigger) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Core::Time AmplitudeProcessor::trigger() const {
-	return _trigger;
+	if ( !_trigger ) {
+		throw Core::ValueException("The trigger has not been set");
+	}
+
+	return *_trigger;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2457,6 +2638,33 @@ void AmplitudeProcessor::writeData() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::CreateAlias(const std::string &aliasType,
+                                     const std::string &sourceType) {
+	return aliasFactories.createAlias(aliasType, sourceType);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor::RemoveAlias(const std::string &aliasType) {
+	return aliasFactories.removeAlias(aliasType);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeProcessor::RemoveAllAliases() {
+	aliasFactories.clear();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+}
 }

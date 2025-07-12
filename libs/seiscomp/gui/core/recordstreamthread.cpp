@@ -99,8 +99,14 @@ bool RecordStreamThread::connect()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setStartTime(const OPT(Core::Time) &t) {
+	if ( !_recordStream ) {
+		return;
+	}
+
+	SEISCOMP_DEBUG("[rthread %d] setting start time = %s",
+	               ID(), t ? t->iso() : "<null>");
+
 	_recordStream->setStartTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -109,8 +115,14 @@ void RecordStreamThread::setStartTime(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setEndTime(const OPT(Core::Time) &t) {
+	if ( !_recordStream ) {
+		return;
+	}
+
+	SEISCOMP_DEBUG("[rthread %d] setting end time = %s",
+	               ID(), t ? t->iso() : "<null>");
+
 	_recordStream->setEndTime(t);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -119,19 +131,15 @@ void RecordStreamThread::setEndTime(const Seiscomp::Core::Time& t) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
-	if ( _recordStream == nullptr ) return;
+void RecordStreamThread::setTimeWindow(const Core::TimeWindow &tw) {
+	if ( !_recordStream ) {
+		return;
+	}
 
-	if ( tw.startTime() )
-		_recordStream->setStartTime(tw.startTime());
-
-	if ( tw.endTime() )
-		_recordStream->setEndTime(tw.endTime());
+	_recordStream->setTimeWindow(tw);
 
 	SEISCOMP_DEBUG("[rthread %d] setting time window: start = %s, end = %s",
-	               ID(),
-	               tw.startTime().toString("%T %F").c_str(),
-	               tw.endTime().toString("%T %F").c_str());
+	               ID(), tw.startTime().iso(), tw.endTime().iso());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -140,7 +148,10 @@ void RecordStreamThread::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::setTimeout(int seconds) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
+
 	return _recordStream->setTimeout(seconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,7 +161,9 @@ bool RecordStreamThread::setTimeout(int seconds) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStation(const std::string& network, const std::string& station) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.??.???", ID(), network.c_str(), station.c_str());
 	return _recordStream->addStream(network, station, "??", "???");
@@ -163,7 +176,9 @@ bool RecordStreamThread::addStation(const std::string& network, const std::strin
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel) {
-	if ( _recordStream == nullptr ) return false;
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s", ID(), network.c_str(), station.c_str(), location.c_str(), channel.c_str());
 	return _recordStream->addStream(network, station, location, channel);
@@ -176,12 +191,15 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
                                    const std::string& location, const std::string& channel,
-                                   const Seiscomp::Core::Time &stime, const Seiscomp::Core::Time &etime) {
-	if ( _recordStream == nullptr ) return false;
+                                   const OPT(Core::Time) &stime, const OPT(Core::Time) &etime) {
+	if ( !_recordStream ) {
+		return false;
+	}
 
 	SEISCOMP_DEBUG("[rthread %d] adding stream %s.%s.%s.%s - %s~%s", ID(),
-	               network.c_str(), station.c_str(), location.c_str(), channel.c_str(),
-	               stime.iso().c_str(), etime.iso().c_str());
+	               network, station, location, channel,
+	               stime ? stime->iso() : "",
+	               etime ? etime->iso() : "");
 	return _recordStream->addStream(network, station, location, channel, stime, etime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -191,7 +209,7 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
-                                   const std::string& location, const std::string& channel, 
+                                   const std::string& location, const std::string& channel,
                                    double gain) {
 	if ( addStream(network,station, location, channel) ) {
 		std::string id = station+"."+location+"."+channel;
@@ -225,8 +243,7 @@ void RecordStreamThread::run()
 	IO::RecordInput recInput(_recordStream.get(), _dataType, _recordHint);
 	_mutex.unlock();
 	try {
-		for (IO::RecordIterator it = recInput.begin(); it != recInput.end(); ++it)
-		{
+		for ( Record *rec : recInput ) {
 			bool stopAcquisition;
 			_mutex.lock();
 			stopAcquisition = _requestedClose;
@@ -235,12 +252,11 @@ void RecordStreamThread::run()
 				SEISCOMP_DEBUG("[rthread %d] close request leads to breaking the acquisition loop", ID());
 				break;
 			}
-			Record* rec = *it;
 			if ( rec ) {
 				if ( !_gainMap.empty() ) {
 					std::string id = rec->stationCode()+"."+rec->locationCode()+"."+rec->channelCode();
 					GainMap::const_iterator git = _gainMap.find(id);
-	
+
 					if ( git != _gainMap.end() ) {
 						const Array* data = rec->data();
 						if ( git->second != 0) {

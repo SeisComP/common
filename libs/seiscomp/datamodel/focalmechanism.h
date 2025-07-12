@@ -69,28 +69,28 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 
 	public:
 		//! Copy constructor
-		FocalMechanism(const FocalMechanism& other);
+		FocalMechanism(const FocalMechanism &other);
 
 		//! Constructor with publicID
 		FocalMechanism(const std::string& publicID);
 
 		//! Destructor
 		~FocalMechanism() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static FocalMechanism* Create();
-		static FocalMechanism* Create(const std::string& publicID);
+		static FocalMechanism *Create();
+		static FocalMechanism *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static FocalMechanism* Find(const std::string& publicID);
+		static FocalMechanism *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -99,14 +99,14 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		FocalMechanism& operator=(const FocalMechanism& other);
+		FocalMechanism &operator=(const FocalMechanism &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const FocalMechanism& other) const;
-		bool operator!=(const FocalMechanism& other) const;
+		bool operator==(const FocalMechanism &other) const;
+		bool operator!=(const FocalMechanism &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const FocalMechanism& other) const;
+		bool equal(const FocalMechanism &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -169,7 +169,7 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -182,8 +182,8 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(Comment* obj);
-		bool add(MomentTensor* obj);
+		bool add(Comment *obj);
+		bool add(MomentTensor *obj);
 
 		/**
 		 * Removes an object.
@@ -192,8 +192,8 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(Comment* obj);
-		bool remove(MomentTensor* obj);
+		bool remove(Comment *obj);
+		bool remove(MomentTensor *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -202,7 +202,7 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeMomentTensor(size_t i);
 
 		//! Retrieve the number of objects of a particular class
@@ -211,14 +211,14 @@ class SC_SYSTEM_CORE_API FocalMechanism : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
-		MomentTensor* momentTensor(size_t i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
+		MomentTensor *momentTensor(size_t i) const;
 
 		//! Find an object by its unique attribute(s)
-		MomentTensor* findMomentTensor(const std::string& publicID) const;
+		MomentTensor *findMomentTensor(const std::string& publicID) const;
 
-		EventParameters* eventParameters() const;
+		EventParameters *eventParameters() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

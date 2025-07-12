@@ -26,16 +26,11 @@
 #include <seiscomp/math/geo.h>
 #include <seiscomp/math/math.h>
 
-#define WGS84_SEMI_MAJOR_AXIS 6378137.0
-#define WGS84_FLATTENING (1.0/298.2572235630)
 
+namespace Seiscomp {
+namespace Math {
+namespace Geo {
 
-namespace Seiscomp
-{
-namespace Math
-{
-namespace Geo
-{
 
 static int _delazi(double lat1,  double lon1, double lat2, double lon2,
                    double *dist, double *azi, double *baz) {
@@ -385,9 +380,9 @@ void xyz2ltp(double x, double y, double z,
 void _ltp2xyz(double lat, double lon, double alt,
               double *x, double *y, double *z) {
 	// 1st eccentricity squared
-	static double esqr = WGS84_FLATTENING * (2.0 - WGS84_FLATTENING);
+	static constexpr double esqr = WGS84_FLATTENING * (2.0 - WGS84_FLATTENING);
 	// 1 minus eccentricity squared
-	static double omes = 1.0 - esqr;
+	static constexpr double omes = 1.0 - esqr;
 
 	double slat = sin(lat);
 	double clat = cos(lat);

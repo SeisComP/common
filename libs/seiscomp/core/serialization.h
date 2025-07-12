@@ -131,13 +131,13 @@ class ObjectContainer {
 		typedef T Type;
 		//typedef C<T, std::allocator<T> > ContainerType;
 		typedef C ContainerType;
-	
+
 		ObjectContainer(ContainerType& c, ADD a) : _container(&c), _add(a) {}
 
 		ContainerType& container() const {
 			return *_container;
 		}
-	
+
 		bool add(T& v) const {
 			_add(v);
 			return true;
@@ -188,9 +188,9 @@ ObjectContainer<C<T, std::allocator<T> >, T, ADD> containerMember(C<T, std::allo
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename Tgt, class ret, class T>
-std::function<ret (const typename Core::SmartPointer<Tgt>::Impl &ptr)>
+std::function<ret (const Core::SmartPointer<Tgt> &ptr)>
 bindMemberFunction(ret (T::*f)(Tgt*), T* c) {
-	return [c,f](const typename Core::SmartPointer<Tgt>::Impl &ptr) {
+	return [c,f](const Core::SmartPointer<Tgt> &ptr) {
 		return (c->*f)(ptr.get());
 	};
 }

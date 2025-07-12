@@ -78,28 +78,28 @@ class SC_SYSTEM_CORE_API OriginReference : public Object {
 		OriginReference();
 
 		//! Copy constructor
-		OriginReference(const OriginReference& other);
+		OriginReference(const OriginReference &other);
 
 		//! Custom constructor
 		OriginReference(const std::string& originID);
 
 		//! Destructor
 		~OriginReference() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		OriginReference& operator=(const OriginReference& other);
+		OriginReference &operator=(const OriginReference &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const OriginReference& other) const;
-		bool operator!=(const OriginReference& other) const;
+		bool operator==(const OriginReference &other) const;
+		bool operator!=(const OriginReference &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const OriginReference& other) const;
+		bool equal(const OriginReference &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -115,17 +115,17 @@ class SC_SYSTEM_CORE_API OriginReference : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const OriginReferenceIndex& index() const;
+		const OriginReferenceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const OriginReference* lhs) const;
+		bool equalIndex(const OriginReference *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Event* event() const;
+		Event *event() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

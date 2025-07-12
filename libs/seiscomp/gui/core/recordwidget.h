@@ -217,8 +217,10 @@ class SC_GUI_API RecordWidget : public QWidget {
 		};
 
 		enum ShadowWidgetFlags {
-			Raw = 0x01,
-			Filtered = 0x02
+			Notify   = 0x00,
+			Raw      = 0x01,
+			Filtered = 0x02,
+			Style    = 0x08
 		};
 
 		enum AxisPosition {
@@ -252,13 +254,13 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 			float                     timingQuality{-1};
 			int                       timingQualityCount{0};
+			bool                      dirtyData{false};
 			bool                      dirty{false};
 			bool                      visible{false};
 			AbstractRecordPolylinePtr poly;
 			QString                   status;
 
 			void reset() {
-				dyMin = dyMax = dOffset  = absMax = 0;
 				fyMin = -1; fyMax = 1;
 				pyMin = pyMax = 0;
 				visible = false;
@@ -363,8 +365,8 @@ class SC_GUI_API RecordWidget : public QWidget {
 		//! Available record slots are copied by reference
 		//! in that way that the listener is not the owner of the
 		//! data. Available marker are copied by value.
-		void setShadowWidget(RecordWidget *shadow,  bool copyMarker,
-		                     int flags = Raw);
+		void setShadowWidget(RecordWidget *shadow,  bool copyMarker = false,
+		                     int flags = Raw | Style);
 
 		//! Returns the current shadow widget
 		RecordWidget *shadowWidget() const { return _shadowWidget; }
@@ -393,7 +395,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 		double smin() const { return _smin; }
 		double smax() const { return _smax; }
-	
+
 		Seiscomp::Core::Time alignment() { return _alignment; }
 
 		Seiscomp::Core::Time centerTime();
@@ -412,11 +414,11 @@ class SC_GUI_API RecordWidget : public QWidget {
 		QPair<double,double> amplitudeRange(int slot) const;
 
 		void ensureVisibility(const Seiscomp::Core::Time &time, int pixelMargin);
-	
+
 		//! Method to inform the widget about a newly inserted
 		//! record.
 		virtual void fed(int slot, const Seiscomp::Record *rec);
-	
+
 		//! Causes the widget to rebuild its internal data
 		//! according its size and parameters
 		void setDirty();
@@ -565,7 +567,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void alignOnMarker(const QString& text);
 
 		void setAmplScale(double);
-	
+
 		void enableFiltering(bool enable);
 		void setGridSpacing(double, double, double);
 		void setGridVSpacing(double, double, double);
@@ -577,7 +579,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void setAutoMaxScale(bool);
 
 		void setNormalizationWindow(const Seiscomp::Core::TimeWindow&);
-		void setOffsetWindow(const Seiscomp::Core::TimeWindow&);
 
 		//! Sets the maximum slot index for which setFilter(filter) is
 		//! applied. The semantics of 'any' is bound to value -1.
@@ -754,7 +755,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		RecordBorderDrawMode _recordBorderDrawMode;
 		Seiscomp::Core::Time _alignment;
 		bool                 _clipRows{true};
-	
+
 		double               _tmin;            // time range min
 		double               _tmax;            // time range max
 		double               _smin, _smax;     // selection
@@ -815,10 +816,9 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int                  _margins[4];
 		QString              _cursorText;
 		Seiscomp::Core::Time _cursorPos;
-		Seiscomp::Core::Time _startDragPos;
+		OPT(Seiscomp::Core::Time)  _startDragPos;
 
 		Seiscomp::Core::TimeWindow _normalizationWindow;
-		Seiscomp::Core::TimeWindow _offsetWindow;
 
 		RecordWidget        *_shadowWidget;
 		RecordWidget        *_markerSourceWidget;

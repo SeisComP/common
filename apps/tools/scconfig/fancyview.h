@@ -73,12 +73,12 @@ class FancyView : public QAbstractItemView {
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		QRect visualRect(const QModelIndex &index) const;
-		void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
-		QModelIndex indexAt(const QPoint &point) const;
+		QRect visualRect(const QModelIndex &index) const override;
+		void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
+		QModelIndex indexAt(const QPoint &point) const override;
 
-		void setModel(QAbstractItemModel * model);
-		void setRootIndex(const QModelIndex &index);
+		void setModel(QAbstractItemModel * model) override;
+		void setRootIndex(const QModelIndex &index) override;
 		void setConfigStage(Seiscomp::Environment::ConfigStage);
 
 
@@ -87,40 +87,40 @@ class FancyView : public QAbstractItemView {
 	// ------------------------------------------------------------------
 	protected slots:
 		void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
-		                 const QVector<int> &roles = QVector<int>());
-		void rowsInserted(const QModelIndex &parent, int start, int end);
-		void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+		                 const QVector<int> &roles = QVector<int>()) override;
+		void rowsInserted(const QModelIndex &parent, int start, int end) override;
+		void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
 
 
 	// ------------------------------------------------------------------
 	//  Protected interface
 	// ------------------------------------------------------------------
 	protected:
-		bool eventFilter(QObject *o, QEvent *e);
-		bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event);
+		bool eventFilter(QObject *o, QEvent *e) override;
+		bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 		QModelIndex moveCursor(QAbstractItemView::CursorAction cursorAction,
-		                       Qt::KeyboardModifiers modifiers);
+		                       Qt::KeyboardModifiers modifiers) override;
 
-		int horizontalOffset() const;
-		int verticalOffset() const;
+		int horizontalOffset() const override;
+		int verticalOffset() const override;
 
-		bool isIndexHidden(const QModelIndex &index) const;
+		bool isIndexHidden(const QModelIndex &index) const override;
 
-		void setSelection(const QRect&, QItemSelectionModel::SelectionFlags command);
+		void setSelection(const QRect&, QItemSelectionModel::SelectionFlags command) override;
 
-		void mousePressEvent(QMouseEvent *event);
+		void mousePressEvent(QMouseEvent *event) override;
 
-		void mouseMoveEvent(QMouseEvent *event);
-		void mouseReleaseEvent(QMouseEvent *event);
+		void mouseMoveEvent(QMouseEvent *event) override;
+		void mouseReleaseEvent(QMouseEvent *event) override;
 
-		void paintEvent(QPaintEvent *event);
-		void resizeEvent(QResizeEvent *event);
-		void scrollContentsBy(int dx, int dy);
+		void paintEvent(QPaintEvent *event) override;
+		void resizeEvent(QResizeEvent *event) override;
+		void scrollContentsBy(int dx, int dy) override;
 
-		QRegion visualRegionForSelection(const QItemSelection &selection) const;
+		QRegion visualRegionForSelection(const QItemSelection &selection) const override;
 
-		void currentChanged(const QModelIndex &curr, const QModelIndex &prev);
-		void keyboardSearch(const QString &search);
+		void currentChanged(const QModelIndex &curr, const QModelIndex &prev) override;
+		void keyboardSearch(const QString &search) override;
 
 
 	// ------------------------------------------------------------------
@@ -156,6 +156,16 @@ class FancyView : public QAbstractItemView {
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Structure *struc);
 		FancyViewItem add(QLayout *layout, const QModelIndex &idx);
 
+		/**
+		 * @brief Evaluate a value based on properities adding to a text string
+		 * @param value The value to evaluate
+		 * @param param The object of properties
+		 * @param eval The text string to return
+		 * @return True if issues were found, false if no issues were found
+		 */
+		bool evaluateValue(const std::string& value,
+		                   const Seiscomp::System::Parameter *param,
+		                   QString &eval, bool verbose);
 
 	private:
 		typedef QHash<QPersistentModelIndex, FancyViewItem> ViewItems;

@@ -86,28 +86,28 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 
 	public:
 		//! Copy constructor
-		DataExtent(const DataExtent& other);
+		DataExtent(const DataExtent &other);
 
 		//! Constructor with publicID
 		DataExtent(const std::string& publicID);
 
 		//! Destructor
 		~DataExtent() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static DataExtent* Create();
-		static DataExtent* Create(const std::string& publicID);
+		static DataExtent *Create();
+		static DataExtent *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static DataExtent* Find(const std::string& publicID);
+		static DataExtent *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -116,14 +116,14 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		DataExtent& operator=(const DataExtent& other);
+		DataExtent &operator=(const DataExtent &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataExtent& other) const;
-		bool operator!=(const DataExtent& other) const;
+		bool operator==(const DataExtent &other) const;
+		bool operator!=(const DataExtent &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataExtent& other) const;
+		bool equal(const DataExtent &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -160,12 +160,12 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DataExtentIndex& index() const;
+		const DataExtentIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const DataExtent* lhs) const;
+		bool equalIndex(const DataExtent *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -178,8 +178,8 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(DataSegment* obj);
-		bool add(DataAttributeExtent* obj);
+		bool add(DataSegment *obj);
+		bool add(DataAttributeExtent *obj);
 
 		/**
 		 * Removes an object.
@@ -188,8 +188,8 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(DataSegment* obj);
-		bool remove(DataAttributeExtent* obj);
+		bool remove(DataSegment *obj);
+		bool remove(DataAttributeExtent *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -198,9 +198,9 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeDataSegment(size_t i);
-		bool removeDataSegment(const DataSegmentIndex& i);
+		bool removeDataSegment(const DataSegmentIndex &i);
 		bool removeDataAttributeExtent(size_t i);
-		bool removeDataAttributeExtent(const DataAttributeExtentIndex& i);
+		bool removeDataAttributeExtent(const DataAttributeExtentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t dataSegmentCount() const;
@@ -208,15 +208,15 @@ class SC_SYSTEM_CORE_API DataExtent : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		DataSegment* dataSegment(size_t i) const;
-		DataSegment* dataSegment(const DataSegmentIndex& i) const;
+		DataSegment *dataSegment(size_t i) const;
+		DataSegment *dataSegment(const DataSegmentIndex &i) const;
 
-		DataAttributeExtent* dataAttributeExtent(size_t i) const;
-		DataAttributeExtent* dataAttributeExtent(const DataAttributeExtentIndex& i) const;
+		DataAttributeExtent *dataAttributeExtent(size_t i) const;
+		DataAttributeExtent *dataAttributeExtent(const DataAttributeExtentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		DataAvailability* dataAvailability() const;
+		DataAvailability *dataAvailability() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

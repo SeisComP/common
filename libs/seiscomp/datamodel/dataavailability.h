@@ -54,11 +54,11 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 		DataAvailability();
 
 		//! Copy constructor
-		DataAvailability(const DataAvailability& other);
+		DataAvailability(const DataAvailability &other);
 
 		//! Destructor
 		~DataAvailability() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
@@ -66,16 +66,16 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		DataAvailability& operator=(const DataAvailability& other);
+		DataAvailability &operator=(const DataAvailability &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const DataAvailability& other) const;
-		bool operator!=(const DataAvailability& other) const;
+		bool operator==(const DataAvailability &other) const;
+		bool operator!=(const DataAvailability &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const DataAvailability& other) const;
+		bool equal(const DataAvailability &other) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -88,7 +88,7 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(DataExtent* obj);
+		bool add(DataExtent *obj);
 
 		/**
 		 * Removes an object.
@@ -97,7 +97,7 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(DataExtent* obj);
+		bool remove(DataExtent *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -106,18 +106,18 @@ class SC_SYSTEM_CORE_API DataAvailability : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeDataExtent(size_t i);
-		bool removeDataExtent(const DataExtentIndex& i);
+		bool removeDataExtent(const DataExtentIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t dataExtentCount() const;
 
 		//! Index access
 		//! @return The object at index i
-		DataExtent* dataExtent(size_t i) const;
-		DataExtent* dataExtent(const DataExtentIndex& i) const;
+		DataExtent *dataExtent(size_t i) const;
+		DataExtent *dataExtent(const DataExtentIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
-		DataExtent* findDataExtent(const std::string& publicID) const;
+		DataExtent *findDataExtent(const std::string& publicID) const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ArclinkStatusLine, Object, "ArclinkStatusLine");
 
 
-ArclinkStatusLine::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ArclinkStatusLine::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("type", "string", false, false, true, false, false, false, nullptr, &ArclinkStatusLine::setType, &ArclinkStatusLine::type));
 	addProperty(Core::simpleProperty("status", "string", false, false, true, false, false, false, nullptr, &ArclinkStatusLine::setStatus, &ArclinkStatusLine::status));
 	addProperty(Core::simpleProperty("size", "int", false, false, false, false, true, false, nullptr, &ArclinkStatusLine::setSize, &ArclinkStatusLine::size));
@@ -66,7 +66,7 @@ ArclinkStatusLineIndex::ArclinkStatusLineIndex(const std::string& volumeID_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkStatusLineIndex::ArclinkStatusLineIndex(const ArclinkStatusLineIndex& idx) {
+ArclinkStatusLineIndex::ArclinkStatusLineIndex(const ArclinkStatusLineIndex &idx) {
 	volumeID = idx.volumeID;
 	type = idx.type;
 	status = idx.status;
@@ -77,7 +77,7 @@ ArclinkStatusLineIndex::ArclinkStatusLineIndex(const ArclinkStatusLineIndex& idx
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLineIndex::operator==(const ArclinkStatusLineIndex& idx) const {
+bool ArclinkStatusLineIndex::operator==(const ArclinkStatusLineIndex &idx) const {
 	return volumeID == idx.volumeID &&
 	       type == idx.type &&
 	       status == idx.status;
@@ -88,7 +88,7 @@ bool ArclinkStatusLineIndex::operator==(const ArclinkStatusLineIndex& idx) const
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLineIndex::operator!=(const ArclinkStatusLineIndex& idx) const {
+bool ArclinkStatusLineIndex::operator!=(const ArclinkStatusLineIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -105,7 +105,7 @@ ArclinkStatusLine::ArclinkStatusLine() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkStatusLine::ArclinkStatusLine(const ArclinkStatusLine& other)
+ArclinkStatusLine::ArclinkStatusLine(const ArclinkStatusLine &other)
 : Object() {
 	*this = other;
 }
@@ -123,7 +123,7 @@ ArclinkStatusLine::~ArclinkStatusLine() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::operator==(const ArclinkStatusLine& rhs) const {
+bool ArclinkStatusLine::operator==(const ArclinkStatusLine &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _size != rhs._size ) return false;
 	if ( _message != rhs._message ) return false;
@@ -135,7 +135,7 @@ bool ArclinkStatusLine::operator==(const ArclinkStatusLine& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::operator!=(const ArclinkStatusLine& rhs) const {
+bool ArclinkStatusLine::operator!=(const ArclinkStatusLine &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ bool ArclinkStatusLine::operator!=(const ArclinkStatusLine& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::equal(const ArclinkStatusLine& other) const {
+bool ArclinkStatusLine::equal(const ArclinkStatusLine &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -245,7 +245,7 @@ const std::string& ArclinkStatusLine::volumeID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ArclinkStatusLineIndex& ArclinkStatusLine::index() const {
+const ArclinkStatusLineIndex &ArclinkStatusLine::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -254,8 +254,11 @@ const ArclinkStatusLineIndex& ArclinkStatusLine::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::equalIndex(const ArclinkStatusLine* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ArclinkStatusLine::equalIndex(const ArclinkStatusLine *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -264,7 +267,7 @@ bool ArclinkStatusLine::equalIndex(const ArclinkStatusLine* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkRequest* ArclinkStatusLine::arclinkRequest() const {
+ArclinkRequest *ArclinkStatusLine::arclinkRequest() const {
 	return static_cast<ArclinkRequest*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -273,7 +276,7 @@ ArclinkRequest* ArclinkStatusLine::arclinkRequest() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkStatusLine& ArclinkStatusLine::operator=(const ArclinkStatusLine& other) {
+ArclinkStatusLine &ArclinkStatusLine::operator=(const ArclinkStatusLine &other) {
 	_index = other._index;
 	_size = other._size;
 	_message = other._message;
@@ -285,10 +288,11 @@ ArclinkStatusLine& ArclinkStatusLine::operator=(const ArclinkStatusLine& other) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::assign(Object* other) {
-	ArclinkStatusLine* otherArclinkStatusLine = ArclinkStatusLine::Cast(other);
-	if ( other == nullptr )
+bool ArclinkStatusLine::assign(Object *other) {
+	ArclinkStatusLine *otherArclinkStatusLine = ArclinkStatusLine::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherArclinkStatusLine;
 
@@ -300,11 +304,13 @@ bool ArclinkStatusLine::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ArclinkStatusLine::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(parent);
+	ArclinkRequest *arclinkRequest = ArclinkRequest::Cast(parent);
 	if ( arclinkRequest != nullptr )
 		return arclinkRequest->add(this);
 
@@ -317,11 +323,13 @@ bool ArclinkStatusLine::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkStatusLine::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ArclinkStatusLine::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkRequest* arclinkRequest = ArclinkRequest::Cast(object);
+	ArclinkRequest *arclinkRequest = ArclinkRequest::Cast(object);
 	if ( arclinkRequest != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -329,7 +337,7 @@ bool ArclinkStatusLine::detachFrom(PublicObject* object) {
 			return arclinkRequest->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ArclinkStatusLine* child = arclinkRequest->arclinkStatusLine(index());
+			ArclinkStatusLine *child = arclinkRequest->arclinkStatusLine(index());
 			if ( child != nullptr )
 				return arclinkRequest->remove(child);
 			else {
@@ -349,8 +357,9 @@ bool ArclinkStatusLine::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkStatusLine::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -360,8 +369,8 @@ bool ArclinkStatusLine::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ArclinkStatusLine::clone() const {
-	ArclinkStatusLine* clonee = new ArclinkStatusLine();
+Object *ArclinkStatusLine::clone() const {
+	ArclinkStatusLine *clonee = new ArclinkStatusLine();
 	*clonee = *this;
 	return clonee;
 }
@@ -371,7 +380,7 @@ Object* ArclinkStatusLine::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkStatusLine::accept(Visitor* visitor) {
+void ArclinkStatusLine::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -380,7 +389,7 @@ void ArclinkStatusLine::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkStatusLine::serialize(Archive& ar) {
+void ArclinkStatusLine::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

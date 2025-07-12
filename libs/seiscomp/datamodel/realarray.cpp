@@ -32,8 +32,8 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(RealArray, "RealArray");
 
 
-RealArray::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
-	addProperty(Core::simpleProperty("content", "float", true, false, false, false, true, false, nullptr, &RealArray::setContent, (const std::vector< double >& (RealArray::*)() const)&RealArray::content));
+RealArray::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
+	addProperty(Core::simpleProperty("content", "float", true, false, false, false, true, false, nullptr, &RealArray::setContent, (const std::vector< double > &(RealArray::*)() const)&RealArray::content));
 }
 
 
@@ -48,7 +48,7 @@ RealArray::RealArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealArray::RealArray(const RealArray& other)
+RealArray::RealArray(const RealArray &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -66,7 +66,7 @@ RealArray::~RealArray() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealArray::operator==(const RealArray& rhs) const {
+bool RealArray::operator==(const RealArray &rhs) const {
 	if ( !(_content == rhs._content) )
 		return false;
 	return true;
@@ -77,7 +77,7 @@ bool RealArray::operator==(const RealArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealArray::operator!=(const RealArray& rhs) const {
+bool RealArray::operator!=(const RealArray &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -86,7 +86,7 @@ bool RealArray::operator!=(const RealArray& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RealArray::equal(const RealArray& other) const {
+bool RealArray::equal(const RealArray &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -104,7 +104,7 @@ void RealArray::setContent(const std::vector< double > &content) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::vector< double >& RealArray::content() const {
+const std::vector< double > &RealArray::content() const {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,7 +113,7 @@ const std::vector< double >& RealArray::content() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector< double >& RealArray::content() {
+std::vector< double > &RealArray::content() {
 	return _content;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -122,7 +122,7 @@ std::vector< double >& RealArray::content() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RealArray& RealArray::operator=(const RealArray& other) {
+RealArray &RealArray::operator=(const RealArray &other) {
 	_content = other._content;
 	return *this;
 }
@@ -132,7 +132,7 @@ RealArray& RealArray::operator=(const RealArray& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RealArray::serialize(Archive& ar) {
+void RealArray::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

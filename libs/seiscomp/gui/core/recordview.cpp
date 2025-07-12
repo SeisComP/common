@@ -30,6 +30,7 @@
 #include <seiscomp/math/filter.h>
 
 #include <limits>
+#include <tuple>
 
 #include <QApplication>
 #include <QScrollBar>
@@ -239,7 +240,9 @@ class RecordScrollArea : public QScrollArea {
 								_overlay->mapToGlobal(rubberBand.topLeft()),
 								_overlay->mapToGlobal(rubberBand.bottomRight())
 							),
-							items, minTime, maxTime,
+							items,
+							static_cast<double>(minTime),
+							static_cast<double>(maxTime),
 							_selectOperation
 						);
 					}
@@ -504,7 +507,7 @@ void RecordView::setFramesEnabled(bool e) {
 			if ( frame ) {
 				//frame->setFrameShape(_frames?QFrame::StyledPanel:QFrame::NoFrame);
 				frame->setFrameStyle(_frames?(QFrame::StyledPanel | QFrame::Raised):(QFrame::NoFrame | QFrame::Plain));
-				frame->layout()->setMargin(_frameMargin);
+				frame->layout()->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 			}
 		}
 	}
@@ -588,7 +591,7 @@ void RecordView::setupUi() {
 	QFrame *frame = new QFrame;
 	QVBoxLayout *frameLayout = new QVBoxLayout(frame);
 	frameLayout->setSpacing(0);
-	frameLayout->setMargin(_frameMargin);
+	frameLayout->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 	frameLayout->addWidget(_timeScaleInfo);
 	frame->setLayout(frameLayout);
 	frame->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
@@ -597,7 +600,7 @@ void RecordView::setupUi() {
 
 	QWidget *timeScaleAuxWidget = new QWidget;
 	_timeScaleAuxLayout->setSpacing(_horizontalSpacing);
-	_timeScaleAuxLayout->setMargin(0);
+	_timeScaleAuxLayout->setContentsMargins(0, 0, 0, 0);
 
 	// Add left info frame
 	_timeScaleAuxLayout->addWidget(frame);
@@ -607,7 +610,7 @@ void RecordView::setupUi() {
 	frame->setFrameStyle(_frames?(QFrame::StyledPanel | QFrame::Raised):(QFrame::NoFrame | QFrame::Plain));
 	frameLayout = new QVBoxLayout(frame);
 	frameLayout->setSpacing(0);
-	frameLayout->setMargin(_frameMargin);
+	frameLayout->setContentsMargins(_frameMargin, _frameMargin, _frameMargin, _frameMargin);
 	frameLayout->addWidget(_timeScaleWidget);
 	frame->setLayout(frameLayout);
 
@@ -625,7 +628,7 @@ void RecordView::setupUi() {
 
 	QLayout* centralLayout = new QVBoxLayout;
 	centralLayout->setSpacing(_rowSpacing);
-	centralLayout->setMargin(0);
+	centralLayout->setContentsMargins(0, 0, 0, 0);
 	setLayout(centralLayout);
 
 	centralLayout->addWidget(_scrollArea);
@@ -1629,13 +1632,16 @@ void RecordView::scrollLeft() {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp -= Core::TimeSpan((float)width()/(20*_timeScale));
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp < _currentItem->widget()->leftTime() )
-			offset = _currentItem->widget()->leftTime() - cp;
-		else
+		if ( cp < _currentItem->widget()->leftTime() ) {
+			offset = static_cast<double>(_currentItem->widget()->leftTime() - cp);
+		}
+		else {
 			return;
+		}
 	}
-	else
+	else {
 		offset = (float)width()/(8*_timeScale);
+	}
 
 	setTimeRange(_tmin - offset, _tmax - offset);
 }
@@ -1646,19 +1652,22 @@ void RecordView::scrollLeft() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollLeftSlowly() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp -= Core::TimeSpan(1.0f/_timeScale);
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp < _currentItem->widget()->leftTime() )
-			offset = _currentItem->widget()->leftTime() - cp;
-		else
+		if ( cp < _currentItem->widget()->leftTime() ) {
+			offset = static_cast<double>(_currentItem->widget()->leftTime() - cp);
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = 1.0/_timeScale;
+	else {
+		offset = 1.0 / _timeScale;
+	}
 
 	setTimeRange(_tmin - offset, _tmax - offset);
 }
@@ -1669,19 +1678,23 @@ void RecordView::scrollLeftSlowly() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollRight() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
-		cp += Core::TimeSpan((float)width()/(20*_timeScale));
+		cp += Core::TimeSpan(static_cast<double>(width()) / (20 * _timeScale));
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp > _currentItem->widget()->rightTime() )
-			offset = cp - _currentItem->widget()->rightTime();
-		else
+
+		if ( cp > _currentItem->widget()->rightTime() ) {
+			offset = static_cast<double>(cp - _currentItem->widget()->rightTime());
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = (float)width()/(8*_timeScale);
+	else {
+		offset = static_cast<double>(width()) / (8 * _timeScale);
+	}
 
 	setTimeRange(_tmin + offset, _tmax + offset);
 }
@@ -1692,19 +1705,22 @@ void RecordView::scrollRight() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scrollRightSlowly() {
-	float offset = 0;
+	double offset = 0;
 
 	if ( _currentItem && !_currentItem->widget()->cursorText().isEmpty() ) {
 		Core::Time cp = _currentItem->widget()->cursorPos();
 		cp += Core::TimeSpan(1.0f/_timeScale);
 		_currentItem->widget()->setCursorPos(cp);
-		if ( cp > _currentItem->widget()->rightTime() )
-			offset = cp - _currentItem->widget()->rightTime();
-		else
+		if ( cp > _currentItem->widget()->rightTime() ) {
+			offset = static_cast<double>(cp - _currentItem->widget()->rightTime());
+		}
+		else {
 			return;
+		}
 	}
-	else
-		offset = (float)1.0/_timeScale;
+	else {
+		offset = 1.0 / _timeScale;
+	}
 
 	setTimeRange(_tmin + offset, _tmax + offset);
 }
@@ -2003,12 +2019,12 @@ void RecordView::scaleContent() {
 	}
 
 	float scale;
-	
+
 	if ( timeWindowLength == 0 )
 		scale = 0;
 	else
 		scale = (float)w/timeWindowLength;
-	
+
 	/*
 	if ( scale < _minTimeScale )
 		scale = _minTimeScale;
@@ -2382,7 +2398,7 @@ double RecordView::mapToUnit(int x) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Time RecordView::mapToTime(int x) const {
-	return Time(mapToUnit(x) * (_tmax - _tmin) + _tmin) + _alignment;
+	return _alignment + TimeSpan(mapToUnit(x) * (_tmax - _tmin) + _tmin);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2537,12 +2553,14 @@ void RecordView::scaleAllRecords() {
 void RecordView::sortByText(int item) {
 	list< pair<QString, RecordViewItem*> > distlist;
 
-	foreach (RecordViewItem* rvItem, _items) {
-		if (rvItem->label()->itemCount() <= item)
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= item ) {
 			return;
+		}
 
 		distlist.push_back(
-			pair<QString, RecordViewItem*>(rvItem->label()->text(item), rvItem) );
+			pair<QString, RecordViewItem*>(rvItem->label()->text(item), rvItem)
+		);
 	}
 
 	sortRows(distlist);
@@ -2556,13 +2574,77 @@ void RecordView::sortByText(int item) {
 void RecordView::sortByText(int row1, int row2) {
 	list< pair<pair<QString, QString>, RecordViewItem*> > distlist;
 
-	foreach (RecordViewItem* rvItem, _items) {
-		if (rvItem->label()->itemCount() <= row1 || rvItem->label()->itemCount() <= row2)
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1 || rvItem->label()->itemCount() <= row2 ) {
 			return;
+		}
 
 		distlist.push_back(
 			pair<pair<QString, QString>, RecordViewItem*>(
-				pair<QString, QString>(rvItem->label()->text(row1), rvItem->label()->text(row2)), rvItem));
+				pair<QString, QString>(rvItem->label()->text(row1), rvItem->label()->text(row2)), rvItem)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByText(int row1, int row2, int row3) {
+	list<pair<tuple<QString, QString, QString>, RecordViewItem*>> distlist;
+
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1
+		  || rvItem->label()->itemCount() <= row2
+		  || rvItem->label()->itemCount() <= row3 ) {
+			return;
+		}
+
+		distlist.push_back(
+			pair<tuple<QString, QString, QString>, RecordViewItem*>(
+				make_tuple(
+					rvItem->label()->text(row1),
+					rvItem->label()->text(row2),
+					rvItem->label()->text(row3)
+				),
+				rvItem
+			)
+		);
+	}
+
+	sortRows(distlist);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::sortByText(int row1, int row2, int row3, int row4) {
+	list<pair<tuple<QString, QString, QString, QString>, RecordViewItem*>> distlist;
+
+	foreach ( RecordViewItem* rvItem, _items ) {
+		if ( rvItem->label()->itemCount() <= row1
+		  || rvItem->label()->itemCount() <= row2
+		  || rvItem->label()->itemCount() <= row3
+		  || rvItem->label()->itemCount() <= row4 ) {
+			return;
+		}
+
+		distlist.push_back(
+			pair<tuple<QString, QString, QString, QString>, RecordViewItem*>(
+				make_tuple(
+					rvItem->label()->text(row1),
+					rvItem->label()->text(row2),
+					rvItem->label()->text(row3),
+					rvItem->label()->text(row4)
+				),
+				rvItem
+			)
+		);
 	}
 
 	sortRows(distlist);
@@ -2574,7 +2656,7 @@ void RecordView::sortByText(int row1, int row2) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column) {
-	list< pair<double, RecordViewItem*> > distlist;
+	list<pair<double, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if (item->columnCount() <= column)
@@ -2593,7 +2675,7 @@ void RecordView::sortByValue(int column) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2) {
-	list< pair<pair<double, double>, RecordViewItem*> > distlist;
+	list<pair<pair<double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1 || item->columnCount() <= column2 )
@@ -2612,7 +2694,7 @@ void RecordView::sortByValue(int column1, int column2) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2, int column3) {
-	list<pair<pair<double, pair<double, double> >, RecordViewItem*> > distlist;
+	list<pair<tuple<double, double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1
@@ -2621,13 +2703,11 @@ void RecordView::sortByValue(int column1, int column2, int column3) {
 			return;
 
 		distlist.push_back(
-			pair<pair<double, pair<double, double> >, RecordViewItem*>(
-				pair<double, pair<double, double> >(
+			pair<tuple<double, double, double>, RecordViewItem*>(
+				make_tuple(
 					item->value(column1),
-					pair<double, double>(
-						item->value(column2),
-						item->value(column3)
-					)
+					item->value(column2),
+					item->value(column3)
 				),
 				item
 			)
@@ -2643,7 +2723,7 @@ void RecordView::sortByValue(int column1, int column2, int column3) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::sortByValue(int column1, int column2, int column3, int column4) {
-	list<pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*> > distlist;
+	list<pair<tuple<double, double, double, double>, RecordViewItem*>> distlist;
 
 	foreach (RecordViewItem* item, _items) {
 		if ( item->columnCount() <= column1
@@ -2653,17 +2733,8 @@ void RecordView::sortByValue(int column1, int column2, int column3, int column4)
 			return;
 
 		distlist.push_back(
-			pair<pair<double, pair<double, pair<double, double> > >, RecordViewItem*>(
-				pair<double, pair<double, pair<double, double> > >(
-					item->value(column1),
-					pair<double, pair<double, double> >(
-						item->value(column2),
-						pair<double, double>(
-							item->value(column3),
-							item->value(column4)
-						)
-					)
-				),
+			pair<tuple<double, double, double, double>, RecordViewItem*>(
+				make_tuple(item->value(column1), item->value(column2), item->value(column3), item->value(column4)),
 				item
 			)
 		);
@@ -2712,15 +2783,17 @@ void RecordView::sortByData() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int RecordView::findByText(int row, QRegExp &regexp, int startRow) const {
+int RecordView::findByText(int row, const QRegularExpression &regexp, int startRow) const {
 	for ( int i = startRow; i < _rows.size(); ++i ) {
 		RecordViewItem* rvItem = _rows[i];
 
-		if (rvItem->label()->itemCount() <= row)
+		if ( rvItem->label()->itemCount() <= row ) {
 			continue;
+		}
 
-		if ( regexp.exactMatch(rvItem->label()->text(row)) )
+		if ( regexp.match(rvItem->label()->text(row)).hasMatch() ) {
 			return i;
+		}
 	}
 
 	return -1;
@@ -2754,15 +2827,12 @@ void RecordView::sortByMarkerTime(const QString& markerText) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
-void RecordView::sortRows(list< pair<T, RecordViewItem*> >& l) {
+void RecordView::sortRows(list<pair<T, RecordViewItem*>>& l) {
 	l.sort();
 
 	int row = 0;
-	typename list< pair<T, RecordViewItem*> >::iterator it;
-	for (it = l.begin(); it != l.end(); ++it)
-	{
-		RecordViewItem *item = (*it).second;
-
+	for ( const auto &p : l ) {
+		RecordViewItem *item = p.second;
 		item->_row = row;
 		_rows[row] = item;
 		++row;
@@ -2982,10 +3052,10 @@ void RecordView::setFilter(RecordWidget::Filter *filter) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordView::setFilterByName(const QString& strFilter) {
 	auto f = RecordWidget::Filter::Create(strFilter.toStdString());
-	
+
 	if ( !f )
 		return false;
-	
+
 	setFilter(f);
 	return true;
 }

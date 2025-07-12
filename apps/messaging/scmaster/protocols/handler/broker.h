@@ -48,7 +48,6 @@ class BrokerHandler : public WebsocketHandler, Broker::Client {
 		void start() override;
 		void handleFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
 		void buffersFlushed() override;
-		void outboxFlushed() override;
 		void close() override;
 
 		Broker::Queue *queue() const override { return _queue; }

@@ -36,7 +36,7 @@ InformationPanel::InformationPanel(QWidget *parent)
 	setDescription("System paths and variables");
 
 	QVBoxLayout *l = new QVBoxLayout;
-	l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
 	setLayout(l);
 
 	QTableWidget *table = new QTableWidget;

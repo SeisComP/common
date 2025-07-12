@@ -85,25 +85,25 @@ class SC_SYSTEM_CORE_API ArclinkRequestLine : public Object {
 		ArclinkRequestLine();
 
 		//! Copy constructor
-		ArclinkRequestLine(const ArclinkRequestLine& other);
+		ArclinkRequestLine(const ArclinkRequestLine &other);
 
 		//! Destructor
 		~ArclinkRequestLine() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		ArclinkRequestLine& operator=(const ArclinkRequestLine& other);
+		ArclinkRequestLine &operator=(const ArclinkRequestLine &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const ArclinkRequestLine& other) const;
-		bool operator!=(const ArclinkRequestLine& other) const;
+		bool operator==(const ArclinkRequestLine &other) const;
+		bool operator!=(const ArclinkRequestLine &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const ArclinkRequestLine& other) const;
+		bool equal(const ArclinkRequestLine &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -142,17 +142,17 @@ class SC_SYSTEM_CORE_API ArclinkRequestLine : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const ArclinkRequestLineIndex& index() const;
+		const ArclinkRequestLineIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const ArclinkRequestLine* lhs) const;
+		bool equalIndex(const ArclinkRequestLine *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		ArclinkRequest* arclinkRequest() const;
+		ArclinkRequest *arclinkRequest() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

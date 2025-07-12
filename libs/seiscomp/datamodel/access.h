@@ -92,25 +92,25 @@ class SC_SYSTEM_CORE_API Access : public Object {
 		Access();
 
 		//! Copy constructor
-		Access(const Access& other);
+		Access(const Access &other);
 
 		//! Destructor
 		~Access() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		Access& operator=(const Access& other);
+		Access &operator=(const Access &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Access& other) const;
-		bool operator!=(const Access& other) const;
+		bool operator==(const Access &other) const;
+		bool operator!=(const Access &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Access& other) const;
+		bool equal(const Access &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -151,17 +151,17 @@ class SC_SYSTEM_CORE_API Access : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const AccessIndex& index() const;
+		const AccessIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Access* lhs) const;
+		bool equalIndex(const Access *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Routing* routing() const;
+		Routing *routing() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -42,8 +42,8 @@ class SC_SYSTEM_CORE_API RecordResamplerBase : public RecordFilterInterface {
 		virtual ~RecordResamplerBase();
 
 	public:
-		virtual Record *flush();
-		virtual void reset();
+		virtual Record *flush() override;
+		virtual void reset() override;
 
 	protected:
 		typedef std::vector<double> Coefficients;
@@ -90,11 +90,11 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 		//! Feeds a record.
 		//! @return A resampled record. May return nullptr if not enough data are
 		//!         available to flush the record.
-		virtual Record *feed(const Record *record);
+		virtual Record *feed(const Record *record) override;
 
-		virtual void reset();
+		virtual void reset() override;
 
-		RecordFilterInterface *clone() const;
+		RecordFilterInterface *clone() const override;
 
 
 	// ----------------------------------------------------------------------

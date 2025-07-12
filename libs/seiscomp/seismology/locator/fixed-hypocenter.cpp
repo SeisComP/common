@@ -49,7 +49,7 @@ namespace {
 #include <seiscomp/seismology/locator/utils.h>
 #include <iostream>
 
-#include "fixed-hypocenter.h"
+#include "fixed-hypocenter_private.h"
 
 
 using namespace std;
@@ -57,9 +57,14 @@ using namespace Seiscomp;
 using namespace Seiscomp::DataModel;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double getTimeError(const Pick *pick, double defaultTimeError,
                     bool useUncertainties) {
 	if ( useUncertainties ) {
@@ -76,8 +81,12 @@ double getTimeError(const Pick *pick, double defaultTimeError,
 
 	return defaultTimeError;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 /**
  * @brief Compute confidence coefficient as per Jordan & Sverdrup (1981).
  * @param label Output label
@@ -99,13 +108,6 @@ double confidenceCoefficient(string &label,
 
 	return m * (k*sk2 + rw2) / (k + n - m) * fdtri(m, k + n - m, p);
 }
-
-
-}
-
-
-namespace Seiscomp {
-namespace Seismology {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -120,6 +122,11 @@ REGISTER_LOCATOR(FixedHypocenter, "FixedHypocenter");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FixedHypocenter::init(const Config::Config &config) {
+	_initLat = Core::None;
+	_initLon = Core::None;
+	_initDepth = Core::None;
+	_initTime = Core::None;
+
 	try {
 		_profiles = config.getStrings("FixedHypocenter.profiles");
 	}
@@ -134,6 +141,45 @@ bool FixedHypocenter::init(const Config::Config &config) {
 			_profiles.push_back("LOCSAT/iasp91");
 			_profiles.push_back("LOCSAT/tab");
 		}
+	}
+
+	try {
+		_initLat = config.getDouble("FixedHypocenter.lat");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.lat: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initLon = config.getDouble("FixedHypocenter.lon");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.lon: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initDepth = config.getDouble("FixedHypocenter.depth");
+		_flags &= ~UseOriginUncertainties;
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.depth: %s", e.what());
+		return false;
+	}
+
+	try {
+		_initTime = Core::Time::FromString(config.getString("FixedHypocenter.time"));
+	}
+	catch ( Config::OptionNotFoundException & ) {}
+	catch ( exception &e ) {
+		SEISCOMP_ERROR("FixedHypocenter.time: %s", e.what());
+		return false;
 	}
 
 	try {
@@ -155,16 +201,12 @@ bool FixedHypocenter::init(const Config::Config &config) {
 
 	try {
 		_confidenceLevel = config.getDouble("FixedHypocenter.confLevel");
-		if ( _confidenceLevel < 0.5 || _confidenceLevel > 1 ) {
+		if ( (_confidenceLevel < 0.5) || (_confidenceLevel > 1) ) {
 			SEISCOMP_ERROR("FixedHypocenter.confLevel: must be >= 0.5 and <= 1");
 			return false;
 		}
 	}
 	catch ( ... ) {}
-
-	_initLat = Core::None;
-	_initLon = Core::None;
-	_initDepth = Core::None;
 
 	return true;
 }
@@ -182,6 +224,7 @@ FixedHypocenter::IDList FixedHypocenter::parameters() const {
 		allowedParameters.push_back("LATITUDE");
 		allowedParameters.push_back("LONGITUDE");
 		allowedParameters.push_back("DEPTH");
+		allowedParameters.push_back("TIME");
 		allowedParameters.push_back("USE_PICK_UNCERTAINTIES");
 		allowedParameters.push_back("DEFAULT_TIME_ERROR");
 		allowedParameters.push_back("NUM_DEG_FREEDOM");
@@ -197,22 +240,33 @@ FixedHypocenter::IDList FixedHypocenter::parameters() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string FixedHypocenter::parameter(const string &name) const {
-	if ( name == "USE_PICK_UNCERTAINTIES" )
+	if ( name == "USE_PICK_UNCERTAINTIES" ) {
 		return (_flags & UsePickUncertainties) ? "y" : "n";
-	else if ( name == "DEFAULT_TIME_ERROR" )
+	}
+	else if ( name == "DEFAULT_TIME_ERROR" ) {
 		return Core::toString(_defaultTimeError);
-	else if ( name == "VERBOSE" )
+	}
+	else if ( name == "VERBOSE" ) {
 		return _verbose ? "y" : "n";
-	else if ( name == "NUM_DEG_FREEDOM" )
+	}
+	else if ( name == "NUM_DEG_FREEDOM" ) {
 		return Core::toString(_degreesOfFreedom);
-	else if ( name == "CONF_LEVEL" )
+	}
+	else if ( name == "CONF_LEVEL" ) {
 		return Core::toString(_confidenceLevel);
-	else if ( name == "LATITUDE" && _initLat )
+	}
+	else if ( name == "LATITUDE" && _initLat ) {
 		return Core::toString(*_initLat);
-	else if ( name == "LONGITUDE" && _initLon )
+	}
+	else if ( name == "LONGITUDE" && _initLon ) {
 		return Core::toString(*_initLon);
-	else if ( name == "DEPTH" && _initDepth )
+	}
+	else if ( name == "DEPTH" && _initDepth ) {
 		return Core::toString(*_initDepth);
+	}
+	else if ( name == "TIME" && _initTime ) {
+		return Core::toString(*_initTime);
+	}
 	return string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -232,8 +286,9 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 	}
 	else if ( name == "DEFAULT_TIME_ERROR" ) {
 		double tmp;
-		if ( !Core::fromString(tmp, value) )
+		if ( !Core::fromString(tmp, value) ) {
 			return false;
+		}
 		_defaultTimeError = tmp;
 	}
 	else if ( name == "VERBOSE" ) {
@@ -241,53 +296,75 @@ bool FixedHypocenter::setParameter(const string &name, const string &value) {
 	}
 	else if ( name == "NUM_DEG_FREEDOM" ) {
 		int tmp;
-		if ( !Core::fromString(tmp, value) )
+		if ( !Core::fromString(tmp, value) ) {
 			return false;
+		}
 		_degreesOfFreedom = tmp;
 	}
 	else if ( name == "CONF_LEVEL" ) {
 		double tmp;
-		if ( !Core::fromString(tmp, value) )
+		if ( !Core::fromString(tmp, value) ) {
 			return false;
-		if ( (tmp < 0.5) || (tmp > 1.0) )
+		}
+		if ( (tmp < 0.5) || (tmp > 1.0) ) {
 			return false;
+		}
 		_confidenceLevel = tmp;
 	}
 	else if ( name == "LATITUDE" ) {
-		if ( value.empty() )
+		if ( value.empty() ) {
 			_initLat = Core::None;
+		}
 		else {
 			double tmp;
-			if ( !Core::fromString(tmp, value) )
+			if ( !Core::fromString(tmp, value) ) {
 				return false;
+			}
 			_initLat = tmp;
 			_flags &= ~UseOriginUncertainties;
 		}
 	}
 	else if ( name == "LONGITUDE" ) {
-		if ( value.empty() )
+		if ( value.empty() ) {
 			_initLon = Core::None;
+		}
 		else {
 			double tmp;
-			if ( !Core::fromString(tmp, value) )
+			if ( !Core::fromString(tmp, value) ) {
 				return false;
+			}
 			_initLon = tmp;
 			_flags &= ~UseOriginUncertainties;
 		}
 	}
 	else if ( name == "DEPTH" ) {
-		if ( value.empty() )
+		if ( value.empty() ) {
 			_initDepth = Core::None;
+		}
 		else {
 			double tmp;
-			if ( !Core::fromString(tmp, value) )
+			if ( !Core::fromString(tmp, value) ) {
 				return false;
+			}
 			_initDepth = tmp;
 			_flags &= ~UseOriginUncertainties;
 		}
 	}
-	else
+	else if ( name == "TIME" ) {
+		if ( value.empty() ) {
+			_initTime = Core::None;
+		}
+		else {
+			Core::Time tmp;
+			if ( !Core::fromString(tmp, value) ) {
+				return false;
+			}
+			_initTime = tmp;
+		}
+	}
+	else {
 		return false;
+	}
 
 	return true;
 }
@@ -404,19 +481,22 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	}
 
 	if ( _initLat ) {
-		if ( slat != *_initLat )
+		if ( slat != *_initLat ) {
 			recomputeDistance = true;
+		}
 		slat = *_initLat;
 	}
 
 	if ( _initLon ) {
-		if ( slon != *_initLon )
+		if ( slon != *_initLon ) {
 			recomputeDistance = true;
+		}
 		slon = *_initLon;
 	}
 
-	if ( _initDepth )
+	if ( _initDepth ) {
 		sdepth = *_initDepth;
+	}
 	else {
 		try {
 			sdepth = origin->depth().value();
@@ -481,18 +561,19 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		try { relev = sloc->elevation(); }
 		catch ( ... ) {}
 
-		double pickTime = double(pick->time().value());
+		double pickTime = pick->time().value().epoch();
 		double travelTime;
 
 		try {
-			if ( arrival->weight() > 0 )
+			if ( arrival->weight() > 0 ) {
 				++activeArrivals;
+			}
 		}
 		catch ( ... ) {}
 
 		try {
 			travelTime = _ttt->computeTime(arrival->phase().code().c_str(),
-			                                  slat, slon, sdepth, rlat, rlon, relev);
+			                               slat, slon, sdepth, rlat, rlon, relev);
 			if ( travelTime < 0 ) {
 				if ( _verbose ) {
 					cerr << "Could not get travel time for "
@@ -526,8 +607,9 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 		try {
 			if ( arrival->weight() == 0 ) {
-				if ( _verbose )
+				if ( _verbose ) {
 					cerr << "Omitting arrival #" << i << " with weight 0" << endl;
+				}
 
 				arrivalWeights[i] = 0;
 			}
@@ -536,8 +618,9 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 		if ( arrivalWeights[i] > 0 ) {
 			double uncertainty = getTimeError(pick, _defaultTimeError, (_flags & UsePickUncertainties) ? true : false);
-			if ( Math::isNaN(uncertainty) || uncertainty <= 0.0 )
+			if ( Math::isNaN(uncertainty) || uncertainty <= 0.0 ) {
 				uncertainty = _defaultTimeError;
+			}
 			arrivalWeights[i] = 1.0 / uncertainty;
 		}
 
@@ -546,19 +629,28 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	}
 
 	if ( originTimes.empty() ) {
-		if ( !activeArrivals )
+		if ( !activeArrivals ) {
 			throw LocatorException("Empty set of active arrivals");
-		else
+		}
+		else {
 			throw LocatorException("Could not compute travel times of active arrivals");
+		}
 	}
 
-	double originTime, originTimeError;
-	Math::Statistics::average(originTimes, weights, originTime, originTimeError);
+	double originTime;
+	if ( _initTime ) {
+		originTime = _initTime->epoch();
+	}
+	else {
+		double originTimeError;
+		Math::Statistics::average(originTimes, weights, originTime, originTimeError);
+	}
 
 	Origin *newOrigin = Origin::Create();
 	*newOrigin = *origin;
-	if ( !newOrigin )
+	if ( !newOrigin ) {
 		throw LocatorException("Could not create origin");
+	}
 
 	newOrigin->setDepthType(DataModel::OriginDepthType(DataModel::OPERATOR_ASSIGNED));
 
@@ -602,27 +694,44 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 		throw LocatorException("At least one active and valid arrival is required");
 	}
 
-	double effectiveSampleSize =  sumWeights * sumWeights / sumSquaredWeights;
 	string label;
-	double kappa_p = confidenceCoefficient(label, 1,
-	                                       originTimes.size(), _degreesOfFreedom,
-	                                       sumSquaredResiduals, _confidenceLevel,
-	                                       1.0);
 
-	string description = Core::stringify("Confidence coefficient: %s, $\\kappa_p$ = %0.1f, $n_{eff}$ = %.1f",
-	                                     label.c_str(), kappa_p, effectiveSampleSize);
+	if ( _initLat )	{
+		newOrigin->setLatitude(*_initLat);
+	}
+	if ( _initLon )	{
+		newOrigin->setLongitude(*_initLon);
+	}
+	if ( _initDepth ) {
+		newOrigin->setDepth(RealQuantity(*_initDepth));
+	}
+	if ( _initTime ) {
+		newOrigin->setTime(TimeQuantity(*_initTime));
+		newOrigin->setTimeFixed(true);
+	}
+	else {
+		double effectiveSampleSize =  sumWeights * sumWeights / sumSquaredWeights;
+		double kappa_p = confidenceCoefficient(label, 1,
+		                                       originTimes.size(), _degreesOfFreedom,
+		                                       sumSquaredResiduals, _confidenceLevel,
+		                                       1.0);
+		string description = Core::stringify("Confidence coefficient: %s, $\\kappa_p$ = %0.1f, $n_{eff}$ = %.1f",
+		                                     label.c_str(), kappa_p, effectiveSampleSize);
 
-	if ( _initLat )	newOrigin->setLatitude(*_initLat);
-	if ( _initLon )	newOrigin->setLongitude(*_initLon);
-	if ( _initDepth ) newOrigin->setDepth(RealQuantity(*_initDepth));
+		newOrigin->setTime(TimeQuantity(Core::Time(originTime)));
+		newOrigin->time().setConfidenceLevel(_confidenceLevel * 100.0);
+		newOrigin->time().setUncertainty(sqrt(kappa_p / sumSquaredWeights));
+		newOrigin->setTimeFixed(false);
 
-	newOrigin->setTime(TimeQuantity(Core::Time(originTime)));
-	newOrigin->time().setConfidenceLevel(_confidenceLevel * 100.0);
-	newOrigin->time().setUncertainty(sqrt(kappa_p / sumSquaredWeights));
+		CommentPtr comment = new Comment;
+		comment->setId("confidence/description");
+		comment->setText(description);
+		newOrigin->add(comment.get());
+	}
+
 	newOrigin->setMethodID("FixedHypocenter");
 	newOrigin->setEarthModelID(_ttt->model());
 	newOrigin->setEpicenterFixed(true);
-	newOrigin->setTimeFixed(false);
 
 	OriginQuality qual;
 
@@ -641,15 +750,8 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 	}
 
 	CreationInfo ci;
-	ci.setCreationTime(Core::Time::GMT());
+	ci.setCreationTime(Core::Time::UTC());
 	newOrigin->setCreationInfo(ci);
-
-	if ( !description.empty() ) {
-		CommentPtr comment = new Comment;
-		comment->setId("confidence/description");
-		comment->setText(description);
-		newOrigin->add(comment.get());
-	}
 
 	return newOrigin;
 }
@@ -659,5 +761,4 @@ Origin *FixedHypocenter::relocate(const Origin *origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
 }

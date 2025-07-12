@@ -261,7 +261,7 @@ void EventSummary::init() {
 	_symbol = nullptr;
 	_map = new EventSummaryMap(this, _maptree.get(), _ui->map);
 	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->map);
-	hboxLayout->setMargin(0);
+	hboxLayout->setContentsMargins(0, 0, 0, 0);
 	hboxLayout->addWidget(_map);
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
@@ -337,7 +337,7 @@ void EventSummary::init() {
 	_ui->type->installEventFilter(drawFilter);
 
 	_magnitudeRows = new QVBoxLayout(_ui->magnitudes);
-	_magnitudeRows->setMargin(0);
+	_magnitudeRows->setContentsMargins(0, 0, 0, 0);
 	_magnitudeRows->setSpacing(layout()->spacing());
 
 	_ui->exportButton->setVisible(false);
@@ -455,7 +455,7 @@ void EventSummary::updateTimeAgo() {
 		return;
 
 	Core::TimeSpan ts;
-	Core::Time ct = Core::Time::GMT();
+	Core::Time ct = Core::Time::UTC();
 
 	ts = ct - _currentOrigin->time();
 	QString ago;
@@ -469,27 +469,33 @@ void EventSummary::updateTimeAgo() {
 		ago = "ago";
 
 	int days = sec / 86400;
-	int hours = (sec - days*86400) / 3600;
-	int minutes = (sec - days*86400 - hours*3600) / 60;
-	int seconds = sec - days*86400 - hours*3600 - 60*minutes;
+	int hours = (sec - days * 86400) / 3600;
+	int minutes = (sec - days * 86400 - hours * 3600) / 60;
+	int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 	QString text;
 
-	if ( days > 0 )
-		text = QString("%1d and %2h %3").arg(days, 0, 'd', 0, ' ').arg(hours, 0, 'd', 0, ' ').arg(ago);
-	else if ( ( days == 0 ) && ( hours > 0 ) )
-		text = QString("%1h and %2m %3").arg(hours, 0, 'd', 0, ' ').arg(minutes, 0, 'd', 0, ' ').arg(ago);
-	else if ( ( days == 0 ) && ( hours == 0 ) && ( minutes > 0 ) ) {
-		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay )
-			text = QString("%1m %3").arg(minutes, 0, 'd', 0, ' ').arg(ago);
-		else
-			text = QString("%1m and %2s %3").arg(minutes, 0, 'd', 0, ' ').arg(seconds, 0, 'd', 0, ' ').arg(ago);
+	if ( days > 0 ) {
+		text = QString("%1d and %2h %3").arg(days).arg(hours).arg(ago);
 	}
-	else if ( ( days == 0 ) && ( hours == 0 ) && ( minutes == 0 ) && ( seconds > 0 ) )
-		text = QString("%1s %3").arg(seconds, 0, 'd', 0, ' ').arg(ago);
+	else if ( !days && (hours > 0) ) {
+		text = QString("%1h and %2m %3").arg(hours).arg(minutes).arg(ago);
+	}
+	else if ( !days && !hours && (minutes > 0) ) {
+		if ( _maxMinutesSecondDisplay >= 0 && minutes > _maxMinutesSecondDisplay ) {
+			text = QString("%1m %2").arg(minutes).arg(ago);
+		}
+		else {
+			text = QString("%1m and %2s %3").arg(minutes).arg(seconds).arg(ago);
+		}
+	}
+	else if ( !days && !hours && !minutes && (seconds > 0) ) {
+		text = QString("%1s %2").arg(seconds).arg(ago);
+	}
 
-	if ( text != _ui->timeAgo->text() )
+	if ( text != _ui->timeAgo->text() ) {
 		_ui->timeAgo->setText(text);
+	}
 
 	if ( _alertActive && _alertSettings.gradient.size() != 0 ) {
 		// update color only on change
@@ -654,7 +660,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		// Focal mechanism
 		_currentFocalMechanism = FocalMechanism::Find(_currentEvent->preferredFocalMechanismID());
 		if ( !_currentFocalMechanism && _reader )
-			_currentFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), 
+			_currentFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(),
 			                                              _currentEvent->preferredFocalMechanismID()));
 		if ( _currentFocalMechanism && (_currentFocalMechanism->momentTensorCount() == 0) && _reader) {
 			_reader->loadMomentTensors(_currentFocalMechanism.get());
@@ -679,7 +685,7 @@ void EventSummary::setEvent(Event *event, Origin *org, bool fixed) {
 		if ( !_currentMag ) {
 			_currentMag = Magnitude::Find(_currentEvent->preferredMagnitudeID());
 			if ( !_currentMag && _reader )
-				_currentMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(), 
+				_currentMag = Magnitude::Cast(_reader->getObject(Magnitude::TypeInfo(),
 				                                         _currentEvent->preferredMagnitudeID()));
 		}
 	}
@@ -828,6 +834,8 @@ void EventSummary::updateOrigin() {
 
 	// Operators comment
 	_ui->labelOpComment->setVisible(false);
+	_ui->labelOpComment->setText(QString());
+	_ui->labelOpComment->setToolTip(QString());
 	_ui->labelOpCommentSeparator->setVisible(false);
 	if ( _currentEvent && _showComment ) {
 		for ( size_t i = 0; i < _currentEvent->commentCount(); ++i ) {
@@ -835,7 +843,13 @@ void EventSummary::updateOrigin() {
 				if ( !_currentEvent->comment(i)->text().empty() ) {
 					_ui->labelOpComment->setVisible(true);
 					_ui->labelOpCommentSeparator->setVisible(true);
-					_ui->labelOpComment->setText(_currentEvent->comment(i)->text().c_str());
+					QString text = _currentEvent->comment(i)->text().c_str();
+					_ui->labelOpComment->setToolTip(text);
+					text.replace("\n", " ");
+					if ( text.size() > 80 ) {
+						text = text.mid(0, 80) + " ...";
+					}
+					_ui->labelOpComment->setText(text);
 				}
 				break;
 			}
@@ -975,7 +989,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 			              + " " + longitudeToString(o->longitude(), false, true) + "\n";
 		} catch ( ... ) {
 			toolTip = "Epicenter: n/a";
-	
+
 		}
 
 		OPT(float) depth;
@@ -1024,7 +1038,7 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 
 	try {
 		strike = fm->nodalPlanes().nodalPlane1().strike().value(),
-		dip = fm->nodalPlanes().nodalPlane1().dip().value(), 
+		dip = fm->nodalPlanes().nodalPlane1().dip().value(),
 		rake = fm->nodalPlanes().nodalPlane1().rake().value();
 		toolTip += QString("NP1 S,D,R: %1, %2, %3\n")
 		               .arg(*strike, 0, 'f', 0)

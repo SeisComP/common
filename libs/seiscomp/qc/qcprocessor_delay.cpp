@@ -42,10 +42,10 @@ bool QcProcessorDelay::setState(const Record *record, const DoubleArray &data) {
 	try {
 		//! (mean) data delay time calculated at time of arrival
 		//! calculate *mean* delay time, valid for all samples of this record
-		//_qcp->parameter = (double)(Core::Time::GMT() - record->endTime()) + 0.5 * (double)(record->endTime() - record->startTime());
+		//_qcp->parameter = (double)(Core::Time::UTC() - record->endTime()) + 0.5 * (double)(record->endTime() - record->startTime());
 
 		//! calculate delay time based on time of last sample
-		_qcp->parameter = (double)(Core::Time::GMT() - record->endTime());
+		_qcp->parameter = (double)(Core::Time::UTC() - record->endTime());
 
 		return true;
 	}

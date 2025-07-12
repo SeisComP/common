@@ -157,6 +157,10 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		//! one passed in 'ver'
 		static bool minQtVersion(const char *ver);
 
+		//! Creates a CSV table into a string.
+		static QString createCSV(const QAbstractItemView* view,
+		                         const QHeaderView *header = nullptr);
+
 		//! Copies all selected items of specified item view to clipboard as CSV
 		static void copyToClipboard(const QAbstractItemView* view,
 		                            const QHeaderView *header = nullptr);

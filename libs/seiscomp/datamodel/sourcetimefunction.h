@@ -51,25 +51,25 @@ class SC_SYSTEM_CORE_API SourceTimeFunction : public Core::BaseObject {
 		SourceTimeFunction();
 
 		//! Copy constructor
-		SourceTimeFunction(const SourceTimeFunction& other);
+		SourceTimeFunction(const SourceTimeFunction &other);
 
 		//! Destructor
 		~SourceTimeFunction() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		SourceTimeFunction& operator=(const SourceTimeFunction& other);
+		SourceTimeFunction &operator=(const SourceTimeFunction &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const SourceTimeFunction& other) const;
-		bool operator!=(const SourceTimeFunction& other) const;
+		bool operator==(const SourceTimeFunction &other) const;
+		bool operator!=(const SourceTimeFunction &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const SourceTimeFunction& other) const;
+		bool equal(const SourceTimeFunction &other) const;
 
 
 	// ------------------------------------------------------------------

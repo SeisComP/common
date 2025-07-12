@@ -40,6 +40,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_MLv : public AbstractAmplitudeProc
 		                      double offset,
 		                      AmplitudeIndex *dt, AmplitudeValue *amplitude,
 		                      double *period, double *snr) override;
+
+	protected:
+		void setDefaultConfiguration() override;
 };
 
 

@@ -234,8 +234,8 @@ class NotifierCreator : public Visitor {
 	//  Interface
 	// ----------------------------------------------------------------------
 	public:
-		bool visit(PublicObject*);
-		void visit(Object*);
+		bool visit(PublicObject*) override;
+		void visit(Object*) override;
 
 	private:
 		Operation _operation;
@@ -262,7 +262,7 @@ class NotifierStoreAppender : public Visitor {
 	//  Interface
 	// ----------------------------------------------------------------------
 	public:
-		bool visit(PublicObject *po) {
+		bool visit(PublicObject *po) override {
 			if ( po->parent() == nullptr ) {
 				if ( _parentID.empty() )
 					return false;
@@ -273,7 +273,7 @@ class NotifierStoreAppender : public Visitor {
 			return true;
 		}
 
-		void visit(Object *o) {
+		void visit(Object *o) override {
 			if ( o->parent() == nullptr ) {
 				if ( _parentID.empty() )
 					return;
@@ -294,11 +294,11 @@ template <class T>
 void AppendNotifier(T &store, Operation op, Object *o, const std::string parentID = "") {
 	// Remember the size of the store before any modifications
 	size_t endPos = store.size();
-	
+
 	// Create a store appender and visit all child objects
 	NotifierStoreAppender<T> nsa(store, op, parentID);
 	o->accept(&nsa);
-	
+
 	// If a parent id was specified and elements have been added to the
 	// store, override the parent id of the first object (o). Note: The
 	// position of the Notifier of o depends on the operation

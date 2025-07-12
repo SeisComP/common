@@ -86,7 +86,7 @@ class SC_SYSTEM_CORE_API EventDescription : public Object {
 		EventDescription();
 
 		//! Copy constructor
-		EventDescription(const EventDescription& other);
+		EventDescription(const EventDescription &other);
 
 		//! Custom constructor
 		EventDescription(const std::string& text);
@@ -95,21 +95,21 @@ class SC_SYSTEM_CORE_API EventDescription : public Object {
 
 		//! Destructor
 		~EventDescription() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		EventDescription& operator=(const EventDescription& other);
+		EventDescription &operator=(const EventDescription &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const EventDescription& other) const;
-		bool operator!=(const EventDescription& other) const;
+		bool operator==(const EventDescription &other) const;
+		bool operator!=(const EventDescription &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const EventDescription& other) const;
+		bool equal(const EventDescription &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -130,17 +130,17 @@ class SC_SYSTEM_CORE_API EventDescription : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const EventDescriptionIndex& index() const;
+		const EventDescriptionIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const EventDescription* lhs) const;
+		bool equalIndex(const EventDescription *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Event* event() const;
+		Event *event() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

@@ -1063,19 +1063,21 @@ QPoint TensorRenderer::project(Math::Vector3d &v) const {
 
 QPoint TensorRenderer::project(double azimuth, double dist) const {
 	double azi = deg2rad(azimuth);
-	double px = dist*sin(azi);
-	double py = dist*cos(azi);
+	double px = dist * sin(azi);
+	double py = dist * cos(azi);
 
-	return QPoint((int)(_projectRadius*px+_center.x()), (int)(_center.y()-_projectRadius*py));
+	return QPoint((int)(_projectRadius * px + _center.x()),
+	              (int)(_center.y() - _projectRadius * py));
 }
 
 
 QPoint TensorRenderer::projectMargin(double azimuth, int margin, double dist) const {
 	double azi = deg2rad(azimuth);
-	double px = dist*sin(azi);
-	double py = dist*cos(azi);
+	double px = dist * sin(azi);
+	double py = dist * cos(azi);
 
-	return QPoint((int)((_radius-margin)*px+_center.x()), (int)(_center.y()-(_radius-margin)*py));
+	return QPoint((int)((_radius - margin) * px + _center.x()),
+	              (int)(_center.y() - (_radius-margin) * py));
 }
 
 
@@ -1083,12 +1085,12 @@ bool TensorRenderer::unproject(Math::Vector3d &v, const QPointF &p) const {
 	double xf = double(p.x() - _center.x()) / (double)_ballRadius;
 	double yf = double(p.y() - _center.y()) / (double)_ballRadius;
 
-	double dist = xf*xf + yf*yf;
+	double dist = xf * xf + yf * yf;
 
 	if ( dist > 1.0 ) {
-		v[0] = yf;
+		v[0] =  yf;
 		v[1] = -xf;
-		v[2] = 0;
+		v[2] =  0;
 		return false;
 	}
 	else {

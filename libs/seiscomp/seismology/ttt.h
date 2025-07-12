@@ -215,24 +215,24 @@ class SC_SYSTEM_CORE_API TravelTimeTable : public TravelTimeTableInterface {
 
 
 	public:
-		bool setModel(const std::string &model);
-		const std::string &model() const;
+		bool setModel(const std::string &model) override;
+		const std::string &model() const override;
 
 		TravelTimeList *
 		compute(double lat1, double lon1, double dep1,
 		        double lat2, double lon2, double elev2 = 0.,
-		        int ellc = 1);
+		        int ellc = 1) override;
 
 		TravelTime
 		compute(const char *phase,
 		        double lat1, double lon1, double dep1,
 		        double lat2, double lon2, double elev2 = 0.,
-		        int ellc = 1);
+		        int ellc = 1) override;
 
 		TravelTime
 		computeFirst(double lat1, double lon1, double dep1,
 		             double lat2, double lon2, double elev2 = 0.,
-		             int ellc = 1);
+		             int ellc = 1) override;
 
 	private:
 		static TravelTimeTableInterfacePtr _interface;
@@ -242,19 +242,28 @@ class SC_SYSTEM_CORE_API TravelTimeTable : public TravelTimeTableInterface {
 
 // Some helpers
 
+/**
+ * @brief Returns the travel time ellipticity correction in seconds.
+ * @param phase The phase code
+ * @param lat1 Source latitude in degrees
+ * @param lon1 Source longitude in degrees
+ * @param depth Source depth in km
+ * @param lat2 Receiver latitude in degrees
+ * @param lon2 Receiver longitude in degrees
+ * @return Correction in seconds
+ */
 SC_SYSTEM_CORE_API
-bool ellipcorr(const std::string &phase,
-               double lat1, double lon1,
-               double lat2, double lon2,
-               double depth, double &corr);
+double ellipticityCorrection(const std::string &phase,
+                             double lat1, double lon1, double depth,
+                             double lat2, double lon2);
 
 // Retrieve traveltime for the specified phase. Returns true if phase was
 // found, false otherwise.
 SC_SYSTEM_CORE_API
-const TravelTime* getPhase(const TravelTimeList *, const std::string &phaseCode);
+const TravelTime *getPhase(const TravelTimeList *, const std::string &phaseCode);
 
 SC_SYSTEM_CORE_API
-const TravelTime* firstArrivalP(const TravelTimeList *);
+const TravelTime *firstArrivalP(const TravelTimeList *);
 
 
 }

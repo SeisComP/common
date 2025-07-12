@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ConfigStation, PublicObject, "ConfigStation");
 
 
-ConfigStation::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ConfigStation::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &ConfigStation::setNetworkCode, &ConfigStation::networkCode));
 	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &ConfigStation::setStationCode, &ConfigStation::stationCode));
 	addProperty(Core::simpleProperty("enabled", "boolean", false, false, false, false, false, false, nullptr, &ConfigStation::setEnabled, &ConfigStation::enabled));
@@ -65,7 +65,7 @@ ConfigStationIndex::ConfigStationIndex(const std::string& networkCode_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStationIndex::ConfigStationIndex(const ConfigStationIndex& idx) {
+ConfigStationIndex::ConfigStationIndex(const ConfigStationIndex &idx) {
 	networkCode = idx.networkCode;
 	stationCode = idx.stationCode;
 }
@@ -75,7 +75,7 @@ ConfigStationIndex::ConfigStationIndex(const ConfigStationIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStationIndex::operator==(const ConfigStationIndex& idx) const {
+bool ConfigStationIndex::operator==(const ConfigStationIndex &idx) const {
 	return networkCode == idx.networkCode &&
 	       stationCode == idx.stationCode;
 }
@@ -85,7 +85,7 @@ bool ConfigStationIndex::operator==(const ConfigStationIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStationIndex::operator!=(const ConfigStationIndex& idx) const {
+bool ConfigStationIndex::operator!=(const ConfigStationIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -103,7 +103,7 @@ ConfigStation::ConfigStation() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation::ConfigStation(const ConfigStation& other)
+ConfigStation::ConfigStation(const ConfigStation &other)
 : PublicObject() {
 	*this = other;
 }
@@ -134,8 +134,8 @@ ConfigStation::~ConfigStation() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation* ConfigStation::Create() {
-	ConfigStation* object = new ConfigStation();
+ConfigStation *ConfigStation::Create() {
+	ConfigStation *object = new ConfigStation();
 	return static_cast<ConfigStation*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -144,7 +144,7 @@ ConfigStation* ConfigStation::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation* ConfigStation::Create(const std::string& publicID) {
+ConfigStation *ConfigStation::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -161,7 +161,7 @@ ConfigStation* ConfigStation::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation* ConfigStation::Find(const std::string& publicID) {
+ConfigStation *ConfigStation::Find(const std::string& publicID) {
 	return ConfigStation::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -170,7 +170,7 @@ ConfigStation* ConfigStation::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::operator==(const ConfigStation& rhs) const {
+bool ConfigStation::operator==(const ConfigStation &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _enabled != rhs._enabled ) return false;
 	if ( _creationInfo != rhs._creationInfo ) return false;
@@ -182,7 +182,7 @@ bool ConfigStation::operator==(const ConfigStation& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::operator!=(const ConfigStation& rhs) const {
+bool ConfigStation::operator!=(const ConfigStation &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -191,7 +191,7 @@ bool ConfigStation::operator!=(const ConfigStation& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::equal(const ConfigStation& other) const {
+bool ConfigStation::equal(const ConfigStation &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -285,7 +285,7 @@ const CreationInfo& ConfigStation::creationInfo() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ConfigStationIndex& ConfigStation::index() const {
+const ConfigStationIndex &ConfigStation::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -294,8 +294,11 @@ const ConfigStationIndex& ConfigStation::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::equalIndex(const ConfigStation* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ConfigStation::equalIndex(const ConfigStation *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -304,7 +307,7 @@ bool ConfigStation::equalIndex(const ConfigStation* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigModule* ConfigStation::configModule() const {
+ConfigModule *ConfigStation::configModule() const {
 	return static_cast<ConfigModule*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -313,7 +316,7 @@ ConfigModule* ConfigStation::configModule() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ConfigStation& ConfigStation::operator=(const ConfigStation& other) {
+ConfigStation &ConfigStation::operator=(const ConfigStation &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_enabled = other._enabled;
@@ -326,10 +329,11 @@ ConfigStation& ConfigStation::operator=(const ConfigStation& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::assign(Object* other) {
-	ConfigStation* otherConfigStation = ConfigStation::Cast(other);
-	if ( other == nullptr )
+bool ConfigStation::assign(Object *other) {
+	ConfigStation *otherConfigStation = ConfigStation::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherConfigStation;
 
@@ -341,11 +345,13 @@ bool ConfigStation::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ConfigStation::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ConfigModule* configModule = ConfigModule::Cast(parent);
+	ConfigModule *configModule = ConfigModule::Cast(parent);
 	if ( configModule != nullptr )
 		return configModule->add(this);
 
@@ -358,11 +364,13 @@ bool ConfigStation::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ConfigStation::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ConfigModule* configModule = ConfigModule::Cast(object);
+	ConfigModule *configModule = ConfigModule::Cast(object);
 	if ( configModule != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -370,7 +378,7 @@ bool ConfigStation::detachFrom(PublicObject* object) {
 			return configModule->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ConfigStation* child = configModule->findConfigStation(publicID());
+			ConfigStation *child = configModule->findConfigStation(publicID());
 			if ( child != nullptr )
 				return configModule->remove(child);
 			else {
@@ -390,8 +398,9 @@ bool ConfigStation::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigStation::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -401,8 +410,8 @@ bool ConfigStation::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ConfigStation::clone() const {
-	ConfigStation* clonee = new ConfigStation();
+Object *ConfigStation::clone() const {
+	ConfigStation *clonee = new ConfigStation();
 	*clonee = *this;
 	return clonee;
 }
@@ -412,10 +421,10 @@ Object* ConfigStation::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::updateChild(Object* child) {
-	Setup* setupChild = Setup::Cast(child);
+bool ConfigStation::updateChild(Object *child) {
+	Setup *setupChild = Setup::Cast(child);
 	if ( setupChild != nullptr ) {
-		Setup* setupElement = setup(setupChild->index());
+		Setup *setupElement = setup(setupChild->index());
 		if ( setupElement != nullptr ) {
 			*setupElement = *setupChild;
 			setupElement->update();
@@ -432,7 +441,7 @@ bool ConfigStation::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ConfigStation::accept(Visitor* visitor) {
+void ConfigStation::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -460,7 +469,7 @@ size_t ConfigStation::setupCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Setup* ConfigStation::setup(size_t i) const {
+Setup *ConfigStation::setup(size_t i) const {
 	return _setups[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -469,10 +478,12 @@ Setup* ConfigStation::setup(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Setup* ConfigStation::setup(const SetupIndex& i) const {
-	for ( std::vector<SetupPtr>::const_iterator it = _setups.begin(); it != _setups.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Setup *ConfigStation::setup(const SetupIndex &i) const {
+	for ( const auto &elem : _setups ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -482,9 +493,10 @@ Setup* ConfigStation::setup(const SetupIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::add(Setup* setup) {
-	if ( setup == nullptr )
+bool ConfigStation::add(Setup *setup) {
+	if ( !setup ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( setup->parent() != nullptr ) {
@@ -521,9 +533,10 @@ bool ConfigStation::add(Setup* setup) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::remove(Setup* setup) {
-	if ( setup == nullptr )
+bool ConfigStation::remove(Setup *setup) {
+	if ( !setup ) {
 		return false;
+	}
 
 	if ( setup->parent() != this ) {
 		SEISCOMP_ERROR("ConfigStation::remove(Setup*) -> element has another parent");
@@ -539,8 +552,7 @@ bool ConfigStation::remove(Setup* setup) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -563,8 +575,7 @@ bool ConfigStation::removeSetup(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_setups[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _setups[i].get());
 	}
 
 	_setups[i]->setParent(nullptr);
@@ -580,9 +591,12 @@ bool ConfigStation::removeSetup(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ConfigStation::removeSetup(const SetupIndex& i) {
-	Setup* object = setup(i);
-	if ( object == nullptr ) return false;
+bool ConfigStation::removeSetup(const SetupIndex &i) {
+	Setup *object = setup(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -591,7 +605,7 @@ bool ConfigStation::removeSetup(const SetupIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ConfigStation::serialize(Archive& ar) {
+void ConfigStation::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

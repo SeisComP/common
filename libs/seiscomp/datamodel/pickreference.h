@@ -78,28 +78,28 @@ class SC_SYSTEM_CORE_API PickReference : public Object {
 		PickReference();
 
 		//! Copy constructor
-		PickReference(const PickReference& other);
+		PickReference(const PickReference &other);
 
 		//! Custom constructor
 		PickReference(const std::string& pickID);
 
 		//! Destructor
 		~PickReference() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		PickReference& operator=(const PickReference& other);
+		PickReference &operator=(const PickReference &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const PickReference& other) const;
-		bool operator!=(const PickReference& other) const;
+		bool operator==(const PickReference &other) const;
+		bool operator!=(const PickReference &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const PickReference& other) const;
+		bool equal(const PickReference &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -115,17 +115,17 @@ class SC_SYSTEM_CORE_API PickReference : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const PickReferenceIndex& index() const;
+		const PickReferenceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const PickReference* lhs) const;
+		bool equalIndex(const PickReference *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Reading* reading() const;
+		Reading *reading() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

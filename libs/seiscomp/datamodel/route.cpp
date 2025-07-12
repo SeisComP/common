@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Route, PublicObject, "Route");
 
 
-Route::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Route::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("networkCode", "string", false, false, true, false, false, false, nullptr, &Route::setNetworkCode, &Route::networkCode));
 	addProperty(Core::simpleProperty("stationCode", "string", false, false, true, false, false, false, nullptr, &Route::setStationCode, &Route::stationCode));
 	addProperty(Core::simpleProperty("locationCode", "string", false, false, true, false, false, false, nullptr, &Route::setLocationCode, &Route::locationCode));
@@ -70,7 +70,7 @@ RouteIndex::RouteIndex(const std::string& networkCode_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteIndex::RouteIndex(const RouteIndex& idx) {
+RouteIndex::RouteIndex(const RouteIndex &idx) {
 	networkCode = idx.networkCode;
 	stationCode = idx.stationCode;
 	locationCode = idx.locationCode;
@@ -82,7 +82,7 @@ RouteIndex::RouteIndex(const RouteIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteIndex::operator==(const RouteIndex& idx) const {
+bool RouteIndex::operator==(const RouteIndex &idx) const {
 	return networkCode == idx.networkCode &&
 	       stationCode == idx.stationCode &&
 	       locationCode == idx.locationCode &&
@@ -94,7 +94,7 @@ bool RouteIndex::operator==(const RouteIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RouteIndex::operator!=(const RouteIndex& idx) const {
+bool RouteIndex::operator!=(const RouteIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -111,7 +111,7 @@ Route::Route() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route::Route(const Route& other)
+Route::Route(const Route &other)
 : PublicObject() {
 	*this = other;
 }
@@ -144,8 +144,8 @@ Route::~Route() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route* Route::Create() {
-	Route* object = new Route();
+Route *Route::Create() {
+	Route *object = new Route();
 	return static_cast<Route*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -154,7 +154,7 @@ Route* Route::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route* Route::Create(const std::string& publicID) {
+Route *Route::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -171,7 +171,7 @@ Route* Route::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route* Route::Find(const std::string& publicID) {
+Route *Route::Find(const std::string& publicID) {
 	return Route::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -180,7 +180,7 @@ Route* Route::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::operator==(const Route& rhs) const {
+bool Route::operator==(const Route &rhs) const {
 	if ( _index != rhs._index ) return false;
 	return true;
 }
@@ -190,7 +190,7 @@ bool Route::operator==(const Route& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::operator!=(const Route& rhs) const {
+bool Route::operator!=(const Route &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -199,7 +199,7 @@ bool Route::operator!=(const Route& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::equal(const Route& other) const {
+bool Route::equal(const Route &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -280,7 +280,7 @@ const std::string& Route::streamCode() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const RouteIndex& Route::index() const {
+const RouteIndex &Route::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -289,8 +289,11 @@ const RouteIndex& Route::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::equalIndex(const Route* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Route::equalIndex(const Route *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -299,7 +302,7 @@ bool Route::equalIndex(const Route* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Routing* Route::routing() const {
+Routing *Route::routing() const {
 	return static_cast<Routing*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -308,7 +311,7 @@ Routing* Route::routing() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Route& Route::operator=(const Route& other) {
+Route &Route::operator=(const Route &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	return *this;
@@ -319,10 +322,11 @@ Route& Route::operator=(const Route& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::assign(Object* other) {
-	Route* otherRoute = Route::Cast(other);
-	if ( other == nullptr )
+bool Route::assign(Object *other) {
+	Route *otherRoute = Route::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherRoute;
 
@@ -334,11 +338,13 @@ bool Route::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Route::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	Routing* routing = Routing::Cast(parent);
+	Routing *routing = Routing::Cast(parent);
 	if ( routing != nullptr )
 		return routing->add(this);
 
@@ -351,11 +357,13 @@ bool Route::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Route::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	Routing* routing = Routing::Cast(object);
+	Routing *routing = Routing::Cast(object);
 	if ( routing != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -363,7 +371,7 @@ bool Route::detachFrom(PublicObject* object) {
 			return routing->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Route* child = routing->findRoute(publicID());
+			Route *child = routing->findRoute(publicID());
 			if ( child != nullptr )
 				return routing->remove(child);
 			else {
@@ -383,8 +391,9 @@ bool Route::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Route::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -394,8 +403,8 @@ bool Route::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Route::clone() const {
-	Route* clonee = new Route();
+Object *Route::clone() const {
+	Route *clonee = new Route();
 	*clonee = *this;
 	return clonee;
 }
@@ -405,10 +414,10 @@ Object* Route::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::updateChild(Object* child) {
-	RouteArclink* routeArclinkChild = RouteArclink::Cast(child);
+bool Route::updateChild(Object *child) {
+	RouteArclink *routeArclinkChild = RouteArclink::Cast(child);
 	if ( routeArclinkChild != nullptr ) {
-		RouteArclink* routeArclinkElement = routeArclink(routeArclinkChild->index());
+		RouteArclink *routeArclinkElement = routeArclink(routeArclinkChild->index());
 		if ( routeArclinkElement != nullptr ) {
 			*routeArclinkElement = *routeArclinkChild;
 			routeArclinkElement->update();
@@ -417,9 +426,9 @@ bool Route::updateChild(Object* child) {
 		return false;
 	}
 
-	RouteSeedlink* routeSeedlinkChild = RouteSeedlink::Cast(child);
+	RouteSeedlink *routeSeedlinkChild = RouteSeedlink::Cast(child);
 	if ( routeSeedlinkChild != nullptr ) {
-		RouteSeedlink* routeSeedlinkElement = routeSeedlink(routeSeedlinkChild->index());
+		RouteSeedlink *routeSeedlinkElement = routeSeedlink(routeSeedlinkChild->index());
 		if ( routeSeedlinkElement != nullptr ) {
 			*routeSeedlinkElement = *routeSeedlinkChild;
 			routeSeedlinkElement->update();
@@ -436,7 +445,7 @@ bool Route::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Route::accept(Visitor* visitor) {
+void Route::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -466,7 +475,7 @@ size_t Route::routeArclinkCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteArclink* Route::routeArclink(size_t i) const {
+RouteArclink *Route::routeArclink(size_t i) const {
 	return _routeArclinks[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -475,10 +484,12 @@ RouteArclink* Route::routeArclink(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteArclink* Route::routeArclink(const RouteArclinkIndex& i) const {
-	for ( std::vector<RouteArclinkPtr>::const_iterator it = _routeArclinks.begin(); it != _routeArclinks.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+RouteArclink *Route::routeArclink(const RouteArclinkIndex &i) const {
+	for ( const auto &elem : _routeArclinks ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -488,9 +499,10 @@ RouteArclink* Route::routeArclink(const RouteArclinkIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::add(RouteArclink* routeArclink) {
-	if ( routeArclink == nullptr )
+bool Route::add(RouteArclink *routeArclink) {
+	if ( !routeArclink ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( routeArclink->parent() != nullptr ) {
@@ -527,9 +539,10 @@ bool Route::add(RouteArclink* routeArclink) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::remove(RouteArclink* routeArclink) {
-	if ( routeArclink == nullptr )
+bool Route::remove(RouteArclink *routeArclink) {
+	if ( !routeArclink ) {
 		return false;
+	}
 
 	if ( routeArclink->parent() != this ) {
 		SEISCOMP_ERROR("Route::remove(RouteArclink*) -> element has another parent");
@@ -545,8 +558,7 @@ bool Route::remove(RouteArclink* routeArclink) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -569,8 +581,7 @@ bool Route::removeRouteArclink(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routeArclinks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routeArclinks[i].get());
 	}
 
 	_routeArclinks[i]->setParent(nullptr);
@@ -586,9 +597,12 @@ bool Route::removeRouteArclink(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::removeRouteArclink(const RouteArclinkIndex& i) {
-	RouteArclink* object = routeArclink(i);
-	if ( object == nullptr ) return false;
+bool Route::removeRouteArclink(const RouteArclinkIndex &i) {
+	RouteArclink *object = routeArclink(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -606,7 +620,7 @@ size_t Route::routeSeedlinkCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteSeedlink* Route::routeSeedlink(size_t i) const {
+RouteSeedlink *Route::routeSeedlink(size_t i) const {
 	return _routeSeedlinks[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -615,10 +629,12 @@ RouteSeedlink* Route::routeSeedlink(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RouteSeedlink* Route::routeSeedlink(const RouteSeedlinkIndex& i) const {
-	for ( std::vector<RouteSeedlinkPtr>::const_iterator it = _routeSeedlinks.begin(); it != _routeSeedlinks.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+RouteSeedlink *Route::routeSeedlink(const RouteSeedlinkIndex &i) const {
+	for ( const auto &elem : _routeSeedlinks ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -628,9 +644,10 @@ RouteSeedlink* Route::routeSeedlink(const RouteSeedlinkIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::add(RouteSeedlink* routeSeedlink) {
-	if ( routeSeedlink == nullptr )
+bool Route::add(RouteSeedlink *routeSeedlink) {
+	if ( !routeSeedlink ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( routeSeedlink->parent() != nullptr ) {
@@ -667,9 +684,10 @@ bool Route::add(RouteSeedlink* routeSeedlink) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::remove(RouteSeedlink* routeSeedlink) {
-	if ( routeSeedlink == nullptr )
+bool Route::remove(RouteSeedlink *routeSeedlink) {
+	if ( !routeSeedlink ) {
 		return false;
+	}
 
 	if ( routeSeedlink->parent() != this ) {
 		SEISCOMP_ERROR("Route::remove(RouteSeedlink*) -> element has another parent");
@@ -685,8 +703,7 @@ bool Route::remove(RouteSeedlink* routeSeedlink) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -709,8 +726,7 @@ bool Route::removeRouteSeedlink(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_routeSeedlinks[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _routeSeedlinks[i].get());
 	}
 
 	_routeSeedlinks[i]->setParent(nullptr);
@@ -726,9 +742,12 @@ bool Route::removeRouteSeedlink(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Route::removeRouteSeedlink(const RouteSeedlinkIndex& i) {
-	RouteSeedlink* object = routeSeedlink(i);
-	if ( object == nullptr ) return false;
+bool Route::removeRouteSeedlink(const RouteSeedlinkIndex &i) {
+	RouteSeedlink *object = routeSeedlink(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -737,7 +756,7 @@ bool Route::removeRouteSeedlink(const RouteSeedlinkIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Route::serialize(Archive& ar) {
+void Route::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

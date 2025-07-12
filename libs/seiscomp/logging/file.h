@@ -43,7 +43,7 @@ class SC_SYSTEM_CORE_API FileOutput : public Output {
 		void log(const char* channelName,
 		         LogLevel level,
 		         const char* msg,
-		         time_t time);
+		         time_t time) override;
 
 	protected:
 		std::string _filename;

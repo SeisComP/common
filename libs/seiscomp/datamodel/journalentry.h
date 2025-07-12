@@ -50,25 +50,25 @@ class SC_SYSTEM_CORE_API JournalEntry : public Object {
 		JournalEntry();
 
 		//! Copy constructor
-		JournalEntry(const JournalEntry& other);
+		JournalEntry(const JournalEntry &other);
 
 		//! Destructor
 		~JournalEntry() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		JournalEntry& operator=(const JournalEntry& other);
+		JournalEntry &operator=(const JournalEntry &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const JournalEntry& other) const;
-		bool operator!=(const JournalEntry& other) const;
+		bool operator==(const JournalEntry &other) const;
+		bool operator!=(const JournalEntry &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const JournalEntry& other) const;
+		bool equal(const JournalEntry &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -90,12 +90,12 @@ class SC_SYSTEM_CORE_API JournalEntry : public Object {
 		void setParameters(const std::string& parameters);
 		const std::string& parameters() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Journaling* journaling() const;
+		Journaling *journaling() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

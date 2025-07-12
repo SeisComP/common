@@ -145,7 +145,7 @@ class SC_SYSTEM_CORE_API Spectralizer : public Core::BaseObject {
 	//  Implementation
 	// ----------------------------------------------------------------------
 	private:
-		typedef Core::SmartPointer< Math::Filtering::InPlaceFilter<double> >::Impl FilterPtr;
+		using FilterPtr = Core::SmartPointer<Math::Filtering::InPlaceFilter<double>>;
 		struct SpecBuffer {
 			SpecBuffer() {}
 			~SpecBuffer() {}
@@ -172,17 +172,17 @@ class SC_SYSTEM_CORE_API Spectralizer : public Core::BaseObject {
 			size_t front;
 
 			// Time of front of ring buffer
-			Core::Time startTime;
+			OPT(Core::Time) startTime;
 
 			// End time of last record
-			Core::Time lastEndTime;
+			OPT(Core::Time) lastEndTime;
 
 			void reset(FilterPtr refFilter) {
 				missingSamples = buffer.size();
 				front = 0;
 				samplesToSkip = 0;
-				startTime = Core::Time();
-				lastEndTime = Core::Time();
+				startTime = Core::None;;
+				lastEndTime = Core::None;
 
 				if ( refFilter ) {
 					filter = refFilter->clone();

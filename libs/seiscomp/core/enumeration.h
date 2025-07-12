@@ -25,6 +25,7 @@
 #include <seiscomp/core/io.h>
 
 #include <ostream>
+#include <string_view>
 #include <fmt/ostream.h>
 
 
@@ -48,7 +49,7 @@ class SC_SYSTEM_CORE_API Enumeration {
 		 *            case sensitive.
 		 * @return The result of the conversion
 		 */
-		virtual bool fromString(const std::string &str) = 0;
+		virtual bool fromString(std::string_view sv) = 0;
 
 		/**
 		 * Converts an enumeration value to an integer
@@ -160,7 +161,7 @@ class Enum : public Enumeration {
 	// ------------------------------------------------------------------
 	public:
 		const char *toString() const override;
-		bool fromString(const std::string &str) override;
+		bool fromString(std::string_view sv) override;
 
 		int toInt() const override;
 		bool fromInt(int value) override;

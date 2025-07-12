@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(ArclinkUser, PublicObject, "ArclinkUser");
 
 
-ArclinkUser::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+ArclinkUser::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("name", "string", false, false, true, false, false, false, nullptr, &ArclinkUser::setName, &ArclinkUser::name));
 	addProperty(Core::simpleProperty("email", "string", false, false, true, false, false, false, nullptr, &ArclinkUser::setEmail, &ArclinkUser::email));
 	addProperty(Core::simpleProperty("password", "string", false, false, false, false, false, false, nullptr, &ArclinkUser::setPassword, &ArclinkUser::password));
@@ -62,7 +62,7 @@ ArclinkUserIndex::ArclinkUserIndex(const std::string& name_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUserIndex::ArclinkUserIndex(const ArclinkUserIndex& idx) {
+ArclinkUserIndex::ArclinkUserIndex(const ArclinkUserIndex &idx) {
 	name = idx.name;
 	email = idx.email;
 }
@@ -72,7 +72,7 @@ ArclinkUserIndex::ArclinkUserIndex(const ArclinkUserIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUserIndex::operator==(const ArclinkUserIndex& idx) const {
+bool ArclinkUserIndex::operator==(const ArclinkUserIndex &idx) const {
 	return name == idx.name &&
 	       email == idx.email;
 }
@@ -82,7 +82,7 @@ bool ArclinkUserIndex::operator==(const ArclinkUserIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUserIndex::operator!=(const ArclinkUserIndex& idx) const {
+bool ArclinkUserIndex::operator!=(const ArclinkUserIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,7 +99,7 @@ ArclinkUser::ArclinkUser() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUser::ArclinkUser(const ArclinkUser& other)
+ArclinkUser::ArclinkUser(const ArclinkUser &other)
 : PublicObject() {
 	*this = other;
 }
@@ -126,8 +126,8 @@ ArclinkUser::~ArclinkUser() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUser* ArclinkUser::Create() {
-	ArclinkUser* object = new ArclinkUser();
+ArclinkUser *ArclinkUser::Create() {
+	ArclinkUser *object = new ArclinkUser();
 	return static_cast<ArclinkUser*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -136,7 +136,7 @@ ArclinkUser* ArclinkUser::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUser* ArclinkUser::Create(const std::string& publicID) {
+ArclinkUser *ArclinkUser::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -153,7 +153,7 @@ ArclinkUser* ArclinkUser::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUser* ArclinkUser::Find(const std::string& publicID) {
+ArclinkUser *ArclinkUser::Find(const std::string& publicID) {
 	return ArclinkUser::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -162,7 +162,7 @@ ArclinkUser* ArclinkUser::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::operator==(const ArclinkUser& rhs) const {
+bool ArclinkUser::operator==(const ArclinkUser &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _password != rhs._password ) return false;
 	return true;
@@ -173,7 +173,7 @@ bool ArclinkUser::operator==(const ArclinkUser& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::operator!=(const ArclinkUser& rhs) const {
+bool ArclinkUser::operator!=(const ArclinkUser &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -182,7 +182,7 @@ bool ArclinkUser::operator!=(const ArclinkUser& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::equal(const ArclinkUser& other) const {
+bool ArclinkUser::equal(const ArclinkUser &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -245,7 +245,7 @@ const std::string& ArclinkUser::password() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const ArclinkUserIndex& ArclinkUser::index() const {
+const ArclinkUserIndex &ArclinkUser::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -254,8 +254,11 @@ const ArclinkUserIndex& ArclinkUser::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::equalIndex(const ArclinkUser* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool ArclinkUser::equalIndex(const ArclinkUser *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -264,7 +267,7 @@ bool ArclinkUser::equalIndex(const ArclinkUser* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkLog* ArclinkUser::arclinkLog() const {
+ArclinkLog *ArclinkUser::arclinkLog() const {
 	return static_cast<ArclinkLog*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -273,7 +276,7 @@ ArclinkLog* ArclinkUser::arclinkLog() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ArclinkUser& ArclinkUser::operator=(const ArclinkUser& other) {
+ArclinkUser &ArclinkUser::operator=(const ArclinkUser &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_password = other._password;
@@ -285,10 +288,11 @@ ArclinkUser& ArclinkUser::operator=(const ArclinkUser& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::assign(Object* other) {
-	ArclinkUser* otherArclinkUser = ArclinkUser::Cast(other);
-	if ( other == nullptr )
+bool ArclinkUser::assign(Object *other) {
+	ArclinkUser *otherArclinkUser = ArclinkUser::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherArclinkUser;
 
@@ -300,11 +304,13 @@ bool ArclinkUser::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool ArclinkUser::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkLog* arclinkLog = ArclinkLog::Cast(parent);
+	ArclinkLog *arclinkLog = ArclinkLog::Cast(parent);
 	if ( arclinkLog != nullptr )
 		return arclinkLog->add(this);
 
@@ -317,11 +323,13 @@ bool ArclinkUser::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool ArclinkUser::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	ArclinkLog* arclinkLog = ArclinkLog::Cast(object);
+	ArclinkLog *arclinkLog = ArclinkLog::Cast(object);
 	if ( arclinkLog != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -329,7 +337,7 @@ bool ArclinkUser::detachFrom(PublicObject* object) {
 			return arclinkLog->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			ArclinkUser* child = arclinkLog->findArclinkUser(publicID());
+			ArclinkUser *child = arclinkLog->findArclinkUser(publicID());
 			if ( child != nullptr )
 				return arclinkLog->remove(child);
 			else {
@@ -349,8 +357,9 @@ bool ArclinkUser::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ArclinkUser::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -360,8 +369,8 @@ bool ArclinkUser::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* ArclinkUser::clone() const {
-	ArclinkUser* clonee = new ArclinkUser();
+Object *ArclinkUser::clone() const {
+	ArclinkUser *clonee = new ArclinkUser();
 	*clonee = *this;
 	return clonee;
 }
@@ -371,7 +380,7 @@ Object* ArclinkUser::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ArclinkUser::updateChild(Object* child) {
+bool ArclinkUser::updateChild(Object *child) {
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -380,7 +389,7 @@ bool ArclinkUser::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkUser::accept(Visitor* visitor) {
+void ArclinkUser::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -397,7 +406,7 @@ void ArclinkUser::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ArclinkUser::serialize(Archive& ar) {
+void ArclinkUser::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

@@ -48,7 +48,7 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 		 * Construct a TravelTimeTable object for the specified model.
 		 * Currently only "iasp91" is supported.
 		 */
-		LibTau();
+		LibTau() = default;
 		~LibTau();
 
 		LibTau(const LibTau &other);
@@ -69,9 +69,6 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 
 		/**
 		 * Compute the traveltime(s) for the branch selected using setBranch()
-		 * @param dep1 The source depth in km
-		 *
-		 * @returns A TravelTimeList of travel times sorted by time.
 		 *
 		 * It should be noted that in this implementation it is extremely
 		 * important to compute as many travel times for the same focal
@@ -79,29 +76,38 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 		 * the time-consuming re-computation of some internal tables,
 		 * which can be avoided by as many consecutive compute() calls as
 		 * possible, for the same depth.
-		 *
-		 * XXX However:
-		 * XXX NEITHER ellipticity NOR altitude correction is currently
-		 * XXX implemented! The respective parameters are ignored.
+		 * @param lat1 The source latitude in degrees
+		 * @param lon1 The source longitude in degrees
+		 * @param dep1 The source depth in km
+		 * @param lat2 The receiver latitude in degrees
+		 * @param lon2 The receiver longitude in degrees
+		 * @param elev2 The receiver elevation in meter.
+		 *              Elevation correction is not implemented and this
+		 *              parameter is ignored.
+		 * @param ellc Toggle earth ellipticity correction.
+		 * @returns A TravelTimeList of travel times sorted by time.
 		 */
 		TravelTimeList *compute(double lat1, double lon1, double dep1,
-		                        double lat2, double lon2, double alt2 = 0.,
+		                        double lat2, double lon2, double elev2 = 0.,
 		                        int ellc = 1) override;
 
 
 		/**
 		 * Compute the traveltime for the branch selected using setBranch()
 		 * and the first (fastest) phase.
+		 * @param lat1 The source latitude in degrees
+		 * @param lon1 The source longitude in degrees
 		 * @param dep1 The source depth in km
-		 *
+		 * @param lat2 The receiver latitude in degrees
+		 * @param lon2 The receiver longitude in degrees
+		 * @param elev2 The receiver elevation in meter.
+		 *              Elevation correction is not implemented and this
+		 *              parameter is ignored.
+		 * @param ellc Toggle earth ellipticity correction.
 		 * @returns A TravelTime
-		 *
-		 * XXX However:
-		 * XXX NEITHER ellipticity NOR altitude correction is currently
-		 * XXX implemented! The respective parameters are ignored.
 		 */
 		TravelTime computeFirst(double lat1, double lon1, double dep1,
-		                        double lat2, double lon2, double alt2 = 0.,
+		                        double lat2, double lon2, double elev2 = 0.,
 		                        int ellc = 1) override;
 
 
@@ -117,12 +123,11 @@ class SC_SYSTEM_CORE_API LibTau : public TravelTimeTableInterface {
 
 		void initPath(const std::string &model);
 
-		libtau _handle;
 
-		double _depth;
-		std::string _model;
-
-		bool _initialized;
+		libtau             _handle;
+		double             _depth{-1};
+		std::string        _model;
+		bool               _initialized{false};
 };
 
 

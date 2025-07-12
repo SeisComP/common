@@ -107,7 +107,7 @@ class SC_SYSTEM_CLIENT_API ServiceProvideMessage : public Seiscomp::Core::Messag
 		const char *parameters() const;
 
 		//! Implemented interface from Message
-		virtual bool empty() const;
+		virtual bool empty() const override;
 
 	private:
 		std::string _serviceName;

@@ -175,7 +175,7 @@ void Picker::process(const Record *record, const DoubleArray &) {
 	if ( !dataTimeWindow().contains(timeWindow())) return;
 
 	// data window relative to continuous()->startTime()
-	double relTriggerTime = _trigger - dataTimeWindow().startTime();
+	double relTriggerTime = (_trigger - dataTimeWindow().startTime()).length();
 
 	double dt1 = relTriggerTime + _config.signalBegin;
 	double dt2 = relTriggerTime + _config.signalEnd;

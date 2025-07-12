@@ -33,7 +33,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Outage, Object, "Outage");
 
 
-Outage::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Outage::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<WaveformStreamID>("waveformID", "WaveformStreamID", true, false, false, &Outage::setWaveformID, &Outage::waveformID));
 	addProperty(Core::simpleProperty("creatorID", "string", false, false, false, false, false, false, nullptr, &Outage::setCreatorID, &Outage::creatorID));
 	addProperty(Core::simpleProperty("created", "datetime", false, false, false, false, false, false, nullptr, &Outage::setCreated, &Outage::created));
@@ -64,7 +64,7 @@ OutageIndex::OutageIndex(const WaveformStreamID& waveformID_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OutageIndex::OutageIndex(const OutageIndex& idx) {
+OutageIndex::OutageIndex(const OutageIndex &idx) {
 	waveformID = idx.waveformID;
 	start = idx.start;
 }
@@ -74,7 +74,7 @@ OutageIndex::OutageIndex(const OutageIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OutageIndex::operator==(const OutageIndex& idx) const {
+bool OutageIndex::operator==(const OutageIndex &idx) const {
 	return waveformID == idx.waveformID &&
 	       start == idx.start;
 }
@@ -84,7 +84,7 @@ bool OutageIndex::operator==(const OutageIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool OutageIndex::operator!=(const OutageIndex& idx) const {
+bool OutageIndex::operator!=(const OutageIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -101,7 +101,7 @@ Outage::Outage() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Outage::Outage(const Outage& other)
+Outage::Outage(const Outage &other)
 : Object() {
 	*this = other;
 }
@@ -119,7 +119,7 @@ Outage::~Outage() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::operator==(const Outage& rhs) const {
+bool Outage::operator==(const Outage &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _creatorID != rhs._creatorID ) return false;
 	if ( _created != rhs._created ) return false;
@@ -132,7 +132,7 @@ bool Outage::operator==(const Outage& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::operator!=(const Outage& rhs) const {
+bool Outage::operator!=(const Outage &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -141,7 +141,7 @@ bool Outage::operator!=(const Outage& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::equal(const Outage& other) const {
+bool Outage::equal(const Outage &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -251,7 +251,7 @@ Seiscomp::Core::Time Outage::end() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const OutageIndex& Outage::index() const {
+const OutageIndex &Outage::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -260,8 +260,11 @@ const OutageIndex& Outage::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::equalIndex(const Outage* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Outage::equalIndex(const Outage *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -270,7 +273,7 @@ bool Outage::equalIndex(const Outage* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QualityControl* Outage::qualityControl() const {
+QualityControl *Outage::qualityControl() const {
 	return static_cast<QualityControl*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -279,7 +282,7 @@ QualityControl* Outage::qualityControl() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Outage& Outage::operator=(const Outage& other) {
+Outage &Outage::operator=(const Outage &other) {
 	_index = other._index;
 	_creatorID = other._creatorID;
 	_created = other._created;
@@ -292,10 +295,11 @@ Outage& Outage::operator=(const Outage& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::assign(Object* other) {
-	Outage* otherOutage = Outage::Cast(other);
-	if ( other == nullptr )
+bool Outage::assign(Object *other) {
+	Outage *otherOutage = Outage::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherOutage;
 
@@ -307,11 +311,13 @@ bool Outage::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Outage::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(parent);
+	QualityControl *qualityControl = QualityControl::Cast(parent);
 	if ( qualityControl != nullptr )
 		return qualityControl->add(this);
 
@@ -324,11 +330,13 @@ bool Outage::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Outage::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Outage::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	QualityControl* qualityControl = QualityControl::Cast(object);
+	QualityControl *qualityControl = QualityControl::Cast(object);
 	if ( qualityControl != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -336,7 +344,7 @@ bool Outage::detachFrom(PublicObject* object) {
 			return qualityControl->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Outage* child = qualityControl->outage(index());
+			Outage *child = qualityControl->outage(index());
 			if ( child != nullptr )
 				return qualityControl->remove(child);
 			else {
@@ -356,8 +364,9 @@ bool Outage::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Outage::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -367,8 +376,8 @@ bool Outage::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Outage::clone() const {
-	Outage* clonee = new Outage();
+Object *Outage::clone() const {
+	Outage *clonee = new Outage();
 	*clonee = *this;
 	return clonee;
 }
@@ -378,7 +387,7 @@ Object* Outage::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Outage::accept(Visitor* visitor) {
+void Outage::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -387,7 +396,7 @@ void Outage::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Outage::serialize(Archive& ar) {
+void Outage::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

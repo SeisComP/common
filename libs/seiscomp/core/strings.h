@@ -32,6 +32,7 @@
 
 #include <limits>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <complex>
 
@@ -72,10 +73,10 @@ template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
 std::string toString(const Enum<ENUMTYPE, END, NAMES> &value);
 
 template <typename T>
-std::string toString(const std::vector<T> &v);
+std::string toString(const std::vector<T> &v, char delimiter = ' ');
 
 template <typename T>
-std::string toString(const ::boost::optional<T> &v);
+std::string toString(const Optional<T> &v);
 
 
 template <typename T>
@@ -102,20 +103,28 @@ std::ostream &operator<<(std::ostream &os, const Number<double> &s);
  * @param str The source string
  */
 template <typename T>
-bool fromString(T &value, const std::string &str);
+bool fromString(T &value, std::string_view sv);
 
 template <typename T>
-bool fromString(std::complex<T> &value, const std::string &str);
+bool fromString(std::complex<T> &value, std::string_view sv);
 
-SC_SYSTEM_CORE_API bool fromString(Time &value, const std::string &str);
-SC_SYSTEM_CORE_API bool fromString(Enumeration &value, const std::string &str);
-SC_SYSTEM_CORE_API bool fromString(std::string &value, const std::string &str);
+template <>
+bool fromString(TimeSpan &value, std::string_view sv);
+
+template <>
+bool fromString(Time &value, std::string_view sv);
+
+template <>
+bool fromString(Enumeration &value, std::string_view sv);
+
+template <>
+bool fromString(std::string &value, std::string_view sv);
 
 template <typename ENUMTYPE, ENUMTYPE END, typename NAMES>
-bool fromString(Enum<ENUMTYPE, END, NAMES> &value, const std::string &str);
+bool fromString(Enum<ENUMTYPE, END, NAMES> &value, std::string_view sv);
 
 template <typename T>
-bool fromString(std::vector<T> &vec, const std::string &str);
+bool fromString(std::vector<T> &vec, std::string_view sv, char delimiter = ' ');
 
 
 /**
@@ -142,12 +151,12 @@ int split(std::vector<std::string> &tokens, const char *source,
           const char *delimiter, bool compressOn = true);
 
 /**
- * @brief Convenience function which takes an std::string as source parameter
+ * @brief Convenience function which takes an std::string_view as source parameter
  *        rather than a const char pointer.
  *        See @ref split(std::vector<std::string> &, const char *, const char *, bool).
  */
 SC_SYSTEM_CORE_API
-int split(std::vector<std::string> &tokens, const std::string &source,
+int split(std::vector<std::string> &tokens, std::string_view source,
           const char *delimiter, bool compressOn = true);
 
 /**
@@ -205,13 +214,7 @@ SC_SYSTEM_CORE_API bool isEmpty(const char*);
  * A case-insensitive comparison.
  * @return Result as defined by strcmp
  */
-SC_SYSTEM_CORE_API int compareNoCase(const std::string &a, const std::string &b);
-
-/** Removes whitespace at the beginning and end of the string.
- * @param string to be trimmed (in/out parameter)
- * @return returns the trimmed string
- */
-SC_SYSTEM_CORE_API std::string &trim(std::string &str);
+SC_SYSTEM_CORE_API int compareNoCase(std::string_view a, std::string_view b);
 
 template <typename T>
 void toHex(std::string &target, T source);
@@ -237,25 +240,17 @@ SC_SYSTEM_CORE_API bool wildcmp(const std::string &wild, const std::string &str)
 SC_SYSTEM_CORE_API bool wildicmp(const char *wild, const char *str);
 SC_SYSTEM_CORE_API bool wildicmp(const std::string &wild, const std::string &str);
 
-
-// -------------------------------------------------------------------------
-//  Plain C string functions which do not modify the input string and work
-//  mostly with length rather than an terminating null byte.
-// -------------------------------------------------------------------------
-
 /**
  * @brief Tokenizes an input string. Empty tokens will be skipped and not
  *        returned (also referred to as compression).
- * @param str The input string. The address is modified that it will point to
- *            the next token.
+ * @param sv The input string. The address is modified that it will point to
+ *           the next token.
  * @param delim A string of characters of allowed delimiters
- * @param len_source The source length. This parameter will be modified
- *                   to match the remaining length of the string.
- * @param len_tok The length of the returned token.
- * @return The address to the token found or nullptr.
+ * @return The matching substring as string_view. If the data pointer is
+ *         nullptr then no further matches are possible.
  */
-template <typename T>
-T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
+SC_SYSTEM_CORE_API
+std::string_view tokenize(std::string_view &sv, const char *delim);
 
 /**
  * @brief Works like tokenize but does not compress empty tokens.
@@ -267,6 +262,18 @@ T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
  * @param len_tok The length of the returned token.
  * @return The address to the token found or nullptr.
  */
+SC_SYSTEM_CORE_API
+std::string_view tokenize2(std::string_view &sv, const char *delim);
+
+
+// -------------------------------------------------------------------------
+//  Plain C string functions which do not modify the input string and work
+//  mostly with length rather than an terminating null byte.
+// -------------------------------------------------------------------------
+
+template <typename T>
+T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
+
 template <typename T>
 T *tokenize2(T *&str, const char *delim, size_t &len_source, size_t &len_tok);
 
@@ -298,7 +305,7 @@ const char *tokenizeExt(size_t &lenTok, size_t &lenSource, const char *&source,
                         const char *whitespaces = " \t\n\v\f\r",
                         const char *quotes = "\"'");
 
-/**
+/**split(
  * @brief Splits a string into several tokens separated by one of the specified
  *        delimiter characters. A delimiter character is ignored if it occurs in
  *        a quoted string or if it is protected by a backslash. Likewise quotes
@@ -343,6 +350,7 @@ SC_SYSTEM_CORE_API bool isEmpty(const char*);
  */
 char *trimFront(char *&data, size_t &len);
 const char *trimFront(const char *&data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trimFront(std::string_view sv);
 
 /**
  * @brief Removes whitespaces from the back of a string.
@@ -353,6 +361,7 @@ const char *trimFront(const char *&data, size_t &len);
  */
 char *trimBack(char *data, size_t &len);
 const char *trimBack(const char *data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trimBack(std::string_view sv);
 
 /**
  * @brief Strips whitespaces from the front and the back of the string.
@@ -364,6 +373,9 @@ const char *trimBack(const char *data, size_t &len);
  */
 char *trim(char *&data, size_t &len);
 const char *trim(const char *&data, size_t &len);
+SC_SYSTEM_CORE_API std::string_view trim(std::string_view sv);
+SC_SYSTEM_CORE_API std::string &trim(std::string &str);
+
 
 char *strnchr(char *p, size_t n, char c);
 const char *strnchr(const char *p, size_t n, char c);
@@ -458,6 +470,26 @@ class ContainerSource {
 		const Container &_container;
 		size_type        _pos;
 };
+
+
+struct InputStringViewBuf : std::streambuf {
+	InputStringViewBuf(std::string_view sv) {
+		auto d = const_cast<char*>(sv.data());
+		this->setg(d, d, d + sv.size());
+	}
+
+	virtual pos_type seekoff(off_type off, std::ios_base::seekdir,
+	                         std::ios_base::openmode) override {
+		return off ? -1 : gptr() - eback();
+	}
+};
+
+struct InputStringViewStream : virtual InputStringViewBuf, std::istream {
+	InputStringViewStream(std::string_view sv)
+	: InputStringViewBuf(sv)
+	, std::istream(static_cast<std::streambuf*>(this)) {}
+};
+
 
 
 }

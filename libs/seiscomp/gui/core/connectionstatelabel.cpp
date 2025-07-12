@@ -47,7 +47,11 @@ ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::setPixmaps(const QPixmap &connected,
                                       const QPixmap &disconnected) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	bool isConnected = (pixmap()->toImage() == _connected.toImage());
+#else
+	bool isConnected = (pixmap().toImage() == _connected.toImage());
+#endif
 
 	_connected = connected;
 	_disconnected = disconnected;
@@ -68,8 +72,7 @@ void ConnectionStateLabel::start(const QString &source) {
 	}
 	else {
 		setToolTip(QString("Connected to %1 at: %2")
-		           .arg(source)
-		           .arg(QDateTime::currentDateTime().toString()));
+		           .arg(source, QDateTime::currentDateTime().toString()));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

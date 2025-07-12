@@ -32,7 +32,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS(PrincipalAxes, "PrincipalAxes");
 
 
-PrincipalAxes::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+PrincipalAxes::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(objectProperty<Axis>("tAxis", "Axis", false, false, false, &PrincipalAxes::setTAxis, &PrincipalAxes::tAxis));
 	addProperty(objectProperty<Axis>("pAxis", "Axis", false, false, false, &PrincipalAxes::setPAxis, &PrincipalAxes::pAxis));
 	addProperty(objectProperty<Axis>("nAxis", "Axis", false, false, true, &PrincipalAxes::setNAxis, &PrincipalAxes::nAxis));
@@ -50,7 +50,7 @@ PrincipalAxes::PrincipalAxes() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PrincipalAxes::PrincipalAxes(const PrincipalAxes& other)
+PrincipalAxes::PrincipalAxes(const PrincipalAxes &other)
 : Core::BaseObject() {
 	*this = other;
 }
@@ -68,7 +68,7 @@ PrincipalAxes::~PrincipalAxes() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PrincipalAxes::operator==(const PrincipalAxes& rhs) const {
+bool PrincipalAxes::operator==(const PrincipalAxes &rhs) const {
 	if ( !(_tAxis == rhs._tAxis) )
 		return false;
 	if ( !(_pAxis == rhs._pAxis) )
@@ -83,7 +83,7 @@ bool PrincipalAxes::operator==(const PrincipalAxes& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PrincipalAxes::operator!=(const PrincipalAxes& rhs) const {
+bool PrincipalAxes::operator!=(const PrincipalAxes &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,7 +92,7 @@ bool PrincipalAxes::operator!=(const PrincipalAxes& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool PrincipalAxes::equal(const PrincipalAxes& other) const {
+bool PrincipalAxes::equal(const PrincipalAxes &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +186,7 @@ const Axis& PrincipalAxes::nAxis() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PrincipalAxes& PrincipalAxes::operator=(const PrincipalAxes& other) {
+PrincipalAxes &PrincipalAxes::operator=(const PrincipalAxes &other) {
 	_tAxis = other._tAxis;
 	_pAxis = other._pAxis;
 	_nAxis = other._nAxis;
@@ -198,7 +198,7 @@ PrincipalAxes& PrincipalAxes::operator=(const PrincipalAxes& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PrincipalAxes::serialize(Archive& ar) {
+void PrincipalAxes::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

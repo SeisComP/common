@@ -96,7 +96,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	configurationPanel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding));
 	//configurationPanel->setAutoFillBackground(true);
 	QHBoxLayout *configurationLayout = new QHBoxLayout;
-	configurationLayout->setMargin(0);
+	configurationLayout->setContentsMargins(0, 0, 0, 0);
 	configurationLayout->setSpacing(1);
 	configurationPanel->setLayout(configurationLayout);
 
@@ -136,7 +136,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	QWidget *settingsPanel = new QWidget;
 	settingsPanel->setAutoFillBackground(true);
 	QVBoxLayout *settingsLayout = new QVBoxLayout;
-	settingsLayout->setMargin(0);
+	settingsLayout->setContentsMargins(0, 0, 0, 0);
 	settingsPanel->setLayout(settingsLayout);
 
 	QSizePolicy sp = settingsPanel->sizePolicy();
@@ -159,7 +159,7 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	searchClose->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
 	searchClose->setFixedSize(18,18);
 
-	searchLayout->setMargin(8);
+	searchLayout->setContentsMargins(0, 0, 0, 0);
 	searchLayout->addWidget(labelSearch);
 	searchLayout->addWidget(search);
 	searchLayout->addWidget(searchClose);
@@ -195,8 +195,9 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 	((FancyView*)_moduleView)->setConfigStage(model->configStage());
 	_moduleView->setModel(_model);
 
-	while ( _moduleTree->topLevelItemCount() > 0 )
+	while ( _moduleTree->topLevelItemCount() > 0 ) {
 		delete _moduleTree->takeTopLevelItem(0);
+	}
 
 	_moduleTree->setColumnCount(1);
 	_moduleTree->header()->hide();
@@ -212,8 +213,12 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 	QTreeWidgetItem *emptyItem = NULL;
 
 	for ( size_t i = 0; i < base->modules.size(); ++i ) {
-		if ( !base->modules[i]->hasConfiguration() ) continue;
-		if ( !base->modules[i]->definition->category.empty() ) continue;
+		if ( !base->modules[i]->hasConfiguration() ) {
+			continue;
+		}
+		if ( !base->modules[i]->definition->category.empty() ) {
+			continue;
+		}
 
 		if ( emptyItem == NULL ) {
 			emptyItem = new QTreeWidgetItem(_moduleTree, QStringList() << "<empty>", 0);
@@ -235,19 +240,26 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 			mitem->setToolTip(0, "");
 		}
 
-		if ( firstModule == NULL ) firstModule = mitem;
+		if ( firstModule == NULL ) {
+			firstModule = mitem;
+		}
 	}
 
-	if ( emptyItem )
+	if ( emptyItem ) {
 		_moduleTree->expandItem(emptyItem);
+	}
 
 	System::Model::Categories::iterator it;
 	for ( it = base->categories.begin(); it != base->categories.end(); ++it ) {
 		QTreeWidgetItem *citem = createPath(_moduleTree, it->c_str(), true);
 
 		for ( size_t i = 0; i < base->modules.size(); ++i ) {
-			if ( !base->modules[i]->hasConfiguration() ) continue;
-			if ( base->modules[i]->definition->category != *it ) continue;
+			if ( !base->modules[i]->hasConfiguration() ) {
+				continue;
+			}
+			if ( base->modules[i]->definition->category != *it ) {
+				continue;
+			}
 			QTreeWidgetItem *mitem = new QTreeWidgetItem(citem, QStringList() << base->modules[i]->definition->name.c_str(), 1);
 			//mitem->setData(0, Qt::DecorationRole, style()->standardIcon(QStyle::SP_FileLinkIcon));
 			if ( base->modules[i]->definition->aliasedModule != NULL ) {
@@ -260,7 +272,9 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 				mitem->setToolTip(0, "");
 			}
 
-			if ( firstModule == NULL ) firstModule = mitem;
+			if ( firstModule == NULL ) {
+				firstModule = mitem;
+			}
 		}
 	}
 
@@ -279,13 +293,17 @@ void ModulesPanel::moduleSelectionChanged(QTreeWidgetItem *curr,QTreeWidgetItem*
 
 
 void ModulesPanel::moduleSelected(QTreeWidgetItem *item,int) {
-	if ( item->type() != 1 ) return;
+	if ( item->type() != 1 ) {
+		return;
+	}
 
 	int rows = _model->rowCount();
 	for ( int i = 0; i < rows; ++i ) {
 		QModelIndex idx = _model->index(i,0);
 		if ( idx.data(ConfigurationTreeItemModel::Type).toInt() !=
-		     ConfigurationTreeItemModel::TypeModule ) continue;
+		     ConfigurationTreeItemModel::TypeModule ) {
+			continue;
+		}
 
 		if ( idx.data().toString() == item->text(0) ) {
 			moduleChanged(idx);
@@ -297,7 +315,9 @@ void ModulesPanel::moduleSelected(QTreeWidgetItem *item,int) {
 
 void ModulesPanel::moduleChanged(const QModelIndex &index) {
 	if ( index.data(ConfigurationTreeItemModel::Type).toInt() !=
-	     ConfigurationTreeItemModel::TypeModule ) return;
+	     ConfigurationTreeItemModel::TypeModule ) {
+		return;
+	}
 	Module *mod = reinterpret_cast<Module*>(index.data(ConfigurationTreeItemModel::Link).value<void*>());
 
 	//static_cast<FancyWidget*>(_moduleView)->setModel(mod);
@@ -305,10 +325,12 @@ void ModulesPanel::moduleChanged(const QModelIndex &index) {
 
 	setHeadline("Configuration / " + index.data(Qt::DisplayRole).toString());
 
-	if ( mod )
+	if ( mod ) {
 		setDescription(mod->definition->description.c_str());
-	else
+	}
+	else {
 		setDescription("...");
+	}
 
 	/*
 	if ( _listWidget->currentItem() == _configItem ) {
@@ -340,7 +362,9 @@ void ModulesPanel::search(const QString &text) {
 	                        Qt::MatchRecursive |
 	                        Qt::MatchWrap);
 
-		if ( hits.isEmpty() ) continue;
+		if ( hits.isEmpty() ) {
+			continue;
+		}
 		_moduleView->scrollTo(hits.first());
 		_moduleView->setCurrentIndex(hits.first());
 		break;

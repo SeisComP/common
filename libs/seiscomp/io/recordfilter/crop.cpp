@@ -216,7 +216,7 @@ void Cropper::crop(const Record *rec) {
 	}
 
 	if ( _buffer->lastEndTime.valid() ) {
-		double diff = rec->startTime() - _buffer->lastEndTime;
+		double diff = (rec->startTime() - _buffer->lastEndTime).length();
 		if ( fabs(diff) > _buffer->dt*0.5 ) {
 			SEISCOMP_DEBUG("[crop] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -239,7 +239,7 @@ void Cropper::crop(const Record *rec) {
 
 	size_t data_len = (size_t)ar->size();
 	const double *data = ar->typedData();
-	double *buffer = &_buffer->buffer[0];
+	double *buffer = _buffer->buffer.data();
 
 	if ( _buffer->missingSamples > 0 ) {
 		size_t toCopy = std::min(_buffer->missingSamples, data_len);
@@ -254,12 +254,12 @@ void Cropper::crop(const Record *rec) {
 
 			// align to timestep if not requested otherwise
 			if ( !_noalign ) {
-				double mod = fmod((double)_buffer->startTime, _timeStep);
+				double mod = fmod(_buffer->startTime.epoch(), _timeStep);
 				double skip = _timeStep - mod;
 				_buffer->samplesToSkip = int(skip*_buffer->sampleRate+0.5);
 
-				Core::Time nextStep(floor(double(_buffer->startTime)/_timeStep+(_buffer->samplesToSkip > 0?1:0))*_timeStep+5E-7);
-				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip*_buffer->dt+5E-7);
+				Core::Time nextStep(floor(_buffer->startTime.epoch() / _timeStep + (_buffer->samplesToSkip > 0 ? 1 : 0)) * _timeStep + 5E-7);
+				_buffer->startTime = nextStep - Core::TimeSpan(_buffer->samplesToSkip * _buffer->dt + 5E-7);
 			}
 		}
 

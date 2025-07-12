@@ -57,6 +57,8 @@ class SC_GUI_API Legend : public QObject {
 
 		Legend &operator =(const Legend &other);
 
+
+	public:
 		virtual void bringToFront();
 
 		virtual Legend* clone() const { return nullptr; }
@@ -108,17 +110,17 @@ class SC_GUI_API Legend : public QObject {
 
 
 	protected:
-		int                           _margin;
-		int                           _spacing;
-		QFont                         _font;
-		QFont                         _titleFont;
-		QSize                         _size;
-		Layer                        *_layer;
-		QString                       _title;
-		Qt::Alignment                 _alignment;
-		bool                          _enabled;
-		QPoint                        _pos;
-		bool                          _visible;
+		int            _margin{9};
+		int            _spacing{4};
+		QFont          _font;
+		QFont          _titleFont;
+		QSize          _size;
+		Layer         *_layer{nullptr};
+		QString        _title;
+		Qt::Alignment  _alignment{Qt::AlignLeft | Qt::AlignTop};
+		bool           _enabled{true};
+		QPoint         _pos;
+		bool           _visible{true};
 
 
 	friend class Canvas;

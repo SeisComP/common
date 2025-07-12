@@ -132,6 +132,8 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 	setSignalStart(0.);
 	setSignalEnd(0.);
 	setMinSNR(0);
+	setMinPeriod(18);
+	setMaxPeriod(22);
 	setMinDist(20);
 	setMaxDist(160);
 	setMaxDepth(100);

@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_PROCESSING_QCPROCESSOR_H
 #define SEISCOMP_PROCESSING_QCPROCESSOR_H
 
+
 #include <deque>
 
 #include <seiscomp/core/datetime.h>
@@ -29,16 +30,15 @@
 
 #include <boost/any.hpp>
 
+
 using boost::any_cast;
+
 
 namespace Seiscomp {
 namespace Processing {
 
 
-
-
 DEFINE_SMARTPOINTER(QcProcessorObserver);
-
 class QcProcessorObserver: public Core::BaseObject {
 	DECLARE_SC_CLASS(QcProcessorObserver);
 
@@ -48,9 +48,7 @@ class QcProcessorObserver: public Core::BaseObject {
 };
 
 
-
 DEFINE_SMARTPOINTER(QcParameter);
-
 //! This class represents the QC processing result.
 class SC_SYSTEM_CLIENT_API QcParameter : public Core::BaseObject {
 	DECLARE_SC_CLASS(QcParameter);
@@ -59,14 +57,12 @@ class SC_SYSTEM_CLIENT_API QcParameter : public Core::BaseObject {
 		QcParameter() {}
 
 		Core::Time recordStartTime, recordEndTime;
-		float recordSamplingFrequency;
+		float      recordSamplingFrequency;
 		boost::any parameter;
 };
 
 
-
 DEFINE_SMARTPOINTER(QcProcessor);
-
 class SC_SYSTEM_CLIENT_API QcProcessor : public WaveformProcessor {
 	DECLARE_SC_CLASS(QcProcessor);
 
@@ -84,7 +80,7 @@ class SC_SYSTEM_CLIENT_API QcProcessor : public WaveformProcessor {
 		bool unsubscribe(QcProcessorObserver *obs);
 
 		//! Returns the result of QC processing
-		QcParameter* getState() const;
+		QcParameter *getState() const;
 
 		//! Calculates the specific result in derived classes
 		virtual bool setState(const Record* record, const DoubleArray& data) = 0;
@@ -98,10 +94,10 @@ class SC_SYSTEM_CLIENT_API QcProcessor : public WaveformProcessor {
 	protected:
 		//! Implements the inherited method
 		//! Notifies registered observers
-		virtual void process(const Record* record, const DoubleArray& data);
+		virtual void process(const Record* record, const DoubleArray& data) override;
 
 		QcParameterPtr _qcp;
-    
+
 	private:
 		std::deque<QcProcessorObserver *> _observers;
 		bool _setFlag;
@@ -111,5 +107,6 @@ class SC_SYSTEM_CLIENT_API QcProcessor : public WaveformProcessor {
 
 }
 }
+
 
 #endif

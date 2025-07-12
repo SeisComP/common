@@ -30,12 +30,11 @@ namespace Processing {
 
 
 class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
-	DECLARE_SC_CLASS(MagnitudeProcessor_mb)
-
-	bool setup(const Settings &settings) override;
-
 	public:
 		MagnitudeProcessor_mb();
+
+	public:
+		void setDefaults() override;
 
 	protected:
 		Status computeMagnitude(double amplitude, const std::string &unit,
@@ -46,10 +45,6 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mb : public MagnitudeProcessor {
 		                        const DataModel::Amplitude *,
 		                        const Locale *,
 		                        double &value) override;
-
-	private:
-		double                  minDistanceDeg;
-		double                  maxDistanceDeg;
 };
 
 

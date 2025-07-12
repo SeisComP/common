@@ -23,10 +23,11 @@
 
 #include <seiscomp/wired/device.h>
 
-#include <stdint.h>
+#include <cstdint>
+#include <ostream>
+
 #include <openssl/ssl.h>
 #include <openssl/pkcs12.h>
-#include <ostream>
 
 
 namespace Seiscomp {
@@ -125,7 +126,7 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 				dwords[1] = dwords[2] = dwords[3] = 0;
 			}
 
-			bool fromString(const char *);
+			bool fromString(const char *str);
 			bool fromStringV4(const char *);
 			bool fromStringV6(const char *);
 

@@ -83,25 +83,25 @@ class SC_SYSTEM_CORE_API CompositeTime : public Object {
 		CompositeTime();
 
 		//! Copy constructor
-		CompositeTime(const CompositeTime& other);
+		CompositeTime(const CompositeTime &other);
 
 		//! Destructor
 		~CompositeTime() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		CompositeTime& operator=(const CompositeTime& other);
+		CompositeTime &operator=(const CompositeTime &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const CompositeTime& other) const;
-		bool operator!=(const CompositeTime& other) const;
+		bool operator==(const CompositeTime &other) const;
+		bool operator!=(const CompositeTime &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const CompositeTime& other) const;
+		bool equal(const CompositeTime &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -139,12 +139,12 @@ class SC_SYSTEM_CORE_API CompositeTime : public Object {
 		RealQuantity& second();
 		const RealQuantity& second() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Origin* origin() const;
+		Origin *origin() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

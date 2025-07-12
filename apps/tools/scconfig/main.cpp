@@ -149,10 +149,12 @@ int main(int argc, char **argv) {
 			return 0;
 	}
 
-	if ( filebase.empty() )
+	if ( filebase.empty() ) {
 		filebase = ".";
-	else if ( *filebase.rbegin() == '/' )
+	}
+	else if ( *filebase.rbegin() == '/' ) {
 		filebase.resize(filebase.size()-1);
+	}
 
 	//outdir = filebase + ".out";
 	outdir = filebase;
@@ -162,8 +164,9 @@ int main(int argc, char **argv) {
 	enableConsoleLogging(_SCWarningChannel);
 
 	for ( int i = 1; i < argc; ++i ) {
-		if ( !strcmp("--debug", argv[i]) )
+		if ( !strcmp("--debug", argv[i]) ) {
 			Seiscomp::Logging::enableConsoleLogging(Seiscomp::Logging::getAll());
+		}
 	}
 
 	System::SchemaDefinitions defs;
@@ -185,8 +188,9 @@ int main(int argc, char **argv) {
 
 	Configurator c(Seiscomp::Environment::CS_CONFIG_APP);
 	c.resize(800,600);
-	if ( !c.setModel(&model) )
+	if ( !c.setModel(&model) ) {
 		return 1;
+	}
 
 	c.show();
 

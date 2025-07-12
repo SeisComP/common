@@ -33,13 +33,13 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(MomentTensorComponentContribution, Object, "MomentTensorComponentContribution");
 
 
-MomentTensorComponentContribution::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+MomentTensorComponentContribution::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("phaseCode", "string", false, false, true, false, false, false, nullptr, &MomentTensorComponentContribution::setPhaseCode, &MomentTensorComponentContribution::phaseCode));
 	addProperty(Core::simpleProperty("component", "int", false, false, true, false, false, false, nullptr, &MomentTensorComponentContribution::setComponent, &MomentTensorComponentContribution::component));
 	addProperty(Core::simpleProperty("active", "boolean", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setActive, &MomentTensorComponentContribution::active));
 	addProperty(Core::simpleProperty("weight", "float", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setWeight, &MomentTensorComponentContribution::weight));
 	addProperty(Core::simpleProperty("timeShift", "float", false, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setTimeShift, &MomentTensorComponentContribution::timeShift));
-	addProperty(Core::simpleProperty("dataTimeWindow", "float", true, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setDataTimeWindow, (const std::vector< double >& (MomentTensorComponentContribution::*)() const)&MomentTensorComponentContribution::dataTimeWindow));
+	addProperty(Core::simpleProperty("dataTimeWindow", "float", true, false, false, false, false, false, nullptr, &MomentTensorComponentContribution::setDataTimeWindow, (const std::vector< double > &(MomentTensorComponentContribution::*)() const)&MomentTensorComponentContribution::dataTimeWindow));
 	addProperty(Core::simpleProperty("misfit", "float", false, false, false, false, true, false, nullptr, &MomentTensorComponentContribution::setMisfit, &MomentTensorComponentContribution::misfit));
 	addProperty(Core::simpleProperty("snr", "float", false, false, false, false, true, false, nullptr, &MomentTensorComponentContribution::setSnr, &MomentTensorComponentContribution::snr));
 }
@@ -68,7 +68,7 @@ MomentTensorComponentContributionIndex::MomentTensorComponentContributionIndex(c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorComponentContributionIndex::MomentTensorComponentContributionIndex(const MomentTensorComponentContributionIndex& idx) {
+MomentTensorComponentContributionIndex::MomentTensorComponentContributionIndex(const MomentTensorComponentContributionIndex &idx) {
 	phaseCode = idx.phaseCode;
 	component = idx.component;
 }
@@ -78,7 +78,7 @@ MomentTensorComponentContributionIndex::MomentTensorComponentContributionIndex(c
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContributionIndex::operator==(const MomentTensorComponentContributionIndex& idx) const {
+bool MomentTensorComponentContributionIndex::operator==(const MomentTensorComponentContributionIndex &idx) const {
 	return phaseCode == idx.phaseCode &&
 	       component == idx.component;
 }
@@ -88,7 +88,7 @@ bool MomentTensorComponentContributionIndex::operator==(const MomentTensorCompon
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContributionIndex::operator!=(const MomentTensorComponentContributionIndex& idx) const {
+bool MomentTensorComponentContributionIndex::operator!=(const MomentTensorComponentContributionIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -108,7 +108,7 @@ MomentTensorComponentContribution::MomentTensorComponentContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorComponentContribution::MomentTensorComponentContribution(const MomentTensorComponentContribution& other)
+MomentTensorComponentContribution::MomentTensorComponentContribution(const MomentTensorComponentContribution &other)
 : Object() {
 	*this = other;
 }
@@ -159,7 +159,7 @@ MomentTensorComponentContribution::~MomentTensorComponentContribution() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::operator==(const MomentTensorComponentContribution& rhs) const {
+bool MomentTensorComponentContribution::operator==(const MomentTensorComponentContribution &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _active != rhs._active ) return false;
 	if ( _weight != rhs._weight ) return false;
@@ -175,7 +175,7 @@ bool MomentTensorComponentContribution::operator==(const MomentTensorComponentCo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::operator!=(const MomentTensorComponentContribution& rhs) const {
+bool MomentTensorComponentContribution::operator!=(const MomentTensorComponentContribution &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -184,7 +184,7 @@ bool MomentTensorComponentContribution::operator!=(const MomentTensorComponentCo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::equal(const MomentTensorComponentContribution& other) const {
+bool MomentTensorComponentContribution::equal(const MomentTensorComponentContribution &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -292,7 +292,7 @@ void MomentTensorComponentContribution::setDataTimeWindow(const std::vector< dou
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::vector< double >& MomentTensorComponentContribution::dataTimeWindow() const {
+const std::vector< double > &MomentTensorComponentContribution::dataTimeWindow() const {
 	return _dataTimeWindow;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -301,7 +301,7 @@ const std::vector< double >& MomentTensorComponentContribution::dataTimeWindow()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::vector< double >& MomentTensorComponentContribution::dataTimeWindow() {
+std::vector< double > &MomentTensorComponentContribution::dataTimeWindow() {
 	return _dataTimeWindow;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -350,7 +350,7 @@ double MomentTensorComponentContribution::snr() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const MomentTensorComponentContributionIndex& MomentTensorComponentContribution::index() const {
+const MomentTensorComponentContributionIndex &MomentTensorComponentContribution::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -359,8 +359,11 @@ const MomentTensorComponentContributionIndex& MomentTensorComponentContribution:
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::equalIndex(const MomentTensorComponentContribution* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool MomentTensorComponentContribution::equalIndex(const MomentTensorComponentContribution *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -369,7 +372,7 @@ bool MomentTensorComponentContribution::equalIndex(const MomentTensorComponentCo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorStationContribution* MomentTensorComponentContribution::momentTensorStationContribution() const {
+MomentTensorStationContribution *MomentTensorComponentContribution::momentTensorStationContribution() const {
 	return static_cast<MomentTensorStationContribution*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -378,7 +381,7 @@ MomentTensorStationContribution* MomentTensorComponentContribution::momentTensor
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MomentTensorComponentContribution& MomentTensorComponentContribution::operator=(const MomentTensorComponentContribution& other) {
+MomentTensorComponentContribution &MomentTensorComponentContribution::operator=(const MomentTensorComponentContribution &other) {
 	_index = other._index;
 	_active = other._active;
 	_weight = other._weight;
@@ -394,10 +397,11 @@ MomentTensorComponentContribution& MomentTensorComponentContribution::operator=(
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::assign(Object* other) {
-	MomentTensorComponentContribution* otherMomentTensorComponentContribution = MomentTensorComponentContribution::Cast(other);
-	if ( other == nullptr )
+bool MomentTensorComponentContribution::assign(Object *other) {
+	MomentTensorComponentContribution *otherMomentTensorComponentContribution = MomentTensorComponentContribution::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherMomentTensorComponentContribution;
 
@@ -409,11 +413,13 @@ bool MomentTensorComponentContribution::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool MomentTensorComponentContribution::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensorStationContribution* momentTensorStationContribution = MomentTensorStationContribution::Cast(parent);
+	MomentTensorStationContribution *momentTensorStationContribution = MomentTensorStationContribution::Cast(parent);
 	if ( momentTensorStationContribution != nullptr )
 		return momentTensorStationContribution->add(this);
 
@@ -426,11 +432,13 @@ bool MomentTensorComponentContribution::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool MomentTensorComponentContribution::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	MomentTensorStationContribution* momentTensorStationContribution = MomentTensorStationContribution::Cast(object);
+	MomentTensorStationContribution *momentTensorStationContribution = MomentTensorStationContribution::Cast(object);
 	if ( momentTensorStationContribution != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -438,7 +446,7 @@ bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
 			return momentTensorStationContribution->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			MomentTensorComponentContribution* child = momentTensorStationContribution->momentTensorComponentContribution(index());
+			MomentTensorComponentContribution *child = momentTensorStationContribution->momentTensorComponentContribution(index());
 			if ( child != nullptr )
 				return momentTensorStationContribution->remove(child);
 			else {
@@ -458,8 +466,9 @@ bool MomentTensorComponentContribution::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MomentTensorComponentContribution::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -469,8 +478,8 @@ bool MomentTensorComponentContribution::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* MomentTensorComponentContribution::clone() const {
-	MomentTensorComponentContribution* clonee = new MomentTensorComponentContribution();
+Object *MomentTensorComponentContribution::clone() const {
+	MomentTensorComponentContribution *clonee = new MomentTensorComponentContribution();
 	*clonee = *this;
 	return clonee;
 }
@@ -480,7 +489,7 @@ Object* MomentTensorComponentContribution::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorComponentContribution::accept(Visitor* visitor) {
+void MomentTensorComponentContribution::accept(Visitor *visitor) {
 	visitor->visit(this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -489,7 +498,7 @@ void MomentTensorComponentContribution::accept(Visitor* visitor) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MomentTensorComponentContribution::serialize(Archive& ar) {
+void MomentTensorComponentContribution::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

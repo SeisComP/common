@@ -51,8 +51,9 @@ Layer::Layer(QObject* parent)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Layer::~Layer() {
-	foreach ( Legend *legend, _legends )
+	foreach ( Legend *legend, _legends ) {
 		legend->disconnect(this);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -61,8 +62,9 @@ Layer::~Layer() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QSize Layer::size() const {
-	if ( _canvas != nullptr )
+	if ( _canvas ) {
 		return _canvas->size();
+	}
 	return QSize();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -324,7 +326,9 @@ void Layer::setDirty() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Legend* Layer::legend(int i) const {
-	if ( i < 0 || i >= _legends.size() ) return nullptr;
+	if ( i < 0 || i >= _legends.size() ) {
+		return nullptr;
+	}
 
 	return _legends[i];
 }
@@ -352,7 +356,9 @@ Layer& Layer::operator =(const Layer &other) {
 	_legends.clear();
 	foreach ( Legend* legend, other._legends ) {
 		Legend *tmp = legend->clone();
-		if ( tmp != nullptr ) _legends.append(tmp);
+		if ( tmp != nullptr ) {
+			_legends.append(tmp);
+		}
 	}
 
 	return *this;
@@ -364,7 +370,9 @@ Layer& Layer::operator =(const Layer &other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Layer::addLegend(Seiscomp::Gui::Map::Legend *legend) {
-	if ( _legends.contains(legend) ) return true;
+	if ( _legends.contains(legend) ) {
+		return true;
+	}
 
 	legend->setParent(this);
 	legend->setLayer(this);
@@ -381,7 +389,9 @@ bool Layer::addLegend(Seiscomp::Gui::Map::Legend *legend) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Layer::removeLegend(Seiscomp::Gui::Map::Legend *legend) {
-	if ( !_legends.contains(legend) ) return false;
+	if ( !_legends.contains(legend) ) {
+		return false;
+	}
 
 	_legends.removeAll(legend);
 	emit legendRemoved(legend);

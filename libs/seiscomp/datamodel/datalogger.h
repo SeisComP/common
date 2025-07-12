@@ -89,28 +89,28 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Datalogger(const Datalogger& other);
+		Datalogger(const Datalogger &other);
 
 		//! Constructor with publicID
 		Datalogger(const std::string& publicID);
 
 		//! Destructor
 		~Datalogger() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Datalogger* Create();
-		static Datalogger* Create(const std::string& publicID);
+		static Datalogger *Create();
+		static Datalogger *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Datalogger* Find(const std::string& publicID);
+		static Datalogger *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -119,14 +119,14 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Datalogger& operator=(const Datalogger& other);
+		Datalogger &operator=(const Datalogger &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Datalogger& other) const;
-		bool operator!=(const Datalogger& other) const;
+		bool operator==(const Datalogger &other) const;
+		bool operator!=(const Datalogger &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Datalogger& other) const;
+		bool equal(const Datalogger &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -188,12 +188,12 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const DataloggerIndex& index() const;
+		const DataloggerIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Datalogger* lhs) const;
+		bool equalIndex(const Datalogger *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -206,8 +206,8 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(DataloggerCalibration* obj);
-		bool add(Decimation* obj);
+		bool add(DataloggerCalibration *obj);
+		bool add(Decimation *obj);
 
 		/**
 		 * Removes an object.
@@ -216,8 +216,8 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(DataloggerCalibration* obj);
-		bool remove(Decimation* obj);
+		bool remove(DataloggerCalibration *obj);
+		bool remove(Decimation *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -226,9 +226,9 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeDataloggerCalibration(size_t i);
-		bool removeDataloggerCalibration(const DataloggerCalibrationIndex& i);
+		bool removeDataloggerCalibration(const DataloggerCalibrationIndex &i);
 		bool removeDecimation(size_t i);
-		bool removeDecimation(const DecimationIndex& i);
+		bool removeDecimation(const DecimationIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t dataloggerCalibrationCount() const;
@@ -236,15 +236,15 @@ class SC_SYSTEM_CORE_API Datalogger : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		DataloggerCalibration* dataloggerCalibration(size_t i) const;
-		DataloggerCalibration* dataloggerCalibration(const DataloggerCalibrationIndex& i) const;
+		DataloggerCalibration *dataloggerCalibration(size_t i) const;
+		DataloggerCalibration *dataloggerCalibration(const DataloggerCalibrationIndex &i) const;
 
-		Decimation* decimation(size_t i) const;
-		Decimation* decimation(const DecimationIndex& i) const;
+		Decimation *decimation(size_t i) const;
+		Decimation *decimation(const DecimationIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Inventory* inventory() const;
+		Inventory *inventory() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

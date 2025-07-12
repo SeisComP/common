@@ -78,28 +78,28 @@ class SC_SYSTEM_CORE_API AmplitudeReference : public Object {
 		AmplitudeReference();
 
 		//! Copy constructor
-		AmplitudeReference(const AmplitudeReference& other);
+		AmplitudeReference(const AmplitudeReference &other);
 
 		//! Custom constructor
 		AmplitudeReference(const std::string& amplitudeID);
 
 		//! Destructor
 		~AmplitudeReference() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Operators
 	// ------------------------------------------------------------------
 	public:
 		//! Copies the metadata of other to this
-		AmplitudeReference& operator=(const AmplitudeReference& other);
+		AmplitudeReference &operator=(const AmplitudeReference &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const AmplitudeReference& other) const;
-		bool operator!=(const AmplitudeReference& other) const;
+		bool operator==(const AmplitudeReference &other) const;
+		bool operator!=(const AmplitudeReference &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const AmplitudeReference& other) const;
+		bool equal(const AmplitudeReference &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -115,17 +115,17 @@ class SC_SYSTEM_CORE_API AmplitudeReference : public Object {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const AmplitudeReferenceIndex& index() const;
+		const AmplitudeReferenceIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const AmplitudeReference* lhs) const;
+		bool equalIndex(const AmplitudeReference *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
-		Reading* reading() const;
+		Reading *reading() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

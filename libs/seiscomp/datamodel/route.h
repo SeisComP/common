@@ -95,28 +95,28 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Route(const Route& other);
+		Route(const Route &other);
 
 		//! Constructor with publicID
 		Route(const std::string& publicID);
 
 		//! Destructor
 		~Route() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Route* Create();
-		static Route* Create(const std::string& publicID);
+		static Route *Create();
+		static Route *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Route* Find(const std::string& publicID);
+		static Route *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -125,14 +125,14 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Route& operator=(const Route& other);
+		Route &operator=(const Route &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Route& other) const;
-		bool operator!=(const Route& other) const;
+		bool operator==(const Route &other) const;
+		bool operator!=(const Route &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Route& other) const;
+		bool equal(const Route &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -161,12 +161,12 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 	// ------------------------------------------------------------------
 	public:
 		//! Returns the object's index
-		const RouteIndex& index() const;
+		const RouteIndex &index() const;
 
 		//! Checks two objects for equality regarding their index
-		bool equalIndex(const Route* lhs) const;
+		bool equalIndex(const Route *lhs) const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -179,8 +179,8 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(RouteArclink* obj);
-		bool add(RouteSeedlink* obj);
+		bool add(RouteArclink *obj);
+		bool add(RouteSeedlink *obj);
 
 		/**
 		 * Removes an object.
@@ -189,8 +189,8 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(RouteArclink* obj);
-		bool remove(RouteSeedlink* obj);
+		bool remove(RouteArclink *obj);
+		bool remove(RouteSeedlink *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -199,9 +199,9 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeRouteArclink(size_t i);
-		bool removeRouteArclink(const RouteArclinkIndex& i);
+		bool removeRouteArclink(const RouteArclinkIndex &i);
 		bool removeRouteSeedlink(size_t i);
-		bool removeRouteSeedlink(const RouteSeedlinkIndex& i);
+		bool removeRouteSeedlink(const RouteSeedlinkIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t routeArclinkCount() const;
@@ -209,15 +209,15 @@ class SC_SYSTEM_CORE_API Route : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		RouteArclink* routeArclink(size_t i) const;
-		RouteArclink* routeArclink(const RouteArclinkIndex& i) const;
+		RouteArclink *routeArclink(size_t i) const;
+		RouteArclink *routeArclink(const RouteArclinkIndex &i) const;
 
-		RouteSeedlink* routeSeedlink(size_t i) const;
-		RouteSeedlink* routeSeedlink(const RouteSeedlinkIndex& i) const;
+		RouteSeedlink *routeSeedlink(size_t i) const;
+		RouteSeedlink *routeSeedlink(const RouteSeedlinkIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		Routing* routing() const;
+		Routing *routing() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

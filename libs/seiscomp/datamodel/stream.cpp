@@ -34,7 +34,7 @@ namespace DataModel {
 IMPLEMENT_SC_CLASS_DERIVED(Stream, PublicObject, "Stream");
 
 
-Stream::MetaObject::MetaObject(const Core::RTTI* rtti) : Seiscomp::Core::MetaObject(rtti) {
+Stream::MetaObject::MetaObject(const Core::RTTI *rtti) : Seiscomp::Core::MetaObject(rtti) {
 	addProperty(Core::simpleProperty("code", "string", false, false, true, false, false, false, nullptr, &Stream::setCode, &Stream::code));
 	addProperty(Core::simpleProperty("start", "datetime", false, false, true, false, false, false, nullptr, &Stream::setStart, &Stream::start));
 	addProperty(Core::simpleProperty("end", "datetime", false, false, false, false, true, false, nullptr, &Stream::setEnd, &Stream::end));
@@ -83,7 +83,7 @@ StreamIndex::StreamIndex(const std::string& code_,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StreamIndex::StreamIndex(const StreamIndex& idx) {
+StreamIndex::StreamIndex(const StreamIndex &idx) {
 	code = idx.code;
 	start = idx.start;
 }
@@ -93,7 +93,7 @@ StreamIndex::StreamIndex(const StreamIndex& idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StreamIndex::operator==(const StreamIndex& idx) const {
+bool StreamIndex::operator==(const StreamIndex &idx) const {
 	return code == idx.code &&
 	       start == idx.start;
 }
@@ -103,7 +103,7 @@ bool StreamIndex::operator==(const StreamIndex& idx) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StreamIndex::operator!=(const StreamIndex& idx) const {
+bool StreamIndex::operator!=(const StreamIndex &idx) const {
 	return !operator==(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -120,7 +120,7 @@ Stream::Stream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream::Stream(const Stream& other)
+Stream::Stream(const Stream &other)
 : PublicObject() {
 	*this = other;
 }
@@ -150,8 +150,8 @@ Stream::~Stream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream* Stream::Create() {
-	Stream* object = new Stream();
+Stream *Stream::Create() {
+	Stream *object = new Stream();
 	return static_cast<Stream*>(GenerateId(object));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -160,7 +160,7 @@ Stream* Stream::Create() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream* Stream::Create(const std::string& publicID) {
+Stream *Stream::Create(const std::string& publicID) {
 	if ( PublicObject::IsRegistrationEnabled() && Find(publicID) != nullptr ) {
 		SEISCOMP_ERROR(
 			"There exists already a PublicObject with Id '%s'",
@@ -177,7 +177,7 @@ Stream* Stream::Create(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream* Stream::Find(const std::string& publicID) {
+Stream *Stream::Find(const std::string& publicID) {
 	return Stream::Cast(PublicObject::Find(publicID));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -186,7 +186,7 @@ Stream* Stream::Find(const std::string& publicID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::operator==(const Stream& rhs) const {
+bool Stream::operator==(const Stream &rhs) const {
 	if ( _index != rhs._index ) return false;
 	if ( _end != rhs._end ) return false;
 	if ( _datalogger != rhs._datalogger ) return false;
@@ -216,7 +216,7 @@ bool Stream::operator==(const Stream& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::operator!=(const Stream& rhs) const {
+bool Stream::operator!=(const Stream &rhs) const {
 	return !operator==(rhs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -225,7 +225,7 @@ bool Stream::operator!=(const Stream& rhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::equal(const Stream& other) const {
+bool Stream::equal(const Stream &other) const {
 	return *this == other;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -654,7 +654,7 @@ bool Stream::shared() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const StreamIndex& Stream::index() const {
+const StreamIndex &Stream::index() const {
 	return _index;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -663,8 +663,11 @@ const StreamIndex& Stream::index() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::equalIndex(const Stream* lhs) const {
-	if ( lhs == nullptr ) return false;
+bool Stream::equalIndex(const Stream *lhs) const {
+	if ( !lhs ) {
+		return false;
+	}
+
 	return lhs->index() == index();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -673,7 +676,7 @@ bool Stream::equalIndex(const Stream* lhs) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SensorLocation* Stream::sensorLocation() const {
+SensorLocation *Stream::sensorLocation() const {
 	return static_cast<SensorLocation*>(parent());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -682,7 +685,7 @@ SensorLocation* Stream::sensorLocation() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Stream& Stream::operator=(const Stream& other) {
+Stream &Stream::operator=(const Stream &other) {
 	PublicObject::operator=(other);
 	_index = other._index;
 	_end = other._end;
@@ -713,10 +716,11 @@ Stream& Stream::operator=(const Stream& other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::assign(Object* other) {
-	Stream* otherStream = Stream::Cast(other);
-	if ( other == nullptr )
+bool Stream::assign(Object *other) {
+	Stream *otherStream = Stream::Cast(other);
+	if ( !other ) {
 		return false;
+	}
 
 	*this = *otherStream;
 
@@ -728,11 +732,13 @@ bool Stream::assign(Object* other) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::attachTo(PublicObject* parent) {
-	if ( parent == nullptr ) return false;
+bool Stream::attachTo(PublicObject *parent) {
+	if ( !parent ) {
+		return false;
+	}
 
 	// check all possible parents
-	SensorLocation* sensorLocation = SensorLocation::Cast(parent);
+	SensorLocation *sensorLocation = SensorLocation::Cast(parent);
 	if ( sensorLocation != nullptr )
 		return sensorLocation->add(this);
 
@@ -745,11 +751,13 @@ bool Stream::attachTo(PublicObject* parent) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::detachFrom(PublicObject* object) {
-	if ( object == nullptr ) return false;
+bool Stream::detachFrom(PublicObject *object) {
+	if ( !object ) {
+		return false;
+	}
 
 	// check all possible parents
-	SensorLocation* sensorLocation = SensorLocation::Cast(object);
+	SensorLocation *sensorLocation = SensorLocation::Cast(object);
 	if ( sensorLocation != nullptr ) {
 		// If the object has been added already to the parent locally
 		// just remove it by pointer
@@ -757,7 +765,7 @@ bool Stream::detachFrom(PublicObject* object) {
 			return sensorLocation->remove(this);
 		// The object has not been added locally so it must be looked up
 		else {
-			Stream* child = sensorLocation->findStream(publicID());
+			Stream *child = sensorLocation->findStream(publicID());
 			if ( child != nullptr )
 				return sensorLocation->remove(child);
 			else {
@@ -777,8 +785,9 @@ bool Stream::detachFrom(PublicObject* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Stream::detach() {
-	if ( parent() == nullptr )
+	if ( !parent() ) {
 		return false;
+	}
 
 	return detachFrom(parent());
 }
@@ -788,8 +797,8 @@ bool Stream::detach() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Object* Stream::clone() const {
-	Stream* clonee = new Stream();
+Object *Stream::clone() const {
+	Stream *clonee = new Stream();
 	*clonee = *this;
 	return clonee;
 }
@@ -799,10 +808,10 @@ Object* Stream::clone() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::updateChild(Object* child) {
-	Comment* commentChild = Comment::Cast(child);
+bool Stream::updateChild(Object *child) {
+	Comment *commentChild = Comment::Cast(child);
 	if ( commentChild != nullptr ) {
-		Comment* commentElement = comment(commentChild->index());
+		Comment *commentElement = comment(commentChild->index());
 		if ( commentElement != nullptr ) {
 			*commentElement = *commentChild;
 			commentElement->update();
@@ -819,7 +828,7 @@ bool Stream::updateChild(Object* child) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Stream::accept(Visitor* visitor) {
+void Stream::accept(Visitor *visitor) {
 	if ( visitor->traversal() == Visitor::TM_TOPDOWN )
 		if ( !visitor->visit(this) )
 			return;
@@ -847,7 +856,7 @@ size_t Stream::commentCount() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Stream::comment(size_t i) const {
+Comment *Stream::comment(size_t i) const {
 	return _comments[i].get();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -856,10 +865,12 @@ Comment* Stream::comment(size_t i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Comment* Stream::comment(const CommentIndex& i) const {
-	for ( std::vector<CommentPtr>::const_iterator it = _comments.begin(); it != _comments.end(); ++it )
-		if ( i == (*it)->index() )
-			return (*it).get();
+Comment *Stream::comment(const CommentIndex &i) const {
+	for ( const auto &elem : _comments ) {
+		if ( i == elem->index() ) {
+			return elem.get();
+		}
+	}
 
 	return nullptr;
 }
@@ -869,9 +880,10 @@ Comment* Stream::comment(const CommentIndex& i) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::add(Comment* comment) {
-	if ( comment == nullptr )
+bool Stream::add(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	// Element has already a parent
 	if ( comment->parent() != nullptr ) {
@@ -908,9 +920,10 @@ bool Stream::add(Comment* comment) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::remove(Comment* comment) {
-	if ( comment == nullptr )
+bool Stream::remove(Comment *comment) {
+	if ( !comment ) {
 		return false;
+	}
 
 	if ( comment->parent() != this ) {
 		SEISCOMP_ERROR("Stream::remove(Comment*) -> element has another parent");
@@ -926,8 +939,7 @@ bool Stream::remove(Comment* comment) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		(*it)->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, it->get());
 	}
 
 	(*it)->setParent(nullptr);
@@ -950,8 +962,7 @@ bool Stream::removeComment(size_t i) {
 
 	// Create the notifiers
 	if ( Notifier::IsEnabled() ) {
-		NotifierCreator nc(OP_REMOVE);
-		_comments[i]->accept(&nc);
+		Notifier::Create(this, OP_REMOVE, _comments[i].get());
 	}
 
 	_comments[i]->setParent(nullptr);
@@ -967,9 +978,12 @@ bool Stream::removeComment(size_t i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Stream::removeComment(const CommentIndex& i) {
-	Comment* object = comment(i);
-	if ( object == nullptr ) return false;
+bool Stream::removeComment(const CommentIndex &i) {
+	Comment *object = comment(i);
+	if ( !object ) {
+		return false;
+	}
+
 	return remove(object);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -978,7 +992,7 @@ bool Stream::removeComment(const CommentIndex& i) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Stream::serialize(Archive& ar) {
+void Stream::serialize(Archive &ar) {
 	// Do not read/write if the archive's version is higher than
 	// currently supported
 	if ( ar.isHigherVersion<Version::Major,Version::Minor>() ) {

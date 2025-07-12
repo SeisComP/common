@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_IO_RECORDFILTER_IIRFILTER_H
 #define SEISCOMP_IO_RECORDFILTER_IIRFILTER_H
 
+
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/io/recordfilter.h>
 #include <seiscomp/math/filter.h>
@@ -90,13 +91,13 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 		//! Applies the filter and returns a copy with a record of the
 		//! requested datatype. The returned record instance is a GenericRecord.
 		//! If no IIR filter is set a type converted copy is returned.
-		virtual Record *feed(const Record *rec);
+		virtual Record *feed(const Record *rec) override;
 
-		virtual Record *flush();
+		virtual Record *flush() override;
 
-		virtual void reset();
+		virtual void reset() override;
 
-		RecordFilterInterface *clone() const;
+		RecordFilterInterface *clone() const override;
 
 
 	// ------------------------------------------------------------------
@@ -104,7 +105,7 @@ class SC_SYSTEM_CORE_API RecordIIRFilter : public RecordFilterInterface {
 	// ------------------------------------------------------------------
 	private:
 		InplaceFilterType *_filter;
-		Core::Time         _lastEndTime;
+		OPT(Core::Time)    _lastEndTime;
 		double             _samplingFrequency;
 		std::string        _lastError;
 };

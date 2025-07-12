@@ -51,6 +51,8 @@ class ExtraLocale : public Core::BaseObject {
 		OPT(double) c4;
 		OPT(double) c5;
 		OPT(double) c6;
+		OPT(double) c7;
+		OPT(double) c8;
 		OPT(double) H;
 		// A0, non-parametric coefficients
 		OPT(LogA0)  logA0;
@@ -67,15 +69,18 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_MLc, "MLc");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_MLc::MagnitudeProcessor_MLc()
-: Processing::MagnitudeProcessor("MLc") {}
+: Processing::MagnitudeProcessor("MLc") {
+	MagnitudeProcessor_MLc::setDefaults();
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string MagnitudeProcessor_MLc::amplitudeType() const {
-	return MagnitudeProcessor::amplitudeType();
+void MagnitudeProcessor_MLc::setDefaults() {
+	_maximumDistanceDeg = 8.0;
+	_maximumDepthKm = 80.0;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -88,19 +93,8 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 		return false;
 	}
 
-	// depth constraint
-	try {_minDepth = settings.getDouble("magnitudes." + _type + ".minDepth"); }
-	catch ( ... ) {}
-
-	try {_maxDepth = settings.getDouble("magnitudes." + _type + ".maxDepth"); }
-	catch ( ... ) {}
-
 	// distance constraints
 	try {_distanceMode = settings.getString("magnitudes." + _type + ".distMode"); }
-	catch ( ... ) {}
-	try {_minDistanceKm = Math::Geo::deg2km(settings.getDouble("magnitudes." + _type + ".minDist")); }
-	catch ( ... ) {}
-	try {_maxDistanceKm = Math::Geo::deg2km(settings.getDouble("magnitudes." + _type + ".maxDist")); }
 	catch ( ... ) {}
 
 	// calibration function
@@ -127,6 +121,10 @@ bool MagnitudeProcessor_MLc::setup(const Settings &settings) {
 	try { _c5 = settings.getDouble("magnitudes." + _type + ".parametric.c5"); }
 	catch ( ... ) {}
 	try { _c6 = settings.getDouble("magnitudes." + _type + ".parametric.c6"); }
+	catch ( ... ) {}
+	try { _c7 = settings.getDouble("magnitudes." + _type + ".parametric.c7"); }
+	catch ( ... ) {}
+	try { _c8 = settings.getDouble("magnitudes." + _type + ".parametric.c8"); }
 	catch ( ... ) {}
 	try { _H = settings.getDouble("magnitudes." + _type + ".parametric.H"); }
 	catch ( ... ) {}
@@ -208,6 +206,14 @@ bool MagnitudeProcessor_MLc::initLocale(Locale *locale,
 	}
 	catch ( ... ) {}
 	try {
+		extra->c7 = cfg->getDouble(configPrefix + "parametric.c7");
+	}
+	catch ( ... ) {}
+	try {
+		extra->c8 = cfg->getDouble(configPrefix + "parametric.c8");
+	}
+	catch ( ... ) {}
+	try {
 		extra->H = cfg->getDouble(configPrefix + "parametric.H");
 	}
 	catch ( ... ) {}
@@ -266,10 +272,16 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 
 	auto distanceMode = _distanceMode;
 	auto calibrationType = _calibrationType;
-	auto minimumDistanceKm = _minDistanceKm;
-	auto maximumDistanceKm = _maxDistanceKm;
-	auto maximumDepth = _maxDepth;
-	auto minimumDepth = _minDepth;
+
+	OPT(double) minimumDistanceKm;
+	OPT(double) maximumDistanceKm;
+
+	if ( _minimumDistanceDeg ) {
+		minimumDistanceKm = Math::Geo::deg2km(*_minimumDistanceDeg);
+	}
+	if ( _maximumDistanceDeg ) {
+		maximumDistanceKm = Math::Geo::deg2km(*_maximumDistanceDeg);
+	}
 
 	ExtraLocale *extra = nullptr;
 	if ( locale ) {
@@ -284,26 +296,21 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 			}
 		}
 
-		if ( locale->minimumDistance ) {
-			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistance);
+		if ( locale->minimumDistanceDeg ) {
+			minimumDistanceKm = Math::Geo::deg2km(*locale->minimumDistanceDeg);
 		}
 
-		if ( locale->maximumDistance ) {
-			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistance);
+		if ( locale->maximumDistanceDeg ) {
+			maximumDistanceKm = Math::Geo::deg2km(*locale->maximumDistanceDeg);
 		}
 	}
 	else {
-		SEISCOMP_DEBUG("  + minimum depth: %.3f km", minimumDepth);
-		if ( depth < minimumDepth ) {
-			return DepthOutOfRange;
+		if ( minimumDistanceKm ) {
+			SEISCOMP_DEBUG("  + minimum distance: %.3f km", *minimumDistanceKm);
 		}
-
-		SEISCOMP_DEBUG("  + maximum depth: %.3f km", maximumDepth);
-		if ( depth > maximumDepth ) {
-			return DepthOutOfRange;
+		if ( maximumDistanceKm ) {
+			SEISCOMP_DEBUG("  + maximum distance: %.3f km", *maximumDistanceKm);
 		}
-		SEISCOMP_DEBUG("  + minimum distance: %.3f km", minimumDistanceKm);
-		SEISCOMP_DEBUG("  + maximum distance: %.3f km", maximumDistanceKm);
 	}
 
 	SEISCOMP_DEBUG("  + distance type: %s", distanceMode.c_str());
@@ -329,11 +336,11 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 
 	SEISCOMP_DEBUG("  + considered distance to station: %.3f km", distanceKm);
 
-	if ( minimumDistanceKm >= 0 && distanceKm < minimumDistanceKm ) {
+	if ( minimumDistanceKm && distanceKm < *minimumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
-	if ( maximumDistanceKm >= 0 && distanceKm > maximumDistanceKm ) {
+	if ( maximumDistanceKm && distanceKm > *maximumDistanceKm ) {
 		return DistanceOutOfRange;
 	}
 
@@ -356,6 +363,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		auto c4 = (extra and extra->c4) ? *extra->c4 : _c4;
 		auto c5 = (extra and extra->c5) ? *extra->c5 : _c5;
 		auto c6 = (extra and extra->c6) ? *extra->c6 : _c6;
+		auto c7 = (extra and extra->c7) ? *extra->c7 : _c7;
+		auto c8 = (extra and extra->c8) ? *extra->c8 : _c8;
 		auto H = (extra and extra->c6) ? *extra->H : _H;
 
 		// https://doi.org/10.1785/0120200252
@@ -369,9 +378,11 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 		             + c2 * (distanceKm + c4)
 		             + c1
 		             + c0
-		             + c6 * H;
-		SEISCOMP_DEBUG("  + c0 - c6: %.5f %.5f %.5f %.5f %.5f %.5f %.5f, H: %.5f, correction: %.5f",
-		               c0, c1, c2, c3, c4, c5, c6, H, correction);
+		             + c6 * H                            // https://doi.org/10.1785/0120200252
+		             + c7 * exp(c8 * distanceKm); // https://doi.org/10.1093/gji/ggy484
+		SEISCOMP_DEBUG("  + c0 - c8: %.5f %.5f %.5f %.5f %.5f %.5f %.5f %.5f "
+		               "%.5f, H: %.5f, correction: %.5f",
+		               c0, c1, c2, c3, c4, c5, c6, c7, c8, H, correction);
 		value = log10(amplitude) + correction;
 	}
 	else if ( calibrationType == "A0" ) {

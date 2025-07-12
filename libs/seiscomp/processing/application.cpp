@@ -179,12 +179,10 @@ void Application::registerProcessor(const std::string& networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::registerProcessor(const DataModel::WaveformStreamID &wfid,
-			            WaveformProcessor *proc) {
-	registerProcessor(wfid.networkCode(),
-		          wfid.stationCode(),
-		          wfid.locationCode(),
-		          wfid.channelCode(),
-		          proc);
+                                    WaveformProcessor *proc) {
+	registerProcessor(wfid.networkCode(), wfid.stationCode(),
+	                  wfid.locationCode(), wfid.channelCode(),
+	                  proc);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -254,12 +252,10 @@ void Application::registerProcessor(const std::string& networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::registerProcessor(const DataModel::WaveformStreamID &wfid,
-			            TimeWindowProcessor *proc) {
-	registerProcessor(wfid.networkCode(),
-		          wfid.stationCode(),
-		          wfid.locationCode(),
-		          wfid.channelCode(),
-		          proc);
+                                    TimeWindowProcessor *proc) {
+	registerProcessor(wfid.networkCode(), wfid.stationCode(),
+	                  wfid.locationCode(), wfid.channelCode(),
+	                  proc);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

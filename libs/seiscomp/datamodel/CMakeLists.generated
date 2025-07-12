@@ -41,6 +41,7 @@ SET(
 		originreference.h
 		focalmechanismreference.h
 		event.h
+		catalog.h
 		originuncertainty.h
 		arrival.h
 		origin.h
@@ -93,14 +94,14 @@ SET(
 		dataattributeextent.h
 		dataextent.h
 		dataavailability.h
-		journaling_package.h
-		arclinklog_package.h
-		qualitycontrol_package.h
-		inventory_package.h
-		dataavailability_package.h
 		eventparameters_package.h
 		config_package.h
+		qualitycontrol_package.h
+		inventory_package.h
 		routing_package.h
+		journaling_package.h
+		arclinklog_package.h
+		dataavailability_package.h
 		databasereader.h
 		databasequery.h
 		version.h
@@ -149,6 +150,7 @@ SET(
 		originreference.cpp
 		focalmechanismreference.cpp
 		event.cpp
+		catalog.cpp
 		originuncertainty.cpp
 		arrival.cpp
 		origin.cpp

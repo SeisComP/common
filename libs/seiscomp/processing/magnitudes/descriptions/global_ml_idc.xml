@@ -11,19 +11,17 @@
 		CTBTO/IDC local magnitude.
 		</description>
 		<configuration>
-			<group name="magnitudes">
-				<group name="ML(IDC)">
-					<parameter name="A" type="path">
-						<description>
-						Location of the station specific attenuation table. If not
-						specified then @DATADIR@/magnitudes/IDC/global.ml will be
-						used as fallback. {net}, {sta} and {loc} are placeholders
-						which will be replaced with the concrete network code,
-						station code and location code.
-						</description>
-					</parameter>
-				</group>
-			</group>
+			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="ML(IDC)">
+				<parameter name="A" type="path">
+					<description>
+					Location of the station specific attenuation table. If not
+					specified then @DATADIR@/magnitudes/IDC/global.ml will be
+					used as fallback. {net}, {sta} and {loc} are placeholders
+					which will be replaced with the concrete network code,
+					station code and location code.
+					</description>
+				</parameter>
+			</extend-struct>
 		</configuration>
 	</binding>
 </seiscomp>

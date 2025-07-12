@@ -42,7 +42,7 @@ class EnumPropertyBase<T, U, F1, F2, 0> : public Core::MetaProperty {
 		EnumPropertyBase(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(Core::BaseObject *object, Core::MetaValue value) const {
+		bool write(Core::BaseObject *object, Core::MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 			U tmp;
@@ -53,7 +53,7 @@ class EnumPropertyBase<T, U, F1, F2, 0> : public Core::MetaProperty {
 			return true;
 		}
 
-		bool writeString(Core::BaseObject *object, const std::string &value) const {
+		bool writeString(Core::BaseObject *object, const std::string &value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 			typename Core::Generic::remove_optional<U>::type tmp;
@@ -64,13 +64,13 @@ class EnumPropertyBase<T, U, F1, F2, 0> : public Core::MetaProperty {
 			return true;
 		}
 
-		Core::MetaValue read(const Core::BaseObject *object) const {
+		Core::MetaValue read(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return (target->*_getter)().toInt();
 		}
 
-		std::string readString(const Core::BaseObject *object) const {
+		std::string readString(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return (target->*_getter)().toString();
@@ -89,7 +89,7 @@ class EnumPropertyBase<T, U, F1, F2, 1> : public Core::MetaProperty {
 		EnumPropertyBase(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(Core::BaseObject *object, Core::MetaValue value) const {
+		bool write(Core::BaseObject *object, Core::MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -106,7 +106,7 @@ class EnumPropertyBase<T, U, F1, F2, 1> : public Core::MetaProperty {
 			return true;
 		}
 
-		bool writeString(Core::BaseObject *object, const std::string &value) const {
+		bool writeString(Core::BaseObject *object, const std::string &value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -123,13 +123,13 @@ class EnumPropertyBase<T, U, F1, F2, 1> : public Core::MetaProperty {
 			return true;
 		}
 
-		Core::MetaValue read(const Core::BaseObject *object) const {
+		Core::MetaValue read(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return (target->*_getter)().toInt();
 		}
 
-		std::string readString(const Core::BaseObject *object) const {
+		std::string readString(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return (target->*_getter)().toString();
@@ -153,7 +153,7 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 0> : public Core::MetaClassPropert
 		BaseObjectPropertyBase(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(Core::BaseObject *object, Core::MetaValue value) const {
+		bool write(Core::BaseObject *object, Core::MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -186,7 +186,7 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 0> : public Core::MetaClassPropert
 			return true;
 		}
 
-		Core::MetaValue read(const Core::BaseObject *object) const {
+		Core::MetaValue read(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return static_cast<Core::BaseObject*>(&(const_cast<T*>(target)->*_getter)());
@@ -205,7 +205,7 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 1> : public Core::MetaClassPropert
 		BaseObjectPropertyBase(F1 setter, F2 getter)
 		 : _setter(setter), _getter(getter) {}
 
-		bool write(Core::BaseObject *object, Core::MetaValue value) const {
+		bool write(Core::BaseObject *object, Core::MetaValue value) const override {
 			T *target = T::Cast(object);
 			if ( !target ) return false;
 
@@ -244,7 +244,7 @@ class BaseObjectPropertyBase<A, T, U, F1, F2, 1> : public Core::MetaClassPropert
 			return true;
 		}
 
-		Core::MetaValue read(const Core::BaseObject *object) const {
+		Core::MetaValue read(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 			return static_cast<Core::BaseObject*>(&(const_cast<T*>(target)->*_getter)());
@@ -267,21 +267,21 @@ class ArrayProperty : public Core::MetaProperty {
 		   _eraseObjIndex(eraseObjIndex),
 		   _eraseObjPointer(eraseObjPointer) {}
 
-		size_t arrayElementCount(const Core::BaseObject *object) const {
+		size_t arrayElementCount(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return static_cast<size_t>((target->*_countObjects)());
 		}
 
-		Core::BaseObject *arrayObject(Core::BaseObject *object, int i) const {
+		Core::BaseObject *arrayObject(Core::BaseObject *object, int i) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return (target->*_getObj)(i);
 		}
 
-		bool arrayAddObject(Core::BaseObject *object, Core::BaseObject *ch) const {
+		bool arrayAddObject(Core::BaseObject *object, Core::BaseObject *ch) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
@@ -291,14 +291,14 @@ class ArrayProperty : public Core::MetaProperty {
 			return (target->*_addObj)(child);
 		}
 
-		bool arrayRemoveObject(Core::BaseObject *object, int i) const {
+		bool arrayRemoveObject(Core::BaseObject *object, int i) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return (target->*_eraseObjIndex)(i);
 		}
 
-		bool arrayRemoveObject(Core::BaseObject *object, Core::BaseObject *ch) const {
+		bool arrayRemoveObject(Core::BaseObject *object, Core::BaseObject *ch) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
@@ -308,7 +308,7 @@ class ArrayProperty : public Core::MetaProperty {
 			return (target->*_eraseObjPointer)(child);
 		}
 
-		Core::BaseObject *createClass() const {
+		Core::BaseObject *createClass() const override {
 			return U::Create();
 		}
 
@@ -331,21 +331,21 @@ class ArrayClassProperty : public Core::MetaClassProperty<A> {
 		   _eraseObjIndex(eraseObjIndex),
 		   _eraseObjPointer(eraseObjPointer) {}
 
-		size_t arrayElementCount(const Core::BaseObject *object) const {
+		size_t arrayElementCount(const Core::BaseObject *object) const override {
 			const T *target = T::ConstCast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return static_cast<size_t>((target->*_countObjects)());
 		}
 
-		Core::BaseObject *arrayObject(Core::BaseObject *object, int i) const {
+		Core::BaseObject *arrayObject(Core::BaseObject *object, int i) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return (target->*_getObj)(i);
 		}
 
-		bool arrayAddObject(Core::BaseObject *object, Core::BaseObject *ch) const {
+		bool arrayAddObject(Core::BaseObject *object, Core::BaseObject *ch) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
@@ -355,14 +355,14 @@ class ArrayClassProperty : public Core::MetaClassProperty<A> {
 			return (target->*_addObj)(child);
 		}
 
-		bool arrayRemoveObject(Core::BaseObject *object, int i) const {
+		bool arrayRemoveObject(Core::BaseObject *object, int i) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 
 			return (target->*_eraseObjIndex)(i);
 		}
 
-		bool arrayRemoveObject(Core::BaseObject *object, Core::BaseObject *ch) const {
+		bool arrayRemoveObject(Core::BaseObject *object, Core::BaseObject *ch) const override {
 			T *target = T::Cast(object);
 			if ( !target ) throw Core::GeneralException("invalid object");
 

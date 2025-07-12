@@ -26,7 +26,6 @@
 #include <seiscomp/utils/files.h>
 
 #include <boost/version.hpp>
-#include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/regex.hpp>
@@ -91,11 +90,11 @@ class CaseSensitivityCheck : public ModelVisitor {
 		: _delegate(delegate), _target(target), _stage(stage), _symbol(symbol) {}
 
 	protected:
-		virtual bool visit(Module *m) { return m == _target; }
-		virtual bool visit(Section*) { return true; }
-		virtual bool visit(Group*) { return true; }
-		virtual bool visit(Structure*) { return true; }
-		virtual void visit(Parameter *p, bool unknown) {
+		virtual bool visit(Module *m) override { return m == _target; }
+		virtual bool visit(Section*) override { return true; }
+		virtual bool visit(Group*) override { return true; }
+		virtual bool visit(Structure*) override { return true; }
+		virtual void visit(Parameter *p, bool unknown) override {
 			if ( !unknown && Core::compareNoCase(p->variableName, _symbol->name) == 0 ) {
 				ConfigDelegate::CSConflict csc;
 				csc.module = _target;
@@ -120,27 +119,27 @@ class DuplicateNameCheck : public ModelVisitor {
 		DuplicateNameCheck()
 		: _currentModule(nullptr) {}
 
-		bool visit(Module *mod) {
+		bool visit(Module *mod) override {
 			_currentModule = mod;
 			_currentSection = nullptr;
 			_names.clear();
 			return true;
 		}
 
-		bool visit(Section *sec) {
+		bool visit(Section *sec) override {
 			_currentSection = sec;
 			return true;
 		}
 
-		bool visit(Group*) {
+		bool visit(Group*) override {
 			return true;
 		}
 
-		bool visit(Structure*) {
+		bool visit(Structure*) override {
 			return true;
 		}
 
-		void visit(Parameter *param, bool unknown) {
+		void visit(Parameter *param, bool unknown) override {
 			// Do not touch unknown parameters
 			if ( unknown ) return;
 
@@ -171,23 +170,23 @@ class DuplicateNameCheck : public ModelVisitor {
 struct ParameterCollector : public ModelVisitor {
 	ParameterCollector() {}
 
-	virtual bool visit(Module*) {
+	virtual bool visit(Module*) override {
 		return true;
 	}
 
-	virtual bool visit(Section*) {
+	virtual bool visit(Section*) override {
 		return true;
 	}
 
-	virtual bool visit(Group*) {
+	virtual bool visit(Group*) override {
 		return true;
 	}
 
-	virtual bool visit(Structure*) {
+	virtual bool visit(Structure*) override {
 		return true;
 	}
 
-	virtual void visit(Parameter *param, bool unknown) {
+	virtual void visit(Parameter *param, bool unknown) override {
 		parameters.push_back(param);
 	}
 
@@ -348,10 +347,22 @@ void populate(Container *container, SchemaParameters *params, const string &pref
 	for ( size_t i = 0; i < params->parameterCount(); ++i ) {
 		SchemaParameter *pdef = params->parameter(i);
 		std::string paramName = prefix;
-		if ( !pdef->name.empty() )
+		if ( !pdef->name.empty() ) {
 			paramName += "." + pdef->name;
-		ParameterPtr param = new Parameter(pdef, paramName);
-		container->add(param.get());
+		}
+
+		auto existingParam = container->findParameter(paramName);
+		if ( existingParam ) {
+			if ( pdef->description.empty() && existingParam->definition ) {
+				pdef->description = existingParam->definition->description;
+			}
+			existingParam->definition = pdef;
+			existingParam->variableName = paramName;
+		}
+		else {
+			ParameterPtr param = new Parameter(pdef, paramName);
+			container->add(param.get());
+		}
 	}
 
 	for ( size_t i = 0; i < params->groupCount(); ++i ) {
@@ -610,9 +621,10 @@ struct StructureExtender : public ModelVisitor {
 	}
 
 	bool visit(Group *group) override {
-		for ( auto structure : group->structureTypes ) {
+		for ( auto &structure : group->structureTypes ) {
 			if ( structure->definition->type == extension->type ) {
 				structure->extensions.push_back(extension);
+				hasExtended = true;
 			}
 		}
 		return true;
@@ -625,11 +637,12 @@ struct StructureExtender : public ModelVisitor {
 	void visit(Parameter*, bool) override { }
 
 	SchemaStructExtent *extension;
+	bool hasExtended{false};
 };
 
 
-void injectExtensions(Container *container, SchemaPluginParameters *pluginParams) {
-	for ( auto e : pluginParams->structExtents ) {
+void injectExtensions(Container *container, SchemaParameters *params) {
+	for ( auto &e : params->structExtents ) {
 		StructureExtender v(e.get());
 		container->accept(&v);
 	}
@@ -859,17 +872,21 @@ Structure *Structure::copy(bool backImport) {
 
 Structure *Structure::clone() const {
 	Structure *struc = new Structure(definition, path, name);
-	for ( size_t i = 0; i < parameters.size(); ++i )
+	for ( size_t i = 0; i < parameters.size(); ++i ) {
 		struc->add(parameters[i]->clone());
+	}
 
-	for ( size_t i = 0; i < groups.size(); ++i )
+	for ( size_t i = 0; i < groups.size(); ++i ) {
 		struc->add(groups[i]->clone());
+	}
 
-	for ( size_t i = 0; i < structures.size(); ++i )
+	for ( size_t i = 0; i < structures.size(); ++i ) {
 		struc->add(structures[i]->clone());
+	}
 
-	for ( size_t i = 0; i < structureTypes.size(); ++i )
+	for ( size_t i = 0; i < structureTypes.size(); ++i ) {
 		struc->addType(structureTypes[i]->clone());
+	}
 
 	struc->extensions = extensions;
 
@@ -878,10 +895,13 @@ Structure *Structure::clone() const {
 
 
 Structure *Structure::instantiate(const char *n) const {
-	if ( !name.empty() ) return nullptr;
+	if ( !name.empty() ) {
+		return nullptr;
+	}
+
 	Structure *struc = loadStructure(definition, path, n);
 
-	for ( auto e : extensions ) {
+	for ( auto &e : extensions ) {
 		if ( e->matchName.empty() || boost::regex_match(n, boost::regex(e->matchName)) ) {
 			populate(struc, e.get(), struc->path);
 			injectExtensions(struc, e.get());
@@ -1895,37 +1915,44 @@ bool Model::recreate() {
 
 
 Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
-	if ( def == nullptr ) return nullptr;
+	if ( !def ) {
+		return nullptr;
+	}
 
 	// Loaded already?
-	ModMap::iterator mit = modMap.find(def->name);
-	if ( mit != modMap.end() ) return mit->second;
+	auto mit = modMap.find(def->name);
+	if ( mit != modMap.end() ) {
+		return mit->second;
+	}
 
 	set<string> imports;
 
 	// Default is: standalone = false
 	// Then "global" is automatically imported
-	if ( def->name != "global" && (!def->standalone || *def->standalone == false) )
+	if ( def->name != "global" && (!def->standalone || *def->standalone == false) ) {
 		imports.insert("global");
+	}
 
-	if ( !def->import.empty() && def->import != def->name )
+	if ( !def->import.empty() && def->import != def->name ) {
 		imports.insert(def->import);
+	}
 
 	ModulePtr mod = new Module(def);
 
-	if ( !def->category.empty() )
+	if ( !def->category.empty() ) {
 		categories.insert(def->category);
+	}
 
 	set<string>::iterator it;
 	for ( it = imports.begin(); it != imports.end(); ++it ) {
 		SchemaModule *baseDef = schema->module(*it);
-		if ( baseDef == nullptr ) {
+		if ( !baseDef ) {
 			// TODO: set error message
 			return nullptr;
 		}
 
 		Module *base = create(schema, baseDef);
-		if ( base == nullptr ) {
+		if ( !base ) {
 			// TODO: set error message
 			return nullptr;
 		}
@@ -1986,8 +2013,9 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 	vector<SchemaBinding*> globalBindings;
 
 	if ( !schemaBindings.empty() && imports.find("global") != imports.end() &&
-	     def->inheritGlobalBinding && *def->inheritGlobalBinding == true )
+	     def->inheritGlobalBinding && *def->inheritGlobalBinding == true ) {
 		globalBindings = schema->bindingsForModule("global");
+	}
 
 	// Import global
 	if ( !globalBindings.empty() ) {
@@ -2008,7 +2036,9 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 			SchemaBinding *sb = globalBindings[i];
 
 			// Category bindings are not supported for import
-			if ( !sb->category.empty() ) continue;
+			if ( !sb->category.empty() ) {
+				continue;
+			}
 
 			if ( sb->parameters ) {
 				for ( size_t j = 0; j < sb->parameters->parameterCount(); ++j ) {
@@ -2017,11 +2047,15 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 					sec->add(param.get());
 				}
 
-				for ( size_t j = 0; j < sb->parameters->groupCount(); ++j )
+				for ( size_t j = 0; j < sb->parameters->groupCount(); ++j ) {
 					loadGroup(sec, sb->parameters->group(j), "");
+				}
 
-				for ( size_t j = 0; j < sb->parameters->structureCount(); ++j )
+				for ( size_t j = 0; j < sb->parameters->structureCount(); ++j ) {
 					sec->addType(loadStructure(sb->parameters->structure(j), "", ""));
+				}
+
+				injectExtensions(sec, sb->parameters.get());
 			}
 		}
 	}
@@ -2087,11 +2121,15 @@ Module *Model::create(SchemaDefinitions *schema, SchemaModule *def) {
 				sec->add(param.get());
 			}
 
-			for ( size_t j = 0; j < sb->parameters->groupCount(); ++j )
+			for ( size_t j = 0; j < sb->parameters->groupCount(); ++j ) {
 				loadGroup(sec, sb->parameters->group(j), prefix);
+			}
 
-			for ( size_t j = 0; j < sb->parameters->structureCount(); ++j )
+			for ( size_t j = 0; j < sb->parameters->structureCount(); ++j ) {
 				sec->addType(loadStructure(sb->parameters->structure(j), prefix, ""));
+			}
+
+			injectExtensions(sec, sb->parameters.get());
 		}
 	}
 
@@ -2241,7 +2279,6 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 		}
 	}
 
-
 	// Read station module configuration
 	keyDir = stationConfigDir(true);
 
@@ -2335,7 +2372,6 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 	}
 	*/
 
-
 	return true;
 }
 
@@ -2345,21 +2381,25 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	// Save station key files
 	//---------------------------------------------------
 	//stations.clear();
-	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it )
+	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it ) {
 		it->second->config.clear();
+	}
 
 	// Collect all stations keyfiles
 	for ( size_t i = 0; i < modules.size(); ++i ) {
 		Module *mod = modules[i].get();
-		if ( !mod->supportsBindings() ) continue;
+		if ( !mod->supportsBindings() ) {
+			continue;
+		}
 
 		Module::BindingMap::iterator it;
 
 		for ( it = mod->bindings.begin(); it != mod->bindings.end(); ++it ) {
 			pair<Stations::iterator, bool> sp;
 			sp = stations.insert(Stations::value_type(it->first, nullptr));
-			if ( sp.second )
+			if ( sp.second ) {
 				sp.first->second = new Station;
+			}
 
 			ModuleBinding *binding = it->second.get();
 			sp.first->second->setConfig(mod->definition->name, binding->name);
@@ -2406,8 +2446,9 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	for ( Stations::iterator it = stations.begin(); it != stations.end(); ++it ) {
 		string filename = keyDir + "/station_" + it->first.networkCode +
 		                  "_" + it->first.stationCode;
-		if ( !it->second->writeConfig(filename.c_str(), delegate) )
+		if ( !it->second->writeConfig(filename.c_str(), delegate) ) {
 			cerr << "[ERROR] writing " << filename << " failed" << endl;
+		}
 	}
 
 	//---------------------------------------------------
@@ -2416,8 +2457,9 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 	for ( size_t i = 0; i < modules.size(); ++i ) {
 		Module *mod = modules[i].get();
 		string filename = configFileLocation(false, mod->definition->name, stage);
-		if ( !writeConfig(mod, filename, stage, multilineLists, delegate) )
+		if ( !writeConfig(mod, filename, stage, multilineLists, delegate) ) {
 			cerr << "[ERROR] writing " << filename << " failed" << endl;
+		}
 	}
 
 

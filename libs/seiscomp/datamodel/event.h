@@ -45,6 +45,7 @@ DEFINE_SMARTPOINTER(Comment);
 DEFINE_SMARTPOINTER(OriginReference);
 DEFINE_SMARTPOINTER(FocalMechanismReference);
 
+class Catalog;
 class EventParameters;
 
 
@@ -79,28 +80,28 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 
 	public:
 		//! Copy constructor
-		Event(const Event& other);
+		Event(const Event &other);
 
 		//! Constructor with publicID
 		Event(const std::string& publicID);
 
 		//! Destructor
 		~Event() override;
-	
+
 
 	// ------------------------------------------------------------------
 	//  Creators
 	// ------------------------------------------------------------------
 	public:
-		static Event* Create();
-		static Event* Create(const std::string& publicID);
+		static Event *Create();
+		static Event *Create(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
 	//  Lookup
 	// ------------------------------------------------------------------
 	public:
-		static Event* Find(const std::string& publicID);
+		static Event *Find(const std::string& publicID);
 
 
 	// ------------------------------------------------------------------
@@ -109,14 +110,14 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 	public:
 		//! Copies the metadata of other to this
 		//! No changes regarding child objects are made
-		Event& operator=(const Event& other);
+		Event &operator=(const Event &other);
 		//! Checks for equality of two objects. Child objects
 		//! are not part of the check.
-		bool operator==(const Event& other) const;
-		bool operator!=(const Event& other) const;
+		bool operator==(const Event &other) const;
+		bool operator!=(const Event &other) const;
 
 		//! Wrapper that calls operator==
-		bool equal(const Event& other) const;
+		bool equal(const Event &other) const;
 
 
 	// ------------------------------------------------------------------
@@ -150,7 +151,7 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 		CreationInfo& creationInfo();
 		const CreationInfo& creationInfo() const;
 
-	
+
 	// ------------------------------------------------------------------
 	//  Public interface
 	// ------------------------------------------------------------------
@@ -163,10 +164,10 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 		 *               because it already exists in the list
 		 *               or it already has another parent
 		 */
-		bool add(EventDescription* obj);
-		bool add(Comment* obj);
-		bool add(OriginReference* obj);
-		bool add(FocalMechanismReference* obj);
+		bool add(EventDescription *obj);
+		bool add(Comment *obj);
+		bool add(OriginReference *obj);
+		bool add(FocalMechanismReference *obj);
 
 		/**
 		 * Removes an object.
@@ -175,10 +176,10 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 		 * @return false The object has not been removed
 		 *               because it does not exist in the list
 		 */
-		bool remove(EventDescription* obj);
-		bool remove(Comment* obj);
-		bool remove(OriginReference* obj);
-		bool remove(FocalMechanismReference* obj);
+		bool remove(EventDescription *obj);
+		bool remove(Comment *obj);
+		bool remove(OriginReference *obj);
+		bool remove(FocalMechanismReference *obj);
 
 		/**
 		 * Removes an object of a particular class.
@@ -187,13 +188,13 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 		 * @return false The index is out of bounds
 		 */
 		bool removeEventDescription(size_t i);
-		bool removeEventDescription(const EventDescriptionIndex& i);
+		bool removeEventDescription(const EventDescriptionIndex &i);
 		bool removeComment(size_t i);
-		bool removeComment(const CommentIndex& i);
+		bool removeComment(const CommentIndex &i);
 		bool removeOriginReference(size_t i);
-		bool removeOriginReference(const OriginReferenceIndex& i);
+		bool removeOriginReference(const OriginReferenceIndex &i);
 		bool removeFocalMechanismReference(size_t i);
-		bool removeFocalMechanismReference(const FocalMechanismReferenceIndex& i);
+		bool removeFocalMechanismReference(const FocalMechanismReferenceIndex &i);
 
 		//! Retrieve the number of objects of a particular class
 		size_t eventDescriptionCount() const;
@@ -203,21 +204,27 @@ class SC_SYSTEM_CORE_API Event : public PublicObject {
 
 		//! Index access
 		//! @return The object at index i
-		EventDescription* eventDescription(size_t i) const;
-		EventDescription* eventDescription(const EventDescriptionIndex& i) const;
+		EventDescription *eventDescription(size_t i) const;
+		EventDescription *eventDescription(const EventDescriptionIndex &i) const;
 
-		Comment* comment(size_t i) const;
-		Comment* comment(const CommentIndex& i) const;
+		Comment *comment(size_t i) const;
+		Comment *comment(const CommentIndex &i) const;
 
-		OriginReference* originReference(size_t i) const;
-		OriginReference* originReference(const OriginReferenceIndex& i) const;
+		OriginReference *originReference(size_t i) const;
+		OriginReference *originReference(const OriginReferenceIndex &i) const;
 
-		FocalMechanismReference* focalMechanismReference(size_t i) const;
-		FocalMechanismReference* focalMechanismReference(const FocalMechanismReferenceIndex& i) const;
+		FocalMechanismReference *focalMechanismReference(size_t i) const;
+		FocalMechanismReference *focalMechanismReference(const FocalMechanismReferenceIndex &i) const;
 
 		//! Find an object by its unique attribute(s)
 
-		EventParameters* eventParameters() const;
+		/**
+		 * The following methods return the parent object by type.
+		 * Because different parent types are possible, just one
+		 * of these methods will return a valid pointer at a time.
+		 */
+		Catalog *catalog() const;
+		EventParameters *eventParameters() const;
 
 		//! Implement Object interface
 		bool assign(Object *other) override;

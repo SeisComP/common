@@ -37,6 +37,9 @@ namespace Seiscomp {
 namespace Database {
 
 
+namespace {
+
+
 class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	DECLARE_SC_CLASS(MySQLDatabase);
 
@@ -52,6 +55,8 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Public interface
 	// ------------------------------------------------------------------
 	public:
+		Backend backend() const override;
+
 		bool connect(const char *con) override;
 		void disconnect() override;
 
@@ -104,6 +109,9 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 		mutable int            _fieldCount{0};
 		mutable unsigned long *_lengths{nullptr};
 };
+
+
+}
 
 
 }
