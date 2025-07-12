@@ -485,7 +485,6 @@ void XMLArchive::close() {
 	_forceWriteVersion = -1;
 
 	xmlSetGenericErrorFunc(nullptr, nullptr);
->>>>>>> e70e4b6f8230d5953559693c2400c4dedccde285
 	setVersion(Core::Version(0,0));
 }
 
