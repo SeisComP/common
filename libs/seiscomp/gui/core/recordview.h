@@ -312,6 +312,10 @@ class SC_GUI_API RecordView : public QWidget {
 		//! Whether to show record borders
 		void showRecordBorders(bool enable);
 
+		//! Whether to show engineering values with unit prefix such as
+		//! milli, kilo, etc.
+		void showEngineeringValues(bool enable);
+
 		//! Whether to draw the background using alternating colors
 		//! The item background will be drawn using QPalette::Base and
 		//! QPalette::AlternateBase
@@ -603,66 +607,66 @@ class SC_GUI_API RecordView : public QWidget {
 		typedef QVector<RecordViewItem*> Rows;
 		typedef QSet<RecordViewItem*> SelectionList;
 
-		SelectionMode _selectionMode;
+		SelectionMode            _selectionMode{NoSelection};
 
-		RecordStreamThread* _thread;
-		RecordViewItem* _currentItem;
+		RecordStreamThread      *_thread{nullptr};
+		RecordViewItem          *_currentItem{nullptr};
 
-		TimeScale* _timeScaleWidget;
-		QScrollArea* _scrollArea;
-		QWidget* _timeScaleInfo;
-		QLayout* _timeScaleAuxLayout;
+		TimeScale               *_timeScaleWidget{nullptr};
+		QScrollArea             *_scrollArea{nullptr};
+		QWidget                 *_timeScaleInfo{nullptr};
+		QLayout                 *_timeScaleAuxLayout{nullptr};
 
-		QAction* _filterAction;
-		QAction* _absTimeAction;
+		QAction                 *_filterAction{nullptr};
+		QAction                 *_absTimeAction{nullptr};
 
-		QTimer _recordUpdateTimer;
+		QTimer                   _recordUpdateTimer;
 
-		SelectionList _selectedItems;
+		SelectionList            _selectedItems;
 
-		Mode _mode;
-		Seiscomp::Core::Time _timeStart;
+		Mode                     _mode{RING_BUFFER};
+		Seiscomp::Core::Time     _timeStart;
 		Seiscomp::Core::TimeSpan _timeSpan;
 
-		Items _items;
-		Rows _rows;
-		Core::Time _alignment;
+		Items                    _items;
+		Rows                     _rows;
+		Core::Time               _alignment;
 
-		QPointF _zoomSpot;
+		QPointF                  _zoomSpot{0.5, 0.5};
 
-		int    _rowHeight;
-		int    _minRowHeight;
-		int    _maxRowHeight;
-		int    _numberOfRows;
-		int    _defaultRowHeight;
-		float  _zoomFactor;
+		int                      _rowHeight;
+		int                      _minRowHeight;
+		int                      _maxRowHeight{-1};
+		int                      _numberOfRows{-1};
+		int                      _defaultRowHeight{16};
+		float                    _zoomFactor{2.0f};
 
-		double _tmin, _tmax;
-		float  _amin, _amax;   // amplitude range
+		double                   _tmin{0}, _tmax{0};
 
-		double _timeScale;     // pixels per second
-		double _minTimeScale;
-		double _amplScale;     // amplitude units per pixel
+		double                   _timeScale{1.0 / 3.0}; // pixels per second
+		double                   _minTimeScale{0.0};
+		double                   _amplScale{0.0}; // amplitude units per pixel
 
-		bool _filtering;      // the filter state
-		bool _alternatingColors;
-		bool _showAllRecords;
-		bool _showRecordBorders;
-		bool _autoInsertItems;
-		bool _autoScale;
-		bool _autoMaxScale;
+		bool                     _filtering{false}; // the filter state
+		bool                     _alternatingColors{false};
+		bool                     _showAllRecords{false};
+		bool                     _showRecordBorders{false};
+		bool                     _showEngineeringValues{true};
+		bool                     _autoInsertItems{true};
+		bool                     _autoScale{false};
+		bool                     _autoMaxScale{false};
 
-		bool _frames;
-		int  _frameMargin;
-		int  _horizontalSpacing;
-		int  _rowSpacing;
+		bool                     _frames{false};
+		int                      _frameMargin{0};
+		int                      _horizontalSpacing{0};
+		int                      _rowSpacing{0};
 
-		int  _labelWidth;
-		int  _labelColumns;
+		int                      _labelWidth{70};
+		int                      _labelColumns{3};
 
 		RecordWidget::RecordBorderDrawMode _recordBorderDrawMode;
 
-		RecordWidget::Filter *_filter;
+		RecordWidget::Filter    *_filter{nullptr};
 
 	friend class RecordViewItem;
 };
