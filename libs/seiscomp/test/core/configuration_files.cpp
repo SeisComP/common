@@ -415,6 +415,48 @@ BOOST_AUTO_TEST_CASE(paths) {
 	BOOST_CHECK_EQUAL(paths[1], "@DATADIR@");
 	BOOST_CHECK_EQUAL(paths[2], "@LOGDIR@");
 }
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(findSymbols) {
+	std::string file = "./data/config3.cfg";
+	Config cfg;
+	BOOST_REQUIRE(cfg.readConfig(file));
+
+	auto pluginNames = cfg.findSymbols("plugins.");
+	BOOST_CHECK_EQUAL(pluginNames.size(), 5);
+	BOOST_CHECK_EQUAL(pluginNames[0], "plugins.default");
+	BOOST_CHECK_EQUAL(pluginNames[1], "plugins.QcLatency");
+	BOOST_CHECK_EQUAL(pluginNames[2], "plugins.QcDelay");
+	BOOST_CHECK_EQUAL(pluginNames[3], "plugins.QcAvailability");
+	BOOST_CHECK_EQUAL(pluginNames[4], "plugins.QcOutage");
+
+	pluginNames = cfg.findSymbols("plugins.", "realTimeOnly", true);
+	BOOST_CHECK_EQUAL(pluginNames.size(), 4);
+	BOOST_CHECK_EQUAL(pluginNames[0], "plugins.QcLatency");
+	BOOST_CHECK_EQUAL(pluginNames[1], "plugins.QcDelay");
+	BOOST_CHECK_EQUAL(pluginNames[2], "plugins.QcAvailability");
+	BOOST_CHECK_EQUAL(pluginNames[3], "plugins.QcOutage");
+
+	pluginNames = cfg.findSymbols("plugins.", "realTimeOnly", false);
+	BOOST_CHECK_EQUAL(pluginNames.size(), 2);
+	BOOST_CHECK_EQUAL(pluginNames[0], "plugins.QcLatency");
+	BOOST_CHECK_EQUAL(pluginNames[1], "plugins.QcDelay");
+
+	pluginNames = cfg.findSymbols("plugins.", "DOES_NOT_EXIST", true);
+	BOOST_CHECK_EQUAL(pluginNames.size(), 5);
+	BOOST_CHECK_EQUAL(pluginNames[0], "plugins.default");
+	BOOST_CHECK_EQUAL(pluginNames[1], "plugins.QcLatency");
+	BOOST_CHECK_EQUAL(pluginNames[2], "plugins.QcDelay");
+	BOOST_CHECK_EQUAL(pluginNames[3], "plugins.QcAvailability");
+	BOOST_CHECK_EQUAL(pluginNames[4], "plugins.QcOutage");
+
+	pluginNames = cfg.findSymbols("plugins.", "DOES_NOT_EXIST", false);
+	BOOST_CHECK_EQUAL(pluginNames.size(), 0);
+}
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
