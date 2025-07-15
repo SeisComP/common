@@ -434,6 +434,9 @@ class SC_GUI_API RecordWidget : public QWidget {
 		void showScaledValues(bool enable);
 		bool areScaledValuesShown() const { return _showScaledValues; }
 
+		void showEngineeringValues(bool enable);
+		bool areEngineeringValuesShown() const { return _showEngineeringValues; }
+
 		//! Adds a marker to the widget. The ownership takes
 		//! the widget.
 		bool addMarker(RecordMarker*);
@@ -776,6 +779,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		bool                 _active{false};
 		bool                 _filtering{false};
 		bool                 _showScaledValues{false};
+		bool                 _showEngineeringValues{true};
 
 		bool                 _drawRecords{false};
 		bool                 _drawRecordID{true};

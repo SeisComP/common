@@ -246,6 +246,24 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 }
 
 
+QString valueToString(bool showEngineeringValues, double value, int precision = -1) {
+	if ( precision < 0 ) {
+		return showEngineeringValues ?
+			Gui::numberToEngineering(value)
+		:
+			QString("%1 ").arg(value)
+		;
+	}
+	else {
+		return showEngineeringValues ?
+			Gui::numberToEngineering(value, precision)
+		:
+			QString("%1 ").arg(value, 0, 'f', precision)
+		;
+	}
+}
+
+
 void updateVerticalAxis(double spacing[2], double rangeLower, double rangeUpper,
                         int dim, int textDim) {
 	// compute adequate tick/annotation interval
@@ -276,7 +294,7 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
                       double spacing[2], const QRect &rect, int tickLength,
                       const QString &label, bool leftAligned,
                       const QPen &fg, const QPen &grid,
-                      int gridLeft, int gridRight) {
+                      int gridLeft, int gridRight, bool showEngineeringValues) {
 	double direction = 1;
 
 	if ( rangeLower > rangeUpper ) {
@@ -351,7 +369,7 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 			p.drawLine(baseLine, ry, baseLine + tick, ry);
 
 			if ( k == 0 ) {
-				str = Gui::numberToEngineering(cpos);
+				str = valueToString(showEngineeringValues, cpos);
 				QRect labelRect = p.fontMetrics().boundingRect(str);
 				// Safety margin to not cut text
 				labelRect.adjust(0, 0, labelRect.width(), 0);
@@ -984,6 +1002,8 @@ RecordWidget::RecordWidget(const DataModel::WaveformStreamID& streamID, QWidget 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::init() {
 	++RecordWidgetCount;
+
+	_showEngineeringValues = SCScheme.records.showEngineeringValues;
 
 	removeCustomBackgroundColor();
 	setBackgroundRole(QPalette::Base);
@@ -2637,7 +2657,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
 					                 rect, tickLength, stream->axisLabel,
 					                 _axisPosition == Left, fg, SCScheme.colors.records.gridPen,
-					                 _canvasRect.left(), _canvasRect.right());
+					                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
 				}
 			}
 
@@ -2694,7 +2714,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
 					                 rect, tickLength, stream->axisLabel,
 					                 _axisPosition == Left, fg, SCScheme.colors.records.gridPen,
-					                 _canvasRect.left(), _canvasRect.right());
+					                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
 				}
 			}
 			break;
@@ -2726,13 +2746,14 @@ void RecordWidget::showAllRecords(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::showScaledValues(bool enable) {
-	if ( _showScaledValues == enable ) return;
+	if ( _showScaledValues == enable ) {
+		return;
+	}
+
 	_showScaledValues = enable;
 
-	for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-		Stream *s = *it;
-
-		if ( s == nullptr ) {
+	for ( auto *s : _streams ) {
+		if ( !s ) {
 			continue;
 		}
 
@@ -2743,6 +2764,31 @@ void RecordWidget::showScaledValues(bool enable) {
 			s->axisDirty = true;
 		}
 	}
+
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordWidget::showEngineeringValues(bool enable) {
+	if ( _showEngineeringValues == enable ) {
+		return;
+	}
+
+	_showEngineeringValues = enable;
+
+	/*
+	for ( auto *s : _streams ) {
+		if ( !s ) {
+			continue;
+		}
+
+		s->axisDirty = true;
+	}
+	*/
 
 	update();
 }
@@ -3521,11 +3567,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						QString str;
 						if ( _showScaledValues )
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							      .arg(valueToString(_showEngineeringValues, trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
 							           stream->axisLabel);
 						else
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							      .arg(valueToString(_showEngineeringValues, trace.absMax, _valuePrecision),
 							           stream->axisLabel);
 
 						int rh = 2 * painter.fontMetrics().ascent() + 4;
@@ -3537,11 +3583,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								      .arg(valueToString(_showEngineeringValues, trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
 								           stream->axisLabel);
 							else
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								      .arg(valueToString(_showEngineeringValues, trace.dOffset, _valuePrecision),
 								           stream->axisLabel);
 
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
@@ -3609,11 +3655,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 						if ( _showScaledValues )
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							      .arg(valueToString(_showEngineeringValues, trace.absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
 							           stream->axisLabel);
 						else
 							str = tr("amax: %1%2")
-							      .arg(numberToEngineering(trace.absMax, _valuePrecision),
+							      .arg(valueToString(_showEngineeringValues, trace.absMax, _valuePrecision),
 							           stream->axisLabel);
 
 						int rh = 2*painter.fontMetrics().ascent()+4;
@@ -3625,11 +3671,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						if ( stream->posY+stream->height >= y+rh ) {
 							if ( _showScaledValues )
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+								      .arg(valueToString(_showEngineeringValues, trace.dOffset * (stream->scale > 0 ? stream->scale : -stream->scale)),
 								           stream->axisLabel);
 							else
 								str = tr("mean: %1%2")
-								      .arg(numberToEngineering(trace.dOffset, _valuePrecision),
+								      .arg(valueToString(_showEngineeringValues, trace.dOffset, _valuePrecision),
 								           stream->axisLabel);
 							painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 						}
@@ -3711,11 +3757,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( _showScaledValues )
 						str = tr("amax: %1%2")
-						      .arg(numberToEngineering(absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
+						      .arg(valueToString(_showEngineeringValues, absMax * (stream->scale > 0 ? stream->scale : -stream->scale)),
 						           stream->axisLabel);
 					else
 						str = tr("amax: %1%2")
-						      .arg(numberToEngineering(absMax, _valuePrecision),
+						      .arg(valueToString(_showEngineeringValues, absMax, _valuePrecision),
 						           stream->axisLabel);
 
 					int rh = 2*painter.fontMetrics().ascent()+4;
@@ -3727,11 +3773,11 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					if ( stream->height >= y+rh ) {
 						if ( _showScaledValues )
 							str = tr("mean: %1%2")
-							      .arg(numberToEngineering(offset * (stream->scale > 0 ? stream->scale : -stream->scale)),
+							      .arg(valueToString(_showEngineeringValues, offset * (stream->scale > 0 ? stream->scale : -stream->scale)),
 							           stream->axisLabel);
 						else
 							str = tr("mean: %1%2")
-							      .arg(numberToEngineering(offset, _valuePrecision),
+							      .arg(valueToString(_showEngineeringValues, offset, _valuePrecision),
 							           stream->axisLabel);
 						painter.drawText(4,y, w-4,rh, Qt::TextSingleLine | Qt::AlignLeft | Qt::AlignBottom, str);
 					}
