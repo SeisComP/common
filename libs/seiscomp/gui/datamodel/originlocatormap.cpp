@@ -70,21 +70,23 @@ struct StationLayer : Map::Layer {
 	void setVisible(bool v) {
 		Map::Layer::setVisible(v);
 		if ( !v ) {
-			for ( auto entry : stations ) {
-				if ( entry->annotation )
+			for ( auto entry : qAsConst(stations) ) {
+				if ( entry->annotation ) {
 					entry->annotation->visible = false;
+				}
 			}
 		}
 		else {
-			for ( auto entry : stations ) {
-				if ( entry->annotation )
+			for ( auto entry : qAsConst(stations) ) {
+				if ( entry->annotation ) {
 					entry->annotation->visible = entry->isVisible();
+				}
 			}
 		}
 	}
 
 	void calculateMapPosition(const Map::Canvas *canvas) override {
-		for ( auto entry : stations ) {
+		for ( auto entry : qAsConst(stations) ) {
 			if ( !entry->validLocation ) {
 				entry->setVisible(false);
 			}
@@ -138,7 +140,7 @@ struct StationLayer : Map::Layer {
 	void draw(const Map::Canvas *canvas, QPainter &p) override {
 		int size = SCScheme.map.stationSize;
 
-		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 4);
+		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 2);
 
 		if ( drawStationsLines && canvas->symbolCollection()->count() > 0 ) {
 			const Map::Symbol *originSymbol = (*canvas->symbolCollection()->begin());
@@ -163,7 +165,7 @@ struct StationLayer : Map::Layer {
 			}
 
 			p.setPen(SCScheme.colors.map.lines);
-			for ( auto s : stations ) {
+			for ( auto s : qAsConst(stations) ) {
 				if ( !s->validLocation || !s->isArrival ) {
 					continue;
 				}
@@ -177,7 +179,7 @@ struct StationLayer : Map::Layer {
 
 			if ( drawDirectivity ) {
 				p.setPen(SCScheme.colors.map.directivity);
-				for ( auto s : stations ) {
+				for ( auto s : qAsConst(stations) ) {
 					if ( s->backAzimuth ) {
 						QPointF p0;
 						Math::Geo::delandaz2coord(s->distance * 0.5, *s->backAzimuth,
@@ -240,7 +242,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void clear() {
-		for ( auto symbol : stations ) {
+		for ( auto symbol : qAsConst(stations) ) {
 			delete symbol;
 		}
 		stations.clear();
@@ -415,6 +417,15 @@ void OriginLocatorMap::mousePressEvent(QMouseEvent *event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorMap::setCache(DataModel::PublicObjectCache *cache) {
+	_cache = cache;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setStationsMaxDist(double d) {
 	_stationsMaxDist = d;
 }
@@ -474,7 +485,7 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 			itemColor = SCScheme.colors.arrivals.undefined;
 		}
 
-		Pick* p = Pick::Cast(PublicObject::Find(arrival->pickID()));
+		Pick *p = _cache ? _cache->get<Pick>(arrival->pickID()).get() : Pick::Find(arrival->pickID());
 		if ( p ) {
 			/*
 			try {
@@ -628,7 +639,7 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 		}
 	}
 
-	for ( auto symbol : SYMBOLLAYER->stations ) {
+	for ( auto symbol : qAsConst(SYMBOLLAYER->stations) ) {
 		if ( symbol->annotation ) {
 			symbol->annotation->highlighted = symbol->isActive && symbol->isArrival;
 		}

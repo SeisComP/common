@@ -26,6 +26,7 @@
 #include <seiscomp/gui/map/mapwidget.h>
 #ifndef Q_MOC_RUN
 #include <seiscomp/datamodel/origin.h>
+#include <seiscomp/datamodel/publicobjectcache.h>
 #endif
 #include <seiscomp/gui/qt.h>
 
@@ -57,6 +58,10 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 
 		OriginLocatorMap(Map::ImageTree* mapTree,
 		                 QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
+
+
+	public:
+		void setCache(DataModel::PublicObjectCache *cache);
 
 		//! Sets the maximum distance for stations to be displayed
 		//! if they are not part of the origin
@@ -113,15 +118,16 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 
 
 	private:
-		DataModel::OriginPtr       _origin;
-		OriginSymbol              *_originSymbol;
-		Map::Layer                *_symbolLayer;
-		Map::AnnotationLayer      *_annotationLayer;
-		bool                       _waveformPropagation{false};
-		bool                       _enabledCreateOrigin{false};
-		QVector<int>               _arrivals;
-		std::map<std::string, int> _stationCodes;
-		double                     _stationsMaxDist{-1};
+		DataModel::PublicObjectCache *_cache{nullptr};
+		DataModel::OriginPtr          _origin;
+		OriginSymbol                 *_originSymbol;
+		Map::Layer                   *_symbolLayer;
+		Map::AnnotationLayer         *_annotationLayer;
+		bool                          _waveformPropagation{false};
+		bool                          _enabledCreateOrigin{false};
+		QVector<int>                  _arrivals;
+		std::map<std::string, int>    _stationCodes;
+		double                        _stationsMaxDist{-1};
 };
 
 

@@ -116,7 +116,7 @@ class SC_GUI_API MagRow : public QWidget
 class SC_GUI_API MagList : public QWidget
 {
 	Q_OBJECT
-	
+
 	public:
 		MagList(QWidget *parent = 0);
 		~MagList();
@@ -168,6 +168,10 @@ class SC_GUI_API EventSummaryView : public QWidget
 		                 QWidget * parent = 0);
 		~EventSummaryView();
 
+
+	public:
+		void setCache(DataModel::PublicObjectCache *cache);
+
 		void setToolButtonText(const QString&);
 
 		void setScript0(const std::string&, bool oldStyle, bool exportMap);
@@ -186,6 +190,7 @@ class SC_GUI_API EventSummaryView : public QWidget
 		void addObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
 		void updateObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
 		void removeObject(const QString &parentID, Seiscomp::DataModel::Object *obj);
+		void setDrawStationAnnotations(bool);
 		void showEvent(Seiscomp::DataModel::Event* event, Seiscomp::DataModel::Origin* org = nullptr);
 		//! Shows an origin that maybe does not belong to an event yet
 		void showOrigin(Seiscomp::DataModel::Origin* origin);
@@ -266,22 +271,23 @@ class SC_GUI_API EventSummaryView : public QWidget
 
 
 	private:
-		Ui::EventSummaryView *_ui;
-		Ui::Hypocenter       *_uiHypocenter;
-		MagList              *_magList;
+		Ui::EventSummaryView         *_ui;
+		Ui::Hypocenter               *_uiHypocenter;
+		MagList                      *_magList;
+		DataModel::PublicObjectCache *_cache{nullptr};
 
-		Seiscomp::DataModel::EventPtr _currentEvent;
-		Seiscomp::DataModel::EventPtr _lastEvent;
-		Seiscomp::DataModel::OriginPtr _currentOrigin;
-		Seiscomp::DataModel::OriginPtr _lastAutomaticOrigin;
-		Seiscomp::DataModel::FocalMechanismPtr _currentFocalMechanism;
-		Seiscomp::DataModel::FocalMechanismPtr _lastAutomaticFocalMechanism;
-		Seiscomp::DataModel::MagnitudePtr _currentNetMag;
+		DataModel::EventPtr _currentEvent;
+		DataModel::EventPtr _lastEvent;
+		DataModel::OriginPtr _currentOrigin;
+		DataModel::OriginPtr _lastAutomaticOrigin;
+		DataModel::FocalMechanismPtr _currentFocalMechanism;
+		DataModel::FocalMechanismPtr _lastAutomaticFocalMechanism;
+		DataModel::MagnitudePtr _currentNetMag;
 
-		Seiscomp::Gui::Map::ImageTreePtr _maptree;
+		Map::ImageTreePtr _maptree;
 		OriginLocatorMap *_map;
 
-		Seiscomp::DataModel::DatabaseQuery* _reader;
+		DataModel::DatabaseQuery *_reader;
 
 		QColor _automaticOriginColor;
 		QColor _automaticFMColor;
@@ -299,7 +305,7 @@ class SC_GUI_API EventSummaryView : public QWidget
 		bool _enableFullTensor;
 		int  _maxMinutesSecondDisplay;
 
-		QTimer* _mapTimer;
+		QTimer *_mapTimer;
 
 		double _maxHotspotDist;
 		double _minHotspotPopulation;
