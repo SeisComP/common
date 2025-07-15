@@ -69,17 +69,17 @@ void AnnotationStyle::draw(QPainter &painter, const AnnotationItem &item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QRect AnnotationStyle::itemRect(QPainter &painter, const AnnotationItem &item,
                                 const QPoint &pos) const {
-	painter.setFont(font);
-
 	if ( item.text.isEmpty() ) {
 		return QRect();
 	}
 
-	QRect labelRect(painter.fontMetrics().boundingRect(item.text));
-	int em = painter.fontMetrics().height();
+	painter.setFont(font);
+	QFontMetrics fm(font);
+	QRect labelRect(fm.boundingRect(item.text));
+	int em = fm.height();
 	labelRect.moveBottomLeft(pos);
-	labelRect.translate(-labelRect.width()/2, -em/4);
-	labelRect.adjust(-em/4,-em/4,em/4,em/4);
+	labelRect.translate(-labelRect.width() / 2, -em / 4);
+	labelRect.adjust(-em / 4, -em / 4, em / 4, em / 4);
 
 	return labelRect;
 }
