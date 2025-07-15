@@ -3400,32 +3400,10 @@ void OriginLocatorView::init() {
 	catch ( ... ) {}
 
 	// Commit bags
-	set<string> profiles;
-	string customConfigPrefix = "olv.customCommits.";
-	auto it = SCApp->configuration().symbolTable()->begin();
-	for ( ; it != SCApp->configuration().symbolTable()->end(); ++it ) {
-		const string &param = (*it)->name;
-		if ( param.compare(0, customConfigPrefix.size(), customConfigPrefix) ) {
-			continue;
-		}
-
-		size_t pos = param.find('.', customConfigPrefix.size());
-		if ( pos == string::npos ) {
-			continue;
-		}
-
-		string profile = param.substr(customConfigPrefix.size(), pos-customConfigPrefix.size());
-		if ( profiles.find(profile) != profiles.end() ) continue;
-		profiles.insert(profile);
-
+	auto profiles = SCApp->configuration().findSymbols("olv.customCommits.", "enable", true);
+	for ( const auto &profile : profiles ) {
 		QLayout *toolBarLayout = SC_D.ui.frameActionsRight->layout();
-		string prefix = customConfigPrefix + profile + ".";
-
-		try {
-			if ( !SCApp->configGetBool(prefix + "enable") )
-				continue;
-		}
-		catch ( ...) {}
+		string prefix = profile + ".";
 
 		CommitOptions customOptions;
 
