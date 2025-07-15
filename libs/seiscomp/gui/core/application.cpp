@@ -199,8 +199,9 @@ class SplashScreen : public QSplashScreen {
 			update();
 
 			int maxCount = 5;
-			while ( !updated && maxCount-- )
+			while ( !updated && maxCount-- ) {
 				app->processEvents();
+			}
 		}
 
 		void drawContents(QPainter *painter) {
