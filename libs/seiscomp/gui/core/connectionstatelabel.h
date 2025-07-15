@@ -48,7 +48,7 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 		void customInfoWidgetRequested(const QPoint &pos);
 
 	protected:
-		void mousePressEvent(QMouseEvent *event);
+		void mouseReleaseEvent(QMouseEvent *event) override;
 
 	protected:
 		QPixmap _connected;
