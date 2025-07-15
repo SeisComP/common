@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/core/fontawesome6.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/map/layers/geofeaturelayer.h>
 #include <seiscomp/gui/map/canvas.h>
@@ -347,12 +347,8 @@ void GeoFeatureLayer::LayerProperties::read(const string &dataDir) {
 		else if ( scheme == "qrc" ) {
 			symbolIcon = QPixmap::fromImage(QImage(":" + iconUrl.path()));
 		}
-		else if ( scheme == "fa" || scheme == "far" ||
-		          scheme == "fa6" || scheme == "far6" ) {
-			symbolIcon = FontAwesome6::icon(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
-		}
-		else if ( scheme == "fas" || scheme == "fas6" ) {
-			symbolIcon = FontAwesome6::iconSolid(FontAwesome6::code(iconUrl.path()), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
+		else if ( scheme == "sc" ) {
+			symbolIcon = icon(iconUrl.path(), brush.color()).pixmap(symbolSize > 0 ? symbolSize : 64);
 		}
 
 		// symbol could not be loaded: fall back to empty symbol shape

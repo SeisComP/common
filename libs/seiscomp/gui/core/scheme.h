@@ -293,6 +293,7 @@ class SC_GUI_API Scheme {
 			int           lineWidth{1};
 			bool          antiAliasing{true};
 			bool          optimize{true};
+			bool          showEngineeringValues{true};
 			RecordBorders recordBorders;
 		};
 

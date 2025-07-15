@@ -242,15 +242,16 @@ class SC_GUI_API RecordWidget : public QWidget {
 			double                    dyMin{0};   // Data minimum value
 			double                    dyMax{0};   // Data maximum value
 			double                    dOffset{0}; // Data offset
-			double                    absMax{0};
-			int                       pyMin{0};   //
+
+			double                    yMin{0};    // Minimum value to render
+			double                    yMax{0};    // Maximum value to render
+			double                    yOffset{0}; // Offset to render
+
+			double                    absMax{0};  // Maximum data amplitude
+			int                       pyMin{0};
 			int                       pyMax{0};
 			double                    fyMin{-1};
 			double                    fyMax{1};
-
-			double                    yMin{0};
-			double                    yMax{0};
-			double                    yOffset{0}; // The used offset
 
 			float                     timingQuality{-1};
 			int                       timingQualityCount{0};
@@ -433,6 +434,9 @@ class SC_GUI_API RecordWidget : public QWidget {
 		//! Whether to show scaled or raw values. The default is false.
 		void showScaledValues(bool enable);
 		bool areScaledValuesShown() const { return _showScaledValues; }
+
+		void showEngineeringValues(bool enable);
+		bool areEngineeringValuesShown() const { return _showEngineeringValues; }
 
 		//! Adds a marker to the widget. The ownership takes
 		//! the widget.
@@ -667,10 +671,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		virtual void customPaintTracesBegin(QPainter &painter);
 		virtual void customPaintTracesEnd(QPainter &painter);
 
-		virtual void createPolyline(int slot, AbstractRecordPolylinePtr &polyline,
-		                            RecordSequence const *, double pixelPerSecond,
-		                            double amplMin, double amplMax, double amplOffset,
-		                            int height, bool optimization, bool highPrecision);
 		virtual const double *value(int slot, const Seiscomp::Core::Time&) const;
 
 
@@ -731,8 +731,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		                       const Record*, const Record*,
 		                       double tolerance) const;
 
-		void prepareRecords(Stream *s);
-		void drawRecords(Stream *s, int slot);
 		void drawTrace(QPainter &painter,
 		               const Trace *trace,
 		               const RecordSequence *seq,
@@ -746,6 +744,14 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int canvasWidth() const;
 		int canvasHeight() const;
 
+	private:
+		void alignTrace(Trace &trace);
+		void prepareRecords(Stream *s);
+		void createPolyline(Stream *s, AbstractRecordPolylinePtr &polyline,
+		                    RecordSequence const *, double pixelPerSecond,
+		                    double amplMin, double amplMax, double amplOffset,
+		                    int height);
+		void render(Stream *s);
 
 	private:
 		typedef QVector<Stream*> StreamMap;
@@ -776,6 +782,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		bool                 _active{false};
 		bool                 _filtering{false};
 		bool                 _showScaledValues{false};
+		bool                 _showEngineeringValues{true};
 
 		bool                 _drawRecords{false};
 		bool                 _drawRecordID{true};

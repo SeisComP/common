@@ -20,12 +20,14 @@
 
 
 #include <seiscomp/gui/core/connectionstatelabel.h>
+#include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/utils.h>
+
 #include <QMouseEvent>
 #include <QDateTime>
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -34,8 +36,8 @@ namespace Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
  : QLabel(parent, f) {
-	_connected.load(":images/images/connect_established.png");
-	_disconnected.load(":images/images/connect_no.png");
+	_connected = Gui::pixmap(this, "wifi");
+	_disconnected = Gui::pixmap(this, "wifi-off");
 	setPixmap(_disconnected);
 	setFrameStyle(QFrame::NoFrame);
 }
@@ -47,16 +49,10 @@ ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::setPixmaps(const QPixmap &connected,
                                       const QPixmap &disconnected) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	bool isConnected = (pixmap()->toImage() == _connected.toImage());
-#else
-	bool isConnected = (pixmap().toImage() == _connected.toImage());
-#endif
-
 	_connected = connected;
 	_disconnected = disconnected;
 
-	setPixmap(isConnected ? _connected : _disconnected);
+	setPixmap(_isConnected ? _connected : _disconnected);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -65,6 +61,7 @@ void ConnectionStateLabel::setPixmaps(const QPixmap &connected,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::start(const QString &source) {
+	_isConnected = true;
 	setPixmap(_connected);
 	if ( source.isEmpty() ) {
 		setToolTip(QString("Connected at: %1")
@@ -82,6 +79,7 @@ void ConnectionStateLabel::start(const QString &source) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConnectionStateLabel::stop() {
+	_isConnected = false;
 	setPixmap(_disconnected);
 	setToolTip("Disconnected at: " + QDateTime::currentDateTime().toString() );
 }
@@ -91,13 +89,13 @@ void ConnectionStateLabel::stop() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ConnectionStateLabel::mousePressEvent(QMouseEvent *event) {
+void ConnectionStateLabel::mouseReleaseEvent(QMouseEvent *event) {
+	QLabel::mouseReleaseEvent(event);
+
 	if ( event->button() == Qt::LeftButton ) {
 		emit customInfoWidgetRequested(event->pos());
 		return;
 	}
-
-	QLabel::mousePressEvent(event);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -105,5 +103,4 @@ void ConnectionStateLabel::mousePressEvent(QMouseEvent *event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // namespace Seiscomp::Gui

@@ -87,6 +87,7 @@ namespace Gui {
 
 
 class ConnectionDialog;
+class ProcessManager;
 
 
 struct MessageGroups {
@@ -200,6 +201,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		//! Sets the mainwidget which is used as hint to close the
 		//! splashscreen when the widget is shown
 		void setMainWidget(QWidget*);
+		QWidget *mainWidget();
 
 		void showMessage(const char*) override;
 		void showWarning(const char*) override;
@@ -218,6 +220,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 		QPalette palette() const;
 		void setPalette(const QPalette &pal);
+
+		ProcessManager *processManager();
 
 
 	protected:
@@ -258,6 +262,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		void addObject(const QString &parentID, Seiscomp::DataModel::Object*);
 		void removeObject(const QString &parentID, Seiscomp::DataModel::Object*);
 		void updateObject(const QString &parentID, Seiscomp::DataModel::Object*);
+
+		void processManagerCreated();
 
 
 	public slots:
@@ -340,6 +346,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 		QSocketNotifier    *_signalNotifier;
 		int                 _signalSocketFd[2];
+
+		ProcessManager     *_processManager{nullptr};
 };
 
 

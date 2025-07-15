@@ -1713,7 +1713,7 @@ bool Application::initMessaging() {
 		      _connection->schemaVersion().toString() << ") , incoming messages "
 		      "will not be readable but sending will work.";
 		showWarning(ss.str().c_str());
-		SEISCOMP_WARNING("%s", ss.str().c_str());
+		SEISCOMP_WARNING("%s", ss.str());
 	}
 	else if ( _connection->schemaVersion() < localSchemaVersion ) {
 		stringstream ss;
@@ -1722,7 +1722,7 @@ bool Application::initMessaging() {
 		      _connection->schemaVersion().toString() << ") , not all "
 		      "information can be handled by the server and will be ignored.";
 		showWarning(ss.str().c_str());
-		SEISCOMP_WARNING("%s", ss.str().c_str());
+		SEISCOMP_WARNING("%s", ss.str());
 	}
 
 	if ( _settings.messaging.contentType == "binary" )

@@ -1014,6 +1014,23 @@
 						into single lines.
 						</description>
 					</parameter>
+					<parameter name="showEngineeringValues" type="boolean" default="true">
+						<description>
+						Shows numerical values in the vertical axis and the min/mean
+						values between 0 and 1000 with a unit prefix such as
+						m (milli) or M (mega).
+
+						Supported prefixes are:
+						Q (queta = 10**30), R (ronna = 10**27), Y (yotta = 10**24),
+						Z (zetta = 10**21), E (exa = 10**18), P (peta = 10**15),
+						T (tera = 10**12), G (giga = 10**9), M (mega = 10**6),
+						k (kilo = 10**3),
+						m (milli = 10**-3), µ (micro = 10**-6), n (nano = 10**-9),
+						p (pico = 10**-12), f (femto = 10**-15), a (atto = 10**-18),
+						z (zepto = 10**-21), y (yocto = 10**-24), r (ronto = 10**-27),
+						q (quekto = 10**-30).
+						</description>
+					</parameter>
 					<group name="borders">
 						<parameter name="drawMode" type="string" default="box" values="topline,box,bottomline">
 							<description>

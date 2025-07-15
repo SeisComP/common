@@ -213,6 +213,7 @@ class SC_GUI_API OriginLocatorPlot : public DiagramWidget {
 
 
 class OriginLocatorViewPrivate;
+class ProcessManager;
 
 
 class SC_GUI_API OriginLocatorView : public QWidget {
@@ -388,6 +389,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 
 		void runScript0();
 		void runScript1();
+		void commandStart();
 
 		void evalResultAvailable(const QString &originID,
 		                         const QString &className,
@@ -468,7 +470,6 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void renameArrivals();
 
 		void commitWithOptions(const void *options);
-
 
 	private:
 		OriginLocatorViewPrivate *_d_ptr;

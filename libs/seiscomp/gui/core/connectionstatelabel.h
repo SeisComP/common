@@ -29,8 +29,7 @@
 #include <QPixmap>
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 class SC_GUI_API ConnectionStateLabel : public QLabel {
@@ -41,26 +40,23 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 
 		void setPixmaps(const QPixmap &connected, const QPixmap &disconnected);
 
-
 	public slots:
 		void start(const QString &source);
 		void stop();
 
-
 	signals:
 		void customInfoWidgetRequested(const QPoint &pos);
 
+	protected:
+		void mouseReleaseEvent(QMouseEvent *event) override;
 
 	protected:
-		void mousePressEvent(QMouseEvent *event);
-
-
 		QPixmap _connected;
 		QPixmap _disconnected;
+		bool    _isConnected{false};
 };
 
 
-}
 }
 
 

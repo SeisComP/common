@@ -6,8 +6,8 @@ SET(
 		connectiondialog.cpp
 		connectionstatelabel.cpp
 		flowlayout.cpp
-		fontawesome6.cpp
 		questionbox.cpp
+		icon.cpp
 		infotext.cpp
 		diagramwidget.cpp
 		locator.cpp
@@ -33,6 +33,8 @@ SET(
 		spectrogramrenderer.cpp
 		spectrogramwidget.cpp
 		spectrumwidget.cpp
+		spinninglabel.cpp
+		processmanager.cpp
 )
 
 IF(MACOSX)
@@ -45,10 +47,10 @@ ENDIF(MACOSX)
 
 SET(
 	GUI_CORE_HEADERS
-		fontawesome6.h
 		maps.h
 		messages.h
 		scheme.h
+		icon.h
 		infotext.h
 		locator.h
 		recordpolyline.h
@@ -57,6 +59,7 @@ SET(
 		utils.h
 		tensorrenderer.h
 		spectrogramrenderer.h
+		processmanager.h
 )
 
 SET(
@@ -82,7 +85,9 @@ SET(
 		uncertainties.h
 		spectrogramwidget.h
 		spectrumwidget.h
+		spinninglabel.h
 		optionaldoublespinbox.h
+		processmanager.h
 )
 
 SET(
@@ -96,11 +101,13 @@ SET(
 		uncertainties.ui
 		diagramfilter.ui
 		showplugins.ui
+		processmanager.ui
 )
 
 SET(
 	GUI_CORE_RESOURCES
-		images.qrc
+		core_icons.qrc
+		core_images.qrc
 )
 
 SC_SETUP_GUI_LIB_SUBDIR(GUI_CORE)

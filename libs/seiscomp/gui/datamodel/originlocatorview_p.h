@@ -39,9 +39,7 @@
 #include <seiscomp/gui/datamodel/ui_originlocatorview.h>
 
 
-namespace Seiscomp {
-namespace Gui {
-
+namespace Seiscomp::Gui {
 
 class OriginLocatorViewPrivate {
 	private:
@@ -69,16 +67,16 @@ class OriginLocatorViewPrivate {
 			bool                 newOrigin;
 		};
 
-		Seiscomp::DataModel::DatabaseQuery   *reader;
+		Seiscomp::DataModel::DatabaseQuery   *reader{nullptr};
 		Map::ImageTreePtr                     maptree;
 		::Ui::OriginLocatorView               ui;
-		QTabBar                              *plotTab;
-		OriginLocatorMap                     *map;
+		QTabBar                              *plotTab{nullptr};
+		OriginLocatorMap                     *map{nullptr};
 		OriginLocatorMap                     *toolMap{nullptr};
 		PickerView                           *recordView{nullptr};
-		DiagramWidget                        *residuals;
+		DiagramWidget                        *residuals{nullptr};
 		ArrivalModel                          modelArrivals;
-		QSortFilterProxyModel                *modelArrivalsProxy;
+		QSortFilterProxyModel                *modelArrivalsProxy{nullptr};
 		DataModel::EventPtr                   baseEvent;
 		DataModel::OriginPtr                  currentOrigin;
 		DataModel::OriginPtr                  baseOrigin;
@@ -91,7 +89,7 @@ class OriginLocatorViewPrivate {
 		QStack<OriginMemento>                 undoList;
 		QStack<OriginMemento>                 redoList;
 
-		QTreeWidgetItem                      *unassociatedEventItem;
+		QTreeWidgetItem                      *unassociatedEventItem{nullptr};
 		PickMap                               associatedPicks;
 		PickList                              originPicks;
 		PickSet                               changedPicks;
@@ -118,20 +116,21 @@ class OriginLocatorViewPrivate {
 		int                                   blinkCounter;
 		char                                  blinker;
 		QColor                                blinkColor;
-		QWidget                              *blinkWidget;
+		QWidget                              *blinkWidget{nullptr};
 		QTimer                                blinkTimer;
-		QMenu                                *commitMenu;
-		QAction                              *actionCommitOptions;
+		QMenu                                *commitMenu{nullptr};
+		QAction                              *actionCommitOptions{nullptr};
 
-		DiagramFilterSettingsDialog          *plotFilterSettings;
-		DiagramFilterSettingsDialog::Filter  *plotFilter;
+		DiagramFilterSettingsDialog          *plotFilterSettings{nullptr};
+		DiagramFilterSettingsDialog::Filter  *plotFilter{nullptr};
+
+		QPushButton                          *btnCommandMenu{nullptr};
 
 	friend class OriginLocatorView;
 };
 
 
-}
-}
+} // namespace Seiscomp::Gui
 
 
 #endif

@@ -263,7 +263,7 @@ RecordResampler<T>::RecordResampler(double targetFrequency, double fp,
 	_fp = fp;
 	_fs = fs;
 	_coeffScale = coeffScale;
-	_maxN = 500/_coeffScale;
+	_maxN = 500 / _coeffScale;
 	_lanczosKernelWidth = lanczosWidth;
 
 	_targetRate = targetFrequency;
@@ -341,12 +341,13 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		return nullptr;
 	}
 
-	if ( stage->lastEndTime.valid() ) {
-		double diff = (rec->startTime() - stage->lastEndTime).length();
+	if ( stage->lastEndTime ) {
+		double diff = (rec->startTime() - *stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
-			if ( diff < 0 )
+			if ( diff < 0 ) {
 				// Ignore overlap
 				return nullptr;
+			}
 
 			SEISCOMP_DEBUG("[dec] %s: gap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -372,13 +373,13 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 	T *buffer = stage->buffer.data();
 
 	if ( stage->missingSamples > 0 ) {
-		if ( !stage->startTime.valid() ) {
-			Core::Time firstNewSampleStart = rec->startTime() + Core::TimeSpan(stage->dt*stage->N2);
+		if ( !stage->startTime ) {
+			Core::Time firstNewSampleStart = rec->startTime() + Core::TimeSpan(stage->dt * stage->N2);
 			double targetDt = 1.0 / stage->targetRate;
 			double mod = fmod(firstNewSampleStart.epoch(), targetDt);
 			double skip = targetDt - mod;
 			stage->samplesToSkip = int(skip*stage->sampleRate+0.5);
-			stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->missingSamples+stage->samplesToSkip)-stage->N2-1)*stage->dt+5E-7);
+			stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->missingSamples + stage->samplesToSkip) - stage->N2 - 1) * stage->dt + 5E-7);
 			// To be discussed: should we round to the next mulitple of stage->targetRate?
 		}
 
@@ -409,10 +410,13 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		// Resampling can start now
 		stage->samplesToSkip = 0;
 	}
-	else
+	else {
 		stage->startTime = rec->startTime() + Core::TimeSpan((int(stage->samplesToSkip)-stage->N2-1)*stage->dt+5E-7);
+	}
 
-	if ( !data_len ) return nullptr;
+	if ( !data_len ) {
+		return nullptr;
+	}
 
 	// Ring buffer is filled at this point.
 	Core::SmartPointer< TypedArray<T> > resampled_data;
@@ -432,7 +436,7 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 			}
 
 			if ( !resampled_data ) {
-				startTime = stage->startTime;
+				startTime = *stage->startTime;
 				resampled_data = new TypedArray<T>;
 			}
 
@@ -489,8 +493,9 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 			delete grec;
 			tmp = nrec;
 		}
-		else
+		else {
 			tmp = grec;
+		}
 
 		return tmp;
 	}
@@ -515,8 +520,8 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		return nullptr;
 	}
 
-	if ( stage->lastEndTime.valid() ) {
-		double diff = (rec->startTime() - stage->lastEndTime).length();
+	if ( stage->lastEndTime ) {
+		double diff = (rec->startTime() - *stage->lastEndTime).length();
 		if ( fabs(diff) > stage->dt*0.5 ) {
 			SEISCOMP_DEBUG("[ups] %s: gap/overlap of %f secs -> reset processing",
 			               rec->streamID().c_str(), diff);
@@ -538,7 +543,9 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 	}
 
 	size_t data_len = (size_t)ar->size();
-	if ( data_len == 0 ) return nullptr;
+	if ( data_len == 0 ) {
+		return nullptr;
+	}
 
 	const T *data = ar->typedData();
 	T *buffer = stage->buffer.data();
@@ -552,25 +559,29 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		data_len -= toCopy;
 		stage->missingSamples -= toCopy;
 
-		if ( !stage->startTime.valid() )
+		if ( !stage->startTime ) {
 			stage->startTime = rec->startTime();
+		}
 
-		startTime = stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
+		startTime = *stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
 
-		stage->startTime -= Core::TimeSpan(toCopy * stage->dt);
+		*stage->startTime -= Core::TimeSpan(toCopy * stage->dt);
 
 		// Still samples missing and no more data available, return
 		if ( stage->missingSamples > 0 ) return nullptr;
 	}
-	else
-		startTime = stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
+	else {
+		startTime = *stage->startTime + Core::TimeSpan(stage->dt * stage->N2);
+	}
 
 	// Ring buffer is filled at this point.
 	Core::SmartPointer< TypedArray<T> > resampled_data;
 
-	if ( !data_len ) return nullptr;
+	if ( !data_len ) {
+		return nullptr;
+	}
 
-	stage->startTime += endTime - rec->startTime();
+	*stage->startTime += endTime - rec->startTime();
 
 	resampled_data = new TypedArray<T>;
 
@@ -585,8 +596,10 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 			size_t bi = stage->front;
 
 			for ( ; a <= stage->width; ++a, ++bi ) {
-				if ( bi == stage->buffer.size() ) bi -= stage->buffer.size();
-				weightedSum += buffer[bi]*Lanczos(xi-a,stage->width);
+				if ( bi == stage->buffer.size() ) {
+					bi -= stage->buffer.size();
+				}
+				weightedSum += buffer[bi] * Lanczos(xi - a, stage->width);
 			}
 
 			xi += stage->downRatio;

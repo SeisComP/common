@@ -46,7 +46,6 @@ using namespace Seiscomp::Core;
 using namespace Seiscomp::Gui;
 
 
-#define DEFAULT_LABEL_WIDTH    70
 #define CHCK255(x)             ((x)>255?255:((x)<0?0:(x)))
 
 
@@ -530,37 +529,11 @@ void RecordView::setFrameMargin(int margin) {
 void RecordView::setupUi() {
 	qRegisterMetaType<Seiscomp::RecordPtr>("Seiscomp::RecordPtr");
 
-	_labelColumns = 3;
-
-	_selectionMode = NoSelection;
-	_currentItem = nullptr;
-
-	_filter = nullptr;
-	_filterAction = nullptr;
-	_filtering = false;
-	_absTimeAction = nullptr;
-	_labelWidth = DEFAULT_LABEL_WIDTH;
+	_showEngineeringValues = SCScheme.records.showEngineeringValues;
 
 	setFilter(nullptr);
-	setZoomFactor(2.0f);
 
-	_zoomSpot = QPointF(0.5,0.5);
-
-	_defaultRowHeight = 16;
 	_rowHeight = _minRowHeight = _defaultRowHeight;
-	_maxRowHeight = -1;
-	_numberOfRows = -1;
-
-	_minTimeScale = 0.0;
-	_timeScale = 1.0/3.0;
-	_amplScale = 0.;
-
-	_tmin = 0;
-	_tmax = 0;
-	_rowSpacing = 0;
-	_horizontalSpacing = 0;
-	_frames = false;
-	_frameMargin = 0;
 
 	_scrollArea = new RecordScrollArea;
 	_scrollArea->setWidgetResizable(true);
@@ -573,8 +546,10 @@ void RecordView::setupUi() {
 	QWidget* scrollWidget = new ItemWidget(this);
 
 	// Setting up timescale widget
-	if ( !_timeScaleWidget )
+	if ( !_timeScaleWidget ) {
 		_timeScaleWidget = new TimeScale;
+	}
+
 	_timeScaleWidget->setRange(_tmin, 0);
 	_timeScaleWidget->setScale(_timeScale);
 	_timeScaleWidget->setSelected(0, 0);
@@ -642,15 +617,7 @@ void RecordView::setupUi() {
 	scrollWidget->setAutoFillBackground(false);
 	_scrollArea->viewport()->setAutoFillBackground(false);
 
-	_autoInsertItems = true;
-	_alternatingColors = false;
-	_showAllRecords = false;
-	_showRecordBorders = false;
 	_recordBorderDrawMode = SCScheme.records.recordBorders.drawMode;
-	_autoScale = false;
-	_autoMaxScale = false;
-
-	_thread = nullptr;
 
 	connect(&_recordUpdateTimer, SIGNAL(timeout()),
 	        this, SLOT(updateRecords()));
@@ -729,7 +696,7 @@ void RecordView::clearSelection() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
+void RecordView::setTimeWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_mode = TIME_WINDOW;
 	_timeStart = tw.startTime();
 	_timeSpan = tw.endTime() - _timeStart;
@@ -741,7 +708,7 @@ void RecordView::setTimeWindow(const Seiscomp::Core::TimeWindow& tw) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setBufferSize(const Seiscomp::Core::TimeSpan& ts) {
+void RecordView::setBufferSize(const Seiscomp::Core::TimeSpan &ts) {
 	_mode = RING_BUFFER;
 	_timeSpan = ts;
 	applyBufferChange();
@@ -1019,7 +986,9 @@ void RecordView::setAutoInsertItem(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::showAllRecords(bool enable) {
-	if ( _showAllRecords == enable ) return;
+	if ( _showAllRecords == enable ) {
+		return;
+	}
 
 	_showAllRecords = enable;
 
@@ -1038,15 +1007,39 @@ void RecordView::showAllRecords(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::showRecordBorders(bool enable) {
-	if ( _showRecordBorders == enable ) return;
+	if ( _showRecordBorders == enable ) {
+		return;
+	}
 
 	_showRecordBorders = enable;
 
-	foreach (RecordViewItem* item, _items) {
+	foreach (RecordViewItem *item, _items) {
 		item->widget()->showRecordBorders(_showRecordBorders);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void RecordView::showEngineeringValues(bool enable) {
+	if ( _showEngineeringValues == enable ) {
+		return;
+	}
+
+	_showEngineeringValues = enable;
+
+	foreach (RecordViewItem *item, _items) {
+		item->widget()->showEngineeringValues(_showEngineeringValues);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setRecordBorderDrawMode(RecordWidget::RecordBorderDrawMode mode) {
 	if ( _recordBorderDrawMode == mode ) return;
 
@@ -1504,6 +1497,7 @@ bool RecordView::addItem(RecordViewItem* item) {
 	item->widget()->setScale(_timeScale);
 	item->widget()->enableFiltering(isFilterEnabled());
 	item->widget()->showAllRecords(_showAllRecords);
+	item->widget()->showEngineeringValues(_showEngineeringValues);
 	item->widget()->setAutoMaxScale(_autoMaxScale);
 	item->label()->setFixedWidth(_labelWidth);
 
@@ -2122,6 +2116,7 @@ bool RecordView::copyState(RecordView* from) {
 
 	setAlternatingRowColors(from->_alternatingColors);
 	showAllRecords(from->_showAllRecords);
+	showEngineeringValues(from->_showEngineeringValues);
 	setAutoInsertItem(from->_autoInsertItems);
 	setAutoScale(from->_autoScale);
 
@@ -2804,7 +2799,7 @@ int RecordView::findByText(int row, const QRegularExpression &regexp, int startR
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::sortByMarkerTime(const QString& markerText) {
+void RecordView::sortByMarkerTime(const QString &markerText) {
 	list< pair<double, RecordViewItem*> > distlist;
 
 	foreach (RecordViewItem* item, _items) {
@@ -2846,7 +2841,7 @@ void RecordView::sortRows(list<pair<T, RecordViewItem*>>& l) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordView::setAlignment(const Seiscomp::Core::Time& time) {
+void RecordView::setAlignment(const Seiscomp::Core::Time &time) {
 	_alignment = time;
 	foreach (RecordViewItem* item, _items) {
 		RecordWidget* w = item->widget();
@@ -3017,8 +3012,9 @@ void RecordView::setRubberBandSelectionEnabled(bool e, SelectionOperation filter
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setFilter(RecordWidget::Filter *filter) {
-	if ( _filter )
+	if ( _filter ) {
 		delete _filter;
+	}
 
 	_filter = filter;
 
@@ -3036,13 +3032,15 @@ void RecordView::setFilter(RecordWidget::Filter *filter) {
 		emit progressFinished();
 	}
 	else {
-		foreach (RecordViewItem* item, _items)
+		foreach (RecordViewItem* item, _items) {
 			//item->widget()->setFilterParameters(order, lowerFreq, upperFreq);
 			item->widget()->setFilter(_filter);
+		}
 	}
 
-	if ( wasActive )
+	if ( wasActive ) {
 		_recordUpdateTimer.start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

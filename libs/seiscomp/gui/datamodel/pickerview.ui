@@ -535,6 +535,7 @@
    </attribute>
    <addaction name="actionPickP"/>
    <addaction name="actionPickS"/>
+   <addaction name="actionAddStations"/>
   </widget>
   <widget class="QToolBar" name="toolBarFilter">
    <property name="windowTitle">

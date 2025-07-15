@@ -47,6 +47,9 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "17.0.0"   0x110000
+   - Added Seiscomp::Gui::Scheme::records.showEngineeringValues
+   - Added Seiscomp::Gui::RecordView::showEngineeringValues(bool)
+   - Added Seiscomp::Gui::RecordWidget::showEngineeringValues(bool)
    - Added Seiscomp::Client::Application::handleSOH
    - Added Seiscomp::Processing::MagnitudeProcessor_MLc _c6, _H and _minDepth.
    - Added Seiscomp::Processing::AmplitudeProcessor::parameter

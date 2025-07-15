@@ -579,7 +579,7 @@ bool WaveformProcessor::parseSaturationThreshold(const Settings &settings,
 			if ( isPercent )
 				value *= 0.01;
 
-			if ( value < 0 || value > 1 ) {
+			if ( (value < 0) || (value > 1) ) {
 				SEISCOMP_ERROR("Number of relative value out of range [0,1]: %f", value);
 				return false;
 			}
@@ -602,11 +602,10 @@ bool WaveformProcessor::parseSaturationThreshold(const Settings &settings,
 void WaveformProcessor::setupStream(double fsamp) {
 	const Core::TimeSpan minGapThres(2 * 1.0 / fsamp);
 	if ( minGapThres > _gapThreshold ) {
-		SEISCOMP_WARNING("Gap threshold smaller than twice the sampling interval: "
-		                 "%ld.%06lds < %ld.%06lds. Resetting gap threshold.",
-		                 _gapThreshold.seconds(), _gapThreshold.microseconds(),
-		                 minGapThres.seconds(), minGapThres.microseconds());
-
+		SEISCOMP_INFO("Gap threshold smaller than twice the sampling interval: "
+		              "%ld.%06lds < %ld.%06lds. Resetting gap threshold.",
+		              _gapThreshold.seconds(), _gapThreshold.microseconds(),
+		              minGapThres.seconds(), minGapThres.microseconds());
 		_gapThreshold = minGapThres;
 	}
 

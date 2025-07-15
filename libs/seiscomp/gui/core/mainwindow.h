@@ -70,17 +70,20 @@ DEFINE_SMARTPOINTER(Object);
 
 namespace Gui {
 
+class ProcessManager;
+class ProcessStateLabel;
+
 
 class SC_GUI_API MainWindow : public QMainWindow {
 	Q_OBJECT
 
 	public:
-		MainWindow(QWidget * parent = 0, Qt::WindowFlags = Qt::WindowFlags());
+		MainWindow(QWidget *parent = 0, Qt::WindowFlags = Qt::WindowFlags());
 		~MainWindow();
 
 
 	public:
-		bool restoreGeometry(const QByteArray & geometry);
+		bool restoreGeometry(const QByteArray &geometry);
 
 
 	protected:
@@ -89,10 +92,10 @@ class SC_GUI_API MainWindow : public QMainWindow {
 		void dropEvent(QDropEvent *);
 		void dragEnterEvent(QDragEnterEvent *);
 
-		virtual void toggledFullScreen(bool);
+		virtual void toggledFullScreen(bool isFullScreen);
 
 	signals:
-		void fullScreenToggled(bool);
+		void fullScreenToggled(bool isFullScreen);
 
 	public slots:
 		void showNormal();
@@ -112,20 +115,22 @@ class SC_GUI_API MainWindow : public QMainWindow {
 		void inspectConfig();
 		void inspectInventory();
 
-		void showNotification(NotificationLevel level, QString message);
+		static void showNotification(const NotificationLevel &level,
+		                             const QString &message);
 
 
 	protected:
-		QAction* _actionToggleFullScreen;
-		QAction* _actionShowSettings;
+		QAction *_actionToggleFullScreen{nullptr};
+		QAction *_actionShowSettings{nullptr};
 
 
 	private:
-		QMenuBar *_menuBar;
-		QWidget *_menuWidget;
-		ConnectionStateLabel *_connectionState;
+		QMenuBar *_menuBar{nullptr};
+		QWidget *_menuWidget{nullptr};
+		ConnectionStateLabel *_connectionState{nullptr};
+		ProcessStateLabel *_processState{nullptr};
 		QString _title;
-		bool _showFullscreen;
+		bool _showFullscreen{false};
 };
 
 

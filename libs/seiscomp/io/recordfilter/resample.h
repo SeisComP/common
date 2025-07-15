@@ -123,16 +123,16 @@ class SC_SYSTEM_CORE_API RecordResampler : public RecordResamplerBase {
 			size_t front;
 
 			// Time of front of ring buffer
-			Seiscomp::Core::Time startTime;
+			OPT(Seiscomp::Core::Time) startTime;
 
 			// End time of last record
-			Seiscomp::Core::Time lastEndTime;
+			OPT(Seiscomp::Core::Time) lastEndTime;
 
 			void reset() {
 				missingSamples = buffer.size();
 				front = 0;
-				startTime = Seiscomp::Core::Time();
-				lastEndTime = Seiscomp::Core::Time();
+				startTime = Core::None;
+				lastEndTime = Core::None;
 			}
 		};
 
