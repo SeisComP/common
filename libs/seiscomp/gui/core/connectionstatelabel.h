@@ -53,6 +53,7 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 	protected:
 		QPixmap _connected;
 		QPixmap _disconnected;
+		bool    _isConnected{false};
 };
 
 
