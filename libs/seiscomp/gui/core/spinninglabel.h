@@ -18,41 +18,57 @@
  ***************************************************************************/
 
 
+#ifndef SEISCOMP_GUI_CORE_SPINNINGLABEL_H
+#define SEISCOMP_GUI_CORE_SPINNINGLABEL_H
 
-#ifndef SEISCOMP_GUI_CONNECTIONSTATELABEL_H
-#define SEISCOMP_GUI_CONNECTIONSTATELABEL_H
-
-
-#include <seiscomp/gui/qt.h>
 
 #include <QLabel>
-#include <QPixmap>
+#include <QVariantAnimation>
+
+#include <seiscomp/gui/qt.h>
 
 
 namespace Seiscomp::Gui {
 
 
-class SC_GUI_API ConnectionStateLabel : public QLabel {
+class SC_GUI_API SpinningLabel : public QLabel {
 	Q_OBJECT
+	Q_PROPERTY(int duration READ duration WRITE setDuration)
+	Q_PROPERTY(QEasingCurve easingCurve READ easingCurve WRITE setEasingCurve)
 
 	public:
-		ConnectionStateLabel(QWidget *parent = nullptr, Qt::WindowFlags f = {});
+		explicit SpinningLabel(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 
-		void setPixmaps(const QPixmap &connected, const QPixmap &disconnected);
+	public:
+		/**
+		 * @brief Starts the spinning animation if the label is shown or visible.
+		 * This is the default state.
+		 */
+		void start();
 
-	public slots:
-		void start(const QString &source);
+		/**
+		 * @brief Stops the spinning animation if the label is shown or visible.
+		 */
 		void stop();
 
-	signals:
-		void customInfoWidgetRequested(const QPoint &pos);
+		int duration() const;
+		void setDuration(int msecs);
+
+		QEasingCurve easingCurve() const;
+		void setEasingCurve(const QEasingCurve &easing);
 
 	protected:
-		void mousePressEvent(QMouseEvent *event);
+		void showEvent(QShowEvent *event) override;
+		void hideEvent(QHideEvent *event) override;
+		void paintEvent(QPaintEvent *event) override;
+
+	private slots:
+		void animationChanged(const QVariant &);
 
 	protected:
-		QPixmap _connected;
-		QPixmap _disconnected;
+		QVariantAnimation _animation;
+		double            _angle;
+		bool              _shouldRun{true};
 };
 
 

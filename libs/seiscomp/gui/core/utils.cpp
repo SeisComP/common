@@ -23,7 +23,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/compat.h>
-#include <seiscomp/gui/core/fontawesome6.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/utils.h>
 
 #include <cstdio>
@@ -571,13 +571,8 @@ QIcon iconFromURL(const QString &url) {
 		return QIcon(urlParsed.path());
 	}
 
-	if ( scheme == "fa" || scheme == "far" ||
-	     scheme == "fa6" || scheme == "far6" ) {
-		return FontAwesome6::icon(FontAwesome6::code(urlParsed.path()));
-	}
-
-	if ( scheme == "fas" || scheme == "fas6" ) {
-		return FontAwesome6::iconSolid(FontAwesome6::code(urlParsed.path()));
+	if ( scheme == "sc" ) {
+		return icon(urlParsed.path());
 	}
 
 	return QIcon(url);

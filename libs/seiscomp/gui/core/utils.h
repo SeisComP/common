@@ -27,6 +27,7 @@
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/defs.h>
 
+#include <QIcon>
 #include <QWidget>
 
 #include <string_view>

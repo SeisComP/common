@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/sc">
+        <file>icons/check.svg</file>
+        <file>icons/database.svg</file>
+        <file>icons/question.svg</file>
+        <file>icons/unlink.svg</file>
+        <file>icons/wifi.svg</file>
+        <file>icons/wifi-off.svg</file>
+        <file>icons/wrench.svg</file>
+    </qresource>
+</RCC>

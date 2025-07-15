@@ -20,6 +20,9 @@
 
 
 #include <seiscomp/gui/core/connectionstatelabel.h>
+#include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/utils.h>
+
 #include <QMouseEvent>
 #include <QDateTime>
 
@@ -34,8 +37,8 @@ namespace Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
  : QLabel(parent, f) {
-	_connected.load(":images/images/connect_established.png");
-	_disconnected.load(":images/images/connect_no.png");
+	_connected = icon("wifi").pixmap(fontMetrics().height());
+	_disconnected = icon("wifi-off").pixmap(fontMetrics().height());
 	setPixmap(_disconnected);
 	setFrameStyle(QFrame::NoFrame);
 }
