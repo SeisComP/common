@@ -27,6 +27,7 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/inspector.h>
+#include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/database.h>
 #include <seiscomp/math/filter.h>
@@ -126,6 +127,14 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	QPainter paint(&img);
 	svg.render(&paint);
 	setWindowIcon(QIcon(QPixmap::fromImage(img)));
+
+	// create process state toolbar widget once process manager is created
+	connect(SCApp, &Gui::Application::processManagerCreated, [this]() {
+		if ( !_processState && statusBar() ) {
+			_processState = new ProcessStateLabel(SCApp->processManager(), this);
+			statusBar()->addPermanentWidget(_processState);
+		}
+	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

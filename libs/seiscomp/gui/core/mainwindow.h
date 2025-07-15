@@ -70,6 +70,9 @@ DEFINE_SMARTPOINTER(Object);
 
 namespace Gui {
 
+class ProcessManager;
+class ProcessStateLabel;
+
 
 class SC_GUI_API MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -117,14 +120,15 @@ class SC_GUI_API MainWindow : public QMainWindow {
 
 
 	protected:
-		QAction* _actionToggleFullScreen;
-		QAction* _actionShowSettings;
+		QAction *_actionToggleFullScreen{nullptr};
+		QAction *_actionShowSettings{nullptr};
 
 
 	private:
 		QMenuBar *_menuBar{nullptr};
 		QWidget *_menuWidget{nullptr};
 		ConnectionStateLabel *_connectionState{nullptr};
+		ProcessStateLabel *_processState{nullptr};
 		QString _title;
 		bool _showFullscreen{false};
 };

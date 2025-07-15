@@ -24,6 +24,7 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/aboutwidget.h>
+#include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/messaging/connection.h>
@@ -507,6 +508,16 @@ void Application::setMainWidget(QWidget* w) {
 	if ( _splash )
 		_splash->finish(w);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QWidget *Application::mainWidget() {
+	return _mainWidget;
+}
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1868,6 +1879,20 @@ QPalette Application::palette() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setPalette(const QPalette &pal) {
 	_app->setPalette(pal);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ProcessManager *Application::processManager() {
+	if ( !_processManager ) {
+		_processManager = new ProcessManager(_mainWidget);
+		emit processManagerCreated();
+	}
+
+	return _processManager;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

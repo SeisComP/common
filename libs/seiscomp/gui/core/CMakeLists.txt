@@ -34,6 +34,7 @@ SET(
 		spectrogramwidget.cpp
 		spectrumwidget.cpp
 		spinninglabel.cpp
+		processmanager.cpp
 )
 
 IF(MACOSX)
@@ -58,6 +59,7 @@ SET(
 		utils.h
 		tensorrenderer.h
 		spectrogramrenderer.h
+		processmanager.h
 )
 
 SET(
@@ -85,6 +87,7 @@ SET(
 		spectrumwidget.h
 		spinninglabel.h
 		optionaldoublespinbox.h
+		processmanager.h
 )
 
 SET(
@@ -98,6 +101,7 @@ SET(
 		uncertainties.ui
 		diagramfilter.ui
 		showplugins.ui
+		processmanager.ui
 )
 
 SET(

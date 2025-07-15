@@ -23,45 +23,50 @@
 #include "originlocatorview.h"
 #include "originlocatorview_p.h"
 
-#include <seiscomp/gui/datamodel/ui_originlocatorview.h>
-#include <seiscomp/gui/core/ui_diagramfilter.h>
-
-#include <seiscomp/gui/core/compat.h>
-#include <seiscomp/gui/core/diagramwidget.h>
-#include <seiscomp/gui/core/locator.h>
-#include <seiscomp/gui/core/gradient.h>
-#include <seiscomp/gui/core/application.h>
-#include <seiscomp/gui/core/utils.h>
-#include <seiscomp/gui/core/tensorrenderer.h>
-#include <seiscomp/gui/datamodel/pickerview.h>
-#include <seiscomp/gui/datamodel/importpicks.h>
-#include <seiscomp/gui/datamodel/locatorsettings.h>
-#include <seiscomp/gui/datamodel/publicobjectevaluator.h>
-#include <seiscomp/gui/datamodel/origindialog.h>
-#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/client/inventory.h>
-#include <seiscomp/io/recordinput.h>
-#include <seiscomp/datamodel/comment.h>
-#include <seiscomp/datamodel/event.h>
-#include <seiscomp/datamodel/origin.h>
+
+#include <seiscomp/core/exceptions.h>
+#include <seiscomp/core/system.h>
 #include <seiscomp/datamodel/arrival.h>
+#include <seiscomp/datamodel/comment.h>
+#include <seiscomp/datamodel/databasearchive.h>
+#include <seiscomp/datamodel/event.h>
 #include <seiscomp/datamodel/focalmechanism.h>
-#include <seiscomp/datamodel/pick.h>
-#include <seiscomp/datamodel/station.h>
-#include <seiscomp/datamodel/stationmagnitude.h>
+#include <seiscomp/datamodel/journalentry.h>
 #include <seiscomp/datamodel/magnitude.h>
 #include <seiscomp/datamodel/momenttensor.h>
-#include <seiscomp/datamodel/databasearchive.h>
-#include <seiscomp/datamodel/utils.h>
-#include <seiscomp/datamodel/journalentry.h>
+#include <seiscomp/datamodel/origin.h>
+#include <seiscomp/datamodel/pick.h>
 #include <seiscomp/datamodel/publicobjectcache.h>
-#include <seiscomp/seismology/regions.h>
+#include <seiscomp/datamodel/station.h>
+#include <seiscomp/datamodel/stationmagnitude.h>
+#include <seiscomp/datamodel/utils.h>
+#include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
+#include <seiscomp/gui/core/diagramwidget.h>
+#include <seiscomp/gui/core/gradient.h>
+#include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/locator.h>
+#include <seiscomp/gui/core/processmanager.h>
+#include <seiscomp/gui/core/mainwindow.h>
+#include <seiscomp/gui/core/tensorrenderer.h>
+#include <seiscomp/gui/core/ui_diagramfilter.h>
+#include <seiscomp/gui/core/utils.h>
+#include <seiscomp/gui/datamodel/importpicks.h>
+#include <seiscomp/gui/datamodel/locatorsettings.h>
+#include <seiscomp/gui/datamodel/origindialog.h>
+#include <seiscomp/gui/datamodel/pickerview.h>
+#include <seiscomp/gui/datamodel/publicobjectevaluator.h>
+#include <seiscomp/gui/datamodel/ui_originlocatorview.h>
+#include <seiscomp/gui/datamodel/utils.h>
+#include <seiscomp/io/exporter.h>
+#include <seiscomp/io/recordinput.h>
+#include <seiscomp/logging/log.h>
 #include <seiscomp/math/conversions.h>
 #include <seiscomp/math/geo.h>
-#include <seiscomp/utils/misc.h>
-#include <seiscomp/core/system.h>
-#include <seiscomp/logging/log.h>
 #include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/seismology/regions.h>
+#include <seiscomp/utils/misc.h>
 
 #include "ui_mergeorigins.h"
 #include "ui_renamephases.h"
@@ -69,6 +74,7 @@
 #include "ui_originlocatorview_comment.h"
 
 #include <QMessageBox>
+#include <QPair>
 #include <QProgressDialog>
 #include <QToolTip>
 #include <QWidget>
@@ -227,6 +233,11 @@ struct CommitOptions {
 	}
 };
 
+struct CommandAction {
+	QString command;
+	QString exporter;
+	bool showProcess{false};
+};
 
 QString toString(const CommitOptions &opts) {
 	QString s = QString(
@@ -278,11 +289,79 @@ double diagramFloor(double value, double range) {
 	return floor(value * pow10) / pow10;
 }
 
+template <int N>
+struct QProcessWriter : streambuf {
+
+	QProcessWriter(QProcess *p) : process(p) {
+		setp(std::begin(out), std::end(out));
+	}
+
+	~QProcessWriter() override {
+		do_sync();
+	}
+	QProcessWriter(const QProcessWriter&) = default;
+	QProcessWriter& operator=(const QProcessWriter&) = default;
+	QProcessWriter(QProcessWriter&&) noexcept = default;
+	QProcessWriter& operator=(QProcessWriter&&) noexcept = default;
+
+	int overflow(int c) override {
+		if ( traits_type::eq_int_type(traits_type::eof(), c)) {
+			return traits_type::eof();
+		}
+
+		if ( sync() ) {
+			return traits_type::eof();
+		}
+
+		traits_type::assign(*pptr(), traits_type::to_char_type(c));
+		pbump(1);
+
+		return traits_type::not_eof(c);
+	}
+
+	streamsize xsputn(const char* s, streamsize n) override {
+		if ( !process->isWritable() ) {
+			return 0;
+		}
+
+		qint64 res = process->write(s, n);
+//		cerr << "put bytes: " << n << ", res: " << res << endl;
+		if ( res < 0 ) {
+			return 0;
+		}
+
+		written += res;
+		return res;
+	}
+
+	int do_sync() {
+//		cerr << "sync" << endl;
+		if ( pbase() == pptr() || !process->isWritable() ) {
+			return 0;
+		}
+
+		qint64 bytes = pptr() - pbase();
+		qint64 res = process->write(pbase(), bytes);
+		written += res;
+//		cerr << "sync bytes: " << bytes << ", res: " << res << endl;
+		// Reset put pointer
+		setp(std::begin(out), std::end(out));
+		return res == bytes ? 0 : 1;
+	}
+
+	int sync() override {
+		return do_sync();
+	}
+
+	QProcess *process;
+	char      out[N]{0};
+	qint64    written{0};
+};
+
 } // ns anonymous
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 namespace {
 
@@ -1640,7 +1719,6 @@ QString wfid2qstr(const DataModel::WaveformStreamID &id) {
 typedef std::pair<std::string, std::string> PickPhase;
 typedef std::pair<PickPtr, int> PickWithFlags;
 typedef std::map<PickPhase, PickWithFlags> PickedPhases;
-
 
 }
 
@@ -3017,7 +3095,7 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.tableArrivals->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-	QAction *action = new QAction(this);
+	auto *action = new QAction(this);
 	action->setShortcut(Qt::Key_Escape);
 	connect(action, SIGNAL(triggered()),
 	        SC_D.ui.tableArrivals, SLOT(clearSelection()));
@@ -3458,6 +3536,112 @@ void OriginLocatorView::init() {
 	}
 
 	resetCustomLabels();
+
+	// Add command menu to menu bar if actions have been defined
+	std::vector<std::string> cmdMenuProfiles;
+	try {
+		cmdMenuProfiles = SCApp->configGetStrings("olv.commandMenuActions");
+	}
+	catch ( ... ) {}
+
+	if ( cmdMenuProfiles.empty() ) {
+		return;
+	}
+
+	auto *env = Environment::Instance();
+	auto *commandMenu = new QMenu(this);
+
+	// Add button next to the last custom button which opens a context menu
+	// with more command options
+	SC_D.btnCommandMenu = new QPushButton("Run...", this);
+	SC_D.btnCommandMenu->setIcon(icon("rocket-launch"));
+	SC_D.btnCommandMenu->setToolTip("Open custom command menu");
+	SC_D.btnCommandMenu->setEnabled(false);
+
+	auto *layout = static_cast<QBoxLayout*>(SC_D.ui.frameActionsLeft->layout());
+	int insertPos = layout->indexOf(SC_D.ui.btnCustom1);
+	layout->insertWidget(insertPos + 1, SC_D.btnCommandMenu);
+
+	// Connect the button's clicked signal to show the context menu
+	auto *btn = SC_D.btnCommandMenu;
+	connect(btn, &QPushButton::clicked, [commandMenu, btn]() {
+		commandMenu->exec(btn->mapToGlobal(btn->rect().bottomLeft()));
+	});
+
+	auto cfgGetString = [](const string &path) {
+		try {
+			return SCApp->configGetString(path);
+		}
+		catch ( Seiscomp::Config::OptionNotFoundException &) {}
+
+		return string();
+	};
+
+	// Create menu
+	for ( const auto &profile : cmdMenuProfiles) {
+		// dash is used as separator
+		if ( profile == "-") {
+			commandMenu->addSeparator();
+			continue;
+		}
+
+		string prefix = "olv.commandMenuAction." + profile + ".";
+
+		CommandAction ca;
+
+		// command
+		ca.command = QString::fromStdString(env->absolutePath(
+		                      cfgGetString(prefix + "command")));
+		if ( ca.command.isEmpty() ) {
+			SEISCOMP_WARNING("No command defined for %s", prefix);
+			continue;
+		}
+
+		// exporter - may be empty
+		ca.exporter = QString::fromStdString(
+		                    cfgGetString(prefix + "exporter"));
+
+		// show process
+		try {
+			ca.showProcess = SCApp->configGetBool(prefix + "showProcess");
+		}
+		catch ( Seiscomp::Config::OptionNotFoundException &) {}
+
+
+		// text
+		auto text = cfgGetString(prefix + "text");
+		auto *action = new QAction(text.c_str(), this);
+
+		action->setData(QVariant::fromValue(ca));
+
+		// icon
+		auto icon = cfgGetString(prefix + "icon");
+		if ( !icon.empty() ) {
+			action->setIcon(iconFromURL(QString::fromStdString(
+			                                env->absolutePath(icon))));
+		}
+
+		// key sequence
+		auto key = cfgGetString(prefix + "keySequence");
+		if ( !key.empty() ) {
+			action->setShortcut(QString::fromStdString(key));
+		}
+
+		// tool tip
+		auto toolTip = cfgGetString(prefix + "toolTip");
+		if ( !toolTip.empty() ) {
+			action->setToolTip(QString::fromStdString(toolTip));
+			connect(action, &QAction::hovered, [action]() {
+				QToolTip::showText(QCursor::pos(), action->toolTip());
+			});
+		}
+
+		commandMenu->addAction(action);
+		addAction(action);
+
+		connect(action, &QAction::triggered,
+		        this, &OriginLocatorView::commandStart);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3466,10 +3650,7 @@ void OriginLocatorView::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OriginLocatorView::~OriginLocatorView() {
-	if ( SC_D.plotFilter ) {
-		delete SC_D.plotFilter;
-	}
-
+	delete SC_D.plotFilter;
 	delete _d_ptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3492,7 +3673,7 @@ void OriginLocatorView::locatorChanged(const QString &text) {
 	set<string> models;
 	Seismology::LocatorInterface::IDList profiles = SC_D.locator->profiles();
 	for ( Seismology::LocatorInterface::IDList::iterator it = profiles.begin();
-	      it != profiles.end(); ++it ) {
+		  it != profiles.end(); ++it ) {
 		if ( models.find(*it) != models.end() ) continue;
 		SC_D.ui.cbLocatorProfile->addItem(it->c_str());
 	}
@@ -3520,16 +3701,16 @@ void OriginLocatorView::locatorChanged(const QString &text) {
 void OriginLocatorView::configureLocator() {
 	if ( !SC_D.locator ) {
 		QMessageBox::critical(this, "Locator settings",
-		                      "No locator selected.");
+							  "No locator selected.");
 		return;
 	}
 
 	Seismology::LocatorInterface::IDList params = SC_D.locator->parameters();
 	if ( params.empty() ) {
 		QMessageBox::information(this, "Locator settings",
-		                         QString("%1 does not provide any "
-		                                 "parameters to adjust.")
-		                         .arg(SC_D.locator->name().c_str()));
+								 QString("%1 does not provide any "
+										 "parameters to adjust.")
+								 .arg(SC_D.locator->name().c_str()));
 		return;
 	}
 
@@ -3625,11 +3806,18 @@ void OriginLocatorView::runScript(const QString &script, const QString &name) {
 	}
 	SEISCOMP_DEBUG("Executing script %s", cmd.toStdString().c_str());
 
-	// start as background process w/o any communication channel
-	if ( !QT_PROCESS_STARTDETACHED(cmd) ) {
-		SEISCOMP_ERROR("Failed executing script %s", cmd.toStdString().c_str());
-		QMessageBox::warning(this, name, tr("Can't execute script"));
+	auto *manager = SCApp->processManager();
+	auto *process = manager->createProcess(name);
+
+	SEISCOMP_DEBUG("Starting command: %s", cmd.toStdString());
+	QT_PROCESS_START(process, cmd);
+
+	// wait up to 5 seconds for process start, will block GUI
+	if ( !manager->waitForStarted(process) ) {
+		return;
 	}
+
+	process->closeWriteChannel();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3648,6 +3836,83 @@ void OriginLocatorView::runScript0() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::runScript1() {
 	runScript(SC_D.script1.c_str(), SC_D.ui.btnCustom1->text());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::commandStart() {
+	if ( !SC_D.currentOrigin ) {
+		SEISCOMP_DEBUG("Can't run command, no origin available");
+		return;
+	}
+
+	auto *action = qobject_cast<QAction *>(sender());
+	if ( !action ) {
+		SEISCOMP_ERROR("Method commandStart() not triggered by QAction");
+		return;
+	}
+
+	auto ca = action->data().value<CommandAction>();
+	if ( ca.command.isEmpty() ) {
+		SEISCOMP_ERROR("No command string found in QAction::data()");
+		return;
+	}
+
+	IO::ExporterPtr exp;
+	if ( !ca.exporter.isEmpty() ) {
+		exp = IO::ExporterFactory::Create(ca.exporter.toStdString().c_str());
+		if ( !exp ) {
+			SEISCOMP_ERROR("Could not create exporter: %s",
+						   ca.exporter.toStdString());
+			return;
+		}
+		// exp->setFormattedOutput();
+		// exp->setIndent();
+	}
+
+	auto originID = QString::fromStdString(SC_D.currentOrigin->publicID());
+	auto command = QString("%1 %2").arg(ca.command, originID);
+	if ( SC_D.baseEvent ) {
+		auto eventID = QString::fromStdString(SC_D.baseEvent->publicID());
+		command = QString("%1 %2").arg(command, eventID);
+	}
+
+	auto *manager = SCApp->processManager();
+	auto *process = manager->createProcess(action->text(), action->toolTip(),
+	                                       action->icon());
+
+	SEISCOMP_DEBUG("Starting command: %s", command.toStdString());
+	QT_PROCESS_START(process, command);
+	process->waitForStarted();
+
+	// check if process could be started
+	if ( !manager->waitForStarted(process) ) {
+		return;
+	}
+
+	if ( exp ) {
+		auto msg = QString("Writing Origin to stdin of process, exporter: %1")
+		           .arg(ca.exporter);
+		SEISCOMP_DEBUG(msg.toStdString());
+		manager->log(process, msg);
+
+		QProcessWriter<4096> writer(process);
+		if ( !exp->write(&writer, SC_D.currentOrigin.get()) ) {
+			auto error = QString("Could not writing Origin to stdin of "
+			                     "process, exporter: %s");
+			manager->log(process, error);
+			QMessageBox::critical(this, "Error", error, QMessageBox::Ok);
+			return;
+		}
+	}
+
+	process->closeWriteChannel();
+	if ( ca.showProcess ) {
+		SCApp->processManager()->show();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3709,7 +3974,7 @@ void OriginLocatorView::residualsSelected() {
 
 		// Restore default arrival usage
 		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(selectedIds[i], USED),
-		                           1, RestoreRole);
+								   1, RestoreRole);
 
 		startIndex = selectedIds[i]+1;
 	}
@@ -3731,9 +3996,9 @@ void OriginLocatorView::hoverArrival(int id) {
 	}
 	else {
 		QString txt = QString("%1.%2-%3")
-		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString())
-		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, STATION), Qt::DisplayRole).toString())
-		              .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
+					  .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, NETWORK), Qt::DisplayRole).toString())
+					  .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, STATION), Qt::DisplayRole).toString())
+					  .arg(SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, PHASE), Qt::DisplayRole).toString());
 		QString method = SC_D.modelArrivals.data(SC_D.modelArrivals.index(id, METHOD), Qt::DisplayRole).toString();
 
 		if ( !method.isEmpty() ) {
@@ -3771,7 +4036,7 @@ void OriginLocatorView::selectArrival(int id) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::selectStation(const std::string &net,
-                                      const std::string &code) {
+									  const std::string &code) {
 	if ( SC_D.recordView ) SC_D.recordView->selectTrace(net, code);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3809,10 +4074,10 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 	// right
 	qreal maxRight = 360.0;
 	if ( SCScheme.unit.distanceInKM && (
-	         SC_D.plotTab->currentIndex() == PT_DISTANCE ||
-	         SC_D.plotTab->currentIndex() == PT_TRAVELTIME ||
-	         SC_D.plotTab->currentIndex() == PT_MOVEOUT ||
-	         SC_D.plotTab->currentIndex() == PT_POLAR ) ) {
+			 SC_D.plotTab->currentIndex() == PT_DISTANCE ||
+			 SC_D.plotTab->currentIndex() == PT_TRAVELTIME ||
+			 SC_D.plotTab->currentIndex() == PT_MOVEOUT ||
+			 SC_D.plotTab->currentIndex() == PT_POLAR ) ) {
 		maxRight = ceil(Math::Geo::deg2km(maxRight));
 	}
 	if ( rect.right() < maxRight ) {
@@ -3830,7 +4095,7 @@ void OriginLocatorView::adjustResidualsRect(QRectF& rect) {
 
 	// polar and fm plots: fixed values for top/bottom
 	if ( SC_D.plotTab->currentIndex() == PT_POLAR ||
-	     SC_D.plotTab->currentIndex() == PT_FM ) {
+		 SC_D.plotTab->currentIndex() == PT_FM ) {
 		rect.setTop(0);
 		rect.setBottom(360);
 
@@ -3861,8 +4126,8 @@ void OriginLocatorView::plotTabChanged(int tab) {
 
 	auto distanceLabel = []() {
 		return QString("%1 distance (%2)")
-		       .arg(SCScheme.distanceHypocentral ? "Hyp." : "Epi.")
-		       .arg(SCScheme.unit.distanceInKM ? "km" :"°");
+			   .arg(SCScheme.distanceHypocentral ? "Hyp." : "Epi.")
+			   .arg(SCScheme.unit.distanceInKM ? "km" :"°");
 	};
 
 	// Distance / Residual
@@ -3961,8 +4226,8 @@ void OriginLocatorView::changeArrivalEnableState(int id,bool state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::artificialOriginRequested(double lat, double lon,
-                                                  double depth,
-                                                  Seiscomp::Core::Time time) {
+												  double depth,
+												  Seiscomp::Core::Time time) {
 	createArtificialOrigin(QPointF(lon, lat), depth, time, QCursor::pos());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4408,7 +4673,7 @@ void OriginLocatorView::setPickerView(PickerView* picker) {
 	connect(SC_D.recordView, SIGNAL(arrivalEnableStateChanged(int,bool)), this, SLOT(changeArrivalEnableState(int,bool)));
 	connect(SC_D.recordView, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
 	connect(SC_D.recordView, SIGNAL(originCreated(Seiscomp::DataModel::Origin*)),
-	        this, SLOT(setCreatedOrigin(Seiscomp::DataModel::Origin*)));
+			this, SLOT(setCreatedOrigin(Seiscomp::DataModel::Origin*)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4437,15 +4702,15 @@ void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::
 
 					if ( evt ) {
 						QMessageBox::information(this, tr("Event change"),
-						                         tr("The current origin was associated to another event than the current.\n"
-						                            "Event %1 is being loaded.").arg(parentID));
+												 tr("The current origin was associated to another event than the current.\n"
+													"Event %1 is being loaded.").arg(parentID));
 						setBaseEvent(evt.get());
 						emit baseEventSet();
 					}
 					else {
 						QMessageBox::warning(this, tr("Event change"),
-						                     tr("The current origin was associated to another event than the current.\n"
-						                        "Unfortunately event %1 could not be loaded.").arg(parentID));
+											 tr("The current origin was associated to another event than the current.\n"
+												"Unfortunately event %1 could not be loaded.").arg(parentID));
 						emit baseEventRejected();
 					}
 				}
@@ -4575,7 +4840,7 @@ void OriginLocatorView::setBaseEvent(DataModel::Event *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
-                                  bool local) {
+								  bool local) {
 	if ( SC_D.currentOrigin == o ) {
 		if ( SC_D.baseEvent != e )
 			setBaseEvent(e);
@@ -4584,10 +4849,10 @@ bool OriginLocatorView::setOrigin(DataModel::Origin* o, DataModel::Event* e,
 
 	if ( !SC_D.undoList.isEmpty() ) {
 		if ( QMessageBox::question(this, "Show origin",
-		                           tr("You have uncommitted modifications.\n"
-		                              "When setting the new origin your modifications get lost.\n"
-		                              "Do you really want to continue?"),
-		                           QMessageBox::Yes, QMessageBox::No) == QMessageBox::No )
+								   tr("You have uncommitted modifications.\n"
+									  "When setting the new origin your modifications get lost.\n"
+									  "Do you really want to continue?"),
+								   QMessageBox::Yes, QMessageBox::No) == QMessageBox::No )
 			return false;
 	}
 
@@ -4820,7 +5085,7 @@ void OriginLocatorView::updateContent() {
 	SC_D.modelArrivalsProxy->setSourceModel(&SC_D.modelArrivals);
 	SC_D.ui.tableArrivals->setModel(SC_D.modelArrivalsProxy);
 	connect(SC_D.ui.tableArrivals->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)),
-	        this, SLOT(selectRow(const QModelIndex&, const QModelIndex&)));
+			this, SLOT(selectRow(const QModelIndex&, const QModelIndex&)));
 
 	for ( int i = 0; i < ArrivalListColumns::Quantity; ++i ) {
 		SC_D.ui.tableArrivals->setColumnHidden(i, !colVisibility[i]);
@@ -4842,6 +5107,9 @@ void OriginLocatorView::updateContent() {
 		SC_D.ui.cbLocatorProfile->setEnabled(false);
 		SC_D.ui.btnCustom0->setEnabled(false);
 		SC_D.ui.btnCustom1->setEnabled(false);
+		if ( SC_D.btnCommandMenu ) {
+			SC_D.btnCommandMenu->setEnabled(false);
+		}
 		SC_D.map->setOrigin(nullptr);
 		SC_D.residuals->update();
 		return;
@@ -4849,6 +5117,9 @@ void OriginLocatorView::updateContent() {
 
 	SC_D.ui.btnCustom0->setEnabled(true);
 	SC_D.ui.btnCustom1->setEnabled(true);
+	if ( SC_D.btnCommandMenu ) {
+		SC_D.btnCommandMenu->setEnabled(true);
+	}
 
 	if ( SC_D.ui.cbLocator->count() > 1 ) {
 		SC_D.ui.cbLocator->setEnabled(true);
@@ -5151,7 +5422,7 @@ void OriginLocatorView::updateContent() {
 	//SC_D.ui.tableArrivals->resizeColumnsToContents();
 	SC_D.ui.tableArrivals->resizeRowsToContents();
 	SC_D.ui.tableArrivals->sortByColumn(SC_D.ui.tableArrivals->horizontalHeader()->sortIndicatorSection(),
-	                                 SC_D.ui.tableArrivals->horizontalHeader()->sortIndicatorOrder());
+									 SC_D.ui.tableArrivals->horizontalHeader()->sortIndicatorOrder());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5160,7 +5431,7 @@ void OriginLocatorView::updateContent() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
-                                   const Pick *pick, const QColor& c) {
+								   const Pick *pick, const QColor& c) {
 	int id = SC_D.residuals->count();
 
 	SC_D.residuals->addValue(QPointF());
@@ -5295,8 +5566,8 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 	}
 
 	if ( SC_D.residuals->isValueValid(id, PC_DISTANCE) &&
-	     SC_D.residuals->isValueValid(id, PC_AZIMUTH) &&
-	     phase == 'P' && SC_D.currentOrigin ) {
+		 SC_D.residuals->isValueValid(id, PC_AZIMUTH) &&
+		 phase == 'P' && SC_D.currentOrigin ) {
 
 		PlotWidget::PolarityType polarity = PlotWidget::POL_UNSET;
 		if ( !pick ) {
@@ -5414,8 +5685,8 @@ void OriginLocatorView::addPick(Seiscomp::DataModel::Pick* pick) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setStationEnabled(const std::string& networkCode,
-                                          const std::string& stationCode,
-                                          bool state) {
+										  const std::string& stationCode,
+										  bool state) {
 	if ( SC_D.recordView )
 		SC_D.recordView->setStationEnabled(networkCode, stationCode, state);
 }
@@ -5439,7 +5710,7 @@ void OriginLocatorView::importArrivals() {
 
 		if ( !event ) {
 			QMessageBox::critical(this, "ImportPicks::Error",
-			                      "This location has not been associated with an event");
+								  "This location has not been associated with an event");
 			return;
 		}
 	}
@@ -5695,7 +5966,7 @@ void OriginLocatorView::importArrivals() {
 	if ( !merge(sourcePhasesPtr, targetPhasesPtr, true, associateOnly, preferTargetPhases) ) {
 		SEISCOMP_DEBUG("No additional picks to merge");
 		QMessageBox::information(this, "ImportPicks", "There are no additional "
-		                         "streams with picks to merge.");
+								 "streams with picks to merge.");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5705,8 +5976,8 @@ void OriginLocatorView::importArrivals() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
-                              bool checkDuplicates, bool associateOnly,
-                              bool failOnNoNewPhases) {
+							  bool checkDuplicates, bool associateOnly,
+							  bool failOnNoNewPhases) {
 	PickedPhases *sourcePhasesPtr, *targetPhasesPtr;
 	set<string> usedPickIDs;
 
@@ -5731,7 +6002,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		// Do we have the same phase already in the target?
 		if ( checkDuplicates && targetPhasesPtr->find(it->first) != targetPhasesPtr->end() ) {
 			SEISCOMP_INFO("- phase %s for stream %s (already in target)",
-			              it->first.second.c_str(), it->first.first.c_str());
+						  it->first.second.c_str(), it->first.first.c_str());
 			continue;
 		}
 
@@ -5739,16 +6010,16 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		// with current origin
 		if ( usedPickIDs.find(p->publicID()) != usedPickIDs.end() ) {
 			SEISCOMP_INFO("- pick %s as phase %s for stream %s (pick already in target)",
-			              p->publicID().c_str(), it->first.second.c_str(),
-			              it->first.first.c_str());
+						  p->publicID().c_str(), it->first.second.c_str(),
+						  it->first.first.c_str());
 			continue;
 		}
 
 		usedPickIDs.insert(p->publicID());
 
 		SEISCOMP_INFO("+ pick %s as phase %s for stream %s",
-		              p->publicID().c_str(), it->first.second.c_str(),
-		              it->first.first.c_str());
+					  p->publicID().c_str(), it->first.second.c_str(),
+					  it->first.first.c_str());
 
 		PhaseStream ps(it->first);
 		PickWithFlags newPick = newPhases[ps];
@@ -5781,8 +6052,8 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		arrival->setPhase(Phase(it->first.second));
 		org->add(arrival.get());
 		SEISCOMP_DEBUG("! pick %s as phase %s for stream %s with flags %d",
-		               it->second.first->publicID().c_str(), it->first.second.c_str(),
-		               it->first.first.c_str(), it->second.second);
+					   it->second.first->publicID().c_str(), it->first.second.c_str(),
+					   it->first.first.c_str(), it->second.second);
 	}
 
 	for ( NewPhases::iterator it = newPhases.begin(); it != newPhases.end(); ++it ) {
@@ -5792,9 +6063,9 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		ppwf.flags = it->second.second;
 		additionalPicks.push_back(ppwf);
 		SEISCOMP_DEBUG("A pick %s as phase %s for stream %s with flags %d",
-		               it->second.first->publicID().c_str(), it->first.second.c_str(),
-		               wfid2str(it->second.first->waveformID()).c_str(),
-		               it->second.second);
+					   it->second.first->publicID().c_str(), it->first.second.c_str(),
+					   wfid2str(it->second.first->waveformID()).c_str(),
+					   it->second.second);
 	}
 
 	if ( org->arrivalCount() == 0 ) {
@@ -5809,7 +6080,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 			double az, baz, dist;
 			Math::Geo::delazi(org->latitude().value(), org->longitude().value(),
-			                  sloc->latitude(), sloc->longitude(), &dist, &az, &baz);
+							  sloc->latitude(), sloc->longitude(), &dist, &az, &baz);
 
 			arrival->setDistance(dist);
 			arrival->setAzimuth(az);
@@ -5832,8 +6103,8 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 			try {
 				double ttime = SC_D.ttTable.computeTime(arrival->phase().code().c_str(),
-				                      org->latitude().value(), org->longitude().value(), depth,
-				                      sloc->latitude(), sloc->longitude(), elev);
+									  org->latitude().value(), org->longitude().value(), depth,
+									  sloc->latitude(), sloc->longitude(), elev);
 
 				double at = (double)(additionalPicks[i].pick->time().value()-org->time().value());
 				arrival->setTimeResidual(at-ttime);
@@ -5868,7 +6139,7 @@ void OriginLocatorView::showWaveforms() {
 	SC_D.recordView = new PickerView(nullptr, Qt::Window);
 	SC_D.recordView->setDatabase(SC_D.reader);
 	connect(SC_D.recordView, SIGNAL(requestArtificialOrigin(double, double, double, Seiscomp::Core::Time)),
-	        this, SLOT(artificialOriginRequested(double, double, double, Seiscomp::Core::Time)));
+			this, SLOT(artificialOriginRequested(double, double, double, Seiscomp::Core::Time)));
 
 	try {
 		SC_D.recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));
@@ -5905,7 +6176,7 @@ void OriginLocatorView::showWaveforms() {
 
 	/*
 	for ( QVector<QPair<QString,QString> >::const_iterator it = _filters.begin();
-	      it != _filters.end(); ++it ) {
+		  it != _filters.end(); ++it ) {
 		SC_D.recordView->addFilter(it->first, it->second);
 	}
 
@@ -5913,8 +6184,8 @@ void OriginLocatorView::showWaveforms() {
 
 	if ( !SC_D.recordView->setDataSource(_streamURL.c_str()) ) {
 		QMessageBox::information(this, "RecordStream Error",
-		                         QString("Setting recordstream '%1' failed.")
-		                           .arg(_streamURL.c_str()));
+								 QString("Setting recordstream '%1' failed.")
+								   .arg(_streamURL.c_str()));
 		delete SC_D.recordView;
 		SC_D.recordView = nullptr;
 		return;
@@ -5949,7 +6220,7 @@ void OriginLocatorView::relocate() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate(std::vector<PhasePickWithFlags>* additionalPicks,
-                                 bool associateOnly, bool replaceExistingPhases) {
+								 bool associateOnly, bool replaceExistingPhases) {
 	relocate(SC_D.currentOrigin.get(), additionalPicks, associateOnly, replaceExistingPhases);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5959,9 +6230,9 @@ void OriginLocatorView::relocate(std::vector<PhasePickWithFlags>* additionalPick
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate(DataModel::Origin *org,
-                                 std::vector<PhasePickWithFlags>* additionalPicks,
-                                 bool associateOnly, bool replaceExistingPhases,
-                                 bool useArrivalTable) {
+								 std::vector<PhasePickWithFlags>* additionalPicks,
+								 bool associateOnly, bool replaceExistingPhases,
+								 bool useArrivalTable) {
 	OriginPtr oldOrigin;
 	OriginPtr origin;
 
@@ -6118,7 +6389,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 			// associate
 			if ( !associateOnly && additionalPicks ) {
 				QMessageBox::critical(this, "Relocation error",
-				       QString("Relocating failed. The new picks are going to be inserted with zero weight.\n%1").arg(e.what()));
+					   QString("Relocating failed. The new picks are going to be inserted with zero weight.\n%1").arg(e.what()));
 				relocate(org, additionalPicks, true, replaceExistingPhases, useArrivalTable);
 			}
 			else
@@ -6264,7 +6535,7 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 			// Pick already exists
 			if ( itp.second == false ) {
 				SEISCOMP_DEBUG("Ignoring pick %s from Origin %s: pick already added to merge list",
-				               ar->pickID().c_str(), o->publicID().c_str());
+							   ar->pickID().c_str(), o->publicID().c_str());
 				continue;
 			}
 
@@ -6306,11 +6577,11 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setLocalAmplitudes(Seiscomp::DataModel::Origin *org,
-                                           AmplitudeSet *amps, StringSet *ampIDs) {
+										   AmplitudeSet *amps, StringSet *ampIDs) {
 	if ( org != SC_D.currentOrigin ) return;
 
 	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
-	      it != SC_D.changedAmplitudes.end(); ++it ) {
+		  it != SC_D.changedAmplitudes.end(); ++it ) {
 		if ( ampIDs->find(it->first->publicID()) != ampIDs->end() )
 			amps->insert(*it);
 	}
@@ -6333,7 +6604,7 @@ void OriginLocatorView::computeMagnitudes() {
 	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
 		emit magnitudesAdded(SC_D.currentOrigin.get(), SC_D.baseEvent.get());
 		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
-		               SC_D.localOrigin, false);
+					   SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6349,7 +6620,7 @@ void OriginLocatorView::magnitudeRemoved(const QString &id, Seiscomp::DataModel:
 
 	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
 		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
-		               SC_D.localOrigin, false);
+					   SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6494,9 +6765,9 @@ void OriginLocatorView::createArtificialOrigin() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-                                              const QPoint &dialogPos) {
+											  const QPoint &dialogPos) {
 	createArtificialOrigin(epicenter, SC_D.pickerConfig.defaultDepth,
-	                       Core::Time::UTC(), dialogPos);
+						   Core::Time::UTC(), dialogPos);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -6505,9 +6776,9 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-                                               double depth,
-                                               Seiscomp::Core::Time time,
-                                               const QPoint &dialogPos) {
+											   double depth,
+											   Seiscomp::Core::Time time,
+											   const QPoint &dialogPos) {
 	OriginDialog dialog(this);
 	try {
 		if ( SCApp->configGetBool("olv.artificialOriginAdvanced") ) {
@@ -6516,9 +6787,9 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 			// build list of available magnitude types
 			QStringList magList;
 			Processing::MagnitudeProcessorFactory::ServiceNames *names =
-			        Processing::MagnitudeProcessorFactory::Services();
+					Processing::MagnitudeProcessorFactory::Services();
 			for ( Processing::MagnitudeProcessorFactory::ServiceNames::const_iterator it = names->begin();
-			      it != names->end(); ++it) {
+				  it != names->end(); ++it) {
 				magList << it->c_str();
 			}
 			dialog.setMagTypes(magList);
@@ -6637,7 +6908,7 @@ void OriginLocatorView::editComment() {
 
 	if ( oldComment != dlg.ui.editComment->toPlainText() ) {
 		sendJournal(SC_D.baseEvent->publicID(), "EvOpComment",
-		            dlg.ui.editComment->toPlainText().toStdString());
+					dlg.ui.editComment->toPlainText().toStdString());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6763,13 +7034,13 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	// intersect the picks in the origin with the already tracked
 	// manual created picks
 	for ( PickSet::iterator it = SC_D.changedPicks.begin();
-	      it != SC_D.changedPicks.end(); ++it ) {
+		  it != SC_D.changedPicks.end(); ++it ) {
 		if ( originPicks.find(it->first) == originPicks.end() ) continue;
 		pickCommitList.push_back(*it);
 	}
 
 	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
-	      it != SC_D.changedAmplitudes.end(); ++it ) {
+		  it != SC_D.changedAmplitudes.end(); ++it ) {
 		amplitudeCommitList.push_back(it->first);
 	}
 
@@ -6825,8 +7096,8 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		emit updatedOrigin(SC_D.currentOrigin.get());
 	else
 		emit committedOrigin(SC_D.currentOrigin.get(),
-		                     associate?SC_D.baseEvent.get():nullptr,
-		                     pickCommitList, amplitudeCommitList);
+							 associate?SC_D.baseEvent.get():nullptr,
+							 pickCommitList, amplitudeCommitList);
 
 	if ( !ignoreDefaultEventType && SC_D.baseEvent && SC_D.defaultEventType ) {
 		// Check if event type changed
@@ -6906,7 +7177,7 @@ void OriginLocatorView::customCommit() {
 	}
 	else {
 		QMessageBox::critical(this, "Internal Error",
-		                      tr("No options connected with commit button"));
+							  tr("No options connected with commit button"));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6918,10 +7189,10 @@ void OriginLocatorView::customCommit() {
 void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	if ( SC_D.localOrigin ) {
 		QMessageBox::critical(this, "Commit",
-		                      "The origin this focal mechanism uses as "
-		                      "trigger is not yet committed.\n"
-		                      "Commit the origin before committing the "
-		                      "focal mechanism.");
+							  "The origin this focal mechanism uses as "
+							  "trigger is not yet committed.\n"
+							  "Commit the origin before committing the "
+							  "focal mechanism.");
 		return;
 	}
 
@@ -6929,7 +7200,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	OriginPtr derived;
 	if ( withMT && SC_D.currentOrigin ) {
 		OriginDialog dialog(SC_D.currentOrigin->longitude().value(),
-		                    SC_D.currentOrigin->latitude().value(), this);
+							SC_D.currentOrigin->latitude().value(), this);
 		try { dialog.setDepth(SC_D.currentOrigin->depth().value()); }
 		catch ( ValueException &e ) {}
 		dialog.setTime(SC_D.currentOrigin->time().value());
@@ -7019,7 +7290,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
-		                             derived?derived.get():nullptr);
+									 derived?derived.get():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7159,9 +7430,9 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	if ( !SC_D.baseEvent || (!options.forceEventAssociation && isLocalOrigin) ) {
 		cerr << "Wait for association" << endl;
 		QProgressDialog progress("Origin has not been associated with an event yet.\n"
-		                         "Waiting for event association ...\n"
-		                         "Hint: scevent should run",
-		                         "Cancel", 0, 0);
+								 "Waiting for event association ...\n"
+								 "Hint: scevent should run",
+								 "Cancel", 0, 0);
 		progress.setAutoClose(true);
 		progress.setWindowModality(Qt::ApplicationModal);
 		connect(this, SIGNAL(baseEventSet()), &progress, SLOT(accept()));
@@ -7348,8 +7619,8 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DataModel::Notifier *
 OriginLocatorView::createJournal(const std::string &objectID,
-                                 const std::string &action,
-                                 const std::string &params) {
+								 const std::string &action,
+								 const std::string &params) {
 	/*
 	if ( _updateLocalEPInstance ) {
 		NotifierPtr notifier;
@@ -7392,8 +7663,8 @@ OriginLocatorView::createJournal(const std::string &objectID,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::sendJournal(const std::string &objectID,
-                                    const std::string &action,
-                                    const std::string &params) {
+									const std::string &action,
+									const std::string &params) {
 	NotifierPtr n = createJournal(objectID, action, params);
 	NotifierMessagePtr nm = new NotifierMessage;
 	nm->attach(n.get());
@@ -7696,8 +7967,8 @@ void OriginLocatorView::deleteSelectedArrivals() {
 		int row = SC_D.modelArrivalsProxy->mapToSource(idx).row();
 		if ( row >= (int)SC_D.currentOrigin->arrivalCount() ) {
 			cerr << "Delete arrivals: invalid idx " << row
-			     << ": only " << SC_D.currentOrigin->arrivalCount() << " available"
-			     << endl;
+				 << ": only " << SC_D.currentOrigin->arrivalCount() << " available"
+				 << endl;
 			continue;
 		}
 
@@ -7724,7 +7995,7 @@ void OriginLocatorView::deleteSelectedArrivals() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::activateSelectedArrivals(Seismology::LocatorInterface::Flags flags,
-                                                 bool activate) {
+												 bool activate) {
 	if ( SC_D.ui.tableArrivals->selectionModel() == nullptr )
 		return;
 
@@ -7788,20 +8059,20 @@ void OriginLocatorView::renameArrivals() {
 	QList<QListWidgetItem*> sourceItems = dlg.ui.listSourcePhases->selectedItems();
 	if ( sourceItems.empty() ) {
 		QMessageBox::information(this, "Rename arrivals",
-		                         "No source phases selected: nothing to do.");
+								 "No source phases selected: nothing to do.");
 		return;
 	}
 
 	QList<QListWidgetItem*> targetItems = dlg.ui.listTargetPhase->selectedItems();
 	if ( targetItems.empty() ) {
 		QMessageBox::information(this, "Rename arrivals",
-		                         "No target phase selected: nothing to do.");
+								 "No target phase selected: nothing to do.");
 		return;
 	}
 
 	if ( targetItems.count() > 1 ) {
 		QMessageBox::critical(this, "Rename arrivals",
-		                      "Internal error: More than one target phase selected.");
+							  "Internal error: More than one target phase selected.");
 		return;
 	}
 
@@ -7854,9 +8125,9 @@ void OriginLocatorView::dataChanged(const QModelIndex& topLeft, const QModelInde
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::evalResultAvailable(const QString &oid,
-                                            const QString &className,
-                                            const QString &script,
-                                            const QString &result) {
+											const QString &className,
+											const QString &script,
+											const QString &result) {
 	if ( !SC_D.currentOrigin || SC_D.currentOrigin->publicID() != oid.toStdString() ) {
 		return;
 	}
@@ -7878,9 +8149,9 @@ void OriginLocatorView::evalResultAvailable(const QString &oid,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::evalResultError(const QString &oid,
-                                        const QString &className,
-                                        const QString &script,
-                                        int error) {
+										const QString &className,
+										const QString &script,
+										int error) {
 	if ( !SC_D.currentOrigin || SC_D.currentOrigin->publicID() != oid.toStdString() ) {
 		return;
 	}
@@ -7904,8 +8175,8 @@ void OriginLocatorView::evalResultError(const QString &oid,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::evaluateOrigin(Seiscomp::DataModel::Origin *org,
-                                       Seiscomp::DataModel::Event *,
-                                       bool localOrigin, bool) {
+									   Seiscomp::DataModel::Event *,
+									   bool localOrigin, bool) {
 	QStringList scripts;
 	for ( auto it = SC_D.scriptLabelMap.begin(); it != SC_D.scriptLabelMap.end(); ++it )
 		scripts << it.key();
@@ -7916,7 +8187,7 @@ void OriginLocatorView::evaluateOrigin(Seiscomp::DataModel::Origin *org,
 	}
 	else {
 		PublicObjectEvaluator::Instance().prepend(this, org->publicID().c_str(),
-		                                          org->typeInfo(), scripts);
+												  org->typeInfo(), scripts);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -7925,8 +8196,8 @@ void OriginLocatorView::evaluateOrigin(Seiscomp::DataModel::Origin *org,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // ns Seiscomp::Gui
 
 
 Q_DECLARE_METATYPE(CommitOptions)
+Q_DECLARE_METATYPE(CommandAction)
