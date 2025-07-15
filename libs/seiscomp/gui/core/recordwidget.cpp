@@ -3127,6 +3127,8 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 				for ( int i = 0; i < 2; ++i ) {
 					int j = i ^ (stream->filtering?1:0);
+					if ( !stream->traces[i].visible ) continue;
+
 					stream->traces[i].dyMin = stream->traces[i].dOffset + minAmpl[j];
 					stream->traces[i].dyMax = stream->traces[i].dOffset + maxAmpl[j];
 				}
