@@ -1289,10 +1289,10 @@ bool RecordWidget::setRecordFilter(int slot, const Filter *filter) {
 
 	if ( stream->records[Stream::Filtered] && stream->ownFilteredRecords ) {
 		delete stream->records[Stream::Filtered];
-		stream->records[Stream::Filtered] = nullptr;
-		stream->traces[Stream::Filtered].dirtyData = true;
 	}
 
+	stream->records[Stream::Filtered] = nullptr;
+	stream->traces[Stream::Filtered].dirtyData = true;
 	stream->traces[Stream::Filtered].status = QString();
 
 	if ( stream->records[Stream::Raw] && !stream->records[Stream::Raw]->empty() ) {
