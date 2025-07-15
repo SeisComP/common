@@ -25,6 +25,7 @@
 
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/inspector.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/database.h>
@@ -80,7 +81,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	_actionShowSettings->setObjectName(QString::fromUtf8("showSettings"));
 	_actionShowSettings->setShortcut(QApplication::translate("MainWindow", "F2", 0));
 	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &connection...", 0));
-
+	_actionShowSettings->setIcon(icon("wifi"));
 	_actionShowSettings->setEnabled(SCApp->isMessagingEnabled() || SCApp->isDatabaseEnabled());
 
 	connect(_actionToggleFullScreen, SIGNAL(triggered(bool)), this, SLOT(toggleFullScreen()));
@@ -216,6 +217,9 @@ void MainWindow::showEvent(QShowEvent *e) {
 	if ( !statusBar() ) return;
 
 	_connectionState = new ConnectionStateLabel(statusBar());
+	connect(_connectionState, &ConnectionStateLabel::customInfoWidgetRequested,
+	        [](const QPoint &pos) { SCApp->showSettings(); } );
+
 	statusBar()->addPermanentWidget(_connectionState);
 
 	onChangedConnection();
