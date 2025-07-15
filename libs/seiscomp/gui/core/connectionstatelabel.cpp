@@ -27,8 +27,7 @@
 #include <QDateTime>
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -104,5 +103,4 @@ void ConnectionStateLabel::mousePressEvent(QMouseEvent *event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // namespace Seiscomp::Gui

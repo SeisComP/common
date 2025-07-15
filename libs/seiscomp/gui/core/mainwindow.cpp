@@ -51,8 +51,7 @@ using namespace Seiscomp::Communication;
 using namespace Seiscomp::DataModel;
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -62,9 +61,7 @@ namespace Gui {
 MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
  : QMainWindow(parent, flags)
 {
-	_connectionState = nullptr;
 	_title = SCApp->name().c_str();
-	_showFullscreen = false;
 
 	setWindowTitle(_title);
 
@@ -74,13 +71,13 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 
 	_actionToggleFullScreen = new QAction(this);
 	_actionToggleFullScreen->setObjectName(QString::fromUtf8("toggleFS"));
-	_actionToggleFullScreen->setShortcut(QApplication::translate("MainWindow", "F11", 0));
-	_actionToggleFullScreen->setText(QApplication::translate("MainWindow", "Toggle fullscreen", 0));
+	_actionToggleFullScreen->setShortcut(QApplication::translate("MainWindow", "F11", nullptr));
+	_actionToggleFullScreen->setText(QApplication::translate("MainWindow", "Toggle fullscreen", nullptr));
 
 	_actionShowSettings = new QAction(this);
 	_actionShowSettings->setObjectName(QString::fromUtf8("showSettings"));
-	_actionShowSettings->setShortcut(QApplication::translate("MainWindow", "F2", 0));
-	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &connection...", 0));
+	_actionShowSettings->setShortcut(QApplication::translate("MainWindow", "F2", nullptr));
+	_actionShowSettings->setText(QApplication::translate("MainWindow", "Configure &connection...", nullptr));
 	_actionShowSettings->setIcon(icon("wifi"));
 	_actionShowSettings->setEnabled(SCApp->isMessagingEnabled() || SCApp->isDatabaseEnabled());
 
@@ -90,39 +87,41 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	addAction(_actionToggleFullScreen);
 	addAction(_actionShowSettings);
 
-	QAction *inspectConfig = new QAction(this);
+	auto *inspectConfig = new QAction(this);
 	inspectConfig->setObjectName(QString::fromUtf8("inspectConfig"));
-	inspectConfig->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+C", 0));
-	inspectConfig->setText(QApplication::translate("MainWindow", "Inspect &configmodule...", 0));
+	inspectConfig->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+C", nullptr));
+	inspectConfig->setText(QApplication::translate("MainWindow", "Inspect &configmodule...", nullptr));
 
-	QAction *inspectInventory = new QAction(this);
+	auto *inspectInventory = new QAction(this);
 	inspectInventory->setObjectName(QString::fromUtf8("inspectInventory"));
-	inspectInventory->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+I", 0));
-	inspectInventory->setText(QApplication::translate("MainWindow", "Inspect &inventory...", 0));
+	inspectInventory->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+I", nullptr));
+	inspectInventory->setText(QApplication::translate("MainWindow", "Inspect &inventory...", nullptr));
 
 	addAction(inspectConfig);
 	addAction(inspectInventory);
 
-	connect(inspectConfig, SIGNAL(triggered(bool)),
-	        this, SLOT(inspectConfig()));
+	connect(inspectConfig, &QAction::triggered,
+	        this, &MainWindow::inspectConfig);
 
-	connect(inspectInventory, SIGNAL(triggered(bool)),
-	        this, SLOT(inspectInventory()));
+	connect(inspectInventory, &QAction::triggered,
+	        this, &MainWindow::inspectInventory);
 
-	connect(SCApp, SIGNAL(connectionEstablished()),
-	        this, SLOT(connectionEstablished()));
+	connect(SCApp, &Application::connectionEstablished,
+	        this, &MainWindow::connectionEstablished);
 
-	connect(SCApp, SIGNAL(connectionLost()),
-	        this, SLOT(connectionLost()));
+	connect(SCApp, &Application::connectionLost,
+	        this, &MainWindow::connectionLost);
 
-	connect(SCApp, SIGNAL(showNotification(NotificationLevel, QString)),
-	        this, SLOT(showNotification(NotificationLevel, QString)));
+	connect(SCApp, &Application::showNotification,
+	        this, &MainWindow::showNotification);
 
 	setAcceptDrops(true);
 
 	QSvgRenderer svg(QString(":/images/images/seiscomp-logo.svg"));
 	long dim = Math::Filtering::next_power_of_2(fontMetrics().height() * 2);
-	if ( dim < 64 ) dim = 64;
+	if ( dim < 64 ) {
+		dim = 64;
+	}
 	QImage img(dim, dim, QImage::Format_ARGB32);
 	QPainter paint(&img);
 	svg.render(&paint);
@@ -161,9 +160,9 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::dropEvent(QDropEvent *event) {
 	if ( event->mimeData()->hasFormat("text/plain") ) {
-		PublicObject *po = PublicObject::Find(event->mimeData()->data("text/plain").toStdString());
+		auto *po = PublicObject::Find(event->mimeData()->data("text/plain").toStdString());
 		if ( po ) {
-			Inspector *w = new Inspector(this, Qt::Tool);
+			auto *w = new Inspector(this, Qt::Tool);
 			w->setAttribute(Qt::WA_DeleteOnClose);
 			w->setObject(po);
 			w->show();
@@ -202,7 +201,9 @@ void MainWindow::paintEvent(QPaintEvent *e) {
 void MainWindow::showEvent(QShowEvent *e) {
 	QMainWindow::showEvent(e);
 
-	if ( _connectionState ) return;
+	if ( _connectionState ) {
+		return;
+	}
 
 	if ( SCApp ) {
 		SCApp->settings().beginGroup(objectName());
@@ -211,10 +212,13 @@ void MainWindow::showEvent(QShowEvent *e) {
 		SCApp->settings().endGroup();
 	}
 
-	if ( _showFullscreen != isFullScreen() )
+	if ( _showFullscreen != isFullScreen() ) {
 		toggleFullScreen();
+	}
 
-	if ( !statusBar() ) return;
+	if ( !statusBar() ) {
+		return;
+	}
 
 	_connectionState = new ConnectionStateLabel(statusBar());
 	connect(_connectionState, &ConnectionStateLabel::customInfoWidgetRequested,
@@ -237,13 +241,15 @@ void MainWindow::showNormal() {
 	_showFullscreen = false;
 	QMainWindow::showNormal();
 	toggledFullScreen(false);
-	fullScreenToggled(false);
+	emit fullScreenToggled(false);
 
-	if ( menuBar() && !SCScheme.showMenu )
+	if ( menuBar() && !SCScheme.showMenu ) {
 		menuBar()->setVisible(false);
+	}
 
-	if ( statusBar() && !SCScheme.showStatusBar )
+	if ( statusBar() && !SCScheme.showStatusBar ) {
 		statusBar()->setVisible(false);
+	}
 
 #ifdef MACOSX
 	Mac::addFullscreen(this);
@@ -259,13 +265,15 @@ void MainWindow::showFullScreen() {
 	_showFullscreen = true;
 	QMainWindow::showFullScreen();
 	toggledFullScreen(true);
-	fullScreenToggled(true);
+	emit fullScreenToggled(true);
 
-	if ( menuBar() && !SCScheme.showMenu )
+	if ( menuBar() && !SCScheme.showMenu ) {
 		menuBar()->setVisible(false);
+	}
 
-	if ( statusBar() && !SCScheme.showStatusBar )
+	if ( statusBar() && !SCScheme.showStatusBar ) {
 		statusBar()->setVisible(false);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -274,10 +282,12 @@ void MainWindow::showFullScreen() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::toggleFullScreen() {
-	if ( isFullScreen() )
+	if ( isFullScreen() ) {
 		showNormal();
-	else
+	}
+	else {
 		showFullScreen();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -286,16 +296,18 @@ void MainWindow::toggleFullScreen() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::setTitle(QString t) {
-	_title = t;
+	_title = std::move(t);
 
 	if ( SCApp->connection() ) {
 		QString title = _title + "@" + SCApp->messagingURL().c_str();
-		if ( SCApp->isReadOnlyMessaging() )
+		if ( SCApp->isReadOnlyMessaging() ) {
 			title += " (read-only)";
+		}
 		setWindowTitle(title);
 	}
-	else
+	else {
 		setWindowTitle(_title);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -355,7 +367,7 @@ void MainWindow::onChangedConnection() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MainWindow::toggledFullScreen(bool) {}
+void MainWindow::toggledFullScreen(bool /*isFullScreen*/) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -363,9 +375,11 @@ void MainWindow::toggledFullScreen(bool) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::inspectConfig() {
-	if ( !SCApp->configModule() ) return;
+	if ( !SCApp->configModule() ) {
+		return;
+	}
 
-	Inspector *w = new Inspector(this, Qt::Tool);
+	auto *w = new Inspector(this, Qt::Tool);
 	w->setAttribute(Qt::WA_DeleteOnClose);
 	w->setObject(Client::ConfigDB::Instance()->config());
 	w->show();
@@ -377,9 +391,11 @@ void MainWindow::inspectConfig() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::inspectInventory() {
-	if ( !Client::Inventory::Instance()->inventory() ) return;
+	if ( !Client::Inventory::Instance()->inventory() ) {
+		return;
+	}
 
-	Inspector *w = new Inspector(this, Qt::Tool);
+	auto *w = new Inspector(this, Qt::Tool);
 	w->setAttribute(Qt::WA_DeleteOnClose);
 	w->setObject(Client::Inventory::Instance()->inventory());
 	w->show();
@@ -390,7 +406,8 @@ void MainWindow::inspectInventory() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MainWindow::showNotification(NotificationLevel level, QString message) {
+void MainWindow::showNotification(const NotificationLevel &level,
+                                  const QString &message) {
 	switch ( level ) {
 		default:
 		case NL_INFO:
@@ -411,5 +428,4 @@ void MainWindow::showNotification(NotificationLevel level, QString message) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
+} // namespace Seiscomp::Gui
