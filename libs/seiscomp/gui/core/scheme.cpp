@@ -433,6 +433,7 @@ void Scheme::fetch() {
 	READ_INT(records.lineWidth);
 	READ_BOOL(records.antiAliasing);
 	READ_BOOL(records.optimize);
+	READ_BOOL(records.showEngineeringValues);
 
 	try {
 		string mode;
