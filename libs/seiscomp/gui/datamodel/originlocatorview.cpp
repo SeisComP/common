@@ -3400,9 +3400,9 @@ void OriginLocatorView::init() {
 	catch ( ... ) {}
 
 	// Commit bags
-	auto profiles = SCApp->configuration().findSymbols("olv.customCommits.", "enable", true);
+	auto profiles = SCApp->configuration().findSymbols("olv.customCommits.", "enable");
 	for ( const auto &profile : profiles ) {
-		QLayout *toolBarLayout = SC_D.ui.frameActionsRight->layout();
+		auto *toolBarLayout = SC_D.ui.frameActionsRight->layout();
 		string prefix = profile + ".";
 
 		CommitOptions customOptions;
@@ -3427,8 +3427,9 @@ void OriginLocatorView::init() {
 
 		try {
 			EventTypeCertainty etc;
-			if ( etc.fromString(SCApp->configGetString(prefix + "eventTypeCertainty")) )
+			if ( etc.fromString(SCApp->configGetString(prefix + "eventTypeCertainty")) ) {
 				customOptions.eventTypeCertainty = etc;
+			}
 			else {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1eventTypeCertainty': %2")
@@ -3442,10 +3443,12 @@ void OriginLocatorView::init() {
 		try {
 			EvaluationStatus stat;
 			string strStat = SCApp->configGetString(prefix + "originStatus");
-			if ( strStat.empty() )
+			if ( strStat.empty() ) {
 				customOptions.originStatus = OPT(EvaluationStatus)();
-			else if ( stat.fromString(strStat) )
+			}
+			else if ( stat.fromString(strStat) ) {
 				customOptions.originStatus = OPT(EvaluationStatus)(stat);
+			}
 			else {
 				QMessageBox::critical(this, "Error",
 				                      QString("Invalid '%1originStatus': %2")
@@ -3471,7 +3474,7 @@ void OriginLocatorView::init() {
 		}
 		catch ( ... ) {}
 
-		QToolButton *button = new QToolButton(SC_D.ui.toolButtonGroupBox);
+		auto *button = new QToolButton(SC_D.ui.toolButtonGroupBox);
 
 		try {
 			button->setText(SCApp->configGetString(prefix + "label").c_str());
@@ -3481,7 +3484,7 @@ void OriginLocatorView::init() {
 		}
 
 		try {
-			QColor col = SCApp->configGetColor(prefix + "color", QColor());
+			auto col = SCApp->configGetColor(prefix + "color", {});
 			if ( col.isValid() ) {
 				QPalette pal = button->palette();
 				pal.setColor(QPalette::Button, col);
@@ -3491,7 +3494,7 @@ void OriginLocatorView::init() {
 		catch ( ...) {}
 
 		try {
-			QColor col = SCApp->configGetColor(prefix + "colorText", QColor());
+			auto col = SCApp->configGetColor(prefix + "colorText", {});
 			if ( col.isValid() ) {
 				QPalette pal = button->palette();
 				pal.setColor(QPalette::ButtonText, col);
@@ -3501,26 +3504,26 @@ void OriginLocatorView::init() {
 		catch ( ...) {}
 
 		customOptions.valid = true;
-		button->setProperty("customCommit", QVariant::fromValue<CommitOptions>(customOptions));
+		button->setProperty("customCommit",
+		                    QVariant::fromValue<CommitOptions>(customOptions));
 
 		try {
-			if ( SCApp->configGetBool(prefix + "tooltip") )
+			if ( SCApp->configGetBool(prefix + "tooltip") ) {
 				button->setToolTip(toString(customOptions));
+			}
 		}
 		catch ( ... ) {}
 
 		toolBarLayout->addWidget(button);
-		connect(button, SIGNAL(clicked()), this, SLOT(customCommit()));
+		connect(button, &QAbstractButton::clicked,
+		        this, &OriginLocatorView::customCommit);
 	}
 
 	resetCustomLabels();
 
 	// Add command menu to menu bar if actions have been defined
-	std::vector<std::string> cmdMenuProfiles;
-	try {
-		cmdMenuProfiles = SCApp->configGetStrings("olv.commandMenuActions");
-	}
-	catch ( ... ) {}
+	auto cmdMenuProfiles = SCApp->configuration().findSymbols(
+	                           "olv.commandMenuAction.", "enable");
 
 	if ( cmdMenuProfiles.empty() ) {
 		return;
@@ -3557,56 +3560,48 @@ void OriginLocatorView::init() {
 
 	// Create menu
 	for ( const auto &profile : cmdMenuProfiles) {
-		// dash is used as separator
-		if ( profile == "-") {
-			commandMenu->addSeparator();
-			continue;
-		}
-
-		string prefix = "olv.commandMenuAction." + profile + ".";
-
 		CommandAction ca;
 
 		// command
 		ca.command = QString::fromStdString(env->absolutePath(
-		                      cfgGetString(prefix + "command")));
+		                      cfgGetString(profile + ".command")));
 		if ( ca.command.isEmpty() ) {
-			SEISCOMP_WARNING("No command defined for %s", prefix);
+			SEISCOMP_WARNING("No command defined for %s", profile);
 			continue;
 		}
 
 		// exporter - may be empty
 		ca.exporter = QString::fromStdString(
-		                    cfgGetString(prefix + "exporter"));
+		                    cfgGetString(profile + ".exporter"));
 
 		// show process
 		try {
-			ca.showProcess = SCApp->configGetBool(prefix + "showProcess");
+			ca.showProcess = SCApp->configGetBool(profile + ".showProcess");
 		}
 		catch ( Seiscomp::Config::OptionNotFoundException &) {}
 
 
 		// text
-		auto text = cfgGetString(prefix + "text");
+		auto text = cfgGetString(profile + ".text");
 		auto *action = new QAction(text.c_str(), this);
 
 		action->setData(QVariant::fromValue(ca));
 
 		// icon
-		auto icon = cfgGetString(prefix + "icon");
+		auto icon = cfgGetString(profile + ".icon");
 		if ( !icon.empty() ) {
 			action->setIcon(iconFromURL(QString::fromStdString(
 			                                env->absolutePath(icon))));
 		}
 
 		// key sequence
-		auto key = cfgGetString(prefix + "keySequence");
+		auto key = cfgGetString(profile + ".keySequence");
 		if ( !key.empty() ) {
 			action->setShortcut(QString::fromStdString(key));
 		}
 
 		// tool tip
-		auto toolTip = cfgGetString(prefix + "toolTip");
+		auto toolTip = cfgGetString(profile + ".toolTip");
 		if ( !toolTip.empty() ) {
 			action->setToolTip(QString::fromStdString(toolTip));
 			connect(action, &QAction::hovered, [action]() {
