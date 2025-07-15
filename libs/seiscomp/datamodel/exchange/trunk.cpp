@@ -29,6 +29,12 @@ namespace DataModel {
 
 REGISTER_IMPORTER_INTERFACE(ImporterTrunk, "trunk");
 REGISTER_EXPORTER_INTERFACE(ExporterTrunk, "trunk");
+
+// Aliases for trunk
+using ImporterSCML = ImporterTrunk;
+using ExporterSCML = ExporterTrunk;
+REGISTER_IMPORTER_INTERFACE(ImporterSCML, "scml");
+REGISTER_EXPORTER_INTERFACE(ExporterSCML, "scml");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
