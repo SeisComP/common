@@ -75,7 +75,7 @@ int *iext;
     brack_(n, &x[1], x0, &ileft);
 /*     x0 < x(1) */
     if (ileft < 1) {
-	if (x[2] > x[1]) {
+	if ((*n > 1) && (x[2] > x[1])) {
 	    *fp0 = (f[2] - f[1]) / (x[2] - x[1]);
 	} else {
 	    *fp0 = (float)0.;
@@ -86,7 +86,7 @@ int *iext;
     }
 /*     x0 > x(n) */
     if (ileft >= *n) {
-	if (x[*n] > x[*n - 1]) {
+	if ((*n > 1) && (x[*n] > x[*n - 1])) {
 	    *fp0 = (f[*n] - f[*n - 1]) / (x[*n] - x[*n - 1]);
 	} else {
 	    *fp0 = (float)0.;
