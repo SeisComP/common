@@ -2,7 +2,6 @@
 #include <locsat/loc.h>
 
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 
@@ -208,7 +207,7 @@ L1020:
 				// Slownesses
 				sc_locsat_slocal(
 					*zfoc, radius, stations[i].distance, stations[i].azimuth,
-					ttt->lentbd, ttt->lentbz, &ttt->ntbd[k], &ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
+					ttt->lentbd, ttt->lentbz, ttt->ntbd[k], ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
 					&ttt->tbz[k * ttt->lentbz],
 					&ttt->tbtt[(k * ttt->lentbz) * ttt->lentbd], &dcalx, atx,
 					&iterr
@@ -229,11 +228,12 @@ L1020:
 			/*    &         call ssscor (alat, alon, correct, 1, i, k) */
 			/*           Compute residual = [observed - calculated] datum */
 			/*                              + station correction */
+
 			if ( data[n].idtyp != 1 ) {
 				data[n].residual = data[n].obs - dcalx;
 			}
 			else {
-				data[n].residual = data[n].obs - dcalx - *torg + correct;
+				data[n].residual = data[n].obs - (dcalx + *torg - correct);
 			}
 
 			// If the azimuth residual is > +/- 180.0 deg., change it

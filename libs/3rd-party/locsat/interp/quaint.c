@@ -118,5 +118,6 @@ void sc_locsat_quaint(const int n, const float *x, const float *f, const float x
 
 	// Now do a straight Hermite cubic interpolation bewteen points 2 and 3
 	sc_locsat_hermit(x2, x3, f2, f3, fp2, fp3, x0, f0, fp0);
+
 	*iext = 0;
 }

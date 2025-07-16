@@ -144,9 +144,6 @@ static int setup_tttables(
 	}
 
 	// Read the travel-time tables
-	ttt->num_phases = num_phase_types;
-	ttt->phases = phase_types;
-
 	sc_locsat_rdtttab(
 		ttt->dir, ttt->phases, ttt->num_phases,
 		ttt->lentbd, ttt->lentbz,

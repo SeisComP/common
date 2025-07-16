@@ -400,7 +400,7 @@ void sc_locsat_fstatx(int m, int n, float p, double *x);
 void sc_locsat_slocal(const float zfoc,
                       const float radius, const float delta, const float azi,
                       const int maxtbd, const int maxtbz,
-                      const int *ntbd, const int *ntbz,
+                      const int ntbd, const int ntbz,
                       const float *tbd, const float *tbz, const float *tbtt,
                       float *dcalx, double *atx, int *iterr
                       );
