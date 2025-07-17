@@ -6649,6 +6649,8 @@ void PickerView::announceAmplitude() {
 		double frequency = (upperFrequency - lowerFrequency) * level + lowerFrequency;
 		// TODO: Start playback of frequency
 		qDebug() << frequency;
+                SC_D.ui.labelCurrentAmp->setAccessibleName(QString::number(amplitude));
+                SC_D.ui.labelCurrentAmp->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
