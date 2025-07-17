@@ -122,6 +122,25 @@
                  </property>
                 </widget>
                 </item>
+               <item>
+                <widget class="QProgressBar" name="ampProgress">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number></number>
+                 </property>
+                </widget>
+                </item>
                 <item>
                  <widget class="QLabel" name="labelCode">
                   <property name="sizePolicy">

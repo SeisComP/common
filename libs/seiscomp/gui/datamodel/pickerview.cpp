@@ -6644,13 +6644,19 @@ void PickerView::announceAmplitude() {
 		// and 1 is the upper end. 0.5 is the center of the view but not
 		// necessarily the data offset.
 
-		const double lowerFrequency = 440;
-		const double upperFrequency = 880;
+		const double lowerFrequency = 440.0;
+		const double upperFrequency = 880.0;
 		double frequency = (upperFrequency - lowerFrequency) * level + lowerFrequency;
+		double percent = 100.0 * level;
+		QString format = tr("%1 %").arg(QString::number(percent, 'f', 1));
+
 		// TODO: Start playback of frequency
 		qDebug() << frequency;
                 SC_D.ui.labelCurrentAmp->setAccessibleName(QString::number(frequency));
                 SC_D.ui.labelCurrentAmp->setTextInteractionFlags(Qt::TextBrowserInteraction);
+		SC_D.ui.ampProgress->setRange(0, 100);
+		SC_D.ui.ampProgress->setFormat(format);
+		SC_D.ui.ampProgress->setValue(static_cast<int>(percent));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
