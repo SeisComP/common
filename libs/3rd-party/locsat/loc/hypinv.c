@@ -233,7 +233,7 @@ L1020:
 				data[n].residual = data[n].obs - dcalx;
 			}
 			else {
-				data[n].residual = data[n].obs - *torg - dcalx + correct;
+				data[n].residual = data[n].obs - dcalx - *torg + correct;
 			}
 
 			// If the azimuth residual is > +/- 180.0 deg., change it
