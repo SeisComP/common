@@ -64,7 +64,7 @@ void sc_locsat_hypcut(
 		stations[i].goodslow = FALSE;
 	}
 
-	*ierr = 0;
+	*ierr = LOCSAT_NoError;
 	itimeyet = 0;
 	bestazcross = 80.;
 	fmaxtime = (float)888888.;
@@ -356,7 +356,7 @@ L1130:
 								// here because of illegal code */
 								// i1 = i
 								// i2 = j
-								*ierr = 1;
+								*ierr = LOCSAT_ERR_MaximumIterations;
 								return;
 							}
 						}
@@ -629,7 +629,7 @@ L1290:;
 	}
 	else {
 		// Bail out!
-		*ierr = 1;
+		*ierr = LOCSAT_ERR_MaximumIterations;
 		return;
 	}
 

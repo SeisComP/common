@@ -1225,29 +1225,29 @@ DataModel::Origin *LOCSAT::locate() {
 	//std::cerr << "ierr = locate_event: " <<  ierr << std::endl;
 
 	switch ( ierr ) {
-		case 0:
+		case LOCSAT_NoError:
 			break;
-		case LOCSAT_GLerror1:
+		case LOCSAT_ERR_MaximumIterations:
 			throw LocatorException("Exceeded maximum iterations");
-		case LOCSAT_GLerror2:
+		case LOCSAT_ERR_SolutionDidNotConverge:
 			throw LocatorException("Solution did not converge");
-		case LOCSAT_GLerror3:
+		case LOCSAT_ERR_TooFewUsableData:
 			throw LocatorException("Too few usable data");
-		case LOCSAT_GLerror4:
+		case LOCSAT_ERR_TooFewDataToConstraintOT:
 			throw LocatorException("Too few data to constrain O.T.");
-		case LOCSAT_GLerror5:
+		case LOCSAT_ERR_InsufficientData:
 			throw LocatorException("Insufficient data for a solution");
-		case LOCSAT_GLerror6:
+		case LOCSAT_ERR_SVDCantDecompose:
 			throw LocatorException("SVD routine can't decompose matrix");
-		case LOCSAT_GLerror7:
+		case LOCSAT_ERR_NoObservations:
 			throw LocatorException("No observations to process");
-		case LOCSAT_GLerror8:
+		case LOCSAT_ERR_BadAssocData:
 			throw LocatorException("Bad assoc data");
-		case LOCSAT_GLerror9:
+		case LOCSAT_ERR_BadOriginPointer:
 			throw LocatorException("Bad origin pointer");
-		case LOCSAT_GLerror10:
+		case LOCSAT_ERR_BadOrigErrPointer:
 			throw LocatorException("Bad origerr pointer");
-		case LOCSAT_GLerror11:
+		case LOCSAT_ERR_ArrivalAssocMismatch:
 			throw LocatorException("Mismatch between arrival/assoc");
 		case LOCSAT_TTerror1:
 			throw LocatorException("Null phase_type list");

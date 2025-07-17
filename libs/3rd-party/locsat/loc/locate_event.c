@@ -263,23 +263,23 @@ int sc_locsat_locate_event(
 
 	if ( (num_obs == 0) || (!arrival) ) {
 		/* It is not an error to simply initialize */
-		return LOCSAT_GLerror7;
+		return LOCSAT_ERR_NoObservations;
 	}
 	if ( !assoc ) {
-		return LOCSAT_GLerror8;
+		return LOCSAT_ERR_BadAssocData;
 	}
 	else if ( !origin ) {
-		return LOCSAT_GLerror9;
+		return LOCSAT_ERR_BadOriginPointer;
 	}
 	else if ( !origerr ) {
-		return LOCSAT_GLerror10;
+		return LOCSAT_ERR_BadOrigErrPointer;
 	}
 
 	/* Check alignment of arrival/assoc pointers */
 
 	for ( i = 0; i < num_obs; i++ ) {
 		if ( arrival[i].arid != assoc[i].arid ) {
-			return LOCSAT_GLerror11;
+			return LOCSAT_ERR_ArrivalAssocMismatch;
 		}
 	}
 
@@ -370,7 +370,7 @@ int sc_locsat_locate_event(
 	);
 
 	// Check the return codes from locsat
-	if ( ierr == 0 || ierr == 4 ) {
+	if ( ierr == LOCSAT_NoError || ierr == LOCSAT_ERR_TooFewDataToConstraintOT ) {
 		// Fill in origin/origerr structure
 		origin->lat = lat;
 		origin->lon = lon;
@@ -401,14 +401,14 @@ int sc_locsat_locate_event(
 		origerr->strike = strike;
 
 		// Special case for unconstained origin time
-		if ( ierr == 4 ) {
+		if ( ierr == LOCSAT_ERR_TooFewDataToConstraintOT ) {
 			origin->time = (double)NULL_TIME;
 			origerr->stt = stt;
 			origerr->stx = stx;
 			origerr->sty = sty;
 			origerr->stz = stz;
 		}
-		else if ( ierr == 0 ) {
+		else if ( ierr == LOCSAT_NoError ) {
 			origin->time = (double)torg + time_offset;
 		}
 
