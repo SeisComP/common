@@ -565,6 +565,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 
 	private:
+		void announceAmplitude();
 		void figureOutTravelTimeTable();
 		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
 

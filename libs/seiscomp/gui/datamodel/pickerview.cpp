@@ -6571,11 +6571,85 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 		}
 	}
 
-	if ( !SC_D.recordView->currentItem() ) return;
+	if ( !SC_D.recordView->currentItem() ) {
+		return;
+	}
 
 	SC_D.recordView->currentItem()->widget()->blockSignals(true);
 	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
 	SC_D.recordView->currentItem()->widget()->blockSignals(false);
+
+	if ( true ) {
+		announceAmplitude();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::announceAmplitude() {
+	bool gotAmplitude = false;
+	double amplitude;
+
+	auto seq =
+		SC_D.currentRecord->isFilteringEnabled()
+			?
+			SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+			:
+			SC_D.currentRecord->records(SC_D.currentSlot);
+
+	if ( seq ) {
+		auto it = seq->lowerBound(SC_D.currentRecord->cursorPos());
+		if ( it != seq->end() ) {
+			auto rec = *it;
+			if ( rec->data() ) {
+				int pos = static_cast<int>(static_cast<double>(SC_D.currentRecord->cursorPos() - rec->startTime()) * rec->samplingFrequency());
+				auto dArray = DoubleArray::ConstCast(rec->data());
+				if ( dArray ) {
+					if ( (pos >= 0) && (pos < dArray->size()) ) {
+						amplitude = (*dArray)[pos];
+						if ( SC_D.currentRecord->areScaledValuesShown() ) {
+							amplitude *= *SC_D.currentRecord->recordScale(SC_D.currentSlot);
+						}
+						gotAmplitude = true;
+					}
+				}
+				else {
+					auto fArray = FloatArray::ConstCast(rec->data());
+					if ( fArray ) {
+						if ( (pos >= 0) && (pos < fArray->size()) ) {
+							amplitude = static_cast<double>((*fArray)[pos]);
+							if ( SC_D.currentRecord->areScaledValuesShown() ) {
+								amplitude *= *SC_D.currentRecord->recordScale(SC_D.currentSlot);
+							}
+							gotAmplitude = true;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if ( !gotAmplitude ) {
+		// TODO: Stop playback
+		qDebug() << "-1";
+	}
+	else {
+		auto range = SC_D.currentRecord->amplitudeDataRange(SC_D.currentSlot);
+		auto width = range.second - range.first;
+		auto level = width != 0.0 ? (amplitude - range.first) / width : 0.5;
+		// Level is from 0 to 1 where 0 is the lower end of the amplitude range
+		// and 1 is the upper end. 0.5 is the center of the view but not
+		// necessarily the data offset.
+
+		const double lowerFrequency = 440;
+		const double upperFrequency = 880;
+		double frequency = (upperFrequency - lowerFrequency) * level + lowerFrequency;
+		// TODO: Start playback of frequency
+		qDebug() << frequency;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6693,7 +6767,9 @@ void PickerView::updateItemRecordState(const Seiscomp::Record *rec) {
 void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 	SC_D.currentRecord->setCursorPos(t);
 
-	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
+	if ( !always && SC_D.currentRecord->cursorText() == "" ) {
+		return;
+	}
 
 	double offset = 0;
 
@@ -7049,23 +7125,21 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 		}
 	}
 
-	if ( cha.size() > 2 )
+	if ( cha.size() > 2 ) {
 		cha[cha.size()-1] = component;
-	else
+	}
+	else {
 		cha += component;
+	}
 
 	SC_D.ui.labelStationCode->setText(streamID.stationCode().c_str());
-	SC_D.ui.labelCode->setText(QString("%1  %2%3")
-	                        .arg(streamID.networkCode().c_str(),
-	                             streamID.locationCode().c_str(),
-	                             cha.c_str()));
-	/*
-	const RecordSequence* seq = SC_D.currentRecord->records();
-	if ( seq && !seq->empty() )
-		SC_D.ui.labelCode->setText((*seq->begin())->streamID().c_str());
-	else
-		SC_D.ui.labelCode->setText("NO DATA");
-	*/
+	SC_D.ui.labelStationCode->setAccessibleName(streamID.stationCode().c_str());
+	SC_D.ui.labelStationCode->setTextInteractionFlags(Qt::TextBrowserInteraction);
+	SC_D.ui.labelCode->setText(QString("%1  %2%3").arg(
+		streamID.networkCode().c_str(),
+		streamID.locationCode().c_str(),
+		cha.c_str())
+	);
 
 	PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setTraces(label->data.traces);
