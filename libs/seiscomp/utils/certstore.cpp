@@ -31,6 +31,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <fstream>
 
 
 using namespace std;
@@ -52,6 +53,25 @@ bool fromASN1Time(Time &time, const ASN1_TIME *asn1Time) {
 		return false;
 	}
 }
+
+
+int verify(EVP_PKEY *pkey, const unsigned char *sig, size_t nSig,
+           const unsigned char *digest, size_t nDigest) {
+	auto ctx = EVP_PKEY_CTX_new(pkey, nullptr);
+	if ( !ctx ) {
+		return 0;
+	}
+
+	if ( EVP_PKEY_verify_init(ctx) <= 0 ) {
+		EVP_PKEY_CTX_free(ctx);
+		return 0;
+	}
+
+	auto r = EVP_PKEY_verify(ctx, sig, nSig, digest, nDigest);
+	EVP_PKEY_CTX_free(ctx);
+	return r;
+}
+
 
 }
 
@@ -177,7 +197,7 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const X509 *CertificateContext::findCertificate(const char *digest, size_t nDigest,
-                                                const ECDSA_SIG *signature) const {
+                                                const unsigned char *sig, unsigned int nSig) const {
 	SEISCOMP_DEBUG("Certificate EC signature lookup");
 
 	int verification_status;
@@ -186,30 +206,22 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		// Check the last cached certificate
 		EVP_PKEY *pkey = X509_get_pubkey(_cert);
 		if ( pkey ) {
-			EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
-			if ( ec_key ) {
-				verification_status = ECDSA_do_verify(
-					reinterpret_cast<const unsigned char*>(digest), nDigest,
-					signature, ec_key
-				);
+			verification_status = verify(pkey, sig, nSig,
+		                                 reinterpret_cast<const unsigned char*>(digest), nDigest);
 
-				if ( verification_status == 1 ) {
-					SEISCOMP_DEBUG("  Reusing cached certifcate");
-					return _cert;
-				}
-
-				EC_KEY_free(ec_key);
+			if ( verification_status == 1 ) {
+				SEISCOMP_DEBUG("  Reusing cached certifcate");
+				return _cert;
 			}
 		}
 	}
 
 	// Iterate through available certificates
-	SEISCOMP_DEBUG("  Find matching certificate\n");
+	SEISCOMP_DEBUG("  Find matching certificate");
 
 	X509 *cert = 0;
 
-	for ( Certs::const_reverse_iterator it = _certs.rbegin();
-	      it != _certs.rend(); ++it ) {
+	for ( auto it = _certs.rbegin(); it != _certs.rend(); ++it ) {
 		X509 *x509 = it->second;
 		if ( !x509 ) {
 			continue;
@@ -227,18 +239,9 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 			SEISCOMP_DEBUG("      No public key");
 			continue;
 		}
-		EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
-		if ( !ec_key ) {
-			SEISCOMP_DEBUG("      No public EC key");
-			continue;
-		}
 
-		verification_status = ECDSA_do_verify(
-			reinterpret_cast<const unsigned char*>(digest), nDigest,
-			signature, ec_key
-		);
-
-		EC_KEY_free(ec_key);
+		verification_status = verify(pkey, sig, nSig,
+		                             reinterpret_cast<const unsigned char*>(digest), nDigest);
 
 		if ( verification_status != 1 ) {
 			SEISCOMP_DEBUG("      Verification failed");
@@ -464,12 +467,12 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CertificateStore::validate(const char *authority, size_t len,
                                 const char *digest, size_t nDigest,
-                                const ECDSA_SIG *signature,
+                                const unsigned char *sig, unsigned int siglen,
                                 const X509 **matchedCertificate) {
 	const CertificateContext *ctx = getContext(authority, len);
 	if ( !ctx ) return false;
 
-	const X509 *cert = ctx->findCertificate(digest, nDigest, signature);
+	const X509 *cert = ctx->findCertificate(digest, nDigest, sig, siglen);
 	if ( !cert ) return false;
 
 	if ( matchedCertificate ) *matchedCertificate = cert;
@@ -484,11 +487,11 @@ bool CertificateStore::validate(const char *authority, size_t len,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CertificateStore::validate(const std::string &hash,
                                 const char *digest, size_t nDigest,
-                                const ECDSA_SIG *signature,
+                                const unsigned char *sig, unsigned int siglen,
                                 const X509 **matchedCertificate) {
 	return validate(
 		&hash[0], hash.size(),
-		digest, nDigest, signature, matchedCertificate
+		digest, nDigest, sig, siglen, matchedCertificate
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

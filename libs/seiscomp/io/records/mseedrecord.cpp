@@ -576,31 +576,26 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 
 					if ( !strncmp(header.c_str(), "SIGN/", 5) ) {
 						header.erase(header.begin(), header.begin() + 5);
-						long lenSignature = opaq->length - opaq->data_offset;
+						long nSignature = opaq->length - opaq->data_offset;
 
-						unsigned char digest_buffer[EVP_MAX_MD_SIZE];
-						unsigned int digest_len;
+						unsigned char digest[EVP_MAX_MD_SIZE];
+						unsigned int nDigest = 0;
 
 						EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 						EVP_DigestInit(mdctx, EVP_sha256());
 						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, dataquality), sizeof(pmsr->fsdh->dataquality));
 						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, station), offsetof(struct fsdh_s, data_offset) - offsetof(struct fsdh_s, station));
 						EVP_DigestUpdate(mdctx, pmsr->record + pmsr->fsdh->data_offset, (1 << pmsr->Blkt1000->reclen) - pmsr->fsdh->data_offset);
-						EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest_buffer), &digest_len);
+						EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest), &nDigest);
 
 						EVP_MD_CTX_destroy(mdctx);
 
 						const unsigned char *pp = reinterpret_cast<const unsigned char *>(opaq) + opaq->data_offset - 4;
-						ECDSA_SIG *signature = d2i_ECDSA_SIG(nullptr, &pp, lenSignature);
-						if ( !signature ) {
-							SEISCOMP_ERROR("MSEED: Failed to extract signature from opaque headers");
-							continue;
-						}
 
 						isSigned = true;
 						const X509 *cert;
-						if ( !cs.validate(header, reinterpret_cast<const char*>(digest_buffer),
-						                  digest_len, signature, &cert) ) {
+						if ( !cs.validate(header, reinterpret_cast<const char*>(digest),
+						                  nDigest, pp, nSignature, &cert) ) {
 							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATION_FAILED;
 							SEISCOMP_WARNING("MSEED: Signature validation failed");
 						}
@@ -635,8 +630,6 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 
 							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATED;
 						}
-
-						ECDSA_SIG_free(signature);
 					}
 				}
 			}

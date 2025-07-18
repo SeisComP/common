@@ -11,6 +11,7 @@
  ***************************************************************************/
 
 
+#include "seiscomp/utils/base64.h"
 #define SEISCOMP_COMPONENT TEST_CORE
 #define SEISCOMP_TEST_MODULE SeisComP
 
@@ -61,7 +62,7 @@ string read_file(const string &fn) {
 	return content;
 }
 
-EC_KEY *set_private_key_from_PEM(const string &pemkey) {
+EVP_PKEY *set_private_key_from_PEM(const string &pemkey) {
 	EVP_PKEY *pkey = EVP_PKEY_new();
 	BIO *bio = BIO_new_mem_buf(const_cast<char*>(pemkey.c_str()), pemkey.size());
 
@@ -72,17 +73,25 @@ EC_KEY *set_private_key_from_PEM(const string &pemkey) {
 
 	BIO_free(bio);
 
-	EC_KEY *eckey = EVP_PKEY_get1_EC_KEY(pkey);
+	return pkey;
+}
 
-	if ( !eckey ) {
-		EVP_PKEY_free(pkey);
+unsigned char *sign(unsigned char *digest, size_t nDigest, EVP_PKEY *pkey, size_t &nSig) {
+	auto ctx = EVP_PKEY_CTX_new(pkey, nullptr);
+	if ( !ctx ) {
 		return nullptr;
 	}
 
-	EC_KEY_set_asn1_flag(eckey, OPENSSL_EC_NAMED_CURVE);
-	EVP_PKEY_free(pkey);
+	if ( EVP_PKEY_sign_init(ctx) <= 0 ) {
+		EVP_PKEY_CTX_free(ctx);
+		return 0;
+	}
 
-	return eckey;
+	EVP_PKEY_sign(ctx, nullptr, &nSig, digest, nDigest);
+	auto sig = new unsigned char[nSig];
+	EVP_PKEY_sign(ctx, sig, &nSig, digest, nDigest);
+	EVP_PKEY_CTX_free(ctx);
+	return sig;
 }
 
 
@@ -138,71 +147,52 @@ BOOST_AUTO_TEST_CASE(get_certificate_by_signature) {
 	string asciiKey = read_file("./data/gempa-gmbh.priv.pem");
 	BOOST_REQUIRE(!asciiKey.empty());
 
-	EC_KEY *privateECKey = set_private_key_from_PEM(asciiKey);
-	BOOST_REQUIRE(privateECKey);
-	BOOST_REQUIRE(ECDSA_size(privateECKey) < 80);
+	auto *privateKey = set_private_key_from_PEM(asciiKey);
+	BOOST_REQUIRE(privateKey);
+	BOOST_REQUIRE(EVP_PKEY_size(privateKey) < 80);
 
-	unsigned char digest[32];
-	unsigned int digest_len;
+	unsigned char digest[EVP_MAX_MD_SIZE] = {0};
+	unsigned int digest_len = 0;
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	EVP_DigestInit(mdctx, EVP_sha256());
 
 	for ( int i = 0; i < 100; ++i ) {
 		int v = ::rand();
-		EVP_DigestUpdate(mdctx, &v, sizeof(v));
+		EVP_DigestUpdate(mdctx, &v, sizeof(char));
 	}
 	EVP_DigestFinal_ex(mdctx, digest, &digest_len);
 	EVP_MD_CTX_destroy(mdctx);
 
-	BOOST_REQUIRE(digest_len == sizeof(digest));
+	size_t siglen = 0;
+	auto sig = sign(digest, digest_len, privateKey, siglen);
+	BOOST_CHECK(sig);
 
-	ECDSA_SIG *signature = ECDSA_do_sign(digest, digest_len, privateECKey);
-	unsigned char signbuf[128];
-	unsigned char *pp = signbuf;
-	int signbuf_len = i2d_ECDSA_SIG(signature, &pp);
+	const X509 *cert = nullptr;
 
-	BOOST_REQUIRE((unsigned long)signbuf_len <= sizeof(signbuf));
-
-	ECDSA_SIG_free(signature);
-
-	const X509 *cert;
-
-	pp = signbuf;
-	signature = d2i_ECDSA_SIG(0, (const unsigned char **)&pp, signbuf_len);
-	cert = ctx->findCertificate((const char*)digest, digest_len, signature);
-	ECDSA_SIG_free(signature);
+	cert = ctx->findCertificate((const char*)digest, digest_len, sig, siglen);
 	BOOST_REQUIRE(cert);
 
 	// Modify the signature and verify again, must fail
-	signbuf[0] += 1;
+	sig[0] += 1;
 
-	pp = signbuf;
-	signature = d2i_ECDSA_SIG(0, (const unsigned char **)&pp, signbuf_len);
-	cert = ctx->findCertificate((const char*)digest, digest_len, signature);
-	ECDSA_SIG_free(signature);
+	cert = ctx->findCertificate((const char*)digest, digest_len, sig, siglen);
 	BOOST_REQUIRE(!cert);
 
 	// Modify the digest and verify again, must fail
-	signbuf[0] -= 1;
+	sig[0] -= 1;
 	digest[0] += 1;
 
-	pp = signbuf;
-	signature = d2i_ECDSA_SIG(0, (const unsigned char **)&pp, signbuf_len);
-	cert = ctx->findCertificate((const char*)digest, digest_len, signature);
-	ECDSA_SIG_free(signature);
+	cert = ctx->findCertificate((const char*)digest, digest_len, sig, siglen);
 	BOOST_REQUIRE(!cert);
 
 	// Revert again, must succeed
 	digest[0] -= 1;
 
-	pp = signbuf;
-	signature = d2i_ECDSA_SIG(0, (const unsigned char **)&pp, signbuf_len);
-	cert = ctx->findCertificate((const char*)digest, digest_len, signature);
-	ECDSA_SIG_free(signature);
+	cert = ctx->findCertificate((const char*)digest, digest_len, sig, siglen);
 	BOOST_REQUIRE(cert);
 
-	EC_KEY_free(privateECKey);
+	EVP_PKEY_free(privateKey);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

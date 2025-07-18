@@ -80,11 +80,11 @@ class SC_SYSTEM_CORE_API CertificateContext : public Core::BaseObject {
 		 *        against the reference signature.
 		 * @param digest Address pointing to the digest
 		 * @param nDigest Number of digest bytes
-		 * @param signature OpenSSL ECDSA signature
+		 * @param sig OpenSSL ECDSA signature
 		 * @return A certficate or null
 		 */
 		const X509 *findCertificate(const char *digest, size_t nDigest,
-		                            const ECDSA_SIG *signature) const;
+		                            const unsigned char *sig, unsigned int siglen) const;
 
 		// /**
 		// * @brief Checks if an certificate has been revoked
@@ -202,12 +202,12 @@ class SC_SYSTEM_CORE_API CertificateStore : public Core::BaseObject {
 		 */
 		bool validate(const char *authority, size_t len,
 		              const char *digest, size_t nDigest,
-		              const ECDSA_SIG *signature,
+		              const unsigned char *sig, unsigned int siglen,
 		              const X509 **matchedCertificate = 0);
 
 		bool validate(const std::string &authority,
 		              const char *digest, size_t nDigest,
-		              const ECDSA_SIG *signature,
+		             const  unsigned char *sig, unsigned int siglen,
 		              const X509 **matchedCertificate = 0);
 
 		/**
