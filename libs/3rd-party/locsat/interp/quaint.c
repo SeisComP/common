@@ -15,7 +15,7 @@ void sc_locsat_quaint(const int n, const float *x, const float *f, const float x
 
 	// x0 < x(1)
 	if ( ileft < 1 ) {
-		if ( x[1] > x[0] ) {
+		if ( (n > 1) && (x[1] > x[0]) ) {
 			*fp0 = (f[1] - f[0]) / (x[1] - x[0]);
 		}
 		else {
@@ -28,7 +28,7 @@ void sc_locsat_quaint(const int n, const float *x, const float *f, const float x
 
 	// x0 > x(n)
 	if ( ileft >= n ) {
-		if ( x[n - 1] > x[n - 2] ) {
+		if ( (n > 1) && (x[n - 1] > x[n - 2]) ) {
 			*fp0 = (f[n - 1] - f[n - 2]) / (x[n - 1] - x[n - 2]);
 		}
 		else {
@@ -118,5 +118,6 @@ void sc_locsat_quaint(const int n, const float *x, const float *f, const float x
 
 	// Now do a straight Hermite cubic interpolation bewteen points 2 and 3
 	sc_locsat_hermit(x2, x3, f2, f3, fp2, fp3, x0, f0, fp0);
+
 	*iext = 0;
 }

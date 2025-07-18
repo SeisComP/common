@@ -2,7 +2,6 @@
 #include <locsat/loc.h>
 
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 
@@ -91,7 +90,7 @@ void sc_locsat_hypinv(
 	cnvrg = FALSE;
 	ldenuis = FALSE;
 	*niter = 0;
-	*ierr = 0;
+	*ierr = LOCSAT_NoError;
 	ierr0 = 0;
 	nairquake = 0;
 	ntoodeep = 0;
@@ -208,7 +207,7 @@ L1020:
 				// Slownesses
 				sc_locsat_slocal(
 					*zfoc, radius, stations[i].distance, stations[i].azimuth,
-					ttt->lentbd, ttt->lentbz, &ttt->ntbd[k], &ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
+					ttt->lentbd, ttt->lentbz, ttt->ntbd[k], ttt->ntbz[k], &ttt->tbd[k * ttt->lentbd],
 					&ttt->tbz[k * ttt->lentbz],
 					&ttt->tbtt[(k * ttt->lentbz) * ttt->lentbd], &dcalx, atx,
 					&iterr
@@ -229,6 +228,7 @@ L1020:
 			/*    &         call ssscor (alat, alon, correct, 1, i, k) */
 			/*           Compute residual = [observed - calculated] datum */
 			/*                              + station correction */
+
 			if ( data[n].idtyp != 1 ) {
 				data[n].residual = data[n].obs - dcalx;
 			}
@@ -277,13 +277,13 @@ L1020:
 	// Check for insufficient data
 	if ( fxdsav != 'y' ) {
 		if ( *nd < 4 ) {
-			*ierr = 5;
+			*ierr = LOCSAT_ERR_InsufficientData;
 			return;
 		}
 	}
 	else {
 		if ( *nd < 3 ) {
-			*ierr = 5;
+			*ierr = LOCSAT_ERR_InsufficientData;
 			return;
 		}
 	}
@@ -430,7 +430,7 @@ L1020:
 		divrg = TRUE;
 		cnvrg = FALSE;
 		ierr0 = 1;
-		*ierr = 2;
+		*ierr = LOCSAT_ERR_SolutionDidNotConverge;
 	}
 	else if ( *niter < 4 ) {
 		divrg = FALSE;
@@ -513,22 +513,22 @@ L1020:
 
 	// End of main iterative loop
 	if ( cnvrg ) {
-		*ierr = 0;
+		*ierr = LOCSAT_NoError;
 		if ( condit[0] > 1e4 ) {
-			*ierr = 5;
+			*ierr = LOCSAT_ERR_InsufficientData;
 			return;
 		}
 		goto L1020;
 	}
 	else if ( divrg ) {
-		*ierr = 2;
+		*ierr = LOCSAT_ERR_SolutionDidNotConverge;
 		if ( ierr0 == 1 ) {
-			*ierr = 3;
+			*ierr = LOCSAT_ERR_TooFewUsableData;
 		}
 		goto L1210;
 	}
 	else if ( *niter >= maxit ) {
-		*ierr = 1;
+		*ierr = LOCSAT_ERR_MaximumIterations;
 	}
 	else {
 		++(*niter);
@@ -545,9 +545,8 @@ L1200:
 	}
 	// Compute location confidence bounds
 	sc_locsat_ellips(
-	    &np, covar, &hymaj0, &hymid0, &hymin0, &hystr, &hyplu, &hyrak, &epmaj0,
-	    &epmin0, epstr, &zfint0, stt, stx, sty, sxx, sxy, syy, stz, sxz, syz,
-	    szz
+		&np, covar, &hymaj0, &hymid0, &hymin0, &hystr, &hyplu, &hyrak, &epmaj0,
+		&epmin0, epstr, &zfint0, stt, stx, sty, sxx, sxy, syy, stz, sxz, syz, szz
 	);
 	// Not currently used, so commented out (WCN)
 	// call fstatx (3, ndf, pconf, fs)
@@ -617,6 +616,6 @@ L1210:
 	}
 
 	if ( *toint <= -888.f ) {
-		*ierr = 4;
+		*ierr = LOCSAT_ERR_TooFewDataToConstraintOT;
 	}
 }

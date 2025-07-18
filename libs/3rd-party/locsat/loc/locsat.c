@@ -184,7 +184,7 @@ void sc_locsat(
 		//		int)47);
 		//	do_fio(&c__1, (char *)&nd, (int)sizeof(int));
 		//	e_wsfe();
-		*ierr = 5;
+		*ierr = LOCSAT_ERR_InsufficientData;
 		return;
 	}
 
@@ -206,7 +206,7 @@ void sc_locsat(
 			ttt, data, ndata, stations, nsta,
 			&alat0, &alon0, ierr
 		);
-		if ( *ierr > 0 ) {
+		if ( *ierr != LOCSAT_NoError ) {
 			return;
 		}
 	}

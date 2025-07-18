@@ -1107,6 +1107,11 @@ void EventSummaryView::init() {
 }
 
 
+void EventSummaryView::setCache(DataModel::PublicObjectCache *cache) {
+	_cache = cache;
+	_map->setCache(_cache);
+}
+
 void EventSummaryView::setToolButtonText(const QString& text) {
 	_ui->btnShowDetails->setText(text);
 }
@@ -1168,12 +1173,12 @@ Seiscomp::DataModel::Magnitude* EventSummaryView::currentMagnitude() const {
 
 
 void EventSummaryView::updateEvent(){
+	if ( !_reader ) {
+		return;
+	}
 
-	if (!_reader) return;
-
-	if (_currentEvent){
+	if ( _currentEvent ) {
 		emit showInStatusbar(QString("update event received: %1").arg(_currentEvent->publicID().c_str()), 1000);
-
 		setOriginParameter(_currentEvent->preferredOriginID());
 		setPrefMagnitudeParameter(_currentEvent->preferredMagnitudeID());
 	}
@@ -1215,7 +1220,7 @@ void EventSummaryView::addObject(const QString& parentID, Seiscomp::DataModel::O
 		if ( !_currentOrigin ) return;
 
 		if ( parentID.toStdString() == _currentOrigin->publicID() ) {
-			Magnitude* mag = Magnitude::Find(netMag->publicID());
+			Magnitude *mag = Magnitude::Find(netMag->publicID());
 			if ( mag ) {
 				bool visibleType = (_visibleMagnitudes.find(mag->type()) != _visibleMagnitudes.end()) || _ui->actionShowInvisibleMagnitudes->isChecked();
 				_magList->addMag(mag, false, visibleType);
@@ -1430,6 +1435,11 @@ void EventSummaryView::removeObject(const QString &parentID, Seiscomp::DataModel
 }
 
 
+void EventSummaryView::setDrawStationAnnotations(bool f) {
+	_map->setDrawStationAnnotations(f);
+}
+
+
 void EventSummaryView::showEvent(Seiscomp::DataModel::Event* event, Seiscomp::DataModel::Origin* org){
 	if ( event )
 		emit showInStatusbar(QString("selected event: %1")
@@ -1471,10 +1481,12 @@ void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataMo
 	if ( event->preferredOriginID().empty() ) return;
 
 	bool changedEvent = true;
-	if ( event && _currentEvent )
+	if ( event && _currentEvent ) {
 		changedEvent = _currentEvent->publicID() != event->publicID();
-	else
+	}
+	else {
 		changedEvent = true;
+	}
 
 	_recenterMap = changedEvent;
 
@@ -1485,16 +1497,19 @@ void EventSummaryView::processEventMsg(DataModel::Event* event, Seiscomp::DataMo
 	}
 
 	_currentFocalMechanism = FocalMechanism::Find(_currentEvent->preferredFocalMechanismID());
-	if ( !_currentFocalMechanism && _reader )
+	if ( !_currentFocalMechanism && _reader ) {
 		_currentFocalMechanism = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), _currentEvent->preferredFocalMechanismID()));
-	if ( _currentFocalMechanism && _reader )
+	}
+	if ( _currentFocalMechanism && _reader ) {
 		_reader->loadMomentTensors(_currentFocalMechanism.get());
+	}
 
-
-	if ( org )
+	if ( org ) {
 		setOrigin(org);
-	else
+	}
+	else {
 		setOriginParameter(_currentEvent->preferredOriginID());
+	}
 
 	if ( _showLastAutomaticSolution ) {
 		if ( changedEvent ) {
@@ -1602,7 +1617,7 @@ bool EventSummaryView::setOriginParameter(std::string OriginID){
 		origin = Origin::Cast(_reader->getObject(Origin::TypeInfo(), OriginID));
 	}
 
-	if ( origin == nullptr ) {
+	if ( !origin ) {
 		_currentOrigin = nullptr;
 		_currentFocalMechanism = nullptr;
 		SEISCOMP_DEBUG("scesv: setOriginParameter:  origin not found %s ", OriginID.c_str());
@@ -1612,8 +1627,9 @@ bool EventSummaryView::setOriginParameter(std::string OriginID){
 		return false;
 	}
 
-	if ( !origin->arrivalCount() && _reader )
+	if ( !origin->arrivalCount() && _reader ) {
 		_reader->loadArrivals(origin.get());
+	}
 
 	if ( !origin->magnitudeCount() && _reader ) {
 		// We do not need the station magnitude references
@@ -1630,15 +1646,15 @@ bool EventSummaryView::setOriginParameter(std::string OriginID){
 }
 
 
-void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
+void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin *origin) {
 	_currentOrigin = origin;
 
 	calcOriginDistances();
 
 	std::string desc = description(_currentOrigin.get());
-	if ( desc.empty() )
-		//desc = _currentEvent->description();
+	if ( desc.empty() ) {
 		_ui->_lbRegionExtra->setVisible(false);
+	}
 	else {
 		_ui->_lbRegionExtra->setVisible(true);
 		_ui->_lbRegionExtra->setText(desc.c_str());
@@ -1646,8 +1662,9 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin* origin) {
 
 	_ui->_lbRegion->setVisible(true);
 	std::string region = _currentEvent?eventRegion(_currentEvent.get()):"";
-	if ( _currentEvent && !region.empty() )
+	if ( _currentEvent && !region.empty() ) {
 		_ui->_lbRegion->setText(region.c_str());
+	}
 	else {
 		_ui->_lbRegion->setText(Regions::getRegionName(_currentOrigin->latitude(), _currentOrigin->longitude()).c_str());
 	}
@@ -2351,12 +2368,10 @@ void EventSummaryView::setAutomaticFM(DataModel::FocalMechanism *fm) {
 
 
 void EventSummaryView::deferredMapUpdate(){
-
 	disconnect (_mapTimer, 0, this, 0);
 	SEISCOMP_DEBUG("processing deferred map update...");
 	updateMap(true);
 	_mapTimer->start(2000); //! minimum time between two map updates
-
 }
 
 

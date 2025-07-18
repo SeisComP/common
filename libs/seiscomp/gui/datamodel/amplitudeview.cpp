@@ -6063,10 +6063,11 @@ void AmplitudeView::closeThreads() {
 void AmplitudeView::acquisitionFinished() {
 	QObject* s = sender();
 	if ( s ) {
-		RecordStreamThread* t = static_cast<RecordStreamThread*>(s);
+		auto t = static_cast<RecordStreamThread*>(s);
 		int index = SC_D.acquisitionThreads.indexOf(t);
 		if ( index != -1 ) {
 			SC_D.acquisitionThreads.remove(index);
+			t->stop(true);
 			SEISCOMP_DEBUG("removed finished thread %d from list", t->ID());
 			delete t;
 		}

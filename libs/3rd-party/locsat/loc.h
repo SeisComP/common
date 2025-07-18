@@ -25,17 +25,17 @@
 
 
 #define LOCSAT_NoError 0
-#define LOCSAT_GLerror1 1
-#define LOCSAT_GLerror2 2
-#define LOCSAT_GLerror3 3
-#define LOCSAT_GLerror4 4
-#define LOCSAT_GLerror5 5
-#define LOCSAT_GLerror6 6
-#define LOCSAT_GLerror7 7
-#define LOCSAT_GLerror8 8
-#define LOCSAT_GLerror9 9
-#define LOCSAT_GLerror10 10
-#define LOCSAT_GLerror11 11
+#define LOCSAT_ERR_MaximumIterations         1 // Exceeded maximum iterations
+#define LOCSAT_ERR_SolutionDidNotConverge    2 // Solution did not converge
+#define LOCSAT_ERR_TooFewUsableData          3 // Too few usable data
+#define LOCSAT_ERR_TooFewDataToConstraintOT  4 // Too few data to constrain O.T.
+#define LOCSAT_ERR_InsufficientData          5 // Insufficient data for a solution
+#define LOCSAT_ERR_SVDCantDecompose          6 // SVD routine can't decompose matrix
+#define LOCSAT_ERR_NoObservations            7 // No observations to process
+#define LOCSAT_ERR_BadAssocData              8 // Bad assoc data
+#define LOCSAT_ERR_BadOriginPointer          9 // Bad origin pointer
+#define LOCSAT_ERR_BadOrigErrPointer        10 // Bad origerr pointer
+#define LOCSAT_ERR_ArrivalAssocMismatch     11 // Mismatch between arrival/assoc
 #define LOCSAT_TTerror1 12
 #define LOCSAT_TTerror2 13
 #define LOCSAT_TTerror3 14
@@ -400,7 +400,7 @@ void sc_locsat_fstatx(int m, int n, float p, double *x);
 void sc_locsat_slocal(const float zfoc,
                       const float radius, const float delta, const float azi,
                       const int maxtbd, const int maxtbz,
-                      const int *ntbd, const int *ntbz,
+                      const int ntbd, const int ntbz,
                       const float *tbd, const float *tbz, const float *tbtt,
                       float *dcalx, double *atx, int *iterr
                       );

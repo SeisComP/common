@@ -40,8 +40,9 @@ int RecordStreamThread::_numberOfThreads = 0;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordStreamThread::RecordStreamThread(const std::string& recordStreamURL)
-: QThread(), _id(_numberOfThreads), _recordStreamURL(recordStreamURL)
-{
+: QThread()
+, _id(_numberOfThreads)
+, _recordStreamURL(recordStreamURL) {
 	_requestedClose = false;
 	_readingStreams = false;
 	_dataType = Array::FLOAT;
@@ -76,8 +77,7 @@ int RecordStreamThread::ID() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStreamThread::connect()
-{
+bool RecordStreamThread::connect() {
 	_requestedClose = false;
 	_readingStreams = false;
 
@@ -85,8 +85,7 @@ bool RecordStreamThread::connect()
 
 	_recordStream = IO::RecordStream::Open(_recordStreamURL.c_str());
 
-	if (_recordStream == nullptr)
-	{
+	if ( !_recordStream ) {
 		SEISCOMP_ERROR("[rthread %d] could not create stream from URL %s", ID(), _recordStreamURL.c_str());
 		return false;
 	}
@@ -160,7 +159,7 @@ bool RecordStreamThread::setTimeout(int seconds) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStreamThread::addStation(const std::string& network, const std::string& station) {
+bool RecordStreamThread::addStation(const std::string &network, const std::string &station) {
 	if ( !_recordStream ) {
 		return false;
 	}
@@ -174,8 +173,8 @@ bool RecordStreamThread::addStation(const std::string& network, const std::strin
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
-                                   const std::string& location, const std::string& channel) {
+bool RecordStreamThread::addStream(const std::string &network, const std::string &station,
+                                   const std::string &location, const std::string &channel) {
 	if ( !_recordStream ) {
 		return false;
 	}
@@ -223,9 +222,8 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::run()
-{
-	if ( _recordStream == nullptr ) {
+void RecordStreamThread::run() {
+	if ( !_recordStream ) {
 		SEISCOMP_DEBUG("[rthread %d] no stream source set, running aborted", ID());
 		return;
 	}
@@ -295,7 +293,7 @@ void RecordStreamThread::run()
 	}
 	catch ( std::exception &e ) {
 		SEISCOMP_ERROR("[rthread %d] acquisition exception: %s", ID(), e.what());
-		handleError(QString(e.what()));
+		emit handleError(QString(e.what()));
 	}
 
 	SEISCOMP_DEBUG("[rthread %d] finished record acquisition", ID());
@@ -312,8 +310,12 @@ void RecordStreamThread::run()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamThread::stop(bool waitForTermination)
-{
+void RecordStreamThread::stop(bool waitForTermination) {
+	if ( isFinished() ) {
+		// Thread is finished, nothing to do ...
+		return;
+	}
+
 	_mutex.lock();
 	_requestedClose = true;
 	if ( !_readingStreams ) {
@@ -327,7 +329,7 @@ void RecordStreamThread::stop(bool waitForTermination)
 	}
 	_mutex.unlock();
 
-	if ( !isRunning () ) {
+	if ( !isRunning() ) {
 		SEISCOMP_DEBUG("[rthread %d] not running now", ID());
 		wait();
 	}
@@ -343,7 +345,7 @@ void RecordStreamThread::stop(bool waitForTermination)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::string& RecordStreamThread::recordStreamURL() const {
+const std::string &RecordStreamThread::recordStreamURL() const {
 	return _recordStreamURL;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -402,7 +404,7 @@ RecordStreamState::RecordStreamState() : QObject() {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RecordStreamState& RecordStreamState::Instance() {
+RecordStreamState &RecordStreamState::Instance() {
 	return _instance;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -429,7 +431,7 @@ QList<RecordStreamThread*> RecordStreamState::connections() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamState::openedConnection(RecordStreamThread* thread) {
+void RecordStreamState::openedConnection(RecordStreamThread *thread) {
 	++_connectionCount;
 	_activeThreads.removeAll(thread);
 	_activeThreads.append(thread);
@@ -447,7 +449,7 @@ void RecordStreamState::openedConnection(RecordStreamThread* thread) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordStreamState::closedConnection(RecordStreamThread* thread) {
+void RecordStreamState::closedConnection(RecordStreamThread *thread) {
 	--_connectionCount;
 	_activeThreads.removeAll(thread);
 
