@@ -6571,7 +6571,9 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 		}
 	}
 
-	if ( !SC_D.recordView->currentItem() ) return;
+	if ( !SC_D.recordView->currentItem() ) {
+		return;
+	}
 
 	SC_D.recordView->currentItem()->widget()->blockSignals(true);
 	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
@@ -6693,7 +6695,9 @@ void PickerView::updateItemRecordState(const Seiscomp::Record *rec) {
 void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 	SC_D.currentRecord->setCursorPos(t);
 
-	if ( !always && SC_D.currentRecord->cursorText() == "" ) return;
+	if ( !always && SC_D.currentRecord->cursorText() == "" ) {
+		return;
+	}
 
 	double offset = 0;
 
@@ -7049,10 +7053,12 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 		}
 	}
 
-	if ( cha.size() > 2 )
+	if ( cha.size() > 2 ) {
 		cha[cha.size()-1] = component;
-	else
+	}
+	else {
 		cha += component;
+	}
 
 	SC_D.ui.labelStationCode->setText(streamID.stationCode().c_str());
 	SC_D.ui.labelCode->setText(QString("%1  %2%3")
