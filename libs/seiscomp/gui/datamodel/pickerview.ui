@@ -246,7 +246,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="icons.qrc">
+                   <iconset resource="datamodel_icons.qrc">
                     <normaloff>:/icons/icons/ok.png</normaloff>:/icons/icons/ok.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -290,7 +290,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="icons.qrc">
+                   <iconset resource="datamodel_icons.qrc">
                     <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -334,7 +334,7 @@
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="icons.qrc">
+                   <iconset resource="datamodel_icons.qrc">
                     <normaloff>:/icons/icons/erase.png</normaloff>:/icons/icons/erase.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -714,7 +714,7 @@
   </widget>
   <action name="actionIncreaseAmplitudeScale">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
    </property>
    <property name="text">
@@ -732,7 +732,7 @@
   </action>
   <action name="actionDecreaseAmplitudeScale">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
    </property>
    <property name="text">
@@ -750,7 +750,7 @@
   </action>
   <action name="actionTimeScaleUp">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
    </property>
    <property name="text">
@@ -765,7 +765,7 @@
   </action>
   <action name="actionTimeScaleDown">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
    </property>
    <property name="text">
@@ -855,7 +855,7 @@
   </action>
   <action name="actionIncreaseRowHeight">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
    </property>
    <property name="text">
@@ -870,7 +870,7 @@
   </action>
   <action name="actionDecreaseRowHeight">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
    </property>
    <property name="text">
@@ -885,7 +885,7 @@
   </action>
   <action name="actionIncreaseRowTimescale">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
    </property>
    <property name="text">
@@ -900,7 +900,7 @@
   </action>
   <action name="actionDecreaseRowTimescale">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
    </property>
    <property name="text">
@@ -937,7 +937,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/align_p.png</normaloff>:/icons/icons/align_p.png</iconset>
    </property>
    <property name="text">
@@ -958,7 +958,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/align_s.png</normaloff>:/icons/icons/align_s.png</iconset>
    </property>
    <property name="text">
@@ -979,7 +979,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/align_t.png</normaloff>:/icons/icons/align_t.png</iconset>
    </property>
    <property name="text">
@@ -997,7 +997,7 @@
   </action>
   <action name="actionDefaultView">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
    </property>
    <property name="text">
@@ -1015,7 +1015,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/sort_abc.png</normaloff>:/icons/icons/sort_abc.png</iconset>
    </property>
    <property name="text">
@@ -1039,7 +1039,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/sort_dist.png</normaloff>:/icons/icons/sort_dist.png</iconset>
    </property>
    <property name="text">
@@ -1060,7 +1060,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
    </property>
    <property name="text">
@@ -1075,7 +1075,7 @@
   </action>
   <action name="actionMaximizeAmplitudes">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/vmax.png</normaloff>:/icons/icons/vmax.png</iconset>
    </property>
    <property name="text">
@@ -1096,7 +1096,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/pick_p.png</normaloff>:/icons/icons/pick_p.png</iconset>
    </property>
    <property name="text">
@@ -1111,7 +1111,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/pick_s.png</normaloff>:/icons/icons/pick_s.png</iconset>
    </property>
    <property name="text">
@@ -1123,7 +1123,7 @@
   </action>
   <action name="actionPickOther">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/pick_other.png</normaloff>:/icons/icons/pick_other.png</iconset>
    </property>
    <property name="text">
@@ -1168,7 +1168,7 @@
   </action>
   <action name="actionRelocate">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/locate.png</normaloff>:/icons/icons/locate.png</iconset>
    </property>
    <property name="text">
@@ -1192,7 +1192,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/mindistance.png</normaloff>:/icons/icons/mindistance.png</iconset>
    </property>
    <property name="text">
@@ -1210,7 +1210,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/withpick.png</normaloff>:/icons/icons/withpick.png</iconset>
    </property>
    <property name="text">
@@ -1228,7 +1228,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/sort_res.png</normaloff>:/icons/icons/sort_res.png</iconset>
    </property>
    <property name="text">
@@ -1246,7 +1246,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/channelZ.png</normaloff>:/icons/icons/channelZ.png</iconset>
    </property>
    <property name="text">
@@ -1267,7 +1267,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/channelN.png</normaloff>:/icons/icons/channelN.png</iconset>
    </property>
    <property name="text">
@@ -1288,7 +1288,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/channelE.png</normaloff>:/icons/icons/channelE.png</iconset>
    </property>
    <property name="text">
@@ -1543,7 +1543,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/sort_az.png</normaloff>:/icons/icons/sort_az.png</iconset>
    </property>
    <property name="text">
@@ -1566,7 +1566,7 @@
   </action>
   <action name="actionResetScale">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="datamodel_icons.qrc">
      <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
    </property>
    <property name="text">
@@ -1635,7 +1635,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="datamodel_icons.qrc"/>
  </resources>
  <connections/>
 </ui>
