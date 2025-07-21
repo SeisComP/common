@@ -29,17 +29,22 @@
 #include <openssl/err.h>
 #include <openssl/pem.h>
 
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <fstream>
 
+#include <filesystem>
 
 using namespace std;
 using namespace Seiscomp::Core;
 
+namespace fs = std::filesystem;
+
 namespace {
 
 bool fromASN1Time(Time &time, const ASN1_TIME *asn1Time) {
+	if ( !asn1Time ) {
+		return false;
+	}
+
 	string str(reinterpret_cast<char*>(asn1Time->data),
 	           static_cast<size_t>(asn1Time->length));
 	if ( asn1Time->type ==  V_ASN1_UTCTIME ) {
@@ -369,10 +374,10 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 	string basename = hash + ".";
 
 	try {
-		boost::filesystem::recursive_directory_iterator it(baseDirectory);
-		boost::filesystem::recursive_directory_iterator end;
+		fs::recursive_directory_iterator it(baseDirectory);
+		fs::recursive_directory_iterator end;
 		for ( ; it != end; ++it ) {
-			if ( boost::filesystem::is_regular_file(*it) ) {
+			if ( fs::is_regular_file(*it) ) {
 				string absFilename = it->path().string();
 				string filename = SC_FS_FILE_PATH(SC_FS_PATH(absFilename)).string();
 				if ( !boost::starts_with(filename, basename) ) {
@@ -398,7 +403,7 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 			}
 		}
 	}
-	catch ( boost::filesystem::filesystem_error &error ) {
+	catch ( fs::filesystem_error &error ) {
 		SEISCOMP_ERROR("%s: %s", hash.c_str(), error.what());
 		return false;
 	}
@@ -423,10 +428,10 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 	string basename = hash + ".r";
 
 	try {
-		boost::filesystem::recursive_directory_iterator it(baseDirectory);
-		boost::filesystem::recursive_directory_iterator end;
+		fs::recursive_directory_iterator it(baseDirectory);
+		fs::recursive_directory_iterator end;
 		for ( ; it != end; ++it ) {
-			if ( boost::filesystem::is_regular_file(*it) ) {
+			if ( fs::is_regular_file(*it) ) {
 				string absFilename = it->path().string();
 				string filename = SC_FS_FILE_PATH(SC_FS_PATH(absFilename)).string();
 				if ( !boost::starts_with(filename, basename) ) {
@@ -452,7 +457,7 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 			}
 		}
 	}
-	catch ( boost::filesystem::filesystem_error &error ) {
+	catch ( fs::filesystem_error &error ) {
 		SEISCOMP_ERROR("%s: %s", hash.c_str(), error.what());
 		return false;
 	}
@@ -470,12 +475,18 @@ bool CertificateStore::validate(const char *authority, size_t len,
                                 const unsigned char *sig, unsigned int siglen,
                                 const X509 **matchedCertificate) {
 	const CertificateContext *ctx = getContext(authority, len);
-	if ( !ctx ) return false;
+	if ( !ctx ) {
+		return false;
+	}
 
 	const X509 *cert = ctx->findCertificate(digest, nDigest, sig, siglen);
-	if ( !cert ) return false;
+	if ( !cert ) {
+		return false;
+	}
 
-	if ( matchedCertificate ) *matchedCertificate = cert;
+	if ( matchedCertificate ) {
+		*matchedCertificate = cert;
+	}
 
 	return true;
 }
