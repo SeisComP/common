@@ -207,21 +207,6 @@ bool RecordStreamThread::addStream(const std::string& network, const std::string
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool RecordStreamThread::addStream(const std::string& network, const std::string& station,
-                                   const std::string& location, const std::string& channel,
-                                   double gain) {
-	if ( addStream(network,station, location, channel) ) {
-		std::string id = station+"."+location+"."+channel;
-		_gainMap.insert(make_pair(id, gain));
-		return true;
-	}
-	return false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamThread::run() {
 	if ( !_recordStream ) {
 		SEISCOMP_DEBUG("[rthread %d] no stream source set, running aborted", ID());
@@ -251,30 +236,6 @@ void RecordStreamThread::run() {
 				break;
 			}
 			if ( rec ) {
-				if ( !_gainMap.empty() ) {
-					std::string id = rec->stationCode()+"."+rec->locationCode()+"."+rec->channelCode();
-					GainMap::const_iterator git = _gainMap.find(id);
-
-					if ( git != _gainMap.end() ) {
-						const Array* data = rec->data();
-						if ( git->second != 0) {
-							double gain = 1.0 / git->second;
-
-							if ( data && data->dataType() == Array::FLOAT ) {
-								auto array = const_cast<FloatArray*>(static_cast<const FloatArray*>(data));
-								*array *= gain;
-							}
-							else if ( data && data->dataType() == Array::DOUBLE ) {
-								auto array = const_cast<DoubleArray*>(static_cast<const DoubleArray*>(data));
-								*array *= gain;
-							}
-							else {
-								throw std::runtime_error("gain correction: invalid record data type");
-							}
-						}
-					}
-				}
-
 				try {
 					rec->endTime();
 					emit receivedRecord(rec);
