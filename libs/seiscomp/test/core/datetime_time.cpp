@@ -223,6 +223,13 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	BOOST_CHECK(time.fromString("201712", "%4Y%m"));
 	BOOST_CHECK(time.fromString("20171207", "%4Y%m%d"));
 	BOOST_CHECK(time.fromString("20171207.142931.50", "%4Y%m%d.%H%M%S.%f"));
+	BOOST_CHECK(time.fromString("201712", "%4Y%m"));
+
+	BOOST_CHECK(time.fromString("2017-23"));
+	BOOST_CHECK_EQUAL(time.iso(), "2017-01-23T00:00:00.0000Z");
+
+	BOOST_CHECK(time.fromString("2017"));
+	BOOST_CHECK_EQUAL(time.iso(), "2017-01-01T00:00:00.0000Z");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
