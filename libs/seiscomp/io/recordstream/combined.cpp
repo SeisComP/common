@@ -49,26 +49,19 @@ namespace {
 size_t findClosingParenthesis(const string &s, size_t p) {
 	int cnt = 1;
 	for ( size_t i = p; i < s.size(); ++i ) {
-		if ( s[i] == '(' ) ++cnt;
-		else if ( s[i] == ')' ) --cnt;
-		if ( !cnt ) return i;
+		if ( s[i] == '(' ) {
+			++cnt;
+		}
+		else if ( s[i] == ')' ) {
+			--cnt;
+		}
+
+		if ( !cnt ) {
+			return i;
+		}
 	}
 
 	return string::npos;
-}
-
-
-bool timeFromString(Core::Time &time, const std::string &s) {
-	if ( Core::fromString(time, s) )
-		return true;
-
-	if ( time.fromString(s.c_str(), "%F") )
-		return true;
-
-	if ( time.fromString(s.c_str(), "%Y") )
-		return true;
-
-	return false;
 }
 
 
@@ -134,7 +127,7 @@ bool CombinedConnection::setRecordType(const char* type) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CombinedConnection::setSource(const std::string &serverloc) {
-	size_t p1,p2;
+	size_t p1, p2;
 
 	_archiveEndTime = Core::Time();
 	bool hasValidArchiveEndTime = false;
@@ -165,7 +158,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	// Extract source1
 	if ( p1 >= serverloc.size() ) {
 		SEISCOMP_ERROR("Invalid RecordStream URL '%s': missing second source",
-		               serverloc.c_str());
+		               serverloc);
 		throw RecordStreamException("Invalid RecordStream URL");
 	}
 
@@ -176,31 +169,31 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		p2 = findClosingParenthesis(serverloc, p1);
 		if ( p2 == string::npos ) {
 			SEISCOMP_ERROR("Invalid RecordStream URL '%s': expected closing parenthesis",
-			               serverloc.c_str());
+			               serverloc);
 			throw RecordStreamException("Invalid RecordStream URL");
 		}
 
-		source1 = serverloc.substr(p1, p2-p1);
+		source1 = serverloc.substr(p1, p2 - p1);
 		++p2;
 
 		if ( p2 >= serverloc.size() || serverloc[p2] != ';' ) {
 			SEISCOMP_ERROR("Invalid RecordStream URL '%s': expected ';' at %d",
-			               serverloc.c_str(), (int)p2);
+			               serverloc, p2);
 			throw RecordStreamException("Invalid RecordStream URL");
 		}
 
-		p1 = p2+1;
+		p1 = p2 + 1;
 	}
 	else {
 		p2 = serverloc.find(';', p1);
 		if ( p2 == string::npos ) {
 			SEISCOMP_ERROR("Invalid RecordStream URL '%s': missing second source, expected ';'",
-			               serverloc.c_str());
+			               serverloc);
 			throw RecordStreamException("Invalid RecordStream URL");
 		}
 
 		source1 = serverloc.substr(p1, p2-p1);
-		p1 = p2+1;
+		p1 = p2 + 1;
 	}
 
 	// Find first slash
@@ -211,7 +204,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		p2 = p1;
 	}
 	else {
-		type2 = serverloc.substr(p1, p2-p1);
+		type2 = serverloc.substr(p1, p2 - p1);
 		// Move behind '/'
 		++p2;
 	}
@@ -229,43 +222,46 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 			p2 = findClosingParenthesis(serverloc, p1);
 			if ( p2 == string::npos ) {
 				SEISCOMP_ERROR("Invalid RecordStream URL '%s': expected closing parenthesis",
-				               serverloc.c_str());
+				               serverloc);
 				throw RecordStreamException("Invalid RecordStream URL");
 			}
 
 			source2 = serverloc.substr(p1, p2-p1);
-			p1 = p2+1;
+			p1 = p2 + 1;
 		}
 		else {
 			p2 = serverloc.find("??", p1);
-			if ( p2 == string::npos )
+			if ( p2 == string::npos ) {
 				source2 = serverloc.substr(p1);
-			else
-				source2 = serverloc.substr(p1, p2-p1);
+			}
+			else {
+				source2 = serverloc.substr(p1, p2 - p1);
+			}
 			p1 = p2;
 		}
 	}
 
 	string params;
-	if ( (p1 <= serverloc.size()-2) && !serverloc.compare(p1,2,"??") )
-		params = serverloc.substr(p1+2);
+	if ( (p1 <= serverloc.size() - 2) && !serverloc.compare(p1, 2, "??") ) {
+		params = serverloc.substr(p1 + 2);
+	}
 	else if ( p1 < serverloc.size() ) {
 		SEISCOMP_ERROR("Invalid RecordStream URL '%s': undefined trailing content '%s'",
-		               serverloc.c_str(), serverloc.c_str()+p1);
+		               serverloc, serverloc.data() + p1);
 		throw RecordStreamException("Invalid RecordStream URL");
 	}
 
 	vector<string> toks;
-	Core::split(toks, params.c_str(), "&");
+	Core::split(toks, params, "&");
+
 	if ( !toks.empty() ) {
-		for ( std::vector<std::string>::iterator it = toks.begin();
-		      it != toks.end(); ++it ) {
+		for ( auto it = toks.begin(); it != toks.end(); ++it ) {
 			std::string name, value;
 
 			size_t pos = it->find('=');
 			if ( pos != std::string::npos ) {
 				name = it->substr(0, pos);
-				value = it->substr(pos+1);
+				value = it->substr(pos + 1);
 			}
 			else {
 				name = *it;
@@ -276,7 +272,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 				if ( value.empty() ) {
 					SEISCOMP_ERROR("Invalid RecordStream URL '%s', "
 					               "value of parameter '%s' is empty",
-					               serverloc.c_str(), name.c_str());
+					               serverloc, name);
 					throw RecordStreamException("Invalid RecordStream URL");
 				}
 
@@ -310,13 +306,14 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 						break;
 				}
 
-				if ( unitFound )
-					value.resize(value.size()-1);
+				if ( unitFound ) {
+					value.resize(value.size() - 1);
+				}
 
 				if ( !Core::fromString(number, value) ) {
 					SEISCOMP_ERROR("Invalid RecordStream URL '%s', "
 					               "value of parameter '%s' not number",
-					               serverloc.c_str(), name.c_str());
+					               serverloc, name);
 					throw RecordStreamException("Invalid RecordStream URL");
 				}
 
@@ -328,14 +325,14 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 				if ( value.empty() ) {
 					SEISCOMP_ERROR("Invalid RecordStream URL '%s', "
 					               "value of parameter '%s' is empty",
-					               serverloc.c_str(), name.c_str());
+					               serverloc, name);
 					throw RecordStreamException("Invalid RecordStream URL");
 				}
 
-				if ( !timeFromString(_archiveEndTime, value) ) {
+				if ( !Core::fromString(_archiveEndTime, value) ) {
 					SEISCOMP_ERROR("Invalid RecordStream URL '%s', "
 					               "value of parameter '%s' not datetime",
-					               serverloc.c_str(), name.c_str());
+					               serverloc, name);
 					throw RecordStreamException("Invalid RecordStream URL");
 				}
 
@@ -345,11 +342,11 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		}
 	}
 
-	SEISCOMP_DEBUG("Type1   : %s", type1.c_str());
-	SEISCOMP_DEBUG("Source1 : %s", source1.c_str());
-	SEISCOMP_DEBUG("Type2   : %s", type2.c_str());
-	SEISCOMP_DEBUG("Source2 : %s", source2.c_str());
-	SEISCOMP_DEBUG("Params  : %s", params.c_str());
+	SEISCOMP_DEBUG("Type1   : %s", type1);
+	SEISCOMP_DEBUG("Source1 : %s", source1);
+	SEISCOMP_DEBUG("Type2   : %s", type2);
+	SEISCOMP_DEBUG("Source2 : %s", source2);
+	SEISCOMP_DEBUG("Params  : %s", params);
 
 	_realtime = IO::RecordStream::Create(type1.c_str());
 	if ( !_realtime ) {
@@ -379,7 +376,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 		_archiveEndTime = Time::UTC() - _realtimeAvailability;
 	}
 
-	SEISCOMP_DEBUG("Split   : %s", _archiveEndTime.iso().c_str());
+	SEISCOMP_DEBUG("Split   : %s", _archiveEndTime.iso());
 
 	return true;
 }
@@ -391,12 +388,10 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool CombinedConnection::addStream(const string &net, const string &sta,
                                    const string &loc, const string &cha) {
-	SEISCOMP_DEBUG("add stream %lu %s.%s.%s.%s", (unsigned long) _nStream, net.c_str(),
-	               sta.c_str(), loc.c_str(), cha.c_str());
+	SEISCOMP_DEBUG("add stream %d %s.%s.%s.%s", _nStream, net, sta, loc, cha);
 	// Streams without a time span are inserted into a temporary list
 	// and will be resolved when the data is requested the first time
-	pair<set<StreamIdx>::iterator, bool> result;
-	result = _tmpStreams.insert(StreamIdx(net, sta, loc, cha));
+	auto result = _tmpStreams.insert(StreamIdx(net, sta, loc, cha));
 	return result.second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -409,8 +404,7 @@ bool CombinedConnection::addStream(const string &net, const string &sta,
                                    const string &loc, const string &cha,
                                    const OPT(Core::Time) &stime,
                                    const OPT(Core::Time) &etime) {
-	SEISCOMP_DEBUG("add stream %lu %s.%s.%s.%s", (unsigned long) _nStream, net.c_str(),
-	               sta.c_str(), loc.c_str(), cha.c_str());
+	SEISCOMP_DEBUG("add stream %d %s.%s.%s.%s", _nStream, net, sta, loc, cha);
 
 	if ( stime && *stime < _archiveEndTime ) {
 		if ( etime && *etime <= _archiveEndTime ) {
@@ -492,22 +486,26 @@ Record *CombinedConnection::next() {
 
 		// add the temporary streams (added without a time span) now and split
 		// them correctly
-		for ( set<StreamIdx>::iterator it = _tmpStreams.begin();
-		      it != _tmpStreams.end(); ++it )
+		for ( auto it = _tmpStreams.begin(); it != _tmpStreams.end(); ++it ) {
 			addStream(it->network(), it->station(), it->location(),
 			          it->channel(), _startTime, _endTime);
+		}
+
 		_tmpStreams.clear();
 
-		if ( _nArchive > 0 )
-			SEISCOMP_DEBUG("start %lu archive requests", (unsigned long) _nArchive);
-		else
-			SEISCOMP_DEBUG("start %lu realtime requests", (unsigned long) _nRealtime);
+		if ( _nArchive > 0 ) {
+			SEISCOMP_DEBUG("start %d archive requests", _nArchive);
+		}
+		else {
+			SEISCOMP_DEBUG("start %d realtime requests", _nRealtime);
+		}
 	}
 
 	if ( _nArchive > 0 ) {
-		Record *rec =  _archive->next();
-		if ( rec != nullptr )
+		auto rec =  _archive->next();
+		if ( rec ) {
 			return rec;
+		}
 
 		_archive->close();
 		_nArchive = 0;
@@ -520,8 +518,9 @@ Record *CombinedConnection::next() {
 			return nullptr;
 		}
 	}
-	else
+	else {
 		return _realtime->next();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -531,4 +530,3 @@ Record *CombinedConnection::next() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace RecordStream
 } // namespace Seiscomp
-
