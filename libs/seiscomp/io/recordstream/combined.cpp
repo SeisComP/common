@@ -503,9 +503,14 @@ Record *CombinedConnection::next() {
 
 		_archive->close();
 		_nArchive = 0;
-		SEISCOMP_DEBUG("start %lu realtime requests", (unsigned long) _nRealtime);
 
-		return _realtime->next();
+		if ( _nRealtime ) {
+			SEISCOMP_DEBUG("start %d realtime requests", _nRealtime);
+			return _realtime->next();
+		}
+		else {
+			return nullptr;
+		}
 	}
 	else
 		return _realtime->next();
