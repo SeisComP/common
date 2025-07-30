@@ -684,7 +684,7 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				}
 
 				QTextStream stream(&file);
-				QString header = QString(R"("%","rank %2",%3)")
+				QString header = QString(R"("%1","rank %2",%3)")
 				    .arg(_measureSaveDialog->name->text())
 				    .arg(_measureSaveDialog->rank->value())
 				    .arg(closedPolygon?_measurePoints.size():-_measurePoints.size());
