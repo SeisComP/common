@@ -133,6 +133,7 @@ class SC_GUI_API ArrivalModel : public QAbstractTableModel {
 		QColor             _disabledForeground;
 		QStringList        _header;
 		std::string        _pickTimeFormat;
+		std::string        _pickCTimeFormat;
 };
 
 

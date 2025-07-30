@@ -705,6 +705,7 @@ QSize FMDefaultSize = QSize(32, 32);
 QSize FMSelectedSize = QSize(40, 40);
 
 
+std::string TableCTimeFormat;
 std::string TableOTimeFormat;
 std::string PanelOTimeFormat;
 
@@ -1346,6 +1347,15 @@ EventEdit::EventEdit(DatabaseQuery* reader,
 			PanelOTimeFormat += ".%";
 			PanelOTimeFormat += Core::toString(SCScheme.precision.originTime);
 			PanelOTimeFormat += "f";
+		}
+	}
+
+	if ( TableCTimeFormat.empty() ) {
+		TableCTimeFormat = "%F %T";
+		if ( SCScheme.precision.originTime > 0 ) {
+			TableCTimeFormat += ".%";
+			TableCTimeFormat += Core::toString(SCScheme.precision.originTime);
+			TableCTimeFormat += "f";
 		}
 	}
 
@@ -2693,7 +2703,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		item->setData(_originColumnMap[OL_AZGAP], Qt::UserRole, QVariant());
 	}
 	try {
-		item->setText(_originColumnMap[OL_CREATED], timeToString(org->creationInfo().creationTime(), "%F %T"));
+		item->setText(_originColumnMap[OL_CREATED], timeToString(org->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(_originColumnMap[OL_CREATED], "");
@@ -2734,7 +2744,7 @@ void EventEdit::updateMagnitudeRow(int row, Magnitude *mag) {
 	item->setData(0, Qt::UserRole, QString(mag->publicID().c_str()));
 
 	try {
-		item->setText(MLC_TIMESTAMP, timeToString(mag->creationInfo().creationTime(), "%F %T"));
+		item->setText(MLC_TIMESTAMP, timeToString(mag->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(MLC_TIMESTAMP, "");
@@ -2914,7 +2924,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 	}
 
 	try {
-		item->setText(_fmColumnMap[FML_CREATED], timeToString(fm->creationInfo().creationTime(), "%F %T"));
+		item->setText(_fmColumnMap[FML_CREATED], timeToString(fm->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(_fmColumnMap[FML_CREATED], "");

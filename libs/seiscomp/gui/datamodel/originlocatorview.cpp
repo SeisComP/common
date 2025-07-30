@@ -2027,6 +2027,10 @@ void ArrivalModel::setOrigin(DataModel::Origin* origin) {
 	_pickTimeFormat += Core::toString(SCScheme.precision.pickTime);
 	_pickTimeFormat += "f";
 
+	_pickCTimeFormat = "%F %T.%";
+	_pickCTimeFormat += Core::toString(SCScheme.precision.pickTime);
+	_pickCTimeFormat += "f";
+
 	_origin = origin;
 	if ( _origin ) {
 		_used.fill(Seismology::LocatorInterface::F_NONE, _origin->arrivalCount());
@@ -2466,8 +2470,8 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		summary += 's';
 		*/
 
-		// Filter
 		if ( pick ) {
+			// Filter
 			if ( !pick->filterID().empty() ) {
 				if (l++) summary += '\n';
 				summary += "Filter: ";
@@ -2475,6 +2479,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			}
 
 			if ( !pick->methodID().empty() ) {
+				// method
 				if (l++) summary += '\n';
 				summary += "Method: ";
 				summary += pick->methodID().c_str();
@@ -2482,11 +2487,24 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 
 			try {
 				const CreationInfo &ci = pick->creationInfo();
+				// creation time
+				if ( l++ ) {
+					summary += '\n';
+				}
+				summary += "Created: ";
+				try {
+					summary += timeToString(pick->time().value(), _pickCTimeFormat.c_str());
+				}
+				catch ( ... ) {
+					summary += '-';
+				}
+				// author
 				if ( !ci.author().empty() ) {
 					if (l++) summary += '\n';
 					summary += "Author: ";
 					summary += ci.author().c_str();
 				}
+				// agency
 				if ( !ci.agencyID().empty() ) {
 					if (l++) summary += '\n';
 					summary += "Agency: ";
