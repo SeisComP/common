@@ -246,7 +246,7 @@ void BrokerHandler::start() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BrokerHandler::handleFrame(Websocket::Frame &frame) {
-	char *content = &frame.data[0];
+	char *content = frame.data.data();
 	size_t content_len = frame.data.size();
 	trimFront(content, content_len);
 

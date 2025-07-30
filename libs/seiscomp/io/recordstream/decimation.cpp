@@ -448,7 +448,7 @@ bool Decimation::initCoefficients(ResampleStage *stage) {
 			double weights[2] = {1,1};
 			double desired[2] = {1,0};
 
-			if ( remez(&((*coeff)[0]), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
+			if ( remez(coeff->data(), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
 				SEISCOMP_WARNING("[dec] failed to build coefficients for N=%d, ignore stream", stage->N);
 				delete coeff;
 				_coefficients[stage->N] = nullptr;
@@ -608,7 +608,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 
 	size_t data_len = (size_t)ar->size();
 	const double *data = ar->typedData();
-	double *buffer = &stage->buffer[0];
+	double *buffer = stage->buffer.data();
 
 	if ( stage->missingSamples > 0 ) {
 		size_t toCopy = std::min(stage->missingSamples, data_len);
@@ -638,7 +638,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 	do {
 		if ( stage->samplesToSkip == 0 ) {
 			// Calculate scalar product of coefficients and ring buffer
-			double *coeff = &((*stage->coefficients)[0]);
+			double *coeff = stage->coefficients->data();
 			double sample = 0;
 
 			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {

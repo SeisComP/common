@@ -116,7 +116,7 @@ void DBHandler::handleFrame(Websocket::Frame &frame) {
 		return;
 	}
 
-	Command cmd = Command(*reinterpret_cast<uint8_t*>(&frame.data[0]));
+	Command cmd = Command(*reinterpret_cast<uint8_t*>(frame.data.data()));
 	switch ( cmd ) {
 		case CMD_START:
 			// SEISCOMP_DEBUG("[cmd] start");

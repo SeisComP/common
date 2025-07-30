@@ -188,7 +188,7 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 		d[0] = d[n - 1] = 0;
 
 		// Find the max. amplitude in the *derivative*
-		imax = find_absmax(n, &d[0], si1, si2, offset);
+		imax = find_absmax(n, d.data(), si1, si2, offset);
 		pmax = -1; // dominant period around maximum
 		double pstd =  0; // standard error of period
 

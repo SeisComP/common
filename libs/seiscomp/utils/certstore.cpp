@@ -501,7 +501,7 @@ bool CertificateStore::validate(const std::string &hash,
                                 const unsigned char *sig, unsigned int siglen,
                                 const X509 **matchedCertificate) {
 	return validate(
-		&hash[0], hash.size(),
+		hash.data(), hash.size(),
 		digest, nDigest, sig, siglen, matchedCertificate
 	);
 }

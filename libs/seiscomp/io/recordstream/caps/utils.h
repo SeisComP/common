@@ -51,7 +51,7 @@ class arraybuf : public std::streambuf {
 
 		arraybuf(const std::string &buf) {
 			if ( buf.size() > 0 ) {
-				char *tmp = const_cast<char*>(&buf[0]);
+				char *tmp = const_cast<char*>(buf.data());
 				setg(tmp, tmp, tmp + buf.size());
 				setp(tmp, tmp + buf.size());
 			}
@@ -226,7 +226,7 @@ inline const char *trim(const char *&str, int &len) {
 
 inline std::string trim(const std::string &s) {
 	int l = (int)s.size();
-	const char *str = &s[0];
+	const char *str = s.data();
 	trim(str, l);
 	return std::string(str, l);
 }

@@ -70,8 +70,8 @@ void encodeBase64(std::string& target, const Container& data) {
 		translate_out;
 	
 	std::copy(
-		translate_out(BOOST_MAKE_PFTO_WRAPPER(static_cast<const typename Container::value_type*>(&data[0]))),
-		translate_out(BOOST_MAKE_PFTO_WRAPPER(static_cast<const typename Container::value_type*>(&data[0] + data.size()))),
+		translate_out(BOOST_MAKE_PFTO_WRAPPER(static_cast<const typename Container::value_type*>(data.data()))),
+		translate_out(BOOST_MAKE_PFTO_WRAPPER(static_cast<const typename Container::value_type*>(data.data() + data.size()))),
 		std::back_inserter(target)
 	);
 }

@@ -121,7 +121,7 @@ bool FileBuffer::open(const char *fn, const char *mode) {
 bool FileBuffer::updateBuffer() {
 	// Erase header since we are transfering the data blocked
 	header.clear();
-	size_t rb = fread(&data[0], 1, data.size(), fp);
+	size_t rb = fread(data.data(), 1, data.size(), fp);
 	data.resize(rb);
 	return data.size() > 0;
 }

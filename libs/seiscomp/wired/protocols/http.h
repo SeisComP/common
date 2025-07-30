@@ -236,7 +236,7 @@ struct URLOptions {
 
 
 struct URLInsituOptions {
-	URLInsituOptions(std::string &s) : _source(&s[0]), _source_len(s.size()) {}
+	URLInsituOptions(std::string &s) : _source(s.data()), _source_len(s.size()) {}
 
 	URLInsituOptions(char *src, size_t l) : _source(src), _source_len(l) {}
 
@@ -431,7 +431,7 @@ class SC_SYSTEM_CORE_API HttpSession : public ClientSession {
 
 
 inline URLPath::URLPath(const std::string &s)
-: _source(&s[0])
+: _source(s.data())
 , _source_len(s.size())
 {
 	while ( _source_len && (*_source == '/') ) {
@@ -483,7 +483,7 @@ inline size_t URLPath::remainderLength() const {
 }
 
 inline URLInsituPath::URLInsituPath(std::string &s)
-: part_start(&s[0])
+: part_start(s.data())
 , part_len(0)
 , _source(part_start)
 , _source_len(s.size())

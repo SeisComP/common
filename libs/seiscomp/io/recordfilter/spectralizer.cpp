@@ -318,7 +318,7 @@ Record *Spectralizer::fft(const Record *rec) {
 
 	size_t data_len = (size_t)ar->size();
 	const double *data = ar->typedData();
-	double *buffer = &_buffer->buffer[0];
+	double *buffer = _buffer->buffer.data();
 
 	if ( _buffer->filter )
 		_buffer->filter->apply(data_len, (double*)data);

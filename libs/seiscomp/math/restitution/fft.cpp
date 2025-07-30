@@ -155,7 +155,7 @@ bool transformFFT(int n, T *inout, double fsamp,
 
 	tf->deconvolve(data_coeff.size()-1, &data_coeff[1], df, df);
 
-	costaper(data_coeff.size(), &data_coeff[0], iTaperStart, iTaperEnd, eTaperStart, eTaperEnd);
+	costaper(data_coeff.size(), data_coeff.data(), iTaperStart, iTaperEnd, eTaperStart, eTaperEnd);
 
 	// do the inverse FFT
 	ifft(n, inout, data_coeff);

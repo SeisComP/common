@@ -434,7 +434,7 @@ const NamedCoordD* nearestHotspot(double lat, double lon, double maxDist,
                                   double *dist, double *azi) {
 	if ( cities.empty() ) return nullptr;
 	return nearestHotspot(lat, lon, maxDist, cities.size(),
-	                      &cities[0], dist, azi);
+	                      cities.data(), dist, azi);
 }
 
 
@@ -475,7 +475,7 @@ const CityD* nearestCity(double lat, double lon,
                          double *dist, double *azi) {
 	if ( cities.empty() ) return nullptr;
 	return nearestCity(lat, lon, maxDist, minPopulation,
-	                   (int)cities.size(), &cities[0], dist, azi);
+	                   (int)cities.size(), cities.data(), dist, azi);
 }
 
 /**

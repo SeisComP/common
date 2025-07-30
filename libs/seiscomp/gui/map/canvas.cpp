@@ -944,7 +944,7 @@ size_t Canvas::drawFeature(QPainter &painter, const Geo::GeoFeature *f,
 		}
 		else
 			lines += drawPolygon(painter, f->vertices().size(),
-			                     &f->vertices()[0], f->closedPolygon(),
+			                     f->vertices().data(), f->closedPolygon(),
 			                     roughness, clipHint);
 	}
 	else {

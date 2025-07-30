@@ -49,7 +49,7 @@ void WindowFunc<TYPE>::apply(int n, TYPE *inout, double width) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename TYPE>
 void WindowFunc<TYPE>::apply(std::vector<TYPE> &inout, double width) const {
-	checkAndProcess(inout.size(), &inout[0], width, width);
+	checkAndProcess(inout.size(), inout.data(), width, width);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -89,7 +89,7 @@ void WindowFunc<TYPE>::apply(int n, TYPE *inout, double left, double right) cons
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename TYPE>
 void WindowFunc<TYPE>::apply(std::vector<TYPE> &inout, double left, double right) const {
-	checkAndProcess(inout.size(), &inout[0], left, right);
+	checkAndProcess(inout.size(), inout.data(), left, right);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

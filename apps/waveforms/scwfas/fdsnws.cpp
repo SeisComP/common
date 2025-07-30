@@ -582,7 +582,7 @@ bool FDSNWSSession::handlePOSTRequest(Wired::HttpRequest &req) {
 		return true;
 	}
 
-	char *tok, *src = &req.data[0];
+	char *tok, *src = req.data.data();
 	size_t len_tok, len_src = req.data.size();
 
 	double timeWindow = 0;

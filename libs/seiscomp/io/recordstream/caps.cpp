@@ -163,12 +163,12 @@ class MSeedRecord_ : public IO::MSeedRecord {
 				throw Core::EndOfStreamException("Invalid miniSEED record, too large (> 1**20 bytes)");
 
 			std::vector<char> rawrec(reclen);
-			memmove(&rawrec[0], header, LEN);
+			memmove(rawrec.data(), header, LEN);
 
 			if ( !is.read(&rawrec[LEN], reclen-LEN) )
 				throw Core::StreamException("Fatal error occured during reading from stream");
 
-			if ( msr_unpack(&rawrec[0], reclen, &prec, 0, 0) == MS_NOERROR ) {
+			if ( msr_unpack(rawrec.data(), reclen, &prec, 0, 0) == MS_NOERROR ) {
 				*static_cast<IO::MSeedRecord*>(this) = IO::MSeedRecord(prec,this->_datatype,this->_hint);
 				msr_free(&prec);
 				if ( _fsamp <= 0 )

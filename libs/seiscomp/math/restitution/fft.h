@@ -47,7 +47,7 @@ bool transformFFT(int n, T *inout, double fsamp, const FFT::TransferFunction *tf
 template <typename T>
 bool transformFFT(std::vector<T> &inout, double fsamp, const FFT::TransferFunction *tf,
                   double cutoff, double min_freq, double max_freq) {
-	return transformFFT(inout.size(), &inout[0], fsamp, tf, cutoff, min_freq, max_freq);
+	return transformFFT(inout.size(), inout.data(), fsamp, tf, cutoff, min_freq, max_freq);
 }
 
 
@@ -63,8 +63,8 @@ template <typename T>
 bool transformFFT(std::vector<T> &inout, double fsamp, const Poles &poles,
                   const Zeros &zeros, double norm, double cutoff,
                   double min_freq, double max_freq) {
-	return transformFFT(inout.size(), &inout[0], poles.size(), &poles[0],
-	                    zeros.size(), &zeros[0], norm, cutoff, min_freq, max_freq);
+	return transformFFT(inout.size(), inout.data(), poles.size(), poles.data(),
+	                    zeros.size(), zeros.data(), norm, cutoff, min_freq, max_freq);
 }
 
 

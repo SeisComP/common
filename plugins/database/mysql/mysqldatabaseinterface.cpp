@@ -423,7 +423,7 @@ size_t MySQLDatabase::getRowFieldSize(int index) {
 bool MySQLDatabase::escape(std::string &out, const std::string &in) const {
 	if ( !_handle ) return false;
 	out.resize(in.size()*2);
-	size_t l = mysql_real_escape_string(_handle, &out[0], in.c_str(), in.size());
+	size_t l = mysql_real_escape_string(_handle, out.data(), in.c_str(), in.size());
 	out[l] = '\0';
 	out.resize(l);
 	return true;

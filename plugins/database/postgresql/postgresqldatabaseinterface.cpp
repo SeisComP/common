@@ -477,7 +477,7 @@ bool PostgreSQLDatabase::escape(std::string &out, const std::string &in) const {
 
 	int error;
 	out.resize(in.size()*2);
-	auto l = PQescapeStringConn(_handle, &out[0], in.c_str(), in.size(), &error);
+	auto l = PQescapeStringConn(_handle, out.data(), in.c_str(), in.size(), &error);
 	out[l] = '\0';
 	out.resize(l);
 	return !error;

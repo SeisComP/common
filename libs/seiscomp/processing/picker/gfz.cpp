@@ -236,7 +236,7 @@ bool GFZPicker::calculatePick(int ndata, const double *data,
 	delete filter;
 
 	int onset = onsetIndex-signalStartIndex;
-	maeda_aic_const(n, &tmp[0], onset, snr);
+	maeda_aic_const(n, tmp.data(), onset, snr);
 	if (onset==-1) {
 		SEISCOMP_INFO("GFZPicker::calculatePick: no onset found: n=%d fs=%g %g %g %g    %d -> -1", n, _stream.fsamp, _config.signalBegin, _config.signalEnd, offset, onsetIndex-signalStartIndex);
 		return false;

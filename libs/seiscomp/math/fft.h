@@ -42,7 +42,7 @@ void fft(ComplexArray &spec, int n, const T *data);
 
 template <typename T>
 void fft(ComplexArray &spec, const std::vector<T> &data) {
-	fft(spec, static_cast<int>(data.size()), &data[0]);
+	fft(spec, static_cast<int>(data.size()), data.data());
 }
 
 template <typename T>
@@ -65,7 +65,7 @@ void ifft(int n, T *out, ComplexArray &spec);
 
 template <typename T>
 void ifft(std::vector<T> &out, ComplexArray &spec) {
-	ifft(static_cast<int>(out.size()), &out[0], spec);
+	ifft(static_cast<int>(out.size()), out.data(), spec);
 }
 
 template <typename T>

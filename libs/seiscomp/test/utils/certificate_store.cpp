@@ -56,7 +56,7 @@ string read_file(const string &fn) {
 	file.seekg(0, ios::beg);
 
 	content.resize(fsize);
-	file.read(&content[0], content.size());
+	file.read(content.data(), content.size());
 	file.close();
 
 	return content;

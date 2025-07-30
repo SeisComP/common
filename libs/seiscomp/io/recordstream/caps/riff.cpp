@@ -88,10 +88,10 @@ bool VectorChunk<SIZE_T,BigEndian>::get(std::streambuf &input, int size) {
 	Endianess::Reader r(input);
 
 	data.resize(count*SIZE_T);
-	r(&data[0], data.size());
+	r(data.data(), data.size());
 
 	// Convert array to little endian
-	Endianess::ByteSwapper<BigEndian,SIZE_T>::Take(&data[0], count);
+	Endianess::ByteSwapper<BigEndian,SIZE_T>::Take(data.data(), count);
 
 	// Go the end of chunk
 	if ( (int)data.size() < size )
