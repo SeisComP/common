@@ -693,6 +693,7 @@ void OriginLocatorMap::setDrawStationLines(bool draw) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setDrawStationAnnotations(bool draw) {
 	_annotationLayer->setVisible(draw);
+	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
