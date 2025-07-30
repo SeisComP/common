@@ -802,14 +802,16 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 using SortItem = QPair<QTreeWidgetItem*, int>;
 using LessThan = bool(*)(const SortItem&, const SortItem&);
 
+template <typename T>
 bool itemLessThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).toDouble() <
-	       right.first->data(right.second, Qt::UserRole).toDouble();
+	return left.first->data(left.second, Qt::UserRole).value<T>() <
+	       right.first->data(right.second, Qt::UserRole).value<T>();
 }
 
+template <typename T>
 bool itemGreaterThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).toDouble() >
-	       right.first->data(right.second, Qt::UserRole).toDouble();
+	return left.first->data(left.second, Qt::UserRole).value<T>() >
+	       right.first->data(right.second, Qt::UserRole).value<T>();
 }
 
 bool itemTextLessThan(const SortItem& left, const SortItem& right) {
@@ -1743,6 +1745,7 @@ class EventTreeItem : public SchemeTreeItem {
 			setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
 			setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
 			setText(config.columnMap[COL_ORIGINS], QString("%1").arg(ev->originReferenceCount()));
+			setData(config.columnMap[COL_ORIGINS], Qt::UserRole, QVariant::fromValue<unsigned>(ev->originReferenceCount()));
 
 			if ( nm ) {
 				QFont f = font(config.columnMap[COL_M]);
@@ -6012,7 +6015,10 @@ void EventListView::sortItems(int col) {
 	     col == SC_D._itemConfig.columnMap[COL_LAT] ||
 	     col == SC_D._itemConfig.columnMap[COL_LON] ||
 	     col == SC_D._itemConfig.columnMap[COL_DEPTH] ) {
-		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
+		compare = (order == Qt::AscendingOrder ? &itemLessThan<double> : &itemGreaterThan<double>);
+	}
+	else if ( col == SC_D._itemConfig.columnMap[COL_ORIGINS] ) {
+		compare = (order == Qt::AscendingOrder ? &itemLessThan<unsigned> : &itemGreaterThan<unsigned>);
 	}
 	else {
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);
