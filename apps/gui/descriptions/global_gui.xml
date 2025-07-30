@@ -213,6 +213,12 @@
 					</description>
 				</parameter>
 
+				<parameter name="distanceHypocentral" type="boolean" default="false">
+					<description>
+					Show hypocentral instead of epicentral distances.
+					</description>
+				</parameter>
+
 				<group name="map">
 					<parameter name="stationSize" type="int" default="8" unit="px">
 						<description>
@@ -1281,8 +1287,8 @@
 
 				<group name="precision">
 					<description>
-					Precisions are given as the number of decimal places shown
-					for a float number.
+					Display values with the precisions configured as the number
+					of decimal places.
 					</description>
 					<parameter name="depth" type="int" default="0">
 						<description>
@@ -1297,22 +1303,23 @@
 					</parameter>
 					<parameter name="location" type="int" default="2">
 						<description>
-							The precision of latitude/longintude values.
+						The precision of latitude/longintude values.
 						</description>
 					</parameter>
 					<parameter name="magnitude" type="int" default="1">
 						<description>
-							The precision of magnitude values.
+						The precision of magnitude values.
 						</description>
 					</parameter>
 					<parameter name="originTime" type="int" default="0">
 						<description>
-							The precision of origin times.
+						The precision of origin times and creation times of
+						origins and focal mechanisms.
 						</description>
 					</parameter>
 					<parameter name="pickTime" type="int" default="1">
 						<description>
-							The precision of pick times.
+						The precision of pick times.
 						</description>
 					</parameter>
 					<parameter name="traceValues" type="int" default="1">
