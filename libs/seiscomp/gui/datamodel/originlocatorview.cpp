@@ -7421,9 +7421,9 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	if ( !SC_D.baseEvent || (!options.forceEventAssociation && isLocalOrigin) ) {
 		cerr << "Wait for association" << endl;
 		QProgressDialog progress("Origin has not been associated with an event yet.\n"
-								 "Waiting for event association ...\n"
-								 "Hint: scevent should run",
-								 "Cancel", 0, 0);
+		                         "Waiting for event association ...\n"
+		                         "Hint: scevent should run",
+		                         "Cancel", 0, 0);
 		progress.setAutoClose(true);
 		progress.setWindowModality(Qt::ApplicationModal);
 		connect(this, SIGNAL(baseEventSet()), &progress, SLOT(accept()));
