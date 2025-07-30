@@ -31,6 +31,7 @@
 
 #include <QAbstractTableModel>
 #include <QDialog>
+#include <QIcon>
 #include <QLabel>
 #include <QMap>
 #include <QProcess>
@@ -38,6 +39,7 @@
 #include <QSortFilterProxyModel>
 #include <QTextEdit>
 #include <QVariantAnimation>
+#include <QVector>
 
 
 namespace Seiscomp::Gui {
@@ -79,6 +81,33 @@ class SC_GUI_API ProcessManager : public QDialog {
 		 * @return True if the process could be launched
 		 */
 		bool waitForStarted(QProcess *process, int timeout = 5000);
+
+		/**
+		 * @brief Registers output streams to which the stdout and stderr data
+		 * of the given process are written to in addition to the console tabs
+		 * visible in the process manager.
+		 * @param process The process to register the output streams for
+		 * @param osOut The output stream used for stdout data
+		 * @param osErr The output stream used for stderr data
+		 * @return True if the process is managed by the process manager
+		 */
+		bool setOutputStreams(QProcess *process, std::ostream *osOut,
+		                      std::ostream *osErr=nullptr);
+
+		/**
+		 * @brief Limits the data written to the console tabs visible in the
+		 * process manager.
+		 * @param process The process to implement limits for
+		 * @param charsOut Maximum number of characters shown in the stdout tab.
+		 * Use a negative number to remove any limit. Use 0 to disable any
+		 * output to the stdout tab.
+		 * @param charsErr Maximum number of characters shown in the stderr tab.
+		 * Use a negative number to remove any limit. Use 0 to disable any
+		 * output to the stderr tab.
+		 * @return True if the process is managed by the process manager
+		 */
+		bool setConsoleLimits(QProcess *process, int charsOut,
+		                      int charsErr = -1);
 
 		/**
 		 * @brief Create a log entry for the process.
@@ -168,7 +197,8 @@ class SC_GUI_API ProcessManager : public QDialog {
 		void init();
 		void updateControls();
 
-		static void addConsoleOutput(QTextEdit *textEdit, const QString &text);
+		static void addConsoleOutput(QTextEdit *textEdit, const QString &text,
+		                             int maxChars = -1);
 		static void addLog(const Item *item, const Core::Time &time,
 		            const QString &message);
 

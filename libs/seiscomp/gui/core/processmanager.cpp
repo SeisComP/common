@@ -36,6 +36,7 @@
 #include <QScrollBar>
 #include <QTextEdit>
 
+#include <ostream>
 
 namespace Seiscomp::Gui {
 
@@ -86,9 +87,15 @@ struct ProcessManager::Item {
 	OPT(Core::Time) finished;
 	QProcess *process;
 
-	QTextEdit *stdOut;
-	QTextEdit *stdErr;
-	QTextEdit *processLog;
+	QTextEdit *stdOut{nullptr};
+	QTextEdit *stdErr{nullptr};
+	QTextEdit *processLog{nullptr};
+	int maxStdOutChars{-1};
+	int maxStdErrChars{-1};
+
+	// managed outside process manager
+	std::ostream *osOut{nullptr};
+	std::ostream *osErr{nullptr};
 
 	~Item() {
 		delete process;
@@ -580,6 +587,68 @@ bool ProcessManager::waitForStarted(QProcess *process, int timeout) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ProcessManager::setOutputStreams(QProcess *process, std::ostream *osOut,
+                                      std::ostream *osErr) {
+	auto *item = _items[process];
+	if ( item ) {
+		item->osOut = osOut;
+		item->osErr = osErr;
+		return true;
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ProcessManager::setConsoleLimits(QProcess *process, int charsOut,
+                                      int charsErr) {
+	auto *item = _items[process];
+	if ( item ) {
+		item->maxStdOutChars = charsOut;
+		item->maxStdErrChars = charsErr;
+
+		QString tt;
+
+		if ( charsOut ) {
+			tt = "Standard ouput of current process";
+			if ( charsOut > 0 ) {
+				tt = QString("%1 limited to %2 characters").arg(tt, charsOut);
+			}
+		}
+		else {
+			tt = "Capture of standard ouput disabled";
+		}
+		item->stdOut->setToolTip(tt);
+
+		if ( charsErr ) {
+			tt = "Error ouput of current process";
+			if ( charsErr > 0 ) {
+				tt = QString("%1 limited to %2 characters").arg(tt, charsErr);
+			}
+		}
+		else {
+			tt = "Capture of error ouput disabled";
+		}
+		item->stdErr->setToolTip(tt);
+
+		addConsoleOutput(item->stdOut, "", charsOut);
+		addConsoleOutput(item->stdErr, "", charsErr);
+
+		return true;
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessManager::log(QProcess *process, const QString &message) {
 	addLog(itemForProcess(process), Core::Time::UTC(), message);
 }
@@ -708,8 +777,11 @@ void ProcessManager::onSelectionChanged(const QItemSelection &selected,
 void ProcessManager::onProcessReadyReadStandardOutput() {
 	auto *item = itemForProcessSender();
 	if ( item ) {
-		addConsoleOutput(item->stdOut,
-		                 QString(item->process->readAllStandardOutput()));
+		auto bytes = item->process->readAllStandardOutput();
+		addConsoleOutput(item->stdOut, QString(bytes), item->maxStdOutChars);
+		if ( item->osOut ) {
+			item->osOut->write(bytes.data(), bytes.size());
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -721,8 +793,11 @@ void ProcessManager::onProcessReadyReadStandardOutput() {
 void ProcessManager::onProcessReadyReadStandardError() {
 	auto *item = itemForProcessSender();
 	if ( item ) {
-		addConsoleOutput(item->stdErr,
-		                 QString(item->process->readAllStandardError()));
+		auto bytes = item->process->readAllStandardError();
+		addConsoleOutput(item->stdErr, QString(bytes), item->maxStdErrChars);
+		if ( item->osErr ) {
+			item->osErr->write(bytes.data(), bytes.size());
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1104,14 +1179,37 @@ void ProcessManager::updateControls() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ProcessManager::addConsoleOutput(QTextEdit *textEdit, const QString &text) {
+void ProcessManager::addConsoleOutput(QTextEdit *textEdit, const QString &text,
+                                      int maxChars) {
+	if ( !maxChars ) {
+		textEdit->clear();
+		return;
+	}
+
 	auto *scrollBar = textEdit->verticalScrollBar();
-	bool isMax = scrollBar->value() == scrollBar->maximum();
+	bool isScrollMax = scrollBar->value() == scrollBar->maximum();
 
-	//_textEdit->insertHtml(text);
-	textEdit->insertPlainText(text);
+	// no char limits, just append
+	if ( maxChars < 0 ) {
+		textEdit->insertPlainText(text);
+	}
+	else {
+		// new text exceeds limits, truncate new text
+		if ( text.length() >= maxChars ) {
+			textEdit->setPlainText(text.mid(text.length() - maxChars));
+		}
+		else {
+			auto currentText = textEdit->toPlainText();
+			int excessLength = currentText.length() + text.length() - maxChars;
+			// new and current text exceed limits, truncate current text
+			if ( excessLength > 0 ) {
+				textEdit->setPlainText(currentText.mid(excessLength));
+			}
+			textEdit->insertPlainText(text);
+		}
+	}
 
-	if ( isMax ) {
+	if ( isScrollMax ) {
 		scrollBar->setValue(scrollBar->maximum());
 	}
 }
