@@ -234,23 +234,28 @@ class ProcessManager::Model : public QAbstractTableModel {
 			endRemoveRows();
 		}
 
-		void emitDataChanged(const QModelIndex &topLeft,
+		bool emitDataChanged(const QModelIndex &topLeft,
 		                     const QModelIndex &bottomRight,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(topLeft, bottomRight, roles);
+			if ( topLeft.isValid() && bottomRight.isValid() ) {
+				emit dataChanged(topLeft, bottomRight, roles);
+				return true;
+			}
+
+			return false;
 		}
 
-		void emitDataChanged(int row,
+		bool emitDataChanged(int row,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(createIndex(row, 0),
-			                 createIndex(row, columnCount()),
-			                 roles);
+			return emitDataChanged(createIndex(row, 0),
+			                       createIndex(row, columnCount() - 1),
+			                       roles);
 		}
 
-		void emitDataChanged(int row, int col,
+		bool emitDataChanged(int row, int col,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(createIndex(row, col), createIndex(row, col),
-			                 roles);
+			return emitDataChanged(createIndex(row, col), createIndex(row, col),
+			                       roles);
 		}
 
 		[[nodiscard]]
