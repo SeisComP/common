@@ -2819,7 +2819,7 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			fallback = false;
 		}
 		else if ( aggType == "median trimmed mean" ) {
-			netmag = Math::Statistics::computeMedianTrimmedMean(mags, 0.5, netmag, *stdev, &weights);
+			Math::Statistics::computeMedianTrimmedMean(mags, 0.5, netmag, *stdev, &weights);
 			magnitude->setMethodID("median trimmed mean");
 			fallback = false;
 		}
