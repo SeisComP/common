@@ -1482,11 +1482,7 @@
 					<description>
 					Configure the columns of the event list that are visible
 					initially. The first column containing the origin time is
-					always visible and cannot be hidden. Possible values are:
-
-					TimeAgo, Certainty, Type, M, MType, RMS, AzGap, Phases, Lat,
-					Lon, Depth, DType, Stat, FM, Origins, Agency, Author,
-					Region, ID.
+					always visible and cannot be hidden.
 
 					Custom columns can be added by eventlist.customColumn.* or
 					eventlist.scripts.* parameters.
