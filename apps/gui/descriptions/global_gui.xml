@@ -73,11 +73,9 @@
 					/path/to/maps/%l/%c/%r.png.
 					</description>
 				</parameter>
-				<parameter name="format" type="string" default="rectangular">
+				<parameter name="format" type="string" default="rectangular" values="rectangular,mercator">
 					<description>
 					Projection of the map tiles configured in &quot;map.location&quot;.
-
-					Supported values: rectangular, mercator
 
 					Note: Additional projections may be available by plugins.
 					</description>
@@ -299,11 +297,14 @@
 						option.
 						</description>
 					</parameter>
-					<parameter name="projection" type="string" default="Rectangular">
+					<parameter name="projection" type="string" default="Rectangular" values="Rectangular,Mercator">
 						<description>
-						SeisComP ships with the Rectangular and the Mercator
-						projection built-in.
+						The projection for showing maps. SeisComP ships with
+						Rectangular and Mercator.
 						Other projections may be provided through plugins.
+
+						The visible latitude range of maps shown with Mercator
+						is limited to -85 - +85 deg.
 						</description>
 					</parameter>
 					<parameter name="toBGR" type="boolean" default="false">
@@ -318,7 +319,7 @@
 					</parameter>
 					<parameter name="maxZoom" type="float" default="24" range="1:24">
 						<description>
-							Maximum allowed zoom level.
+						Maximum allowed zoom level.
 						</description>
 					</parameter>
 				</group>
