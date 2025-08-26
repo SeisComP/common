@@ -635,7 +635,7 @@ dm::Origin *LOCSAT::relocate(const dm::Origin *origin) {
 double LOCSAT::stationCorrection(const std::string &staid,
                                  const std::string &stacode,
                                  const std::string &phase) const {
-	StationCorrectionMap::const_iterator it = _stationCorrection.find(staid);
+	auto it = _stationCorrection.find(staid);
 	if ( it != _stationCorrection.end() ) {
 		PhaseCorrectionMap::const_iterator pit = it->second.find(phase);
 		if ( pit != it->second.end() ) {
