@@ -1601,9 +1601,9 @@ void MagnitudeView::setPreferredMagnitudeID(const string &id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeView::setDefaultAggregationType(const std::string &type) {
 	if ( type == "mean"
-	  || type == "trimmed mean"
+	  || type == "trimmedMean"
 	  || type == "median"
-	  || type == "median trimmed mean" ) {
+	  || type == "medianTrimmedMean" ) {
 		_defaultMagnitudeAggregation = type;
 		return true;
 	}
@@ -1649,7 +1649,7 @@ void MagnitudeView::recalculateMagnitude() {
 		}
 		else {
 			Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, stdev, &weights);
-			_netMag->setMethodID("trimmed mean");
+			_netMag->setMethodID("trimmed mean(25)");
 		}
 	}
 	else if ( _ui->btnMean->isChecked() ) {
@@ -1668,7 +1668,7 @@ void MagnitudeView::recalculateMagnitude() {
 			return;
 		}
 
-		_netMag->setMethodID("trimmed mean");
+		_netMag->setMethodID(Core::stringify("trimmed mean(%d)", _ui->spinTrimmedMeanValue->value()));
 	}
 	else if ( _ui->btnMedian->isChecked() ) {
 		netmag = Math::Statistics::median(mags);
@@ -1690,7 +1690,7 @@ void MagnitudeView::recalculateMagnitude() {
 			return;
 		}
 
-		_netMag->setMethodID("median trimmed mean");
+		_netMag->setMethodID(Core::stringify("median trimmed mean(%f)", _ui->spinTrimmedMedianValue->value()));
 	}
 	else {
 		QMessageBox::critical(this, "Error", "Please select a method to recalculate the magnitude.");
@@ -2292,20 +2292,25 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 
 	if ( netMag->origin() != _origin ) return;
 
-	if ( _ui->btnMean->isChecked() )
+	if ( _ui->btnMean->isChecked() ) {
 		computeMagnitude(netMag, "mean");
-	else if ( _ui->btnTrimmedMean->isChecked() )
-		computeMagnitude(netMag, "trimmed mean");
-	else if ( _ui->btnMedian->isChecked() )
+	}
+	else if ( _ui->btnTrimmedMean->isChecked() ) {
+		computeMagnitude(netMag, "trimmedMean");
+	}
+	else if ( _ui->btnMedian->isChecked() ) {
 		computeMagnitude(netMag, "median");
-	else if ( _ui->btnTrimmedMedian->isChecked() )
-		computeMagnitude(netMag, "median trimmed mean");
-	else
+	}
+	else if ( _ui->btnTrimmedMedian->isChecked() ) {
+		computeMagnitude(netMag, "medianTrimmedMean");
+	}
+	else {
 		computeMagnitude(netMag, "");
+	}
 
-	ObjectChangeList<DataModel::Amplitude>::iterator it;
-	for ( it = changedAmps.begin(); it != changedAmps.end(); ++it )
+	for ( auto it = changedAmps.begin(); it != changedAmps.end(); ++it ) {
 		_amplitudes.insert(PickAmplitudeMap::value_type(it->first->pickID(), AmplitudeEntry(it->first, true)));
+	}
 
 	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
 
@@ -2799,9 +2804,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			magnitude->setMethodID("mean");
 			fallback = false;
 		}
-		else if ( aggType == "trimmed mean" ) {
+		else if ( aggType == "trimmedMean" ) {
 			Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, *stdev, &weights);
-			magnitude->setMethodID("trimmed mean");
+			magnitude->setMethodID("trimmed mean(25)");
 			fallback = false;
 		}
 		else if ( aggType == "median" ) {
@@ -2818,9 +2823,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			magnitude->setMethodID("median");
 			fallback = false;
 		}
-		else if ( aggType == "median trimmed mean" ) {
+		else if ( aggType == "medianTrimmedMean" ) {
 			Math::Statistics::computeMedianTrimmedMean(mags, 0.5, netmag, *stdev, &weights);
-			magnitude->setMethodID("median trimmed mean");
+			magnitude->setMethodID("median trimmed mean(0.5)");
 			fallback = false;
 		}
 
@@ -2832,7 +2837,7 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			}
 			else {
 				Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, *stdev, &weights);
-				magnitude->setMethodID("trimmed mean");
+				magnitude->setMethodID("trimmed mean(25)");
 			}
 		}
 
@@ -2845,8 +2850,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 				++staCount;
 		}
 	}
-	else
+	else {
 		magnitude->setEvaluationStatus(EvaluationStatus(REJECTED));
+	}
 
 	magnitude->setMagnitude(DataModel::RealQuantity(netmag, stdev, Core::None, Core::None, Core::None));
 	magnitude->setStationCount(staCount);
@@ -3524,17 +3530,22 @@ void MagnitudeView::setContent() {
 
 	// Set default aggregation type
 	if ( _defaultMagnitudeAggregation ) {
-		if ( *_defaultMagnitudeAggregation == "median" )
+		if ( *_defaultMagnitudeAggregation == "median" ) {
 			_ui->btnMedian->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "mean" ) {
 			_ui->btnMean->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "trimmed mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "trimmedMean" ) {
 			_ui->btnTrimmedMean->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "median trimmed mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "medianTrimmedMean" ) {
 			_ui->btnTrimmedMedian->setChecked(true);
+		}
 	}
-	else
+	else {
 		_ui->btnDefault->setChecked(true);
+	}
 
 	updateContent();
 }
@@ -3760,6 +3771,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 			snprintf(buf, 10, "%d", (int)netmagval);
 
 		_ui->labelMethod->setText(_netMag->methodID().c_str());
+		_ui->labelMethod->setToolTip(_netMag->methodID().c_str());
 		try {
 			_ui->labelAgencyID->setText(_netMag->creationInfo().agencyID().c_str());
 			_ui->labelAgencyID->setToolTip(_netMag->creationInfo().agencyID().c_str());
@@ -3856,6 +3868,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 		_ui->labelAuthor->setToolTip("");
 
 		_ui->labelMethod->setText("");
+		_ui->labelMethod->setToolTip("");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
