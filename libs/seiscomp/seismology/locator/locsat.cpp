@@ -874,6 +874,9 @@ void LOCSAT::setProfile(const std::string &prefix) {
 		SEISCOMP_DEBUG("LOCSAT: no station corrections used for profile %s", _tablePrefix.c_str());
 	}
 	else {
+		SEISCOMP_DEBUG("LOCSAT: loading station corrections for profile %s from file %s",
+		               _tablePrefix.c_str(),
+		               (Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
 		std::string line;
 		int lc = 1;
 		int cnt = 0;

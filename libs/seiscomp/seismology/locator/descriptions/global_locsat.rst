@@ -73,13 +73,15 @@ Limitations
 #. Only phases for which a travel-time table exists can be considered.
 #. LOCSAT currently considers travel-time tables for phases which are hard-coded
 
-   * seismic body waves: P, Pg, Pb, Pn, Rg, pP, sP, PKP, PP, PKPab, PKPbc, PKPdf,
-     SKPdf, PcP,
-     S, Sg, Sb, Sn, Lg, SKS, SS, ScS,
+   * seismic body waves: P, Pb, Pg, Pn, pP, PP, PcP, PKiKP, PKIKP, PKKP, PKP,
+     PKPab, PKPbc, PKPdf, pPKPab, pPKPbc, pPKPdf,
 
-     where P and S are the direct P and S phases, respectively, at all distances
-     no matter the take-off angle at the source.
-   * seismic surface waves: LQ, LR.
+     S, Sb, Sg, Sn, sP, sS, SS, ScP, ScS, SKKP, SKP, SKPdf, SKS, SKSac, SKSdf,
+     sPKPab, sPKPbc, sPKPdf,
+
+     where P and S are the frist-arrival direct P and S phases, respectively, at
+     all distances no matter the take-off angle at the source.
+   * seismic surface waves: LQ, LR, Lg, Rg.
    * infrasound: Is, It, Iw.
 
 #. The maximum number of distance and depth intervals per table file is
@@ -98,20 +100,20 @@ Limitations
 
 #. The considered minimum depth is 0 km. Elevations and depths above datum are
    not natively considered. The effects of station elevation can be
-   :ref:`corrected for empirically <locsat_station_elevation>`.
+   :ref:`empirically corrected for<locsat_station_elevation>`.
+
 
 .. _locsat_station_elevation:
 
 Station elevations
 ------------------
 
-LOCSAT does not natively support corrections of travel-time tables for station
+LOCSAT does not natively support corrections of travel times for station
 elevations. At least checking the code:
 
 .. code-block:: c
 
    sta_cor[i]  = 0.0;    /* FIX !!!!!!*/
-
 
 However, the |scname| wrapper adds this feature. It allows to define a
 :file:`.stacor` file which defines emperic corrections of observed travel times.
@@ -121,28 +123,43 @@ station correction definitions.
 
 Each LOCSAT profile (travel time table) can have one associated station
 correction file. E.g. for adding station corrections to the iasp91 tables, the
-file :file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.stacor` needs to be created.
+file :file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.stacor` needs to be
+created.
 
-A station correction table takes the form:
+Station correction files take the form (example):
 
 .. code-block:: properties
 
    # LOCDELAY code phase numReadings delay
-   LOCDELAY GE.MORC P 1 -0.1
+   LOCDELAY GE.MORC P 1 0.15
+   LOCDELAY IU.ANMO.00 P 1 0.36
+   LOCDELAY IU.KONO.20 P 1 -0.03
 
 with
 
-- **code** (*string*) station code (after all alias evaluations)
-- **phase** (*string*) phase type (any of the available travel time tables)
-- **numReadings** (*integer*) number of residuals used to calculate mean residual/delay
-  (not used by NLLoc, included for compatibility with the format of a summary,
-  phase statistics file)
-- **delay** (*float*) delay in seconds, subtracted from observed time
+- **LOCDELAY**: Required fixed string.
+- **code** (*string*): Stream code (after all alias evaluations) up to sensor
+  location code with network and station code as a minium. Exception: If only
+  a station code is given, then only the station code is checked. This is a
+  fallback for data centers ignoring network codes and should be used
+  exceptionally only.
+
+  Network, station and
+  sensor location codes are separated by '.'. If no sensor location is given, an
+  empty code is assumed. Wildcards are not supported.
+- **phase** (*string*): Phase type (any of the available travel time tables)
+- **numReadings** (*integer*): Number of residuals used to calculate mean
+  residual/delay. Not used by LOCSAT, included for compatibility reasons with
+  :ref:`NonLinLoc <global_nonlinloc>`
+- **delay** (*float*): Delay in seconds, subtracted from observed time.
 
 .. note::
 
-   The fourth column (numReadings) is ignored and just provided for compatibility
-   reasons with :ref:`NonLinLoc <global_nonlinloc>`.
+   * Station corrections are only considered by the locator, not the travel-time
+     interface. Therefore, they do not find application for locating by
+     :ref:`global_fixedhypocenter` or for phase association in :ref:`scautoloc`.
+   * The example file for station corrections above reflect the format not any
+     empirically derived relationship and the values themselves have no meaning.
 
 
 .. _locsat_station_application:
