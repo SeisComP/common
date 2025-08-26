@@ -22,6 +22,7 @@
 #define SEISCOMP_DATAMODEL_VERSION_H__
 
 
+#define SEISCOMP_DATAMODEL_XMLNS_ROOT_0_13 "http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/"
 #define SEISCOMP_DATAMODEL_XMLNS_ROOT "http://geofon.gfz.de/ns/seiscomp-schema/"
 #define SEISCOMP_DATAMODEL_XMLNS SEISCOMP_DATAMODEL_XMLNS_ROOT "0.14"
 
