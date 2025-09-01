@@ -23,6 +23,7 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/logging/log.h>
+#include <seiscomp/utils/url.h>
 
 #include <string.h>
 
@@ -108,62 +109,32 @@ bool DatabaseInterface::connect(const char* con) {
 		return false;
 
 	_timeout = 0;
-	string connection = con;
-	string params;
-	size_t pos = connection.find('?');
-	if ( pos != string::npos ) {
-		params = connection.substr(pos+1);
-		connection.erase(connection.begin() + pos, connection.end());
+
+	Util::Url url(con);
+
+	auto path = url.path();
+	if ( !path.empty() ) {
+		if ( path[0] == '/' ) {
+			path = path.substr(1);
+		}
+		_database = path;
+	}
+	if ( !url.username().empty() ) {
+		_user = url.username();
+	}
+	if ( !url.password().empty() ) {
+		_password = url.password();
+	}
+	if ( !url.host().empty() ) {
+		_host = url.host();
+	}
+	if ( url.port().has_value() ) {
+		_port = *url.port();
 	}
 
-	vector<string> tokens;
-	string host;
-	if ( Core::split(tokens, connection.c_str(), "@") >= 2 ) {
-		string login = tokens[0];
-		host = tokens[1];
-
-		Seiscomp::Core::split(tokens, login.c_str(), ":");
-		if ( tokens.size() > 0 ) _user = tokens[0];
-		if ( tokens.size() > 1 ) _password = tokens[1];
-	}
-	else
-		host = tokens[0];
-
-	size_t splitter = host.find_first_of('/');
-	if ( splitter != string::npos ) {
-		tokens.resize(2);
-		tokens[0] = host.substr(0, splitter);
-		tokens[1] = host.substr(splitter+1);
-	}
-	else
-		tokens[0] = host;
-
-	if ( !tokens[0].empty() )
-		_host = tokens[0];
-
-	if ( tokens.size() >= 2 ) _database = tokens[1];
-
-	pos = _host.find(":");
-	if ( pos != string::npos ) {
-		Seiscomp::Core::fromString(_port, _host.substr(pos+1));
-		_host.erase(pos);
-	}
-
-	Core::split(tokens, params.c_str(), "&");
-	if ( !tokens.empty() ) {
-		for ( size_t i = 0; i < tokens.size(); ++i ) {
-			vector<string> param;
-			Core::split(param, tokens[i].c_str(), "=");
-			if ( !param.empty() ) {
-				if ( param.size() == 1 ) {
-					if ( !handleURIParameter(param[0], "") )
-						return false;
-				}
-				else if ( param.size() == 2 ) {
-					if ( !handleURIParameter(param[0], param[1]) )
-						return false;
-				}
-			}
+	for ( auto [key, value] : url.queryItems() ) {
+		if ( !handleURIParameter(key, value) ) {
+			return false;
 		}
 	}
 
