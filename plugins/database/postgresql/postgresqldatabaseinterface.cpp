@@ -78,6 +78,10 @@ bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
 		_debug = true;
 	}
 
+	if ( name == "options" ) {
+		_options = value;
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -92,8 +96,9 @@ bool PostgreSQLDatabase::open() {
 		ss << _port;
 	}
 
+	const char* options = _options.empty() ? nullptr : _options.c_str();
 	_handle = PQsetdbLogin(_host.c_str(), ss.str().c_str(),
-	                       nullptr,
+	                       options,
 	                       nullptr,
 	                       _database.c_str(),
 	                       _user.c_str(),
