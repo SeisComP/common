@@ -20056,6 +20056,8 @@ class ArtificialEventParametersMessage(seiscomp.core.Message):
 
 # Register ArtificialEventParametersMessage in _datamodel:
 _datamodel.ArtificialEventParametersMessage_swigregister(ArtificialEventParametersMessage)
+SEISCOMP_DATAMODEL_XMLNS_ROOT_0_13 = _datamodel.SEISCOMP_DATAMODEL_XMLNS_ROOT_0_13
+
 SEISCOMP_DATAMODEL_XMLNS_ROOT = _datamodel.SEISCOMP_DATAMODEL_XMLNS_ROOT
 
 SEISCOMP_DATAMODEL_XMLNS = _datamodel.SEISCOMP_DATAMODEL_XMLNS

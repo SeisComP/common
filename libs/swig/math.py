@@ -453,6 +453,10 @@ class vectord(object):
 
 # Register vectord in _math:
 _math.vectord_swigregister(vectord)
+
+def double2frac(value):
+    r"""double2frac(double value) -> Seiscomp::Math::Fraction"""
+    return _math.double2frac(value)
 class CoordF(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::Math::Geo::Coord< float > class."""
 

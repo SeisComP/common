@@ -3396,26 +3396,27 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_std__invalid_argument swig_types[186]
 #define SWIGTYPE_p_std__nullopt_t swig_types[187]
 #define SWIGTYPE_p_std__ostream swig_types[188]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[189]
-#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[190]
-#define SWIGTYPE_p_std__string swig_types[191]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[192]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[193]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[194]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[195]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[196]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[197]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[198]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[199]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[200]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[201]
-#define SWIGTYPE_p_unsigned_char swig_types[202]
-#define SWIGTYPE_p_unsigned_int swig_types[203]
-#define SWIGTYPE_p_unsigned_long_long swig_types[204]
-#define SWIGTYPE_p_unsigned_short swig_types[205]
-#define SWIGTYPE_p_value_type swig_types[206]
-static swig_type_info *swig_types[208];
-static swig_module_info swig_module = {swig_types, 207, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__pairT_int_int_t swig_types[189]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t swig_types[190]
+#define SWIGTYPE_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t swig_types[191]
+#define SWIGTYPE_p_std__string swig_types[192]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[193]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[194]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityD_t swig_types[195]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__CityF_t swig_types[196]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordD_t swig_types[197]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Geo__NamedCoordF_t swig_types[198]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[199]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[200]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[201]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[202]
+#define SWIGTYPE_p_unsigned_char swig_types[203]
+#define SWIGTYPE_p_unsigned_int swig_types[204]
+#define SWIGTYPE_p_unsigned_long_long swig_types[205]
+#define SWIGTYPE_p_unsigned_short swig_types[206]
+#define SWIGTYPE_p_value_type swig_types[207]
+static swig_type_info *swig_types[209];
+static swig_module_info swig_module = {swig_types, 208, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -11970,6 +11971,43 @@ SWIGINTERN PyObject *vectord_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObje
 SWIGINTERN PyObject *vectord_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   return SWIG_Python_InitShadowInstance(args);
 }
+
+SWIGINTERN PyObject *_wrap_double2frac(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  double arg1 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  PyObject *swig_obj[1] ;
+  SwigValueWrapper< std::pair< int,int > > result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  ecode1 = SWIG_AsVal_double(swig_obj[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "double2frac" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  {
+    try {
+      result = Seiscomp::Math::double2frac(arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::Math::Fraction(result)), SWIGTYPE_p_std__pairT_int_int_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
 
 SWIGINTERN PyObject *_wrap_CoordF_serialize(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
@@ -51936,6 +51974,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_vectord", _wrap_delete_vectord, METH_O, "delete_vectord(vectord self)"},
 	 { "vectord_swigregister", vectord_swigregister, METH_O, NULL},
 	 { "vectord_swiginit", vectord_swiginit, METH_VARARGS, NULL},
+	 { "double2frac", _wrap_double2frac, METH_O, "double2frac(double value) -> Seiscomp::Math::Fraction"},
 	 { "CoordF_serialize", _wrap_CoordF_serialize, METH_VARARGS, "CoordF_serialize(CoordF self, GenericArchive ar)"},
 	 { "new_CoordF", _wrap_new_CoordF, METH_VARARGS, "\n"
 		"CoordF()\n"
@@ -53520,6 +53559,7 @@ static swig_type_info _swigt__p_Seiscomp__Core__ValueException = {"_p_Seiscomp__
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__nullopt_t = {"_p_std__nullopt_t", "Seiscomp::Core::NoneType *|::std::nullopt_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__ostream = {"_p_std__ostream", "std::ostream *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__pairT_int_int_t = {"_p_std__pairT_int_int_t", "Seiscomp::Math::Fraction *|std::pair< int,int > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaObject_t", "Seiscomp::Core::MetaObjectHandle *|std::shared_ptr< Seiscomp::Core::MetaObject > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t = {"_p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t", "Seiscomp::Core::MetaPropertyHandle *|std::shared_ptr< Seiscomp::Core::MetaProperty > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
@@ -53729,6 +53769,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__invalid_argument,
   &_swigt__p_std__nullopt_t,
   &_swigt__p_std__ostream,
+  &_swigt__p_std__pairT_int_int_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   &_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
   &_swigt__p_std__string,
@@ -53938,6 +53979,7 @@ static swig_cast_info _swigc__p_std__exception[] = {  {&_swigt__p_std__exception
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__nullopt_t[] = {  {&_swigt__p_std__nullopt_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__ostream[] = {  {&_swigt__p_std__ostream, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__pairT_int_int_t[] = {  {&_swigt__p_std__pairT_int_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[] = {  {&_swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
@@ -54147,6 +54189,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__invalid_argument,
   _swigc__p_std__nullopt_t,
   _swigc__p_std__ostream,
+  _swigc__p_std__pairT_int_int_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaObject_t,
   _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t,
   _swigc__p_std__string,
