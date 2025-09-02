@@ -89,7 +89,7 @@ using Regionalization = vector<MagnitudeProcessor::Locale>;
 DEFINE_SMARTPOINTER(TypeSpecificRegionalization);
 class TypeSpecificRegionalization : public Core::BaseObject {
 	public:
-		const Regions   *regions;
+		const Regions   *regions{nullptr};
 		Regionalization  regionalization;
 };
 
@@ -790,6 +790,14 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 				if ( !locale ) {
 					return notFoundStatus;
 				}
+			}
+			else if ( tsr and tsr->regions ) {
+				// There are type specific regionalization regions configured
+				// but not regionalization settings used: all are disabled and
+				// magnitude compution is skipped.
+				SEISCOMP_DEBUG("%s.%s: %s: all regions are disabled",
+				               _networkCode, _stationCode, _type);
+				return EpicenterOutOfRegions;
 			}
 		}
 	}
