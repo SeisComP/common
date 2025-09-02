@@ -111,14 +111,14 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 			auto sourceFactory = MagnitudeProcessorFactory::Find(sourceType);
 			if ( !sourceFactory ) {
 				SEISCOMP_ERROR("alias: magnitude source factory '%s' does not exist",
-				               sourceType.c_str());
+				               sourceType);
 				return false;
 			}
 
 			auto factory = MagnitudeProcessorFactory::Find(aliasType);
 			if ( factory ) {
 				SEISCOMP_ERROR("alias: magnitude alias type '%s' is already registered",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -135,7 +135,7 @@ class AliasFactories : public std::vector<MagnitudeProcessorAliasFactory*> {
 			auto factory = MagnitudeProcessorFactory::Find(aliasType);
 			if ( !factory ) {
 				SEISCOMP_ERROR("alias: magnitude alias type '%s' does not exist",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -251,11 +251,11 @@ std::string MagnitudeProcessor::amplitudeType() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("%s.%s.%s.%s - %s magnitude configuration:",
-	               settings.networkCode.c_str(),
-	               settings.stationCode.c_str(),
-	               settings.locationCode.c_str(),
-	               settings.channelCode.c_str(),
-	               _type.c_str());
+	               settings.networkCode,
+	               settings.stationCode,
+	               settings.locationCode,
+	               settings.channelCode,
+	               _type);
 
 	_minimumDistanceDeg = Core::None;
 	_maximumDistanceDeg = Core::None;
@@ -293,9 +293,9 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 		catch ( ... ) {
 			try {
 				strLinearCorrections = settings.getDouble("mag." + type() + ".multiplier");
-				SEISCOMP_WARNING("mag.%s.multiplier is deprecated", type().c_str());
+				SEISCOMP_WARNING("mag.%s.multiplier is deprecated", type());
 				SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.multiplier",
-				                 type().c_str());
+				                 type());
 			}
 			catch ( ... ) {}
 		}
@@ -311,19 +311,19 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				if ( p == string::npos ) {
 					if ( hasDefault ) {
 						SEISCOMP_ERROR("%s/%s.%s: Only one default linear correction allowed: %s",
-						               _type.c_str(),
-						               settings.networkCode.c_str(),
-						               settings.stationCode.c_str(),
-						               strLinearCorrections.c_str());
+						               _type,
+						               settings.networkCode,
+						               settings.stationCode,
+						               strLinearCorrections);
 						return false;
 					}
 
 					if ( !Core::fromString(_defaultCorrection.first, tok) ) {
 						SEISCOMP_ERROR("%s/%s.%s: Invalid linear correction value: %s",
-						               _type.c_str(),
-						               settings.networkCode.c_str(),
-						               settings.stationCode.c_str(),
-						               tok.c_str());
+						               _type,
+						               settings.networkCode,
+						               settings.stationCode,
+						               tok);
 						return false;
 					}
 
@@ -334,10 +334,10 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				double value;
 				if ( !Core::fromString(value, tok.substr(p+1)) ) {
 					SEISCOMP_ERROR("%s/%s.%s: Invalid linear correction: %s",
-					               _type.c_str(),
-					               settings.networkCode.c_str(),
-					               settings.stationCode.c_str(),
-					               tok.c_str());
+					               _type,
+					               settings.networkCode,
+					               settings.stationCode,
+					               tok);
 					return false;
 				}
 
@@ -345,10 +345,10 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				Core::trim(name);
 				if ( name.empty() ) {
 					SEISCOMP_ERROR("%s/%s.%s: Empty linear correction profiles not allowed: %s",
-					               _type.c_str(),
-					               settings.networkCode.c_str(),
-					               settings.stationCode.c_str(),
-					               tok.c_str());
+					               _type,
+					               settings.networkCode,
+					               settings.stationCode,
+					               tok);
 					return false;
 				}
 
@@ -365,9 +365,9 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 		catch ( ... ) {
 			try {
 				strConstantCorrections = settings.getDouble("mag." + type() + ".offset");
-				SEISCOMP_WARNING("mag.%s.offset is deprecated", type().c_str());
+				SEISCOMP_WARNING("mag.%s.offset is deprecated", type());
 				SEISCOMP_WARNING("  + remove parameter from bindings and use magnitudes.%s.offset",
-				                 type().c_str());
+				                 type());
 			}
 			catch ( ... ) {}
 		}
@@ -383,19 +383,19 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				if ( p == string::npos ) {
 					if ( hasDefault ) {
 						SEISCOMP_ERROR("%s/%s.%s: Only one default constant correction allowed: %s",
-						               _type.c_str(),
-						               settings.networkCode.c_str(),
-						               settings.stationCode.c_str(),
-						               strConstantCorrections.c_str());
+						               _type,
+						               settings.networkCode,
+						               settings.stationCode,
+						               strConstantCorrections);
 						return false;
 					}
 
 					if ( !Core::fromString(_defaultCorrection.second, tok) ) {
 						SEISCOMP_ERROR("%s/%s.%s: Invalid constant correction value: %s",
-						               _type.c_str(),
-						               settings.networkCode.c_str(),
-						               settings.stationCode.c_str(),
-						               tok.c_str());
+						               _type,
+						               settings.networkCode,
+						               settings.stationCode,
+						               tok);
 						return false;
 					}
 
@@ -406,10 +406,10 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				double value;
 				if ( !Core::fromString(value, tok.substr(p+1)) ) {
 					SEISCOMP_ERROR("%s/%s.%s: Invalid constant correction: %s",
-					               _type.c_str(),
-					               settings.networkCode.c_str(),
-					               settings.stationCode.c_str(),
-					               tok.c_str());
+					               _type,
+					               settings.networkCode,
+					               settings.stationCode,
+					               tok);
 					return false;
 				}
 
@@ -417,10 +417,10 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 				Core::trim(name);
 				if ( name.empty() ) {
 					SEISCOMP_ERROR("%s/%s.%s: Empty constant correction profiles not allowed: %s",
-					               _type.c_str(),
-					               settings.networkCode.c_str(),
-					               settings.stationCode.c_str(),
-					               tok.c_str());
+					               _type,
+					               settings.networkCode,
+					               settings.stationCode,
+					               tok);
 					return false;
 				}
 
@@ -536,7 +536,7 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 		}
 		else {
 			SEISCOMP_ERROR("%scheck: invalid region check: %s",
-			               cfgPrefix.c_str(), check.c_str());
+			               cfgPrefix, check);
 			return false;
 		}
 	}
@@ -546,8 +546,8 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 		return false;
 	}
 
-	SEISCOMP_DEBUG("%s (locale)", _type.c_str());
-	SEISCOMP_DEBUG("  + region: %s", locale->name.c_str());
+	SEISCOMP_DEBUG("%s (locale)", _type);
+	SEISCOMP_DEBUG("  + region: %s", locale->name);
 	if ( locale->minimumDistanceDeg ) {
 		SEISCOMP_DEBUG("  + minimum distance: %.3f", *locale->minimumDistanceDeg);
 	}
@@ -586,7 +586,7 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 				if ( !cfg->getString("magnitudes." + type() + ".regions").empty() ) {
 					SEISCOMP_WARNING("%s magnitude: ignoring obsolete "
 					                 "configuration parameter: magnitudes.%s.regions",
-					                 type().c_str(), type().c_str());
+					                 type(), type());
 				}
 			}
 			catch ( ... ) {}
@@ -597,7 +597,7 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 				regionalizedSettings->regions = Regions::load(filename);
 				if ( !regionalizedSettings->regions ) {
 					SEISCOMP_ERROR("Failed to read/parse %s regions file: %s",
-					               type().c_str(), filename.c_str());
+					               type(), filename);
 					return false;
 				}
 
@@ -616,13 +616,13 @@ bool MagnitudeProcessor::initRegionalization(const Settings &settings) {
 					try {
 						if ( !cfg->getBool(cfgPrefix + "enable") ) {
 							SEISCOMP_DEBUG("%s: - region %s (disabled)",
-							               _type.c_str(), feature->name().c_str());
+							               _type, feature->name());
 							continue;
 						}
 					}
 					catch ( ... ) {
 						SEISCOMP_DEBUG("%s: - region %s (disabled)",
-						               _type.c_str(), feature->name().c_str());
+						               _type, feature->name());
 						continue;
 					}
 
@@ -683,14 +683,14 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 
 	if ( _minimumDepthKm && (depth < *_minimumDepthKm) ) {
 		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f < %f",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               depth, *_minimumDepthKm);
 		return DepthOutOfRange;
 	}
 
 	if ( _maximumDepthKm && (depth > *_maximumDepthKm) ) {
 		SEISCOMP_DEBUG("%s.%s: %s: depth out of range: %f > %f",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               depth, *_maximumDepthKm);
 		return DepthOutOfRange;
 	}
@@ -804,8 +804,8 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 
 	if ( locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: locale = '%s'",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
-		               locale->name.c_str());
+		               _networkCode, _stationCode, _type,
+		               locale->name);
 	}
 
 	auto r = computeMagnitude(amplitudeValue, unit, period, snr, delta, depth,
@@ -830,21 +830,21 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 
 	if ( _minimumDistanceDeg && delta < *_minimumDistanceDeg ) {
 		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f < %f",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               delta, *_minimumDistanceDeg);
 		return DistanceOutOfRange;
 	}
 
 	if ( _maximumDistanceDeg && delta > *_maximumDistanceDeg ) {
 		SEISCOMP_DEBUG("%s.%s: %s: station distance out of range: %f > %f",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               delta, *_maximumDistanceDeg);
 		return DistanceOutOfRange;
 	}
 
 	if ( !locale ) {
 		SEISCOMP_DEBUG("%s.%s: %s: effective correction (no locale) = %.2f:%.2f",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               _defaultCorrection.first, _defaultCorrection.second);
 		value = _defaultCorrection.first * value + _defaultCorrection.second;
 	}
@@ -852,12 +852,12 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 		const Correction::A *corr = _corrections.apply(value, locale->name);
 		if ( corr ) {
 			SEISCOMP_DEBUG("%s.%s: %s: effective correction (regionalized binding) = %.2f:%.2f",
-			               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+			               _networkCode, _stationCode, _type,
 			               corr->first, corr->second);
 		}
 		else {
 			SEISCOMP_DEBUG("%s.%s: %s: effective correction (region) = %.2f:%.2f",
-			               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+			               _networkCode, _stationCode, _type,
 			               locale->multiplier, locale->offset);
 			value = locale->multiplier * value + locale->offset;
 		}
@@ -877,7 +877,7 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 	if ( _minimumSNR && snr < *_minimumSNR ) {
 		r = SNROutOfRange;
 		SEISCOMP_DEBUG("%s.%s: %s: SNR out of range: %f > %f: qc failed",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               snr, *_minimumSNR);
 		_treatAsValidMagnitude = true;
 	}
@@ -885,14 +885,14 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 	if ( _minimumPeriod && period < *_minimumPeriod ) {
 		r = PeriodOutOfRange;
 		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f < %f: qc failed",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               period, *_minimumPeriod);
 		_treatAsValidMagnitude = true;
 	}
 	else if ( _maximumPeriod && period > *_maximumPeriod ) {
 		r = PeriodOutOfRange;
 		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f > %f: qc failed",
-		               _networkCode.c_str(), _stationCode.c_str(), _type.c_str(),
+		               _networkCode, _stationCode, _type,
 		               period, *_maximumPeriod);
 		_treatAsValidMagnitude = true;
 	}
@@ -932,10 +932,10 @@ MagnitudeProcessor::Status MagnitudeProcessor::estimateMw(
 
 				if ( !tmpMwMapping.set(def) ) {
 					SEISCOMP_ERROR("%s: Invalid Mw table: %s",
-					               type().c_str(), Core::join(def, ", ").c_str());
+					               type(), Core::join(def, ", "));
 				}
 				else {
-					SEISCOMP_DEBUG("%s: Mw table = %s", type().c_str(), Core::join(def, ", ").c_str());
+					SEISCOMP_DEBUG("%s: Mw table = %s", type(), Core::join(def, ", "));
 					MwTables[type()] = tmpMwMapping;
 					MwMapping = &*MwTables[type()];
 				}
@@ -994,7 +994,7 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	uc = Util::UnitConverter::get(desiredAmplitudeUnit);
 	if ( !uc ) {
 		SEISCOMP_ERROR("This must not happen: no converter for amplitude target unit '%s'",
-		               desiredAmplitudeUnit.c_str());
+		               desiredAmplitudeUnit);
 		// This must not happen. The desired amplitude unit should always
 		// have a mapping.
 		return false;
@@ -1003,8 +1003,8 @@ bool MagnitudeProcessor::convertAmplitude(double &amplitude,
 	double desiredAmplitude = uc->revert(amplitudeSI);
 
 	SEISCOMP_DEBUG("Converted amplitude from %f %s to %f %s",
-	               amplitude, amplitudeUnit.c_str(),
-	               desiredAmplitude, desiredAmplitudeUnit.c_str());
+	               amplitude, amplitudeUnit,
+	               desiredAmplitude, desiredAmplitudeUnit);
 
 	amplitude = desiredAmplitude;
 
