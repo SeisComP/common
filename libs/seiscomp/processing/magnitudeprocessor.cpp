@@ -472,9 +472,20 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 	try { _minimumSNR = settings.getDouble("magnitudes." + type() + ".minSNR"); }
 	catch ( ... ) {}
 
-	try { _minimumPeriod = settings.getDouble("magnitudes." + type() + ".minPeriod"); }
+	try {
+		_minimumPeriod = settings.getDouble("magnitudes." + type() + ".minPeriod");
+		if ( *_minimumPeriod <= 0 ) {
+			_minimumPeriod = Core::None;
+		}
+	}
 	catch ( ... ) {}
-	try { _maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod"); }
+
+	try {
+		_maximumPeriod = settings.getDouble("magnitudes." + type() + ".maxPeriod");
+		if ( *_maximumPeriod <= 0 ) {
+			_maximumPeriod = Core::None;
+		}
+	}
 	catch ( ... ) {}
 
 	SEISCOMP_DEBUG("  + minimum distance = %s deg", toString(_minimumDistanceDeg, "%.5f"));
@@ -882,18 +893,28 @@ MagnitudeProcessor::computeMagnitude(double amplitudeValue,
 		_treatAsValidMagnitude = true;
 	}
 
-	if ( _minimumPeriod && period < *_minimumPeriod ) {
-		r = PeriodOutOfRange;
-		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f < %f: qc failed",
-		               _networkCode, _stationCode, _type,
-		               period, *_minimumPeriod);
-		_treatAsValidMagnitude = true;
+	if ( period > 0 ) {
+		// Only valid periods can be checked against configured limits
+		if ( _minimumPeriod && (period < *_minimumPeriod) ) {
+			r = PeriodOutOfRange;
+			SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f < %f: qc failed",
+			               _networkCode, _stationCode, _type,
+			               period, *_minimumPeriod);
+			_treatAsValidMagnitude = true;
+		}
+		else if ( _maximumPeriod && (period > *_maximumPeriod) ) {
+			r = PeriodOutOfRange;
+			SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f > %f: qc failed",
+			               _networkCode, _stationCode, _type,
+			               period, *_maximumPeriod);
+			_treatAsValidMagnitude = true;
+		}
 	}
-	else if ( _maximumPeriod && period > *_maximumPeriod ) {
+	else if ( _minimumPeriod || _maximumPeriod ) {
+		// Invalid periods will never meet a configured limit.
 		r = PeriodOutOfRange;
-		SEISCOMP_DEBUG("%s.%s: %s: period out of range: %f > %f: qc failed",
-		               _networkCode, _stationCode, _type,
-		               period, *_maximumPeriod);
+		SEISCOMP_DEBUG("%s.%s: %s: period out of range: no period but limits set: qc failed",
+		               _networkCode, _stationCode, _type);
 		_treatAsValidMagnitude = true;
 	}
 

@@ -1911,15 +1911,21 @@ void AmplitudeProcessor::process(const Record *record) {
 		}
 
 		if ( res.period > 0 ) {
-			if ( _config.minimumPeriod > 0 && res.period < _config.minimumPeriod ) {
+			// Only valid periods can be checked against configured limits
+			if ( (_config.minimumPeriod > 0) && (res.period < _config.minimumPeriod) ) {
 				setStatus(PeriodOutOfRange, res.period);
 				return;
 			}
 
-			if ( _config.maximumPeriod > 0 && res.period > _config.maximumPeriod ) {
+			if ( (_config.maximumPeriod > 0) && (res.period > _config.maximumPeriod) ) {
 				setStatus(PeriodOutOfRange, res.period);
 				return;
 			}
+		}
+		else if ( (_config.minimumPeriod > 0) || (_config.maximumPeriod > 0) ) {
+			// Invalid periods will never meet a configured limit.
+			setStatus(PeriodOutOfRange, 0.0);
+			return;
 		}
 
 		if ( index.begin > index.end ) {
