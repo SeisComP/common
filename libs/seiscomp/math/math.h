@@ -44,11 +44,11 @@
 #endif
 
 
-namespace Seiscomp {
-namespace Math {
+namespace Seiscomp::Math {
 
 
-typedef std::complex<double> Complex;
+	using Complex = std::complex<double>;
+	using Fraction = std::pair<int, int>;
 
 
 #if defined(WIN32)
@@ -62,8 +62,16 @@ template <typename T>
 	inline bool isNaN(T v) { return std::isnan(v)!=0; }
 #endif
 
+	/**
+	 * @brief Converts a double to a fraction containing numerator and
+	 * denominator. If the double value exceeds the numeric integer limits
+	 * numeric_limits<int>::max()/1 or numeric_limits<int>::min()/1 is returned.
+	 * @param value The double number to be converted.
+	 * @return Fraction containing numerator and denominator.
+	 */
+	Fraction double2frac(double value);
 
-} // namespace Math
-} // namespace Seiscomp
+
+} // namespace Seiscomp::Math
 
 #endif

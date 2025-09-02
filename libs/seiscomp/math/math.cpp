@@ -18,17 +18,49 @@
  ***************************************************************************/
 
 
-#include "math.h"
-#include <cstdint>
-#include <limits>
+#include "./math.h"
+
+#include <cmath>
+#include <numeric>
 
 
-namespace Seiscomp {
-namespace Math {
+namespace Seiscomp::Math {
 
 
-//
+Fraction double2frac(double value) {
+	// Check numeric limits
+	if ( value > std::numeric_limits<int>::max() ) {
+		return {std::numeric_limits<int>::max(), 1};
+	}
+
+	if ( value < std::numeric_limits<int>::min() ) {
+		return {std::numeric_limits<int>::min(), 1};
+	}
+
+	// Operate on positive numbers
+	int sign = 1;
+	if ( value < 0 ) {
+		sign = -1;
+		value = -value;
+	}
+
+	// Calculatate the largest possible power of 10 giving numeric integer
+	// limits and the current input number
+	static auto max_exp = floor(log10(std::numeric_limits<int>::max())) - 1.0;
+	auto exp = max_exp;
+	if ( value >= 10 ) {
+		exp -= floor(log10(value));
+	}
+
+	// Expand input number with power of 10
+	auto denominator = static_cast<int>(pow(10, exp));
+	auto numerator = static_cast<int>(round(value * denominator));
+
+	// Simplify the fraction by calculating the greatest common divisor
+	int gcd = std::gcd(numerator, denominator);
+
+	return {sign * numerator / gcd, denominator / gcd};
+}
 
 
-} // namespace Math
-} // namespace Seiscomp
+} // namespace Seiscomp::Math
