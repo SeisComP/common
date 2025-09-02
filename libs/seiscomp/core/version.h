@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 3, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(16, 4, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x100300
+#define SC_API_VERSION 0x100400
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+
+ "16.4.0"   0x100400
+   - Added Seiscomp::Math::double2frac
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
