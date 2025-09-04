@@ -32,6 +32,7 @@ SET(
 		uncertainties.cpp
 		spectrogramrenderer.cpp
 		spectrogramwidget.cpp
+		spectrogramsettings.cpp
 		spectrumwidget.cpp
 		spinninglabel.cpp
 		processmanager.cpp
@@ -84,6 +85,7 @@ SET(
 		inspector.h
 		uncertainties.h
 		spectrogramwidget.h
+		spectrogramsettings.h
 		spectrumwidget.h
 		spinninglabel.h
 		optionaldoublespinbox.h
@@ -102,6 +104,7 @@ SET(
 		diagramfilter.ui
 		showplugins.ui
 		processmanager.ui
+		spectrogramsettings.ui
 )
 
 SET(

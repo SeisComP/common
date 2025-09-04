@@ -43,6 +43,9 @@ namespace Seiscomp {
 namespace Gui {
 
 
+class SpectrogramSettings;
+
+
 class PickerViewPrivate {
 	private:
 		struct WaveformRequest {
@@ -61,14 +64,8 @@ class PickerViewPrivate {
 			char                        component;
 		};
 
-		struct SpectrogramOptions {
-			double minRange;
-			double maxRange;
-			double tw;
-		};
-
-		typedef std::list<WaveformRequest> WaveformStreamList;
-		typedef std::map<std::string, PrivatePickerView::PickerRecordLabel*> RecordItemMap;
+		using WaveformStreamList = std::list<WaveformRequest>;
+		using RecordItemMap = std::map<std::string, PrivatePickerView::PickerRecordLabel*>;
 
 
 	private:
@@ -159,7 +156,7 @@ class PickerViewPrivate {
 		QList<PickerMarkerActionPlugin*>    markerPlugins;
 
 		PickerView::Config                  config;
-		SpectrogramOptions                  specOpts;
+		SpectrogramSettings                *spectrogramSettings;
 
 		QWidget                            *spectrumView;
 

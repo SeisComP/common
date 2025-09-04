@@ -438,11 +438,6 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void updateRecordValue(Seiscomp::Core::Time);
 		void showTraceScaleToggled(bool);
 
-		void specLogToggled(bool);
-		void specSmoothToggled(bool);
-		void specMinValue(double);
-		void specMaxValue(double);
-		void specTimeWindow(double);
 		void specApply();
 
 		void limitFilterToZoomTrace(bool);

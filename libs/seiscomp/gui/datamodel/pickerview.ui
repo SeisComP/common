@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>945</width>
-    <height>738</height>
+    <width>1063</width>
+    <height>798</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -576,20 +576,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QToolBar" name="toolBarSpectrogram">
-   <property name="windowTitle">
-    <string>Spectrogram</string>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QToolBar" name="toolBarTTT">
    <property name="windowTitle">
     <string>Travel times</string>
@@ -630,8 +616,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>945</width>
-     <height>18</height>
+     <width>1063</width>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Filter">
@@ -724,12 +710,18 @@
     <addaction name="menuTraces"/>
     <addaction name="menuComponents"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+   </widget>
    <addaction name="menuView"/>
    <addaction name="menu_Navigation"/>
    <addaction name="menuPicking"/>
    <addaction name="menu_Filter"/>
    <addaction name="menu_Tools"/>
    <addaction name="menu_Locate"/>
+   <addaction name="menuWindow"/>
   </widget>
   <action name="actionIncreaseAmplitudeScale">
    <property name="icon">

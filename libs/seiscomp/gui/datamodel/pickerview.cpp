@@ -33,6 +33,7 @@
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/gui/core/uncertainties.h>
 #include <seiscomp/gui/core/spectrogramrenderer.h>
+#include <seiscomp/gui/core/spectrogramsettings.h>
 #include <seiscomp/gui/core/spectrumwidget.h>
 #include <seiscomp/gui/plot/axis.h>
 #include <seiscomp/client/inventory.h>
@@ -59,6 +60,7 @@
 #include <seiscomp/utils/units.h>
 #include <seiscomp/logging/log.h>
 
+#include <QDockWidget>
 #include <QMessageBox>
 #include <QToolButton>
 
@@ -211,35 +213,50 @@ class ZoomRecordWidget : public RecordWidget {
 			update();
 		}
 
-		void setLogSpectrogram(bool enable) {
-			for ( int i = 0; i < 3; ++i )
+		void specSetLogScale(bool enable) {
+			for ( int i = 0; i < 3; ++i ) {
 				spectrogram[i].setLogScale(enable);
+			}
 			spectrogramAxis.setLogScale(enable);
 			update();
 		}
 
-		void setSmoothSpectrogram(bool enable) {
-			for ( int i = 0; i < 3; ++i )
+		void specSetSmoothTransform(bool enable) {
+			for ( int i = 0; i < 3; ++i ) {
 				spectrogram[i].setSmoothTransform(enable);
+			}
 			update();
 		}
 
-		void setMinSpectrogramRange(double v) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setGradientRange(v, spectrogram[i].gradientUpperBound());
+		void specSetNormalizationMode(SpectrogramRenderer::NormalizationMode mode) {
+			for ( int i = 0; i < 3; ++i ) {
+				spectrogram[i].setNormalizationMode(mode);
+			}
+			if ( showSpectrogram ) {
+				resetSpectrogram();
+				update();
+			}
+		}
+
+		void specSetGradientRange(double from, double to) {
+			for ( int i = 0; i < 3; ++i ) {
+				spectrogram[i].setGradientRange(from, to);
+			}
 			update();
 		}
 
-		void setMaxSpectrogramRange(double v) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setGradientRange(spectrogram[i].gradientLowerBound(), v);
+		void specSetFrequencyRange(OPT(double) from, OPT(double) to) {
+			for ( int i = 0; i < 3; ++i ) {
+				spectrogram[i].setFrequencyRange(from, to);
+			}
 			update();
 		}
 
-		void setSpectrogramTimeWindow(double tw) {
+		void specSetTimeWindow(double tw, double overlap) {
 			for ( int i = 0; i < 3; ++i ) {
 				IO::Spectralizer::Options opts = spectrogram[i].options();
 				opts.windowLength = tw;
+				opts.windowOverlap = overlap;
 				spectrogram[i].setOptions(opts);
 			}
 
@@ -247,6 +264,11 @@ class ZoomRecordWidget : public RecordWidget {
 				resetSpectrogram();
 				update();
 			}
+		}
+
+		void specSetShowAxis(bool show) {
+			showSpectrogramAxis = show;
+			update();
 		}
 
 		void setTraces(ThreeComponentTrace::Component *t) {
@@ -311,12 +333,14 @@ class ZoomRecordWidget : public RecordWidget {
 
 		void updateTraceColor() {
 			if ( showSpectrogram ) {
-				for ( int i = 0; i < slotCount(); ++i )
+				for ( int i = 0; i < slotCount(); ++i ) {
 					setRecordPen(i, QPen(SCScheme.colors.records.spectrogram, SCScheme.records.lineWidth));
+				}
 			}
 			else {
-				for ( int i = 0; i < slotCount(); ++i )
+				for ( int i = 0; i < slotCount(); ++i ) {
 					setRecordPen(i, QPen(SCScheme.colors.records.foreground, SCScheme.records.lineWidth));
+				}
 			}
 		}
 
@@ -324,7 +348,7 @@ class ZoomRecordWidget : public RecordWidget {
 		void paintEvent(QPaintEvent *p) override {
 			RecordWidget::paintEvent(p);
 
-			if ( showSpectrogram ) {
+			if ( showSpectrogram && showSpectrogramAxis ) {
 				QPainter painter(this);
 				painter.setBrush(palette().brush(QPalette::Base));
 
@@ -418,6 +442,7 @@ class ZoomRecordWidget : public RecordWidget {
 		int                             currentIndex;
 		SpectrogramRenderer             spectrogram[3];
 		bool                            showSpectrogram;
+		bool                            showSpectrogramAxis{true};
 		Seiscomp::Gui::Axis             spectrogramAxis;
 		ThreeComponentTrace::Component *traces;
 };
@@ -1365,6 +1390,17 @@ class PickerTimeWindowDecorator : public RecordWidgetDecorator {
 		bool             _visible{false};
 		Core::TimeWindow _timeWindow;
 		double           _snr{-1};
+};
+
+
+class WidgetMenu : public QMenu {
+	public:
+		WidgetMenu(QWidget *parent = 0) : QMenu(parent) {}
+
+	public:
+		QSize sizeHint() const {
+			return QWidget::sizeHint();
+		}
 };
 
 
@@ -2781,6 +2817,24 @@ void PickerView::init() {
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboUnit);
 
+	{
+		SC_D.spectrogramSettings = new SpectrogramSettings(this);
+		SC_D.spectrogramSettings->ui.cbShowAxis->setChecked(true);
+		connect(SC_D.spectrogramSettings, SIGNAL(apply()), this, SLOT(specApply()));
+		SC_D.spectrogramSettings->init(SCApp, "picker.spectrogram.");
+
+		auto dockSpec = new QDockWidget(tr("Spectrogram settings"), this);
+		dockSpec->setObjectName("Dock" + SC_D.spectrogramSettings->objectName());
+		dockSpec->setWidget(SC_D.spectrogramSettings);
+		dockSpec->setAllowedAreas(Qt::AllDockWidgetAreas);
+		dockSpec->setVisible(false);
+		addDockWidget(Qt::LeftDockWidgetArea, dockSpec);
+		dockSpec->toggleViewAction()->setShortcut(QKeySequence("ctrl+shift+s"));
+		SC_D.ui.menuWindow->addAction(dockSpec->toggleViewAction());
+
+		specApply();
+	}
+
 	// TTT selection
 	SC_D.comboTTT = new QComboBox;
 	SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTT);
@@ -2872,67 +2926,6 @@ void PickerView::init() {
 	connect(SC_D.spinDistance, SIGNAL(editingFinished()),
 	        this, SLOT(loadNextStations()));
 	*/
-
-	QCheckBox *cb = new QCheckBox;
-	cb->setObjectName("spec.log");
-	cb->setText(tr("Logscale"));
-	cb->setChecked(false);
-	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specLogToggled(bool)));
-	specLogToggled(cb->isChecked());
-
-	SC_D.ui.toolBarSpectrogram->addWidget(cb);
-
-	cb = new QCheckBox;
-	cb->setObjectName("spec.smooth");
-	cb->setText(tr("Smoothing"));
-	cb->setChecked(true);
-	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specSmoothToggled(bool)));
-	specSmoothToggled(cb->isChecked());
-
-	SC_D.ui.toolBarSpectrogram->addWidget(cb);
-
-	SC_D.specOpts.minRange = -15;
-	SC_D.specOpts.maxRange = -5;
-	SC_D.specOpts.tw = 5;
-
-	QDoubleSpinBox *spinLower = new QDoubleSpinBox;
-	spinLower->setMinimum(-100);
-	spinLower->setMaximum(100);
-	spinLower->setValue(SC_D.specOpts.minRange);
-	connect(spinLower, SIGNAL(valueChanged(double)), this, SLOT(specMinValue(double)));
-	specMinValue(spinLower->value());
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinLower);
-
-	QDoubleSpinBox *spinUpper = new QDoubleSpinBox;
-	spinUpper->setMinimum(-100);
-	spinUpper->setMaximum(100);
-	spinUpper->setValue(SC_D.specOpts.maxRange);
-	connect(spinUpper, SIGNAL(valueChanged(double)), this, SLOT(specMaxValue(double)));
-	specMaxValue(spinUpper->value());
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinUpper);
-
-	QDoubleSpinBox *spinTW = new QDoubleSpinBox;
-	spinTW->setMinimum(0.1);
-	spinTW->setMaximum(600);
-	spinTW->setValue(SC_D.specOpts.tw);
-	spinTW->setSuffix("s");
-	spinTW->setToolTip(tr("Sets the time window length of raw data to be used to compute a column of the spectrogram."));
-	connect(spinTW, SIGNAL(valueChanged(double)), this, SLOT(specTimeWindow(double)));
-	specTimeWindow(spinTW->value());
-	specApply();
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinTW);
-
-	QToolButton *btnSpecUpdate = new QToolButton;
-	btnSpecUpdate->setToolTip(tr("Applies the time window changes to the current spectrogram (if active)."));
-	btnSpecUpdate->setText(tr("Apply"));
-	connect(btnSpecUpdate, SIGNAL(clicked()), this, SLOT(specApply()));
-	SC_D.ui.toolBarSpectrogram->addWidget(btnSpecUpdate);
 
 	// connect actions
 	connect(SC_D.ui.actionDefaultView, SIGNAL(triggered(bool)),
@@ -9128,55 +9121,38 @@ void PickerView::activateFilter(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specLogToggled(bool e) {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setLogSpectrogram(e);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specSmoothToggled(bool e) {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSmoothSpectrogram(e);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specMinValue(double v) {
-	SC_D.specOpts.minRange = v;
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setMinSpectrogramRange(SC_D.specOpts.minRange);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specMaxValue(double v) {
-	SC_D.specOpts.maxRange = v;
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setMaxSpectrogramRange(SC_D.specOpts.maxRange);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specTimeWindow(double tw) {
-	SC_D.specOpts.tw = tw;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::specApply() {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSpectrogramTimeWindow(SC_D.specOpts.tw);
+	auto traceWidget = static_cast<ZoomRecordWidget*>(SC_D.currentRecord);
+	traceWidget->specSetSmoothTransform(SC_D.spectrogramSettings->ui.cbSmoothing->isChecked());
+	switch ( SC_D.spectrogramSettings->ui.cbNormalization->currentIndex() ) {
+		default:
+		case 0:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Fixed);
+			break;
+		case 1:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Frequency);
+			break;
+		case 2:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Time);
+			break;
+	}
+
+	traceWidget->specSetLogScale(SC_D.spectrogramSettings->ui.cbLogScale->isChecked());
+	traceWidget->specSetGradientRange(
+		SC_D.spectrogramSettings->ui.spinMinAmp->value(),
+		SC_D.spectrogramSettings->ui.spinMaxAmp->value()
+	);
+	traceWidget->specSetFrequencyRange(
+		SC_D.spectrogramSettings->ui.spinMinFrequency->value() == 0
+		? Core::None
+		: OPT(double)(SC_D.spectrogramSettings->ui.spinMinFrequency->value()),
+		SC_D.spectrogramSettings->ui.spinMaxFrequency->value() == 0
+		? Core::None
+		: OPT(double)(SC_D.spectrogramSettings->ui.spinMaxFrequency->value())
+	);
+	traceWidget->specSetTimeWindow(SC_D.spectrogramSettings->ui.spinTimeWindow->value(),
+	                               SC_D.spectrogramSettings->ui.spinOverlap->value() * 0.01);
+	traceWidget->specSetShowAxis(SC_D.spectrogramSettings->ui.cbShowAxis->isChecked());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
