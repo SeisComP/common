@@ -533,7 +533,8 @@ void RecordView::setupUi() {
 
 	setFilter(nullptr);
 
-	_rowHeight = _minRowHeight = _defaultRowHeight;
+	_rowHeight = _defaultRowHeight;
+	_minRowHeight = QFontMetrics(font()).height() * 15 / 10;
 
 	_scrollArea = new RecordScrollArea;
 	_scrollArea->setWidgetResizable(true);
