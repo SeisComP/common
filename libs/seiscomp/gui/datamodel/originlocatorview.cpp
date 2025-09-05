@@ -6142,21 +6142,6 @@ void OriginLocatorView::showWaveforms() {
 	}
 	catch ( ... ) {}
 
-	try {
-		auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
-		double minDist = 0, maxDist = 1000;
-		try {
-			minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
-		}
-		catch ( ... ) {}
-		try {
-			maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
-		}
-		catch ( ... ) {}
-		SC_D.recordView->setAuxiliaryChannels(patterns, minDist, maxDist);
-	}
-	catch ( ... ) {}
-
 	QString errorMsg;
 	if ( !SC_D.recordView->setConfig(SC_D.pickerConfig, &errorMsg) ) {
 		QMessageBox::information(this, "Picker Error", errorMsg);
@@ -6756,9 +6741,9 @@ void OriginLocatorView::createArtificialOrigin() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-											  const QPoint &dialogPos) {
+                                               const QPoint &dialogPos) {
 	createArtificialOrigin(epicenter, SC_D.pickerConfig.defaultDepth,
-						   Core::Time::UTC(), dialogPos);
+	                       Core::Time::UTC(), dialogPos);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -6767,9 +6752,9 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-											   double depth,
-											   Seiscomp::Core::Time time,
-											   const QPoint &dialogPos) {
+                                               double depth,
+                                               Seiscomp::Core::Time time,
+                                               const QPoint &dialogPos) {
 	OriginDialog dialog(this);
 	try {
 		if ( SCApp->configGetBool("olv.artificialOriginAdvanced") ) {

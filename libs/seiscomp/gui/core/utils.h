@@ -40,6 +40,15 @@ class QLabel;
 namespace Seiscomp::Gui {
 
 
+struct AuxiliaryChannelProfile {
+	std::vector<std::string> patterns;
+	double                   minimumDistance{0};
+	double                   maximumDistance{1000};
+};
+
+using AuxiliaryChannelProfiles = std::vector<AuxiliaryChannelProfile>;
+
+
 SC_GUI_API extern QChar degrees;
 
 SC_GUI_API extern std::string colorConvertError;

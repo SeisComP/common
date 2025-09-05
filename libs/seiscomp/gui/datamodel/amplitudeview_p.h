@@ -96,10 +96,6 @@ class AmplitudeViewPrivate {
 		double                              minDist;
 		double                              maxDist;
 
-		std::vector<std::string>            auxiliaryStreamIDPatterns;
-		double                              auxiliaryMinDistance{0};
-		double                              auxiliaryMaxDistance{1000};
-
 		float                               zoom;
 		double                              currentAmplScale;
 		QString                             lastRecordURL;

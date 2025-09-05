@@ -1910,22 +1910,6 @@ void MagnitudeView::openWaveforms() {
 		}
 		catch ( ... ) {}
 
-		try {
-			auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
-			double minDist = 0, maxDist = 1000;
-			try {
-				minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
-			}
-			catch ( ... ) {}
-			try {
-				maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
-			}
-			catch ( ... ) {}
-
-			_amplitudeView->setAuxiliaryChannels(patterns, minDist, maxDist);
-		}
-		catch ( ... ) {}
-
 		connect(_amplitudeView, SIGNAL(magnitudeCreated(Seiscomp::DataModel::Magnitude*)),
 		        this, SLOT(magnitudeCreated(Seiscomp::DataModel::Magnitude*)));
 		connect(_amplitudeView, SIGNAL(amplitudesConfirmed(Seiscomp::DataModel::Origin*, QList<Seiscomp::DataModel::AmplitudePtr>)),

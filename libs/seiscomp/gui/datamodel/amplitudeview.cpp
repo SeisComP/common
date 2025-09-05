@@ -2446,18 +2446,6 @@ void AmplitudeView::setDatabase(Seiscomp::DataModel::DatabaseQuery* reader) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeView::setAuxiliaryChannels(const std::vector<std::string> &patterns,
-                                      double minimumDistance, double maximumDistance) {
-	SC_D.auxiliaryStreamIDPatterns = patterns;
-	SC_D.auxiliaryMinDistance = minimumDistance;
-	SC_D.auxiliaryMaxDistance = maximumDistance;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setStrongMotionCodes(const std::vector<std::string> &codes) {
 	SC_D.strongMotionCodes = codes;
 }
@@ -3290,26 +3278,28 @@ void AmplitudeView::loadNextStations(float distance) {
 				if ( stream ) {
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 					auto sid = waveformIDToStdString(streamID);
-					bool isAuxiliary = false;
-					for ( const auto &pattern : SC_D.auxiliaryStreamIDPatterns ) {
-						if ( Core::wildcmp(pattern, sid) ) {
-							isAuxiliary = true;
-							break;
+					const AuxiliaryChannelProfile *isAuxiliary{nullptr};
+					for ( const auto &profile : SC_D.config.auxiliaryChannelProfiles ) {
+						for ( const auto &pattern : profile.patterns ) {
+							if ( Core::wildcmp(pattern, sid) ) {
+								isAuxiliary = &profile;
+								break;
+							}
 						}
 					}
 
 					if ( isAuxiliary ) {
 						// Auxiliary station will only be added (unless associated)
 						// if they are within a configured distance range.
-						if ( delta < SC_D.auxiliaryMinDistance ) {
+						if ( delta < isAuxiliary->minimumDistance ) {
 							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too close (%f < %f)",
-							               sid.c_str(), delta, SC_D.auxiliaryMinDistance);
+							               sid.c_str(), delta, isAuxiliary->minimumDistance);
 							continue;
 						}
 
-						if ( delta > SC_D.auxiliaryMaxDistance ) {
+						if ( delta > isAuxiliary->minimumDistance ) {
 							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too far away (%f > %f)",
-							               sid.c_str(), delta, SC_D.auxiliaryMaxDistance);
+							               sid.c_str(), delta, isAuxiliary->maximumDistance);
 							continue;
 						}
 					}
