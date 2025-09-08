@@ -836,6 +836,10 @@ class SC_GUI_API RecordWidget : public QWidget {
 };
 
 
+inline int RecordWidget::currentRecords() const {
+	return _currentSlot;
+}
+
 inline const QRect &RecordWidget::canvasRect() const {
 	return _canvasRect;
 }
