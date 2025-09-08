@@ -116,6 +116,7 @@ class SC_GUI_API SpectrogramRenderer {
 		void setTransferFunction(Math::Restitution::FFT::TransferFunction *tf);
 
 		bool isDirty() const { return _dirty; }
+		bool isAmplitudeRangeDirty() const { return _updatedAmplitudeRange; }
 
 		//! Creates the spectrogram. This is usually done in render if the
 		//! spectrogram is dirty but can called from outside.
@@ -131,7 +132,8 @@ class SC_GUI_API SpectrogramRenderer {
 		                int paddingOuter = 6, int paddingInner = 0,
 		                bool stretch = false);
 
-		QPair<double,double> range() const;
+		QPair<double,double> amplitudeRange() const;
+		QPair<double,double> frequencyRange() const;
 
 
 	// ----------------------------------------------------------------------
@@ -227,12 +229,17 @@ class SC_GUI_API SpectrogramRenderer {
 		bool                      _logarithmic;
 		bool                      _smoothTransform;
 		bool                      _dirty;
+		bool                      _updatedAmplitudeRange;
 		double                    _renderedFmin;
 		double                    _renderedFmax;
 };
 
 
-inline QPair<double,double> SpectrogramRenderer::range() const {
+inline QPair<double,double> SpectrogramRenderer::amplitudeRange() const {
+	return QPair<double,double>(_normalizationAmpRange[0], _normalizationAmpRange[1]);
+}
+
+inline QPair<double,double> SpectrogramRenderer::frequencyRange() const {
 	return QPair<double,double>(_renderedFmin, _renderedFmax);
 }
 

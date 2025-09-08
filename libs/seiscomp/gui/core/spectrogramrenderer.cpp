@@ -623,6 +623,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 
 	double frange;
 
+	_updatedAmplitudeRange = false;
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
 
@@ -672,6 +673,8 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 		if ( _dirty || (minAmp != _normalizationAmpRange[0]) || (maxAmp != _normalizationAmpRange[1]) ) {
 			_normalizationAmpRange[0] = minAmp;
 			_normalizationAmpRange[1] = maxAmp;
+
+			_updatedAmplitudeRange = true;
 
 			minAmp = _ampMin;
 			maxAmp = _ampMax;

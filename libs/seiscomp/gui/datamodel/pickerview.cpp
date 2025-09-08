@@ -172,6 +172,7 @@ class ZoomRecordWidget : public RecordWidget {
 			}
 		}
 
+	public:
 		void setUncertainties(const PickerView::Config::UncertaintyList &list) {
 			uncertainties = list;
 			maxLower = maxUpper = 0;
@@ -307,7 +308,7 @@ class ZoomRecordWidget : public RecordWidget {
 			spectrogram[slot].setTimeRange(tmin(), tmax());
 			painter.save();
 			painter.setClipRect(r);
-			spectrogram[slot].render(painter, r, false, false);
+			spectrogram[slot].render(painter, r, false, true);
 			painter.restore();
 		}
 
@@ -318,7 +319,7 @@ class ZoomRecordWidget : public RecordWidget {
 
 			painter.save();
 
-			QPair<double, double> range = spectrogram[slot].range();
+			QPair<double, double> range = spectrogram[slot].frequencyRange();
 			spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
 
 			r.setLeft(r.right());
@@ -373,15 +374,25 @@ class ZoomRecordWidget : public RecordWidget {
 
 				switch ( drawMode() ) {
 					case InRows:
-						for ( int i = 0; i < 3; ++i )
+						for ( int i = 0; i < 3; ++i ) {
 							drawSpectrogram(painter, i);
+						}
 						break;
 					case Single:
-						if ( (currentRecords() >= 0) && (currentRecords() < 3) )
+						if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
 							drawSpectrogram(painter, currentRecords());
+						}
 						break;
 					default:
 						break;
+				}
+
+				if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
+					if ( spectrogram[currentRecords()].isAmplitudeRangeDirty()
+					  && spectrogramAmplitudesChanged ) {
+						auto range = spectrogram[currentRecords()].amplitudeRange();
+						spectrogramAmplitudesChanged(range.first, range.second);
+					}
 				}
 			}
 		}
@@ -434,17 +445,18 @@ class ZoomRecordWidget : public RecordWidget {
 		}
 
 	public:
-		PickerView::Config::UncertaintyList uncertainties;
+		PickerView::Config::UncertaintyList   uncertainties;
+		std::function<void (double, double)>  spectrogramAmplitudesChanged;
 
 	private:
-		bool                            crossHair;
-		double                          maxLower, maxUpper;
-		int                             currentIndex;
-		SpectrogramRenderer             spectrogram[3];
-		bool                            showSpectrogram;
-		bool                            showSpectrogramAxis{true};
-		Seiscomp::Gui::Axis             spectrogramAxis;
-		ThreeComponentTrace::Component *traces;
+		bool                                  crossHair;
+		double                                maxLower, maxUpper;
+		int                                   currentIndex;
+		SpectrogramRenderer                   spectrogram[3];
+		bool                                  showSpectrogram;
+		bool                                  showSpectrogramAxis{true};
+		Seiscomp::Gui::Axis                   spectrogramAxis;
+		ThreeComponentTrace::Component       *traces;
 };
 
 
@@ -2660,6 +2672,10 @@ void PickerView::init() {
 	SC_D.currentRecord->setDrawAxis(true);
 	SC_D.currentRecord->setDrawSPS(true);
 	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->spectrogramAmplitudesChanged = bind(
+		&PickerView::specAmplitudesChanged,
+		this, placeholders::_1, placeholders::_2
+	);
 
 	//SC_D.currentRecord->setFocusPolicy(Qt::StrongFocus);
 
@@ -9143,6 +9159,16 @@ void PickerView::specApply() {
 	traceWidget->specSetTimeWindow(SC_D.spectrogramSettings->ui.spinTimeWindow->value(),
 	                               SC_D.spectrogramSettings->ui.spinOverlap->value() * 0.01);
 	traceWidget->specSetShowAxis(SC_D.spectrogramSettings->ui.cbShowAxis->isChecked());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::specAmplitudesChanged(double minAmp, double maxAmp) {
+	SC_D.spectrogramSettings->ui.spinMinAmp->setValue(minAmp);
+	SC_D.spectrogramSettings->ui.spinMaxAmp->setValue(maxAmp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -437,6 +437,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void showTraceScaleToggled(bool);
 
 		void specApply();
+		void specAmplitudesChanged(double, double);
 
 		void limitFilterToZoomTrace(bool);
 
