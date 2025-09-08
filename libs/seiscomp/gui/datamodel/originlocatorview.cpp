@@ -5716,6 +5716,7 @@ void OriginLocatorView::importArrivals() {
 	bool importAllPicks = dlg->importAllPicks();
 	bool importAllPhases = dlg->importAllPhases();
 	bool preferTargetPhases = dlg->preferTargetPhases();
+	auto allowedPhases = dlg->allowedPhases();
 	delete dlg;
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
@@ -5724,8 +5725,8 @@ void OriginLocatorView::importArrivals() {
 	bool associateOnly = false;
 
 	DataModel::PublicObjectTimeSpanBuffer cache(SC_D.reader, Core::TimeSpan(3600,0));
-	typedef std::pair<std::string,int> PhaseWithFlags;
-	typedef std::map<std::string, PhaseWithFlags> PhasePicks;
+	using PhaseWithFlags = std::pair<std::string,int>;
+	using PhasePicks = std::map<std::string, PhaseWithFlags>;
 
 	PhasePicks sourcePhasePicks;
 
@@ -5898,28 +5899,37 @@ void OriginLocatorView::importArrivals() {
 	PickedPhases sourcePhases, targetPhases, *sourcePhasesPtr, *targetPhasesPtr;
 
 	// Collect source phases grouped by stream
-	for ( PhasePicks::iterator it = sourcePhasePicks.begin(); it != sourcePhasePicks.end(); ++it ) {
-		PickPtr pick = cache.get<Pick>(it->first);
+	for ( auto &[pickID, phaseWithFlags] : sourcePhasePicks ) {
+		if ( allowedPhases.isDenied(phaseWithFlags.first) ) {
+			SEISCOMP_DEBUG("Phase %s is blocked", phaseWithFlags.first);
+			continue;
+		}
+
+		PickPtr pick = cache.get<Pick>(pickID);
 		if ( !pick ) {
-			SEISCOMP_WARNING("Pick %s not found: ignoring", it->first.c_str());
+			SEISCOMP_WARNING("Pick %s not found: ignoring", pickID);
 			continue;
 		}
 
 		// Filter agency
-		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) )
+		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) ) {
 			continue;
+		}
 
 		char phaseCode[2] = {'\0', '\0'};
-		try { phaseCode[0] = Util::getShortPhaseName(it->second.first); }
+		try { phaseCode[0] = Util::getShortPhaseName(phaseWithFlags.first); }
 		catch ( ... ) {}
 
-		if ( phaseCode[0] == '\0' )
+		if ( phaseCode[0] == '\0' ) {
 			phaseCode[0] = 'P';
+		}
 
-		if ( !importAllPhases )
-			sourcePhases[PickPhase(pick->waveformID().networkCode() + "." + pick->waveformID().stationCode(), phaseCode)] = PickWithFlags(pick, it->second.second);
-		else
-			sourcePhases[PickPhase(wfid2str(pick->waveformID()), it->second.first)] = PickWithFlags(pick, it->second.second);
+		if ( !importAllPhases ) {
+			sourcePhases[PickPhase(pick->waveformID().networkCode() + "." + pick->waveformID().stationCode(), phaseCode)] = PickWithFlags(pick, phaseWithFlags.second);
+		}
+		else {
+			sourcePhases[PickPhase(wfid2str(pick->waveformID()), phaseWithFlags.first)] = PickWithFlags(pick, phaseWithFlags.second);
+		}
 	}
 
 	// Collect target phases grouped by stream
@@ -5957,7 +5967,7 @@ void OriginLocatorView::importArrivals() {
 	if ( !merge(sourcePhasesPtr, targetPhasesPtr, true, associateOnly, preferTargetPhases) ) {
 		SEISCOMP_DEBUG("No additional picks to merge");
 		QMessageBox::information(this, "ImportPicks", "There are no additional "
-								 "streams with picks to merge.");
+		                         "streams with picks to merge.");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

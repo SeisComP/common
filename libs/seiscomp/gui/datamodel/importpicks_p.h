@@ -18,70 +18,41 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_GUI_IMPORTPICKS_H
-#define SEISCOMP_GUI_IMPORTPICKS_H
+#ifndef SEISCOMP_GUI_IMPORTPICKS_PRIVATE_H
+#define SEISCOMP_GUI_IMPORTPICKS_PRIVATE_H
 
 
-#include <seiscomp/utils/stringfirewall.h>
-#include <seiscomp/gui/qt.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the SeisComP API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QDialog>
-#include <set>
-#include <string>
+
+#include "importpicks.h"
+
+#include <seiscomp/gui/datamodel/ui_importpicks.h>
 
 
 namespace Seiscomp::Gui {
 
 
-class ImportPicksPrivate;
-
-
-class SC_GUI_API ImportPicksDialog : public QDialog {
-	Q_OBJECT
-
-	public:
-		enum Selection {
-			LatestOrigin,
-			LatestAutomaticOrigin,
-			MaxPhaseOrigin,
-			AllOrigins
-		};
-
-
-	public:
-		ImportPicksDialog(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
-
-
-	public:
-		void accept() override;
-
-		Selection currentSelection() const;
-		bool importAllPicks() const;
-		bool importAllPhases() const;
-		bool preferTargetPhases() const;
-		Util::StringFirewall allowedPhases() const;
-
-
+class ImportPicksPrivate {
 	private:
-		enum CBSelection {
-			CBUndefined = -1,
-			CBNone = 0,
-			CBImportAllPicks = 1 << 0,
-			CBImportAllPhases = 1 << 1,
-			CBPreferTargetPhases = 1 << 2,
-		};
+		ImportPicksPrivate() {}
 
-		int currentCBSelection() const;
+		::Ui::ImportPicks ui;
 
-	private:
-		ImportPicksPrivate *_d_ptr;
-		static Selection _lastSelection;
-		static int _lastCBSelection;
-		static QString _lastPhases;
+	friend class ImportPicksDialog;
 };
 
 
-}
+} // namespace Seiscomp::Gui
 
 
 #endif

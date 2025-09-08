@@ -18,14 +18,15 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT Gui::ImportPicks
 
-#include "importpicks.h"
+#include "importpicks_p.h"
 
-namespace Seiscomp {
 
-namespace Gui {
+#define SC_D (*_d_ptr)
+
+
+namespace Seiscomp::Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -34,6 +35,7 @@ namespace Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportPicksDialog::Selection ImportPicksDialog::_lastSelection = ImportPicksDialog::LatestOrigin;
 int ImportPicksDialog::_lastCBSelection = ImportPicksDialog::CBUndefined;
+QString ImportPicksDialog::_lastPhases;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -41,26 +43,27 @@ int ImportPicksDialog::_lastCBSelection = ImportPicksDialog::CBUndefined;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportPicksDialog::ImportPicksDialog(QWidget * parent, Qt::WindowFlags flags)
- : QDialog(parent, flags) {
-	_ui.setupUi(this);
+ : QDialog(parent, flags)
+ , _d_ptr(new ImportPicksPrivate()) {
+	SC_D.ui.setupUi(this);
 	QFont f;
-	f = _ui.radioLatestOrigin->font(); f.setBold(true); _ui.radioLatestOrigin->setFont(f);
-	f = _ui.radioLatestAutomaticOrigin->font(); f.setBold(true); _ui.radioLatestAutomaticOrigin->setFont(f);
-	f = _ui.radioMaxPhaseOrigin->font(); f.setBold(true); _ui.radioMaxPhaseOrigin->setFont(f);
-	f = _ui.radioAllOrigins->font(); f.setBold(true); _ui.radioAllOrigins->setFont(f);
+	f = SC_D.ui.radioLatestOrigin->font(); f.setBold(true); SC_D.ui.radioLatestOrigin->setFont(f);
+	f = SC_D.ui.radioLatestAutomaticOrigin->font(); f.setBold(true); SC_D.ui.radioLatestAutomaticOrigin->setFont(f);
+	f = SC_D.ui.radioMaxPhaseOrigin->font(); f.setBold(true); SC_D.ui.radioMaxPhaseOrigin->setFont(f);
+	f = SC_D.ui.radioAllOrigins->font(); f.setBold(true); SC_D.ui.radioAllOrigins->setFont(f);
 
 	switch ( _lastSelection ) {
 		case LatestOrigin:
-			_ui.radioLatestOrigin->setChecked(true);
+			SC_D.ui.radioLatestOrigin->setChecked(true);
 			break;
 		case LatestAutomaticOrigin:
-			_ui.radioLatestAutomaticOrigin->setChecked(true);
+			SC_D.ui.radioLatestAutomaticOrigin->setChecked(true);
 			break;
 		case MaxPhaseOrigin:
-			_ui.radioMaxPhaseOrigin->setChecked(true);
+			SC_D.ui.radioMaxPhaseOrigin->setChecked(true);
 			break;
 		case AllOrigins:
-			_ui.radioAllOrigins->setChecked(true);
+			SC_D.ui.radioAllOrigins->setChecked(true);
 			break;
 	}
 
@@ -68,10 +71,25 @@ ImportPicksDialog::ImportPicksDialog(QWidget * parent, Qt::WindowFlags flags)
 		_lastCBSelection = currentCBSelection();
 	}
 	else {
-		_ui.checkAllAgencies->setChecked(_lastCBSelection & CBImportAllPicks);
-		_ui.checkAllPhases->setChecked(_lastCBSelection & CBImportAllPhases);
-		_ui.checkPreferTargetPhases->setChecked(_lastCBSelection & CBPreferTargetPhases);
+		SC_D.ui.checkAllAgencies->setChecked(_lastCBSelection & CBImportAllPicks);
+		SC_D.ui.checkAllPhases->setChecked(_lastCBSelection & CBImportAllPhases);
+		SC_D.ui.checkPreferTargetPhases->setChecked(_lastCBSelection & CBPreferTargetPhases);
 	}
+
+	SC_D.ui.lineEditAcceptedPhases->setText(_lastPhases);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ImportPicksDialog::accept() {
+	// Remember the last settings
+	_lastPhases = SC_D.ui.lineEditAcceptedPhases->text();
+	_lastCBSelection = currentCBSelection();
+	_lastSelection = currentSelection();
+	QDialog::accept();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -80,25 +98,23 @@ ImportPicksDialog::ImportPicksDialog(QWidget * parent, Qt::WindowFlags flags)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportPicksDialog::Selection ImportPicksDialog::currentSelection() const {
-	_lastCBSelection = currentCBSelection();
-
-	if ( _ui.radioLatestOrigin->isChecked() ) {
-		return _lastSelection = LatestOrigin;
+	if ( SC_D.ui.radioLatestOrigin->isChecked() ) {
+		return LatestOrigin;
 	}
 
-	if ( _ui.radioLatestAutomaticOrigin->isChecked() ) {
-		return _lastSelection = LatestAutomaticOrigin;
+	if ( SC_D.ui.radioLatestAutomaticOrigin->isChecked() ) {
+		return LatestAutomaticOrigin;
 	}
 
-	if ( _ui.radioMaxPhaseOrigin->isChecked() ) {
-		return _lastSelection = MaxPhaseOrigin;
+	if ( SC_D.ui.radioMaxPhaseOrigin->isChecked() ) {
+		return MaxPhaseOrigin;
 	}
 
-	if ( _ui.radioAllOrigins->isChecked() ) {
-		return _lastSelection = AllOrigins;
+	if ( SC_D.ui.radioAllOrigins->isChecked() ) {
+		return AllOrigins;
 	}
 
-	return _lastSelection = LatestOrigin;
+	return LatestOrigin;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -107,7 +123,7 @@ ImportPicksDialog::Selection ImportPicksDialog::currentSelection() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ImportPicksDialog::importAllPicks() const {
-	return _ui.checkAllAgencies->isChecked();
+	return SC_D.ui.checkAllAgencies->isChecked();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -116,7 +132,7 @@ bool ImportPicksDialog::importAllPicks() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ImportPicksDialog::importAllPhases() const {
-	return _ui.checkAllPhases->isChecked();
+	return SC_D.ui.checkAllPhases->isChecked();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -125,7 +141,34 @@ bool ImportPicksDialog::importAllPhases() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ImportPicksDialog::preferTargetPhases() const {
-	return _ui.checkPreferTargetPhases->isChecked();
+	return SC_D.ui.checkPreferTargetPhases->isChecked();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Util::StringFirewall ImportPicksDialog::allowedPhases() const {
+	Util::StringFirewall phases;
+	QStringList editPhases = SC_D.ui.lineEditAcceptedPhases->text().split(",");
+	for ( auto &ph : editPhases ) {
+		ph = ph.trimmed();
+		if ( ph.isEmpty() ) {
+			continue;
+		}
+		if ( ph[0] == '-' ) {
+			phases.deny.insert(ph.mid(1).toStdString());
+		}
+		else if ( ph[1] == '+' ) {
+			phases.allow.insert(ph.mid(1).toStdString());
+		}
+		else {
+			phases.allow.insert(ph.toStdString());
+		}
+	}
+
+	return phases;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -152,5 +195,4 @@ int ImportPicksDialog::currentCBSelection() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
 }
