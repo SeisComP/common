@@ -3387,6 +3387,57 @@ void OriginLocatorView::init() {
 	}
 
 	try {
+		auto mode = SCApp->configGetString("olv.import.mode");
+		if ( mode == "latest" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::LatestOrigin);
+		}
+		else if ( mode == "latest-automatic" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::LatestAutomaticOrigin);
+		}
+		else if ( mode == "phases" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::MaxPhaseOrigin);
+		}
+		else if ( mode == "all" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::AllOrigins);
+		}
+		else {
+			SEISCOMP_WARNING("Unknown olv.import.mode: %s: ignoring", mode);
+		}
+	}
+	catch ( ... ) {}
+
+	{
+		int options = ImportPicksDialog::CBImportAllPhases | ImportPicksDialog::CBPreferTargetPhases;
+		try {
+			if ( SCApp->configGetBool("olv.import.options.allAgencies") ) {
+				options |= ImportPicksDialog::CBImportAllPicks;
+			}
+		}
+		catch ( ... ) {}
+		try {
+			if ( !SCApp->configGetBool("olv.import.options.allPhases") ) {
+				options &= ~ImportPicksDialog::CBImportAllPhases;
+			}
+		}
+		catch ( ... ) {}
+		try {
+			if ( !SCApp->configGetBool("olv.import.options.preferTargetPhases") ) {
+				options &= ~ImportPicksDialog::CBPreferTargetPhases;
+			}
+		}
+		catch ( ... ) {}
+		ImportPicksDialog::setDefaultOptions(options);
+	}
+
+	try {
+		auto acceptedPhases = SCApp->configGetStrings("olv.import.acceptedPhases");
+		if ( !acceptedPhases.empty() ) {
+			ImportPicksDialog::setDefaultAcceptedPhases(Core::join(acceptedPhases, ", ").data());
+		}
+	}
+	catch ( ... ) {}
+
+	try {
 		SC_D.ui.btnCustom0->setText(SCApp->configGetString("button0").c_str());
 	}
 	catch ( ... ) {}

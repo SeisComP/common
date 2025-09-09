@@ -47,12 +47,24 @@ class SC_GUI_API ImportPicksDialog : public QDialog {
 			AllOrigins
 		};
 
+		enum CBSelection {
+			CBUndefined = -1,
+			CBNone = 0,
+			CBImportAllPicks = 1 << 0,
+			CBImportAllPhases = 1 << 1,
+			CBPreferTargetPhases = 1 << 2,
+		};
+
 
 	public:
 		ImportPicksDialog(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
 
 	public:
+		static void setDefaultAcceptedPhases(QString phases);
+		static void setDefaultSelection(Selection sel);
+		static void setDefaultOptions(int options);
+
 		void accept() override;
 
 		Selection currentSelection() const;
@@ -63,14 +75,6 @@ class SC_GUI_API ImportPicksDialog : public QDialog {
 
 
 	private:
-		enum CBSelection {
-			CBUndefined = -1,
-			CBNone = 0,
-			CBImportAllPicks = 1 << 0,
-			CBImportAllPhases = 1 << 1,
-			CBPreferTargetPhases = 1 << 2,
-		};
-
 		int currentCBSelection() const;
 
 	private:
