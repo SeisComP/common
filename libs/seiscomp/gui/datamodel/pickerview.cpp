@@ -199,6 +199,10 @@ class ZoomRecordWidget : public RecordWidget {
 			return currentIndex;
 		}
 
+		void setSpectrogramAxisWidth(int width) {
+			spectrogramAxisWidth = width;
+		}
+
 		void setCrossHairEnabled(bool enable) {
 			crossHair = enable;
 			update();
@@ -209,7 +213,6 @@ class ZoomRecordWidget : public RecordWidget {
 
 			showSpectrogram = enable;
 			updateTraceColor();
-
 			resetSpectrogram();
 			update();
 		}
@@ -305,14 +308,14 @@ class ZoomRecordWidget : public RecordWidget {
 			r.setHeight(streamHeight(slot));
 			r.moveTop(streamYPos(slot));
 			spectrogram[slot].setAlignment(alignment());
-			spectrogram[slot].setTimeRange(tmin(), tmax());
+			spectrogram[slot].setTimeRange(tmin(), tmin() + canvasRect().width() / timeScale());
 			painter.save();
 			painter.setClipRect(r);
-			spectrogram[slot].render(painter, r, false, true);
+			spectrogram[slot].render(painter, r, false, false);
 			painter.restore();
 		}
 
-		void drawSpectrogramAxis(QPainter &painter, int slot) {
+		int drawSpectrogramAxis(QPainter &painter, int slot) {
 			QRect r(canvasRect());
 			r.setHeight(streamHeight(slot));
 			r.moveTop(streamYPos(slot));
@@ -322,14 +325,14 @@ class ZoomRecordWidget : public RecordWidget {
 			QPair<double, double> range = spectrogram[slot].frequencyRange();
 			spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
 
-			r.setLeft(r.right());
-			r.setWidth(0);
+			r.setLeft(r.right() - spectrogramAxisWidth);
 			spectrogramAxis.updateLayout(painter, r);
-			r.setRight(canvasRect().right());
 			painter.fillRect(r.adjusted(-axisSpacing(),0,0,0), palette().color(backgroundRole()));
 			spectrogramAxis.draw(painter, r, true);
 
 			painter.restore();
+
+			return r.width();
 		}
 
 		void updateTraceColor() {
@@ -347,24 +350,34 @@ class ZoomRecordWidget : public RecordWidget {
 
 	protected:
 		void paintEvent(QPaintEvent *p) override {
-			RecordWidget::paintEvent(p);
-
 			if ( showSpectrogram && showSpectrogramAxis ) {
-				QPainter painter(this);
-				painter.setBrush(palette().brush(QPalette::Base));
+				auto tmp = _canvasRect;
+				_canvasRect.setWidth(_canvasRect.width() - spectrogramAxisWidth);
+				RecordWidget::paintEvent(p);
+				_canvasRect = tmp;
 
-				switch ( drawMode() ) {
-					case InRows:
-						for ( int i = 0; i < 3; ++i )
-							drawSpectrogramAxis(painter, i);
-						break;
-					case Single:
-						if ( (currentRecords() >= 0) && (currentRecords() < 3) )
-							drawSpectrogramAxis(painter, currentRecords());
-						break;
-					default:
-						break;
+				{
+					QPainter painter(this);
+					painter.setBrush(palette().brush(QPalette::Base));
+
+					switch ( drawMode() ) {
+						case InRows:
+							for ( int i = 0; i < 3; ++i ) {
+								drawSpectrogramAxis(painter, i);
+							}
+							break;
+						case Single:
+							if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
+								drawSpectrogramAxis(painter, currentRecords());
+							}
+							break;
+						default:
+							break;
+					}
 				}
+			}
+			else {
+				RecordWidget::paintEvent(p);
 			}
 		}
 
@@ -456,6 +469,7 @@ class ZoomRecordWidget : public RecordWidget {
 		bool                                  showSpectrogram;
 		bool                                  showSpectrogramAxis{true};
 		Seiscomp::Gui::Axis                   spectrogramAxis;
+		int                                   spectrogramAxisWidth{90};
 		ThreeComponentTrace::Component       *traces;
 };
 
@@ -3724,6 +3738,9 @@ void PickerView::showEvent(QShowEvent *e) {
 	SC_D.ui.frameZoomControls->setFixedWidth(w2);
 	SC_D.recordView->setLabelWidth(w2);
 	SC_D.currentRecord->setAxisWidth(w2 + SC_D.currentRecord->axisSpacing());
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSpectrogramAxisWidth(
+		fm.boundingRect("1E-03 WW").width()
+	);
 
 	QWidget::showEvent(e);
 }
