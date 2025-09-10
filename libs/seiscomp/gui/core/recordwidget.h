@@ -744,7 +744,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int canvasWidth() const;
 		int canvasHeight() const;
 
-	private:
 		void alignTrace(Trace &trace);
 		void prepareRecords(Stream *s);
 		void createPolyline(Stream *s, AbstractRecordPolylinePtr &polyline,
@@ -753,7 +752,8 @@ class SC_GUI_API RecordWidget : public QWidget {
 		                    int height);
 		void render(Stream *s);
 
-	private:
+
+	protected:
 		typedef QVector<Stream*> StreamMap;
 
 		QVariant             _data;
