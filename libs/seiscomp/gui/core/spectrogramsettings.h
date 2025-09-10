@@ -22,7 +22,7 @@
 #endif
 #include <QWidget>
 
-#include "ui_spectrogramsettings.h"
+#include <seiscomp/gui/core/ui_spectrogramsettings.h>
 
 
 namespace Seiscomp::Gui {
