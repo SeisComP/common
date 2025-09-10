@@ -290,11 +290,13 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 		if ( allowModification )
 			rect.setWidth(_extent);
 
-		if ( _position == Left )
+		if ( _position == Left ) {
 			_transform.translate(rect.right(), rect.bottom());
+		}
 		else {
-			if ( allowModification )
+			if ( allowModification ) {
 				rect.moveLeft(rect.left()-_extent);
+			}
 			_transform.translate(rect.left(), rect.bottom());
 		}
 
