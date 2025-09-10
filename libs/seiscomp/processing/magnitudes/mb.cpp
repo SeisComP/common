@@ -89,7 +89,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	}
 
 	// amplitude is nanometers, whereas compute_mb wants micrometers
-	bool valid = Magnitudes::compute_mb(amplitude * 1.E-3, period, delta, depth + 1, &value);
+	bool valid = Magnitudes::compute_mb(amplitude * 1.E-3, period, delta, depth, &value);
 	return valid ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
