@@ -20,9 +20,12 @@
 
 #include <QApplication>
 #include <QIconEngine>
+#include <QSvgRenderer>
 #include <QPainter>
 #include <QPalette>
 #include <QWidget>
+#include <QFile>
+#include <QPixmapCache>
 
 #include "icon.h"
 
@@ -33,35 +36,26 @@ namespace {
 
 class IconEngine : public QIconEngine {
 	public:
-		IconEngine(const QIcon &i)
-		: _icon(i) {}
+		IconEngine(const QString &name)
+		: _name(name) {}
 
-		IconEngine(const QColor &cOnOff, const QIcon &i)
-		: _color(cOnOff), _colorOff(cOnOff), _icon(i) {}
+		IconEngine(const QColor &cOnOff, const QString &name)
+		: _color(cOnOff), _colorOff(cOnOff), _name(name) {}
 
-		IconEngine(const QColor &cOn, const QColor &cOff, const QIcon &i)
-		: _color(cOn), _colorOff(cOff), _icon(i) {}
+		IconEngine(const QColor &cOn, const QColor &cOff, const QString &name)
+		: _color(cOn), _colorOff(cOff), _name(name) {}
 
 	public:
 		QIconEngine *clone() const override {
-			return new IconEngine(_color, _colorOff, _icon);
+			return new IconEngine(_color, _colorOff, _name);
 		}
 
-		QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) override {
-			return _icon.actualSize(size, mode, state);
+		QSize actualSize(const QSize &size, QIcon::Mode, QIcon::State) override {
+			return Seiscomp::Gui::pixmap(_name, size).size();
 		}
 
 		QString key() const override {
 			return "sc_svg_coloured";
-		}
-
-		QList<QSize> availableSizes(QIcon::Mode mode = QIcon::Normal,
-#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
-		                            QIcon::State state = QIcon::Off) override {
-#else
-		                            QIcon::State state = QIcon::Off) const override {
-#endif
-			return _icon.availableSizes(mode, state);
 		}
 
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
@@ -69,21 +63,15 @@ class IconEngine : public QIconEngine {
 #else
 		QString iconName() const override {
 #endif
-
-			return _icon.name();
+			return _name;
 		}
 
 		void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override {
-			auto pm = pixmap(rect.size(), mode, state);
+			auto pm = IconEngine::pixmap(rect.size(), mode, state);
 			painter->drawPixmap(rect.left(), rect.top(), pm);
 		}
 
 		QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override {
-			QPixmap pm(size);
-			pm.fill(Qt::transparent);
-
-			QPainter p(&pm);
-
 			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
 			if ( !color.isValid() ) {
 				if ( mode == QIcon::Disabled ) {
@@ -100,19 +88,30 @@ class IconEngine : public QIconEngine {
 				}
 			}
 
-			QRect r(QPoint(0, 0), size);
-			_icon.paint(&p, r, Qt::AlignCenter, mode, state);
-			p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-			p.fillRect(r, color);
-
-			return pm;
+			return Seiscomp::Gui::pixmap(_name, size, color);
 		}
 
 	private:
-		QColor _color;
-		QColor _colorOff;
-		QIcon  _icon;
+		QColor  _color;
+		QColor  _colorOff;
+		QString _name;
 };
+
+
+QByteArray changeColor(const QString &path, const QColor &c) {
+	QFile f(path);
+	if ( !f.open(QIODevice::ReadOnly) ) {
+		return {};
+	}
+
+	auto content = f.readAll();
+	if ( c.isValid() ) {
+		auto colorHex = c.name(QColor::HexRgb);
+		content.replace("#000000", 7, qPrintable(colorHex), colorHex.size());
+	}
+
+	return content;
+}
 
 
 }
@@ -131,10 +130,8 @@ namespace Seiscomp::Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QIcon icon(QString name) {
 	// A good source for SVG icons is Google material at
-	// https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded&selected=Material+Symbols+Rounded:check:FILL@1;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%231f1f1f
-	QIcon i(":/sc/icons/" + name + ".svg");
-	auto engine = new IconEngine(i);
-	return QIcon(engine);
+	// https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded&selected=Material+Symbols+Rounded:check:FILL@1;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23000000
+	return QIcon(new IconEngine(name));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -143,9 +140,7 @@ QIcon icon(QString name) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QIcon icon(QString name, const QColor &cOn) {
-	QIcon i(":/sc/icons/" + name + ".svg");
-	auto engine = new IconEngine(cOn, i);
-	return QIcon(engine);
+	return QIcon(new IconEngine(cOn, name));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -154,9 +149,7 @@ QIcon icon(QString name, const QColor &cOn) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QIcon icon(QString name, const QColor &cOn, const QColor &cOff) {
-	QIcon i(":/sc/icons/" + name + ".svg");
-	auto engine = new IconEngine(cOn, cOff, i);
-	return QIcon(engine);
+	return QIcon(new IconEngine(cOn, cOff, name));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -177,8 +170,57 @@ int iconSize(const QFontMetricsF &fm, double scale) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QPixmap pixmap(const QString &name, const QSize &size, const QColor &c) {
+	QString cacheId = QString("sc_svg_%1_%2x%3_%4")
+	                  .arg(name).arg(size.width()).arg(size.height()).arg(c.name(QColor::HexArgb));
+	QPixmap pm;
+#if QT_VERSION < QT_VERSION_CHECK(5,13,0)
+	if ( QPixmapCache::find(cacheId, pm) ) {
+#else
+	if ( QPixmapCache::find(cacheId, &pm) ) {
+#endif
+		return pm;
+	}
+
+	auto svg = changeColor(":/sc/icons/" + name + ".svg", c);
+	QSvgRenderer renderer;
+	if ( !renderer.load(svg) ) {
+		return {};
+	}
+
+	if ( !renderer.isValid() ) {
+		return {};
+	}
+
+	auto actualSize = renderer.defaultSize();
+	if ( !actualSize.isNull() ) {
+		actualSize.scale(size, Qt::KeepAspectRatio);
+	}
+
+	if ( actualSize.isEmpty() ) {
+		return {};
+	}
+
+	QImage img(actualSize, QImage::Format_ARGB32_Premultiplied);
+	img.fill(Qt::transparent);
+	QPainter p(&img);
+	renderer.render(&p);
+	p.end();
+
+	pm = QPixmap::fromImage(img);
+	QPixmapCache::insert(cacheId, pm);
+
+	return pm;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPixmap pixmap(const QFontMetrics &fm, const QString &name, double scale) {
-	return icon(name).pixmap(iconSize(fm, scale));
+	auto e = iconSize(fm, scale);
+	return pixmap(name, QSize(e, e));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -195,8 +237,9 @@ QPixmap pixmap(const QWidget *parent, const QString &name, double scale) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &cOnOff, double scale) {
-	return icon(name, cOnOff).pixmap(iconSize(fm, scale));
+QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double scale) {
+	auto e = iconSize(fm, scale);
+	return pixmap(name, QSize(e, e), color);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -204,26 +247,8 @@ QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &cOnOff
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &cOnOff, double scale) {
-	return pixmap(QFontMetrics(parent->font()), name, cOnOff, scale);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &cOn, const QColor &cOff, double scale) {
-	return icon(name, cOn, cOff).pixmap(iconSize(fm, scale));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &cOn, const QColor &cOff, double scale) {
-	return pixmap(QFontMetrics(parent->font()), name, cOn, cOff, scale);
+QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &color, double scale) {
+	return pixmap(QFontMetrics(parent->font()), name, color, scale);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

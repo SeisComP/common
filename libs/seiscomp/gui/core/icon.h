@@ -65,6 +65,19 @@ QIcon icon(QString name, const QColor &cOnOff);
  */
 QIcon icon(QString name, const QColor &cOn, const QColor &cOff);
 
+
+/**
+ * @brief Returns an icon pixmap by name.
+ *
+ * Renders an icon in the requested size and optional color.
+ *
+ * @param size The requested size
+ * @param name The name of the icon which is effectively the basename of the SVG file.
+ * @param color An optional color.
+ * @return The pixmap possibly invalid if an invalid name was given.
+ */
+QPixmap pixmap(const QString &name, const QSize &size, const QColor &c = QColor());
+
 /**
  * @brief Returns an icon pixmap by name.
  *
@@ -95,43 +108,21 @@ QPixmap pixmap(const QWidget *parent, const QString &name, double scale = 1.0);
  * @brief Convenience function which takes a primarly color.
  * @param fm The fontMetrics used to calculate the icon size.
  * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param cOnOff The primary color of the icon. This will ignore the application palette.
+ * @param color The primary color of the icon. This will ignore the application palette.
  * @param scale An optional size scaling factor.
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &cOnOff, double scale = 1.0);
+QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double scale = 1.0);
 
 /**
  * @brief Convenience function which takes a primarly color.
  * @param parent The parent widget to extract the pixmap for.
  * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param cOnOff The primary color of the icon. This will ignore the application palette.
+ * @param color The primary color of the icon. This will ignore the application palette.
  * @param scale An optional size scaling factor.
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &cOnOff, double scale = 1.0);
-
-/**
- * @brief Convenience function which takes an on and an off color.
- * @param fm The fontMetrics used to calculate the icon size.
- * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param cOn The color of the icon for state = On.
- * @param cOff The color of the icon for state = Off.
- * @param scale An optional size scaling factor.
- * @return The pixmap possibly invalid if an invalid name was given.
- */
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &cOn, const QColor &cOff, double scale = 1.0);
-
-/**
- * @brief Convenience function which takes an on and an off color.
- * @param parent The parent widget to extract the pixmap for.
- * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param cOn The color of the icon for state = On.
- * @param cOff The color of the icon for state = Off.
- * @param scale An optional size scaling factor.
- * @return The pixmap possibly invalid if an invalid name was given.
- */
-QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &cOn, const QColor &cOff, double scale = 1.0);
+QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &color, double scale = 1.0);
 
 /**
  * @brief Convenience function which extracts a pixmap from a given icon.
