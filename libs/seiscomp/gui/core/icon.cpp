@@ -26,6 +26,7 @@
 #include <QWidget>
 #include <QFile>
 #include <QPixmapCache>
+#include <iostream>
 
 #include "icon.h"
 
@@ -51,7 +52,7 @@ class IconEngine : public QIconEngine {
 		}
 
 		QSize actualSize(const QSize &size, QIcon::Mode, QIcon::State) override {
-			return Seiscomp::Gui::pixmap(_name, size).size();
+			return Seiscomp::Gui::pixmap(_name, size, 1.0).size();
 		}
 
 		QString key() const override {
@@ -67,7 +68,23 @@ class IconEngine : public QIconEngine {
 		}
 
 		void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override {
-			auto pm = IconEngine::pixmap(rect.size(), mode, state);
+			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
+			if ( !color.isValid() ) {
+				if ( mode == QIcon::Disabled ) {
+					color = qApp->palette().color(QPalette::Disabled, QPalette::Text);
+				}
+				else if ( mode == QIcon::Normal ) {
+					color = qApp->palette().color(QPalette::Normal, QPalette::Text);
+				}
+				else if ( mode == QIcon::Active ) {
+					color = qApp->palette().color(QPalette::Active, QPalette::Text);
+				}
+				else if ( mode == QIcon::Selected ) {
+					color = qApp->palette().color(QPalette::Active, QPalette::Text);
+				}
+			}
+
+			auto pm = Seiscomp::Gui::pixmap(_name, rect.size(), 1.0, color);
 			painter->drawPixmap(rect.left(), rect.top(), pm);
 		}
 
@@ -88,7 +105,7 @@ class IconEngine : public QIconEngine {
 				}
 			}
 
-			return Seiscomp::Gui::pixmap(_name, size, color);
+			return Seiscomp::Gui::pixmap(_name, size, 1.0, color);
 		}
 
 	private:
@@ -159,8 +176,8 @@ QIcon icon(QString name, const QColor &cOn, const QColor &cOff) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
-int iconSize(const QFontMetricsF &fm, double scale) {
-	return static_cast<int>(fm.height() * scale);
+int iconSize(const QFontMetricsF &fm) {
+	return static_cast<int>(fm.height());
 }
 
 }
@@ -170,9 +187,15 @@ int iconSize(const QFontMetricsF &fm, double scale) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QString &name, const QSize &size, const QColor &c) {
-	QString cacheId = QString("sc_svg_%1_%2x%3_%4")
-	                  .arg(name).arg(size.width()).arg(size.height()).arg(c.name(QColor::HexArgb));
+QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor &c) {
+	QString cacheId = c.isValid() ?
+		QString("sc_svg_%1_%2x%3_%4_%5")
+		.arg(name).arg(size.width()).arg(size.height())
+		.arg(c.name(QColor::HexArgb)).arg(dpr)
+	:
+		QString("sc_svg_%1_%2x%3_%4")
+		.arg(name).arg(size.width()).arg(size.height()).arg(dpr)
+	;
 	QPixmap pm;
 #if QT_VERSION < QT_VERSION_CHECK(5,13,0)
 	if ( QPixmapCache::find(cacheId, pm) ) {
@@ -201,6 +224,8 @@ QPixmap pixmap(const QString &name, const QSize &size, const QColor &c) {
 		return {};
 	}
 
+	actualSize *= dpr;
+
 	QImage img(actualSize, QImage::Format_ARGB32_Premultiplied);
 	img.fill(Qt::transparent);
 	QPainter p(&img);
@@ -208,6 +233,8 @@ QPixmap pixmap(const QString &name, const QSize &size, const QColor &c) {
 	p.end();
 
 	pm = QPixmap::fromImage(img);
+	pm.setDevicePixelRatio(qApp->devicePixelRatio());
+
 	QPixmapCache::insert(cacheId, pm);
 
 	return pm;
@@ -218,28 +245,9 @@ QPixmap pixmap(const QString &name, const QSize &size, const QColor &c) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, double scale) {
-	auto e = iconSize(fm, scale);
-	return pixmap(name, QSize(e, e));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QWidget *parent, const QString &name, double scale) {
-	return pixmap(QFontMetrics(parent->font()), name, scale);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double scale) {
-	auto e = iconSize(fm, scale);
-	return pixmap(name, QSize(e, e), color);
+QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double dpr) {
+	auto e = iconSize(fm);
+	return pixmap(name, QSize(e, e), dpr, color);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -248,27 +256,11 @@ QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &color, double scale) {
-	return pixmap(QFontMetrics(parent->font()), name, color, scale);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QFontMetrics &fm, const QIcon &icon, double scale,
-               QIcon::Mode mode, QIcon::State state) {
-	return icon.pixmap(iconSize(fm, scale), mode, state);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QWidget *parent, const QIcon &icon, double scale,
-               QIcon::Mode mode, QIcon::State state) {
-	return pixmap(QFontMetrics(parent->font()), icon, scale, mode, state);
+	auto e = iconSize(QFontMetrics(parent->font()));
+	return pixmap(
+		name, QSize(e, e) * scale,
+		parent->devicePixelRatioF(), color
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

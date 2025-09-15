@@ -71,86 +71,33 @@ QIcon icon(QString name, const QColor &cOn, const QColor &cOff);
  *
  * Renders an icon in the requested size and optional color.
  *
- * @param size The requested size
  * @param name The name of the icon which is effectively the basename of the SVG file.
+ * @param size The requested size
+ * @param dpr The device pixel ratio
  * @param color An optional color.
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QString &name, const QSize &size, const QColor &c = QColor());
-
-/**
- * @brief Returns an icon pixmap by name.
- *
- * This is a convenience function to extrace a pixmap from an icon for a given
- * font metrics.
- *
- * @param fm The fontMetrics used to calculate the icon size.
- * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param scale An optional size scaling factor.
- * @return The pixmap possibly invalid if an invalid name was given.
- */
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, double scale = 1.0);
-
-/**
- * @brief Returns an icon pixmap by name.
- *
- * This is a convenience function to extrace a pixmap from an icon for a given
- * widget in its font size.
- *
- * @param parent The parent widget to extract the pixmap for.
- * @param name The name of the icon which is effectively the basename of the SVG file.
- * @param scale An optional size scaling factor.
- * @return The pixmap possibly invalid if an invalid name was given.
- */
-QPixmap pixmap(const QWidget *parent, const QString &name, double scale = 1.0);
+QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor &c = QColor());
 
 /**
  * @brief Convenience function which takes a primarly color.
  * @param fm The fontMetrics used to calculate the icon size.
  * @param name The name of the icon which is effectively the basename of the SVG file.
  * @param color The primary color of the icon. This will ignore the application palette.
- * @param scale An optional size scaling factor.
+ * @param dpr The device pixel ratio
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double scale = 1.0);
+QPixmap pixmap(const QFontMetrics &fm, const QString &name, const QColor &color, double dpr);
 
 /**
  * @brief Convenience function which takes a primarly color.
  * @param parent The parent widget to extract the pixmap for.
  * @param name The name of the icon which is effectively the basename of the SVG file.
  * @param color The primary color of the icon. This will ignore the application palette.
- * @param scale An optional size scaling factor.
+ * @param scale The size scaling factor.
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &color, double scale = 1.0);
-
-/**
- * @brief Convenience function which extracts a pixmap from a given icon.
- * @param fm The fontMetrics used to calculate the icon size.
- * @param icon
- * @param scale An optional size scaling factor.
- * @param mode
- * @param state
- * @return The pixmap possibly invalid if an invalid icon was given.
- */
-QPixmap pixmap(const QFontMetrics &fm, const QIcon &icon,
-               double scale = 1.0,
-               QIcon::Mode mode = QIcon::Normal,
-               QIcon::State state = QIcon::Off);
-
-/**
- * @brief Convenience function which extracts a pixmap from a given icon.
- * @param parent The parent widget to extract the pixmap for.
- * @param icon
- * @param scale An optional size scaling factor.
- * @param mode
- * @param state
- * @return The pixmap possibly invalid if an invalid icon was given.
- */
-QPixmap pixmap(const QWidget *parent, const QIcon &icon,
-               double scale = 1.0,
-               QIcon::Mode mode = QIcon::Normal,
-               QIcon::State state = QIcon::Off);
+QPixmap pixmap(const QWidget *parent, const QString &name, const QColor &color = QColor(), double scale = 1.0);
 
 
 }
