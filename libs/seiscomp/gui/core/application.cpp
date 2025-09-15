@@ -287,7 +287,7 @@ void Application::_GUI_Core_Settings::_MapsDesc::accept(SettingsLinker &linker) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::Application(int& argc, char **argv, int flags, Type type)
-    : QObject(), Client::Application(argc, argv)
+: QObject(), Client::Application(argc, argv)
 , _qSettings(nullptr)
 , _readOnlyMessaging(false)
 , _mainWidget(nullptr)
@@ -296,6 +296,14 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 , _settingsOpened(false)
 , _flags(flags) {
 	bindSettings(&_settings);
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	// This is especially important for displays with a display pixel ratio
+	// greater than 1, e.g. 4k displays. Otherwise QIcon pixmaps will be scaled
+	// up to the native display resolution which looks blurry at best.
+	// In Qt6 this setting is default.
+	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
 	_type = type;
 	if ( type == Tty ) {
