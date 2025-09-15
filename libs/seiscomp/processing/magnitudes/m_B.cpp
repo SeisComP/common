@@ -18,10 +18,13 @@
  ***************************************************************************/
 
 
+#define SEISCOMP_COMPONENT MAGNITUDES
 
 #include <seiscomp/processing/magnitudes/m_B.h>
 #include <seiscomp/seismology/magnitudes.h>
+#include <seiscomp/logging/log.h>
 #include <math.h>
+
 
 namespace Seiscomp {
 namespace Processing {
@@ -44,7 +47,7 @@ REGISTER_MAGNITUDEPROCESSOR(MagnitudeProcessor_mB, "mB");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor_mB::MagnitudeProcessor_mB()
  : MagnitudeProcessor("mB") {
-	setDefaults();
+	MagnitudeProcessor_mB::setDefaults();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -65,6 +68,29 @@ MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string &type)
 void MagnitudeProcessor_mB::setDefaults() {
 	_minimumDistanceDeg = 5.0;   // default minimum distance
 	_maximumDistanceDeg = 105.0; // default maximum distance
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_mB::setup(const Settings &settings) {
+	if ( !MagnitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	if ( (_minimumDepthKm < 0.) || (_minimumDepthKm > 700.) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum depth is out of allowed range [0, 700]km", type());
+		return false;
+	}
+
+	if ( (_minimumDistanceDeg < 5) || (_maximumDistanceDeg > 105) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum distance is out of allowed range [5, 105]°", type());
+		return false;
+	}
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

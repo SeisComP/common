@@ -26,6 +26,7 @@
 
 #include "iostream"
 
+
 namespace Seiscomp {
 namespace Processing {
 
@@ -63,6 +64,29 @@ void MagnitudeProcessor_mb::setDefaults() {
 	// maximum allowed period is 3 s according to IASPEI standard (pers. comm. Peter Bormann)
 	_minimumPeriod = 0.4;
 	_maximumPeriod = 3.0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_mb::setup(const Settings &settings) {
+	if ( !MagnitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	if ( (_minimumDepthKm < 0.) || (_minimumDepthKm > 700.) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum depth is out of allowed range [0, 700]km", type());
+		return false;
+	}
+
+	if ( (_minimumDistanceDeg < 5) || (_maximumDistanceDeg > 105) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum distance is out of allowed range [5, 105]°", type());
+		return false;
+	}
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
