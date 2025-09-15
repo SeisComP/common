@@ -489,10 +489,11 @@ bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 
 		if ( QT_FM_WIDTH(fm, q->text()) > rect.width() ) {
 			//QPixmap pixmap(rect.size());//, QImage::Format_ARGB32);
-			QImage pixmap(rect.size(), QImage::Format_ARGB32);
-			pixmap.fill(Qt::transparent);
+			QImage image(rect.size() * qApp->devicePixelRatio(), QImage::Format_ARGB32_Premultiplied);
+			image.setDevicePixelRatio(qApp->devicePixelRatio());
+			image.fill(Qt::transparent);
 
-			QPainter p(&pixmap);
+			QPainter p(&image);
 			p.setPen(painter.pen());
 			p.setFont(painter.font());
 
@@ -505,15 +506,15 @@ bool ElideFadeDrawer::eventFilter(QObject *obj, QEvent *event) {
 			gradient.setColorAt(1.0, to);
 			p.setPen(QPen(gradient, 0));
 			*/
-			p.drawText(pixmap.rect(), flags, q->text());
+			p.drawText(rect, flags, q->text());
 
 			QLinearGradient alphaGradient(rect.topLeft(), rect.topRight());
 			alphaGradient.setColorAt(0.8, QColor(0,0,0,255));
 			alphaGradient.setColorAt(1.0, QColor(0,0,0,0));
 			p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-			p.fillRect(pixmap.rect(), alphaGradient);
+			p.fillRect(rect, alphaGradient);
 
-			painter.drawImage(rect.topLeft(), pixmap);
+			painter.drawImage(rect, image);
 		}
 		else {
 			painter.setPen(q->palette().color(QPalette::WindowText));
