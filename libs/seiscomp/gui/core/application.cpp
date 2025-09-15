@@ -233,17 +233,23 @@ Application* Application::_instance = nullptr;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::_GUI_Core_Settings::accept(SettingsLinker &linker) {
 	linker
+	& cli(
+		styleSheet,
+		"User interface",
+		"stylesheet",
+		"Apply the stylesheet (.qss) to the application"
+	)
 	& cliSwitch(
 		fullScreen,
 		"User interface",
 		"full-screen,F",
-		"starts the application in fullscreen"
+		"Starts the application in fullscreen"
 	)
 	& cliInverseSwitch(
 		interactive,
 		"User interface",
 		"non-interactive,N",
-		"use non interactive presentation mode"
+		"Use non interactive presentation mode"
 	)
 	& cfg(fullScreen, "mode.fullscreen")
 	& cfg(interactive, "mode.interactive")
@@ -297,8 +303,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 		setenv("QT_QPA_PLATFORM", "offscreen", 1);
 		_app = new QApplication(argc, argv);
 	}
-	else
+	else {
 		_app = new QApplication(argc, argv);
+	}
 
 	setDaemonEnabled(false);
 
@@ -886,8 +893,9 @@ void Application::configSetColorGradient(const std::string& query, const Gradien
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initConfiguration() {
-	if ( !Client::Application::initConfiguration() )
+	if ( !Client::Application::initConfiguration() ) {
 		return false;
+	}
 
 	QPalette pal;
 	_scheme->colors.background = pal.color(QPalette::Window);
@@ -1050,6 +1058,10 @@ bool Application::init() {
 		return false;
 	}
 
+	if ( !_settings.styleSheet.empty() ) {
+		_app->setStyleSheet(("file:///" + _settings.styleSheet).data());
+	}
+
 	// Check author read-only
 	try {
 		vector<string> blacklistedAuthors = configGetStrings("blacklist.authors");
@@ -1111,14 +1123,16 @@ bool Application::init() {
 	if ( isDatabaseEnabled() && (_type != Tty) ) {
 		cdlg()->setDefaultDatabaseParameters(databaseURI().c_str());
 
-		if ( !cdlg()->hasDatabaseChanged() )
+		if ( !cdlg()->hasDatabaseChanged() ) {
 			cdlg()->setDatabaseParameters(databaseURI().c_str());
+		}
 
 		cdlg()->connectToDatabase();
 	}
 
-	if ( !_settingsOpened && isMessagingEnabled() && (_type != Tty) )
+	if ( !_settingsOpened && isMessagingEnabled() && (_type != Tty) ) {
 		cdlg()->connectToMessaging();
+	}
 
 	/*
 	if ( _flags & OPEN_CONNECTION_DIALOG ) {
@@ -1431,10 +1445,12 @@ void Application::showSettings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::quit() {
-	if ( _app )
+	if ( _app ) {
 		_app->quit();
-	else
+	}
+	else {
 		Client::Application::quit();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1777,7 +1793,9 @@ void Application::objectDestroyed(QObject* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::closedLastWindow() {
-	if ( _app ) _app->quit();
+	if ( _app ) {
+		_app->quit();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1789,7 +1807,9 @@ void Application::exit(int returnCode) {
 	if ( _thread )
 		_thread->setReconnectOnErrorEnabled(false);
 
-	if ( _app ) _app->exit(returnCode);
+	if ( _app ) {
+		_app->exit(returnCode);
+	}
 
 	Client::Application::exit(returnCode);
 
