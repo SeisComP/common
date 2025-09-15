@@ -41,9 +41,11 @@ namespace Seiscomp::Gui {
 
 
 struct AuxiliaryChannelProfile {
+	QString                  name;
 	std::vector<std::string> patterns;
 	double                   minimumDistance{0};
 	double                   maximumDistance{1000};
+	bool                     visible{true};
 };
 
 using AuxiliaryChannelProfiles = std::vector<AuxiliaryChannelProfile>;

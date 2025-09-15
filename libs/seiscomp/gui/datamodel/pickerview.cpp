@@ -2952,7 +2952,7 @@ void PickerView::init() {
 		SC_D.spinDistance->setSuffix(degrees);
 	}
 
-	SC_D.ui.toolBarStations->insertWidget(SC_D.ui.actionShowAllStations, SC_D.spinDistance);
+	SC_D.ui.toolBarStations->insertWidget(SC_D.ui.actionAddStationsInDistanceRange, SC_D.spinDistance);
 
 	/*
 	connect(SC_D.spinDistance, SIGNAL(editingFinished()),
@@ -3066,16 +3066,11 @@ void PickerView::init() {
 	connect(SC_D.ui.actionModifyOrigin, SIGNAL(triggered(bool)),
 	        this, SLOT(modifyOrigin()));
 
-	connect(SC_D.ui.actionShowAllStations, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionAddStationsInDistanceRange, SIGNAL(triggered(bool)),
 	        this, SLOT(loadNextStations()));
 
 	connect(SC_D.ui.actionShowUsedStations, SIGNAL(triggered(bool)),
 	        this, SLOT(showUsedStations(bool)));
-
-	/* TODO: Remove me
-	connect(SC_D.ui.btnScaleReset, SIGNAL(clicked()),
-	        this, SLOT(scaleReset()));
-	*/
 
 	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()),
 	        this, SLOT(confirmPick()));
@@ -3608,6 +3603,43 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 
 			addAction(action);
 		}
+	}
+
+	if ( SC_D.auxiliaryProfileMenu ) {
+		delete SC_D.auxiliaryProfileMenu;
+		SC_D.auxiliaryProfileMenu = nullptr;
+	}
+
+	if ( SC_D.auxiliaryProfileVisibilityMenu ) {
+		delete SC_D.auxiliaryProfileVisibilityMenu;
+		SC_D.auxiliaryProfileVisibilityMenu = nullptr;
+	}
+
+	if ( !SC_D.config.auxiliaryChannelProfiles.empty() ) {
+		SC_D.auxiliaryProfileMenu = new QMenu(this);
+		SC_D.auxiliaryProfileVisibilityMenu = new QMenu(this);
+
+		for ( const auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+			auto action = SC_D.auxiliaryProfileMenu->addAction(p.name.isEmpty() ? "AUX" : p.name);
+			action->setData(p.name);
+
+			action = SC_D.auxiliaryProfileVisibilityMenu->addAction(p.name.isEmpty() ? "AUX" : p.name);
+			action->setData(p.name);
+			action->setCheckable(true);
+			action->setChecked(true);
+		}
+
+		SC_D.ui.actionAddStationsInDistanceRange->setMenu(SC_D.auxiliaryProfileMenu);
+		SC_D.ui.actionShowUsedStations->setMenu(SC_D.auxiliaryProfileVisibilityMenu);
+
+		connect(SC_D.auxiliaryProfileMenu, &QMenu::triggered,
+		        this, &PickerView::loadAuxiliaryStations);
+		connect(SC_D.auxiliaryProfileVisibilityMenu, &QMenu::triggered,
+		        this, &PickerView::showAuxiliaryStations);
+	}
+	else {
+		SC_D.ui.actionAddStationsInDistanceRange->setMenu(nullptr);
+		SC_D.ui.actionShowUsedStations->setMenu(nullptr);
 	}
 
 	bool reselectCurrentItem = false;
@@ -4169,9 +4201,7 @@ void PickerView::loadNextStations() {
 				show = item->value(ITEM_DISTANCE_INDEX) <= distance;
 			}
 
-			if ( SC_D.ui.actionShowUsedStations->isChecked() )
-				show = show && isTraceUsed(item->widget());
-
+			show = show && getVisibilityState(item);
 			item->setVisible(show);
 		}
 	}
@@ -4255,7 +4285,7 @@ void PickerView::resetState() {
 	pickNone(true);
 	sortByDistance();
 	SC_D.ui.actionShowUsedStations->setChecked(false);
-	showUsedStations(false);
+	showUsedStations(SC_D.ui.actionShowUsedStations->isChecked());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4414,16 +4444,27 @@ void PickerView::showComponent(char componentCode) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::showUsedStations(bool usedOnly) {
-	//float distance = SC_D.spinDistance->value();
-
+void PickerView::showUsedStations(bool) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( !isLinkedItem(item) ) {
-			if ( usedOnly )
-				item->setVisible(isTraceUsed(item->widget()));
-			else
-				item->setVisible(true);
+			item->setVisible(getVisibilityState(item));
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showAuxiliaryStations(QAction *action) {
+	QString name = action->data().toString();
+	for ( auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+		if ( p.name == name ) {
+			p.visible = action->isChecked();
+			showAuxiliaryStationProfile(p);
+			break;
 		}
 	}
 }
@@ -4434,10 +4475,9 @@ void PickerView::showUsedStations(bool usedOnly) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::loadNextStations(float distance) {
-	DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
+	auto inv = Client::Inventory::Instance()->inventory();
 
-	if ( inv != nullptr ) {
-
+	if ( inv ) {
 		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 			Network *n = inv->network(i);
 			for ( size_t j = 0; j < n->stationCount(); ++j ) {
@@ -4547,13 +4587,192 @@ void PickerView::loadNextStations(float distance) {
 					RecordViewItem* item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
 					if ( item ) {
 						SC_D.stations.insert(code);
-						item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
-						if ( SC_D.config.hideStationsWithoutData )
+						item->setVisible(getVisibilityState(item));
+						if ( SC_D.config.hideStationsWithoutData ) {
 							item->forceInvisibilty(true);
+						}
 					}
 				}
 			}
 		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::loadAuxiliaryStations(QAction *action) {
+	const AuxiliaryChannelProfile *profile{};
+	QString name = action->data().toString();
+	for ( const auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+		if ( p.name == name ) {
+			profile = &p;
+			break;
+		}
+	}
+
+	if ( !profile ) {
+		QMessageBox::critical(this, tr("Error"),
+		                      tr("Unexpected state: auxiliary profile %1 not found")
+		                      .arg(action->text()));
+		return;
+	}
+
+	SC_D.recordView->setUpdatesEnabled(false);
+
+	loadAuxiliaryStationProfile(*profile);
+
+	fillRawPicks();
+
+	sortByState();
+	alignByState();
+	componentByState();
+
+	if ( !SC_D.recordView->currentItem() ) {
+		selectFirstVisibleItem(SC_D.recordView);
+	}
+	setCursorText(SC_D.currentRecord->cursorText());
+
+	SC_D.recordView->setUpdatesEnabled(true);
+	SC_D.recordView->setFocus();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::loadAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile) {
+	auto inv = Client::Inventory::Instance()->inventory();
+
+	if ( inv ) {
+		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
+			Network *n = inv->network(i);
+			for ( size_t j = 0; j < n->stationCount(); ++j ) {
+				Station *s = n->station(j);
+
+				QString code = (n->code() + "." + s->code()).c_str();
+
+				if ( SC_D.stations.contains(code) ) {
+					continue;
+				}
+
+				try {
+					if ( s->end() <= SC_D.origin->time() ) {
+						continue;
+					}
+				}
+				catch ( Core::ValueException & ) {}
+
+				double delta;
+
+				try {
+					delta = computeDistance(SC_D.origin.get(), s, SC_D.config.defaultDepth);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_WARNING("Distance to %s.%s: %s",
+					                 n->code(), s->code(), e.what());
+					continue;
+				}
+
+				if ( (delta >= profile.minimumDistance) && (delta <= profile.maximumDistance) ) {
+					// Only the invalid distance range is considered.
+					continue;
+				}
+
+				// try to get the configured location and stream code
+				Stream *stream = findConfiguredStream(s, SC_D.origin->time());
+				if ( stream ) {
+					SEISCOMP_DEBUG("Adding configured stream %s.%s.%s.%s",
+					               stream->sensorLocation()->station()->network()->code().c_str(),
+					               stream->sensorLocation()->station()->code().c_str(),
+					               stream->sensorLocation()->code().c_str(),
+					               stream->code().c_str());
+				}
+
+				// Try to get a default stream
+				if ( !stream ) {
+					// Preferred channel code is BH. If not available use either SH or skip.
+					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
+						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
+						if ( stream ) {
+							break;
+						}
+					}
+				}
+
+				if ( !stream && !SC_D.config.ignoreUnconfiguredStations ) {
+					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
+					if ( stream ) {
+						SEISCOMP_DEBUG("Adding velocity stream %s.%s.%s.%s",
+						               stream->sensorLocation()->station()->network()->code().c_str(),
+						               stream->sensorLocation()->station()->code().c_str(),
+						               stream->sensorLocation()->code().c_str(),
+						               stream->code().c_str());
+					}
+				}
+
+				if ( stream ) {
+					try {
+						stream->sensorLocation()->latitude();
+						stream->sensorLocation()->longitude();
+					}
+					catch ( ... ) {
+						SEISCOMP_WARNING("SensorLocation %s.%s.%s has no valid coordinates",
+						                 stream->sensorLocation()->station()->network()->code().c_str(),
+						                 stream->sensorLocation()->station()->code().c_str(),
+						                 stream->sensorLocation()->code().c_str());
+						continue;
+					}
+
+					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
+					auto sid = waveformIDToStdString(streamID);
+					bool matchesProfile = false;
+					for ( const auto &pattern : profile.patterns ) {
+						if ( Core::wildcmp(pattern, sid) ) {
+							matchesProfile = true;
+							break;
+						}
+					}
+
+					if ( !matchesProfile ) {
+						continue;
+					}
+
+					RecordViewItem *item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
+					if ( item ) {
+						SC_D.stations.insert(code);
+						item->setVisible(getVisibilityState(item));
+						if ( SC_D.config.hideStationsWithoutData ) {
+							item->forceInvisibilty(true);
+						}
+						static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile = &profile;
+					}
+				}
+			}
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile) {
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		auto item = SC_D.recordView->itemAt(r);
+		if ( isLinkedItem(item) ) {
+			continue;
+		}
+
+		if ( static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile != &profile ) {
+			continue;
+		}
+
+		item->setVisible(getVisibilityState(item));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6949,6 +7168,28 @@ void PickerView::ensureVisibility(const Seiscomp::Core::Time &time, int pixelMar
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool PickerView::getVisibilityState(RecordViewItem *item) {
+	if ( isTraceUsed(item->widget()) ) {
+		return true;
+	}
+
+	if ( SC_D.ui.actionShowUsedStations->isChecked() ) {
+		// Hide unused stations if enabled
+		return false;
+	}
+
+	return static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile ?
+		static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile->visible
+		:
+		true
+	;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::moveTraces(double offset) {
 	if ( fabs(offset) < 0.001 ) return;
 
@@ -8451,15 +8692,9 @@ void PickerView::acquireStreams() {
 		return;
 	}
 
-	connect(t, SIGNAL(handleError(QString)),
-	        this, SLOT(handleAcquisitionError(QString)));
-
-	connect(t, SIGNAL(receivedRecord(Seiscomp::Record*)),
-	        this, SLOT(receivedRecord(Seiscomp::Record*)));
-
-	connect(t, SIGNAL(finished()),
-	        this, SLOT(acquisitionFinished()));
-
+	connect(t, SIGNAL(handleError(QString)), this, SLOT(handleAcquisitionError(QString)));
+	connect(t, SIGNAL(receivedRecord(Seiscomp::Record*)), this, SLOT(receivedRecord(Seiscomp::Record*)));
+	connect(t, SIGNAL(finished()), this, SLOT(acquisitionFinished()));
 
 	t->setTimeWindow(SC_D.timeWindow);
 
@@ -8475,6 +8710,7 @@ void PickerView::acquireStreams() {
 				             it->streamID.stationCode(),
 				             it->streamID.locationCode(),
 				             it->streamID.channelCode());
+			}
 		}
 		else {
 			t->addStream(it->streamID.networkCode(),
@@ -8824,7 +9060,7 @@ void PickerView::addStations() {
 			                                 false, true, stream);
 			if ( item ) {
 				SC_D.stations.insert(code);
-				item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
+				item->setVisible(getVisibilityState(item));
 				if ( SC_D.config.hideStationsWithoutData )
 					item->forceInvisibilty(true);
 			}
@@ -9777,10 +10013,10 @@ void PickerView::setArrivalState(int arrivalId, bool state) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( setArrivalState(item->widget(), arrivalId, state) ) {
-			item->setVisible(!(SC_D.ui.actionShowUsedStations->isChecked() &&
-			                   item->widget()->hasMovableMarkers()));
-			if ( state )
+			item->setVisible(getVisibilityState(item));
+			if ( state ) {
 				item->label()->setEnabled(true);
+			}
 			break;
 		}
 	}

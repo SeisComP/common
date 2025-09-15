@@ -155,6 +155,8 @@ class PickerViewPrivate {
 		SpectrogramSettings                *spectrogramSettings;
 
 		QWidget                            *spectrumView;
+		QMenu                              *auxiliaryProfileMenu{nullptr};
+		QMenu                              *auxiliaryProfileVisibilityMenu{nullptr};
 
 		::Ui::PickerView                    ui;
 		bool                                settingsRestored;

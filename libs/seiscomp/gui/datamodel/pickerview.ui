@@ -527,7 +527,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionShowAllStations"/>
+   <addaction name="actionAddStationsInDistanceRange"/>
    <addaction name="actionShowUsedStations"/>
   </widget>
   <widget class="QToolBar" name="toolBarPicking">
@@ -1197,7 +1197,7 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actionShowAllStations">
+  <action name="actionAddStationsInDistanceRange">
    <property name="checkable">
     <bool>false</bool>
    </property>
