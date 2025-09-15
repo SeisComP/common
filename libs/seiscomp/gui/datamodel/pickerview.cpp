@@ -2330,10 +2330,12 @@ bool PickerRecordLabel::isExpanded() const {
 
 void PickerRecordLabel::visibilityChanged(bool v) {
 	if ( _linkedItem && !_isLinkedItem ) {
-		if ( !v )
+		if ( !v ) {
 			_linkedItem->setVisible(false);
-		else if ( _isExpanded )
+		}
+		else if ( _isExpanded ) {
 			_linkedItem->setVisible(true);
+		}
 	}
 }
 
@@ -4062,7 +4064,9 @@ void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
 
 		// Is the item an linked (controlled) item, ignore it
 		// The alignment is done by the controller item
-		if ( l->isLinkedItem() ) continue;
+		if ( l->isLinkedItem() ) {
+			continue;
+		}
 
 		RecordViewItem *controlledItem = l->controlledItem();
 
@@ -4133,17 +4137,16 @@ void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::loadNextStations() {
-	float distance = SC_D.spinDistance->value();
+	auto distance = SC_D.spinDistance->value();
 
-	if ( SCScheme.unit.distanceInKM )
+	if ( SCScheme.unit.distanceInKM ) {
 		distance = Math::Geo::km2deg(distance);
-
-	std::vector<Seiscomp::DataModel::WaveformStreamID>::iterator it;
+	}
 
 	SC_D.recordView->setUpdatesEnabled(false);
 
 	/*
-	for ( it = SC_D.nextStations.begin(); it != SC_D.nextStations.end(); ++it ) {
+	for ( auto it = SC_D.nextStations.begin(); it != SC_D.nextStations.end(); ++it ) {
 		RecordViewItem* item = SC_D.recordView->item(waveformIDToString(*it));
 		if ( item ) {
 			item->setVisible(item->value(0) <= distance);
@@ -4158,11 +4161,13 @@ void PickerView::loadNextStations() {
 		bool show = false;
 
 		if ( !isLinkedItem(item) ) {
-			if ( isArrivalTrace(item->widget()) )
-			//if ( item->widget()->hasMovableMarkers() )
+			if ( isArrivalTrace(item->widget()) ) {
+			//if ( item->widget()->hasMovableMarkers() ) {
 				show = true;
-			else
+			}
+			else {
 				show = item->value(ITEM_DISTANCE_INDEX) <= distance;
+			}
 
 			if ( SC_D.ui.actionShowUsedStations->isChecked() )
 				show = show && isTraceUsed(item->widget());
@@ -4213,8 +4218,9 @@ void PickerView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignByState() {
-	if ( SC_D.alignedOnOT && SC_D.origin )
+	if ( SC_D.alignedOnOT && SC_D.origin ) {
 		SC_D.recordView->setAlignment(SC_D.origin->time());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4480,13 +4486,15 @@ void PickerView::loadNextStations(float distance) {
 					// Preferred channel code is BH. If not available use either SH or skip.
 					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
 						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
-						if ( stream ) break;
+						if ( stream ) {
+							break;
+						}
 					}
 				}
 
 				if ( !stream && !SC_D.config.ignoreUnconfiguredStations ) {
 					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
-					if ( stream != nullptr ) {
+					if ( stream ) {
 						SEISCOMP_DEBUG("Adding velocity stream %s.%s.%s.%s",
 						               stream->sensorLocation()->station()->network()->code().c_str(),
 						               stream->sensorLocation()->station()->code().c_str(),
@@ -4731,15 +4739,17 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 				// If the stream is a strong motion stream, we need to unlink
 				// it from its broadband stream (disconnect the "expand button" feature)
-				if ( isLinkedItem(item) )
+				if ( isLinkedItem(item) ) {
 					unlinkItem(item);
+				}
 			}
 
 			addArrival(item->widget(), arrival, i);
 		}
 	}
-	else
+	else {
 		loadNextStations();
+	}
 
 	SC_D.timeWindowOfInterest.setStartTime(originTime + Core::TimeSpan(relTimeWindowStart));
 	SC_D.timeWindowOfInterest.setEndTime(originTime + Core::TimeSpan(relTimeWindowStart + timeWindowLength));
@@ -5361,7 +5371,7 @@ void PickerView::queueStream(double dist, const DataModel::WaveformStreamID& str
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RecordViewItem* PickerView::addStream(const DataModel::SensorLocation *sloc,
+RecordViewItem *PickerView::addStream(const DataModel::SensorLocation *sloc,
                                       const WaveformStreamID& streamID,
                                       double distance,
                                       const std::string& text,
@@ -5819,13 +5829,14 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		}
 
 		if ( m->isArrival() ) {
-			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			if ( needSeparator ) { menu.addSeparator(); }
 			deleteArrival = menu.addAction(tr("Delete arrival"));
-			if ( SC_D.loadedPicks )
+			if ( SC_D.loadedPicks ) {
 				deleteArrivalWithRemove = menu.addAction(tr("Delete arrival and remove pick"));
+			}
 		}
 		else if ( m->isPick() ) {
-			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			if ( needSeparator ) { menu.addSeparator(); }
 			removePick = menu.addAction(tr("Remove pick"));
 		}
 
@@ -5870,14 +5881,19 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 					delete m;
 					m = nullptr;
 				}
-				else
+				else {
 					m->setType(PickerMarker::Pick);
+				}
 			}
 
-			if ( m && res == deleteArrivalWithRemove ) delete m;
+			if ( m && res == deleteArrivalWithRemove ) {
+				delete m;
+			}
 
 			SC_D.currentRecord->update();
-			if ( SC_D.recordView->currentItem() ) SC_D.recordView->currentItem()->widget()->update();
+			if ( SC_D.recordView->currentItem() ) {
+				SC_D.recordView->currentItem()->widget()->update();
+			}
 		}
 
 		return;
@@ -8418,9 +8434,11 @@ void PickerView::acquisitionFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::acquireStreams() {
-	if ( SC_D.nextStreams.empty() ) return;
+	if ( SC_D.nextStreams.empty() ) {
+		return;
+	}
 
-	RecordStreamThread *t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
+	auto t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
 
 	if ( !t->connect() ) {
 		if ( SC_D.config.recordURL != SC_D.lastRecordURL ) {
@@ -8448,10 +8466,11 @@ void PickerView::acquireStreams() {
 	for ( auto it = SC_D.nextStreams.begin(); it != SC_D.nextStreams.end(); ++it ) {
 		if ( it->timeWindow ) {
 			if ( !t->addStream(it->streamID.networkCode(),
-				               it->streamID.stationCode(),
-				               it->streamID.locationCode(),
-				               it->streamID.channelCode(),
-				               it->timeWindow.startTime(), it->timeWindow.endTime()) )
+			                   it->streamID.stationCode(),
+			                   it->streamID.locationCode(),
+			                   it->streamID.channelCode(),
+			                   it->timeWindow.startTime(),
+			                   it->timeWindow.endTime()) ) {
 				t->addStream(it->streamID.networkCode(),
 				             it->streamID.stationCode(),
 				             it->streamID.locationCode(),
@@ -8539,8 +8558,9 @@ void PickerView::receivedRecord(Seiscomp::Record *rec) {
 
 		// If this item is linked to another item, enable the expand button of
 		// the controller
-		if ( label->isLinkedItem() && label->_linkedItem != nullptr )
+		if ( label->isLinkedItem() && label->_linkedItem ) {
 			static_cast<PickerRecordLabel*>(label->_linkedItem->label())->enabledExpandButton(item);
+		}
 	}
 	else {
 		// Tell the widget to rebuild its traces
@@ -9510,8 +9530,9 @@ void PickerView::updateRecordAxisLabel(RecordViewItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickerView::applyFilter(RecordViewItem *item) {
 	if ( item == nullptr ) {
-		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i )
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
 			applyFilter(SC_D.recordView->itemAt(i));
+		}
 	}
 	else {
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
