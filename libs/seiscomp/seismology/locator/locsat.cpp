@@ -1299,7 +1299,7 @@ void LocSAT::setProfile(const std::string &prefix) {
 	}
 
 	std::ifstream ifs;
-	ifs.open((Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
+	ifs.open((std::string(_locator_params->prefix) + ".stacor").c_str());
 	if ( !ifs.is_open() )
 		SEISCOMP_DEBUG("LOCSAT: no station corrections used for profile %s", _tablePrefix.c_str());
 	else {
