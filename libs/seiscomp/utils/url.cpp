@@ -192,7 +192,7 @@ bool Url::parse(const std::string &url) {
 
 	end = url.find("://", start);
 	if ( end != string::npos ) {
-		_scheme = url.substr(start, end - start);
+		_scheme = Decoded(url.substr(start, end - start));
 		start = end+3;
 		if ( start == string::npos )
 			return false;
@@ -201,21 +201,21 @@ bool Url::parse(const std::string &url) {
 	end = url.find('/', start);
 	if ( end == string::npos ) {
 		end = url.find('?', start);
-		_host = url.substr(start, (end!=string::npos)?end - start:string::npos);
+		_host = Decoded(url.substr(start, (end!=string::npos)?end - start:string::npos));
 		_path= "/";
 	}
 	else {
-		_host = url.substr(start, end - start);
+		_host = Decoded(url.substr(start, end - start));
 		start = end;
 		end = url.find('?', start);
-		_path = url.substr(start, (end!=string::npos)?end - start:string::npos);
+		_path = Decoded(url.substr(start, (end!=string::npos)?end - start:string::npos));
 	}
 
 	if ( end != string::npos ) {
 		_query = url.substr(end+1);
 		end = _query.find('#');
 		if ( end != string::npos ) {
-			_fragment = _query.substr(end+1);
+			_fragment = Decoded(_query.substr(end+1));
 			_query.erase(end);
 		}
 	}
@@ -223,16 +223,17 @@ bool Url::parse(const std::string &url) {
 	// Extract userinfo
 	end = _host.find('@');
 	if ( end != string::npos ) {
-		string userinfo = _host.substr(0, end);
+		string userinfo = Decoded(_host.substr(0, end));
 		_host.erase(0, end+1);
 
 		end = userinfo.find(':');
 		if ( end != string::npos ) {
-			_username = userinfo.substr(0, end);
-			_password = userinfo.substr(end+1);
+			_username = Decoded(userinfo.substr(0, end));
+			_password = Decoded(userinfo.substr(end+1));
 		}
-		else
-			_username = userinfo;
+		else {
+			_username = Decoded(userinfo);
+		}
 	}
 
 	end = _host.find(':');
@@ -246,7 +247,7 @@ bool Url::parse(const std::string &url) {
 		end = _query.find('=', start);
 		if ( end == string::npos ) break;
 
-		string key = _query.substr(start, end - start);
+		string key = Decoded(_query.substr(start, end - start));
 		if ( key.empty() ) break;
 
 		start = end + 1;
@@ -254,9 +255,9 @@ bool Url::parse(const std::string &url) {
 
 		end = _query.find('&', start);
 		if ( end == string::npos ) 
-			_queryItems[key] = _query.substr(start);
+			_queryItems[key] = Decoded(_query.substr(start));
 		else {
-			_queryItems[key] = _query.substr(start, end - start);
+			_queryItems[key] = Decoded(_query.substr(start, end - start));
 			++end;
 		}
 
@@ -297,6 +298,37 @@ std::string Url::withoutScheme() const {
 	}
 
 	return _url;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Url::Decoded(const std::string &s) {
+	std::string decoded = {};
+	for( size_t i = 0; i < s.length(); ++i ) {
+		if ( s[i] == '+' )
+			decoded += ' ';
+		else if ( s[i] == '%' ) {
+			++i;
+			char hi, lo;
+			if ( i < s.length() ) hi = s[i];
+			else break;
+			++i;
+			if ( i < s.length() ) lo = s[i];
+			else break;
+
+			hi = (hi >= 'A' ? ((hi & 0xDF) - 'A') + 10 : (hi - '0'));
+			lo = (lo >= 'A' ? ((lo & 0xDF) - 'A') + 10 : (lo - '0'));
+
+			decoded += ((hi << 4) + lo);
+		}
+		else
+			decoded += s[i];
+	}
+
+	return decoded;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

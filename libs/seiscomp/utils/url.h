@@ -92,6 +92,15 @@ class SC_SYSTEM_CORE_API Url {
 		 */
 		std::string withoutScheme() const;
 
+		/**
+		 * @brief Decodes STL string based as defined in RFC 3986:
+		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
+		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
+		 * @param s C string
+		 * @return Encoded STL string
+		 */
+		static std::string Decoded(const std::string &s);
+
 
 	// ----------------------------------------------------------------------
 	//  Operators
