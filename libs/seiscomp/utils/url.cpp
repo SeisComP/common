@@ -193,7 +193,7 @@ bool Url::parse(const std::string &url) {
 	end = url.find("://", start);
 	if ( end != string::npos ) {
 		_scheme = Decoded(url.substr(start, end - start));
-		start = end+3;
+		start = end + 3;
 		if ( start == string::npos )
 			return false;
 	}
@@ -201,11 +201,11 @@ bool Url::parse(const std::string &url) {
 	end = url.find('/', start);
 	if ( end == string::npos ) {
 		end = url.find('?', start);
-		_host = Decoded(url.substr(start, (end!=string::npos)?end - start:string::npos));
+		_host = url.substr(start, (end!=string::npos)?end - start:string::npos);
 		_path= "/";
 	}
 	else {
-		_host = Decoded(url.substr(start, end - start));
+		_host = url.substr(start, end - start);
 		start = end;
 		end = url.find('?', start);
 		_path = Decoded(url.substr(start, (end!=string::npos)?end - start:string::npos));
@@ -241,6 +241,8 @@ bool Url::parse(const std::string &url) {
 		Core::fromString(_port, _host.substr(end + 1));
 		_host.erase(end);
 	}
+
+	_host = Decoded(_host);
 
 	start = 0;
 	do {
