@@ -129,4 +129,22 @@ BOOST_AUTO_TEST_CASE(urls) {
 }
 
 
+BOOST_AUTO_TEST_CASE(decode) {
+	Url url;
+
+	BOOST_CHECK_EQUAL(Url::Decoded("Hello%20World!"), "Hello World!");
+	BOOST_CHECK_EQUAL(Url::Decoded("https://exam%3Aple.com/sear%23ch"),
+	                  "https://exam:ple.com/sear#ch");
+	BOOST_CHECK_EQUAL(Url::Decoded("https://example.com/search?q=Hello%20World%21&lang%3Den"),
+	                  "https://example.com/search?q=Hello World!&lang=en");
+
+	BOOST_REQUIRE(url.setUrl("https://sys%2Fop:sys%2Fop@exam%3Aple.com/sear%23ch?q=Hello%20World%21&lang%3Den"));
+	BOOST_CHECK_EQUAL(url.scheme(), "https");
+	BOOST_CHECK_EQUAL(url.username(), "sys/op");
+	BOOST_CHECK_EQUAL(url.password(), "sys/op");
+	BOOST_CHECK_EQUAL(url.host(), "exam:ple.com");
+	BOOST_CHECK_EQUAL(url.path(), "/sear#ch");
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
