@@ -384,7 +384,8 @@ TimeSpan& TimeSpan::operator=(double t) {
 	if( t > MaxTime || t < MinTime )
 		throw Core::OverflowException("TimeSpan::operator=(): double doesn't fit into int");
 	_timeval.tv_sec = (long)t;
-	_timeval.tv_usec = (long)((t-_timeval.tv_sec)*MICROS + 0.5);
+	double ms = (t-_timeval.tv_sec) * MICROS;
+	_timeval.tv_usec = (long)(ms >= 0 ? ms + 0.5 : ms - 0.5);
 
 	return *this;
 }
