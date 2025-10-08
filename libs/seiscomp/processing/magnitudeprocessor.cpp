@@ -493,8 +493,8 @@ bool MagnitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + minimum depth = %s km", toString(_minimumDepthKm, "%.3f"));
 	SEISCOMP_DEBUG("  + maximum depth = %s km", toString(_maximumDepthKm, "%.3f"));
 	SEISCOMP_DEBUG("  + minimum SNR = %s", toString(_minimumSNR, "%f"));
-	SEISCOMP_DEBUG("  + minimum period = %ss", toString(_minimumPeriod, "%f"));
-	SEISCOMP_DEBUG("  + maximum period = %ss", toString(_maximumPeriod, "%f"));
+	SEISCOMP_DEBUG("  + minimum period = %s s", toString(_minimumPeriod, "%f"));
+	SEISCOMP_DEBUG("  + maximum period = %s s", toString(_maximumPeriod, "%f"));
 
 	return true;
 }

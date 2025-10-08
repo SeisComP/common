@@ -68,6 +68,8 @@ MagnitudeProcessor_mB::MagnitudeProcessor_mB(const std::string &type)
 void MagnitudeProcessor_mB::setDefaults() {
 	_minimumDistanceDeg = 5.0;   // default minimum distance
 	_maximumDistanceDeg = 105.0; // default maximum distance
+	_minimumDepthKm = 0.0;   // default minimum depth
+	_maximumDepthKm = 700.0; // default maximum depth
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
