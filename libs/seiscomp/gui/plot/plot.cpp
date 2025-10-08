@@ -175,6 +175,11 @@ void Plot::draw(QPainter &p, const QRect &rect) {
 
 	p.save();
 
+	if ( p.device()->devicePixelRatioF() > 1.0 ) {
+		p.setRenderHint(QPainter::Antialiasing, true);
+		p.translate(0.5, 0.5);
+	}
+
 	// Draw axis
 	for ( int i = _extraYAxis1.count()-1; i >= 0; --i ) {
 		if ( _extraYAxis1[i]->isVisible() ) {
