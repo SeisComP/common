@@ -302,7 +302,8 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	// greater than 1, e.g. 4k displays. Otherwise QIcon pixmaps will be scaled
 	// up to the native display resolution which looks blurry at best.
 	// In Qt6 this setting is default.
-	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
 	_type = type;

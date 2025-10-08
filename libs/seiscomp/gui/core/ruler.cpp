@@ -375,8 +375,10 @@ void Ruler::changed(int pos) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Ruler::drawSelection(QPainter &p) {
-	static QPoint marker[3] = { QPoint(0, 0), QPoint(0, 0), QPoint(0, 0) };
-	if ( !_enableSelection ) return;
+	static QPointF marker[3] = { QPointF(0, 0), QPointF(0, 0), QPointF(0, 0) };
+	if ( !_enableSelection ) {
+		return;
+	}
 
 	p.save();
 	p.setRenderHints(QPainter::Antialiasing, true);
@@ -417,7 +419,7 @@ void Ruler::drawSelection(QPainter &p) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Ruler::drawRangeSelection(QPainter &p) {
 	if ( _rangemin != _rangemax ) {
-		QRect rect;
+		QRectF rect;
 		int offset = _tickLong + 1;
 		int height = fontMetrics().height()+1;
 
@@ -453,8 +455,8 @@ void Ruler::drawRangeSelection(QPainter &p) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPoint Ruler::r2wPos(int rx, int ry) const {
-	return QPoint(
+QPointF Ruler::r2wPos(int rx, int ry) const {
+	return QPointF(
 		isHorizontal() ?
 			_leftToRight ?
 				rx
@@ -483,8 +485,8 @@ QPoint Ruler::r2wPos(int rx, int ry) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPoint Ruler::w2rPos(int x, int y) const {
-	return QPoint(
+QPointF Ruler::w2rPos(int x, int y) const {
+	return QPointF(
 		isHorizontal() ?
 			_leftToRight ?
 				x
@@ -513,9 +515,9 @@ QPoint Ruler::w2rPos(int x, int y) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QRect Ruler::r2wRect(int rx, int ry, int w, int h) const {
+QRectF Ruler::r2wRect(int rx, int ry, int w, int h) const {
 	return _leftToRight ?
-		QRect(
+		QRectF(
 			isHorizontal() ?
 				rx
 				:
@@ -534,7 +536,7 @@ QRect Ruler::r2wRect(int rx, int ry, int w, int h) const {
 			isHorizontal() ? h : w
 		)
 		:
-		QRect(
+		QRectF(
 			isHorizontal() ?
 				width() - 1 - rx - w
 				:
@@ -567,7 +569,7 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
 	int th = fm.height();
 
 	// Top/left position of text box in widget coordinates
-	QPoint pos;
+	QPointF pos;
 	if ( isHorizontal() || allowRotate ) {
 		pos = r2wPos(rx-tw/2, isTop() || isLeft() ? ry+th : ry);
 	}
@@ -577,15 +579,16 @@ bool Ruler::rulerDrawText(QPainter &p, int rx, int ry, const QString &text,
 
 	bool rotate = isVertical() && allowRotate;
 	// Is text clipped?
-	QRect rect(0, 0, width(), height());
-	QPoint pos2(pos.x() + (rotate?th:tw), pos.y() + (rotate?-tw:th));
+	QRectF rect(0, 0, width(), height());
+	QPointF pos2(pos.x() + (rotate?th:tw), pos.y() + (rotate?-tw:th));
 // 	std::cout << "rotate/tw,th/rect/pos/pos2: " << rotate << " / "
 // 		<< tw << "," << th << " / "
 // 		<< rect.x() << "," << rect.y() << "," << rect.width() << "," << rect.height() << " / "
 // 		<< pos.x() << "," << pos.y() << " / "
 // 		<< pos2.x() << "," << pos2.y() << std::endl;
-	if ( !allowClip && (!rect.contains(pos) || !rect.contains(pos2)) )
+	if ( !allowClip && (!rect.contains(pos) || !rect.contains(pos2)) ) {
 		return false;
+	}
 
 	int flags = Qt::AlignCenter | Qt::AlignBottom;
 	if ( rotate ) {
@@ -634,12 +637,19 @@ bool Ruler::rulerDrawTextAtLine(QPainter &p, int rx, int line, const QString &te
 void Ruler::paintEvent(QPaintEvent *e) {
 	QFrame::paintEvent(e);
 
-	QPainter painter(this);
-
 	if ( Seiscomp::Math::isNaN(_min) ) return;
 	if ( _min == std::numeric_limits<double>::infinity() ) return;
 	if ( _min == -std::numeric_limits<double>::infinity() ) return;
 
+	QPainter painter(this);
+	if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+		painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.translate(0.5, 0.5);
+	}
+
+	// Draw ruler base line
+	int rw = rulerWidth();
+	painter.drawLine(r2wPos(0, 0), r2wPos(rw, 0));
 	drawRangeSelection(painter);
 
 	if ( _scl > 0 ) {
@@ -659,10 +669,6 @@ void Ruler::paintEvent(QPaintEvent *e) {
 			cpos = 0;
 
 			int tick = k == 0 ? _tickLong : _tickShort;
-
-			// Draw ruler base line
-			int rw = rulerWidth();
-			painter.drawLine(r2wPos(0, 0), r2wPos(rw, 0));
 
 			// Draw ticks and counts
 			int rx = static_cast<int>((cpos - pos) * _scl);
@@ -738,9 +744,9 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
 	if ( _dragMode != 0 ) return;
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QPoint rp = w2rPos(e->x(), e->y());
+	QPointF rp = w2rPos(e->x(), e->y());
 #else
-	QPoint rp = e->position().toPoint();
+	QPointF rp = e->position();
 	rp = w2rPos(rp.x(), rp.y());
 #endif
 	int rx = rp.x();
@@ -865,9 +871,9 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 			// check if mouse is over selection handle and if so, determine best
 			// matching handle and highlight it
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-			QPoint rp = w2rPos(e->x(), e->y());
+			QPointF rp = w2rPos(e->x(), e->y());
 #else
-			QPoint rp = e->position().toPoint();
+			QPointF rp = e->position();
 			rp = w2rPos(rp.x(), rp.y());
 #endif
 			int rx = rp.x();
@@ -897,9 +903,9 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 
 	// position on the ruler
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QPoint rPoint = w2rPos(e->x(), e->y());
+	QPointF rPoint = w2rPos(e->x(), e->y());
 #else
-	QPoint rPoint = e->position().toPoint();
+	QPointF rPoint = e->position();
 	rPoint = w2rPos(rPoint.x(), rPoint.y());
 #endif
 	int rx = rPoint.x();
@@ -933,9 +939,9 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 			if ( idx != _currentSelectionHandle ) {
 				// Need to find another item as current
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-				QPoint rp = w2rPos(e->x(), e->y());
+				QPointF rp = w2rPos(e->x(), e->y());
 #else
-				QPoint rp = e->position().toPoint();
+				QPointF rp = e->position();
 				rp = w2rPos(rp.x(), rp.y());
 #endif
 				int rx = rp.x();
@@ -1020,11 +1026,11 @@ void Ruler::wheelEvent(QWheelEvent *event) {
 
 	// scale (Ctrl key)
 	if ( event->modifiers() & Qt::ControlModifier ) {
-		QPoint pos = QT_WE_POS(event);
-		QPoint rp = w2rPos(pos.x(), pos.y());
+		QPointF pos = QT_WE_POS(event);
+		QPointF rp = w2rPos(pos.x(), pos.y());
 		double center = (double)(rp.x() + _pos) / rulerWidth();
 		double ofs = delta / _scl;
-		changeRange(_min + ofs * center, _max - ofs * (1-center));
+		changeRange(_min + ofs * center, _max - ofs * (1 - center));
 	}
 	// translate
 	else {

@@ -137,13 +137,13 @@ class SC_GUI_API Ruler : public QFrame
 
 		//! Converts ruler position to point in widget coordinates, rx is the
 		//! position on the ruler, ry the distance from the rulers baseline
-		QPoint r2wPos(int rx, int ry) const;
+		QPointF r2wPos(int rx, int ry) const;
 		//! Converts widget coordinates to ruler position
-		QPoint w2rPos(int x, int y) const;
+		QPointF w2rPos(int x, int y) const;
 		//! Converts ruler rectangle to rectangle in widget coordinates.
 		//! rx is the position on the ruler, ry the distance from the rulers
 		//! baseline
-		QRect r2wRect(int rx, int ry, int rw, int rh) const;
+		QRectF r2wRect(int rx, int ry, int rw, int rh) const;
 		//! Draws text at the specified ruler position (rx) with
 		//! the specified distance (ry) from the rulers baseline.
 		//! If allowRotate is set to 'true' the text is rotated
