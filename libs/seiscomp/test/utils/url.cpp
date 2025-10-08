@@ -207,6 +207,13 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_REQUIRE(url.setUrl("telnet://192.0.2.16:80/"));
 
 	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test"));
+
+    BOOST_REQUIRE(url.setUrl("https://sys%2Fop:sys%2Fop@exam%3Aple.com/sear%23ch?q=Hello%20World%21&lang%3Den"));
+    BOOST_CHECK_EQUAL(url.scheme(), "https");
+    BOOST_CHECK_EQUAL(url.username(), "sys/op");
+    BOOST_CHECK_EQUAL(url.password(), "sys/op");
+    BOOST_CHECK_EQUAL(url.host(), "exam:ple.com");
+    BOOST_CHECK_EQUAL(url.path(), "/sear#ch");
 }
 
 BOOST_AUTO_TEST_CASE(Extract) {
@@ -229,6 +236,5 @@ BOOST_AUTO_TEST_CASE(Decode) {
 	BOOST_CHECK_EQUAL(Url::Decoded("https://example.com/search?q=Hello%20World%21&lang%3Den"),
 	                  "https://example.com/search?q=Hello World!&lang=en");
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
