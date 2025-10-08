@@ -103,8 +103,9 @@ bool Decimation::setSource(const string &source) {
 	string service;
 
 	pos = name.find('?');
-	if ( pos == string::npos )
+	if ( pos == string::npos ) {
 		service = name;
+	}
 	else {
 		service = name.substr(0, pos);
 		name.erase(0, pos+1);
@@ -193,6 +194,8 @@ bool Decimation::setSource(const string &source) {
 			}
 		}
 	}
+
+	SEISCOMP_DEBUG("Set decimation proxy stream to %s://%s", service, addr);
 
 	_source = Create(service.c_str());
 	if ( !_source ) {
