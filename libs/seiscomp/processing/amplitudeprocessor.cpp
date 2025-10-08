@@ -39,7 +39,6 @@
 #include <cmath>
 #include <functional>
 #include <fstream>
-#include <limits>
 #include <vector>
 #include <mutex>
 
@@ -1352,9 +1351,19 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 	}
 
 	TypeSpecificRegionalization *tsr = it->second.get();
-	if ( !tsr or tsr->regionalization.empty() ) {
+	if ( !tsr ) {
 		// No type specific regionalization, check given distance and depth
 		checkEnvironmentalLimits();
+		return;
+	}
+
+	if ( tsr->regionalization.empty() ) {
+		if ( tsr->regions ) {
+			setStatus(EpicenterOutOfRegions, 0);
+		}
+		else {
+			checkEnvironmentalLimits();
+		}
 		return;
 	}
 
