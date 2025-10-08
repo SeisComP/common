@@ -171,7 +171,7 @@ void readValue(T &value, const CFG *cfg, const std::string &var, const string &u
 			value = Util::UnitConverter::parse<double>(s, unit);
 		}
 		catch ( exception &e ) {
-			SEISCOMP_ERROR("%s: invalid value: %s", var, e.what());
+			SEISCOMP_ERROR("%s: Invalid value: %s", var, e.what());
 			throw e;
 		}
 	}
@@ -546,7 +546,7 @@ bool MagnitudeProcessor::readLocale(Locale *locale,
 			locale->check = Locale::SourceReceiverPath;
 		}
 		else {
-			SEISCOMP_ERROR("%scheck: invalid region check: %s",
+			SEISCOMP_ERROR("%: Invalid configuration of region check: %s",
 			               cfgPrefix, check);
 			return false;
 		}

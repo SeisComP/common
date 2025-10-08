@@ -2421,8 +2421,8 @@ bool AmplitudeProcessor::readLocale(Locale *locale,
 			locale->check = Locale::SourceReceiverPath;
 		}
 		else {
-			SEISCOMP_ERROR("%scheck: invalid region check: %s",
-			               cfgPrefix.c_str(), check.c_str());
+			SEISCOMP_ERROR("%: Invalid configuration of region check: %s",
+			               cfgPrefix, check);
 			return false;
 		}
 	}
