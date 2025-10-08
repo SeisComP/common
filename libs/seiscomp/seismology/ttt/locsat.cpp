@@ -19,6 +19,7 @@
 
 
 #include <math.h>
+#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 #include <cstring>
@@ -34,6 +35,8 @@
 
 
 using namespace std;
+
+namespace fs = std::filesystem;
 
 
 namespace {
@@ -121,13 +124,23 @@ bool Locsat::setModel(const string &model) {
 		return true;
 	}
 
-	auto prefix = Environment::Instance()->shareDir() + "/locsat/tables/" + _model;
+	std::string prefix;
+
+	const char *tablePath = getenv("SEISCOMP_LOCSAT_TABLE_DIR");
+	if ( tablePath ) {
+		fs::path path(tablePath);
+		path /= model;
+		prefix = path.string();
+	}
+	else {
+		prefix = Environment::Instance()->shareDir() + "/locsat/tables/" + _model;
+	}
 
 	if ( _tablePrefix == prefix ) {
 		return true;
 	}
 
-	_tablePrefix = move(prefix);
+	_tablePrefix = std::move(prefix);
 
 	if ( sc_locsat_setup_tttables(&_ttt, _tablePrefix.c_str(), 0) != 0 ) {
 		return false;

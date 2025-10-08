@@ -869,14 +869,13 @@ void LOCSAT::setProfile(const std::string &prefix) {
 	}
 
 	std::ifstream ifs;
-	ifs.open((Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
+	ifs.open((std::string(P(prefix)) + ".stacor").c_str());
 	if ( !ifs.is_open() ) {
 		SEISCOMP_DEBUG("LOCSAT: no station corrections used for profile %s", _tablePrefix.c_str());
 	}
 	else {
-		SEISCOMP_DEBUG("LOCSAT: loading station corrections for profile %s from file %s",
-		               _tablePrefix.c_str(),
-		               (Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
+		SEISCOMP_DEBUG("LOCSAT: loading station corrections for profile %s from file %s.stacor",
+		               _tablePrefix, P(prefix));
 		std::string line;
 		int lc = 1;
 		int cnt = 0;
