@@ -18,14 +18,13 @@
  ***************************************************************************/
 
 
-
 #define SEISCOMP_COMPONENT Stream
+
 
 #include <seiscomp/processing/stream.h>
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/logging/log.h>
 
-#include <iostream>
 #include <algorithm>
 #include <cmath>
 
@@ -52,9 +51,9 @@ Stream::Stream() {
 void Stream::init(const DataModel::Stream *stream) {
 	gain = 0.0;
 	gainFrequency = Core::None;
-	gainUnit = std::string();
+	gainUnit = {};
 	setCode(stream->code());
-	epoch = Core::TimeWindow();
+	epoch = {};
 	_sensor = nullptr;
 
 	epoch.setStartTime(stream->start());
@@ -246,14 +245,18 @@ void Stream::init(const std::string &networkCode,
                   const Core::Time &time) {
 	gain = 0.0;
 	setCode(channelCode);
-	epoch = Core::TimeWindow();
+	epoch = {};
 	_sensor = nullptr;
 
-	Client::Inventory *inv = Client::Inventory::Instance();
-	if ( !inv ) return;
+	auto inv = Client::Inventory::Instance();
+	if ( !inv ) {
+		return;
+	}
 
-	DataModel::Stream *stream = inv->getStream(networkCode, stationCode, locationCode, channelCode, time);
-	if ( !stream ) return;
+	auto stream = inv->getStream(networkCode, stationCode, locationCode, channelCode, time);
+	if ( !stream ) {
+		return;
+	}
 
 	init(stream);
 }

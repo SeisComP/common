@@ -78,13 +78,13 @@ class SC_SYSTEM_CLIENT_API Stream : public Core::BaseObject {
 
 
 	public:
-		Core::TimeWindow epoch;
+		Core::OpenTimeWindow epoch;
 
-		double      gain;
-		OPT(double) gainFrequency;
-		std::string gainUnit;
-		double      azimuth;
-		double      dip;
+		double               gain;
+		OPT(double)          gainFrequency;
+		std::string          gainUnit;
+		double               azimuth;
+		double               dip;
 
 
 	// ----------------------------------------------------------------------

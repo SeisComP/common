@@ -71,6 +71,22 @@ BOOST_AUTO_TEST_CASE(Construction) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(Construction2) {
+	Time start(2024, 12, 1, 10, 38, 42, 0);
+	Time end(2024, 12, 1, 11, 38, 42, 0);
+
+	OpenTimeWindow tw0;
+	OpenTimeWindow tw1(start, end);
+
+	BOOST_CHECK(tw0.startTime() == None);
+	BOOST_CHECK(tw0.endTime() == None);
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(Or) {
 	TimeWindow tw1(Time(2024, 12, 1, 10, 38, 42, 0), Time(2024, 12, 1, 11, 38, 42, 0));
 	TimeWindow tw2(Time(2024, 12, 1, 11, 38, 42, 0), Time(2024, 12, 1, 12, 0, 0, 0));
@@ -84,6 +100,60 @@ BOOST_AUTO_TEST_CASE(Or) {
 
 	BOOST_CHECK_EQUAL(tw.startTime(), tw1.startTime());
 	BOOST_CHECK_EQUAL(tw.endTime(), tw1.endTime());
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(Contains) {
+	OpenTimeWindow tw;
+
+	tw.setStartTime(Time(2024, 12, 1, 10, 38, 42));
+	tw.setEndTime(Time(2024, 12, 1, 11, 38, 42));
+
+	BOOST_CHECK(tw.contains(Time(2024, 12, 1, 11, 8, 42)));
+	BOOST_CHECK(!tw.contains(Time(2024, 12, 1, 12, 8, 42)));
+	BOOST_CHECK(!tw.contains(Time(2024, 12, 1, 10, 8, 42)));
+	BOOST_CHECK(tw.contains(OpenTimeWindow(
+		Time(2024, 12, 1, 11, 8, 42),
+		Time(2024, 12, 1, 11, 18, 42)
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow(
+		Time(2024, 12, 1, 11, 8, 42),
+		Time(2024, 12, 1, 12, 8, 42)
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow(
+		Time(2024, 12, 1, 10, 8, 42),
+		Time(2024, 12, 1, 11, 8, 42)
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow(
+		Time(2024, 12, 1, 10, 8, 42),
+		Time(2024, 12, 1, 12, 8, 42)
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow(
+		Time(2024, 12, 1, 11, 8, 42), None
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow(
+		None, Time(2024, 12, 1, 11, 8, 42)
+	)));
+	BOOST_CHECK(!tw.contains(OpenTimeWindow()));
+
+	BOOST_CHECK(!OpenTimeWindow(
+		Time(2024, 12, 1, 11, 8, 42), None
+	).contains(tw));
+	BOOST_CHECK(!OpenTimeWindow(
+		None, Time(2024, 12, 1, 11, 8, 42)
+	).contains(tw));
+
+	BOOST_CHECK(OpenTimeWindow().contains(tw));
+	BOOST_CHECK(OpenTimeWindow(
+		Time(2024, 12, 1, 10, 8, 42), None
+	).contains(tw));
+	BOOST_CHECK(OpenTimeWindow(
+		None, Time(2024, 12, 1, 12, 8, 42)
+	).contains(tw));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

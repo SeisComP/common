@@ -37,12 +37,11 @@ class SC_SYSTEM_CORE_API TimeWindow {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		TimeWindow();
+		TimeWindow() = default;
 		TimeWindow(const Time &startTime, double length);
 		TimeWindow(const Time &startTime, const TimeSpan length);
 		TimeWindow(const Time &startTime, const Time &endTime);
 		TimeWindow(const TimeWindow &other);
-		~TimeWindow() {}
 
 
 	// ----------------------------------------------------------------------
@@ -135,7 +134,65 @@ class SC_SYSTEM_CORE_API TimeWindow {
 };
 
 
+
+class SC_SYSTEM_CORE_API OpenTimeWindow {
+	// ----------------------------------------------------------------------
+	//  X'truction
+	// ----------------------------------------------------------------------
+	public:
+		OpenTimeWindow() = default;
+		OpenTimeWindow(const OPT(Time) &startTime, const OPT(Time) &endTime);
+		OpenTimeWindow(const OpenTimeWindow &other);
+
+
+	// ----------------------------------------------------------------------
+	//  Assignment operators
+	// ----------------------------------------------------------------------
+	public:
+		OpenTimeWindow &operator=(const OpenTimeWindow&);
+
+
+	// ----------------------------------------------------------------------
+	//  Comparison operators
+	// ----------------------------------------------------------------------
+	public:
+		bool operator==(const OpenTimeWindow&) const;
+		bool operator!=(const OpenTimeWindow&) const;
+
+
+	// ----------------------------------------------------------------------
+	//  Public interface
+	// ----------------------------------------------------------------------
+	public:
+		OPT(Time) startTime() const;
+		OPT(Time) endTime() const;
+		OPT(TimeSpan) length() const;
+
+		void set(const OPT(Time) &t1, const OPT(Time) &t2);
+		void setStartTime(const OPT(Time) &t);
+		void setEndTime(const OPT(Time) &t);
+
+		//! does it contain time t?
+		bool contains(const Time &t) const;
+
+		//! does it contain time window tw completely?
+		bool contains(const OpenTimeWindow &tw) const;
+
+		//! does it overlap with time window tw?
+		bool overlaps(const OpenTimeWindow &tw) const;
+
+
+	// ----------------------------------------------------------------------
+	//  Private members
+	// ----------------------------------------------------------------------
+	private:
+		OPT(Time) _startTime;
+		OPT(Time) _endTime;
+};
+
+
 std::ostream &operator<<(std::ostream &os, const TimeWindow &timeWindow);
+std::ostream &operator<<(std::ostream &os, const OpenTimeWindow &timeWindow);
 
 
 #include "timewindow.ipp"
