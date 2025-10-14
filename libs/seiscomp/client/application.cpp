@@ -1305,16 +1305,22 @@ bool Application::reloadBindings() {
 		std::set<std::string> params;
 
 		if ( !_settings.database.configDB.empty() ) {
-			if ( !loadConfig(_settings.database.configDB) ) return false;
+			if ( !loadConfig(_settings.database.configDB) ) {
+				SEISCOMP_ERROR("Failed to load configuration module from %s",
+				               _settings.database.configDB);
+				return false;
+			}
 		}
 		else if ( _database ) {
 			if ( _query ) {
 				SEISCOMP_INFO("Loading configuration module");
 				showMessage("Reading station config");
-				if ( !_settings.configModuleName.empty() )
+				if ( !_settings.configModuleName.empty() ) {
 					ConfigDB::Instance()->load(query(), _settings.configModuleName, Core::None, Core::None, Core::None, params);
-				else
+				}
+				else {
 					ConfigDB::Instance()->load(query(), Core::None, Core::None, Core::None, Core::None, params);
+				}
 				SEISCOMP_INFO("Finished loading configuration module");
 			}
 			else {
@@ -1327,8 +1333,10 @@ bool Application::reloadBindings() {
 			return false;
 		}
 
-		DataModel::Config* config = ConfigDB::Instance()->config();
+		auto config = ConfigDB::Instance()->config();
 		if ( !config ) {
+			SEISCOMP_ERROR("No configuration module found in %s",
+			               _settings.database.configDB.empty() ? "database" : _settings.database.configDB);
 			return false;
 		}
 
