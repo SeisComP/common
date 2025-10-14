@@ -350,8 +350,9 @@ Record *Decimation::next() {
 				GenericRecord *rec = _nextRecord;
 				_nextRecord = nullptr;
 
-				if ( rec->data()->dataType() != _dataType )
+				if ( rec->data()->dataType() != _dataType ) {
 					rec->setData(rec->data()->copy(_dataType));
+				}
 
 				return rec;
 			}
@@ -560,7 +561,7 @@ GenericRecord *Decimation::convert(Record *rec) {
 			return nullptr;
 	}
 
-	ArrayPtr data = rec->data()->copy(_dataType);
+	ArrayPtr data = rec->data() ? rec->data()->copy(_dataType) : nullptr;
 	out->setData(data.get());
 
 	return out;
@@ -600,10 +601,16 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 
 	ArrayPtr tmp_ar;
 	const DoubleArray *ar = DoubleArray::ConstCast(rec->data());
-	if ( ar == nullptr ) {
-		tmp_ar = rec->data()->copy(Array::DOUBLE);
+	if ( !ar ) {
+		tmp_ar = rec->data() ? rec->data()->copy(Array::DOUBLE) : nullptr;
+		if ( !tmp_ar ) {
+			SEISCOMP_WARNING("[dec] %s: %s ~ %s: no data -> ignoring",
+			                 rec->streamID(), rec->startTime().iso(),
+			                 rec->endTime().iso());
+			return nullptr;
+		}
 		ar = DoubleArray::ConstCast(tmp_ar);
-		if ( ar == nullptr ) {
+		if ( !ar ) {
 			SEISCOMP_ERROR("[dec] internal error: doubles expected");
 			return nullptr;
 		}
