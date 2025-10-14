@@ -219,7 +219,7 @@ class Context {
 
 			if ( !_ttt ) {
 				if ( _proc->config().ttInterface.empty() ) {
-					_ttt = TravelTimeTableInterfaceFactory::Create("libtau");
+					_ttt = TravelTimeTableInterfaceFactory::Create("LOCSAT");
 				}
 				else {
 					_ttt = TravelTimeTableInterfaceFactory::Create(_proc->config().ttInterface);

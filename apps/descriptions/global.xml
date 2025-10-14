@@ -453,7 +453,7 @@
 					e.g. &quot;signalBegin&quot;. This can be overridden per
 					station in its bindings.
 					</description>
-					<parameter name="interface" type="string" default="libtau" values="libtau,LOCSAT,homogeneous">
+					<parameter name="interface" type="string" default="LOCSAT" values="libtau,LOCSAT,homogeneous">
 						<description>
 						The name of the travel-time interface to use. The list
 						can be extended by plugins.
@@ -1071,7 +1071,7 @@
 					noise time window specifications,
 					e.g. &quot;signalBegin&quot;.
 					</description>
-					<parameter name="interface" type="string" default="libtau" values="libtau,LOCSAT,homogeneous">
+					<parameter name="interface" type="string" default="LOCSAT" values="libtau,LOCSAT,homogeneous">
 						<description>
 						The name of the travel-time interface to use. The list
 						can be extended by plugins.

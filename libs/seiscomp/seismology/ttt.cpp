@@ -36,7 +36,9 @@ namespace Seiscomp {
 double ellipticityCorrection(const std::string &phase,
                              double lat1, double lon1, double depth,
                              double lat2, double lon2) {
-	double delta, azi1, azi2;
+	double delta;
+	double azi1;
+	double azi2;
 	Seiscomp::Math::Geo::delazi(lat1, lon1, lat2, lon2, &delta, &azi1, &azi2);
 	return sc_locsat_elpcor(phase.c_str(), delta, depth, azi1, 90. - lat1);
 }
@@ -218,14 +220,14 @@ TravelTime TravelTimeTableInterface::compute(const char *phase,
                                              double lat1, double lon1, double dep1,
                                              double lat2, double lon2, double alt2,
                                              int ellc) {
-	TravelTimeList *ttlist = compute(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
-	if ( ttlist == nullptr )
+	auto *ttlist = compute(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
+	if ( !ttlist )
 		throw NoPhaseError();
 
 	TravelTime ret;
-	const TravelTime *tt = getPhase(ttlist, phase);
+	const auto *tt = getPhase(ttlist, phase);
 
-	if ( tt == nullptr ) {
+	if ( !tt ) {
 		delete ttlist;
 		throw NoPhaseError();
 	}
@@ -248,22 +250,26 @@ TravelTimeTableInterfacePtr TravelTimeTable::_interface;
 
 
 TravelTimeTable::TravelTimeTable() {
-	if ( !_interface )
-		_interface = TravelTimeTableInterfaceFactory::Create("libtau");
+	if ( !_interface ) {
+		_interface = TravelTimeTableInterfaceFactory::Create("LOCSAT");
+		_interface->setModel("iasp91");
+	}
 }
 
 
 bool TravelTimeTable::setModel(const std::string &model) {
-	if ( _interface )
+	if ( _interface ) {
 		return _interface->setModel(model);
+	}
 	return false;
 }
 
 
 const std::string &TravelTimeTable::model() const {
 	static std::string empty;
-	if ( _interface )
+	if ( _interface ) {
 		return _interface->model();
+	}
 	return empty;
 }
 
@@ -272,8 +278,9 @@ TravelTimeList *
 TravelTimeTable::compute(double lat1, double lon1, double dep1,
                          double lat2, double lon2, double alt2,
                          int ellc) {
-	if ( _interface )
+	if ( _interface ) {
 		return _interface->compute(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
+	}
 	return nullptr;
 }
 
@@ -283,8 +290,9 @@ TravelTimeTable::compute(const char *phase,
                          double lat1, double lon1, double dep1,
                          double lat2, double lon2, double alt2,
                          int ellc) {
-	if ( _interface )
+	if ( _interface ) {
 		return _interface->compute(phase, lat1, lon1, dep1, lat2, lon2, alt2, ellc);
+	}
 	throw NoPhaseError();
 }
 
@@ -293,8 +301,9 @@ TravelTime
 TravelTimeTable::computeFirst(double lat1, double lon1, double dep1,
                               double lat2, double lon2, double alt2,
                               int ellc) {
-	if ( _interface )
+	if ( _interface ) {
 		return _interface->computeFirst(lat1, lon1, dep1, lat2, lon2, alt2, ellc);
+	}
 	throw NoPhaseError();
 }
 

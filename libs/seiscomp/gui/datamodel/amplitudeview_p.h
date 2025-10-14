@@ -145,7 +145,7 @@ class AmplitudeViewPrivate {
 };
 
 
-std::string AmplitudeViewPrivate::ttInterface = "libtau";
+std::string AmplitudeViewPrivate::ttInterface = "LOCSAT";
 std::string AmplitudeViewPrivate::ttTableName = "iasp91";
 
 

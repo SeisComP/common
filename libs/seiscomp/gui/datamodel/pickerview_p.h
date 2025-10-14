@@ -171,7 +171,7 @@ class PickerViewPrivate {
 QSize PickerViewPrivate::defaultSpectrumWidgetSize = QSize(500,400);
 QByteArray PickerViewPrivate::spectrumWidgetGeometry;
 
-std::string PickerViewPrivate::ttInterface = "libtau";
+std::string PickerViewPrivate::ttInterface = "LOCSAT";
 std::string PickerViewPrivate::ttTableName = "iasp91";
 
 
