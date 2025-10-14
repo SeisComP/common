@@ -491,6 +491,21 @@
 					</parameter>
 				</group>
 				<struct type="GlobalAmplitudeProfile" title="Amplitude-type profile" aliases="config:amplitudes.aliases">
+					<parameter name="regionalize" type="boolean" default="true">
+						<description>
+						Control if the amplitude calculation should be
+						regionalized or not. The regions and their configuration
+						are taken from the corresponding magnitude profiles. If
+						regionalization is activate, then e.g. modules without
+						origin information will not be able to compute an
+						amplitude as the origin is required to determine the
+						effective settings.
+
+						If amplitudes for this particular type shall be computed
+						regardless of any defined regions, set this parameter to
+						false.
+						</description>
+					</parameter>
 					<parameter name="considerUnusedArrivals" type="boolean" default="false">
 						<description>
 						If enabled, then also stations with unused (disabled)
@@ -1266,21 +1281,6 @@
 						Example:
 
 						maxDepth = 500km
-						</description>
-					</parameter>
-					<parameter name="regionalize" type="boolean" default="true">
-						<description>
-						Control if the amplitude calculation should be
-						regionalized or not. The regions and their configuration
-						are taken from the corresponding magnitude profiles. If
-						regionalization is activate, then e.g. modules without
-						origin information will not be able to compute an
-						amplitude as the origin is required to determine the
-						effective settings.
-
-						If amplitudes for this particular type shall be computed
-						regardless of any defined regions, set this parameter to
-						false.
 						</description>
 					</parameter>
 					<group name="resp">
