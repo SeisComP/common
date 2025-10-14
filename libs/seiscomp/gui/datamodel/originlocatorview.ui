@@ -1059,6 +1059,9 @@
            <property name="text" >
             <string>Relocate</string>
            </property>
+           <property name="shortcut">
+            <string>R</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1481,6 +1484,9 @@
            </property>
            <property name="text" >
             <string>Compute magnitudes</string>
+           </property>
+           <property name="shortcut">
+            <string>M</string>
            </property>
           </widget>
          </item>
