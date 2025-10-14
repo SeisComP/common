@@ -53,7 +53,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="originWidget">
        <attribute name="title">
@@ -826,7 +826,7 @@
             <item row="13" column="0">
              <widget class="QPushButton" name="fmFixButton">
               <property name="text">
-               <string>Fix FM</string>
+               <string>Fix</string>
               </property>
              </widget>
             </item>
@@ -936,7 +936,7 @@
             <item row="14" column="0" colspan="4">
              <widget class="QPushButton" name="fmAutoButton">
               <property name="text">
-               <string>Unfix FM</string>
+               <string>Unfix focal mechanism</string>
               </property>
              </widget>
             </item>
