@@ -913,7 +913,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_REGION], Qt::AlignLeft | Qt::AlignVCenter);
 
 			if ( config.customColumn != -1 ) {
-				setTextAlignment(config.customColumn, Qt::AlignCenter);
+				setTextAlignment(config.customColumn, Qt::AlignLeft);
 			}
 
 			for ( const auto &col : config.originScriptColumns ) {
@@ -1149,11 +1149,13 @@ class OriginTreeItem : public SchemeTreeItem {
 
 			if ( config.customColumn != -1 ) {
 				setText(config.customColumn, config.customDefaultText);
-				setData(config.customColumn, Qt::ForegroundRole, QVariant());
+				setToolTip(config.customColumn, config.customDefaultText);
+				setData(config.customColumn, Qt::ForegroundRole, {});
 				if ( !config.originCommentID.empty() ) {
 					for ( size_t i = 0; i < ori->commentCount(); ++i ) {
 						if ( ori->comment(i)->id() == config.originCommentID ) {
 							setText(config.customColumn, ori->comment(i)->text().c_str());
+							setToolTip(config.customColumn, ori->comment(i)->text().c_str());
 							QMap<std::string, QColor>::const_iterator it =
 								config.customColorMap.find(ori->comment(i)->text());
 							if ( it != config.customColorMap.end() ) {
@@ -1876,10 +1878,12 @@ class EventTreeItem : public SchemeTreeItem {
 				if ( config.customColumn != -1 ) {
 					setData(config.customColumn, Qt::ForegroundRole, QVariant());
 					setText(config.customColumn, config.customDefaultText);
+					setToolTip(config.customColumn, config.customDefaultText);
 					if ( !config.originCommentID.empty() ) {
 						for ( size_t i = 0; i < origin->commentCount(); ++i ) {
 							if ( origin->comment(i)->id() == config.originCommentID ) {
 								setText(config.customColumn, origin->comment(i)->text().c_str());
+								setToolTip(config.customColumn, origin->comment(i)->text().c_str());
 								auto it = config.customColorMap.find(origin->comment(i)->text());
 								if ( it != config.customColorMap.end() ) {
 									setData(config.customColumn, Qt::ForegroundRole, it.value());
@@ -1896,6 +1900,7 @@ class EventTreeItem : public SchemeTreeItem {
 								}
 
 								setText(config.customColumn, ev->comment(i)->text().c_str());
+								setToolTip(config.customColumn, ev->comment(i)->text().c_str());
 								auto it = config.customColorMap.find(ev->comment(i)->text());
 								if ( it != config.customColorMap.end() ) {
 									setData(config.customColumn, Qt::ForegroundRole, it.value());
@@ -1943,6 +1948,7 @@ class EventTreeItem : public SchemeTreeItem {
 
 				if ( config.customColumn != -1 ) {
 					setText(config.customColumn, config.customDefaultText);
+					setToolTip(config.customColumn, config.customDefaultText);
 					setData(config.customColumn, Qt::ForegroundRole, QVariant());
 				}
 			}
