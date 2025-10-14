@@ -316,6 +316,10 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 		_app = new QApplication(argc, argv);
 	}
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+	_app->setDesktopFileName(("de.gempa.seiscomp." + name()).data());
+#endif
+
 	setDaemonEnabled(false);
 
 	if ( _instance != this && _instance != nullptr ) {
