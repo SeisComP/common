@@ -936,7 +936,7 @@
             <item row="14" column="0" colspan="4">
              <widget class="QPushButton" name="fmAutoButton">
               <property name="text">
-               <string>Automatic FM selection</string>
+               <string>Unfix FM</string>
               </property>
              </widget>
             </item>
