@@ -453,9 +453,17 @@
 					e.g. &quot;signalBegin&quot;. This can be overridden per
 					station in its bindings.
 					</description>
-					<parameter name="interface" type="string" default="libtau">
+					<parameter name="interface" type="string" default="libtau" values="libtau,LOCSAT,homogeneous">
+						<description>
+						The name of the travel-time interface to use. The list
+						can be extended by plugins.
+						</description>
 					</parameter>
 					<parameter name="model" type="string" default="iasp91">
+						<description>
+						The name of the travel-time interface (velocity) model
+						to use.
+						</description>
 					</parameter>
 				</group>
 				<group name="WoodAnderson">
@@ -571,7 +579,7 @@
 								magnitude. This settings has no effect with e.g.
 								scautopick as there is no information about the
 								source of the event to compute the distance.
-								The default value is implementation specific.
+								The default value depends on magnitude type.
 
 								Although the default unit is 'deg', values can be
 								given in any SI distance unit such km, m or cm
@@ -588,7 +596,7 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to compute the distance. The default
-								value is implementation specific.
+								value depends on magnitude type.
 
 								Although the default unit is 'deg', values can be
 								given in any SI distance unit such km, m or cm
@@ -605,7 +613,7 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to retrieve the depth. The default
-								value is implementation specific.
+								value depends on magnitude type.
 
 								Although the default unit is 'km', values can be
 								given in any SI distance unit such km, m or cm
@@ -622,7 +630,7 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to retrieve the depth. The default
-								value is implementation specific.
+								value depends on magnitude type.
 
 								Although the default unit is 'km', values can be
 								given in any SI distance unit such km, m or cm
@@ -1011,14 +1019,14 @@
 					The parameters of this group will be overridden by type
 					specific settings if given (see GlobalAmplitudeProfile).
 					</description>
-					<parameter name="taper" default="5" unit="s">
+					<parameter name="taper" default="5" unit="s" type="double">
 						<description>
 						Define the length of the taper at either side of the
 						waveform. The length will be added to the data
 						request: start - taper and end + taper.
 						</description>
 					</parameter>
-					<parameter name="minFreq" default="0.00833333" unit="Hz">
+					<parameter name="minFreq" default="0.00833333" unit="Hz" type="double">
 						<description>
 						The minimum frequency of the considered spectrum.
 
@@ -1029,7 +1037,7 @@
 						that taper.
 						</description>
 					</parameter>
-					<parameter name="maxFreq" default="0" unit="Hz">
+					<parameter name="maxFreq" default="0" unit="Hz" type="double">
 						<description>
 						The maximum frequency of the considered spectrum.
 
@@ -1048,9 +1056,17 @@
 					noise time window specifications,
 					e.g. &quot;signalBegin&quot;.
 					</description>
-					<parameter name="interface" type="string" default="libtau">
+					<parameter name="interface" type="string" default="libtau" values="libtau,LOCSAT,homogeneous">
+						<description>
+						The name of the travel-time interface to use. The list
+						can be extended by plugins.
+						</description>
 					</parameter>
 					<parameter name="model" type="string" default="iasp91">
+						<description>
+						The name of the travel-time interface (velocity) model
+						to use.
+						</description>
 					</parameter>
 				</group>
 				<group name="WoodAnderson">
@@ -1189,8 +1205,8 @@
 						The minimum distance required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to compute
-						the distance. The default value is implementation
-						specific.
+						the distance. The default value depends on
+						amplitude type.
 
 						Although the default unit is 'deg', values can be
 						given in any SI distance unit such km, m or cm
@@ -1206,8 +1222,8 @@
 						The maximum distance allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to compute
-						the distance. The default value is implementation
-						specific.
+						the distance. The default value depends on
+						amplitude type.
 
 						Although the default unit is 'deg', values can be
 						given in any SI distance unit such km, m or cm
@@ -1223,8 +1239,8 @@
 						The minimum depth required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to
-						retrieve the depth. The default value is implementation
-						specific.
+						retrieve the depth. The default value depends on
+						amplitude type.
 
 						Although the default unit is 'km', values can be
 						given in any SI distance unit such km, m or cm
@@ -1240,8 +1256,8 @@
 						The maximum depth allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to
-						retrieve the depth. The default value is implementation
-						specific.
+						retrieve the depth. The default value depends on
+						amplitude type.
 
 						Although the default unit is 'km', values can be
 						given in any SI distance unit such km, m or cm
@@ -1271,14 +1287,14 @@
 						<description>
 						Several parameters if usage of full responses is enabled.
 						</description>
-						<parameter name="taper" default="5" unit="s">
+						<parameter name="taper" default="5" unit="s" type="double">
 							<description>
 							Define the length of the taper at either side of the
 							waveform. The length will be added to the data
 							request: start - taper and end + taper.
 							</description>
 						</parameter>
-						<parameter name="minFreq" default="0.00833333" unit="Hz">
+						<parameter name="minFreq" default="0.00833333" unit="Hz" type="double">
 							<description>
 							After data are converted in to the frequency domain
 							that minimum frequency defines the end of the left-side
@@ -1287,7 +1303,7 @@
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
-						<parameter name="maxFreq" default="0" unit="Hz">
+						<parameter name="maxFreq" default="0" unit="Hz" type="double">
 							<description>
 							After data are converted in to the frequency domain
 							that maximum frequency defines the start of the right-side
@@ -1341,7 +1357,7 @@
 						magnitude. This settings has no effect with e.g.
 						scautopick as there is no information about the
 						source of the event to compute the distance.
-						The default value is implementation specific.
+						The default value depends on magnitude type.
 
 						Although the default unit is 'deg', values can be
 						given in any SI distance unit such km, m or cm
@@ -1358,7 +1374,11 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to compute the distance. The default
-						value is implementation specific.
+						value depends on magnitude type.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
 						</description>
 					</parameter>
 					<parameter name="minDepth" type="string" unit="km">
@@ -1367,7 +1387,7 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to retrieve the depth. The default
-						value is implementation specific.
+						value depends on magnitude type.
 
 						Although the default unit is 'km', values can be
 						given in any SI distance unit such km, m or cm
@@ -1384,7 +1404,7 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to retrieve the depth. The default
-						value is implementation specific.
+						value depends on magnitude type.
 
 						Although the default unit is 'km', values can be
 						given in any SI distance unit such km, m or cm
