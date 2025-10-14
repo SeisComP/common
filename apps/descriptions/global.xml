@@ -572,6 +572,14 @@
 								scautopick as there is no information about the
 								source of the event to compute the distance.
 								The default value is implementation specific.
+
+								Although the default unit is 'deg', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								minDist = 500km
 								</description>
 							</parameter>
 							<parameter name="maxDist" type="string" unit="deg">
@@ -581,6 +589,14 @@
 								as there is no information about the source of
 								the event to compute the distance. The default
 								value is implementation specific.
+
+								Although the default unit is 'deg', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								maxDist = 500km
 								</description>
 							</parameter>
 							<parameter name="minDepth" type="string" unit="km">
@@ -590,6 +606,14 @@
 								as there is no information about the source of
 								the event to retrieve the depth. The default
 								value is implementation specific.
+
+								Although the default unit is 'km', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								minDepth = 500km
 								</description>
 							</parameter>
 							<parameter name="maxDepth" type="string" unit="km">
@@ -599,6 +623,14 @@
 								as there is no information about the source of
 								the event to retrieve the depth. The default
 								value is implementation specific.
+
+								Although the default unit is 'km', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								maxDepth = 500km
 								</description>
 							</parameter>
 							<parameter name="check" type="string" default="source">
@@ -1101,7 +1133,7 @@
 						this check.
 
 						Caution: If a value is set but the amplitude does not
-						provide the period, no amplitude is send.
+						provide the period, no amplitude is sent.
 						</description>
 					</parameter>
 					<parameter name="maxPeriod" type="double" unit="s">
@@ -1113,7 +1145,7 @@
 						this check.
 
 						Caution: If a value is set but the amplitude does not
-						provide the period, no amplitude is send.
+						provide the period, no amplitude is sent.
 						</description>
 					</parameter>
 					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
@@ -1159,6 +1191,14 @@
 						is no information about the source of the event to compute
 						the distance. The default value is implementation
 						specific.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDist = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDist" type="string" unit="deg" default="180">
@@ -1168,6 +1208,14 @@
 						is no information about the source of the event to compute
 						the distance. The default value is implementation
 						specific.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDist = 500km
 						</description>
 					</parameter>
 					<parameter name="minDepth" type="string" unit="km" default="-1000000">
@@ -1177,6 +1225,14 @@
 						is no information about the source of the event to
 						retrieve the depth. The default value is implementation
 						specific.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDepth" type="string" unit="km" default="1000000">
@@ -1186,6 +1242,14 @@
 						is no information about the source of the event to
 						retrieve the depth. The default value is implementation
 						specific.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="regionalize" type="boolean" default="true">
@@ -1278,6 +1342,14 @@
 						scautopick as there is no information about the
 						source of the event to compute the distance.
 						The default value is implementation specific.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDist = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDist" type="string" unit="deg">
@@ -1296,6 +1368,14 @@
 						as there is no information about the source of
 						the event to retrieve the depth. The default
 						value is implementation specific.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDepth" type="string" unit="km">
@@ -1305,6 +1385,14 @@
 						as there is no information about the source of
 						the event to retrieve the depth. The default
 						value is implementation specific.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double">
