@@ -2611,6 +2611,7 @@ void PickerView::init() {
 	SC_D.recordView->setSelectionEnabled(false);
 	SC_D.recordView->setRecordUpdateInterval(1000);
 
+	SC_D.ui.progressAmpLevel->setVisible(false);
 	SC_D.ui.progressAmpLevel->setEnabled(false);
 	SC_D.ui.progressAmpLevel->setTextVisible(false);
 
@@ -3303,6 +3304,11 @@ void PickerView::init() {
 
 	try {
 		SC_D.componentFollowsMouse = SCApp->configGetBool("picker.componentFollowsMouse");
+	}
+	catch ( ... ) {}
+
+	try {
+		SC_D.ui.progressAmpLevel->setVisible(SCApp->configGetBool("picker.showAmpLevel"));
 	}
 	catch ( ... ) {}
 }
