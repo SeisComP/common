@@ -79,6 +79,7 @@ class PickerViewPrivate {
 		QComboBox                          *comboTTTables;
 		QDoubleSpinBox                     *spinDistance;
 		QComboBox                          *comboPicker;
+		QPushButton                        *btnApply;
 
 		QLineEdit                          *searchStation;
 		QLabel                             *searchLabel;
@@ -123,7 +124,6 @@ class PickerViewPrivate {
 		bool                                autoScaleZoomTrace;
 		bool                                loadedPicks;
 		int                                 currentSlot;
-		bool                                alignedOnOT;
 		RecordWidget::Filter               *currentFilter;
 		QString                             currentFilterID;
 

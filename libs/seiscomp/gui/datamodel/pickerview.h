@@ -137,9 +137,9 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 
 
 	protected:
-		void visibilityChanged(bool);
-		void resizeEvent(QResizeEvent *e);
-		void paintEvent(QPaintEvent *e);
+		void visibilityChanged(bool) override;
+		void resizeEvent(QResizeEvent *e) override;
+		void paintEvent(QPaintEvent *e) override;
 
 
 	public slots:
@@ -556,12 +556,14 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 
 	protected:
-		void showEvent(QShowEvent* event);
+		void showEvent(QShowEvent* event) override;
+		void changeEvent(QEvent *e) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 
 
 	private:
+		void applyThemeColors();
 		void announceAmplitude();
 		void figureOutTravelTimeTable();
 		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);

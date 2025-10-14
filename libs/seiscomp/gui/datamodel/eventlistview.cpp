@@ -26,10 +26,11 @@
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
 #include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
 
+#include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/connectiondialog.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/messages.h>
-#include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/scheme.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/gui/datamodel/utils.h>
@@ -2503,7 +2504,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	setSortingEnabled(true);
 
-	SC_D._ui->btnFilter->setIconSize(QSize(SC_D._ui->btnFilter->fontMetrics().height(),SC_D._ui->btnFilter->fontMetrics().height()));
+	SC_D._ui->btnFilter->setIcon(icon("filter"));
 
 	SC_D._unassociatedEventItem = nullptr;
 	SC_D._updateLocalEPInstance = false;
@@ -3247,7 +3248,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	//_withComments = true;
 
 	SC_D._busyIndicator = new QMovie(this);
-	SC_D._busyIndicator->setFileName(":/images/images/loader.mng");
+	SC_D._busyIndicator->setFileName(":/sc/assets/loader.mng");
 	SC_D._busyIndicator->setCacheMode(QMovie::CacheAll);
 
 	SC_D._busyIndicatorLabel = new QLabel(SC_D._treeWidget->viewport());

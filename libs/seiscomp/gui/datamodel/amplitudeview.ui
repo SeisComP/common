@@ -245,10 +245,6 @@
                   <property name="text">
                    <string/>
                   </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/icons/ok.png</normaloff>:/icons/icons/ok.png</iconset>
-                  </property>
                   <property name="iconSize">
                    <size>
                     <width>24</width>
@@ -289,10 +285,6 @@
                   <property name="text">
                    <string/>
                   </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
-                  </property>
                   <property name="iconSize">
                    <size>
                     <width>24</width>
@@ -332,10 +324,6 @@
                   </property>
                   <property name="text">
                    <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/icons/erase.png</normaloff>:/icons/icons/erase.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -403,15 +391,13 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionDefaultView"/>
-   <addaction name="separator"/>
-   <addaction name="actionIncreaseRowHeight"/>
-   <addaction name="actionDecreaseRowHeight"/>
-   <addaction name="separator"/>
    <addaction name="actionIncreaseRowTimescale"/>
    <addaction name="actionDecreaseRowTimescale"/>
-   <addaction name="separator"/>
+   <addaction name="actionIncreaseRowHeight"/>
+   <addaction name="actionDecreaseRowHeight"/>
    <addaction name="actionMaximizeAmplitudes"/>
+   <addaction name="separator"/>
+   <addaction name="actionDefaultView"/>
   </widget>
   <widget class="QToolBar" name="toolBarSort">
    <property name="windowTitle">
@@ -454,8 +440,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionAlignOnPArrival"/>
    <addaction name="actionAlignOnOriginTime"/>
+   <addaction name="actionAlignOnPArrival"/>
   </widget>
   <widget class="QToolBar" name="toolBarComponent">
    <property name="windowTitle">
@@ -505,7 +491,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionShowAllStations"/>
+   <addaction name="actionAddStationsInDistanceRange"/>
    <addaction name="actionShowUsedStations"/>
   </widget>
   <widget class="QToolBar" name="toolBarPicking">
@@ -546,10 +532,10 @@
      <property name="title">
       <string>&amp;Zoomtrace</string>
      </property>
+	 <addaction name="actionTimeScaleUp"/>
+     <addaction name="actionTimeScaleDown"/>
      <addaction name="actionIncreaseAmplitudeScale"/>
      <addaction name="actionDecreaseAmplitudeScale"/>
-     <addaction name="actionTimeScaleUp"/>
-     <addaction name="actionTimeScaleDown"/>
      <addaction name="actionResetScale"/>
      <addaction name="separator"/>
      <addaction name="actionClipComponentsToViewport"/>
@@ -562,8 +548,8 @@
       <property name="title">
        <string>Align</string>
       </property>
+	  <addaction name="actionAlignOnOriginTime"/>
       <addaction name="actionAlignOnPArrival"/>
-      <addaction name="actionAlignOnOriginTime"/>
      </widget>
      <addaction name="actionIncreaseRowHeight"/>
      <addaction name="actionDecreaseRowHeight"/>
@@ -694,17 +680,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionComputeMagnitudes"/>
   </widget>
   <action name="actionIncreaseAmplitudeScale">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
-   </property>
    <property name="text">
-    <string>Scale amplitudes up</string>
-   </property>
-   <property name="iconText">
     <string>Scale amplitudes up</string>
    </property>
    <property name="toolTip">
@@ -715,14 +693,7 @@
    </property>
   </action>
   <action name="actionDecreaseAmplitudeScale">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
-   </property>
    <property name="text">
-    <string>Scale amplitudes down</string>
-   </property>
-   <property name="iconText">
     <string>Scale amplitudes down</string>
    </property>
    <property name="toolTip">
@@ -733,10 +704,6 @@
    </property>
   </action>
   <action name="actionTimeScaleUp">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Increase visible timespan</string>
    </property>
@@ -748,14 +715,7 @@
    </property>
   </action>
   <action name="actionTimeScaleDown">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
-   </property>
    <property name="text">
-    <string>Decrease visible timespan</string>
-   </property>
-   <property name="iconText">
     <string>Decrease visible timespan</string>
    </property>
    <property name="toolTip">
@@ -791,9 +751,6 @@
    <property name="text">
     <string>Next trace</string>
    </property>
-   <property name="iconText">
-    <string>Next trace</string>
-   </property>
    <property name="shortcut">
     <string>Down</string>
    </property>
@@ -802,18 +759,12 @@
    <property name="text">
     <string>Previous trace</string>
    </property>
-   <property name="iconText">
-    <string>Previous trace</string>
-   </property>
    <property name="shortcut">
     <string>Up</string>
    </property>
   </action>
   <action name="actionScrollFineLeft">
    <property name="text">
-    <string>Scroll fine left</string>
-   </property>
-   <property name="iconText">
     <string>Scroll fine left</string>
    </property>
    <property name="toolTip">
@@ -827,9 +778,6 @@
    <property name="text">
     <string>Scroll fine right</string>
    </property>
-   <property name="iconText">
-    <string>Scroll fine right</string>
-   </property>
    <property name="toolTip">
     <string>Scroll current trace right with finer steps</string>
    </property>
@@ -838,10 +786,6 @@
    </property>
   </action>
   <action name="actionIncreaseRowHeight">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Increase row height</string>
    </property>
@@ -853,10 +797,6 @@
    </property>
   </action>
   <action name="actionDecreaseRowHeight">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Decrease row height</string>
    </property>
@@ -868,10 +808,6 @@
    </property>
   </action>
   <action name="actionIncreaseRowTimescale">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Increase row timescale</string>
    </property>
@@ -883,10 +819,6 @@
    </property>
   </action>
   <action name="actionDecreaseRowTimescale">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Decrease row timescale</string>
    </property>
@@ -923,19 +855,12 @@
   </action>
   <action name="actionAlignOnPArrival">
    <property name="checkable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="checked">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/align_p.png</normaloff>:/icons/icons/align_p.png</iconset>
-   </property>
    <property name="text">
-    <string>Align on trigger time</string>
-   </property>
-   <property name="iconText">
     <string>Align on trigger time</string>
    </property>
    <property name="toolTip">
@@ -947,16 +872,9 @@
   </action>
   <action name="actionAlignOnOriginTime">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/align_t.png</normaloff>:/icons/icons/align_t.png</iconset>
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>Align on origin time</string>
-   </property>
-   <property name="iconText">
     <string>Align on origin time</string>
    </property>
    <property name="toolTip">
@@ -967,10 +885,6 @@
    </property>
   </action>
   <action name="actionDefaultView">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Default view</string>
    </property>
@@ -985,14 +899,7 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/sort_abc.png</normaloff>:/icons/icons/sort_abc.png</iconset>
-   </property>
    <property name="text">
-    <string>Sort by names</string>
-   </property>
-   <property name="iconText">
     <string>Sort by names</string>
    </property>
    <property name="toolTip">
@@ -1008,10 +915,6 @@
    </property>
    <property name="checked">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/sort_dist.png</normaloff>:/icons/icons/sort_dist.png</iconset>
    </property>
    <property name="text">
     <string>Sort by distance</string>
@@ -1030,10 +933,6 @@
    <property name="checked">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Toggle filter</string>
    </property>
@@ -1045,14 +944,7 @@
    </property>
   </action>
   <action name="actionMaximizeAmplitudes">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/vmax.png</normaloff>:/icons/icons/vmax.png</iconset>
-   </property>
    <property name="text">
-    <string>Maximize visible amplitudes</string>
-   </property>
-   <property name="iconText">
     <string>Maximize visible amplitudes</string>
    </property>
    <property name="toolTip">
@@ -1063,15 +955,8 @@
    </property>
   </action>
   <action name="actionComputeMagnitudes">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/locate.png</normaloff>:/icons/icons/locate.png</iconset>
-   </property>
    <property name="text">
-    <string>&amp;Apply</string>
-   </property>
-   <property name="iconText">
-    <string>Apply</string>
+    <string>&amp;Apply all</string>
    </property>
    <property name="toolTip">
     <string>Compute the magnitude and update it in the origin.</string>
@@ -1093,9 +978,6 @@
    <property name="text">
     <string>Show theoretical arrivals</string>
    </property>
-   <property name="iconText">
-    <string>Show theoretical arrivals</string>
-   </property>
    <property name="toolTip">
     <string>Shows theoretical arrivals as blue bars in the traces</string>
    </property>
@@ -1103,18 +985,11 @@
     <string>Ctrl+T</string>
    </property>
   </action>
-  <action name="actionShowAllStations">
+  <action name="actionAddStationsInDistanceRange">
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/mindistance.png</normaloff>:/icons/icons/mindistance.png</iconset>
-   </property>
    <property name="text">
-    <string>Add stations in range</string>
-   </property>
-   <property name="iconText">
     <string>Add stations in range</string>
    </property>
    <property name="toolTip">
@@ -1125,15 +1000,8 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/withpick.png</normaloff>:/icons/icons/withpick.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Show used stations only</string>
-   </property>
-   <property name="iconText">
-    <string>Used stations only</string>
    </property>
    <property name="toolTip">
     <string>Toggles between hiding unpicked and deactivated stations and showing all stations</string>
@@ -1146,14 +1014,7 @@
    <property name="checked">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/channelZ.png</normaloff>:/icons/icons/channelZ.png</iconset>
-   </property>
    <property name="text">
-    <string>Vertical</string>
-   </property>
-   <property name="iconText">
     <string>Vertical</string>
    </property>
    <property name="toolTip">
@@ -1167,14 +1028,7 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/channelN.png</normaloff>:/icons/icons/channelN.png</iconset>
-   </property>
    <property name="text">
-    <string>North</string>
-   </property>
-   <property name="iconText">
     <string>North</string>
    </property>
    <property name="toolTip">
@@ -1188,14 +1042,7 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/channelE.png</normaloff>:/icons/icons/channelE.png</iconset>
-   </property>
    <property name="text">
-    <string>East</string>
-   </property>
-   <property name="iconText">
     <string>East</string>
    </property>
    <property name="toolTip">
@@ -1209,9 +1056,6 @@
    <property name="text">
     <string>Goto next marker</string>
    </property>
-   <property name="iconText">
-    <string>Goto next marker</string>
-   </property>
    <property name="toolTip">
     <string>Goto next marker</string>
    </property>
@@ -1221,9 +1065,6 @@
   </action>
   <action name="actionGotoPreviousMarker">
    <property name="text">
-    <string>Goto previous marker</string>
-   </property>
-   <property name="iconText">
     <string>Goto previous marker</string>
    </property>
    <property name="toolTip">
@@ -1238,9 +1079,6 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Toggle fullscreen</string>
-   </property>
-   <property name="iconText">
     <string>Toggle fullscreen</string>
    </property>
    <property name="toolTip">
@@ -1312,9 +1150,6 @@
    <property name="text">
     <string>Create amplitude</string>
    </property>
-   <property name="iconText">
-    <string>Create amplitude</string>
-   </property>
    <property name="toolTip">
     <string>Create amplitude</string>
    </property>
@@ -1324,9 +1159,6 @@
   </action>
   <action name="actionConfirmAmplitude">
    <property name="text">
-    <string>Confirm amplitude</string>
-   </property>
-   <property name="iconText">
     <string>Confirm amplitude</string>
    </property>
    <property name="toolTip">
@@ -1340,9 +1172,6 @@
    <property name="text">
     <string>Delete amplitude</string>
    </property>
-   <property name="iconText">
-    <string>Delete amplitude</string>
-   </property>
    <property name="toolTip">
     <string>Delete amplitude (Del)</string>
    </property>
@@ -1354,9 +1183,6 @@
    <property name="text">
     <string>Leave picking mode</string>
    </property>
-   <property name="iconText">
-    <string>Leave picking mode</string>
-   </property>
    <property name="toolTip">
     <string>Leave picking mode (Esc)</string>
    </property>
@@ -1365,32 +1191,18 @@
    </property>
   </action>
   <action name="actionRecalculateAmplitudes">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/ok.png</normaloff>:/icons/icons/ok.png</iconset>
-   </property>
    <property name="text">
     <string>Remeasure all amplitudes</string>
    </property>
-   <property name="iconText">
-    <string>Remeasure all amplitudes</string>
-   </property>
    <property name="toolTip">
-    <string>Remeasure all amplitudes</string>
+    <string>Remeasure all amplitudes (Shift+R)</string>
    </property>
    <property name="shortcut">
     <string>Shift+R</string>
    </property>
   </action>
   <action name="actionPickAmplitude">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/pick_p.png</normaloff>:/icons/icons/pick_p.png</iconset>
-   </property>
    <property name="text">
-    <string>Pick amplitudes</string>
-   </property>
-   <property name="iconText">
     <string>Pick amplitudes</string>
    </property>
    <property name="toolTip">
@@ -1401,18 +1213,11 @@
    </property>
   </action>
   <action name="actionRecalculateAmplitude">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/ok_single.png</normaloff>:/icons/icons/ok_single.png</iconset>
-   </property>
    <property name="text">
     <string>Remeasure amplitude of selected waveform</string>
    </property>
-   <property name="iconText">
-    <string>Remeasure amplitude of selected waveform</string>
-   </property>
    <property name="toolTip">
-    <string>Remeasure amplitude of selected waveform</string>
+    <string>Remeasure amplitude of selected waveform (R)</string>
    </property>
    <property name="shortcut">
     <string>R</string>
@@ -1427,10 +1232,6 @@
    </property>
   </action>
   <action name="actionResetScale">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
-   </property>
    <property name="text">
     <string>Reset Scale</string>
    </property>
@@ -1447,8 +1248,5 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons.qrc"/>
- </resources>
  <connections/>
 </ui>

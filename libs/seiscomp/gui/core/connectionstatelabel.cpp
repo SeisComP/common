@@ -36,8 +36,8 @@ namespace Seiscomp::Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
  : QLabel(parent, f) {
-	_connected = Gui::pixmap(this, "wifi");
-	_disconnected = Gui::pixmap(this, "wifi-off");
+	_connected = Gui::pixmap(this, "connection_on");
+	_disconnected = Gui::pixmap(this, "connection_off");
 	setPixmap(_disconnected);
 	setFrameStyle(QFrame::NoFrame);
 }

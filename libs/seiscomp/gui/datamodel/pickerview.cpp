@@ -29,12 +29,14 @@
 #include <seiscomp/gui/datamodel/origindialog.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/gui/core/uncertainties.h>
 #include <seiscomp/gui/core/spectrogramrenderer.h>
 #include <seiscomp/gui/core/spectrogramsettings.h>
 #include <seiscomp/gui/core/spectrumwidget.h>
+#include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/plot/axis.h>
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/client/configdb.h>
@@ -67,8 +69,6 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
-#include <numeric>
-#include <fstream>
 #include <limits>
 #include <set>
 
@@ -2290,7 +2290,7 @@ void PickerRecordLabel::enabledExpandButton(RecordViewItem *controlledItem) {
 	_btnExpand = new QPushButton(this);
 	_btnExpand->resize(16,16);
 	_btnExpand->move(width() - _btnExpand->width(), height() - _btnExpand->height());
-	_btnExpand->setIcon(QIcon(QString::fromUtf8(":/icons/icons/arrow_down.png")));
+	_btnExpand->setIcon(icon("down"));
 	_btnExpand->setFlat(true);
 	_btnExpand->show();
 
@@ -2428,7 +2428,7 @@ void PickerRecordLabel::enableExpandable(const Seiscomp::Record *rec) {
 
 void PickerRecordLabel::extentButtonPressed() {
 	_isExpanded = !_isExpanded;
-	_btnExpand->setIcon(QIcon(QString::fromUtf8(_isExpanded?":/icons/icons/arrow_up.png":":/icons/icons/arrow_down.png")));
+	_btnExpand->setIcon(icon(_isExpanded ? "up" : "down"));
 	if ( _linkedItem ) {
 		if ( !_isExpanded ) {
 			recordViewItem()->recordView()->setCurrentItem(recordViewItem());
@@ -2742,6 +2742,64 @@ void PickerView::init() {
 
 	connect(SC_D.recordView, SIGNAL(updatedRecords()),
 	        SC_D.currentRecord, SLOT(updateRecords()));
+
+	// Style actions
+	{
+		SC_D.btnApply = new QPushButton("Apply all");
+		SC_D.btnApply->setIcon(icon("apply_changes"));
+		SC_D.btnApply->setToolTip(SC_D.ui.actionRelocate->toolTip());
+		SC_D.btnApply->setStatusTip(SC_D.ui.actionRelocate->statusTip());
+		connect(SC_D.btnApply, &QPushButton::clicked, this, &PickerView::relocate);
+		SC_D.ui.toolBarRelocate->addWidget(SC_D.btnApply);
+	}
+
+	QActionGroup *actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::ExclusiveOptional);
+	actionGroup->addAction(SC_D.ui.actionAlignOnOriginTime);
+	actionGroup->addAction(SC_D.ui.actionAlignOnPArrival);
+	actionGroup->addAction(SC_D.ui.actionAlignOnSArrival);
+
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+	actionGroup->addAction(SC_D.ui.actionShowZComponent);
+	actionGroup->addAction(SC_D.ui.actionShowNComponent);
+	actionGroup->addAction(SC_D.ui.actionShowEComponent);
+
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+	actionGroup->addAction(SC_D.ui.actionSortAlphabetically);
+	actionGroup->addAction(SC_D.ui.actionSortByDistance);
+	actionGroup->addAction(SC_D.ui.actionSortByAzimuth);
+	actionGroup->addAction(SC_D.ui.actionSortByResidual);
+
+	SC_D.ui.actionSortAlphabetically->setIcon(icon("trace_sort_name"));
+	SC_D.ui.actionSortByDistance->setIcon(icon("trace_sort_dist"));
+	SC_D.ui.actionSortByAzimuth->setIcon(icon("trace_sort_azimuth"));
+	SC_D.ui.actionSortByResidual->setIcon(icon("trace_sort_resi"));
+	SC_D.ui.actionShowZComponent->setIcon(icon("component_1"));
+	SC_D.ui.actionShowNComponent->setIcon(icon("component_2"));
+	SC_D.ui.actionShowEComponent->setIcon(icon("component_3"));
+	SC_D.ui.actionAlignOnOriginTime->setIcon(icon("trace_align_OT"));
+	SC_D.ui.actionAlignOnPArrival->setIcon(icon("trace_align_P"));
+	SC_D.ui.actionAlignOnSArrival->setIcon(icon("trace_align_S"));
+	SC_D.ui.actionPickP->setIcon(icon("trace_pick_P"));
+	SC_D.ui.actionPickS->setIcon(icon("trace_pick_S"));
+	SC_D.ui.actionIncreaseAmplitudeScale->setIcon(icon("trace_row_zoom+"));
+	SC_D.ui.actionDecreaseAmplitudeScale->setIcon(icon("trace_row_zoom-"));
+	SC_D.ui.actionTimeScaleUp->setIcon(icon("trace_time_zoom+"));
+	SC_D.ui.actionTimeScaleDown->setIcon(icon("trace_time_zoom-"));
+	SC_D.ui.actionIncreaseRowHeight->setIcon(icon("trace_row_zoom+"));
+	SC_D.ui.actionDecreaseRowHeight->setIcon(icon("trace_row_zoom-"));
+	SC_D.ui.actionIncreaseRowTimescale->setIcon(icon("trace_time_zoom+"));
+	SC_D.ui.actionDecreaseRowTimescale->setIcon(icon("trace_time_zoom-"));
+	SC_D.ui.actionResetScale->setIcon(icon("trace_view_reset"));
+	SC_D.ui.actionDefaultView->setIcon(icon("trace_view_reset"));
+	SC_D.ui.actionToggleFilter->setIcon(icon("filter"));
+	SC_D.ui.actionMaximizeAmplitudes->setIcon(icon("trace_ampl_max"));
+	SC_D.ui.actionAddStationsInDistanceRange->setIcon(icon("add"));
+	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off|visibility_on"));
+	SC_D.ui.actionRelocate->setIcon(icon("apply_changes"));
+	applyThemeColors();
 
 	// add actions
 	addAction(SC_D.ui.actionIncreaseAmplitudeScale);
@@ -3072,16 +3130,14 @@ void PickerView::init() {
 	connect(SC_D.ui.actionShowUsedStations, SIGNAL(triggered(bool)),
 	        this, SLOT(showUsedStations(bool)));
 
-	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()),
-	        this, SLOT(confirmPick()));
-	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
-	        this, SLOT(setCurrentRowDisabled(bool)));
-	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
-	        SC_D.recordView, SLOT(selectNextRow()));
-	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
-	        this, SLOT(resetPick()));
-	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
-	        SC_D.recordView, SLOT(selectNextRow()));
+	SC_D.ui.btnRowAccept->setIcon(icon("pick_accept"));
+	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()), this, SLOT(confirmPick()));
+	SC_D.ui.btnRowRemove->setIcon(icon("pick_deactivate"));
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)), this, SLOT(setCurrentRowDisabled(bool)));
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)), SC_D.recordView, SLOT(selectNextRow()));
+	SC_D.ui.btnRowReset->setIcon(icon("pick_reset"));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)), this, SLOT(resetPick()));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)), SC_D.recordView, SLOT(selectNextRow()));
 
 	connect(SC_D.currentRecord, SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateSubCursor(RecordWidget*,int)));
@@ -3784,6 +3840,17 @@ void PickerView::showEvent(QShowEvent *e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::changeEvent(QEvent *e) {
+	if ( e->type() == QEvent::ThemeChange ) {
+		applyThemeColors();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::onSelectedTime(Seiscomp::Core::Time time) {
 	//updatePhaseMarker(SC_D.currentRecord, time);
 	if ( SC_D.recordView->currentItem() ) {
@@ -4042,6 +4109,19 @@ void PickerView::alignOnPhase(QAction *action) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setCursorText(const QString &text) {
+	if ( text == "P" ) {
+		SC_D.ui.actionPickP->setChecked(true);
+		SC_D.ui.actionPickS->setChecked(false);
+	}
+	else if ( text == "S" ) {
+		SC_D.ui.actionPickP->setChecked(false);
+		SC_D.ui.actionPickS->setChecked(true);
+	}
+	else {
+		SC_D.ui.actionPickP->setChecked(false);
+		SC_D.ui.actionPickS->setChecked(false);
+	}
+
 	SC_D.recordView->setCursorText(text);
 	SC_D.currentRecord->setCursorText(text);
 	SC_D.currentRecord->setActive(text != "");
@@ -4078,10 +4158,25 @@ void PickerView::setCursorText(const QString &text) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
+void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 	int used = 0;
 
-	SC_D.alignedOnOT = false;
+	if ( (phase == "P") && !theoretical ) {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(true);
+		SC_D.ui.actionAlignOnSArrival->setChecked(false);
+	}
+	else if ( (phase == "S") && !theoretical ) {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(false);
+		SC_D.ui.actionAlignOnSArrival->setChecked(true);
+	}
+	else {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(false);
+		SC_D.ui.actionAlignOnSArrival->setChecked(false);
+	}
+
 	QString phaseId = phase;
 	//QString shortPhaseId = QString("%1").arg(getShortPhaseName(phase.toStdString()));
 
@@ -4248,8 +4343,18 @@ void PickerView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignByState() {
-	if ( SC_D.alignedOnOT && SC_D.origin ) {
-		SC_D.recordView->setAlignment(SC_D.origin->time());
+	if ( !SC_D.origin ) {
+		return;
+	}
+
+	if ( SC_D.ui.actionAlignOnOriginTime->isChecked() ) {
+		alignOnOriginTime();
+	}
+	else if ( SC_D.ui.actionAlignOnPArrival->isChecked() ) {
+		alignOnPhase("P", false);
+	}
+	else if ( SC_D.ui.actionAlignOnSArrival->isChecked() ) {
+		alignOnPhase("S", false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6842,6 +6947,45 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+template <typename CONTROL>
+void setIconColor(CONTROL *control, const QColor &color) {
+	control->setIcon(icon(control->icon().name(), color));
+}
+
+}
+
+void PickerView::applyThemeColors() {
+	auto colorTheme = currentColorTheme();
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme.green);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme.green);
+	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme.green);
+	setIconColor(SC_D.ui.actionSortByResidual, colorTheme.green);
+	setIconColor(SC_D.ui.actionShowZComponent, colorTheme.orange);
+	setIconColor(SC_D.ui.actionShowNComponent, colorTheme.orange);
+	setIconColor(SC_D.ui.actionShowEComponent, colorTheme.orange);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme.petrol);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme.petrol);
+	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme.petrol);
+	setIconColor(SC_D.ui.actionPickP, colorTheme.blue);
+	setIconColor(SC_D.ui.actionPickS, colorTheme.blue);
+
+	{
+		QPalette pal = SC_D.btnApply->palette();
+		pal.setColor(QPalette::ButtonText, colorTheme.white);
+		pal.setColor(QPalette::Button, colorTheme.red);
+		SC_D.btnApply->setPalette(pal);
+		SC_D.btnApply->setIcon(SC_D.btnApply->icon());
+		setIconColor(SC_D.btnApply, colorTheme.lightRed);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::announceAmplitude() {
 	bool gotAmplitude = false;
 	double amplitude;
@@ -7847,7 +7991,9 @@ void PickerView::alignOnOriginTime() {
 
 	SC_D.recordView->setAlignment(SC_D.origin->time());
 
-	SC_D.alignedOnOT = true;
+	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
+	SC_D.ui.actionAlignOnPArrival->setChecked(false);
+	SC_D.ui.actionAlignOnSArrival->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9621,30 +9767,70 @@ void PickerView::changeRotation(int index) {
 
 	SC_D.currentRotationMode = index;
 
+	auto colorTheme = currentColorTheme();
+
+	// Change icons depending on the current rotation mode
+	if ( index == PickerView::Config::RT_ZNE ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_N", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("North"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_E", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("East"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_ZRT ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_R", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_LQT ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_L", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Longitudinal"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Longitudinal Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_Q", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Quasi-Vertical"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Quasi-Vertical Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_ZH ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_L2", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("L2"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Combined Horizontal Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_0", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Zero"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Zero Component (E)"));
+	}
+	else {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_1", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("First"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show First Component (N)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_2", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Second"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Second Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_3", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Third"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Third Component (E)"));
+	}
+
 	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
 		RecordViewItem* rvi = SC_D.recordView->itemAt(i);
 		applyRotation(rvi, index);
 		updateTraceInfo(rvi, nullptr);
 	}
-
-	// Change icons depending on the current rotation mode
-	if ( index == PickerView::Config::RT_ZRT ) {
-		SC_D.ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelR.png")));
-		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
-		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelT.png")));
-		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
-		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
-	}
-	else {
-		SC_D.ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelN.png")));
-		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("North"));
-		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelE.png")));
-		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("East"));
-		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
-	}
-
 
 	if ( index == PickerView::Config::RT_ZNE
 	  || index == PickerView::Config::RT_ZRT

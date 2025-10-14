@@ -579,4 +579,43 @@ QIcon iconFromURL(const QString &url) {
 	return QIcon(url);
 }
 
+
+bool isDarkMode() {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+	return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
+#else
+	const QPalette defaultPalette;
+	const auto text = defaultPalette.color(QPalette::WindowText);
+	const auto window = defaultPalette.color(QPalette::Window);
+	return text.lightness() > window.lightness();
+#endif // QT_VERSION
+}
+
+
+const ColorTheme &currentColorTheme() {
+	static ColorTheme colorTheme[2] = {
+		{
+			QColor(52, 131, 105), // green
+			QColor(255, 116, 0),  // orange
+			QColor(0, 136, 159),  // petrol
+			QColor(31, 121, 181), // blue
+			QColor(232, 45, 41),  // red
+			QColor(249, 221, 220),// lightRed
+			QColor(255, 255, 255) // white
+		},
+		{
+			QColor(63, 162, 129), // green
+			QColor(255, 139, 41), // orange
+			QColor(0, 155, 178),  // petrol
+			QColor(31, 141, 207), // blue
+			QColor(232, 45, 41),  // red
+			QColor(249, 221, 220),// lightRed
+			QColor(255, 255, 255) // white
+		}
+	};
+
+	return colorTheme[isDarkMode() ? 1 : 0];
+}
+
+
 } // ns Seiscomp::Gui

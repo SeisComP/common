@@ -33,6 +33,7 @@
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/utils/misc.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/datamodel/amplitudeview.h>
 #include <seiscomp/gui/datamodel/utils.h>
@@ -1584,7 +1585,7 @@ void MagnitudeView::setPreferredMagnitudeID(const string &id) {
 		TabData d = _tabMagnitudes->tabData(i).value<TabData>();
 		if ( d.publicID == _preferredMagnitudeID ) {
 			//_tabMagnitudes->setTabTextColor(i, Qt::green);
-			_tabMagnitudes->setTabIcon(i, QIcon(":icons/icons/ok.png"));
+			_tabMagnitudes->setTabIcon(i, icon("tab_ok"));
 			resetPreferredMagnitudeSelection();
 		}
 		else {
@@ -3402,7 +3403,7 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 				.arg(totalStationCount(netMag))
 			);
 			_tabMagnitudes->setTabTextColor(tabIndex, palette().color(QPalette::Disabled, QPalette::WindowText));
-			_tabMagnitudes->setTabIcon(tabIndex, QIcon(":icons/icons/disabled.png"));
+			_tabMagnitudes->setTabIcon(tabIndex, icon("tab_disabled"));
 			data.valid = false;
 		}
 	}

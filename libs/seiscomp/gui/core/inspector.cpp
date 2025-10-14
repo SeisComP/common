@@ -22,20 +22,25 @@
 
 #include <seiscomp/core/strings.h>
 #include <seiscomp/datamodel/publicobject.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/inspector.h>
 
 #include <QHeaderView>
 #include <QLabel>
-#include <iostream>
 
 
 using namespace Seiscomp::Core;
 using namespace Seiscomp::DataModel;
 
-namespace Seiscomp {
-namespace Gui {
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace Seiscomp::Gui {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -62,8 +67,12 @@ std::string propToString(const MetaProperty *prop, BaseObject *obj) {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f), _object(nullptr), _currentSelection(nullptr) {
 	_ui.setupUi(this);
@@ -75,20 +84,28 @@ Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
 	_ui.tableWidget->horizontalHeader()->setStretchLastSection(true);
 	_ui.tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
-	connect(_ui.editFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-	connect(_ui.treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
-	        this, SLOT(selectionChanged()));
+	connect(_ui.editFilter, &QLineEdit::textChanged, this, &Inspector::filterChanged);
+	connect(_ui.treeWidget, &QTreeWidget::currentItemChanged, this, &Inspector::selectionChanged);
 
-	connect(_ui.buttonBack, SIGNAL(clicked()), this, SLOT(back()));
+	_ui.buttonBack->setIcon(icon("undo"));
+	connect(_ui.buttonBack, &QToolButton::clicked, this, &Inspector::back);
 
 	_filterTimer.setSingleShot(true);
-	connect(&_filterTimer, SIGNAL(timeout()), this, SLOT(applyFilter()));
+	connect(&_filterTimer, &QTimer::timeout, this, &Inspector::applyFilter);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inspector::~Inspector() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::setObject(BaseObject *obj) {
 	_object = obj;
 	_currentSelection = nullptr;
@@ -113,8 +130,12 @@ void Inspector::setObject(BaseObject *obj) {
 	_ui.treeWidget->setCurrentItem(item);
 	_ui.treeWidget->setFocus();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::selectObject(Core::BaseObject *obj) {
 	if ( obj == nullptr ) return;
 
@@ -128,8 +149,12 @@ void Inspector::selectObject(Core::BaseObject *obj) {
 		selectObject(item, obj);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::selectObject(QTreeWidgetItem *parent, Core::BaseObject *obj) {
 	for ( int i = 0; i < parent->childCount(); ++i ) {
 		TreeItem *item = static_cast<TreeItem*>(parent->child(i));
@@ -141,8 +166,12 @@ void Inspector::selectObject(QTreeWidgetItem *parent, Core::BaseObject *obj) {
 		selectObject(item, obj);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::addObject(QTreeWidgetItem *p) {
 	TreeItem *parent = static_cast<TreeItem*>(p);
 	BaseObject *obj = parent->object();
@@ -219,8 +248,12 @@ void Inspector::addObject(QTreeWidgetItem *p) {
 	if ( !po && !indexName.empty() )
 		parent->setText(0, indexName.c_str());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::selectionChanged() {
 	while ( _ui.tableWidget->rowCount() )
 		_ui.tableWidget->removeRow(0);
@@ -250,13 +283,21 @@ void Inspector::selectionChanged() {
 		            prop->isIndex(), prop->isOptional(), prop->isReference());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::filterChanged(QString) {
 	_filterTimer.start(500);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::applyFilter() {
 	QString filter = _ui.editFilter->text();
 
@@ -293,8 +334,12 @@ void Inspector::applyFilter() {
 		_ui.treeWidget->setCurrentItem(firstMatch);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Inspector::filterTree(QTreeWidgetItem *node, const std::string &type,
                            const std::string &attr, const std::string &value,
                            QTreeWidgetItem **firstMatch,
@@ -358,8 +403,12 @@ bool Inspector::filterTree(QTreeWidgetItem *node, const std::string &type,
 
 	return node->isHidden();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::addProperty(const std::string &name, const std::string &type,
                             const std::string &value, bool isIndex,
                             bool isOptional, bool isReference) {
@@ -370,7 +419,7 @@ void Inspector::addProperty(const std::string &name, const std::string &type,
 
 	if ( isReference && !value.empty() ) {
 		link = new QLabel;
-		link->setText(QString("<a href=\"%1\">%2</a>").arg(value.c_str()).arg(value.c_str()));
+		link->setText(QString("<a href=\"%1\">%2</a>").arg(value.c_str(), value.c_str()));
 		link->setMargin(4);
 		if ( PublicObject::Find(value) == nullptr ) {
 			link->setEnabled(false);
@@ -414,11 +463,17 @@ void Inspector::addProperty(const std::string &name, const std::string &type,
 	if ( item2 != nullptr ) _ui.tableWidget->setItem(row, 2, item2);
 	if ( link != nullptr ) _ui.tableWidget->setCellWidget(row, 2, link);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::linkClicked(QString id) {
 	PublicObject *po = PublicObject::Find(id.toStdString());
-	if ( !po ) return;
+	if ( !po ) {
+		return;
+	}
 
 	/*
 	Inspector *w = new Inspector(this, Qt::Tool);
@@ -427,21 +482,32 @@ void Inspector::linkClicked(QString id) {
 	w->show();
 	*/
 
-	if ( po == _object ) return;
+	if ( po == _object ) {
+		return;
+	}
 
 	_history.push(State(_object, _currentSelection));
-	BaseObject *obj = _currentSelection != nullptr?_currentSelection:_object;
+
+	BaseObject *obj = _currentSelection ? _currentSelection : _object;
 	PublicObject *posrc = PublicObject::Cast(obj);
-	if ( posrc )
-		_ui.buttonBack->setToolTip(QString("Object %1 of type %2 (Back)").arg(posrc->publicID().c_str()).arg(obj->className()));
-	else
+
+	if ( posrc ) {
+		_ui.buttonBack->setToolTip(QString("Object %1 of type %2 (Back)").arg(posrc->publicID().c_str(), obj->className()));
+	}
+	else if ( obj ) {
 		_ui.buttonBack->setToolTip(QString("Object of type %1 (Back)").arg(obj->className()));
+	}
+
 	_ui.buttonBack->setEnabled(true);
 
 	setObject(po);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::back() {
 	if ( _history.empty() ) return;
 
@@ -451,7 +517,11 @@ void Inspector::back() {
 
 	if ( _history.empty() ) _ui.buttonBack->setEnabled(false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

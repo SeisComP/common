@@ -65,7 +65,6 @@ QIcon icon(QString name, const QColor &cOnOff);
  */
 QIcon icon(QString name, const QColor &cOn, const QColor &cOff);
 
-
 /**
  * @brief Returns an icon pixmap by name.
  *
@@ -75,9 +74,10 @@ QIcon icon(QString name, const QColor &cOn, const QColor &cOff);
  * @param size The requested size
  * @param dpr The device pixel ratio
  * @param color An optional color.
+ * @param scaledColor An optional color towards which all pixmap colors will be blended.
  * @return The pixmap possibly invalid if an invalid name was given.
  */
-QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor &c = QColor());
+QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor &c = QColor(), const QColor &scaledColor = QColor());
 
 /**
  * @brief Convenience function which takes a primarly color.

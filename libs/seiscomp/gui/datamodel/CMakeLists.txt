@@ -90,8 +90,4 @@ SET(GUI_DATAMODEL_UI
 	renamephases.ui
 )
 
-SET(GUI_DATAMODEL_RESOURCES
-	datamodel_icons.qrc
-)
-
 SC_SETUP_GUI_LIB_SUBDIR(GUI_DATAMODEL)

@@ -118,15 +118,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 
 	setAcceptDrops(true);
 
-	QSvgRenderer svg(QString(":/images/images/seiscomp-logo.svg"));
-	long dim = Math::Filtering::next_power_of_2(fontMetrics().height() * 2);
-	if ( dim < 64 ) {
-		dim = 64;
-	}
-	QImage img(dim, dim, QImage::Format_ARGB32);
-	QPainter paint(&img);
-	svg.render(&paint);
-	setWindowIcon(QIcon(QPixmap::fromImage(img)));
+	setWindowIcon(icon("seiscomp-logo"));
 
 	// create process state toolbar widget once process manager is created
 	connect(SCApp, &Gui::Application::processManagerCreated, [this]() {

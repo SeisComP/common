@@ -30,9 +30,9 @@
 #include <seiscomp/gui/qt.h>
 
 #include <QAbstractTableModel>
-#include <QDialog>
 #include <QIcon>
 #include <QLabel>
+#include <QMainWindow>
 #include <QMap>
 #include <QProcess>
 #include <QSet>
@@ -47,7 +47,7 @@ namespace Seiscomp::Gui {
 class ProcessStateLabel;
 
 
-class SC_GUI_API ProcessManager : public QDialog {
+class SC_GUI_API ProcessManager : public QMainWindow {
 	Q_OBJECT
 
 	// ------------------------------------------------------------------
@@ -137,6 +137,22 @@ class SC_GUI_API ProcessManager : public QDialog {
 		int erroneousCount();
 
 		/**
+		 * @brief Stop execution of the process by sending the SIGSTOP (19)
+ 		 * signal. The process may be resumed via SIGCONT (18) later on.
+		 * @param process Process to terminate
+		 * @return True if the SIGSTOP signal could be sent
+		 */
+		bool stop(QProcess *process);
+
+		/**
+		 * @brief Continue execution of the process by sending the SIGCONT (18)
+		 * signal. The process must have been stopped via SIGSTOP (19) before.
+		 * @param process Process to continue
+		 * @return True if the SIGCONT signal could be sent
+		 */
+		bool continue_(QProcess *process);
+
+		/**
 		 * @brief Terminate the process gracefully by sending the SIGTERM (9)
 		 * signal.
 		 * @param process Process to terminate
@@ -179,6 +195,8 @@ class SC_GUI_API ProcessManager : public QDialog {
 		void onProcessReadyReadStandardError();
 		void onProcessStateChanged();
 		void onStopClicked();
+		void onContinueClicked();
+		void onTerminateClicked();
 		void onKillClicked();
 		void onRemoveClicked();
 		void onClearClicked();
@@ -196,6 +214,7 @@ class SC_GUI_API ProcessManager : public QDialog {
 
 		void init();
 		void updateControls();
+		void updateItemState(Item *item);
 
 		static void addConsoleOutput(QTextEdit *textEdit, const QString &text,
 		                             int maxChars = -1);

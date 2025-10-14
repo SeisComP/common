@@ -398,11 +398,13 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 	protected:
 		void showEvent(QShowEvent* event);
+		void changeEvent(QEvent *e) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 
 
 	private:
+		void applyThemeColors();
 		void figureOutTravelTimeTable();
 
 		void init();

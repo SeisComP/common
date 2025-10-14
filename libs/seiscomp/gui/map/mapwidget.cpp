@@ -27,6 +27,7 @@
 #include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/compat.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/geo.h>
 
@@ -288,8 +289,8 @@ void MapWidget::init() {
 	zoomLayout->addWidget(zoomIn);
 	zoomLayout->addWidget(zoomOut);
 
-	zoomIn->setIcon(QIcon(":/map/icons/zoomin.png"));
-	zoomOut->setIcon(QIcon(":/map/icons/zoomout.png"));
+	zoomIn->setIcon(icon("zoom_in"));
+	zoomOut->setIcon(icon("zoom_out"));
 
 	_zoomControls->move(0,0);
 	_zoomControls->hide();

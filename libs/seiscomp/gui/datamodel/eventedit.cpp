@@ -2378,7 +2378,7 @@ void EventEdit::setFMActivity(bool e) {
 		if ( _fmActivityMovie != nullptr ) delete _fmActivityMovie;
 
 		_fmActivityMovie = new QMovie(this);
-		_fmActivityMovie->setFileName(":/icons/icons/mt.mng");
+		_fmActivityMovie->setFileName(":/sc/assets/mt.mng");
 
 		_fmActivity->show();
 		_fmActivity->setMovie(_fmActivityMovie);

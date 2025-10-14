@@ -26,7 +26,6 @@
 #include <QWidget>
 #include <QFile>
 #include <QPixmapCache>
-#include <iostream>
 
 #include "icon.h"
 
@@ -37,22 +36,43 @@ namespace {
 
 class IconEngine : public QIconEngine {
 	public:
-		IconEngine(const QString &name)
-		: _name(name) {}
+		explicit IconEngine(const QString &name) {
+			parseName(name);
+		}
 
-		IconEngine(const QColor &cOnOff, const QString &name)
-		: _color(cOnOff), _colorOff(cOnOff), _name(name) {}
+		explicit IconEngine(const QColor &cOnOff, const QString &name)
+		: _color(cOnOff), _colorOff(cOnOff) {
+			parseName(name);
+		}
 
-		IconEngine(const QColor &cOn, const QColor &cOff, const QString &name)
-		: _color(cOn), _colorOff(cOff), _name(name) {}
+		explicit IconEngine(const QColor &cOn, const QColor &cOff, const QString &name)
+		: _color(cOn), _colorOff(cOff) {
+			parseName(name);
+		}
+
+	private:
+		explicit IconEngine(const QColor &cOn, const QColor &cOff, const QString &nameOn, const QString &nameOff)
+		: _color(cOn), _colorOff(cOff), _nameOn(nameOn), _nameOff(nameOff) {}
+
+	private:
+		void parseName(const QString &name) {
+			int p = name.indexOf('|');
+			if ( p < 0 ) {
+				_nameOn = _nameOff = name;
+			}
+			else {
+				_nameOn = name.left(p);
+				_nameOff = name.right(name.length() - p - 1);
+			}
+		}
 
 	public:
 		QIconEngine *clone() const override {
-			return new IconEngine(_color, _colorOff, _name);
+			return new IconEngine(_color, _colorOff, _nameOn, _nameOff);
 		}
 
 		QSize actualSize(const QSize &size, QIcon::Mode, QIcon::State) override {
-			return Seiscomp::Gui::pixmap(_name, size, 1.0).size();
+			return Seiscomp::Gui::pixmap(_nameOn, size, 1.0).size();
 		}
 
 		QString key() const override {
@@ -64,54 +84,51 @@ class IconEngine : public QIconEngine {
 #else
 		QString iconName() const override {
 #endif
-			return _name;
+			return _nameOn != _nameOff ? (_nameOn + '|' + _nameOff) : _nameOn;
 		}
 
 		void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override {
 			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
 			if ( !color.isValid() ) {
-				if ( mode == QIcon::Disabled ) {
-					color = qApp->palette().color(QPalette::Disabled, QPalette::Text);
-				}
-				else if ( mode == QIcon::Normal ) {
-					color = qApp->palette().color(QPalette::Normal, QPalette::Text);
-				}
-				else if ( mode == QIcon::Active ) {
-					color = qApp->palette().color(QPalette::Active, QPalette::Text);
-				}
-				else if ( mode == QIcon::Selected ) {
-					color = qApp->palette().color(QPalette::Active, QPalette::Text);
-				}
+				color = qApp->palette().color(QPalette::Normal, QPalette::Text);
 			}
 
-			auto pm = Seiscomp::Gui::pixmap(_name, rect.size(), 1.0, color);
-			painter->drawPixmap(rect.left(), rect.top(), pm);
+			QColor scaledColor;
+			if ( mode == QIcon::Disabled ) {
+				scaledColor = qApp->palette().color(QPalette::Disabled, QPalette::Text);
+			}
+
+			painter->drawPixmap(
+				rect.left(), rect.top(),
+				Seiscomp::Gui::pixmap(
+					state == QIcon::On ? _nameOn : _nameOff,
+					rect.size(), painter->device()->devicePixelRatioF(), color, scaledColor
+				)
+			);
 		}
 
 		QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override {
 			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
 			if ( !color.isValid() ) {
-				if ( mode == QIcon::Disabled ) {
-					color = qApp->palette().color(QPalette::Disabled, QPalette::Text);
-				}
-				else if ( mode == QIcon::Normal ) {
-					color = qApp->palette().color(QPalette::Normal, QPalette::Text);
-				}
-				else if ( mode == QIcon::Active ) {
-					color = qApp->palette().color(QPalette::Active, QPalette::Text);
-				}
-				else if ( mode == QIcon::Selected ) {
-					color = qApp->palette().color(QPalette::Active, QPalette::Text);
-				}
+				color = qApp->palette().color(QPalette::Normal, QPalette::Text);
 			}
 
-			return Seiscomp::Gui::pixmap(_name, size, 1.0, color);
+			QColor scaledColor;
+			if ( mode == QIcon::Disabled ) {
+				scaledColor = qApp->palette().color(QPalette::Disabled, QPalette::Text);
+			}
+
+			return Seiscomp::Gui::pixmap(
+				state == QIcon::On ? _nameOn : _nameOff,
+				size, 1.0, color, scaledColor
+			);
 		}
 
 	private:
 		QColor  _color;
 		QColor  _colorOff;
-		QString _name;
+		QString _nameOn;
+		QString _nameOff;
 };
 
 
@@ -146,8 +163,6 @@ namespace Seiscomp::Gui {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QIcon icon(QString name) {
-	// A good source for SVG icons is Google material at
-	// https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded&selected=Material+Symbols+Rounded:check:FILL@1;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23000000
 	return QIcon(new IconEngine(name));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -187,7 +202,8 @@ int iconSize(const QFontMetricsF &fm) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor &c) {
+QPixmap pixmap(const QString &name, const QSize &size, double dpr,
+               const QColor &c, const QColor &scaledColor) {
 	QString cacheId = c.isValid() ?
 		QString("sc_svg_%1_%2x%3_%4_%5")
 		.arg(name).arg(size.width()).arg(size.height())
@@ -196,6 +212,11 @@ QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor 
 		QString("sc_svg_%1_%2x%3_%4")
 		.arg(name).arg(size.width()).arg(size.height()).arg(dpr)
 	;
+
+	if ( scaledColor.isValid() ) {
+		cacheId += QString("_%1").arg(scaledColor.name(QColor::HexArgb));
+	}
+
 	QPixmap pm;
 #if QT_VERSION < QT_VERSION_CHECK(5,13,0)
 	if ( QPixmapCache::find(cacheId, pm) ) {
@@ -226,11 +247,55 @@ QPixmap pixmap(const QString &name, const QSize &size, double dpr, const QColor 
 
 	actualSize *= dpr;
 
-	QImage img(actualSize, QImage::Format_ARGB32_Premultiplied);
+	QImage img(actualSize, QImage::Format_ARGB32);
 	img.fill(Qt::transparent);
-	QPainter p(&img);
-	renderer.render(&p);
-	p.end();
+	{
+		QPainter p(&img);
+		renderer.render(&p);
+		p.end();
+	}
+
+	if ( scaledColor.isValid() ) {
+#if 1
+		int cGray = 0;
+		if ( c.isValid() ) {
+			cGray = (299 * c.red() + 587 * c.green() + 114 * c.blue()) / 1000;
+		}
+
+		int count = img.width() * img.height();
+		QRgb *data = reinterpret_cast<QRgb*>(img.bits());
+		for ( int i = 0; i < count; ++i, ++data ) {
+			int gray = (299 * qRed(*data) + 587 * qGreen(*data) + 114 * qBlue(*data)) / 1000;
+			int diff = 255 + gray - cGray;
+			int red = (diff * scaledColor.red()) >> 8;
+			int green = (diff * scaledColor.green()) >> 8;
+			int blue = (diff * scaledColor.blue()) >> 8;
+			if ( red < 0 ) { red = 0; } else if ( red > 255 ) { red = 255; }
+			if ( green < 0 ) { green = 0; } else if ( green > 255 ) { green = 255; }
+			if ( blue < 0 ) { blue = 0; } else if ( blue > 255 ) { blue = 255; }
+			*data = qRgba(red, green, blue, qAlpha(*data));
+		}
+#else
+		int cRed = 0, cGreen = 0, cBlue = 0;
+		if ( c.isValid() ) {
+			cRed = c.red();
+			cGreen = c.green();
+			cBlue = c.blue();
+		}
+
+		int count = img.width() * img.height();
+		QRgb *data = reinterpret_cast<QRgb*>(img.bits());
+		for ( int i = 0; i < count; ++i, ++data ) {
+			int red = ((255 + qRed(*data) - cRed) * scaledColor.red()) >> 8;
+			int green = ((255 + qGreen(*data) - cGreen) * scaledColor.green()) >> 8;
+			int blue = ((255 + qBlue(*data) - cBlue) * scaledColor.blue()) >> 8;
+			if ( red < 0 ) { red = 0; } else if ( red > 255 ) { red = 255; }
+			if ( green < 0 ) { green = 0; } else if ( green > 255 ) { green = 255; }
+			if ( blue < 0 ) { blue = 0; } else if ( blue > 255 ) { blue = 255; }
+			*data = qRgba(red, green, blue, qAlpha(*data));
+		}
+#endif
+	}
 
 	pm = QPixmap::fromImage(img);
 	pm.setDevicePixelRatio(qApp->devicePixelRatio());

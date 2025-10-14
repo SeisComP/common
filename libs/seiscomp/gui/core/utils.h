@@ -70,6 +70,7 @@ SC_GUI_API Qt::BrushStyle readBrushStyle(const std::string &query,
                                          Qt::BrushStyle base,
                                          bool *ok = nullptr);
 
+
 SC_GUI_API QString latitudeToString(double lat, bool withValue = true,
                                     bool withUnit = true, int precision = 2);
 SC_GUI_API QString longitudeToString(double lon, bool withValue = true,
@@ -167,6 +168,28 @@ SC_GUI_API QIcon iconFromURL(const QString &url);
 
 template <typename T>
 using ObjectChangeList = std::vector<std::pair<Core::SmartPointer<T>, bool>>;
+
+
+/**
+ * @brief Figure if Dark Mode has been set.
+ * @return true if dark mode, false otherwise.
+ */
+bool isDarkMode();
+
+
+struct ColorTheme {
+	QColor green;
+	QColor orange;
+	QColor petrol;
+	QColor blue;
+	QColor red;
+	QColor lightRed;
+	QColor white;
+};
+
+
+const ColorTheme &currentColorTheme();
+
 
 
 } // ns Seiscomp::Gui

@@ -78,6 +78,7 @@ class AmplitudeViewPrivate {
 		QDoubleSpinBox                     *spinDistance;
 		QCheckBox                          *checkOverrideSNR;
 		QDoubleSpinBox                     *spinSNR;
+		QPushButton                        *btnApply;
 
 		QLineEdit                          *searchStation;
 		QLabel                             *searchLabel;

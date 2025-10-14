@@ -264,10 +264,6 @@
                   <property name="text">
                    <string/>
                   </property>
-                  <property name="icon">
-                   <iconset resource="datamodel_icons.qrc">
-                    <normaloff>:/icons/icons/ok.png</normaloff>:/icons/icons/ok.png</iconset>
-                  </property>
                   <property name="iconSize">
                    <size>
                     <width>24</width>
@@ -308,10 +304,6 @@
                   <property name="text">
                    <string/>
                   </property>
-                  <property name="icon">
-                   <iconset resource="datamodel_icons.qrc">
-                    <normaloff>:/icons/icons/remove.png</normaloff>:/icons/icons/remove.png</iconset>
-                  </property>
                   <property name="iconSize">
                    <size>
                     <width>24</width>
@@ -351,10 +343,6 @@
                   </property>
                   <property name="text">
                    <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="datamodel_icons.qrc">
-                    <normaloff>:/icons/icons/erase.png</normaloff>:/icons/icons/erase.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -422,15 +410,13 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionDefaultView"/>
-   <addaction name="separator"/>
-   <addaction name="actionIncreaseRowHeight"/>
-   <addaction name="actionDecreaseRowHeight"/>
-   <addaction name="separator"/>
    <addaction name="actionIncreaseRowTimescale"/>
    <addaction name="actionDecreaseRowTimescale"/>
-   <addaction name="separator"/>
+   <addaction name="actionIncreaseRowHeight"/>
+   <addaction name="actionDecreaseRowHeight"/>
    <addaction name="actionMaximizeAmplitudes"/>
+   <addaction name="separator"/>
+   <addaction name="actionDefaultView"/>
   </widget>
   <widget class="QToolBar" name="toolBarSort">
    <property name="windowTitle">
@@ -475,9 +461,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionAlignOnOriginTime"/>
    <addaction name="actionAlignOnPArrival"/>
    <addaction name="actionAlignOnSArrival"/>
-   <addaction name="actionAlignOnOriginTime"/>
   </widget>
   <widget class="QToolBar" name="toolBarComponent">
    <property name="windowTitle">
@@ -608,7 +594,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionRelocate"/>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -723,10 +708,6 @@
    <addaction name="menuWindow"/>
   </widget>
   <action name="actionIncreaseAmplitudeScale">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Scale amplitudes up</string>
    </property>
@@ -741,10 +722,6 @@
    </property>
   </action>
   <action name="actionDecreaseAmplitudeScale">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Scale amplitudes down</string>
    </property>
@@ -759,10 +736,6 @@
    </property>
   </action>
   <action name="actionTimeScaleUp">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Increase visible timespan</string>
    </property>
@@ -774,10 +747,6 @@
    </property>
   </action>
   <action name="actionTimeScaleDown">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Decrease visible timespan</string>
    </property>
@@ -864,10 +833,6 @@
    </property>
   </action>
   <action name="actionIncreaseRowHeight">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/vzoomin.png</normaloff>:/icons/icons/vzoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Increase row height</string>
    </property>
@@ -879,10 +844,6 @@
    </property>
   </action>
   <action name="actionDecreaseRowHeight">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/vzoomout.png</normaloff>:/icons/icons/vzoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Decrease row height</string>
    </property>
@@ -894,10 +855,6 @@
    </property>
   </action>
   <action name="actionIncreaseRowTimescale">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/zoomin.png</normaloff>:/icons/icons/zoomin.png</iconset>
-   </property>
    <property name="text">
     <string>Increase row timescale</string>
    </property>
@@ -909,10 +866,6 @@
    </property>
   </action>
   <action name="actionDecreaseRowTimescale">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/zoomout.png</normaloff>:/icons/icons/zoomout.png</iconset>
-   </property>
    <property name="text">
     <string>Decrease row timescale</string>
    </property>
@@ -941,14 +894,10 @@
   </action>
   <action name="actionAlignOnPArrival">
    <property name="checkable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="checked">
     <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/align_p.png</normaloff>:/icons/icons/align_p.png</iconset>
    </property>
    <property name="text">
     <string>Align on P arrival</string>
@@ -965,11 +914,7 @@
   </action>
   <action name="actionAlignOnSArrival">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/align_s.png</normaloff>:/icons/icons/align_s.png</iconset>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Align on S arrival</string>
@@ -986,11 +931,7 @@
   </action>
   <action name="actionAlignOnOriginTime">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/align_t.png</normaloff>:/icons/icons/align_t.png</iconset>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Align on origin time</string>
@@ -1006,10 +947,6 @@
    </property>
   </action>
   <action name="actionDefaultView">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Default view</string>
    </property>
@@ -1023,10 +960,6 @@
   <action name="actionSortAlphabetically">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/sort_abc.png</normaloff>:/icons/icons/sort_abc.png</iconset>
    </property>
    <property name="text">
     <string>Sort by names</string>
@@ -1048,10 +981,6 @@
    <property name="checked">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/sort_dist.png</normaloff>:/icons/icons/sort_dist.png</iconset>
-   </property>
    <property name="text">
     <string>Sort by distance</string>
    </property>
@@ -1069,10 +998,6 @@
    <property name="checked">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/filter.png</normaloff>:/icons/icons/filter.png</iconset>
-   </property>
    <property name="text">
     <string>&amp;Toggle filter</string>
    </property>
@@ -1084,10 +1009,6 @@
    </property>
   </action>
   <action name="actionMaximizeAmplitudes">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/vmax.png</normaloff>:/icons/icons/vmax.png</iconset>
-   </property>
    <property name="text">
     <string>Maximize visible amplitudes</string>
    </property>
@@ -1103,11 +1024,7 @@
   </action>
   <action name="actionPickP">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/pick_p.png</normaloff>:/icons/icons/pick_p.png</iconset>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Pick P phase</string>
@@ -1118,26 +1035,13 @@
   </action>
   <action name="actionPickS">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/pick_s.png</normaloff>:/icons/icons/pick_s.png</iconset>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Pick S phase</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
-   </property>
-  </action>
-  <action name="actionPickOther">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/pick_other.png</normaloff>:/icons/icons/pick_other.png</iconset>
-   </property>
-   <property name="text">
-    <string>Pick other phase</string>
    </property>
   </action>
   <action name="actionDisablePicking">
@@ -1177,15 +1081,11 @@
    </property>
   </action>
   <action name="actionRelocate">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/locate.png</normaloff>:/icons/icons/locate.png</iconset>
-   </property>
    <property name="text">
-    <string>&amp;Apply</string>
+    <string>&amp;Apply all</string>
    </property>
    <property name="iconText">
-    <string>Apply</string>
+    <string>Apply all</string>
    </property>
    <property name="toolTip">
     <string>Apply the changed picks to the origin and update the residuals. &quot;Relocate&quot; has to be done manually! (F5)</string>
@@ -1201,10 +1101,6 @@
    <property name="checkable">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/mindistance.png</normaloff>:/icons/icons/mindistance.png</iconset>
-   </property>
    <property name="text">
     <string>Add stations in range</string>
    </property>
@@ -1218,10 +1114,6 @@
   <action name="actionShowUsedStations">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/withpick.png</normaloff>:/icons/icons/withpick.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Show used stations only</string>
@@ -1237,10 +1129,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/sort_res.png</normaloff>:/icons/icons/sort_res.png</iconset>
-   </property>
    <property name="text">
     <string>Sort by residual</string>
    </property>
@@ -1254,10 +1142,6 @@
    </property>
    <property name="checked">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/channelZ.png</normaloff>:/icons/icons/channelZ.png</iconset>
    </property>
    <property name="text">
     <string>Vertical</string>
@@ -1276,10 +1160,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/channelN.png</normaloff>:/icons/icons/channelN.png</iconset>
-   </property>
    <property name="text">
     <string>North</string>
    </property>
@@ -1296,10 +1176,6 @@
   <action name="actionShowEComponent">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/channelE.png</normaloff>:/icons/icons/channelE.png</iconset>
    </property>
    <property name="text">
     <string>East</string>
@@ -1552,10 +1428,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/sort_az.png</normaloff>:/icons/icons/sort_az.png</iconset>
-   </property>
    <property name="text">
     <string>Sort by azimuth</string>
    </property>
@@ -1575,10 +1447,6 @@
    </property>
   </action>
   <action name="actionResetScale">
-   <property name="icon">
-    <iconset resource="datamodel_icons.qrc">
-     <normaloff>:/icons/icons/home.png</normaloff>:/icons/icons/home.png</iconset>
-   </property>
    <property name="text">
     <string>Reset scale</string>
    </property>
@@ -1646,6 +1514,7 @@
  </customwidgets>
  <resources>
   <include location="datamodel_icons.qrc"/>
+  <include location="../sc_icons.qrc"/>
  </resources>
  <connections/>
 </ui>

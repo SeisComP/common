@@ -107,10 +107,4 @@ SET(
 		spectrogramsettings.ui
 )
 
-SET(
-	GUI_CORE_RESOURCES
-		core_icons.qrc
-		core_images.qrc
-)
-
 SC_SETUP_GUI_LIB_SUBDIR(GUI_CORE)

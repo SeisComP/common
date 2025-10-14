@@ -105,20 +105,12 @@
         <item>
          <widget class="QToolButton" name="btnFilter">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
           </property>
           <property name="toolTip">
            <string>Configures the server-side event filter</string>
           </property>
           <property name="text">
            <string>Filter</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/icons/icons/filter2.png</normaloff>:/icons/icons/filter2.png</iconset>
           </property>
          </widget>
         </item>

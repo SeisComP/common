@@ -977,6 +977,13 @@ class CommentEdit : public QDialog {
 		CommentEdit(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QDialog(parent, f) {
 			ui.setupUi(this);
+			ui.labelHeadline->setPixmap(icon("comment").pixmap(QFontMetrics(font()).height() * 2));
+			ui.labelHeadline->setFont(SCScheme.fonts.highlight);
+			ui.labelAuthor->setText("-");
+			ui.labelDate->setText("-");
+
+			setItalic(ui.labelAuthor);
+			setItalic(ui.labelDate);
 		}
 
 	public:
@@ -3260,6 +3267,8 @@ void OriginLocatorView::init() {
 
 	connect(&SC_D.blinkTimer, SIGNAL(timeout()), this, SLOT(updateBlinkState()));
 
+	SC_D.ui.btnLocatorSettings->setIcon(icon("settings"));
+	SC_D.ui.buttonEditComment->setIcon(icon("comment"));
 	/*
 	QFontMetrics fm = fontMetrics();
 	int width = SC_D.ui.lbAgencyID->width() + 6 + fm.boundingRect("WWWWWWWWWW").width();
@@ -3604,7 +3613,7 @@ void OriginLocatorView::init() {
 	// Add button next to the last custom button which opens a context menu
 	// with more command options
 	SC_D.btnCommandMenu = new QPushButton("Run...", this);
-	SC_D.btnCommandMenu->setIcon(icon("rocket-launch"));
+	SC_D.btnCommandMenu->setIcon(icon("process_run"));
 	SC_D.btnCommandMenu->setToolTip("Open custom command menu");
 	SC_D.btnCommandMenu->setEnabled(false);
 
@@ -6908,12 +6917,6 @@ void OriginLocatorView::editComment() {
 	if ( !SC_D.baseEvent ) return;
 
 	CommentEdit dlg;
-	dlg.ui.labelHeadline->setFont(SCScheme.fonts.highlight);
-	dlg.ui.labelAuthor->setText("-");
-	dlg.ui.labelDate->setText("-");
-
-	setItalic(dlg.ui.labelAuthor);
-	setItalic(dlg.ui.labelDate);
 
 	QString oldComment;
 

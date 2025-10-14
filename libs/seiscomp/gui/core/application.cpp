@@ -76,7 +76,7 @@ std::string toString(const QString &qstring) {
 namespace {
 
 
-QString splashDefaultImage = ":/images/images/splash-default.png";
+QString splashDefaultImage = ":/sc/assets/splash-default.png";
 
 
 // Don't catch signal on windows since that path hasn't tested.
