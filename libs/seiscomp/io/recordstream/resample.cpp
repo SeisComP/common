@@ -335,12 +335,15 @@ void Resample::push(Record *rec) {
 	}
 	*/
 
-	if ( out != nullptr ) {
-		if ( _debug ) out->setLocationCode("RS");
+	if ( out ) {
+		if ( _debug ) {
+			out->setLocationCode("RS");
+		}
 		_queue.push_back(out);
 	}
-	else if ( out_rec != nullptr )
+	else if ( out_rec ) {
 		delete out_rec;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -361,17 +364,20 @@ Record *Resample::next() {
 			r->setDataType(_dataType);
 			r->setHint(_hint);
 
-			if ( r->data()->dataType() != r->dataType() )
+			if ( r->data()->dataType() != r->dataType() ) {
 				r->setData(r->data()->copy(r->dataType()));
+			}
 
 			return r;
 		}
 
 		RecordPtr pms = _source->next();
-		if ( pms )
+		if ( pms ) {
 			push(pms.get());
-		else
+		}
+		else {
 			break;
+		}
 	}
 
 	return nullptr;

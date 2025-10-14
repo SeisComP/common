@@ -29,7 +29,6 @@
 #include <climits>
 #include <cstring>
 #include <cmath>
-#include <ctype.h>
 
 
 namespace Seiscomp {
@@ -78,7 +77,9 @@ bool getFraction(int &num, int &den, double value, double epsilon = 1E-5, int ma
 	int64_t overflow = INT_MAX;
 	double r0 = value;
 	int64_t a0 = (int64_t)r0;
-	if ( abs(a0) > overflow ) return false;
+	if ( std::abs(a0) > overflow ) {
+		return false;
+	}
 
 	// check for (almost) integer arguments, which should not go
 	// to iterations.
@@ -105,7 +106,7 @@ bool getFraction(int &num, int &den, double value, double epsilon = 1E-5, int ma
 		int64_t a1 = (int64_t)r1;
 		p2 = (a1 * p1) + p0;
 		q2 = (a1 * q1) + q0;
-		if ( (abs(p2) > overflow) || (abs(q2) > overflow) ) {
+		if ( (std::abs(p2) > overflow) || (std::abs(q2) > overflow) ) {
 			return false;
 		}
 
@@ -341,6 +342,13 @@ GenericRecord *RecordResampler<T>::resample(DownsampleStage *stage, const Record
 		return nullptr;
 	}
 
+	if ( !rec->data() ) {
+		SEISCOMP_WARNING("[dec] %s: %s ~ %s: no data -> ignoring",
+		                 rec->streamID(), rec->startTime().iso(),
+		                 rec->endTime().iso());
+		return nullptr;
+	}
+
 	if ( stage->lastEndTime.valid() ) {
 		double diff = rec->startTime() - stage->lastEndTime;
 		if ( fabs(diff) > stage->dt*0.5 ) {
@@ -512,6 +520,13 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 		return nullptr;
 	}
 
+	if ( !rec->data() ) {
+		SEISCOMP_WARNING("[ups] %s: %s ~ %s: no data -> ignoring",
+			             rec->streamID(), rec->startTime().iso(),
+			             rec->endTime().iso());
+		return nullptr;
+	}
+
 	if ( stage->lastEndTime.valid() ) {
 		double diff = rec->startTime() - stage->lastEndTime;
 		if ( fabs(diff) > stage->dt*0.5 ) {
@@ -525,10 +540,10 @@ GenericRecord *RecordResampler<T>::resample(UpsampleStage *stage, const Record *
 
 	ArrayPtr tmp_ar;
 	const TypedArray<T> *ar = TypedArray<T>::ConstCast(rec->data());
-	if ( ar == nullptr ) {
-		tmp_ar = rec->data()->copy(dataType<T>());
+	if ( !ar ) {
+		tmp_ar = rec->data() ? rec->data()->copy(dataType<T>()) : nullptr;
 		ar = TypedArray<T>::ConstCast(tmp_ar);
-		if ( ar == nullptr ) {
+		if ( !ar ) {
 			SEISCOMP_ERROR("[dec] internal error: wrong conversion type received");
 			return nullptr;
 		}
