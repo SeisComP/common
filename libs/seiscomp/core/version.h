@@ -94,16 +94,17 @@ namespace Core {
    - Removed Seiscomp::DataModel::DatabaseQuery::getStation
    - Added Seiscomp::Geo::readFEP
    - Added Seiscomp::Geo::writeGeoJSON
+   - Added Seiscomp::Math::Matrix3<T> ostream output operator
+   - Added Seiscomp::Math::Vector3<T> ostream output operator
+   - Added Seiscomp::Math::Matrix3<T>::operator*
+   - Added Seiscomp::Math::Matrix3<T>::operator=
+   - Added static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
+   - Added unary Seiscomp::Math::Vector3<T>::operator+
+   - Added unary Seiscomp::Math::Vector3<T>::operator-
+   - Added Seiscomp::Math::Vector3<T>::normalized
 
  "16.4.0"   0x100400
-   - Add Seiscomp::Math::Matrix3<T> ostream output operator
-   - Add Seiscomp::Math::Vector3<T> ostream output operator
-   - Add Seiscomp::Math::Matrix3<T>::operator*
-   - Add Seiscomp::Math::Matrix3<T>::operator=
-   - Add static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
-   - Add unary Seiscomp::Math::Vector3<T>::operator+
-   - Add unary Seiscomp::Math::Vector3<T>::operator-
-   - Add Seiscomp::Math::Vector3<T>::normalized
+   - Added Seiscomp::Math::double2frac
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
