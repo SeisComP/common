@@ -7214,7 +7214,7 @@ void OriginLocatorView::customCommit() {
 	}
 	else {
 		QMessageBox::critical(this, "Internal Error",
-							  tr("No options connected with commit button"));
+		                      tr("No options connected with commit button"));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -7226,10 +7226,10 @@ void OriginLocatorView::customCommit() {
 void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	if ( SC_D.localOrigin ) {
 		QMessageBox::critical(this, "Commit",
-							  "The origin this focal mechanism uses as "
-							  "trigger is not yet committed.\n"
-							  "Commit the origin before committing the "
-							  "focal mechanism.");
+		                      "The origin this focal mechanism uses as "
+		                      "trigger is not yet committed.\n"
+		                      "Commit the origin before committing the "
+		                      "focal mechanism.");
 		return;
 	}
 
@@ -7237,7 +7237,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	OriginPtr derived;
 	if ( withMT && SC_D.currentOrigin ) {
 		OriginDialog dialog(SC_D.currentOrigin->longitude().value(),
-							SC_D.currentOrigin->latitude().value(), this);
+		                    SC_D.currentOrigin->latitude().value(), this);
 		try { dialog.setDepth(SC_D.currentOrigin->depth().value()); }
 		catch ( ValueException &e ) {}
 		dialog.setTime(SC_D.currentOrigin->time().value());
@@ -7247,15 +7247,19 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		// search for preferred magnitude value
 		if ( SC_D.baseEvent ) {
 			Magnitude *m = Magnitude::Find(SC_D.baseEvent->preferredMagnitudeID());
-			if ( m )
+			if ( m ) {
 				dialog.setMagValue(m->magnitude().value());
+			}
 		}
 		dialog.setMagType("Mw");
 
-		if ( ! pos.isNull() )
+		if ( ! pos.isNull() ) {
 			dialog.move(pos.x(), pos.y());
+		}
 
-		if ( dialog.exec() != QDialog::Accepted ) return; // commit aborted
+		if ( dialog.exec() != QDialog::Accepted ) {
+			return; // commit aborted
+		}
 
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
@@ -7327,7 +7331,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
-									 derived?derived.get():nullptr);
+		                             derived?derived.get():nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
