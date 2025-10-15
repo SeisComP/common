@@ -37,7 +37,6 @@
 #include <QTextEdit>
 
 #include <cerrno>
-#include <ostream>
 
 #include <signal.h>
 #include <unistd.h>
@@ -83,6 +82,7 @@ struct ProcessManager::Item {
 	QString name;
 	QString description;
 	QIcon icon;
+	QVariant userData;
 	Core::Time created;
 	OPT(Core::Time) started;
 	OPT(Core::Time) running;
@@ -98,10 +98,6 @@ struct ProcessManager::Item {
 	QTextEdit *processLog{nullptr};
 	int maxStdOutChars{-1};
 	int maxStdErrChars{-1};
-
-	// managed outside process manager
-	std::ostream *osOut{nullptr};
-	std::ostream *osErr{nullptr};
 
 	~Item() {
 		delete process;
@@ -489,7 +485,7 @@ ProcessManager::ProcessManager(QWidget *parent, Qt::WindowFlags f)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QProcess *ProcessManager::createProcess(QString name, QString description,
-                                        QIcon icon) {
+                                        QIcon icon, QVariant userData) {
 	auto *process = new QProcess(this);
 	process->setEnvironment(QProcess::systemEnvironment());
 	process->setProcessChannelMode(QProcess::SeparateChannels);
@@ -512,6 +508,7 @@ QProcess *ProcessManager::createProcess(QString name, QString description,
 	item->name = std::move(name);
 	item->description = std::move(description);
 	item->icon = std::move(icon);
+	item->userData = std::move(userData);
 	item->process = process;
 	item->created = Core::Time::UTC();
 	item->stdOut = new QTextEdit;
@@ -603,23 +600,6 @@ bool ProcessManager::waitForStarted(QProcess *process, int timeout) {
 	// process not managed, show message box instead
 	else {
 		QMessageBox::warning(this, "Failed to start", msg);
-	}
-
-	return false;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool ProcessManager::setOutputStreams(QProcess *process, std::ostream *osOut,
-                                      std::ostream *osErr) {
-	auto *item = _items[process];
-	if ( item ) {
-		item->osOut = osOut;
-		item->osErr = osErr;
-		return true;
 	}
 
 	return false;
@@ -806,6 +786,20 @@ bool ProcessManager::kill(QProcess *process) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QList<QProcess*> ProcessManager::processes() {
+	QList<QProcess*> processes;
+	for ( auto *item : std::as_const(_items) ) {
+		processes << item->process;
+	}
+
+	return processes;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessManager::onDataChanged(const QModelIndex &topLeft,
                                    const QModelIndex &bottomRight,
                                    const QVector<int> &roles) {
@@ -866,9 +860,8 @@ void ProcessManager::onProcessReadyReadStandardOutput() {
 	if ( item ) {
 		auto bytes = item->process->readAllStandardOutput();
 		addConsoleOutput(item->stdOut, QString(bytes), item->maxStdOutChars);
-		if ( item->osOut ) {
-			item->osOut->write(bytes.data(), bytes.size());
-		}
+
+		emit readStandardOutput(bytes, item->process, item->userData);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -882,9 +875,8 @@ void ProcessManager::onProcessReadyReadStandardError() {
 	if ( item ) {
 		auto bytes = item->process->readAllStandardError();
 		addConsoleOutput(item->stdErr, QString(bytes), item->maxStdErrChars);
-		if ( item->osErr ) {
-			item->osErr->write(bytes.data(), bytes.size());
-		}
+
+		emit readStandardError(bytes, item->process, item->userData);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1379,6 +1371,8 @@ void ProcessManager::addLog(const Item *item, const Core::Time &time,
 	                 QString::fromStdString(time.toString("%T")),
 	                 message.toHtmlEscaped());
 	item->processLog->insertHtml(html);
+
+	emit logEntryAdded(message, item->process, item->userData);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1519,7 +1513,7 @@ void ProcessStateLabel::onProcessStateChanged() {
 void ProcessStateLabel::init() {
 	_defaultPixmap = Gui::pixmap(this, "process_manager");
 	_progressPixmap = Gui::pixmap(this, "process_progress");
-	_erroneousPixmap = Gui::pixmap(this, "process_attention", {192, 0, 0});
+	_erroneousPixmap = Gui::pixmap(this, "process_attention");
 
 	connect(_manager, &ProcessManager::stateChanged,
 	        this, &ProcessStateLabel::onProcessStateChanged);

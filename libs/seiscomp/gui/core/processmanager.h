@@ -67,10 +67,11 @@ class SC_GUI_API ProcessManager : public QMainWindow {
 		 * @param name Name of the process
 		 * @param description Description of the process shown as tool tip
 		 * @param icon Icon to be shown next to the name
+		 * @param userData User data to be associcated to the created process
 		 * @return QProcess instance mananged by this instance
 		 */
 		QProcess *createProcess(QString name, QString description={},
-		                        QIcon icon={});
+		                        QIcon icon={}, QVariant userData={});
 
 		/**
 		 * @brief Wait for the process to start. If the start up fails logging
@@ -81,18 +82,6 @@ class SC_GUI_API ProcessManager : public QMainWindow {
 		 * @return True if the process could be launched
 		 */
 		bool waitForStarted(QProcess *process, int timeout = 5000);
-
-		/**
-		 * @brief Registers output streams to which the stdout and stderr data
-		 * of the given process are written to in addition to the console tabs
-		 * visible in the process manager.
-		 * @param process The process to register the output streams for
-		 * @param osOut The output stream used for stdout data
-		 * @param osErr The output stream used for stderr data
-		 * @return True if the process is managed by the process manager
-		 */
-		bool setOutputStreams(QProcess *process, std::ostream *osOut,
-		                      std::ostream *osErr=nullptr);
 
 		/**
 		 * @brief Limits the data written to the console tabs visible in the
@@ -168,17 +157,50 @@ class SC_GUI_API ProcessManager : public QMainWindow {
 		 */
 		bool kill(QProcess *process);
 
-		// friend class ProcessStateLabel;
-
+		/**
+		 * @brief Returns a list of processes managed by this instance.
+		 * @return Copy of the process list
+		 */
+		QList<QProcess*> processes();
 
 	// ------------------------------------------------------------------
 	// Signals
 	// ------------------------------------------------------------------
 	signals:
-		// emitted if a process was added/removed or any of the managed
-		// processes changed state
-		void stateChanged();
+		/**
+		 * @brief This signal is emitted when data has been read from
+		 * process standard out.
+		 * @param data The data read from standard out
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void readStandardOutput(const QByteArray &data, QProcess *process,
+		                        const QVariant &userData);
 
+		/**
+		 * @brief This signal is emitted when data has been read from
+		 * process standard error.
+		 * @param data The data read from standard error
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void readStandardError(const QByteArray &data, QProcess *process,
+		                       const QVariant &userData);
+
+		/**
+		 * @brief This signal is emitted when a log entry has been added.
+		 * @param entry The log entry added
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void logEntryAdded(const QString &entry, QProcess *process,
+		                   const QVariant &userData);
+
+		/**
+		 * @brief This signal is emitted if a process was added/removed
+		 * or any of the managed processes changed its state.
+		 */
+		void stateChanged();
 
 	// ------------------------------------------------------------------
 	// Protected Slots
@@ -218,7 +240,7 @@ class SC_GUI_API ProcessManager : public QMainWindow {
 
 		static void addConsoleOutput(QTextEdit *textEdit, const QString &text,
 		                             int maxChars = -1);
-		static void addLog(const Item *item, const Core::Time &time,
+		void addLog(const Item *item, const Core::Time &time,
 		            const QString &message);
 
 
