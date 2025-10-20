@@ -3202,8 +3202,17 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._ui->btnReadDays->setEnabled(SC_D._reader != nullptr);
 	SC_D._ui->btnReadInterval->setEnabled(SC_D._reader != nullptr);
 
-	SC_D._ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTimeUtc());
-	SC_D._ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTimeUtc());
+	QT_DTE_SET(SC_D._ui->dateTimeEditStart, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
+	QT_DTE_SET(SC_D._ui->dateTimeEditEnd, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
+
+	if ( SCScheme.dateTime.useLocalTime ) {
+		SC_D._ui->dateTimeEditStart->setDisplayFormat(SC_D._ui->dateTimeEditStart->displayFormat() + " " + Core::Time::LocalTimeZone().c_str());
+		SC_D._ui->dateTimeEditEnd->setDisplayFormat(SC_D._ui->dateTimeEditEnd->displayFormat() + " " + Core::Time::LocalTimeZone().c_str());
+	}
+	else {
+		SC_D._ui->dateTimeEditStart->setDisplayFormat(SC_D._ui->dateTimeEditStart->displayFormat() + " UTC");
+		SC_D._ui->dateTimeEditEnd->setDisplayFormat(SC_D._ui->dateTimeEditEnd->displayFormat() + " UTC");
+	}
 
 	initTree();
 
@@ -3889,8 +3898,8 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
 
-	SC_D._ui->dateTimeEditStart->setDateTime(start);
-	SC_D._ui->dateTimeEditEnd->setDateTime(end);
+	QT_DTE_SET(SC_D._ui->dateTimeEditStart, start, SCScheme.dateTime.useLocalTime);
+	QT_DTE_SET(SC_D._ui->dateTimeEditEnd, end, SCScheme.dateTime.useLocalTime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
