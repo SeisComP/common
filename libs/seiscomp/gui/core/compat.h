@@ -119,4 +119,16 @@
 	#define QT_EVENT_POS(dropEvent) dropEvent->pos()
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(6,7,0)
+	#define QT_DTE_SET(edit, dt, useLocalTime) do {\
+		edit->setTimeZone(useLocalTime ? QTimeZone(QTimeZone::LocalTime) : QTimeZone::utc());\
+		edit->setDateTime(dt);\
+	} while ( 0 )
+#else
+	#define QT_DTE_SET(edit, dt, useLocalTime) do {\
+		edit->setTimeSpec(useLocalTime ? Qt::TimeSpec::LocalTime : Qt::TimeSpec::UTC);\
+		edit->setDateTime(dt);\
+	} while ( 0 )
+#endif
+
 #endif
