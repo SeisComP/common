@@ -30,9 +30,9 @@
 
 #include "gui.h"
 
-#include <QtGui>
 #include <QApplication>
 #include <QMessageBox>
+#include <QToolBar>
 #include <QSharedMemory>
 #include <QSystemSemaphore>
 #include <QCryptographicHash>
@@ -134,6 +134,15 @@ class RunGuard {
 
 
 int main(int argc, char **argv) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	// This is especially important for displays with a display pixel ratio
+	// greater than 1, e.g. 4k displays. Otherwise QIcon pixmaps will be scaled
+	// up to the native display resolution which looks blurry at best.
+	// In Qt6 this setting is default.
+	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
 	QApplication app(argc, argv);
 
 	filebase = Seiscomp::Environment::Instance()->installDir();

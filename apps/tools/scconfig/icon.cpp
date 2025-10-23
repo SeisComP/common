@@ -1,0 +1,283 @@
+/***************************************************************************
+ * Copyright (C) gempa GmbH                                                *
+ * All rights reserved.                                                    *
+ * Contact: gempa GmbH (seiscomp-dev@gempa.de)                             *
+ *                                                                         *
+ * GNU Affero General Public License Usage                                 *
+ * This file may be used under the terms of the GNU Affero                 *
+ * Public License version 3.0 as published by the Free Software Foundation *
+ * and appearing in the file LICENSE included in the packaging of this     *
+ * file. Please review the following information to ensure the GNU Affero  *
+ * Public License version 3.0 requirements will be met:                    *
+ * https://www.gnu.org/licenses/agpl-3.0.html.                             *
+ *                                                                         *
+ * Other Usage                                                             *
+ * Alternatively, this file may be used in accordance with the terms and   *
+ * conditions contained in a signed written agreement between you and      *
+ * gempa GmbH.                                                             *
+ ***************************************************************************/
+
+
+#include <QApplication>
+#include <QIconEngine>
+#include <QSvgRenderer>
+#include <QPainter>
+#include <QPalette>
+#include <QWidget>
+#include <QFile>
+#include <QPixmapCache>
+
+#include "icon.h"
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+QByteArray changeColor(const QString &path, const QColor &c) {
+	QFile f(path);
+	if ( !f.open(QIODevice::ReadOnly) ) {
+		return {};
+	}
+
+	auto content = f.readAll();
+	if ( c.isValid() ) {
+		auto colorHex = c.name(QColor::HexRgb);
+		content.replace("#000000", 7, qPrintable(colorHex), colorHex.size());
+	}
+
+	return content;
+}
+
+
+QPixmap createPixmap(const QString &name, const QSize &size, double dpr,
+                     const QColor &c = QColor(), const QColor &scaledColor = QColor()) {
+	QString cacheId = c.isValid() ?
+		QString("scconfig_svg_%1_%2x%3_%4_%5")
+		.arg(name).arg(size.width()).arg(size.height())
+		.arg(c.name(QColor::HexArgb)).arg(dpr)
+	:
+		QString("scconfig_svg_%1_%2x%3_%4")
+		.arg(name).arg(size.width()).arg(size.height()).arg(dpr)
+	;
+
+	if ( scaledColor.isValid() ) {
+		cacheId += QString("_%1").arg(scaledColor.name(QColor::HexArgb));
+	}
+
+	QPixmap pm;
+#if QT_VERSION < QT_VERSION_CHECK(5,13,0)
+	if ( QPixmapCache::find(cacheId, pm) ) {
+#else
+	if ( QPixmapCache::find(cacheId, &pm) ) {
+#endif
+		return pm;
+	}
+
+	auto svg = changeColor(":/scconfig/icons/" + name + ".svg", c);
+	QSvgRenderer renderer;
+	if ( !renderer.load(svg) ) {
+		return {};
+	}
+
+	if ( !renderer.isValid() ) {
+		return {};
+	}
+
+	auto actualSize = renderer.defaultSize();
+	if ( !actualSize.isNull() ) {
+		actualSize.scale(size, Qt::KeepAspectRatio);
+	}
+
+	if ( actualSize.isEmpty() ) {
+		return {};
+	}
+
+	actualSize *= dpr;
+
+	QImage img(actualSize, QImage::Format_ARGB32);
+	img.fill(Qt::transparent);
+	{
+		QPainter p(&img);
+		renderer.render(&p);
+		p.end();
+	}
+
+	if ( scaledColor.isValid() ) {
+#if 1
+		int cGray = 0;
+		if ( c.isValid() ) {
+			cGray = (299 * c.red() + 587 * c.green() + 114 * c.blue()) / 1000;
+		}
+
+		int count = img.width() * img.height();
+		QRgb *data = reinterpret_cast<QRgb*>(img.bits());
+		for ( int i = 0; i < count; ++i, ++data ) {
+			int gray = (299 * qRed(*data) + 587 * qGreen(*data) + 114 * qBlue(*data)) / 1000;
+			int diff = 255 + gray - cGray;
+			int red = (diff * scaledColor.red()) >> 8;
+			int green = (diff * scaledColor.green()) >> 8;
+			int blue = (diff * scaledColor.blue()) >> 8;
+			if ( red < 0 ) { red = 0; } else if ( red > 255 ) { red = 255; }
+			if ( green < 0 ) { green = 0; } else if ( green > 255 ) { green = 255; }
+			if ( blue < 0 ) { blue = 0; } else if ( blue > 255 ) { blue = 255; }
+			*data = qRgba(red, green, blue, qAlpha(*data));
+		}
+#else
+		int cRed = 0, cGreen = 0, cBlue = 0;
+		if ( c.isValid() ) {
+			cRed = c.red();
+			cGreen = c.green();
+			cBlue = c.blue();
+		}
+
+		int count = img.width() * img.height();
+		QRgb *data = reinterpret_cast<QRgb*>(img.bits());
+		for ( int i = 0; i < count; ++i, ++data ) {
+			int red = ((255 + qRed(*data) - cRed) * scaledColor.red()) >> 8;
+			int green = ((255 + qGreen(*data) - cGreen) * scaledColor.green()) >> 8;
+			int blue = ((255 + qBlue(*data) - cBlue) * scaledColor.blue()) >> 8;
+			if ( red < 0 ) { red = 0; } else if ( red > 255 ) { red = 255; }
+			if ( green < 0 ) { green = 0; } else if ( green > 255 ) { green = 255; }
+			if ( blue < 0 ) { blue = 0; } else if ( blue > 255 ) { blue = 255; }
+			*data = qRgba(red, green, blue, qAlpha(*data));
+		}
+#endif
+	}
+
+	pm = QPixmap::fromImage(img);
+	pm.setDevicePixelRatio(qApp->devicePixelRatio());
+
+	QPixmapCache::insert(cacheId, pm);
+
+	return pm;
+}
+
+
+class IconEngine : public QIconEngine {
+	public:
+		explicit IconEngine(const QString &name) {
+			parseName(name);
+		}
+
+		explicit IconEngine(const QColor &cOnOff, const QString &name)
+		: _color(cOnOff), _colorOff(cOnOff) {
+			parseName(name);
+		}
+
+		explicit IconEngine(const QColor &cOn, const QColor &cOff, const QString &name)
+		: _color(cOn), _colorOff(cOff) {
+			parseName(name);
+		}
+
+	private:
+		explicit IconEngine(const QColor &cOn, const QColor &cOff, const QString &nameOn, const QString &nameOff)
+		: _color(cOn), _colorOff(cOff), _nameOn(nameOn), _nameOff(nameOff) {}
+
+	private:
+		void parseName(const QString &name) {
+			int p = name.indexOf('|');
+			if ( p < 0 ) {
+				_nameOn = _nameOff = name;
+			}
+			else {
+				_nameOn = name.left(p);
+				_nameOff = name.right(name.length() - p - 1);
+			}
+		}
+
+	public:
+		QIconEngine *clone() const override {
+			return new IconEngine(_color, _colorOff, _nameOn, _nameOff);
+		}
+
+		QSize actualSize(const QSize &size, QIcon::Mode, QIcon::State) override {
+			return createPixmap(_nameOn, size, 1.0).size();
+		}
+
+		QString key() const override {
+			return "scconfig_svg_coloured";
+		}
+
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+		QString iconName() override {
+#else
+		QString iconName() const override {
+#endif
+			return _nameOn != _nameOff ? (_nameOn + '|' + _nameOff) : _nameOn;
+		}
+
+		void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override {
+			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
+			if ( !color.isValid() ) {
+				color = qApp->palette().color(QPalette::Normal, QPalette::Text);
+			}
+
+			QColor scaledColor;
+			if ( mode == QIcon::Disabled ) {
+				scaledColor = qApp->palette().color(QPalette::Disabled, QPalette::Text);
+			}
+
+			painter->drawPixmap(
+				rect.left(), rect.top(),
+				createPixmap(
+					state == QIcon::On ? _nameOn : _nameOff,
+					rect.size(), painter->device()->devicePixelRatioF(), color, scaledColor
+				)
+			);
+		}
+
+		QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override {
+			QColor color = ( state == QIcon::On ) ? _color : _colorOff;
+			if ( !color.isValid() ) {
+				color = qApp->palette().color(QPalette::Normal, QPalette::Text);
+			}
+
+			QColor scaledColor;
+			if ( mode == QIcon::Disabled ) {
+				scaledColor = qApp->palette().color(QPalette::Disabled, QPalette::Text);
+			}
+
+			return createPixmap(
+				state == QIcon::On ? _nameOn : _nameOff,
+				size, 1.0, color, scaledColor
+			);
+		}
+
+	private:
+		QColor  _color;
+		QColor  _colorOff;
+		QString _nameOn;
+		QString _nameOff;
+};
+
+
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QIcon icon(QString name) {
+	return QIcon(new IconEngine(name));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QIcon icon(QString name, const QColor &cOn) {
+	return QIcon(new IconEngine(cOn, name));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QIcon icon(QString name, const QColor &cOn, const QColor &cOff) {
+	return QIcon(new IconEngine(cOn, cOff, name));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

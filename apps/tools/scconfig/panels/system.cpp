@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 
+#include "../gui.h"
+#include "../icon.h"
 #include "system.h"
 #include <seiscomp/system/environment.h>
 
@@ -33,11 +35,13 @@
 #include <QTextEdit>
 #include <QToolBar>
 
-#include <iostream>
 
 using namespace std;
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
+
 
 class LogDialog : public QDialog {
 	public:
@@ -69,7 +73,12 @@ class LogDialog : public QDialog {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SystemPanel::SystemPanel(QWidget *parent)
 : ConfiguratorPanel(false, parent) {
 	QPalette pal;
@@ -77,9 +86,9 @@ SystemPanel::SystemPanel(QWidget *parent)
 	_process = NULL;
 
 	_name = "System";
-	_icon = QIcon(":/res/icons/system.png");
+	_icon = QIcon(":/scconfig/icons/menu_scconfig_system.svg");
 	setHeadline("System");
-	setDescription("The current status of the system");
+	setDescription("Module status and control");
 
 	QVBoxLayout *l = new QVBoxLayout;
 	l->setContentsMargins(0, 0, 0, 0);
@@ -95,71 +104,69 @@ SystemPanel::SystemPanel(QWidget *parent)
 	_cmdToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	l->addWidget(_cmdToolBar);
 
-	_helpLabel = new QLabel;
-	pal = _helpLabel->palette();
-	pal.setColor(QPalette::Window, QColor(255,255,204));
-	_helpLabel->setPalette(pal);
+	_helpLabel = new StatusLabel;
 	_helpLabel->setWordWrap(true);
-	_helpLabel->setAutoFillBackground(true);
-	_helpLabel->setMargin(4);
-	//_helpLabel->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-	_helpLabel->setText(
-	            tr("All commands (such as 'start', 'stop') will affect all "
-	               "modules which rows are currently selected. If no row is "
-	               "selected, all modules are affected. You can clear the row "
-	               "selection with ESC.")
-	);
+	_helpLabel->setInfoText(
+	            tr("Commands ('Start', 'Stop', ...) only affect the selected "
+	               "modules. Without selection, all modules are affected. "
+	               "Press ESC for clearing all selections."
+	));
 
 	l->addWidget(_helpLabel);
 
-	QAction *a = _cmdToolBar->addAction("Refresh");
-	a->setToolTip("Refresh the state of the modules");
-	a->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
+	QAction *a = _cmdToolBar->addAction(tr("Refresh"));
+	a->setToolTip("Refresh the shown state of the modules");
+	a->setIcon(::icon("refresh"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(updateModuleState()));
 
 	_cmdToolBar->addSeparator();
 	//_cmdToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-	a = _cmdToolBar->addAction("Start");
+	a = _cmdToolBar->addAction(tr("Start"));
 	a->setToolTip("Start modules");
-	a->setIcon(QIcon(":/res/icons/start.png"));
+	a->setIcon(::icon("start_color"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(start()));
 
-	a = _cmdToolBar->addAction("Stop");
+	a = _cmdToolBar->addAction(tr("Stop"));
 	a->setToolTip("Stop modules");
-	a->setIcon(QIcon(":/res/icons/stop.png"));
+	a->setIcon(::icon("stop_color"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(stop()));
 
-	a = _cmdToolBar->addAction("Restart");
+	a = _cmdToolBar->addAction(tr("Restart"));
 	a->setToolTip("Stop and start modules");
-	a->setIcon(QIcon(":/res/icons/restart.png"));
+	a->setIcon(::icon("module_restart"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(restart()));
 
-	a = _cmdToolBar->addAction("Check");
+	a = _cmdToolBar->addAction(tr("Check"));
 	a->setToolTip("Restart modules which stopped unexpectedly");
-	a->setIcon(QIcon(":/res/icons/check.png"));
+	a->setIcon(::icon("module_check"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(check()));
 
-	a = _cmdToolBar->addAction("Reload");
-	a->setToolTip("Reload the module configuration and apply during runtime of the module. Not supported by all modules.");
-	a->setIcon(QIcon(":/res/icons/reload.png"));
+	a = _cmdToolBar->addAction(tr("Reload"));
+	a->setToolTip("Reload the module configuration and apply during runtime of "
+	              "the module. Supported only be specific modules.");
+	a->setIcon(::icon("reload_config"));
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(reload()));
 
 	_cmdToolBar->addSeparator();
 
-	_enable = _cmdToolBar->addAction("Enable module(s)");
-	_enable->setIcon(QIcon(":/res/icons/autostart_add.png"));
+	_enable = _cmdToolBar->addAction(tr("Enable"));
+	_enable->setToolTip("Enable selected modules for default startup");
+	_enable->setIcon(::icon("module_enable"));
 	connect(_enable, SIGNAL(triggered(bool)), this, SLOT(enable()));
 
-	_disable = _cmdToolBar->addAction("Disable module(s)");
-	_disable->setIcon(QIcon(":/res/icons/autostart_remove.png"));
+	_disable = _cmdToolBar->addAction(tr("Disable"));
+	_disable->setToolTip("Disable selected modules from default startup");
+	_disable->setIcon(::icon("module_disable"));
 	connect(_disable, SIGNAL(triggered(bool)), this, SLOT(disable()));
 
 	_cmdToolBar->addSeparator();
 
-	a = _cmdToolBar->addAction("Update configuration");
-	a->setIcon(QIcon(":/res/icons/update-config.png"));
-	a->setToolTip("Synchronize inventory, keys and bindings. Sent bindings configuration to messaging for writing to the database.");
+	a = _cmdToolBar->addAction(tr("Update config"));
+	a->setIcon(::icon("module_update_config"));
+	a->setToolTip("Synchronize inventory, keys and bindings. Send inventory and "
+	              "bindings configuration to messaging for writing to database. "
+	              "Also generate configuration of standalone modules");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(updateConfig()));
 
 	QSplitter *splitter = new QSplitter(Qt::Horizontal);
@@ -220,7 +227,12 @@ SystemPanel::SystemPanel(QWidget *parent)
 	connect(clearSelection, SIGNAL(triggered()), _procTable->selectionModel(), SLOT(clearSelection()));
 	addAction(clearSelection);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::onContextMenuRequested(const QPoint &pos) {
 	QMenu menu;
 
@@ -261,7 +273,12 @@ void SystemPanel::onContextMenuRequested(const QPoint &pos) {
 		showLog(moduleLogFileName, logFile.readAll());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::showLog(const QString fileName, const QString &text) {
 	LogDialog dlg;
 	dlg.setWindowTitle("Log file: " + fileName);
@@ -273,9 +290,12 @@ void SystemPanel::showLog(const QString fileName, const QString &text) {
 	}
 	dlg.exec();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::setModel(ConfigurationTreeItemModel *model) {
 	if ( _model ) _model->disconnect(this);
 
@@ -284,19 +304,27 @@ void SystemPanel::setModel(ConfigurationTreeItemModel *model) {
 	connect(_model, SIGNAL(modificationChanged(bool)),
 	        this, SLOT(modificationChanged(bool)));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::activated() {
 	modificationChanged(_model->isModified());
 	updateModuleState();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::modificationChanged(bool changed) {
 	if ( changed ) {
 		_status->setWarningText(
-			tr("The configuration is changed but has not been saved yet. It must "
-		       "be saved to run all configuration commands as expected.")
+			tr("Module and/or binding configuration was changed but not saved. "
+		       "Save configuration to apply before running commands.")
 		);
 
 		_status->show();
@@ -304,8 +332,12 @@ void SystemPanel::modificationChanged(bool changed) {
 	else
 		_status->hide();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::updateModuleState(bool logOutput) {
 	setCursor(Qt::WaitCursor);
 
@@ -395,13 +427,18 @@ void SystemPanel::updateModuleState(bool logOutput) {
 				break;
 			case 0:
 				state->setText("not running");
-				if ( f == 1 )
-					state->setBackground(QColor(255,192,192));
-				else
+				if ( f == 1 ) {
+					state->setForeground(Qt::white);
+					state->setBackground(QColor(229, 34, 34));
+				}
+				else {
+					state->setForeground(Qt::NoBrush);
 					state->setBackground(Qt::NoBrush);
+				}
 				break;
 			default:
-				state->setBackground(QColor(192,255,192));
+				state->setForeground(Qt::white);
+				state->setBackground(QColor(0, 166, 0));
 				state->setText("running");
 				break;
 		}
@@ -409,11 +446,11 @@ void SystemPanel::updateModuleState(bool logOutput) {
 		switch ( a ) {
 			case 0:
 				active->setText("Off");
-				active->setForeground(Qt::darkRed);
+				active->setForeground(QColor(229, 34, 34));
 				break;
 			case 1:
 				active->setText("On");
-				active->setForeground(Qt::darkGreen);
+				active->setForeground(QColor(0, 166, 0));
 				break;
 			default:
 				active->setText("-");
@@ -445,58 +482,104 @@ void SystemPanel::updateModuleState(bool logOutput) {
 
 	unsetCursor();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::logStdOut(const QByteArray &data) {
 	_logWindow->setTextColor(palette().color(QPalette::Text));
 	_logWindow->insertPlainText(data.constData());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::logStdErr(const QByteArray &data) {
 	_logWindow->setTextColor(QColor(128,92,0));
 	_logWindow->insertPlainText(data.constData());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::start() {
 	runSeiscomp(QStringList() << "start");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::stop() {
 	runSeiscomp(QStringList() << "stop");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::restart() {
 	runSeiscomp(QStringList() << "restart");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::reload() {
 	runSeiscomp(QStringList() << "reload");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::check() {
 	runSeiscomp(QStringList() << "check");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::enable() {
 	runSeiscomp(QStringList() << "enable");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::disable() {
 	runSeiscomp(QStringList() << "disable");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::updateConfig() {
 	runSeiscomp(QStringList() << "update-config");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::runSeiscomp(const QStringList &params_) {
 	if ( _process ) return;
 
@@ -531,18 +614,30 @@ void SystemPanel::runSeiscomp(const QStringList &params_) {
 	_procLabel->setText("Running");
 	_cmdToolBar->setEnabled(false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::readStdout() {
 	logStdOut(_process->readAllStandardOutput());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::readStderr() {
 	logStdErr(_process->readAllStandardError());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::processFinished(int code, QProcess::ExitStatus status) {
 	delete _process;
 	_process = NULL;
@@ -551,3 +646,4 @@ void SystemPanel::processFinished(int code, QProcess::ExitStatus status) {
 
 	updateModuleState(false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

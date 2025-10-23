@@ -72,7 +72,7 @@ class SystemPanel : public ConfiguratorPanel {
 		QAction      *_disable;
 		QAction      *_updateConfig;
 		StatusLabel  *_status;
-		QLabel       *_helpLabel;
+		StatusLabel  *_helpLabel;
 };
 
 

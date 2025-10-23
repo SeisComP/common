@@ -20,6 +20,8 @@
 
 #include "inventory.h"
 #include "inspector.h"
+#include "../icon.h"
+#include "../dialogs/importfdsnws.h"
 
 #include <seiscomp/system/environment.h>
 #include <seiscomp/io/archive/xmlarchive.h>
@@ -37,6 +39,7 @@
 #include <QVBoxLayout>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 /** The code to parse VT100 escape sequences is taken from KSysGuard,
     KTextEditVT.cpp.
 
@@ -89,16 +92,20 @@ class LogDialog : public QTextEdit {
 				if ( escape_CSI || escape_OSC ) {
 					if ( c.isDigit() ) {
 						if ( !escape_number_seperator ) {
-							if ( escape_number1 == -1 )
+							if ( escape_number1 == -1 ) {
 								escape_number1 = c.digitValue();
-							else
+							}
+							else {
 								escape_number1 = escape_number1*10 + c.digitValue();
+							}
 						}
 						else {
-							if ( escape_number2 == -1 )
+							if ( escape_number2 == -1 ) {
 								escape_number2 = c.digitValue();
-							else
+							}
+							else {
 								escape_number2 = escape_number2*10 + c.digitValue();
+							}
 
 						}
 					}
@@ -109,16 +116,20 @@ class LogDialog : public QTextEdit {
 						//Throw away any letters that are not OSC
 						escape_code = c;
 					}
-					else if ( escape_CSI )
+					else if ( escape_CSI ) {
 						escape_code = c;
+					}
 				}
-				else if ( c=='[' )
+				else if ( c=='[' ) {
 					escape_CSI = true;
-				else if ( c==']' )
+				}
+				else if ( c==']' ) {
 					escape_OSC = true;
+				}
 				else if ( c=='(' || c==')' ) {}
-				else
+				else {
 					escape_code = c;
+				}
 
 				if ( !escape_code.isNull() ) {
 					//We've read in the whole escape sequence.  Now parse it
@@ -167,17 +178,21 @@ class LogDialog : public QTextEdit {
 					escape_number_seperator = false;
 				}
 			}
-			else if ( c == QChar(0x0d) )
+			else if ( c == QChar(0x0d) ) {
 				insertPlainText(QChar('\n'));
-			else if ( c.isPrint() || c == '\n' )
+			}
+			else if ( c.isPrint() || c == '\n' ) {
 				insertPlainText(QChar(c));
+			}
 			else if ( true /* parse ansi */ ) {
-				if ( c == QChar(127) || c == QChar(8) )
+				if ( c == QChar(127) || c == QChar(8) ) {
 					// delete or backspace, respectively
 					textCursor().deletePreviousChar();
-				else if ( c == QChar(27) )
+				}
+				else if ( c == QChar(27) ) {
 					// escape key
 					escape_sequence = true;
+				}
 				else if ( c == QChar(0x9b) ) {
 					// CSI - equivalent to esc [
 					escape_sequence = true;
@@ -209,11 +224,15 @@ class LogDialog : public QTextEdit {
 		bool  escape_number_seperator;
 		QChar escape_code;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class StatusPanel : public QWidget {
 	public:
-		StatusPanel(QWidget *parent = NULL) : QWidget(parent) {
+		StatusPanel(QWidget *parent = nullptr) : QWidget(parent) {
 			setAutoFillBackground(true);
 
 			QPalette pal = palette();
@@ -268,8 +287,12 @@ class StatusPanel : public QWidget {
 	private:
 		QLabel *_label;
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessWidget::ProcessWidget(QWidget *parent) : QDialog(parent) {
 	// Create widgets
 	_btnOK = new QPushButton;
@@ -303,22 +326,32 @@ ProcessWidget::ProcessWidget(QWidget *parent) : QDialog(parent) {
 
 	resize(500, 600);
 
-	_process = NULL;
+	_process = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessWidget::~ProcessWidget() {
 	if ( _process ) {
 		delete _process;
-		_process = NULL;
+		_process = nullptr;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int ProcessWidget::start(const QString &cmd, const QStringList &params) {
 	_exitCode = -1;
 
-	if ( _process != NULL ) return _exitCode;
+	if ( _process ) {
+		return _exitCode;
+	}
 
 	_status->hide();
 
@@ -332,7 +365,7 @@ int ProcessWidget::start(const QString &cmd, const QStringList &params) {
 	        this, SLOT(readStderr()));
 	connect(_process, SIGNAL(readyReadStandardOutput()),
 	        this, SLOT(readStdout()));
-	connect(_process, SIGNAL(finished(int, QProcess::ExitStatus)),
+	connect(_process, SIGNAL(finished(int,QProcess::ExitStatus)),
 	        this, SLOT(processFinished(int,QProcess::ExitStatus)));
 
 	connect(_btnStop, SIGNAL(clicked()), _process, SLOT(terminate()));
@@ -347,8 +380,12 @@ int ProcessWidget::start(const QString &cmd, const QStringList &params) {
 
 	return _exitCode;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::done(int r) {
 	if ( _process ) {
 		if ( _process->state() != QProcess::NotRunning ) {
@@ -359,18 +396,26 @@ void ProcessWidget::done(int r) {
 			}
 		}
 		delete _process;
-		_process = NULL;
+		_process = nullptr;
 	}
 
 	QDialog::done(r);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::started() {
 	//
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::error(QProcess::ProcessError) {
 	_btnOK->setEnabled(true);
 	_btnStop->setEnabled(false);
@@ -378,20 +423,32 @@ void ProcessWidget::error(QProcess::ProcessError) {
 	_status->setError(tr("Program failed to start"));
 	_status->show();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::readStderr() {
 	_logWindow->setTextColor(Qt::darkGray);
 	_logWindow->insertPlainText(_process->readAllStandardError());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::readStdout() {
 	_logWindow->setTextColor(Qt::black);
 	_logWindow->insertPlainText(_process->readAllStandardOutput());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessWidget::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
 	if ( exitStatus == QProcess::NormalExit )
 		_exitCode = exitCode;
@@ -402,8 +459,12 @@ void ProcessWidget::processFinished(int exitCode, QProcess::ExitStatus exitStatu
 	_status->setStatus(exitCode, exitStatus);
 	_status->show();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImportDialog::ImportDialog(const QStringList &formats, QWidget *parent) : QDialog(parent) {
 	setWindowTitle("Import");
 
@@ -442,14 +503,14 @@ ImportDialog::ImportDialog(const QStringList &formats, QWidget *parent) : QDialo
 	                         "on the selected format (and thus the converter being "
 	                         "used)."));
 
-	QToolButton *openFD = new QToolButton;
+	auto *openFD = new QToolButton;
 	openFD->setText(tr("..."));
 
 	grid->addWidget(sourceLabel, 1, 0);
 	grid->addWidget(_source, 1, 1);
 	grid->addWidget(openFD, 1, 2);
 
-	connect(openFD, SIGNAL(clicked()), this, SLOT(openFileDialog()));
+	connect(openFD, &QToolButton::clicked, this, &ImportDialog::openFileDialog);
 
 	layout->addLayout(grid);
 
@@ -471,18 +532,30 @@ ImportDialog::ImportDialog(const QStringList &formats, QWidget *parent) : QDialo
 
 	layout->addLayout(hl);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString ImportDialog::format() const {
 	return _formats->currentText();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString ImportDialog::source() const {
 	return _source->text();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImportDialog::openFileDialog() {
 	QFileDialog dialog(this);
 	dialog.setFileMode(QFileDialog::ExistingFile);
@@ -490,26 +563,31 @@ void ImportDialog::openFileDialog() {
 
 	if ( dialog.exec() ) {
 		QStringList fileNames = dialog.selectedFiles();
-		if ( fileNames.empty() ) return;
+		if ( fileNames.empty() ) {
+			return;
+		}
 		_source->setText(fileNames.front());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 InventoryPanel::InventoryPanel(QWidget *parent)
 : ConfiguratorPanel(false, parent) {
 	_name = "Inventory";
-	_icon = QIcon(":/res/icons/inventory.png");
+	_icon = QIcon(":/scconfig/icons/menu_scconfig_inventory.svg");
 	setHeadline("Inventory");
-	setDescription("Shows available inventory files and provides options to "
-	               "import inventory data also from other formats via import_inv.");
+	setDescription("Control and synchronize inventory files.");
 
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	QString inventoryDir = QDir::toNativeSeparators((env->installDir() + "/etc/inventory").c_str());
 	QDir invDir(inventoryDir);
 	if ( !invDir.exists() ) {
 		if ( !invDir.mkpath(".") ) {
-			QMessageBox::warning(NULL, "Path missing",
+			QMessageBox::warning(nullptr, "Path missing",
 			                     "Inventory folder does not exists and\n"
 			                     "creation failed.");
 			return;
@@ -518,11 +596,12 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 
 	QVBoxLayout *l = new QVBoxLayout;
 	setMargin(l, 0);
-	l->setSpacing(0);
+	l->setSpacing(1);
 	setLayout(l);
 
 	QToolBar *folderViewTools = new QToolBar;
-	folderViewTools->setIconSize(QSize(24,24));
+	folderViewTools->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	folderViewTools->setIconSize(QSize(24, 24));
 	folderViewTools->setAutoFillBackground(true);
 	folderViewTools->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
@@ -540,16 +619,6 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	QAction *checkFileAction = new QAction(tr("Check"), this);
 	checkFileAction->setShortcut(QKeySequence(Qt::Key_F1));
 	connect(checkFileAction, SIGNAL(triggered(bool)), this, SLOT(testInventoryFile()));
-
-	_folderView = new QListView;
-	_folderView->setFrameShape(QFrame::NoFrame);
-	_folderView->setResizeMode(QListView::Adjust);
-	_folderView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_folderView->setContextMenuPolicy(Qt::ActionsContextMenu);
-	_folderView->addAction(inspectFileAction);
-	_folderView->addAction(checkFileAction);
-	_folderView->addAction(deleteFileAction);
-	_folderView->addAction(renameFileAction);
 
 	_folderTree = new QTreeView;
 	_folderTree->setAutoFillBackground(true);
@@ -569,120 +638,115 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	connect(_folderTree->header(), SIGNAL(sectionClicked(int)),
 	        this, SLOT(headerSectionClicked(int)));
 
-	QAction *a = folderViewTools->addAction("Icons");
-	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogContentsView));
-	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToIconView()));
-
-	a = folderViewTools->addAction("List");
-	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogListView));
-	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToListView()));
-
-	a = folderViewTools->addAction("Details");
-	a->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
-	connect(a, SIGNAL(triggered(bool)), this, SLOT(switchToDetailedView()));
-
-	folderViewTools->addSeparator();
-
-	a = folderViewTools->addAction("Import");
+	auto a = folderViewTools->addAction("Import");
+	a->setIcon(::icon("import"));
 	a->setToolTip("Import inventory files in SC3ML or other supported formats.");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(import()));
+
+	a = folderViewTools->addAction("FDSNWS");
+	a->setIcon(::icon("import"));
+	a->setToolTip("Import inventory from FDSN web service.");
+	connect(a, &QAction::triggered, this, [this]() {
+		ImportFDSNWSDialog dlg(this);
+		dlg.exec();
+	});
 
 	folderViewTools->addSeparator();
 
 	a = folderViewTools->addAction("Check");
+	a->setIcon(::icon("module_check"));
 	a->setToolTip("Check consistency of all inventory files and report conflicts."
 	              "\nApplies: scinv check"
 	              "\nDefine criteria in scinv module configuration.");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(testInventory()));
+
 	a = folderViewTools->addAction("Sync keys");
+	a->setIcon(::icon("sync"));
 	a->setToolTip("Synchronize key files from inventory. Delete key files from non-existing stations.\nApplies: scinv keys");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(syncKeys()));
+
 	folderViewTools->addSeparator();
+
 	a = folderViewTools->addAction("Test sync");
 	a->setToolTip("Test synchronization of key files and sending to the messaging.\nApplies: scinv sync --test");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(testSync()));
+
 	a = folderViewTools->addAction("Sync");
 	a->setToolTip("Synchronize all key files and send to the messaging.\nApplies: scinv sync");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(sync()));
 
 	l->addWidget(folderViewTools);
-	l->addWidget(_folderView);
 	l->addWidget(_folderTree);
 
 	_folderModel->setRootPath(inventoryDir);
-
-	_folderView->setModel(_folderModel);
-	_folderTree->setModel(_folderModel);
-
 	_selectionModel = new QItemSelectionModel(_folderModel, this);
 
+	_folderTree->setModel(_folderModel);
 	_folderTree->setSelectionModel(_selectionModel);
-	_folderView->setSelectionModel(_selectionModel);
-
-	QModelIndex root = _folderModel->index(inventoryDir);
-
-	_folderView->setRootIndex(root);
-	_folderTree->setRootIndex(root);
-
-	switchToDetailedView();
+	_folderTree->setRootIndex(_folderModel->index(inventoryDir));
+	_folderTree->sortByColumn(0, Qt::AscendingOrder);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void InventoryPanel::showEvent(QShowEvent *event) {
+	ConfiguratorPanel::showEvent(event);
+	_folderTree->resizeColumnToContents(0);
+	_folderTree->resizeColumnToContents(1);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int InventoryPanel::runProc(const QString &cmd, const QStringList &params) {
 	ProcessWidget proc;
 	return proc.start(cmd, params);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int InventoryPanel::runSCProc(const QString &cmd, const QStringList &params) {
 	QStringList sc_params;
 	sc_params << "exec" << cmd << params;
 	return runSC(sc_params);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int InventoryPanel::runSC(const QStringList &params) {
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	QString cmd = QString("%1%2")
-	              .arg(env->installDir().c_str()).arg("/bin/seiscomp");
+	              .arg(env->installDir().c_str(), "/bin/seiscomp");
 	return runProc(cmd, params);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::headerSectionClicked(int logicalIndex) {
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 	QString inventoryDir = QDir::toNativeSeparators((env->installDir() + "/etc/inventory").c_str());
-
-	QModelIndex root = _folderModel->index(inventoryDir);
-
-	_folderView->setRootIndex(root);
-	_folderTree->setRootIndex(root);
+	_folderTree->setRootIndex(_folderModel->index(inventoryDir));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void InventoryPanel::switchToIconView() {
-	_folderTree->hide();
-	_folderView->show();
-	_folderView->setViewMode(QListView::IconMode);
-	_folderView->setGridSize(QSize(64,64));
-}
 
 
-void InventoryPanel::switchToListView() {
-	_folderTree->hide();
-	_folderView->show();
-	_folderView->setViewMode(QListView::ListMode);
-	_folderView->setGridSize(QSize());
-	_folderView->setSpacing(0);
-}
-
-
-void InventoryPanel::switchToDetailedView() {
-	_folderView->hide();
-	_folderTree->show();
-}
-
-
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::deleteFiles() {
 	QModelIndexList indexes;
 	indexes = _selectionModel->selectedIndexes();
@@ -700,10 +764,16 @@ void InventoryPanel::deleteFiles() {
 		toBeDeleted.append(/*_sortModel->mapToSource(i)*/i);
 
 	foreach ( const QPersistentModelIndex &i, toBeDeleted )
-		if ( i.isValid() ) _folderModel->remove(i);
+		if ( i.isValid() ) {
+			_folderModel->remove(i);
+		}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::renameFile() {
 	QModelIndexList indexes;
 	indexes = _selectionModel->selectedRows();
@@ -729,7 +799,12 @@ void InventoryPanel::renameFile() {
 	QFile file(source);
 	file.rename(newFile);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::inspectFile() {
 	QModelIndexList indexes;
 	indexes = _selectionModel->selectedRows();
@@ -768,8 +843,12 @@ void InventoryPanel::inspectFile() {
 	dlg.setObject(obj.get());
 	dlg.exec();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::import() {
 	QProcess proc;
 	proc.start("import_inv", QStringList() << "help" << "formats", QProcess::Unbuffered | QProcess::ReadWrite);
@@ -802,7 +881,9 @@ void InventoryPanel::import() {
 	}
 
 	ImportDialog dlg(formats);
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
 
 	QString format = dlg.format();
 	QString source = dlg.source();
@@ -819,20 +900,35 @@ void InventoryPanel::import() {
 		return;
 	}
 
-	runSCProc("import_inv", QStringList() << format << source);
+	if ( runSCProc("import_inv", QStringList() << format << source) == 0 ) {
+		_folderTree->resizeColumnToContents(0);
+		_folderTree->resizeColumnToContents(1);
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::testInventory() {
 	runSCProc("scinv", QStringList() << "check");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::testSync() {
 	runSCProc("scinv", QStringList() << "sync" << "--test");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::testInventoryFile() {
 	QModelIndexList indexes;
 	indexes = _selectionModel->selectedRows();
@@ -852,8 +948,12 @@ void InventoryPanel::testInventoryFile() {
 
 	runSCProc("scinv", QStringList() << "check" << target);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::sync() {
 	if ( QMessageBox::question(NULL, "Sync",
 	           "Synchronization will modify the database.\n"
@@ -865,11 +965,16 @@ void InventoryPanel::sync() {
 	     ) != QMessageBox::Yes )
 		return;
 
-	if ( runSCProc("scinv", QStringList() << "sync") == 0 )
+	if ( runSCProc("scinv", QStringList() << "sync") == 0 ) {
 		emit reloadRequested();
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InventoryPanel::syncKeys() {
 	if ( QMessageBox::question(NULL, "Sync keys",
 	           "Unless an error is raised the current unsaved bindings "
@@ -883,3 +988,4 @@ void InventoryPanel::syncKeys() {
 	if ( runSCProc("scinv", QStringList() << "keys") == 0 )
 		emit reloadRequested();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

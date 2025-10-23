@@ -48,7 +48,7 @@ class ProcessWidget : public QDialog {
 		~ProcessWidget();
 
 		int start(const QString &cmd, const QStringList &params);
-		void done(int r);
+		void done(int r) override;
 
 
 	private slots:
@@ -95,6 +95,10 @@ class InventoryPanel : public ConfiguratorPanel {
 		InventoryPanel(QWidget *parent = 0);
 
 
+	protected:
+		void showEvent(QShowEvent *) override;
+
+
 	private:
 		int runProc(const QString &cmd, const QStringList &params);
 		int runSCProc(const QString &cmd, const QStringList &params);
@@ -104,9 +108,6 @@ class InventoryPanel : public ConfiguratorPanel {
 	private slots:
 		void headerSectionClicked(int);
 
-		void switchToIconView();
-		void switchToListView();
-		void switchToDetailedView();
 		void renameFile();
 		void deleteFiles();
 		void inspectFile();
@@ -120,7 +121,6 @@ class InventoryPanel : public ConfiguratorPanel {
 
 
 	private:
-		QListView             *_folderView;
 		QTreeView             *_folderTree;
 		QFileSystemModel      *_folderModel;
 		QItemSelectionModel   *_selectionModel;

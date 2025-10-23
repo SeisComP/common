@@ -25,30 +25,9 @@
 
 
 class QAction;
+class QPushButton;
 class QTreeView;
-
-class BindingsViewDelegate : public QItemDelegate {
-	Q_OBJECT
-
-	public:
-		BindingsViewDelegate(QObject *parent = 0);
-
-		QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-		                      const QModelIndex &index) const;
-
-		void setEditorData(QWidget *editor, const QModelIndex &index) const;
-		void setModelData(QWidget *editor, QAbstractItemModel *model,
-		                  const QModelIndex &index) const;
-
-		QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index ) const;
-
-		void updateEditorGeometry(QWidget *editor,
-		                          const QStyleOptionViewItem &option,
-		                          const QModelIndex &index) const;
-
-	private slots:
-		void profileChanged(const QString &text);
-};
+class SearchWidget;
 
 
 class BindingView : public QWidget {
@@ -62,14 +41,17 @@ class BindingView : public QWidget {
 
 		void setModel(ConfigurationTreeItemModel *base, QAbstractItemModel *model);
 		void setRootIndex(const QModelIndex & index);
+		QModelIndex rootIndex() const { return _rootIndex; }
+		void saved();
 
+	signals:
+		void closeRequested();
 
 	private slots:
 		void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 		void rowsRemoved(const QModelIndex &parent, int start, int end);
 
-		void search(const QString &text);
-		void search();
+		void openSearch();
 		void closeSearch();
 
 
@@ -77,9 +59,10 @@ class BindingView : public QWidget {
 		QAbstractItemModel                     *_model;
 		QPersistentModelIndex                   _rootIndex;
 		QWidget                                *_header;
-		QWidget                                *_searchWidget;
+		SearchWidget                           *_searchWidget;
 		QLabel                                 *_icon;
 		QLabel                                 *_label;
+		QPushButton                            *_closeButton;
 		ConfigurationTreeItemModel             *_bindingModel;
 		QAbstractItemView                      *_view;
 };
@@ -92,7 +75,8 @@ class BindingsPanel : public ConfiguratorPanel {
 		BindingsPanel(QWidget *parent = 0);
 
 	protected:
-		void setModel(ConfigurationTreeItemModel *model);
+		void setModel(ConfigurationTreeItemModel *model) override;
+		void saved() override;
 
 	private:
 		void deleteStation(const QModelIndex &idx);
@@ -107,6 +91,7 @@ class BindingsPanel : public ConfiguratorPanel {
 		void collectModuleBindings(ModuleBindingMap &, const QModelIndex &idx);
 
 	public:
+		void updateIndication();
 		bool assignProfile(const QModelIndex &, const QString &module,
 		                   const QString &profile);
 
@@ -141,21 +126,18 @@ class BindingsPanel : public ConfiguratorPanel {
 
 
 	private:
-		QAbstractItemView      *_stationsTreeView;
-		QListView              *_stationsFolderView;
-		QAbstractItemView      *_modulesView;
-		QListView              *_modulesFolderView;
-		BindingView            *_bindingView;
-		QStandardItemModel     *_bindingsModel;
-		QStandardItemModel     *_profilesModel;
-		QAction                *_folderLevelUp;
-		QAction                *_deleteItem;
-		QAction                *_addProfile;
-		QAction                *_deleteProfile;
-
-		QIcon                   _docIcon;
-		QIcon                   _linkIcon;
-		QIcon                   _docFolder;
+		QAbstractItemView               *_stationsTreeView;
+		QListView                       *_stationsFolderView;
+		QAbstractItemView               *_modulesView;
+		QListView                       *_modulesFolderView;
+		BindingView                     *_bindingView;
+		QStandardItemModel              *_bindingsModel;
+		QStandardItemModel              *_profilesModel;
+		QAction                         *_folderLevelUp;
+		QAction                         *_deleteItem;
+		QAction                         *_addProfile;
+		QAction                         *_deleteProfile;
+		Seiscomp::System::ModuleBinding *_currentBinding{nullptr};
 };
 
 

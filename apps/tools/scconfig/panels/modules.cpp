@@ -17,8 +17,11 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include "modules.h"
 #include "../fancyview.h"
+#include "../icon.h"
+#include "../searchwidget.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -37,15 +40,37 @@ using namespace Seiscomp;
 using namespace Seiscomp::System;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
+
+/*
+void dumpTree(QModelIndex start, int indent = 0) {
+	int rows = start.model()->rowCount(start);
+	for ( int i = 0; i < rows; ++i ) {
+		auto idx = start.model()->index(i, 0, start);
+		auto type = idx.data(ConfigurationTreeItemModel::Type).toInt();
+		if ( type == ConfigurationTreeItemModel::TypeStruct ) {
+			continue;
+		}
+
+		for ( int i = 0; i < indent; ++i ) {
+			std::cerr << " ";
+		}
+		std::cerr << "+ " << idx.data(Qt::DisplayRole).toString().toStdString() << std::endl;
+		dumpTree(idx, indent + 2);
+	}
+}
+*/
+
+
 QTreeWidgetItem *createPath(QTreeWidget *tree, const QString &path, bool expand) {
-	QTreeWidgetItem *parent = NULL;
+	QTreeWidgetItem *parent = nullptr;
 	auto dirs = path.split('/', QT_SKIP_EMPTY_PARTS);
 
 	foreach ( const QString &dir, dirs ) {
-		QTreeWidgetItem *node = NULL;
-		if ( parent == NULL ) {
+		QTreeWidgetItem *node = nullptr;
+		if ( !parent ) {
 			for ( int i = 0; i < tree->topLevelItemCount(); ++i ) {
 				if ( tree->topLevelItem(i)->text(0) == dir ) {
 					node = tree->topLevelItem(i);
@@ -53,8 +78,9 @@ QTreeWidgetItem *createPath(QTreeWidget *tree, const QString &path, bool expand)
 				}
 			}
 
-			if ( node == NULL )
+			if ( !node ) {
 				node = new QTreeWidgetItem(tree, QStringList() << dir, 0);
+			}
 		}
 		else {
 			for ( int i = 0; i < parent->childCount(); ++i ) {
@@ -64,17 +90,19 @@ QTreeWidgetItem *createPath(QTreeWidget *tree, const QString &path, bool expand)
 				}
 			}
 
-			if ( node == NULL )
+			if ( !node ) {
 				node = new QTreeWidgetItem(parent, QStringList() << dir, 0);
+			}
 		}
 
-		if ( expand )
+		if ( expand ) {
 			tree->expandItem(node);
+		}
 
 		QFont boldFont = tree->font();
 		boldFont.setBold(true);
 		node->setData(0, Qt::FontRole, boldFont);
-		node->setData(0, Qt::DecorationRole, tree->style()->standardIcon(QStyle::SP_DirLinkIcon));
+		node->setData(0, Qt::DecorationRole, ::icon("folder"));
 		node->setFlags(node->flags() & ~Qt::ItemIsSelectable);
 		node->setToolTip(0, "");
 		parent = node;
@@ -83,12 +111,18 @@ QTreeWidgetItem *createPath(QTreeWidget *tree, const QString &path, bool expand)
 	return parent;
 }
 
-}
 
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ModulesPanel::ModulesPanel(QWidget *parent)
 : ConfiguratorPanel(false, parent) {
 	_name = "Modules";
-	_icon = QIcon(":/res/icons/config.png");
+	_icon = ::icon("menu_scconfig_modules");
 	setDescription("Configuration of module parameters");
 	setHeadline("Configuration");
 
@@ -130,12 +164,11 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	_moduleView = treeView;
 	*/
 	//FancyWidget *fancyView = new FancyWidget;
-	FancyView *fancyView = new FancyView;
-	_moduleView = fancyView;
+	_moduleView = new FancyView;
 
 	QWidget *settingsPanel = new QWidget;
-	settingsPanel->setAutoFillBackground(true);
 	QVBoxLayout *settingsLayout = new QVBoxLayout;
+	settingsLayout->setSpacing(1);
 	settingsLayout->setContentsMargins(0, 0, 0, 0);
 	settingsPanel->setLayout(settingsLayout);
 
@@ -145,38 +178,21 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 
 	QVBoxLayout *moduleViewLayout = new QVBoxLayout;
 
-	_searchWidget = new QWidget;
-	QHBoxLayout *searchLayout = new QHBoxLayout;
-	_searchWidget->setLayout(searchLayout);
-	QLabel *labelSearch = new QLabel;
-	labelSearch->setText("Search parameter:");
-	labelSearch->setSizePolicy(QSizePolicy(QSizePolicy::Maximum,QSizePolicy::Preferred));
-	QLineEdit *search = new QLineEdit;
-	connect(search, SIGNAL(textEdited(const QString &)),
-	        this, SLOT(search(const QString &)));
-	connect(search, SIGNAL(returnPressed()), this, SLOT(search()));
-	QPushButton *searchClose = new QPushButton;
-	searchClose->setIcon(style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
-	searchClose->setFixedSize(18,18);
-
-	searchLayout->setContentsMargins(0, 0, 0, 0);
-	searchLayout->addWidget(labelSearch);
-	searchLayout->addWidget(search);
-	searchLayout->addWidget(searchClose);
-
-	connect(searchClose, SIGNAL(clicked()), this, SLOT(closeSearch()));
+	_searchWidget = new SearchWidget(_moduleView);
+	_searchWidget->setAutoFillBackground(true);
+	connect(_searchWidget, &SearchWidget::closeRequested, this, &ModulesPanel::closeSearch);
 
 	QAction *activateSearch = new QAction(this);
 	activateSearch->setShortcut(QKeySequence("Ctrl+f"));
 	addAction(activateSearch);
-	connect(activateSearch, SIGNAL(triggered()), _searchWidget, SLOT(show()));
-	connect(activateSearch, SIGNAL(triggered()), search, SLOT(setFocus()));
+	connect(activateSearch, &QAction::triggered, this, &ModulesPanel::openSearch);
 
-	QAction *closeSearch = new QAction(_searchWidget);
+	connect(static_cast<FancyView*>(_moduleView), &FancyView::searchRequested, this, &ModulesPanel::openSearch);
+
+	QAction *closeSearch = new QAction(this);
 	closeSearch->setShortcut(QKeySequence("Esc"));
-	closeSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 	_searchWidget->addAction(closeSearch);
-	connect(closeSearch, SIGNAL(triggered()), this, SLOT(closeSearch()));
+	connect(closeSearch, &QAction::triggered, this, &ModulesPanel::closeSearch);
 
 	_searchWidget->hide();
 	moduleViewLayout->addWidget(_searchWidget);
@@ -187,8 +203,12 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 
 	_modified = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 	ConfiguratorPanel::setModel(model);
 
@@ -209,8 +229,8 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 
 	System::Model *base = model->model();
 
-	QTreeWidgetItem *firstModule = NULL;
-	QTreeWidgetItem *emptyItem = NULL;
+	QTreeWidgetItem *firstModule = nullptr;
+	QTreeWidgetItem *emptyItem = nullptr;
 
 	for ( size_t i = 0; i < base->modules.size(); ++i ) {
 		if ( !base->modules[i]->hasConfiguration() ) {
@@ -220,27 +240,26 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 			continue;
 		}
 
-		if ( emptyItem == NULL ) {
+		if ( !emptyItem ) {
 			emptyItem = new QTreeWidgetItem(_moduleTree, QStringList() << "<empty>", 0);
 			emptyItem->setToolTip(0, "");
 			emptyItem->setData(0, Qt::FontRole, boldFont);
-			emptyItem->setData(0, Qt::DecorationRole, style()->standardIcon(QStyle::SP_DirLinkIcon));
+			emptyItem->setData(0, Qt::DecorationRole, ::icon("folder"));
 			emptyItem->setFlags(emptyItem->flags() & ~Qt::ItemIsSelectable);
 		}
 
 		QTreeWidgetItem *mitem = new QTreeWidgetItem(emptyItem, QStringList() << base->modules[i]->definition->name.c_str(), 1);
-		mitem->setData(0, Qt::DecorationRole, style()->standardIcon(QStyle::SP_FileLinkIcon));
-		if ( base->modules[i]->definition->aliasedModule != NULL ) {
-			mitem->setData(0, Qt::DecorationRole, QIcon(":/res/icons/document_link.png"));
+		if ( base->modules[i]->definition->aliasedModule ) {
+			mitem->setData(0, Qt::DecorationRole, ::icon("file_link"));
 			mitem->setData(0, Qt::FontRole, italicFont);
 			mitem->setToolTip(0, tr("This is an alias for %1").arg(base->modules[i]->definition->aliasedModule->name.c_str()));
 		}
 		else {
-			mitem->setData(0, Qt::DecorationRole, QIcon(":/res/icons/document.png"));
+			mitem->setData(0, Qt::DecorationRole, ::icon("file"));
 			mitem->setToolTip(0, "");
 		}
 
-		if ( firstModule == NULL ) {
+		if ( !firstModule ) {
 			firstModule = mitem;
 		}
 	}
@@ -249,8 +268,7 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 		_moduleTree->expandItem(emptyItem);
 	}
 
-	System::Model::Categories::iterator it;
-	for ( it = base->categories.begin(); it != base->categories.end(); ++it ) {
+	for ( auto it = base->categories.begin(); it != base->categories.end(); ++it ) {
 		QTreeWidgetItem *citem = createPath(_moduleTree, it->c_str(), true);
 
 		for ( size_t i = 0; i < base->modules.size(); ++i ) {
@@ -261,38 +279,45 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 				continue;
 			}
 			QTreeWidgetItem *mitem = new QTreeWidgetItem(citem, QStringList() << base->modules[i]->definition->name.c_str(), 1);
-			//mitem->setData(0, Qt::DecorationRole, style()->standardIcon(QStyle::SP_FileLinkIcon));
-			if ( base->modules[i]->definition->aliasedModule != NULL ) {
-				mitem->setData(0, Qt::DecorationRole, QIcon(":/res/icons/document_link.png"));
+			if ( base->modules[i]->definition->aliasedModule ) {
+				mitem->setData(0, Qt::DecorationRole, ::icon("file_link"));
 				mitem->setData(0, Qt::FontRole, italicFont);
 				mitem->setToolTip(0, tr("This is an alias for %1").arg(base->modules[i]->definition->aliasedModule->name.c_str()));
 			}
 			else {
-				mitem->setData(0, Qt::DecorationRole, QIcon(":/res/icons/document.png"));
+				mitem->setData(0, Qt::DecorationRole, ::icon("file"));
 				mitem->setToolTip(0, "");
 			}
 
-			if ( firstModule == NULL ) {
+			if ( !firstModule ) {
 				firstModule = mitem;
 			}
 		}
 	}
 
-	if ( firstModule != NULL ) {
+	if ( firstModule ) {
 		_moduleTree->setCurrentItem(firstModule);
 		moduleSelected(firstModule, 0);
 	}
 
 	_modified = false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::moduleSelectionChanged(QTreeWidgetItem *curr,QTreeWidgetItem*) {
-	moduleSelected(curr,0);
+	moduleSelected(curr, 0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void ModulesPanel::moduleSelected(QTreeWidgetItem *item,int) {
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ModulesPanel::moduleSelected(QTreeWidgetItem *item, int) {
 	if ( item->type() != 1 ) {
 		return;
 	}
@@ -311,8 +336,12 @@ void ModulesPanel::moduleSelected(QTreeWidgetItem *item,int) {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::moduleChanged(const QModelIndex &index) {
 	if ( index.data(ConfigurationTreeItemModel::Type).toInt() !=
 	     ConfigurationTreeItemModel::TypeModule ) {
@@ -323,7 +352,7 @@ void ModulesPanel::moduleChanged(const QModelIndex &index) {
 	//static_cast<FancyWidget*>(_moduleView)->setModel(mod);
 	_moduleView->setRootIndex(index);
 
-	setHeadline("Configuration / " + index.data(Qt::DisplayRole).toString());
+	setHeadline("Configuration", index.data(Qt::DisplayRole).toString());
 
 	if ( mod ) {
 		setDescription(mod->definition->description.c_str());
@@ -340,44 +369,28 @@ void ModulesPanel::moduleChanged(const QModelIndex &index) {
 	}
 	*/
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void ModulesPanel::search(const QString &text) {
-	QModelIndexList hits;
 
-	QModelIndex idx = _moduleView->rootIndex();
-	QAbstractItemModel *model = _moduleView->model();
 
-	if ( text.isEmpty() ) {
-		_moduleView->scrollTo(idx);
-		_moduleView->setCurrentIndex(idx);
-		return;
-	}
-
-	int rows = model->rowCount(idx);
-
-	for ( int i = 0; i < rows; ++i ) {
-		hits = model->match(model->index(i, 0, idx), Qt::DisplayRole, text, 1,
-	                        Qt::MatchStartsWith |
-	                        Qt::MatchRecursive |
-	                        Qt::MatchWrap);
-
-		if ( hits.isEmpty() ) {
-			continue;
-		}
-		_moduleView->scrollTo(hits.first());
-		_moduleView->setCurrentIndex(hits.first());
-		break;
-	}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ModulesPanel::openSearch() {
+	_searchWidget->reset();
+	_searchWidget->show();
+	_searchWidget->setFocus(Qt::ActiveWindowFocusReason);
+	static_cast<FancyView*>(_moduleView)->showSearchButton(false);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void ModulesPanel::search() {
-	search(static_cast<QLineEdit*>(sender())->text());
-}
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::closeSearch() {
 	_moduleView->setCurrentIndex(_moduleView->rootIndex());
+	_searchWidget->reset();
 	_searchWidget->hide();
+	static_cast<FancyView*>(_moduleView)->showSearchButton(true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

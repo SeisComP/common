@@ -18,36 +18,43 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_CONFIGURATION_GUI_PANEL_MODULES_H__
-#define SEISCOMP_CONFIGURATION_GUI_PANEL_MODULES_H__
+#ifndef SEISCOMP_CONFIGURATION_GUI_PANEL_MODULES_H
+#define SEISCOMP_CONFIGURATION_GUI_PANEL_MODULES_H
+
 
 #include "../gui.h"
+
+
+class SearchWidget;
 
 
 class ModulesPanel : public ConfiguratorPanel {
 	Q_OBJECT
 
+
 	public:
 		ModulesPanel(QWidget *parent = 0);
+
 
 	public:
 		void setModel(ConfigurationTreeItemModel *model);
 		void aboutToClose();
 
+
 	private slots:
 		void moduleSelectionChanged(QTreeWidgetItem*,QTreeWidgetItem*);
 		void moduleSelected(QTreeWidgetItem*,int);
 		void moduleChanged(const QModelIndex &index);
-		void search(const QString &text);
-		void search();
+
+		void openSearch();
 		void closeSearch();
 
 
 	private:
-		bool                _modified;
-		QAbstractItemView  *_moduleView;
-		QTreeWidget        *_moduleTree;
-		QWidget            *_searchWidget;
+		bool               _modified;
+		QAbstractItemView *_moduleView;
+		QTreeWidget       *_moduleTree;
+		SearchWidget      *_searchWidget;
 };
 
 

@@ -6,7 +6,12 @@
         <file>icons/amplitudes_remeasure.svg</file>
         <file>icons/apply_changes.svg</file>
         <file>icons/check.svg</file>
+        <file>icons/chevron_down.svg</file>
+        <file>icons/chevron_left.svg</file>
+        <file>icons/chevron_right.svg</file>
+        <file>icons/chevron_up.svg</file>
         <file>icons/clear.svg</file>
+        <file>icons/close.svg</file>
         <file>icons/comment.svg</file>
         <file>icons/component_0.svg</file>
         <file>icons/component_1.svg</file>
@@ -25,11 +30,14 @@
         <file>icons/database.svg</file>
         <file>icons/down.svg</file>
         <file>icons/file_certificate.svg</file>
+        <file>icons/file_open.svg</file>
         <file>icons/filter.svg</file>
         <file>icons/filter_off.svg</file>
+        <file>icons/folder_open.svg</file>
         <file>icons/fullscreen.svg</file>
         <file>icons/help.svg</file>
         <file>icons/left.svg</file>
+        <file>icons/link.svg</file>
         <file>icons/pick_accept.svg</file>
         <file>icons/pick_deactivate.svg</file>
         <file>icons/pick_reactivate.svg</file>

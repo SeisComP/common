@@ -19,97 +19,165 @@
 
 
 #include "help.h"
+#include "../icon.h"
+
 #include <seiscomp/system/environment.h>
 
 #include <QAbstractTextDocumentLayout>
+#include <QActionGroup>
 #include <QDesktopServices>
 #include <QDialog>
 #include <QDir>
 #include <QMenu>
+#include <QPainter>
 #include <QTextEdit>
 #include <QToolBar>
 #include <QUrl>
 #include <QVBoxLayout>
 
-#include <iostream>
 
 using namespace std;
 
-#define TYPEROLE Qt::UserRole+1
-#define PATHROLE Qt::UserRole+2
 
 
 namespace {
 
 
-/*
-class IconItemDelegate : public QStyledItemDelegate {
+class IconBesideTextDelegate : public QAbstractItemDelegate {
 	public:
-		IconItemDelegate(QObject *parent = 0)
-		: QStyledItemDelegate(parent) {}
+		using QAbstractItemDelegate::QAbstractItemDelegate;
 
-	virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-		return QSize(96,96);
-	}
+	public:
+		void paint(QPainter *p,
+		           const QStyleOptionViewItem &option,
+		           const QModelIndex &index) const override {
+			if ( !option.showDecorationSelected ) {
+				const_cast<QStyleOptionViewItem*>(&option)->showDecorationSelected = true;
+			}
+			option.widget->style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, p, option.widget);
 
-	virtual void paint(QPainter *painter,
-	                   const QStyleOptionViewItem &option,
-	                   const QModelIndex &index) const {
-		painter->fillRect(option.rect, Qt::blue);
-	}
+			auto s = static_cast<const QListView*>(option.widget)->iconSize();
+			auto spacing = static_cast<const QListView*>(option.widget)->spacing();
+			auto pm = index.data(Qt::DecorationRole).value<QIcon>().pixmap(s);
+			p->drawPixmap(
+				option.rect.left(),
+				option.rect.top() + (option.rect.height() - s.height()) / 2,
+				pm
+			);
+
+			QString text = index.data().toString();
+
+			p->setPen(
+				option.palette.color(
+					option.state & QStyle::State_Selected ?
+						QPalette::HighlightedText : QPalette::Text
+				)
+			);
+			auto tr = option.rect.adjusted(s.width() + spacing, 0, 0, 0);
+			if ( option.fontMetrics.horizontalAdvance(text) > tr.width() ) {
+				text = option.fontMetrics.elidedText(text, Qt::ElideRight, tr.width());
+			}
+
+			p->drawText(tr, Qt::AlignLeft | Qt::AlignVCenter, text);
+		}
+
+		QSize sizeHint(const QStyleOptionViewItem &option,
+		               const QModelIndex &index) const override {
+			// 20 character, 1 character spacing and icon
+			return QSize(
+				option.fontMetrics.averageCharWidth() * 20 +
+				static_cast<const QListView*>(option.widget)->spacing() +
+				static_cast<const QListView*>(option.widget)->iconSize().width(),
+				qMax(
+					option.fontMetrics.height(),
+					static_cast<const QListView*>(option.widget)->iconSize().height()
+				)
+			);
+		}
 };
-*/
 
 
 }
 
 
+#define TYPEROLE Qt::UserRole+1
+#define PATHROLE Qt::UserRole+2
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 HelpPanel::HelpPanel(QWidget *parent)
 : ConfiguratorPanel(false, parent) {
 	QAction *a;
 
 	_name = "Docs";
-	_icon = QIcon(":/res/icons/help.png");
-	setHeadline("Docs & Changelogs");
-	setDescription("Shows available application changelogs and documentations.");
+	_icon = ::icon("menu_scconfig_docs");
+	setHeadline("Changelog and Documentation");
+	setDescription("View changelogs and documentations for installed packages and libraries");
 
 	QToolBar *tools = new QToolBar;
 	tools->setIconSize(QSize(24,24));
 	tools->setAutoFillBackground(true);
 	tools->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
+	QActionGroup *viewMode = new QActionGroup(tools);
+	viewMode->setExclusive(true);
+
+	a = tools->addAction("Icons");
+	a->setCheckable(true);
+	viewMode->addAction(a);
+	a->setIcon(::icon("view_icons"));
+	a->setChecked(true);
+	connect(a, &QAction::triggered, this, [this, a] {
+		if ( a->isChecked() ) {
+			_folderView->setViewMode(QListView::IconMode);
+			_folderView->setIconSize(QSize(72, 72));
+			_folderView->setSpacing(6);
+		}
+	});
+	a = tools->addAction("List");
+	a->setCheckable(true);
+	viewMode->addAction(a);
+	a->setIcon(::icon("view_list"));
+	connect(a, &QAction::triggered, this, [this, a] {
+		if ( a->isChecked() ) {
+			_folderView->setViewMode(QListView::ListMode);
+			_folderView->setIconSize(QSize(24, 24));
+			_folderView->setSpacing(0);
+		}
+	});
+
+	tools->addSeparator();
+
 	a = tools->addAction("Refresh");
 	a->setShortcut(QKeySequence(Qt::Key_F5));
-	a->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
-	connect(a, SIGNAL(triggered(bool)), this, SLOT(refresh()));
+	a->setIcon(::icon("refresh"));
+	connect(a, &QAction::triggered, this, &HelpPanel::refresh);
 
 	QVBoxLayout *l = new QVBoxLayout;
 	l->setContentsMargins(0, 0, 0, 0);
-	l->setSpacing(0);
+	l->setSpacing(1);
 	setLayout(l);
 
 	l->addWidget(tools);
 
 	_folderView = new QListView;
 	_folderView->setFrameShape(QFrame::NoFrame);
+	_folderView->setFlow(QListView::TopToBottom);
 	_folderView->setResizeMode(QListView::Adjust);
 	_folderView->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	_folderView->setViewMode(QListView::IconMode);
 	_folderView->setMovement(QListView::Static);
-	_folderView->setIconSize(QSize(64,64));
+	_folderView->setIconSize(QSize(72, 72));
 	_folderView->setSpacing(6);
+	_folderView->setItemDelegate(new IconBesideTextDelegate(_folderView));
 	//_folderView->setGridSize(QSize(172,164 + fontMetrics().height()*2));
 	_folderView->setUniformItemSizes(true);
 
-	/*
-	IconItemDelegate *delegate = new IconItemDelegate(this);
-	_folderView->setItemDelegate(delegate);
-	*/
-
-	connect(_folderView, SIGNAL(activated(QModelIndex)),
-	        this, SLOT(openIndex(QModelIndex)));
+	connect(_folderView, &QListView::activated, this, &HelpPanel::openIndex);
 
 	_model = new QStandardItemModel;
 	_folderView->setModel(_model);
@@ -118,16 +186,20 @@ HelpPanel::HelpPanel(QWidget *parent)
 
 	refresh();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void HelpPanel::refresh() {
+	static QIcon iconDoc = ::icon("docs_help");
+	static QIcon iconChangelog = ::icon("docs_changelog");
+
 	_model->clear();
 	_model->setHeaderData(0, Qt::Horizontal, tr("Name"));
 
-	QIcon iconDoc = QIcon(":/res/icons/help-doc.png");
-	QIcon iconChangelog = QIcon(":/res/icons/help-changelog.png");
-
-	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
+	auto env = Seiscomp::Environment::Instance();
 	QDir docDir((env->shareDir() + "/doc").c_str());
 	QFileInfoList entries = docDir.entryInfoList();
 
@@ -140,6 +212,7 @@ void HelpPanel::refresh() {
 		if ( QFile::exists(fileInfo.absoluteFilePath() + "/html/index.html") ) {
 			QStandardItem *item = new QStandardItem;
 			item->setText(name);
+			item->setData(name.toLower(), Qt::UserRole);
 			item->setIcon(iconDoc);
 			item->setEditable(false);
 			// Type HTML
@@ -150,6 +223,7 @@ void HelpPanel::refresh() {
 		else if ( QFile::exists(fileInfo.absoluteFilePath() + "/index.html") ) {
 			QStandardItem *item = new QStandardItem;
 			item->setText(name);
+			item->setData(name.toLower(), Qt::UserRole);
 			item->setIcon(iconDoc);
 			item->setEditable(false);
 			// Type HTML
@@ -161,6 +235,7 @@ void HelpPanel::refresh() {
 		if ( QFile::exists(fileInfo.absoluteFilePath() + "/CHANGELOG") ) {
 			QStandardItem *item = new QStandardItem;
 			item->setText(name);
+			item->setData(name.toLower(), Qt::UserRole);
 			item->setIcon(iconChangelog);
 			item->setEditable(false);
 			// Type changelog
@@ -169,9 +244,16 @@ void HelpPanel::refresh() {
 			_model->appendRow(item);
 		}
 	}
+
+	_model->setSortRole(Qt::UserRole);
+	_model->sort(0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void HelpPanel::openIndex(const QModelIndex &index) {
 	int type = index.data(TYPEROLE).toInt();
 	QString path = index.data(PATHROLE).toString();
@@ -202,3 +284,4 @@ void HelpPanel::openIndex(const QModelIndex &index) {
 		dlg.exec();
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

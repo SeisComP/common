@@ -19,8 +19,8 @@
 
 
 
-#ifndef SEISCOMP_CONFIGURATION_FANCYVIEW_H__
-#define SEISCOMP_CONFIGURATION_FANCYVIEW_H__
+#ifndef SEISCOMP_CONFIGURATION_FANCYVIEW_H
+#define SEISCOMP_CONFIGURATION_FANCYVIEW_H
 
 
 #ifndef Q_MOC_RUN
@@ -31,9 +31,11 @@
 #include <QScrollArea>
 
 
-class QLabel;
+class QAbstractButton;
 class QBoxLayout;
-
+class QLabel;
+class QPushButton;
+class SearchWidget;
 
 
 struct FancyViewItemEdit {
@@ -46,15 +48,19 @@ struct FancyViewItemEdit {
 
 struct FancyViewItem {
 	FancyViewItem(const QModelIndex &idx = QModelIndex(),
-	              QWidget *c = NULL);
+	              QWidget *c = 0);
 
 	bool isValid() const { return index.isValid(); }
+	void updated();
 
 	QPersistentModelIndex  index;
 	QWidget               *container;
-	QWidget               *label;
-	FancyViewItemEdit     *input;
-	QWidget               *description;
+	QWidget               *label{nullptr};
+	FancyViewItemEdit     *input{nullptr};
+	QAbstractButton       *editControl{nullptr};
+	QAbstractButton       *reset{nullptr};
+	QWidget               *description{nullptr};
+	QAbstractButton       *toggle{nullptr};
 };
 
 
@@ -80,6 +86,20 @@ class FancyView : public QAbstractItemView {
 		void setModel(QAbstractItemModel * model) override;
 		void setRootIndex(const QModelIndex &index) override;
 		void setConfigStage(Seiscomp::Environment::ConfigStage);
+
+
+	// ------------------------------------------------------------------
+	//  Signals
+	// ------------------------------------------------------------------
+	signals:
+		void searchRequested();
+
+
+	// ------------------------------------------------------------------
+	//  Public slots
+	// ------------------------------------------------------------------
+	public slots:
+		void showSearchButton(bool);
 
 
 	// ------------------------------------------------------------------
@@ -113,7 +133,6 @@ class FancyView : public QAbstractItemView {
 		void mouseMoveEvent(QMouseEvent *event) override;
 		void mouseReleaseEvent(QMouseEvent *event) override;
 
-		void paintEvent(QPaintEvent *event) override;
 		void resizeEvent(QResizeEvent *event) override;
 		void scrollContentsBy(int dx, int dy) override;
 
@@ -127,7 +146,8 @@ class FancyView : public QAbstractItemView {
 	//  Private slots
 	// ------------------------------------------------------------------
 	private slots:
-		void lockChanged(bool);
+		void editChanged(bool);
+		void resetValue();
 		void optionTextEdited();
 		void optionTextChanged(const QString &);
 		void optionToggled(bool);
@@ -167,17 +187,18 @@ class FancyView : public QAbstractItemView {
 		                   const Seiscomp::System::Parameter *param,
 		                   QString &eval, bool verbose);
 
+
 	private:
 		typedef QHash<QPersistentModelIndex, FancyViewItem> ViewItems;
-		Seiscomp::Environment::ConfigStage _configStage;
-		QWidget *_rootWidget;
-		ViewItems _viewItems;
-		QIcon _lockIcon;
-		QIcon _unlockIcon;
-		QIcon _traceIcon;
-		QWidget *_currentItem;
-		QLabel *_optionEditHint;
-		void *_blockPopulate;
+		Seiscomp::Environment::ConfigStage _configStage{Seiscomp::Environment::CS_CONFIG_APP};
+		QWidget      *_rootWidget{nullptr};
+		ViewItems     _viewItems;
+		QIcon         _iconEdit;
+		QIcon         _iconReset;
+		QPushButton  *_btnSearch{nullptr};
+		QWidget      *_currentItem{nullptr};
+		QLabel       *_optionEditHint{nullptr};
+		void         *_blockPopulate{nullptr};
 };
 
 

@@ -37,6 +37,8 @@
 
 #include <seiscomp/gui/core/compat.h>
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -85,9 +87,12 @@ class LineNumberArea : public QWidget {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigHighlighter::ConfigHighlighter(QTextDocument *parent)
 : QSyntaxHighlighter(parent) {
 	Rule rule;
@@ -131,8 +136,12 @@ ConfigHighlighter::ConfigHighlighter(QTextDocument *parent)
 	_rules.append(rule);
 	*/
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigHighlighter::highlightBlock(const QString &text) {
 	foreach ( const Rule &rule, _rules ) {
 		QRegularExpression expression(rule.pattern);
@@ -146,18 +155,30 @@ void ConfigHighlighter::highlightBlock(const QString &text) {
 	}
 	setCurrentBlockState(0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigEditor::ConfigEditor(QWidget *parent) : QTextEdit(parent) {
 	init();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigEditor::ConfigEditor(const QString &text, QWidget *parent) : QTextEdit(text, parent) {
 	init();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::init() {
 	_errorLine = -1;
 
@@ -190,14 +211,22 @@ void ConfigEditor::init() {
 	connect(verticalScrollBar(), SIGNAL(valueChanged(int)),
 	        this, SLOT(scrollBarValueChanged(int)));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::setErrorLine(int line) {
 	_errorLine = line;
 	updateExtraSelections();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::gotoLine(int line) {
 	QTextCursor cur = textCursor();
 	cur.movePosition(QTextCursor::Start);
@@ -205,18 +234,30 @@ void ConfigEditor::gotoLine(int line) {
 	setTextCursor(cur);
 	ensureCursorVisible();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::layoutChanged(const QRectF &) {
 	updateLineNumberArea(rect(), 0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::scrollBarValueChanged(int dy) {
 	updateLineNumberArea(rect(), dy);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::updateExtraSelections() {
 	QList<ExtraSelection> extraSelections;
 
@@ -245,8 +286,12 @@ void ConfigEditor::updateExtraSelections() {
 
 	setExtraSelections(extraSelections);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int ConfigEditor::lineNumberAreaWidth() {
 	int digits = 1;
 	int max = qMax(1, document()->blockCount());
@@ -259,30 +304,45 @@ int ConfigEditor::lineNumberAreaWidth() {
 
 	return space;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::updateLineNumberAreaWidth(int /* newBlockCount */) {
 	setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::updateLineNumberArea(const QRect &rect, int dy) {
-	if ( rect.contains(viewport()->rect()) )
+	if ( rect.contains(viewport()->rect()) ) {
 		updateLineNumberAreaWidth(0);
+	}
 
 	update();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigEditor::resizeEvent(QResizeEvent *event) {
 	QTextEdit::resizeEvent(event);
-
 	QRect cr = contentsRect();
 	_lineNumbers->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigFileWidget::ConfigFileWidget(QWidget *parent) : QWidget(parent) {
 	_editor = new ConfigEditor;
 	//_editor->setFrameShape(QFrame::NoFrame);
@@ -316,13 +376,21 @@ ConfigFileWidget::ConfigFileWidget(QWidget *parent) : QWidget(parent) {
 	connect(_errorlist, SIGNAL(currentRowChanged(int)),
 	        this, SLOT(setError(int)));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigEditor *ConfigFileWidget::editor() const {
 	return _editor;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigFileWidget::loadFile(const QString &filename) {
 	QFile file(filename);
 	// File not found is actually not an error
@@ -333,8 +401,12 @@ bool ConfigFileWidget::loadFile(const QString &filename) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ConfigFileWidget::saveFile(const QString &filename) {
 	QFile file(filename);
 	// File not found is actually not an error
@@ -344,8 +416,12 @@ bool ConfigFileWidget::saveFile(const QString &filename) {
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigFileWidget::setErrors(const QList<Error> &errors, bool selectFirst) {
 	_errorlist->clear();
 
@@ -362,31 +438,46 @@ void ConfigFileWidget::setErrors(const QList<Error> &errors, bool selectFirst) {
 		if ( selectFirst )
 			_errorlist->setCurrentRow(0);
 	}
-	else
+	else {
 		_editor->setErrorLine(-1);
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigFileWidget::setError(int r) {
 	QListWidgetItem *item = _errorlist->item(r);
-	if ( item == NULL ) return;
+	if ( !item ) {
+		return;
+	}
 
 	int line = item->data(Qt::UserRole).toInt();
 	_editor->setErrorLine(line);
 	_editor->gotoLine(line);
 	_editor->setFocus();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigConflictWidget::ConfigConflictWidget(QWidget *parent) : QWidget(parent) {
-	QVBoxLayout *l = new QVBoxLayout;
+	auto l = new QVBoxLayout;
 	_list = new QListWidget;
 	l->addWidget(_list);
 	_list->setAlternatingRowColors(true);
 	setLayout(l);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigConflictWidget::setConflicts(const QList<Seiscomp::System::ConfigDelegate::CSConflict> &conflicts) {
 	_conflicts = conflicts;
 	_list->clear();
@@ -413,7 +504,13 @@ void ConfigConflictWidget::setConflicts(const QList<Seiscomp::System::ConfigDele
 		_list->addItem(line);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
 
 struct UpdateFileItem {
 	Seiscomp::System::Module *module;
@@ -431,7 +528,13 @@ struct UpdateFileItem {
 	}
 };
 
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigConflictWidget::fixConflicts() {
 	std::set<UpdateFileItem> updateFiles;
 	std::set<UpdateFileItem>::iterator it;
@@ -486,8 +589,12 @@ void ConfigConflictWidget::fixConflicts() {
 		file.module->model->writeConfig(file.module, file.filename, file.stage, true);
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConfigChangesWidget::ConfigChangesWidget(QWidget *parent) : QWidget(parent) {
 	QVBoxLayout *l = new QVBoxLayout;
 	_table = new QTableWidget;
@@ -495,8 +602,12 @@ ConfigChangesWidget::ConfigChangesWidget(QWidget *parent) : QWidget(parent) {
 	_table->setAlternatingRowColors(true);
 	setLayout(l);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ConfigChangesWidget::setChanges(const Seiscomp::System::ConfigDelegate::ChangeList &changes) {
 	_table->clear();
 	_table->setColumnCount(4);
@@ -553,3 +664,4 @@ void ConfigChangesWidget::setChanges(const Seiscomp::System::ConfigDelegate::Cha
 
 	_table->resizeColumnsToContents();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

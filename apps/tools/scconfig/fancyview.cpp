@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 
+#include <QApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPainter>
@@ -36,7 +37,6 @@
 #include <QScrollBar>
 #include <QResizeEvent>
 
-#include <iostream>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/config/config.h>
 #include <seiscomp/core/strings.h>
@@ -44,6 +44,7 @@
 
 #include "fancyview.h"
 #include "gui.h"
+#include "icon.h"
 
 
 using namespace std;
@@ -52,27 +53,26 @@ using namespace Seiscomp;
 using namespace Seiscomp::System;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Q_DECLARE_METATYPE(FancyViewItem)
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
-//static QColor TextColor(100,144,47);
-static QColor CategoryTextColor(255,255,255);
-static QColor CategoryBgColor(38,80,128);
 
-static QColor TextColor(38,80,128);
-static QColor DescColor(TextColor.red()*3/4+64,
-                        TextColor.green()*3/4+64,
-                        TextColor.blue()*3/4+64);
-static QColor DescBackColor(255,255,204);
-static QColor AlertColor(128*3/4+64,64,64);
+QColor CategoryTextColor(255, 255, 255);
+QColor CategoryBgColor(38, 80, 128);
+QColor AlertColor(0xfa, 0x9f, 0x8c);
+QColor AlertFrameColor(0xb2, 0x6f, 0x65);
+QColor AlertTextColor(0, 0, 0);
 
 
-QColor blend(const QColor& c1, const QColor& c2, int percentOfC1) {
-	return QColor((c1.red()*percentOfC1 + c2.red()*(100-percentOfC1)) / 100,
-	              (c1.green()*percentOfC1 + c2.green()*(100-percentOfC1)) / 100,
-	              (c1.blue()*percentOfC1 + c2.blue()*(100-percentOfC1)) / 100);
+int layoutPadding() {
+	return QApplication::fontMetrics().ascent() / 2;
 }
 
 
@@ -253,7 +253,6 @@ class NewStructDialog : public QDialog {
 };
 
 
-
 class NewCatBindingDialog : public QDialog {
 	public:
 		NewCatBindingDialog(const BindingCategory *c,
@@ -313,11 +312,11 @@ class NewCatBindingDialog : public QDialog {
 };
 
 
-
 class BlockWidget : public QWidget {
 	public:
 		BlockWidget(QWidget *parent = 0) : QWidget(parent) {
 			_hasCustomBackground = false;
+			setContentsMargins(layoutPadding() * 3, 0, 0, 0);
 		}
 
 		void setBackgroundColor(QColor bg) {
@@ -329,22 +328,19 @@ class BlockWidget : public QWidget {
 		void paintEvent(QPaintEvent *) {
 			QPainter p(this);
 
-			if ( _hasCustomBackground )
+			if ( _hasCustomBackground ) {
 				p.fillRect(rect(), _bg);
+			}
 
-			auto m = contentsMargins();
-			m.setBottom(rect().bottom() - m.bottom());
-			//p.drawLine(0, m.top(), m.left(), m.top());
-			//p.drawLine(0, m.top(), 0, m.bottom());
-			//p.drawLine(0, m.bottom(), m.left(), m.bottom());
-			QLinearGradient grad(0, m.top(), 0, m.bottom());
-			QColor fg = Qt::gray;
-			grad.setColorAt(0.5,fg);
-			fg.setAlpha(0);
-			grad.setColorAt(0,fg);
-			grad.setColorAt(1,fg);
-			p.setPen(QPen(grad,1));
-			p.drawLine(m.left() - 1, m.top(), m.left() - 1, m.bottom());
+			p.setPen(palette().color(QPalette::Mid));
+
+			if ( p.device()->devicePixelRatioF() > 1.0 ) {
+				p.setRenderHint(QPainter::Antialiasing, true);
+				p.drawLine(layoutPadding() + 0.5, rect().top(), layoutPadding() + 0.5, rect().bottom());
+			}
+			else {
+				p.drawLine(layoutPadding(), rect().top(), layoutPadding(), rect().bottom());
+			}
 		}
 
 	private:
@@ -370,18 +366,26 @@ class ViewItemWidget : public QWidget {
 		void paintEvent(QPaintEvent *e) {
 			QPainter p(this);
 			if ( _isSelected ) {
-				QLinearGradient grad(0,0,0,height());
-				QColor highlight = palette().color(QPalette::Highlight);
-				QColor base = palette().color(QPalette::Base);
-
-				highlight.setAlpha(64);
-
-				grad.setColorAt(0,base);
-				grad.setColorAt(0.5,highlight);
-				grad.setColorAt(1,base);
-				p.setPen(highlight);
+				QLinearGradient grad(QPoint(0, 0), QPoint(28, 28));
+				QColor c0 = palette().color(QPalette::Highlight);
+				c0.setAlpha(32);
+				QColor c1 = palette().color(QPalette::Base);
+				c1.setAlpha(32);
+				grad.setColorAt(0, c0);
+				grad.setColorAt(0.66, c0);
+				grad.setColorAt(0.67, c1);
+				grad.setColorAt(1, c1);
+				grad.setSpread(QGradient::RepeatSpread);
+				c0.setAlpha(64);
+				p.setPen(c0);
 				p.setBrush(grad);
-				p.drawRect(0,0,width()-1,height()-1);
+				if ( p.device()->devicePixelRatioF() > 1.0 ) {
+					p.setRenderHint(QPainter::Antialiasing, true);
+					p.drawRoundedRect(rect().adjusted(1, 0, 0, 0), 8, 8);
+				}
+				else {
+					p.drawRoundedRect(rect(), 8, 8);
+				}
 			}
 		}
 
@@ -390,61 +394,64 @@ class ViewItemWidget : public QWidget {
 };
 
 
+class IconLabel : public QLabel {
+	public:
+		IconLabel(QIcon icon, QWidget *parent = nullptr)
+		: QLabel(parent) {
+			setPixmap(icon.pixmap(QFontMetrics(font()).ascent()));
+		}
+};
+
+
 class HRuler : public QWidget {
 	public:
-		HRuler(QWidget *parent = 0) : QWidget(parent) {
-			setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
+		HRuler(qreal width = 1, QWidget *parent = nullptr)
+		: QWidget(parent), _width(width) {
+			setForegroundRole(QPalette::Highlight);
+			setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+			setFixedHeight(_width * 2);
 		}
-
-		QSize sizeHint() const { return QSize(-1,1); }
 
 	protected:
 		void paintEvent(QPaintEvent *) {
 			QPainter p(this);
-			int cy = rect().center().y();
-			QLinearGradient grad(0,0,rect().width(),0);
-			QColor fg = Qt::gray;
-			grad.setColorAt(0.5,fg);
-			fg.setAlpha(0);
-			grad.setColorAt(0,fg);
-			grad.setColorAt(1,fg);
-			p.setPen(QPen(grad,1));
-			p.drawLine(rect().left(),cy,rect().right(),cy);
+			QPoint p1, p2;
+			if ( p.device()->devicePixelRatioF() > 1.0 ) {
+				p.setRenderHint(QPainter::Antialiasing, true);
+			}
+			auto rect = contentsRect();
+			p1 = QPoint(rect.x(), rect.y() + rect.height() / 2);
+			p2 = QPoint(rect.x() + rect.width(), p1.y());
+			p.setPen(QPen(palette().brush(foregroundRole()), _width));
+			p.drawLine(p1, p2);
 		}
+
+	private:
+		qreal _width;
 };
 
 
 class BlockHandle : public QToolButton {
 	public:
 		BlockHandle(QWidget *parent = 0) : QToolButton(parent) {
-			setFixedWidth(16);
-			setFixedHeight(16);
+			setFixedWidth(layoutPadding() * 2);
+			setFixedHeight(layoutPadding() * 2);
+			setForegroundRole(QPalette::Mid);
 		}
 
 	protected:
 		void paintEvent(QPaintEvent *) {
+			static auto expand = ::icon("chevron_right", palette().color(foregroundRole())).pixmap(layoutPadding() * 2);
+			static auto collapse = ::icon("chevron_down", palette().color(foregroundRole())).pixmap(layoutPadding() * 2);
+
 			QPainter p(this);
 
-			p.setPen(Qt::gray);
-			p.setBrush(Qt::NoBrush);
-			p.setRenderHint(QPainter::Antialiasing, true);
-			QPolygon poly;
 			if ( isChecked() ) {
-				poly.append(QPoint(4,4));
-				poly.append(QPoint(12,4));
-				poly.append(QPoint(8,12));
-				/*
-				p.drawLine(4,4,12,4);
-				p.drawLine(4,4,8,12);
-				p.drawLine(8,12,12,4);
-				*/
+				p.drawPixmap(0, 0, collapse);
 			}
 			else {
-				poly.append(QPoint(4,4));
-				poly.append(QPoint(12,8));
-				poly.append(QPoint(4,12));
+				p.drawPixmap(0, 0, expand);
 			}
-			p.drawPolygon(poly);
 		}
 };
 
@@ -464,43 +471,41 @@ class Header : public QWidget {
 };
 
 
+class HeaderLabel : public QLabel {
+	public:
+		HeaderLabel() {
+			QPalette pal = palette();
+			pal.setColor(QPalette::Text, blend(pal.color(QPalette::Text), pal.color(QPalette::Highlight), 50));
+			setPalette(pal);
+		}
+};
+
+
 class IconButton : public QAbstractButton {
 	public:
-		IconButton(const QIcon &normalIcon, const QIcon &checkedIcon)
+		IconButton(const QIcon &icon)
 		: QAbstractButton() {
-			_normalIcon = normalIcon;
-			_checkedIcon = checkedIcon;
+			setIcon(icon);
 		}
 
 
 	protected:
 		void paintEvent(QPaintEvent *) {
-			QPixmap pixmap;
-			if ( isChecked() )
-				pixmap = _checkedIcon.pixmap(
-				           size(),
-				           isEnabled()?QIcon::Normal:QIcon::Disabled
-				         );
-			else
-				pixmap = _normalIcon.pixmap(
-				           size(),
-				           isEnabled()?QIcon::Normal:QIcon::Disabled
-				         );
+			auto pixmap = icon().pixmap(
+				size(),
+				isEnabled() ? QIcon::Normal : QIcon::Disabled,
+				isChecked() ? QIcon::On : QIcon::Off
+			);
 
 			QPainter p(this);
-			p.drawPixmap(0,0,pixmap);
+			p.drawPixmap(0, 0, pixmap);
 		}
-
-
-	private:
-		QIcon _normalIcon;
-		QIcon _checkedIcon;
 };
 
 
-class DescLabel : public QWidget {
+class BaseTextLabel : public QWidget {
 	public:
-		DescLabel(QWidget *parent = 0) : QWidget(parent) {
+		BaseTextLabel(QWidget *parent = 0) : QWidget(parent) {
 			QSizePolicy sp(QSizePolicy::Preferred, QSizePolicy::Preferred);
 			sp.setHeightForWidth(true);
 			setSizePolicy(sp);
@@ -527,8 +532,9 @@ class DescLabel : public QWidget {
 		void paintEvent(QPaintEvent *e) {
 			QPainter p(this);
 
-			if ( autoFillBackground() )
+			if ( autoFillBackground() ) {
 				p.fillRect(e->rect(), palette().color(QPalette::Window));
+			}
 
 			p.drawText(contentsRect(), Qt::AlignLeft|Qt::AlignTop|Qt::TextWordWrap, _text);
 		}
@@ -536,6 +542,34 @@ class DescLabel : public QWidget {
 
 	private:
 		QString _text;
+};
+
+
+class DescLabel : public BaseTextLabel {
+	public:
+		DescLabel(QWidget *parent = 0) : BaseTextLabel(parent) {
+			QPalette pal = palette();
+			pal.setColor(QPalette::Text, blend(pal.color(QPalette::Text), pal.color(QPalette::Highlight), 50));
+			setPalette(pal);
+		}
+};
+
+
+class HelpLabel : public BaseTextLabel {
+	public:
+		HelpLabel(QWidget *parent = 0) : BaseTextLabel(parent) {
+			setForegroundRole(QPalette::Dark);
+		}
+};
+
+
+class AlertLabel : public BaseTextLabel {
+	public:
+		AlertLabel(QWidget *parent = 0) : BaseTextLabel(parent) {
+			QPalette pal = palette();
+			pal.setColor(QPalette::Text, AlertColor);
+			setPalette(pal);
+		}
 };
 
 
@@ -640,82 +674,153 @@ class EvalHintWidget : public QLabel {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FancyViewItem::FancyViewItem(const QModelIndex &idx, QWidget *c)
-: index(idx), container(c), label(NULL), input(NULL), description(NULL) {
-	if ( container )
+: index(idx), container(c) {
+	if ( container ) {
 		// Link the container widget with its FancyViewItem
 		container->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(*this));
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyViewItem::updated() {
+	bool isInitial = index.sibling(index.row(), 3).data(Qt::DisplayRole).toBool() ==
+	                 index.sibling(index.row(), 3).data(ConfigurationTreeItemModel::Initial).toBool();
+
+	isInitial &= index.sibling(index.row(), 2).data(Qt::DisplayRole).toString() ==
+	             index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString();
+
+	/*
+	std::cerr << qPrintable(index.sibling(index.row(), 0).data().toString()) << " "
+	          << qPrintable(index.sibling(index.row(), 2).data(Qt::DisplayRole).toString()) << " "
+	          << qPrintable(index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString()) << std::endl;
+	*/
+
+	reset->setVisible(!isInitial);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FancyView::FancyView(QWidget *parent) : QAbstractItemView(parent) {
-	_rootWidget = NULL;
-	_currentItem = NULL;
-	_optionEditHint = NULL;
-	_lockIcon = QIcon(":/res/icons/lock.png");
-	_unlockIcon = QIcon(":/res/icons/unlock.png");
-	_traceIcon = QIcon(":/res/icons/trace.png");
-	_configStage = Environment::CS_CONFIG_APP;
-	_blockPopulate = NULL;
+	_iconEdit = icon("param_edit|param_edit_off");
+	_iconReset = icon("refresh", palette().color(QPalette::Highlight));
 	setFrameShape(QFrame::NoFrame);
+	setFocusPolicy(Qt::StrongFocus);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QRect FancyView::visualRect(const QModelIndex &index) const {
 	return QRect();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::scrollTo(const QModelIndex &index, ScrollHint hint) {
-	ViewItems::iterator it = _viewItems.find(index);
-	if ( it == _viewItems.end() ) return;
+	auto it = _viewItems.find(index);
+	if ( it == _viewItems.end() ) {
+		return;
+	}
 
 	QWidget *w = it.value().container;
-	QPoint p = _rootWidget->mapFromGlobal(w->mapToGlobal(QPoint(0,0)));
+	if ( !w->isVisible() ) {
+		auto parent = index.parent();
+		while ( parent.isValid() ) {
+			it = _viewItems.find(parent);
+			if ( it != _viewItems.end() ) {
+				auto toggle = it.value().toggle;
+				if ( toggle && !toggle->isChecked() ) {
+					toggle->setChecked(true);
+				}
+			}
+
+			parent = parent.parent();
+		}
+	}
+
+	QPoint p = _rootWidget->mapFromGlobal(w->mapToGlobal(QPoint(0, 0)));
 	horizontalScrollBar()->setValue(p.x());
 	verticalScrollBar()->setValue(p.y());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QModelIndex FancyView::indexAt(const QPoint &point) const {
 	return QModelIndex();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::setModel(QAbstractItemModel *model) {
 	QAbstractItemView::setModel(model);
 
-	if ( _rootWidget != NULL ) {
+	if ( _rootWidget ) {
 		delete _rootWidget;
-		_rootWidget = NULL;
+		_rootWidget = nullptr;
 	}
 
-	horizontalScrollBar()->setRange(0,0);
-	verticalScrollBar()->setRange(0,0);
+	horizontalScrollBar()->setRange(0, 0);
+	verticalScrollBar()->setRange(0, 0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::setRootIndex(const QModelIndex &index) {
 	QAbstractItemView::setRootIndex(index);
 	if ( _rootWidget ) {
 		delete _rootWidget;
-		_rootWidget = NULL;
+		_rootWidget = nullptr;
 	}
 
-	_currentItem = NULL;
+	_currentItem = nullptr;
 	_viewItems = ViewItems();
 
-	if ( !index.isValid() ) return;
+	if ( !index.isValid() ) {
+		return;
+	}
 
 	_rootWidget = new QWidget(viewport());
 	//_rootWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	QVBoxLayout *l = new QVBoxLayout;
+	l->setSpacing(layoutPadding());
+	setMargin(l, layoutPadding() * 2);
 	_rootWidget->setLayout(l);
 
 	int rows = model()->rowCount(index);
+
+	if ( !_btnSearch ) {
+		_btnSearch = new QPushButton(icon("search"), {}, this);
+		_btnSearch->setVisible(true);
+		connect(_btnSearch, &QPushButton::clicked, this, &FancyView::searchRequested);
+	}
 
 	/*
 	if ( index.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeModule ) {
@@ -728,64 +833,87 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 	}
 	*/
 
+	{
+		auto helpLayout = new QHBoxLayout;
+		setMargin(helpLayout, 0);
+		helpLayout->addWidget(new QLabel("Parameter options:"));
+		auto tmpLayout = new QHBoxLayout;
+		tmpLayout->setSpacing(0);
+		tmpLayout->addWidget(new IconLabel(icon("param_edit")));
+		tmpLayout->addWidget(new QLabel("|"));
+		tmpLayout->addWidget(new IconLabel(icon("param_edit_off")));
+		helpLayout->addLayout(tmpLayout);
+		helpLayout->addWidget(new QLabel("Set/Remove value"));
+		helpLayout->addSpacing(QFontMetrics(font()).averageCharWidth());
+		helpLayout->addWidget(new IconLabel(icon("refresh", palette().color(QPalette::Highlight))));
+		helpLayout->addWidget(new QLabel("Reset to intial state"));
+		helpLayout->addStretch();
+		// helpLayout->addWidget(_btnSearch);
+		l->addLayout(helpLayout);
+	}
+
 	if ( index.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeModule ) {
 		Module *mod = reinterpret_cast<Module*>(index.data(ConfigurationTreeItemModel::Link).value<void*>());
 		QLabel *info = new QLabel(_rootWidget);
 		info->setWordWrap(true);
-		QPalette pal = info->palette();
-		pal.setColor(QPalette::Text, DescColor);
-		info->setPalette(pal);
-		QFont f = info->font();
-		f.setBold(true);
-		info->setFont(f);
-		if ( mod->supportsBindings() )
+		info->setForegroundRole(QPalette::Highlight);
+		if ( mod->supportsBindings() ) {
 			info->setText(tr(
 				"This module considers module configuration parameters. "
 				"It also requires bindings which may overwrite module "
 				"configuration parameters."
 			));
-		else
+		}
+		else {
 			info->setText(tr(
 				"This module only considers module configuration parameters. "
 				"It does not provide a bindings configuration."
 			));
-		info->setMargin(8);
+		}
 		l->addWidget(info);
 	}
 
 	QString secName;
 	int type = index.data(ConfigurationTreeItemModel::Type).toInt();
 	if ( type == ConfigurationTreeItemModel::TypeModule ||
-	     type == ConfigurationTreeItemModel::TypeBinding )
+	     type == ConfigurationTreeItemModel::TypeBinding ) {
 		secName = index.data().toString();
+	}
 
 	for ( int i = 0; i < rows; ++i ) {
 		auto idx = model()->index(i, 0, index);
 		QWidget *w = createWidgetFromIndex(idx, secName);
-		if ( w )
+		if ( w ) {
 			l->addWidget(w);
+		}
 	}
 
 	l->addStretch();
 
-	//_rootWidget->setBackgroundRole(QPalette::ToolTipBase);
-	//_rootWidget->setAutoFillBackground(true);
-
 	_rootWidget->installEventFilter(this);
 	_rootWidget->show();
-	//updateContentGeometry();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::setConfigStage(Seiscomp::Environment::ConfigStage cs) {
 	_configStage = cs;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
                                           const QString &rootSecName) {
 	ViewItemWidget *w = new ViewItemWidget;
 	QBoxLayout *l = new QVBoxLayout;
+	l->setSpacing(layoutPadding());
+	setMargin(l, 1);
 	w->setLayout(l);
 
 	w->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
@@ -800,11 +928,12 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			if ( binding ) {
 				FancyViewItem item(idx, w);
 				add(l, item, binding, true);
+				l->setContentsMargins(0, 0, 0, 0);
 
 				w->setProperty("viewBinding", QVariant::fromValue((void*)binding));
 
 				bool firstParameter = true;
-				QLayout *paramLayout = NULL;
+				QLayout *paramLayout = nullptr;
 
 				for ( int i = 0; i < rows; ++i ) {
 					auto child = model()->index(i, 0, idx);
@@ -813,7 +942,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(0, layoutPadding() * 2, layoutPadding() * 2);
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -835,14 +964,8 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				if ( rows == 0 ) {
-					DescLabel *desc = new DescLabel;
-					desc->setContentsMargins(8,0,0,0);
+					auto desc = new AlertLabel;
 					desc->setText("This section does not contain a parameter to configure...");
-					//desc->setWordWrap(true);
-					//desc->setMinimumWidth(100);
-					QPalette pal = desc->palette();
-					pal.setColor(QPalette::Text, AlertColor);
-					desc->setPalette(pal);
 					l->addWidget(desc);
 				}
 
@@ -856,17 +979,14 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			if (cat ) {
 				FancyViewItem item(idx, w);
 				add(l, item, cat, false);
+				l->setContentsMargins(0, 0, 0, 0);
 
-				DescLabel *desc = new DescLabel;
-				desc->setContentsMargins(8,0,0,0);
-				desc->setText(QString("No binding for \"%1\" selected.").arg(cat->name.c_str()));
-				QPalette pal = desc->palette();
-				pal.setColor(QPalette::Text, AlertColor);
-				desc->setPalette(pal);
-				l->addWidget(desc);
-				desc->setVisible(cat->bindings.empty());
+				auto alert = new AlertLabel;
+				alert->setText(QString("No binding for \"%1\" selected.").arg(cat->name.c_str()));
+				l->addWidget(alert);
+				alert->setVisible(cat->bindings.empty());
 
-				w->setProperty("statusLabel", QVariant::fromValue((void*)desc));
+				w->setProperty("statusLabel", QVariant::fromValue((void*)alert));
 
 				for ( int r = 0; r < rows; ++r ) {
 					auto secIdx = model()->index(r, 0, idx);
@@ -875,7 +995,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 						continue;
 
 					QWidget *bw = createWidgetFromIndex(secIdx, rootSecName);
-					bw->setProperty("statusLabel", QVariant::fromValue((void*)desc));
+					bw->setProperty("statusLabel", QVariant::fromValue((void*)alert));
 					l->addWidget(bw);
 				}
 
@@ -911,7 +1031,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				addButton->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 				addButton->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
 				addButton->setProperty("comboBox", QVariant::fromValue((void*)comboBox));
-				addButton->setIcon(QIcon(":/res/icons/add.png"));
+				addButton->setIcon(::icon("add"));
 				addButton->setToolTip(QString("Add a new '%1' instance").arg(cat->name.c_str()));
 				addButton->setEnabled(catBindingCount > 0);
 
@@ -941,6 +1061,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			if ( sec ) {
 				FancyViewItem item(idx, w);
 				add(l, item, sec, idx.data().toString() != rootSecName);
+				l->setContentsMargins(0, 0, 0, 0);
 
 				bool firstParameter = true;
 				QLayout *paramLayout = NULL;
@@ -948,7 +1069,6 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				if ( !sec->description.empty() ) {
 					StatusLabel *desc = new StatusLabel;
 					desc->setWordWrap(true);
-					desc->setContentsMargins(8,0,0,0);
 					desc->setInfoText(sec->description.c_str());
 					l->addWidget(desc);
 				}
@@ -960,7 +1080,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(0, layoutPadding() * 2, layoutPadding() * 2);
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -982,15 +1102,9 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				if ( rows == 0 ) {
-					DescLabel *desc = new DescLabel;
-					desc->setContentsMargins(8,0,0,0);
-					desc->setText("This section does not contain a parameter to configure...");
-					//desc->setWordWrap(true);
-					//desc->setMinimumWidth(100);
-					QPalette pal = desc->palette();
-					pal.setColor(QPalette::Text, AlertColor);
-					desc->setPalette(pal);
-					l->addWidget(desc);
+					auto alert = new AlertLabel;
+					alert->setText("This section does not contain a parameter to configure...");
+					l->addWidget(alert);
 				}
 
 				_viewItems[idx] = item;
@@ -1003,9 +1117,10 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			if ( group ) {
 				FancyViewItem item(idx, w);
 				add(l, item, group);
+				l->setContentsMargins(0, 0, 0, 0);
 
 				bool firstParameter = true;
-				QLayout *paramLayout = NULL;
+				QLayout *paramLayout = nullptr;
 
 				for ( int i = 0; i < rows; ++i ) {
 					auto child = model()->index(i, 0, idx);
@@ -1014,36 +1129,33 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(0, layoutPadding() * 2, layoutPadding() * 2);
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
 					}
 
 					FancyViewItem item = add(paramLayout, child);
-					if ( item.isValid() )
+					if ( item.isValid() ) {
 						_viewItems[child] = item;
+					}
 				}
 
 				for ( int i = 0; i < rows; ++i ) {
 					auto child = model()->index(i, 0, idx);
-					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter )
+					if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter ) {
 						continue;
+					}
 					QWidget *cw = createWidgetFromIndex(child, rootSecName);
-					if ( cw )
+					if ( cw ) {
 						l->addWidget(cw);
+					}
 				}
 
 				if ( rows == 0 ) {
-					DescLabel *desc = new DescLabel;
-					desc->setContentsMargins(8,0,0,0);
-					desc->setText("This group does not contain a parameter to configure...");
-					//desc->setWordWrap(true);
-					//desc->setMinimumWidth(100);
-					QPalette pal = desc->palette();
-					pal.setColor(QPalette::Text, AlertColor);
-					desc->setPalette(pal);
-					l->addWidget(desc);
+					auto alert = new AlertLabel;
+					alert->setText("This group does not contain a parameter to configure...");
+					l->addWidget(alert);
 				}
 
 				_viewItems[idx] = item;
@@ -1053,8 +1165,10 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 		case ConfigurationTreeItemModel::TypeParameter:
 		{
 			FancyViewItem item = add(l, idx);
-			if ( item.isValid() )
+			l->setContentsMargins(0, 0, 0, 0);
+			if ( item.isValid() ) {
 				_viewItems[idx] = item;
+			}
 
 			break;
 		}
@@ -1064,6 +1178,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			if ( struc ) {
 				FancyViewItem item(idx, w);
 				add(l, item, struc);
+				l->setContentsMargins(0, 0, 0, 0);
 
 				if ( struc->name.empty() ) break;
 
@@ -1077,7 +1192,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 					if ( firstParameter ) {
 						QFrame *paramWidget = new QFrame;
-						paramLayout = new Seiscomp::Gui::FlowLayout(-1, -1, fontMetrics().ascent());
+						paramLayout = new Seiscomp::Gui::FlowLayout(0, layoutPadding() * 2, layoutPadding() * 2);
 						paramWidget->setLayout(paramLayout);
 						l->addWidget(paramWidget);
 						firstParameter = false;
@@ -1098,15 +1213,9 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				if ( rows == 0 ) {
-					DescLabel *desc = new DescLabel;
-					desc->setContentsMargins(8,0,0,0);
-					desc->setText("This group does not contain a parameter to configure...");
-					//desc->setWordWrap(true);
-					//desc->setMinimumWidth(100);
-					QPalette pal = desc->palette();
-					pal.setColor(QPalette::Text, AlertColor);
-					desc->setPalette(pal);
-					l->addWidget(desc);
+					auto alert = new AlertLabel;
+					alert->setText("This group does not contain a parameter to configure...");
+					l->addWidget(alert);
 				}
 			}
 			break;
@@ -1117,21 +1226,26 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 	return w;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
                     Seiscomp::System::BindingCategory *cat, bool collapsed) {
 	QHBoxLayout *hlayout = new QHBoxLayout;
-	setMargin(hlayout, 0);
+	hlayout->setSpacing(layoutPadding());
+	hlayout->setContentsMargins(0, 0, 0, 0);
 
-	BlockHandle *catHandle = new BlockHandle;
-	catHandle->setCheckable(true);
-	catHandle->setChecked(true);
+	item.toggle = new BlockHandle;
+	item.toggle->setCheckable(true);
+	item.toggle->setChecked(true);
 
 	Header *header = new Header(CategoryBgColor);
 	header->setLayout(hlayout);
 
-	hlayout->addWidget(catHandle);
+	hlayout->addWidget(item.toggle);
 
 	QLabel *catName = new QLabel;
 	catName->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
@@ -1149,7 +1263,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	hlayout->addWidget(catName);
 
-	HRuler *hline = new HRuler;
+	HRuler *hline = new HRuler(1);
 	hlayout->addWidget(hline);
 
 	//layout->addLayout(hlayout);
@@ -1157,20 +1271,19 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	BlockWidget *catWidget = new BlockWidget;
 	catWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-	catWidget->setContentsMargins(8,0,0,0);
 
 	layout->addWidget(catWidget);
 
 	layout = new QVBoxLayout;
+	layout->setSpacing(layoutPadding());
 	catWidget->setLayout(layout);
 
 	if ( collapsed ) {
-		catHandle->setChecked(false);
+		item.toggle->setChecked(false);
 		catWidget->setVisible(false);
 	}
 
-	connect(catHandle, SIGNAL(toggled(bool)),
-	        catWidget, SLOT(setVisible(bool)));
+	connect(item.toggle, &BlockHandle::toggled, catWidget, &QWidget::setVisible);
 
 	/*
 	size_t catBindingCount = cat->bindingTypes.size();
@@ -1208,26 +1321,26 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
                     Seiscomp::System::Binding *binding, bool collapsed) {
-	QHBoxLayout *hlayout = new QHBoxLayout;
-
-	BlockHandle *secHandle = new BlockHandle;
-	secHandle->setCheckable(true);
-	secHandle->setChecked(true);
-
-	hlayout->addWidget(secHandle);
+	item.toggle = new BlockHandle;
+	item.toggle->setCheckable(true);
+	item.toggle->setChecked(true);
 
 	QToolButton *removeButton = new QToolButton;
-	removeButton->setIcon(QIcon(":/res/icons/remove.png"));
+	removeButton->setIcon(::icon("delete_forever"));
 	removeButton->setToolTip(QString("Remove binding '%1'").arg(binding->name.c_str()));
 	removeButton->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
 
 	connect(removeButton, SIGNAL(clicked()), this, SLOT(removeCategoryBinding()));
 
-	QLabel *sectionName = new QLabel;
+	QLabel *sectionName = new HeaderLabel;
 	sectionName->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 	QFont f = sectionName->font();
 	//f.setPointSize(f.pointSize()*150/100);
@@ -1236,41 +1349,42 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	sectionName->setFont(f);
 
 	QString label = item.index.data().toString();
-	if ( label != binding->name.c_str() )
+	if ( label != binding->name.c_str() ) {
 		sectionName->setText(item.index.data().toString() + " : " + binding->name.c_str());
-	else
+	}
+	else {
 		sectionName->setText(item.index.data().toString());
-	QPalette pal = sectionName->palette();
-	pal.setColor(QPalette::Text, TextColor);
-	sectionName->setPalette(pal);
+	}
 
 	item.label = sectionName;
 
+	QHBoxLayout *hlayout = new QHBoxLayout;
+	hlayout->setContentsMargins(0, 0, 0, 0);
+	hlayout->setSpacing(layoutPadding());
+	hlayout->addWidget(item.toggle);
 	hlayout->addWidget(sectionName);
-
-	HRuler *hline = new HRuler;
-	hlayout->addWidget(hline);
+	hlayout->addWidget(new HRuler);
 
 	hlayout->addWidget(removeButton);
 
 	layout->addLayout(hlayout);
 
 	BlockWidget *sectionWidget = new BlockWidget;
+	auto pal = sectionWidget->palette();
 	sectionWidget->setBackgroundColor(blend(pal.color(QPalette::Base), CategoryBgColor, 90));
 	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-	sectionWidget->setContentsMargins(8,0,0,0);
 	layout->addWidget(sectionWidget);
 
 	layout = new QVBoxLayout;
+	layout->setSpacing(layoutPadding());
 	sectionWidget->setLayout(layout);
 
 	if ( collapsed ) {
-		secHandle->setChecked(false);
+		item.toggle->setChecked(false);
 		sectionWidget->setVisible(false);
 	}
 
-	connect(secHandle, SIGNAL(toggled(bool)),
-	        sectionWidget, SLOT(setVisible(bool)));
+	connect(item.toggle, &BlockHandle::toggled, sectionWidget, &QWidget::setVisible);
 
 	return true;
 }
@@ -1278,121 +1392,116 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
                     Seiscomp::System::Section *sec, bool collapsed) {
-	QHBoxLayout *hlayout = new QHBoxLayout;
+	item.toggle = new BlockHandle;
+	item.toggle->setCheckable(true);
+	item.toggle->setChecked(true);
 
-	BlockHandle *secHandle = new BlockHandle;
-	secHandle->setCheckable(true);
-	secHandle->setChecked(true);
-
-	hlayout->addWidget(secHandle);
-
-	QLabel *sectionName = new QLabel;
+	QLabel *sectionName = new HeaderLabel;
 	sectionName->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 	QFont f = sectionName->font();
-	f.setPointSize(f.pointSize()*150/100);
+	f.setPointSize(f.pointSize() * 150 / 100);
 	f.setBold(true);
 	//f.setItalic(true);
 	sectionName->setFont(f);
 	sectionName->setText(item.index.data().toString());
-	QPalette pal = sectionName->palette();
-	pal.setColor(QPalette::Text, TextColor);
-	sectionName->setPalette(pal);
 
 	item.label = sectionName;
 
+	QHBoxLayout *hlayout = new QHBoxLayout;
+	hlayout->setSpacing(layoutPadding());
+	hlayout->setContentsMargins(0, 0, 0, 0);
+	hlayout->addWidget(item.toggle);
 	hlayout->addWidget(sectionName);
-
-	HRuler *hline = new HRuler;
-	hlayout->addWidget(hline);
+	hlayout->addWidget(new HRuler(2));
 
 	layout->addLayout(hlayout);
 
 	QWidget *sectionWidget = new BlockWidget;
 	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
-	sectionWidget->setContentsMargins(8,0,0,0);
 	layout->addWidget(sectionWidget);
 
 	layout = new QVBoxLayout;
+	layout->setSpacing(layoutPadding());
 	sectionWidget->setLayout(layout);
 
 	if ( collapsed ) {
-		secHandle->setChecked(false);
+		item.toggle->setChecked(false);
 		sectionWidget->setVisible(false);
 	}
 
-	connect(secHandle, SIGNAL(toggled(bool)),
-	        sectionWidget, SLOT(setVisible(bool)));
+	connect(item.toggle, &BlockHandle::toggled, sectionWidget, &QWidget::setVisible);
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group) {
-	layout->addSpacing(16);
+	// layout->addSpacing(16);
 
 	// Build header
-	QHBoxLayout *hlayout = new QHBoxLayout;
-	BlockHandle *groupHandle= new BlockHandle;
-	groupHandle->setCheckable(true);
-	groupHandle->setChecked(true);
-	hlayout->addWidget(groupHandle);
+	item.toggle = new BlockHandle;
+	item.toggle->setCheckable(true);
+	item.toggle->setChecked(true);
 
-	QLabel *name = new QLabel;
+	QLabel *name = new HeaderLabel;
 	name->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 	QFont f = name->font();
 	//f.setPointSize(f.pointSize()*125/100);
 	f.setBold(true);
 	name->setFont(f);
-	QPalette pal = name->palette();
-	pal.setColor(QPalette::Text, TextColor);
-	name->setPalette(pal);
 	name->setText(item.index.data().toString());//  group->definition->name.c_str());
-	hlayout->addWidget(name);
 
 	item.label = name;
 
-	HRuler *hline = new HRuler;
-	hlayout->addWidget(hline);
+	QHBoxLayout *hlayout = new QHBoxLayout;
+	hlayout->setSpacing(layoutPadding());
+	hlayout->setContentsMargins(0, 0, 0, 0);
+	hlayout->addWidget(item.toggle);
+	hlayout->addWidget(name);
+	hlayout->addWidget(new HRuler);
 
 	layout->addLayout(hlayout);
 
 	// Build group widget
 	QWidget *groupWidget = new BlockWidget;
-	groupWidget->setContentsMargins(8,0,0,0);
 	//groupWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	//groupWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
 	QVBoxLayout *groupLayout = new QVBoxLayout;
+	groupLayout->setSpacing(layoutPadding());
 	groupWidget->setLayout(groupLayout);
 
 	if ( !group->definition->description.empty() ) {
-		DescLabel *desc = new DescLabel;
-		desc->setContentsMargins(8,0,0,0);
+		auto desc = new DescLabel;
 		desc->setText(group->definition->description.c_str());
-		//desc->setWordWrap(true);
-		QPalette pal = desc->palette();
-		pal.setColor(QPalette::Text, DescColor);
-		desc->setPalette(pal);
-		layout->addWidget(desc);
+		groupLayout->addWidget(desc);
 		item.description = desc;
 	}
 
 	layout->addWidget(groupWidget);
 	layout = groupLayout;
 
-	connect(groupHandle, SIGNAL(toggled(bool)),
-	        groupWidget, SLOT(setVisible(bool)));
+	connect(item.toggle, &BlockHandle::toggled, groupWidget, &QWidget::setVisible);
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) {
 	QHBoxLayout *hlayout = new QHBoxLayout;
+	hlayout->setSpacing(layoutPadding());
+	hlayout->setContentsMargins(0, 0, 0, 0);
 
-	QLabel *type = new QLabel;
+	QLabel *type = new HeaderLabel;
 	type->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
-	BlockHandle *groupHandle = NULL;
 
 	QToolButton *modify = new QToolButton;
 	modify->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
@@ -1407,7 +1516,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 		else {
 			type->setText(struc->definition->type.c_str());
 		}
-		modify->setIcon(QIcon(":/res/icons/add.png"));
+		modify->setIcon(::icon("add"));
 		modify->setToolTip(QString("Create a new '%1' instance").arg(struc->definition->type.c_str()));
 		//add->setFlat(true);
 		//add->setIconSize(QSize(20,20));
@@ -1421,12 +1530,12 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 	}
 	else {
 		// Build header
-		groupHandle = new BlockHandle;
-		groupHandle->setCheckable(true);
-		hlayout->addWidget(groupHandle);
+		item.toggle = new BlockHandle;
+		item.toggle->setCheckable(true);
+		hlayout->addWidget(item.toggle);
 
 		type->setText(struc->name.c_str());
-		modify->setIcon(QIcon(":/res/icons/remove.png"));
+		modify->setIcon(::icon("delete_forever"));
 		modify->setToolTip(QString("Delete structure '%1'").arg(type->text()));
 
 		connect(modify, SIGNAL(clicked()), this, SLOT(removeStruct()));
@@ -1435,11 +1544,8 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 		f.setBold(true);
 		f.setItalic(true);
 		type->setFont(f);
-		QPalette pal = type->palette();
-		pal.setColor(QPalette::Text, TextColor);
-		type->setPalette(pal);
 
-		groupHandle->setChecked(true);
+		item.toggle->setChecked(true);
 
 		hlayout->addWidget(type);
 		hlayout->addWidget(new HRuler);
@@ -1453,42 +1559,43 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 	if ( !struc->name.empty() ) {
 		// Build group widget
 		QWidget *groupWidget = new BlockWidget;
-		groupWidget->setContentsMargins(8,0,0,0);
 
 		QVBoxLayout *groupLayout = new QVBoxLayout;
+		groupLayout->setSpacing(layoutPadding());
 		groupWidget->setLayout(groupLayout);
 
 		if ( !struc->definition->description.empty() ) {
-			DescLabel *desc = new DescLabel;
-			desc->setContentsMargins(8,0,0,0);
+			auto desc = new DescLabel;
 			desc->setText(struc->definition->description.c_str());
-			//desc->setWordWrap(true);
-			QPalette pal = desc->palette();
-			pal.setColor(QPalette::Text, DescColor);
-			desc->setPalette(pal);
-			layout->addWidget(desc);
+			groupLayout->addWidget(desc);
 			item.description = desc;
 		}
 
 		layout->addWidget(groupWidget);
 		layout = groupLayout;
 
-		groupWidget->setVisible(groupHandle->isChecked());
+		groupWidget->setVisible(item.toggle->isChecked());
 
-		connect(groupHandle, SIGNAL(toggled(bool)),
-		        groupWidget, SLOT(setVisible(bool)));
+		connect(item.toggle, &QAbstractButton::toggled, groupWidget, &QWidget::setVisible);
 	}
 
 	return true;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	Parameter *param = reinterpret_cast<Parameter*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
-	if ( param == NULL ) return FancyViewItem();
+	if ( !param ) {
+		return FancyViewItem();
+	}
 
 	ViewItemWidget *paramWidget = new ViewItemWidget;
 	QVBoxLayout *paramLayout = new QVBoxLayout;
+	setMargin(paramLayout, 1);
 	paramLayout->setSpacing(0);
 	paramWidget->setLayout(paramLayout);
 
@@ -1519,8 +1626,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		inputWidget = checkBox;
 		textWidget = checkBox;
 
-		connect(checkBox, SIGNAL(toggled(bool)),
-		        this, SLOT(optionToggled(bool)));
+		connect(checkBox, &BoolEdit::toggled, this, &FancyView::optionToggled);
 
 		nameLayout->addWidget(checkBox);
 		paramLayout->addLayout(nameLayout);
@@ -1532,7 +1638,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			pal.setColor(QPalette::Button, AlertColor);
 			pal.setColor(QPalette::Window, AlertColor);
 			pal.setColor(QPalette::Highlight, AlertColor);
-			pal.setColor(QPalette::ButtonText, Qt::white);
+			pal.setColor(QPalette::ButtonText, AlertTextColor);
 			pal.setColor(QPalette::Disabled, QPalette::Base, blend(AlertColor, oldButton, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Button, blend(AlertColor, oldButton, 50));
 			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertColor, oldButton, 50));
@@ -1578,10 +1684,11 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			QColor oldText = pal.color(QPalette::Disabled, QPalette::Text);
 
 			pal.setColor(QPalette::Base, AlertColor);
-			pal.setColor(QPalette::Text, Qt::white);
+			pal.setColor(QPalette::Text, AlertTextColor);
+			pal.setColor(QPalette::Window, AlertFrameColor);
 			pal.setColor(QPalette::Disabled, QPalette::Base, blend(AlertColor, oldBase, 50));
-			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertColor, oldWindow, 50));
-			pal.setColor(QPalette::Disabled, QPalette::Text, blend(Qt::white, oldText, 50));
+			pal.setColor(QPalette::Disabled, QPalette::Window, blend(AlertFrameColor, oldWindow, 50));
+			pal.setColor(QPalette::Disabled, QPalette::Text, blend(AlertTextColor, oldText, 50));
 			inputWidget->widget()->setPalette(pal);
 		}
 
@@ -1591,12 +1698,16 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	}
 
 	nameLayout->addStretch();
-	QAbstractButton *locker = new IconButton(_unlockIcon, _lockIcon);
-	nameLayout->addWidget(locker);
+	auto btnReset = new IconButton(_iconReset);
+	nameLayout->addWidget(btnReset);
+	auto btnEdit = new IconButton(_iconEdit);
+	nameLayout->addWidget(btnEdit);
 
 	updateToolTip(inputWidget->widget(), param);
 
 	FancyViewItem item(idx, paramWidget);
+	item.reset = btnReset;
+	item.editControl = btnEdit;
 	item.label = textWidget;
 	item.input = inputWidget;
 
@@ -1629,45 +1740,41 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		descText = descText + "Options: " + Core::toString(param->definition->options);
 	}
 	if ( !descText.empty() ) {
-		DescLabel *desc = new DescLabel;
-		desc->setText(maxSize(descText, 60).c_str());
+		auto help = new HelpLabel;
+		help->setText(maxSize(descText, 60).c_str());
 		QString content(string2Block(descText, 80).c_str());
 		content = encodeHTML(content);
 
 		QString toolTip = QString("<p style='white-space:pre'>%1</p>").arg(content);
-		desc->setToolTip(toolTip);
+		help->setToolTip(toolTip);
 
-		//desc->setWordWrap(true);
-		QPalette pal = desc->palette();
-		pal.setColor(QPalette::Text, Qt::gray);
-		desc->setPalette(pal);
-		/*
-		f = desc->font();
-		f.setBold(true);
-		name->setFont(f);
-		*/
-		paramLayout->addWidget(desc);
-		item.description = desc;
+		paramLayout->addWidget(help);
+		item.description = help;
 
-		if ( item.input->widget() )
+		if ( item.input->widget() ) {
 			item.input->widget()->setWhatsThis(descText.c_str());
+		}
 	}
-	else
-		item.description = NULL;
-
-	if ( (idx.sibling(idx.row(),2).flags() & Qt::ItemIsEnabled) == 0 ) {
-		textWidget->setEnabled(false);
-		inputWidget->widget()->setEnabled(false);
+	else {
+		item.description = nullptr;
 	}
 
-	if ( locker ) {
-		locker->setCheckable(true);
-		locker->setFixedSize(16,16);
-		locker->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
+	if ( (idx.sibling(idx.row(), 2).flags() & Qt::ItemIsEnabled) == 0 ) {
+		item.label->setEnabled(false);
+		item.input->widget()->setEnabled(false);
+		if ( item.description ) {
+			item.description->setEnabled(false);
+		}
+	}
 
-		if ( idx.sibling(idx.row(),3).data().toBool() ) {
-			locker->setChecked(true);
-			locker->setToolTip(isDefined?
+	if ( btnEdit ) {
+		btnEdit->setCheckable(true);
+		btnEdit->setFixedSize(16, 16);
+		btnEdit->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
+
+		if ( idx.sibling(idx.row(), 3).data().toBool() ) {
+			btnEdit->setChecked(true);
+			btnEdit->setToolTip(isDefined?
 			                   "This parameter is locked. Its is already "
 			                   "defined in an earlier or later configuration stage.\n"
 			                   "If you want to redefine it you can press "
@@ -1679,14 +1786,22 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			                   "to unlock it.");
 		}
 		else {
-			locker->setChecked(false);
-			locker->setToolTip("This parameter is present in the application "
+			btnEdit->setChecked(false);
+			btnEdit->setToolTip("This parameter is present in the application "
 			                   "configuration. To remove the parameter\nin "
 			                   "order to use the applications default, press "
 			                   "the button and lock it.");
 		}
 
-		connect(locker, SIGNAL(toggled(bool)), this, SLOT(lockChanged(bool)));
+		connect(btnEdit, &QAbstractButton::toggled, this, &FancyView::editChanged);
+	}
+
+	if ( btnReset ) {
+		btnReset->setVisible(false);
+		btnReset->setCheckable(false);
+		btnReset->setFixedSize(16, 16);
+		btnReset->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
+		connect(btnReset, &QAbstractButton::clicked, this, &FancyView::resetValue);
 	}
 
 	paramLayout->addStretch();
@@ -1695,105 +1810,176 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 	// Link the view item with the input widget
 	inputWidget->widget()->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
+	item.updated();
 
 	return item;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::showSearchButton(bool v) {
+	if ( _btnSearch ) {
+		_btnSearch->setVisible(v);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                             const QVector<int> &roles) {
-	ViewItems::iterator it = _viewItems.find(topLeft.sibling(topLeft.row(),0));
-	if ( it == _viewItems.end() ) return;
+	auto it = _viewItems.find(topLeft.sibling(topLeft.row(),0));
+	if ( it == _viewItems.end() ) {
+		return;
+	}
 
 	if ( _blockPopulate != it.value().input->widget() ) {
-		it.value().label->setEnabled(model()->flags(topLeft.sibling(topLeft.row(),2)) & Qt::ItemIsEnabled);
-		it.value().input->widget()->setEnabled(model()->flags(topLeft.sibling(topLeft.row(),2)) & Qt::ItemIsEnabled);
+		auto &item = it.value();
+		bool isEnabled = model()->flags(topLeft.sibling(topLeft.row(), 2)) & Qt::ItemIsEnabled;
+		item.label->setEnabled(isEnabled);
+		item.input->widget()->setEnabled(isEnabled);
+		if ( item.description ) {
+			item.description->setEnabled(isEnabled);
+		}
 
 		// Change values
-		if ( topLeft.column() == 2 )
-			it.value().input->setValue(topLeft.data().toString());
+		if ( topLeft.column() == 2 ) {
+			item.input->setValue(topLeft.data().toString());
+		}
+
+		if ( (topLeft.column() == 2) || (topLeft.column() == 3) ) {
+			item.updated();
+		}
 	}
 
 	QAbstractItemView::dataChanged(topLeft, bottomRight, roles);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::rowsInserted(const QModelIndex &parent, int start, int end) {
 	QAbstractItemView::rowsInserted(parent, start, end);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) {
 	QAbstractItemView::rowsAboutToBeRemoved(parent, start, end);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::eventFilter(QObject *o, QEvent *e) {
-	if ( o == _rootWidget && e->type() == QEvent::LayoutRequest )
+	if ( o == _rootWidget && e->type() == QEvent::LayoutRequest ) {
 		updateContentGeometry();
+	}
 
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) {
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QModelIndex FancyView::moveCursor(QAbstractItemView::CursorAction cursorAction,
                                   Qt::KeyboardModifiers modifiers) {
 	return QModelIndex();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FancyView::horizontalOffset() const {
 	return horizontalScrollBar()->value();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FancyView::verticalOffset() const {
 	return verticalScrollBar()->value();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::isIndexHidden(const QModelIndex &index) const {
 	return false;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void FancyView::setSelection(const QRect&, QItemSelectionModel::SelectionFlags command) {
-
-}
 
 
-void FancyView::mousePressEvent(QMouseEvent *event) {
-
-}
-
-
-void FancyView::mouseMoveEvent(QMouseEvent *event) {
-
-}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::setSelection(const QRect&, QItemSelectionModel::SelectionFlags command) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void FancyView::mouseReleaseEvent(QMouseEvent *event) {
-
-}
 
 
-void FancyView::paintEvent(QPaintEvent *event) {
-	QAbstractItemView::paintEvent(event);
-}
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::mousePressEvent(QMouseEvent *event) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-void FancyView::lockChanged(bool state) {
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::mouseMoveEvent(QMouseEvent *event) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::mouseReleaseEvent(QMouseEvent *event) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::editChanged(bool state) {
 	QWidget *w = static_cast<QWidget*>(sender());
 
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
-	if ( !item.isValid() ) return;
+	if ( !item.isValid() ) {
+		return;
+	}
 
 	Parameter *param = reinterpret_cast<Parameter*>(
-		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
+		item.index.sibling(item.index.row(), 0).data(ConfigurationTreeItemModel::Link).value<void*>()
 	);
 
 	//if ( item.input ) item.input->setDisabled(state);
@@ -1802,12 +1988,44 @@ void FancyView::lockChanged(bool state) {
 	model()->setData(item.index.sibling(item.index.row(), 3), state);
 
 	updateToolTip(item.input->widget(), param);
+	item.updated();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::resetValue() {
+	QWidget *w = static_cast<QWidget*>(sender());
+
+	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
+	if ( !item.isValid() ) {
+		return;
+	}
+
+	// Restore initial check state
+	item.editControl->setChecked(model()->data(item.index.sibling(item.index.row(), 3), ConfigurationTreeItemModel::Initial).toBool());
+	model()->setData(
+		item.index.sibling(item.index.row(), 2),
+		model()->data(item.index.sibling(item.index.row(), 2), ConfigurationTreeItemModel::Initial).toString()
+	);
+
+	Parameter *param = reinterpret_cast<Parameter*>(
+		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
+	);
+	updateToolTip(item.input->widget(), param);
+	item.updated();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::evaluateValue(const std::string& valueTest,
                               const Seiscomp::System::Parameter *param,
                               QString &eval, bool verbose=false) {
-	bool isPathType = false;
 	auto evalSize = eval.size();
 
 	// test values types
@@ -1889,7 +2107,6 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 			return eval.size() > evalSize;
 		}
 
-		isPathType = true;
 		for ( auto &item : param->definition->options ) {
 			if ( item == "read" ) {
 				// files must exist if tagged as read
@@ -1957,7 +2174,6 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 			eval += "<b>Directory is actually a file:</b> ";
 		}
 
-		isPathType = true;
 		// check options
 		for ( auto &item : param->definition->options ) {
 			if ( item == "read") {
@@ -2031,26 +2247,6 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 		}
 	}
 
-	// test values themselves
-	if ( !param->definition->values.empty() && !isPathType ) {
-		bool valueAccept = false;
-		for ( const auto &value : param->definition->values ) {
-			if ( valueTest == Core::trim(value) ) {
-				valueAccept = true;
-				break;
-			}
-		}
-
-		if ( !valueAccept ) {
-			if ( verbose && !symbolURIString.empty() ) {
-				cerr << symbolURIString << param->variableName << " = '" << valueTest
-				     << "' is not a member of '" << Core::toString(param->definition->values)
-				     << "'" << endl;
-			}
-			eval += "<b>Unsupported value:</b> ";
-		}
-	}
-
 	// test if values are in range
 	if ( !param->definition->range.empty() ) {
 		double value;
@@ -2094,7 +2290,12 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 
 	return eval.size() > evalSize;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	bool isOverridden = param->symbol.stage > _configStage;
 	vector<string> values;
@@ -2130,8 +2331,7 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 
 	QString toolTip = QString("<b>Location</b><br/>%1<br/><br/>"
 	                          "<b>Evaluated</b><br/>%2")
-	                  .arg(param->symbol.uri.c_str())
-	                  .arg(eval);
+	                  .arg(param->symbol.uri.c_str(), eval);
 
 	if ( isOverridden ) {
 		toolTip += QString("<br/><br/><b>WARNING</b><br/><i>This value is overridden in a "
@@ -2142,10 +2342,14 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 
 	w->setToolTip(toolTip);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::optionTextEdited() {
-	if ( _optionEditHint != NULL ) {
+	if ( _optionEditHint ) {
 		_optionEditHint->hide();
 	}
 
@@ -2160,18 +2364,20 @@ void FancyView::optionTextEdited() {
 		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
 	);
 
-	model()->setData(item.index.sibling(item.index.row(), 2), item.input->value());
-	/*
-	if ( model()->data(item.index.sibling(item.index.row(), 2)).toString() != text )
-		item.input->setValue(model()->data(item.index.sibling(item.index.row(), 2)).toString());
-	*/
+	if ( item.input->value() != item.index.sibling(item.index.row(), 2).data() ) {
+		model()->setData(item.index.sibling(item.index.row(), 2), item.input->value());
+		item.updated();
+		updateToolTip(item.input->widget(), param);
+	}
 
 	//setFocus(Qt::ActiveWindowFocusReason);
-
-	updateToolTip(item.input->widget(), param);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::optionTextChanged(const QString &txt) {
 	QWidget *w = static_cast<QWidget*>(sender());
 
@@ -2180,9 +2386,9 @@ void FancyView::optionTextChanged(const QString &txt) {
 		return;
 	}
 
-	if ( _optionEditHint == NULL ) {
+	if ( !_optionEditHint ) {
 		_optionEditHint = new EvalHintWidget(this);
-		_optionEditHint->setMargin(6);
+		_optionEditHint->setContentsMargins(6, 6, 6, 6);
 	}
 
 	Parameter *param = reinterpret_cast<Parameter*>(
@@ -2225,15 +2431,13 @@ void FancyView::optionTextChanged(const QString &txt) {
 		             issueFound ? QColor(255,127,0) : QColor(32,128,32));
 
 		_optionEditHint->setText(QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
-		                         .arg(values.size()).arg(values.size() == 1?"":"s")
-		                         .arg(eval));
+		                         .arg(values.size()).arg(values.size() == 1 ? "" : "s", eval));
 	}
 	else {
 		pal.setColor(QPalette::WindowText, QColor(128,32,32));
 		eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
 
-		_optionEditHint->setText(QString("<b>Error</b><br/><br/>%1")
-		                         .arg(eval));
+		_optionEditHint->setText(QString("<b>Error</b><br/><br/>%1").arg(eval));
 	}
 
 	_optionEditHint->setPalette(pal);
@@ -2253,37 +2457,54 @@ void FancyView::optionTextChanged(const QString &txt) {
 
 	int x,y;
 
-	if ( tl.x() + size.width() <= width() )
+	if ( tl.x() + size.width() <= width() ) {
 		x = tl.x();
+	}
 	else {
 		x = width()-size.width();
-		if ( x < 0 ) x = 0;
+		if ( x < 0 ) {
+			x = 0;
+		}
 	}
 
-	if ( br.y() + size.height() <= height() || (height()-br.y()) >= tl.y() )
+	if ( br.y() + size.height() <= height() || (height()-br.y()) >= tl.y() ) {
 		y = br.y();
-	else
+	}
+	else {
 		y = tl.y() - size.height();
+	}
 
 	_optionEditHint->move(x,y);
 	_optionEditHint->show();
 
 	_blockPopulate = w;
 	model()->setData(item.index.sibling(item.index.row(), 2), item.input->value());
-	_blockPopulate = NULL;
+	item.updated();
+	_blockPopulate = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::optionToggled(bool opt) {
 	QWidget *w = static_cast<QWidget*>(sender());
 
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
-	if ( !item.isValid() ) return;
+	if ( !item.isValid() ) {
+		return;
+	}
 
 	model()->setData(item.index.sibling(item.index.row(), 2), item.input->value());
+	item.updated();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::bindingCategoryChanged(int idx) {
 	/*
 	QComboBox *comboBox = static_cast<QComboBox*>(sender());
@@ -2315,8 +2536,12 @@ void FancyView::bindingCategoryChanged(int idx) {
 	model()->setData(item.index, QVariant::fromValue((void*)cat), ConfigurationTreeItemModel::Link);
 	*/
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::addCategoryBinding() {
 	QWidget *w = (QWidget*)sender();
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
@@ -2363,8 +2588,12 @@ void FancyView::addCategoryBinding() {
 	QBoxLayout *l = (QBoxLayout*)w->parentWidget()->layout();
 	l->insertWidget(row+1, createWidgetFromIndex(ni, ""));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::removeCategoryBinding() {
 	QWidget *w = (QWidget*)sender();
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
@@ -2389,7 +2618,9 @@ void FancyView::removeCategoryBinding() {
 
 	model()->removeRow(item.index.row(), item.index.parent());
 
-	if ( item.container ) delete item.container;
+	if ( item.container ) {
+		delete item.container;
+	}
 }
 
 
@@ -2401,7 +2632,9 @@ void FancyView::addStruct() {
 	Container *c = reinterpret_cast<Container*>(item.index.parent().data(ConfigurationTreeItemModel::Link).value<void*>());
 
 	NewStructDialog dlg(c);
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
 
 	Structure *ns = c->instantiate(s, qPrintable(dlg.name()));
 	if ( ns ) {
@@ -2418,8 +2651,12 @@ void FancyView::addStruct() {
 		l->insertWidget(row, createWidgetFromIndex(ni, ""));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::removeStruct() {
 	QWidget *w = (QWidget*)sender();
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
@@ -2434,19 +2671,43 @@ void FancyView::removeStruct() {
 	}
 
 	ViewItems::iterator it = _viewItems.find(item.index);
-	if ( it != _viewItems.end() )
+	if ( it != _viewItems.end() ) {
 		_viewItems.erase(it);
-	else
+	}
+	else {
 		cerr << "ERROR: view item does not exist for index" << endl;
+	}
 
 	model()->removeRow(item.index.row(), item.index.parent());
 
-	if ( item.container ) delete item.container;
+	if ( item.container ) {
+		delete item.container;
+	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::updateContentGeometry() {
-	if ( _rootWidget == NULL ) return;
+	if ( !_rootWidget ) {
+		return;
+	}
+
+	{
+		int top = 0, right = 0;
+		_btnSearch->resize(_btnSearch->sizeHint());
+		if ( _rootWidget->layout() ) {
+			top = _rootWidget->layout()->contentsMargins().top();
+			right = _rootWidget->layout()->contentsMargins().right();
+		}
+		_btnSearch->move(
+			width() - _btnSearch->width() -
+			(verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0) - right,
+			top
+		);
+	}
 
 	QSize p = viewport()->size();
 	QSize min = qSmartMinSize(_rootWidget);
@@ -2469,38 +2730,60 @@ void FancyView::updateContentGeometry() {
 	verticalScrollBar()->setPageStep(viewport()->height());
 	verticalScrollBar()->setRange(0, qMax(0, _rootWidget->height() - viewport()->height()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::resizeEvent(QResizeEvent *event) {
 	QAbstractItemView::resizeEvent(event);
 	updateContentGeometry();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::scrollContentsBy(int dx, int dy) {
 	viewport()->scroll(dx, dy);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QRegion FancyView::visualRegionForSelection(const QItemSelection &selection) const {
 	return QRegion();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::currentChanged(const QModelIndex &curr, const QModelIndex &) {
 	if ( _currentItem ) {
 		static_cast<ViewItemWidget*>(_currentItem)->setSelected(false);
 		_currentItem = NULL;
 	}
 
-	ViewItems::iterator it = _viewItems.find(curr);
-	if ( it == _viewItems.end() ) return;
+	auto it = _viewItems.find(curr);
+	if ( it == _viewItems.end() ) {
+		return;
+	}
 
 	_currentItem = it.value().container;
 	static_cast<ViewItemWidget*>(_currentItem)->setSelected(true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::keyboardSearch(const QString &search) {
 	if ( _currentItem ) {
 		static_cast<ViewItemWidget*>(_currentItem)->setSelected(false);
@@ -2509,3 +2792,4 @@ void FancyView::keyboardSearch(const QString &search) {
 
 	// TODO: implement keyboard search
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

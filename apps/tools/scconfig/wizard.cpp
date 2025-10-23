@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #include "gui.h"
 #include "wizard.h"
 
@@ -43,10 +44,15 @@
 using namespace std;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardWidget::Node::Node(Node *p, Input *i, Node *next)
 : parent(p), next(next), input(i) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardWidget::Node::~Node() {
 	while ( child ) {
 		Node *n = child;
@@ -54,31 +60,55 @@ WizardWidget::Node::~Node() {
 		delete n;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardPage::WizardPage(QWidget *parent) : QWidget(parent) {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardPage::setTitle(const QString &title) {
 	_title = title;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardPage::setSubTitle(const QString &subtitle) {
 	_subtitle = subtitle;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const QString &WizardPage::title() const {
 	return _title;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const QString &WizardPage::subtitle() const {
 	return _subtitle;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 : QDialog(parent), _model(model) {
 	resize(500,400);
@@ -163,18 +193,30 @@ WizardWidget::WizardWidget(WizardModel *model, QWidget *parent)
 	_currentNode = _modelTree;
 	setPage(createIntroPage());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardWidget::~WizardWidget() {
 	if ( _modelTree ) delete _modelTree;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool WizardWidget::ranSetup() const {
 	return _ranSetup;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::reject() {
 	if ( _procSeisComP ) {
 		if ( QMessageBox::question(this, tr("Abort setup"),
@@ -187,8 +229,12 @@ void WizardWidget::reject() {
 
 	QDialog::reject();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::addGroups(Node *parent, const QString &modname,
                              const SetupGroups &groups) {
 	for ( Seiscomp::System::SchemaSetupGroup *group : groups ) {
@@ -196,8 +242,12 @@ void WizardWidget::addGroups(Node *parent, const QString &modname,
 		          (group->name + ".").c_str());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::dumpNode(Node *node, int level) {
 	for ( int i = 0; i < level; ++i ) cerr << " ";
 
@@ -220,8 +270,12 @@ void WizardWidget::dumpNode(Node *node, int level) {
 		child = child->next;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::addInputs(Node *parent, const QString &modname,
                              Group *g, const Inputs &inputs,
                              const QString &path) {
@@ -272,8 +326,12 @@ void WizardWidget::addInputs(Node *parent, const QString &modname,
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::back() {
 	_buttonCancel->setText(tr("Cancel"));
 	_buttonNext->setText(tr("Next"));
@@ -286,8 +344,12 @@ void WizardWidget::back() {
 	else
 		setPage(createCurrentPage());
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::next() {
 	if ( _buttonNext->property("finished").toBool() == true ) {
 		finish();
@@ -341,8 +403,12 @@ void WizardWidget::next() {
 		setPage(createCurrentPage());
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QByteArray &operator<<(QByteArray &ar, WizardWidget::Node *n) {
 	if ( n->input ) {
 		ar.append(n->modname.toUtf8());
@@ -371,13 +437,21 @@ QByteArray &operator<<(QByteArray &ar, WizardWidget::Node *n) {
 
 	return ar;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QByteArray &operator<<(QByteArray &ar, WizardWidget::Node &n) {
 	return ar << &n;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::finish() {
 	setPage(createOutputPage());
 
@@ -420,8 +494,12 @@ void WizardWidget::finish() {
 	finishedProc(0, QProcess::NormalExit);
 #endif
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::setPage(WizardPage *p) {
 	if ( _currentPage ) delete _currentPage;
 
@@ -456,8 +534,12 @@ void WizardWidget::setPage(WizardPage *p) {
 	if ( _currentInput ) _currentInput->setFocus();
 	_currentInput = nullptr;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardPage *WizardWidget::createIntroPage() {
 	WizardPage *w = new WizardPage;
 	w->setTitle(tr("Introduction"));
@@ -479,8 +561,12 @@ WizardPage *WizardWidget::createIntroPage() {
 
 	return w;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardPage *WizardWidget::createExtroPage() {
 	WizardPage *w = new WizardPage;
 	w->setTitle(tr("Finished"));
@@ -522,8 +608,12 @@ WizardPage *WizardWidget::createOutputPage() {
 
 	return w;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WizardPage *WizardWidget::createCurrentPage() {
 	WizardPage *w = new WizardPage;
 
@@ -602,38 +692,62 @@ WizardPage *WizardWidget::createCurrentPage() {
 
 	return w;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::textChanged(const QString &text) {
 	_currentNode->value = text;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::checkStateChanged(bool e) {
 	_currentNode->value = e?"true":"false";
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::radioStateChanged(bool e) {
 	if ( e )
 		_currentNode->value = static_cast<QRadioButton*>(sender())->text();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::readProcStdOut() {
 	QString text = _procSeisComP->readAllStandardOutput();
 	_logPanel->setTextColor(_logPanel->palette().color(QPalette::Text));
 	_logPanel->insertPlainText(text);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::readProcStdErr() {
 	QString text = _procSeisComP->readAllStandardError();
 	_logPanel->setTextColor(_logPanel->palette().color(QPalette::Disabled, QPalette::Text));
 	_logPanel->insertPlainText(text);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WizardWidget::finishedProc(int res, QProcess::ExitStatus stat) {
 	delete _procSeisComP;
 	_procSeisComP = nullptr;
@@ -661,3 +775,4 @@ void WizardWidget::finishedProc(int res, QProcess::ExitStatus stat) {
 	_buttonNext->setEnabled(false);
 	_buttonCancel->setText(tr("Close"));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
