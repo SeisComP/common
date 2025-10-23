@@ -85,10 +85,10 @@ class SC_SYSTEM_CORE_API TravelTime {
  */
 class SC_SYSTEM_CORE_API TravelTimeList : public  std::list<TravelTime> {
 	public:
-		bool isEmpty() { return size()==0; } // XXX temporary hack
-
+		bool isEmpty() { return empty(); }
 		void sortByTime();
 
+	public:
 		double depth, delta;
 };
 
