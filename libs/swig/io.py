@@ -1439,6 +1439,10 @@ class MSeedRecord(seiscomp.core.Record):
         ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> MSeedRecord
         """
         return _io.MSeedRecord_ConstCast(*args)
+    V2 = _io.MSeedRecord_V2
+    
+    V3 = _io.MSeedRecord_V3
+    
 
     def __init__(self, *args):
         r"""
@@ -1448,7 +1452,11 @@ class MSeedRecord(seiscomp.core.Record):
         __init__(MSeedRecord self, Record rec, int reclen=512) -> MSeedRecord
         """
         _io.MSeedRecord_swiginit(self, _io.new_MSeedRecord(*args))
-    __swig_destroy__ = _io.delete_MSeedRecord
+
+    @staticmethod
+    def Detect(data, len, format=None):
+        r"""Detect(void const * data, size_t len, Seiscomp::IO::MSeedRecord::Format * format=None) -> int64_t"""
+        return _io.MSeedRecord_Detect(data, len, format)
 
     def setNetworkCode(self, net):
         r"""setNetworkCode(MSeedRecord self, string net)"""
@@ -1470,14 +1478,6 @@ class MSeedRecord(seiscomp.core.Record):
         r"""setStartTime(MSeedRecord self, Time time)"""
         return _io.MSeedRecord_setStartTime(self, time)
 
-    def sequenceNumber(self):
-        r"""sequenceNumber(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sequenceNumber(self)
-
-    def setSequenceNumber(self, seqno):
-        r"""setSequenceNumber(MSeedRecord self, int seqno)"""
-        return _io.MSeedRecord_setSequenceNumber(self, seqno)
-
     def dataQuality(self):
         r"""dataQuality(MSeedRecord self) -> char"""
         return _io.MSeedRecord_dataQuality(self)
@@ -1485,22 +1485,6 @@ class MSeedRecord(seiscomp.core.Record):
     def setDataQuality(self, qual):
         r"""setDataQuality(MSeedRecord self, char qual)"""
         return _io.MSeedRecord_setDataQuality(self, qual)
-
-    def sampleRateFactor(self):
-        r"""sampleRateFactor(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateFactor(self)
-
-    def setSampleRateFactor(self, srfact):
-        r"""setSampleRateFactor(MSeedRecord self, int srfact)"""
-        return _io.MSeedRecord_setSampleRateFactor(self, srfact)
-
-    def sampleRateMultiplier(self):
-        r"""sampleRateMultiplier(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateMultiplier(self)
-
-    def setSampleRateMultiplier(self, srmult):
-        r"""setSampleRateMultiplier(MSeedRecord self, int srmult)"""
-        return _io.MSeedRecord_setSampleRateMultiplier(self, srmult)
 
     def byteOrder(self):
         r"""byteOrder(MSeedRecord self) -> int8_t"""
@@ -1510,18 +1494,6 @@ class MSeedRecord(seiscomp.core.Record):
         r"""encoding(MSeedRecord self) -> int8_t"""
         return _io.MSeedRecord_encoding(self)
 
-    def sampleRateNumerator(self):
-        r"""sampleRateNumerator(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateNumerator(self)
-
-    def sampleRateDenominator(self):
-        r"""sampleRateDenominator(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateDenominator(self)
-
-    def frameNumber(self):
-        r"""frameNumber(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_frameNumber(self)
-
     def endTime(self):
         r"""endTime(MSeedRecord self) -> Time"""
         return _io.MSeedRecord_endTime(self)
@@ -1529,10 +1501,6 @@ class MSeedRecord(seiscomp.core.Record):
     def recordLength(self):
         r"""recordLength(MSeedRecord self) -> int"""
         return _io.MSeedRecord_recordLength(self)
-
-    def leapSeconds(self):
-        r"""leapSeconds(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_leapSeconds(self)
 
     def data(self):
         r"""data(MSeedRecord self) -> Array"""
@@ -1565,6 +1533,7 @@ class MSeedRecord(seiscomp.core.Record):
     def write(self, out):
         r"""write(MSeedRecord self, std::ostream & out)"""
         return _io.MSeedRecord_write(self, out)
+    __swig_destroy__ = _io.delete_MSeedRecord
 
 # Register MSeedRecord in _io:
 _io.MSeedRecord_swigregister(MSeedRecord)

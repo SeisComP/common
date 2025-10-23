@@ -70,16 +70,20 @@ class SC_SYSTEM_CORE_API Record : public Seiscomp::Core::BaseObject {
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
-	public:
-		//! Default Constructor
-		Record(Array::DataType datatype, Hint);
+	protected:
+		//! Default constructor
+		Record() = default;
 
-		//! Initializing Constructor
+	public:
+		//! Initializing constructor
+		Record(Array::DataType, Hint);
+
+		//! Initializing constructor
 		Record(Array::DataType, Hint,
 		       std::string net, std::string sta, std::string loc, std::string cha,
 		       Seiscomp::Core::Time stime, int nsamp, double fsamp, int tqual);
 
-		//! Copy Constructor
+		//! Copy constructor
 		Record(const Record &rec);
 
 		//! Destructor
@@ -223,10 +227,10 @@ class SC_SYSTEM_CORE_API Record : public Seiscomp::Core::BaseObject {
 		Core::Time      _stime;
 		Array::DataType _datatype;
 		Hint            _hint;
-		int             _nsamp;
-		double          _fsamp;
-		int             _timequal;
-		Authentication  _authenticationStatus;
+		int             _nsamp{0};
+		double          _fsamp{0.0};
+		int             _timequal{-1};
+		Authentication  _authenticationStatus{NOT_SIGNED};
 		std::string     _authority;
 };
 

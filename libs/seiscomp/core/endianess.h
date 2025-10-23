@@ -179,6 +179,11 @@ struct Converter {
 	}
 
 	template <typename T>
+	constexpr static void ToBigEndian(T *data, size_t len) {
+		Swapper<T,Current::LittleEndian,sizeof(T)>::Take(data, len);
+	}
+
+	template <typename T>
 	constexpr static T FromBigEndian(const T &v) {
 		return Swapper<T,Current::LittleEndian,sizeof(T)>::Take(v);
 	}

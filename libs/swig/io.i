@@ -123,12 +123,10 @@
 %include "seiscomp/io/exporter.h"
 %include "seiscomp/io/archive/xmlarchive.h"
 %include "seiscomp/io/archive/binarchive.h"
-//#ifdef HAVE_MSEED
 %include "seiscomp/io/records/mseedrecord.h"
 %include "seiscomp/io/recordstream/file.h"
 %include "seiscomp/io/recordstream/slconnection.h"
 %include "seiscomp/io/recordstream/combined.h"
-//#endif
 
 
 %extend Seiscomp::IO::RecordInput {

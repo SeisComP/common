@@ -26,9 +26,10 @@
 #include <seiscomp/core/system.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/io/records/mseedrecord.h>
+#include <seiscomp/io/records/mseed/decoder/format.h>
+
 #include "slconnection.h"
 
-#include <libmseed.h>
 /* Seedlink packets consist of an 8-byte Seedlink header ... */
 #define HEADSIZE 8
 /* ... followed by a 512-byte MiniSEED record */
@@ -58,8 +59,8 @@ using namespace Seiscomp::IO;
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const string DefaultHost = "localhost";
-const string DefaultPort = "18000";
+const char *DefaultHost = "localhost";
+const char *DefaultPort = "18000";
 
 IMPLEMENT_SC_CLASS_DERIVED(SLConnection,
                            Seiscomp::IO::RecordStream,
@@ -113,33 +114,41 @@ SLStreamIdx& SLStreamIdx::operator=(const SLStreamIdx &other) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SLStreamIdx::operator<(const SLStreamIdx &other) const {
-	if ( _net < other._net )
+	if ( _net < other._net ) {
 		return true;
-	else if ( _net > other._net )
+	}
+	else if ( _net > other._net ) {
 		return false;
+	}
 
-	if ( _sta < other._sta )
+	if ( _sta < other._sta ) {
 		return true;
-	else if ( _sta > other._sta )
+	}
+	else if ( _sta > other._sta ) {
 		return false;
+	}
 
 	// Wildcards precede concrete location codes
 	bool isWildcard = _loc.find_first_of("*?") != string::npos;
 	bool isOtherWildcard = other._loc.find_first_of("*?") != string::npos;
 
-	if ( isWildcard != isOtherWildcard )
+	if ( isWildcard != isOtherWildcard ) {
 		return isWildcard;
+	}
 
-	if ( _loc < other._loc )
+	if ( _loc < other._loc ) {
 		return true;
-	else if ( _loc > other._loc )
+	}
+	else if ( _loc > other._loc ) {
 		return false;
+	}
 
 	isWildcard = _cha.find_first_of("*?") != string::npos;
 	isOtherWildcard = other._cha.find_first_of("*?") != string::npos;
 
-	if ( isWildcard != isOtherWildcard )
+	if ( isWildcard != isOtherWildcard ) {
 		return isWildcard;
+	}
 
 	return _cha < other._cha;
 }
@@ -200,14 +209,22 @@ string SLStreamIdx::selector() const {
 	string cha = _cha;
 	string::size_type pos = loc.find('*',0);
 
-	if (loc.length() > 0) {
-		if (pos != string::npos) loc.replace(pos,1,1,'?');
-		if (loc.length() < 2) loc.append(2-loc.length(),'?');
+	if ( loc.length() >  0) {
+		if ( pos != string::npos ) {
+			loc.replace(pos,1,1,'?');
+		}
+		if ( loc.length() < 2 ) {
+			loc.append(2-loc.length(),'?');
+		}
 	}
 
 	pos = cha.find('*',0);
-	if (pos != string::npos) cha.replace(pos,1,1,'?');
-	if (cha.length() < 3) cha.append(3-cha.length(),'?');
+	if ( pos != string::npos ) {
+		cha.replace(pos,1,1,'?');
+	}
+	if ( cha.length() < 3 ) {
+		cha.append(3-cha.length(),'?');
+	}
 
 	string selector = loc + cha + ".D";
 	return selector;
@@ -246,8 +263,9 @@ const OPT(Time) &SLStreamIdx::timestamp() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SLStreamIdx::setTimestamp(const OPT(Time) &rectime) const {
-	if (_timestamp < rectime)
+	if ( _timestamp < rectime ) {
 		_timestamp = rectime;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -356,12 +374,15 @@ bool SLConnection::setSource(const string &source) {
 
 	// set address defaults if necessary
 	if ( _serverloc.empty() || _serverloc == ":" ) {
-		_serverloc = DefaultHost + ":" + DefaultPort;
+		_serverloc = DefaultHost;
+		_serverloc += ":";
+		_serverloc += DefaultPort;
 	}
 	else {
 		pos = _serverloc.find(':');
 		if ( pos == string::npos ) {
-			_serverloc += ":" + DefaultPort;
+			_serverloc += ":";
+			_serverloc += DefaultPort;
 		}
 		else if ( pos == _serverloc.length()-1 ) {
 			_serverloc += DefaultPort;
@@ -492,11 +513,13 @@ void SLConnection::handshake() {
 			batchmode = true;
 			SEISCOMP_INFO("Seedlink server supports BATCH command");
 		}
-		else
+		else {
 			SEISCOMP_INFO("Seedlink server does not support BATCH command");
+		}
 	}
-	else
+	else {
 		SEISCOMP_INFO("BATCH mode requests disabled");
+	}
 
 	for ( const auto &idx : _streams ) {
 		try {
@@ -559,36 +582,11 @@ void SLConnection::handshake() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Time getEndtime(MSRecord *prec) {
-	double diff = 0;
-	Time stime = Time::FromEpoch((hptime_t)prec->starttime / HPTMODULUS, (hptime_t)prec->starttime % HPTMODULUS);
-
-	if ( prec->samprate > 0 ) {
-		diff = prec->samplecnt / prec->samprate;
+void updateStreams(std::set<SLStreamIdx> &streams, const MSeedRecord &prec) {
+	SLStreamIdx idx(prec.networkCode(), prec.stationCode(), prec.locationCode(), prec.channelCode());
+	if ( auto it = streams.find(idx); it != streams.end() ) {
+		it->setTimestamp(prec.endTime());
 	}
-
-	if ( diff == 0 ) {
-		return stime;
-	}
-	return stime + TimeSpan(diff);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void updateStreams(std::set<SLStreamIdx> &streams, MSRecord *prec) {
-	Time rectime = getEndtime(prec);
-	string net = prec->network;
-	string sta = prec->station;
-	string loc = prec->location;
-	string cha = prec->channel;
-
-	SLStreamIdx idx(net,sta,loc,cha);
-	set<SLStreamIdx>::iterator it = streams.find(idx);
-	if (it != streams.end())
-		it->setTimestamp(rectime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -638,49 +636,38 @@ Record *SLConnection::next() {
 				break;
 			}
 
-			_slrecord += _sock.read(strlen(ERRTOKEN)-strlen(TERMTOKEN));
+			_slrecord += _sock.read(strlen(ERRTOKEN) - strlen(TERMTOKEN));
 			if ( !_slrecord.compare(ERRTOKEN) ) {
 				_sock.close();
 				break;
 			}
 
-			_slrecord += _sock.read(HEADSIZE+RECSIZE-strlen(ERRTOKEN));
-			char *data = const_cast<char *>(_slrecord.c_str());
-			if ( !MS_ISVALIDHEADER(data+HEADSIZE) ) {
-				SEISCOMP_WARNING("Invalid MSEED record received (MS_ISVALIDHEADER failed)");
+			_slrecord += _sock.read(HEADSIZE + RECSIZE - strlen(ERRTOKEN));
+			const char *data = _slrecord.data();
+			if ( !MSEED::V2::isValidHeader(data + HEADSIZE) ) {
+				SEISCOMP_WARNING("Invalid MSEED record received (header check failed)");
 				continue;
 			}
 
-			MSRecord *prec = nullptr;
+			istream stream(&_streambuf);
+			stream.clear();
+			stream.rdbuf()->pubsetbuf(const_cast<char*>(data) + HEADSIZE, RECSIZE);
 
-			if ( msr_unpack(data+HEADSIZE,RECSIZE,&prec,0,0) == MS_NOERROR ) {
-				int samprate_fact = prec->fsdh->samprate_fact;
-				int numsamples = prec->fsdh->numsamples;
-
-				updateStreams(_streams,prec);
-				msr_free(&prec);
-
-				/* Test for a so-called end-of-detection-record */
-				if ( !(samprate_fact == 0 && numsamples == 0) ) {
-					istream stream(&_streambuf);
-					stream.clear();
-					stream.rdbuf()->pubsetbuf(data+HEADSIZE,RECSIZE);
-
-					IO::MSeedRecord *rec = new IO::MSeedRecord();
-					setupRecord(rec);
-					try {
-						rec->read(stream);
-					}
-					catch ( ... ) {
-						delete rec;
-						continue;
-					}
-
-					return rec;
+			auto *rec = new IO::MSeedRecord();
+			try {
+				rec->read(stream);
+				if ( (rec->samplingFrequency() == 0.0) && !rec->sampleCount() ) {
+					delete rec;
+					continue;
 				}
+
+				return rec;
 			}
-			else
+			catch ( ... ) {
 				SEISCOMP_WARNING("Could not parse the incoming MiniSEED record. Ignore it.");
+				delete rec;
+				continue;
+			}
 		}
 		catch ( SocketException &ex ) {
 			SEISCOMP_ERROR("SocketException: %s",ex.what());
