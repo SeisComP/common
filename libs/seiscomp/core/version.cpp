@@ -20,7 +20,6 @@
 
 #include <seiscomp/core/version.h>
 #include <seiscomp/core/strings.h>
-#include <iostream>
 
 #include <seiscomp/core/build_version.h>
 #include <seiscomp/version.h>
