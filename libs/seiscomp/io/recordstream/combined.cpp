@@ -22,7 +22,6 @@
 
 #include <cstdio>
 #include <string>
-#include <iostream>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/strings.h>

@@ -18,11 +18,23 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT MSEEDRECORD
+// #define USE_RAPIDJSON
+#define SEISCOMP_COMPONENT core/io/records/mseed
+
 #include <seiscomp/logging/log.h>
-#include <seiscomp/io/records/mseedrecord.h>
 #include <seiscomp/core/arrayfactory.h>
+#include <seiscomp/core/endianess.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/utils/certstore.h>
+
+#include <seiscomp/io/records/mseedrecord.h>
+#include <seiscomp/io/records/mseed/decoder/format.h>
+#include <seiscomp/io/records/mseed/encoder/format.h>
+#include <seiscomp/io/records/mseed/encoder/steim1.h>
+#include <seiscomp/io/records/mseed/encoder/steim2.h>
+#include <seiscomp/io/records/mseed/encoder/uncompressed.h>
+
+#include <rapidjson/document.h>
 
 #include <openssl/asn1.h>
 #include <openssl/ecdsa.h>
@@ -36,28 +48,28 @@
 #include <openssl/x509err.h>
 #endif
 
-#include <libmseed.h>
+#include <cmath>
 #include <cctype>
+#include <cstring>
+#include <string_view>
 
 
-namespace Seiscomp {
-namespace IO {
+using namespace std;
 
+
+namespace Seiscomp::IO {
 namespace {
 
 
-/* callback function for libmseed-function msr_pack(...) */
-void _Record_Handler(char *record, int reclen, void *packed) {
-	/* to make the data available to the overloaded operator<< */
-	reinterpret_cast<CharArray *>(packed)->append(reclen, record);
-}
-
-
 bool isPowerOfTwo(size_t n) {
-	if ( !n ) return false;
+	if ( !n ) {
+		return false;
+	}
 
 	while ( n != 1 ) {
-		if ( n % 2 ) return false;
+		if ( n % 2 ) {
+			return false;
+		}
 		n >>= 1;
 	}
 
@@ -65,26 +77,26 @@ bool isPowerOfTwo(size_t n) {
 }
 
 
-struct MSEEDLogger {
-	MSEEDLogger() {
-		ms_loginit(MSEEDLogger::print, "[libmseed] ", MSEEDLogger::diag, "[libmseed] ");
+void mstrncpy(std::string &dest, const char *source, int length) {
+	for ( ; length; ++source, --length ) {
+		if ( *source == '\0' ) {
+			break;
+		}
+
+		if ( *source != ' ' ) {
+			dest.push_back(*source);
+		}
 	}
-
-	static void print(char */*msg*/) {
-		// SEISCOMP_DEBUG("%s", msg);
-	}
-	static void diag(char */*msg*/) {
-		// SEISCOMP_WARNING("%s", msg);
-	}
-};
-
-
-static MSEEDLogger __logger__;
-
-
 }
 
 
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IMPLEMENT_SC_CLASS_DERIVED(MSeedRecord, Record, "MSeedRecord");
 REGISTER_RECORD(MSeedRecord, "mseed");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -94,117 +106,15 @@ REGISTER_RECORD(MSeedRecord, "mseed");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
-: Record(dt, h)
-, _data(0)
-, _seqno(0)
-, _rectype('D')
-, _srfact(0)
-, _srmult(0)
-, _byteorder(0)
-, _encoding(0)
-, _srnum(0)
-, _srdenom(0)
-, _reclen(0)
-, _nframes(0)
-, _leap(0)
-, _encodingFlag(true)
-{}
+: Record(dt, h) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
-: Record(dt, h, rec->network, rec->station, rec->location, rec->channel,
-         Seiscomp::Core::Time::FromEpoch(hptime_t(rec->starttime / HPTMODULUS),
-                                         hptime_t(rec->starttime % HPTMODULUS)),
-         int(rec->samplecnt), rec->samprate, rec->Blkt1001 ? rec->Blkt1001->timing_qual : -1)
-, _data(0)
-, _seqno(rec->sequence_number)
-, _rectype(rec->dataquality)
-, _srfact(rec->fsdh->samprate_fact)
-, _srmult(rec->fsdh->samprate_mult)
-, _byteorder(rec->byteorder)
-, _encoding(rec->encoding)
-, _reclen(rec->reclen)
-, _encodingFlag(true)
-{
-	if ( _hint == SAVE_RAW ) {
-		_raw.setData(rec->reclen,rec->record);
-	}
-	else if ( _hint == DATA_ONLY ) {
-		try {
-			_setDataAttributes(rec->reclen, rec->record);
-		}
-		catch ( LibmseedException &e ) {
-			_nsamp = 0;
-			_fsamp = 0;
-			_data = nullptr;
-			SEISCOMP_ERROR("%s", e.what());
-		}
-	}
-
-	_srnum = 0;
-	_srdenom = 1;
-
-	if ( (_srfact > 0) && (_srmult > 0) ) {
-		_srnum = _srfact*_srmult;
-		_srdenom = 1;
-	}
-
-	if ( _srfact > 0 && _srmult < 0 ) {
-		_srnum = _srfact;
-		_srdenom = -_srmult;
-	}
-
-	if ( (_srfact < 0) && (_srmult > 0) ) {
-		_srnum = _srmult;
-		_srdenom = -_srfact;
-	}
-
-	if ( (_srfact < 0) && (_srmult < 0) ) {
-		_srnum = 1;
-		_srdenom = _srfact*_srmult;
-	}
-
-	_nframes = 0;
-	if ( rec->Blkt1001 ) {
-		_nframes = rec->Blkt1001->framecnt;
-	}
-
-	_leap = 0;
-	if ( rec->fsdh->start_time.sec > 59 ) {
-		_leap = rec->fsdh->start_time.sec-59;
-	}
-
-	hptime_t hptime = msr_endtime(rec);
-	_etime = Seiscomp::Core::Time::FromEpoch(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord::MSeedRecord(const MSeedRecord &msrec)
-: Record(msrec)
-, _seqno(msrec.sequenceNumber())
-, _rectype(msrec.dataQuality())
-, _srfact(msrec.sampleRateFactor())
-, _srmult(msrec.sampleRateMultiplier())
-, _byteorder(msrec.byteOrder())
-, _encoding(msrec.encoding())
-, _srnum(msrec.sampleRateNumerator())
-, _srdenom(msrec.sampleRateDenominator())
-, _nframes(msrec.frameNumber())
-, _leap(msrec.leapSeconds())
-, _etime(msrec.endTime())
-, _encodingFlag(true)
-{
-	_reclen = msrec._reclen;
-	_raw = msrec._raw;
-	_data = msrec._data?msrec._data->clone():nullptr;
+MSeedRecord::MSeedRecord(const MSeedRecord &msrec) {
+	*this = msrec;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -213,30 +123,10 @@ MSeedRecord::MSeedRecord(const MSeedRecord &msrec)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(const Record &rec, int reclen)
-: Record(rec)
-, _seqno(0)
-, _rectype('D')
-, _srfact(0)
-, _srmult(0)
-, _byteorder(0)
-, _encoding(0)
-, _srnum(0)
-, _srdenom(0)
-, _nframes(0)
-, _leap(0)
-, _etime(Seiscomp::Core::Time())
-, _encodingFlag(false)
-{
-	_reclen = reclen;
-	_data = rec.data()?rec.data()->clone():nullptr;
+: Record(rec) {
+	_recordLength = reclen;
+	_data = rec.data() ? rec.data()->clone() : nullptr;
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord::~MSeedRecord() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -245,10 +135,13 @@ MSeedRecord::~MSeedRecord() {}
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setNetworkCode(std::string net) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[3];
-		strncpy(tmp, net.c_str(), 2);
-		memcpy(header->network, tmp, 2);
+		if ( _format == V2 ) {
+			using namespace MSEED::V2;
+			auto *netHeader = Network::Get(_raw.typedData());
+			for ( size_t i = 0; i < 2; ++i ) {
+				netHeader[i] = net.size() > 0 ? net[i] : ' ';
+			}
+		}
 	}
 
 	Record::setNetworkCode(net);
@@ -261,10 +154,13 @@ void MSeedRecord::setNetworkCode(std::string net) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setStationCode(std::string sta) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[6];
-		strncpy(tmp, sta.c_str(), 5);
-		memcpy(header->station, tmp, 5);
+		if ( _format == V2 ) {
+			using namespace MSEED::V2;
+			auto *staHeader = Station::Get(_raw.typedData());
+			for ( size_t i = 0; i < 5; ++i ) {
+				staHeader[i] = sta.size() > i ? sta[i] : ' ';
+			}
+		}
 	}
 
 	Record::setStationCode(sta);
@@ -277,10 +173,13 @@ void MSeedRecord::setStationCode(std::string sta) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setLocationCode(std::string loc) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[3];
-		strncpy(tmp, loc.c_str(), 2);
-		memcpy(header->location, tmp, 2);
+		if ( _format == V2 ) {
+			using namespace MSEED::V2;
+			auto *locHeader = Location::Get(_raw.typedData());
+			for ( size_t i = 0; i < 2; ++i ) {
+				locHeader[i] = loc.size() > i ? loc[i] : ' ';
+			}
+		}
 	}
 
 	Record::setLocationCode(loc);
@@ -293,10 +192,13 @@ void MSeedRecord::setLocationCode(std::string loc) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setChannelCode(std::string cha) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[4];
-		strncpy(tmp, cha.c_str(), 3);
-		memcpy(header->channel, tmp, 3);
+		if ( _format == V2 ) {
+			using namespace MSEED::V2;
+			auto *chaHeader = Channel::Get(_raw.typedData());
+			for ( size_t i = 0; i < 3; ++i ) {
+				chaHeader[i] = cha.size() > i ? cha[i] : ' ';
+			}
+		}
 	}
 
 	Record::setChannelCode(cha);
@@ -307,12 +209,24 @@ void MSeedRecord::setChannelCode(std::string cha) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setStartTime(const Core::Time& time) {
+void MSeedRecord::setStartTime(const Core::Time &time) {
+	using namespace MSEED;
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		hptime_t hptime = hptime_t(time.epochSeconds() * HPTMODULUS) + hptime_t(time.microseconds());
-		ms_hptime2btime(hptime, &header->start_time);
-		MS_SWAPBTIME(&header->start_time);
+		if ( _format == V2 ) {
+			using namespace MSEED::V2;
+			bool swapflag = _byteOrder & MSEED::SwapHeader;
+			int year, yday, hour, minute, second, microsecond;
+			time.get2(&year, &yday, &hour, &minute, &second, &microsecond);
+
+			*Year::Get(_raw.typedData()) = swap(year, swapflag);
+			*YDay::Get(_raw.typedData()) = swap(yday + 1, swapflag);
+
+			*Hour::Get(_raw.typedData()) = hour;
+			*Minute::Get(_raw.typedData()) = minute;
+			*Second::Get(_raw.typedData()) = second;
+			*Unused::Get(_raw.typedData()) = 0;
+			*FSecond::Get(_raw.typedData()) = swap(microsecond / 100, swapflag);
+		}
 	}
 
 	Record::setStartTime(time);
@@ -323,26 +237,57 @@ void MSeedRecord::setStartTime(const Core::Time& time) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord& MSeedRecord::operator=(const MSeedRecord &msrec) {
-	if ( &msrec != this ) {
-		Record::operator=(msrec);
-		_raw = msrec._raw;
-		_data = msrec._data?msrec._data->clone():nullptr;
-		_seqno = msrec.sequenceNumber();
-		_rectype = msrec.dataQuality();
-		_srfact = msrec.sampleRateFactor();
-		_srmult = msrec.sampleRateMultiplier();
-		_byteorder = msrec.byteOrder();
-		_encoding = msrec.encoding();
-		_srnum = msrec.sampleRateNumerator();
-		_srdenom = msrec.sampleRateDenominator();
-		_reclen = msrec._reclen;
-		_nframes = msrec.frameNumber();
-		_leap = msrec.leapSeconds();
-		_etime = msrec.endTime();
+int64_t MSeedRecord::Detect(const void *ptr, size_t len, Format *format) {
+	using namespace MSEED;
+
+	if ( (len >= V2::HeaderLength) && V2::isValidHeader(ptr) ) {
+		if ( format ) {
+			*format = V2;
+		}
+
+		using namespace MSEED::V2;
+
+		bool swapflag = false;
+		if ( !isValidYearDay(*Year::Get(ptr), *YDay::Get(ptr)) ) {
+			swapflag = true;
+		}
+
+		auto blkt_offset = swap(*BlocketteOffset::Get(ptr), swapflag);
+		uint16_t blkt_type;
+		uint16_t next_blkt;
+
+		const char *data = reinterpret_cast<const char*>(ptr);
+
+		while ( blkt_offset != 0 ) {
+			blkt_type = swap(*reinterpret_cast<const uint16_t*>(data + blkt_offset), swapflag);
+			next_blkt = swap(*reinterpret_cast<const uint16_t*>(data + blkt_offset + 2), swapflag);
+
+			if ( next_blkt != 0 ) {
+				if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) ) {
+					SEISCOMP_ERROR("Invalid blockette offset less than or equal to current offset");
+					return -1;
+				}
+			}
+
+			if ( blkt_type == 1000 ) {
+				return static_cast<uint64_t>(1) << *B1000RecLength::Get(data + blkt_offset);
+			}
+
+			blkt_offset = next_blkt;
+		}
+	}
+	else if ( (len >= V3::HeaderLength) && V3::isValidHeader(ptr) ) {
+		if ( format ) {
+			*format = V3;
+		}
+
+		return V3::HeaderLength +
+		       Core::Endianess::Converter::ToLittleEndian(*V3::SIDLength::Get(ptr)) +
+		       Core::Endianess::Converter::ToLittleEndian(*V3::ExtraLength::Get(ptr)) +
+		       Core::Endianess::Converter::ToLittleEndian(*V3::DataLength::Get(ptr));
 	}
 
-	return (*this);
+	return -1;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -350,26 +295,21 @@ MSeedRecord& MSeedRecord::operator=(const MSeedRecord &msrec) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sequenceNumber() const {
-	return _seqno;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+MSeedRecord &MSeedRecord::operator=(const MSeedRecord &msrec) {
+	if ( &msrec != this ) {
+		Record::operator=(msrec);
+		_format = msrec._format;
+		_raw = msrec._raw;
+		_data = msrec._data ? msrec._data->clone() : nullptr;
+		_quality = msrec._quality;
+		_byteOrder = msrec._byteOrder;
+		_encoding = msrec._encoding;
+		_encodingFlag = msrec._encodingFlag;
+		_recordLength = msrec._recordLength;
+		_endTime = msrec._endTime;
+	}
 
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSequenceNumber(int seqno) {
-	_seqno = seqno;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-char MSeedRecord::dataQuality() const {
-	return _rectype;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -378,115 +318,7 @@ char MSeedRecord::dataQuality() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setDataQuality(char qual) {
-	_rectype = qual;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateFactor() const {
-	return _srfact;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSampleRateFactor(int srfact) {
-	_srfact = srfact;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateMultiplier() const {
-	return _srmult;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSampleRateMultiplier(int srmult) {
-	_srmult = srmult;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int8_t MSeedRecord::byteOrder() const {
-	return _byteorder;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int8_t MSeedRecord::encoding() const {
-	return _encoding;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateNumerator() const {
-	return _srnum;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateDenominator() const {
-	return _srdenom;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::frameNumber() const {
-	return _nframes;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Core::Time& MSeedRecord::endTime() const {
-	return _etime;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::recordLength() const {
-	return _reclen;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::leapSeconds() const {
-	return _leap;
+	_quality = qual;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -505,7 +337,7 @@ const Array *MSeedRecord::raw() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Array *MSeedRecord::data() const {
 	if ( _raw.data() && (!_data || _datatype != _data->dataType()) ) {
-		_setDataAttributes(_reclen, const_cast<char*>(_raw.typedData()));
+		unpackData(_raw.typedData(), _raw.size());
 	}
 
 	return _data.get();
@@ -516,134 +348,305 @@ const Array *MSeedRecord::data() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
-	MSRecord *pmsr = nullptr;
-
-	if ( !data ) return;
-
-	int r = msr_unpack(data, reclen, &pmsr, 1, 0);
-	if ( r != MS_NOERROR ) {
-		throw LibmseedException(fmt::format("Unpacking of Mini SEED record failed: {}", r));
-	}
+void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
+	using namespace MSEED;
 
 	Array::DataType dt = _datatype;
 	_data = nullptr;
 
-	if ( pmsr->numsamples == _nsamp ) {
-		switch ( pmsr->sampletype ) {
-			case 'i':
-				_data = ArrayFactory::Create(dt, Array::INT, _nsamp, pmsr->datasamples);
-				break;
-			case 'f':
-				_data = ArrayFactory::Create(dt, Array::FLOAT, _nsamp, pmsr->datasamples);
-				break;
-			case 'd':
-				if ( dt < Array::DOUBLE ) {
-					// We need double precision in order to store doubles.
-					dt = Array::DOUBLE;
-				}
+	int dataLength;
+	const char *data;
+	int64_t nsamples;
 
-				_data = ArrayFactory::Create(dt, Array::DOUBLE, _nsamp, pmsr->datasamples);
-				break;
-			case 'a':
-				_data = ArrayFactory::Create(dt, Array::CHAR, _nsamp, pmsr->datasamples);
-				break;
+	if ( _format == V2 ) {
+		auto dataOffset = swap(*V2::DataOffset::Get(rec), _byteOrder & SwapHeader);
+		if ( dataOffset >= reclen ) {
+			throw LibmseedException("Data frames outside of record");
 		}
 
-		// Check authentication
-		Util::CertificateStore &cs = Util::CertificateStore::global();
-		if ( cs.isValid() ) {
-			bool isSigned = false;
-			BlktLink *blk = pmsr->blkts;
-			for ( ; blk; blk = blk->next ) {
-				if ( blk->blkt_type == 2000 ) {
-					blkt_2000_s *opaq = reinterpret_cast<blkt_2000_s*>(blk->blktdata);
-					if ( opaq->numheaders != 1 ) continue;
+		dataLength = reclen - dataOffset;
+		data = rec + dataOffset;
+	}
+	else if ( _format == V3 ) {
+		using C = Core::Endianess::Converter;
+		using namespace V3;
 
-					int maxHeaderLength = opaq->data_offset - 15;
-					if ( maxHeaderLength < 6 ) continue;
+		auto sidLength = *SIDLength::Get(rec);
+		auto extraLength = C::ToLittleEndian(*ExtraLength::Get(rec));
+		size_t dataOffset = HeaderLength + sidLength + extraLength;
+		dataLength = C::ToLittleEndian(*DataLength::Get(rec));
 
-					const char *opaqHeaders = opaq->payload;
-					std::string header;
-					for ( int i = 0; i < maxHeaderLength; ++i ) {
-						if ( opaqHeaders[i] == '~' ) {
-							header.assign(opaqHeaders, opaqHeaders + i);
-							break;
-						}
-					}
-
-					if ( header.empty() ) continue;
-
-					if ( !strncmp(header.c_str(), "SIGN/", 5) ) {
-						header.erase(header.begin(), header.begin() + 5);
-						long nSignature = opaq->length - opaq->data_offset;
-
-						unsigned char digest[EVP_MAX_MD_SIZE];
-						unsigned int nDigest = 0;
-
-						EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-						EVP_DigestInit(mdctx, EVP_sha256());
-						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, dataquality), sizeof(pmsr->fsdh->dataquality));
-						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, station), offsetof(struct fsdh_s, data_offset) - offsetof(struct fsdh_s, station));
-						EVP_DigestUpdate(mdctx, pmsr->record + pmsr->fsdh->data_offset, (1 << pmsr->Blkt1000->reclen) - pmsr->fsdh->data_offset);
-						EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest), &nDigest);
-
-						EVP_MD_CTX_destroy(mdctx);
-
-						const unsigned char *pp = reinterpret_cast<const unsigned char *>(opaq) + opaq->data_offset - 4;
-
-						isSigned = true;
-						const X509 *cert;
-						if ( !cs.validate(header, reinterpret_cast<const char*>(digest),
-						                  nDigest, pp, nSignature, &cert) ) {
-							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATION_FAILED;
-							SEISCOMP_WARNING("MSEED: Signature validation failed");
-						}
-						else {
-							if ( cert ) {
-								X509_NAME *name = X509_get_subject_name(const_cast<X509*>(cert));
-								if ( name ) {
-									int pos = X509_NAME_get_index_by_NID(name, NID_organizationName, -1);
-									if ( pos != -1 ) {
-										X509_NAME_ENTRY *e = X509_NAME_get_entry(name, pos);
-										ASN1_STRING *str = X509_NAME_ENTRY_get_data(e);
-										if ( ASN1_STRING_type(str) != V_ASN1_UTF8STRING ) {
-											unsigned char *utf8 = 0;
-											int length = ASN1_STRING_to_UTF8(&utf8, str);
-											if ( length > 0 )
-												const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(utf8), size_t(length));
-											if ( utf8 )
-												OPENSSL_free(utf8);
-										}
-										else {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-											const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(ASN1_STRING_data(str)), size_t(ASN1_STRING_length(str)));
-#else
-											const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<const char*>(ASN1_STRING_get0_data(str)), ASN1_STRING_length(str));
-#endif
-										}
-									}
-									else
-										SEISCOMP_WARNING("MSEED: Failed to extract certificate authority (O)");
-								}
-							}
-
-							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATED;
-						}
-					}
-				}
-			}
-
-			if ( !isSigned )
-				const_cast<MSeedRecord*>(this)->_authenticationStatus = NOT_SIGNED;
+		if ( dataOffset >= reclen ) {
+			throw LibmseedException("Data section outside of record");
 		}
+
+		if ( dataOffset + dataLength > reclen ) {
+			throw LibmseedException("Data section outside of record");
+		}
+
+		data = rec + dataOffset;
 	}
 	else {
-		msr_free(&pmsr);
-		throw LibmseedException("The number of the unpacked data samples differs from the sample number in fixed data header.");
+		throw LibmseedException("Invalid miniSEED format");
 	}
 
-	msr_free(&pmsr);
+	switch ( static_cast<EncodingType>(_encoding) ) {
+		case EncodingType::ASCII:
+			if ( _nsamp != dataLength ) {
+				throw LibmseedException("Number of characters does not match data size");
+			}
+			else {
+				auto cdata = new CharArray(_nsamp);
+				memcpy(cdata->typedData(), data, dataLength);
+				nsamples = dataLength;
+				_data = cdata;
+			}
+			break;
+		case EncodingType::INT16:
+		{
+			auto idata = new IntArray(_nsamp);
+			for ( int i = 0 ; i < _nsamp; ++i ) {
+				(*idata)[i] = reinterpret_cast<const int16_t*>(data)[i];
+			}
+			if ( _byteOrder & SwapPayload ) {
+				Core::Endianess::swap(idata->typedData(), idata->size());
+			}
+			nsamples = _nsamp;
+			_data = idata;
+			break;
+		}
+		case EncodingType::INT32:
+		{
+			auto idata = new IntArray(_nsamp);
+			memcpy(idata->typedData(), data, _nsamp * 4);
+			if ( _byteOrder & SwapPayload ) {
+				Core::Endianess::swap(idata->typedData(), idata->size());
+			}
+			nsamples = _nsamp;
+			_data = idata;
+			break;
+		}
+		case EncodingType::FLOAT32:
+		{
+			auto fdata = new FloatArray(_nsamp);
+			memcpy(fdata->typedData(), data, _nsamp * 4);
+			if ( _byteOrder & SwapPayload ) {
+				Core::Endianess::swap(fdata->typedData(), fdata->size());
+			}
+			nsamples = _nsamp;
+			_data = fdata;
+			break;
+		}
+		case EncodingType::FLOAT64:
+		{
+			auto ddata = new DoubleArray(_nsamp);
+			memcpy(ddata->typedData(), data, _nsamp * 8);
+			if ( _byteOrder & SwapPayload ) {
+				Core::Endianess::swap(ddata->typedData(), ddata->size());
+			}
+			nsamples = _nsamp;
+			_data = ddata;
+			break;
+		}
+		default:
+			SEISCOMP_WARNING("Unsupported data type: %d, assuming STEIM1", static_cast<int>(_encoding));
+		case EncodingType::STEIM1:
+		{
+			auto idata = new IntArray(_nsamp);
+			nsamples = decodeSteim1(
+				reinterpret_cast<int32_t*>(const_cast<char*>(data)), dataLength, _nsamp,
+				idata->typedData(), idata->size() * idata->elementSize(),
+				_byteOrder & SwapPayload
+			);
+			_data = idata;
+			break;
+		}
+		case EncodingType::STEIM2:
+		{
+			auto idata = new IntArray(_nsamp);
+			nsamples = decodeSteim2(
+				reinterpret_cast<int32_t*>(const_cast<char*>(data)), dataLength, _nsamp,
+				idata->typedData(), idata->size() * idata->elementSize(),
+				_byteOrder & SwapPayload
+			);
+			_data = idata;
+			break;
+		}
+		case EncodingType::GEOSCOPE24:
+		case EncodingType::GEOSCOPE163:
+		case EncodingType::GEOSCOPE164:
+		{
+			auto fdata = new FloatArray(_nsamp);
+			nsamples = decodeGEOSCOPE(
+				const_cast<char*>(data), _nsamp,
+				fdata->typedData(), _data->size() * _data->elementSize(),
+				static_cast<EncodingType>(_encoding), _byteOrder & SwapPayload
+			);
+			_data = fdata;
+			break;
+		}
+		case EncodingType::CDSN:
+		{
+			auto idata = new IntArray(_nsamp);
+			nsamples = decodeCDSN(
+				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
+				idata->typedData(), _data->size() * _data->elementSize(),
+				_byteOrder & SwapPayload
+			);
+			_data = idata;
+			break;
+		}
+		case EncodingType::SRO:
+		{
+			auto idata = new IntArray(_nsamp);
+			nsamples = decodeSRO(
+				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
+				idata->typedData(), _data->size() * _data->elementSize(),
+				_byteOrder & SwapPayload
+			);
+			_data = idata;
+			break;
+		}
+		case EncodingType::DWWSSN:
+		{
+			auto idata = new IntArray(_nsamp);
+			nsamples = decodeDWWSSN(
+				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
+				idata->typedData(), _data->size() * _data->elementSize(),
+				_byteOrder & SwapPayload
+			);
+			break;
+		}
+	}
+
+	if ( nsamples != _nsamp ) {
+		SEISCOMP_WARNING("%s.%s.%s.%s: inconsistent sample count",
+		                 _net, _sta, _loc, _cha);
+	}
+
+	if ( dt != Array::DT_QUANTITY ) {
+		// Convert the data to the final datatype
+		_data = ArrayFactory::Create(dt, _data.get());
+	}
+
+	// Final check
+	if ( _data->size() != _nsamp ) {
+		SEISCOMP_WARNING("%s.%s.%s.%s: inconsistent sample count",
+		                 _net, _sta, _loc, _cha);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MSeedRecord::updateAuthentication(const char *rec, size_t reclen, size_t blkt_offset) {
+	using namespace MSEED::V2;
+
+	_authenticationStatus = NOT_SIGNED;
+
+	Util::CertificateStore &cs = Util::CertificateStore::global();
+	if ( !cs.isValid() ) {
+		return;
+	}
+
+	bool swapflag = _byteOrder & MSEED::SwapHeader;
+
+	auto *blkt = rec + blkt_offset;
+	if ( *B2000HeaderCount::Get(blkt) != 1 ) {
+		return;
+	}
+
+	if ( MSEED::swap(*B2000DataOffset::Get(blkt), swapflag) < 21 ) {
+		return;
+	}
+
+	auto b2000DataOffset = MSEED::swap(*B2000DataOffset::Get(blkt), swapflag);
+	auto b2000DataLength = MSEED::swap(*B2000Length::Get(blkt), swapflag);
+	size_t maxHeaderLength = b2000DataOffset - 15;
+	const char *opaqHeaders = B2000Payload::Get(blkt);
+	std::string_view header;
+	for ( size_t i = 0; i < maxHeaderLength; ++i ) {
+		if ( opaqHeaders[i] == '~' ) {
+			header = { opaqHeaders, i };
+			break;
+		}
+	}
+
+	if ( header.empty() ) {
+		return;
+	}
+
+	if ( header.compare(0, 5, "SIGN/") ) {
+		return;
+	}
+
+	header = header.substr(5);
+	size_t nSignature = b2000DataLength - b2000DataOffset;
+
+	unsigned char digest[EVP_MAX_MD_SIZE];
+	unsigned int nDigest = 0;
+
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+	EVP_DigestInit(mdctx, EVP_sha256());
+	EVP_DigestUpdate(mdctx, DataQuality::Get(rec), 1);
+
+	EVP_DigestUpdate(
+		mdctx,
+		Station::Get(rec),
+		(char*)DataOffset::Get(rec) - (char*)Station::Get(rec)
+	);
+	EVP_DigestUpdate(
+		mdctx,
+		rec + MSEED::swap(*DataOffset::Get(rec), swapflag),
+		reclen - MSEED::swap(*DataOffset::Get(rec), swapflag)
+	);
+	EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest), &nDigest);
+	EVP_MD_CTX_destroy(mdctx);
+
+	const unsigned char *pp = reinterpret_cast<const unsigned char *>(blkt) + b2000DataOffset;
+
+	const X509 *cert;
+	if ( !cs.validate(header, reinterpret_cast<const char*>(digest),
+	                  nDigest, pp, nSignature, &cert) ) {
+		const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATION_FAILED;
+		SEISCOMP_WARNING("MSEED: Signature validation failed");
+	}
+	else {
+		if ( cert ) {
+			X509_NAME *name = X509_get_subject_name(const_cast<X509*>(cert));
+			if ( name ) {
+				int pos = X509_NAME_get_index_by_NID(name, NID_organizationName, -1);
+				if ( pos != -1 ) {
+					X509_NAME_ENTRY *e = X509_NAME_get_entry(name, pos);
+					ASN1_STRING *str = X509_NAME_ENTRY_get_data(e);
+					if ( ASN1_STRING_type(str) != V_ASN1_UTF8STRING ) {
+						unsigned char *utf8 = 0;
+						int length = ASN1_STRING_to_UTF8(&utf8, str);
+						if ( length > 0 ) {
+							const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(utf8), size_t(length));
+						}
+						if ( utf8 ) {
+							OPENSSL_free(utf8);
+						}
+					}
+					else {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+						_authority.assign(reinterpret_cast<char*>(ASN1_STRING_data(str)), size_t(ASN1_STRING_length(str)));
+#else
+						_authority.assign(reinterpret_cast<const char*>(ASN1_STRING_get0_data(str)), ASN1_STRING_length(str));
+#endif
+					}
+				}
+				else {
+					SEISCOMP_WARNING("MSEED: Failed to extract certificate authority (O)");
+				}
+			}
+		}
+
+		_authenticationStatus = SIGNATURE_VALIDATED;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -652,7 +655,7 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::saveSpace() const {
-	if (_hint == SAVE_RAW && _data) {
+	if ( _hint == SAVE_RAW && _data) {
 		_data = 0;
 	}
 }
@@ -680,8 +683,22 @@ void MSeedRecord::useEncoding(bool flag) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MSeedRecord::setLittleEndian(bool flag) {
+	if ( flag ) {
+		_byteOrder |= MSEED::TargetLittleEndian;
+	}
+	else {
+		_byteOrder &= ~MSEED::TargetLittleEndian;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setOutputRecordLength(int reclen) {
-	_reclen = reclen;
+	_recordLength = reclen;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -690,14 +707,14 @@ void MSeedRecord::setOutputRecordLength(int reclen) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool _isHeader(const char *header) {
-	return (std::isdigit(*(header+0))
-	     && std::isdigit(*(header+1))
-	     && std::isdigit(*(header+2))
-	     && std::isdigit(*(header+3))
-	     && std::isdigit(*(header+4))
-	     && std::isdigit(*(header+5))
-	     && std::isalpha(*(header+6))
-	     && (*(header+7) == ' ' || *(header+7) == '\0'));
+	return (std::isdigit(*(header + 0))
+	     && std::isdigit(*(header + 1))
+	     && std::isdigit(*(header + 2))
+	     && std::isdigit(*(header + 3))
+	     && std::isdigit(*(header + 4))
+	     && std::isdigit(*(header + 5))
+	     && std::isalpha(*(header + 6))
+	     && (*(header + 7) == ' ' || *(header + 7) == '\0'));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -737,135 +754,382 @@ void error(std::istream &is, const char *msg, size_t fp) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::read(std::istream &is) {
-#define HEADER_BLOCK_LEN 64
+	using namespace MSEED;
+
 	int reclen = -1;
-	MSRecord *prec = nullptr;
 	bool swapflag = false;
-	char header[HEADER_BLOCK_LEN];
-	std::vector<char> buffer;
+	char header[std::max(V2::HeaderLength, V3::HeaderLength)];
+
+	auto &buffer = _raw.impl();
+
+	_data = nullptr;
+	_byteOrder &= TargetLittleEndian;
+	_encoding = -1;
+	_net = _sta = _loc = _cha = {};
 
 	while ( is.good() ) {
-		if ( is.read(header, sizeof(header))
-		 and MS_ISVALIDHEADER(header) ) {
-			buffer.reserve(512);
-			buffer.resize(sizeof(header));
-			memcpy(buffer.data(), header, sizeof(header));
-
-			// Remember current position
-			size_t p = is.tellg();
-
-			fsdh_s *fsdh = reinterpret_cast<fsdh_s*>(buffer.data());
-			uint16_t blkt_offset;
-			uint16_t blkt_type;
-			uint16_t next_blkt;
-
-			if ( !MS_ISVALIDYEARDAY(fsdh->start_time.year, fsdh->start_time.day) )
-				swapflag = true;
-
-			blkt_offset = fsdh->blockette_offset;
-			if ( swapflag ) ms_gswap2(&blkt_offset);
-
-			while ( blkt_offset != 0 ) {
-				if ( !fill(is, buffer, blkt_offset + 4) )
-					error(is, "Blockette reading error", p);
-
-				blkt_type = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset);
-				next_blkt = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2);
-
-				if ( swapflag ) {
-					ms_gswap2(&blkt_type);
-					ms_gswap2(&next_blkt);
+		if ( is.read(header, std::min(V2::HeaderLength, V3::HeaderLength)) ) {
+			if ( V2::isValidHeader(header) ) {
+				if constexpr ( V2::HeaderLength > V3::HeaderLength ) {
+					auto p = is.tellg();
+					if ( !is.read(header + V3::HeaderLength, V2::HeaderLength - V3::HeaderLength) ) {
+						error(is, "Header v2 reading error", p);
+					}
 				}
 
-				if ( next_blkt != 0 ) {
-					if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) )
-						error(is, "Invalid blockette offset less than or equal to current offset", p);
+				buffer.reserve(512);
+				buffer.resize(V2::HeaderLength);
+				memcpy(buffer.data(), header, V2::HeaderLength);
 
-					if ( !fill(is, buffer, next_blkt) )
+				if constexpr ( V2::HeaderLength < 64 ) {
+					auto p = is.tellg();
+					if ( !fill(is, buffer, 64) ) {
 						error(is, "Blockette reading error", p);
+					}
 				}
 
-				// Found a 1000 blockette
-				if ( blkt_type == 1000 ) {
-					if ( !fill(is, buffer, blkt_offset + 4 + sizeof(blkt_1000_s)) )
-						error(is, "Blockette 1000 reading error", p);
+				// Remember current position
+				auto p = is.tellg();
 
-					blkt_1000_s *blkt_1000;blkt_1000 = reinterpret_cast<blkt_1000_s*>(buffer.data() + blkt_offset + 4);
-					reclen = (unsigned int)1 << blkt_1000->reclen;
-					break;
+				using namespace MSEED::V2;
+
+				if ( !isValidYearDay(*Year::Get(buffer.data()), *YDay::Get(buffer.data())) ) {
+					_byteOrder |= SwapHeader;
+					swapflag = true;
+					swapHeader(header);
 				}
 
-				blkt_offset = next_blkt;
-			}
+				auto hours = *Hour::Get(header);
+				auto minutes = *Minute::Get(header);
+				auto seconds = *Second::Get(header);
+				auto fsec = *FSecond::Get(header) * 100;
 
-			if ( reclen < 0 ) {
-				// Read current record to next power of two
-				size_t oldSize = buffer.size();
-				size_t newSize = 1;
+				_stime = Core::Time::FromYearDay(*Year::Get(header), *YDay::Get(header));
+				_stime += Core::TimeSpan(hours * 3600 + minutes * 60 + seconds, fsec);
 
-				while ( newSize < oldSize )
-					newSize <<= 1;
+				if ( *TimeCorrection::Get(header) != 0 && !(*ActivityFlags::Get(header) & 0x02) ) {
+					_stime += Core::TimeSpan(0, *TimeCorrection::Get(header) * 100);
+				}
 
-				if ( !fill(is, buffer, newSize) )
-					error(is, "Data read error", p);
+				mstrncpy(_net, Network::Get(header), 2);
+				mstrncpy(_sta, Station::Get(header), 5);
+				mstrncpy(_loc, Location::Get(header), 2);
+				mstrncpy(_cha, Channel::Get(header), 3);
 
-				while ( is.read(header, sizeof(header)) ) {
-					if ( MS_ISVALIDHEADER(header)
-					  or MS_ISVALIDBLANK(header)
-					  or _isHeader(header) ) {
+				auto blkt_offset = *BlocketteOffset::Get(header);
+				uint16_t blkt_type;
+				uint16_t next_blkt;
+				int blocketteCount = 0;
+				int ofsB1000 = 0, ofsB2000 = 0;
+
+				while ( blkt_offset != 0 ) {
+					if ( !fill(is, buffer, blkt_offset + 4) ) {
+						error(is, "Blockette reading error", p);
+					}
+
+					blkt_type = swap(*reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset), swapflag);
+					next_blkt = swap(*reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2), swapflag);
+
+					if ( next_blkt != 0 ) {
+						if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) ) {
+							error(is, "Invalid blockette offset less than or equal to current offset", p);
+						}
+
+						if ( !fill(is, buffer, next_blkt) ) {
+							error(is, "Blockette reading error", p);
+						}
+					}
+
+					// Found a 1000 blockette
+					if ( blkt_type == 1000 ) {
+						ofsB1000 = blkt_offset;
+
+						if ( !fill(is, buffer, blkt_offset + BHeadLength + B1000Length) ) {
+							error(is, "Blockette 1000 reading error", p);
+						}
+
+						reclen = static_cast<uint64_t>(1) << *B1000RecLength::Get(buffer.data() + blkt_offset);
+						_encoding = *B1000Encoding::Get(buffer.data() + blkt_offset);
+						if ( *B1000ByteOrder::Get(buffer.data() + blkt_offset) > 0 ) {
+							if constexpr ( Core::Endianess::Current::LittleEndian ) {
+								_byteOrder |= SwapPayload;
+							}
+						}
+						else if ( *B1000ByteOrder::Get(buffer.data() + blkt_offset) == 0 ) {
+							if constexpr ( Core::Endianess::Current::BigEndian ) {
+								_byteOrder |= SwapPayload;
+							}
+						}
+					}
+					else if ( blkt_type == 1001 ) {
+						if ( !fill(is, buffer, blkt_offset + BHeadLength + B1001Length) ) {
+							error(is, "Blockette 1001 reading error", p);
+						}
+
+						_stime += Core::TimeSpan(0, *B1001MicroSecond::Get(buffer.data() + blkt_offset));
+						_timequal = *B1001TimingQuality::Get(buffer.data() + blkt_offset);
+					}
+					else if ( blkt_type == 2000 ) {
+						ofsB2000 = blkt_offset;
+					}
+
+					blkt_offset = next_blkt;
+					++blocketteCount;
+				}
+
+				if ( blocketteCount != *BlocketteCount::Get(buffer.data()) ) {
+					SEISCOMP_WARNING("%s.%s.%s.%s: blockette count does not match",
+					                 _net, _sta, _loc, _cha);
+				}
+
+				if ( reclen < 0 ) {
+					// Read current record to next power of two
+					size_t oldSize = buffer.size();
+					size_t newSize = 1;
+
+					while ( newSize < oldSize ) {
+						newSize <<= 1;
+					}
+
+					if ( !fill(is, buffer, newSize) ) {
+						error(is, "Data read error", p);
+					}
+
+					while ( is.read(header, sizeof(header)) ) {
+						if ( isValidHeader(header) || _isHeader(header) ) {
+							reclen = buffer.size();
+							// Set current stream position back to header start
+							is.seekg(-sizeof(header), std::ios::cur);
+							break;
+						}
+						else {
+							if ( buffer.size() < MaximumRecordLength ) {
+								buffer.resize(buffer.size() + sizeof(header));
+								memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
+							}
+							else {
+								error(is, "miniSEED Record exceeds maximum allowed record length", p);
+							}
+						}
+					}
+
+					if ( is.eof() and isPowerOfTwo(buffer.size()) ) {
 						reclen = buffer.size();
-						// Set current stream position back to header start
-						is.seekg(-sizeof(header), std::ios::cur);
-						break;
+					}
+				}
+
+				if ( reclen <= 0 ) {
+					continue;
+				}
+
+				if ( size_t(reclen) > MaximumRecordLength ) {
+					throw Core::StreamException("miniSEED2 records exceeds 2**20 bytes");
+				}
+
+				if ( !fill(is, buffer, reclen) ) {
+					error(is, "Fatal error occured while reading record from stream", p);
+				}
+
+				_format = V2;
+				_recordLength = reclen;
+				_nsamp = *SampleCount::Get(header);
+				if ( (_nsamp <= 0) || (_nsamp > 1000000) ) {
+					throw LibmseedException("Invalid sample count in header");
+				}
+
+				_fsamp = 0.0;
+
+				int64_t sfNum{0}, sfDen{0};
+
+				if ( *SamplingRateF::Get(header) > 0 ) {
+					sfNum = *SamplingRateF::Get(header);
+					sfDen = 1;
+				}
+				else {
+					sfNum = 1;
+					sfDen = -*SamplingRateF::Get(header);
+				}
+
+				if ( *SamplingRateM::Get(header) > 0 ) {
+					sfNum *= *SamplingRateM::Get(header);
+				}
+				else {
+					sfDen *= -*SamplingRateM::Get(header);
+				}
+
+				if ( sfDen > 0 ) {
+					_fsamp = static_cast<double>(sfNum) / static_cast<double>(sfDen);
+				}
+
+				if ( sfNum > 0 ) {
+					_endTime = _stime + Core::TimeSpan(0, _nsamp * sfDen * 1000000 / sfNum);
+				}
+				else {
+					_endTime = _stime;
+				}
+
+				_quality = *DataQuality::Get(header);
+				_encodingFlag = true;
+
+				if ( !ofsB1000 && (_byteOrder & SwapHeader) ) {
+					_byteOrder |= SwapPayload;
+				}
+
+				if ( ofsB2000 ) {
+					updateAuthentication(buffer.data(), reclen, ofsB2000);
+				}
+
+				break;
+			}
+			else if ( V3::isValidHeader(header) ) {
+				using namespace V3;
+
+				using C = Core::Endianess::Converter;
+				// Remember current position
+				auto p = is.tellg();
+
+				if constexpr ( V3::HeaderLength > V2::HeaderLength ) {
+					if ( !is.read(header + V2::HeaderLength, V3::HeaderLength - V2::HeaderLength) ) {
+						error(is, "Header v3 reading error", p);
+					}
+				}
+
+				if constexpr ( Core::Endianess::Current::BigEndian ) {
+					_byteOrder |= SwapHeader;
+				}
+
+				_encoding = C::ToLittleEndian(*Encoding::Get(header));
+
+				if ( (_encoding == static_cast<int16_t>(EncodingType::STEIM1)) ||
+				     (_encoding == static_cast<int16_t>(EncodingType::STEIM2)) ) {
+					if constexpr ( Core::Endianess::Current::LittleEndian ) {
+						_byteOrder |= SwapPayload;
+					}
+				}
+				else {
+					if constexpr ( Core::Endianess::Current::BigEndian ) {
+						_byteOrder |= SwapPayload;
+					}
+				}
+
+				uint8_t sidLength;
+				uint16_t extraLength;
+				uint32_t dataLength;
+
+				sidLength = *SIDLength::Get(header);
+				extraLength = C::ToLittleEndian(*ExtraLength::Get(header));
+				dataLength = C::ToLittleEndian(*DataLength::Get(header));
+
+				reclen = HeaderLength + sidLength + extraLength + dataLength;
+
+				if ( !dataLength ) {
+					// Skip empty records
+					continue;
+				}
+
+				buffer.reserve(reclen);
+				buffer.resize(V3::HeaderLength);
+				memcpy(buffer.data(), header, V3::HeaderLength);
+
+				if ( size_t(reclen) > MaximumRecordLength ) {
+					throw Core::StreamException("miniSEED3 record exceeds 2**20 bytes");
+				}
+
+				if ( !fill(is, buffer, reclen) ) {
+					error(is, "Fatal error occured while reading record from stream", p);
+				}
+
+				if ( !sid2nslc({ SID::Get(buffer.data()), sidLength }, _net, _sta, _loc, _cha) ) {
+					throw Core::StreamException("Invalid SID");
+				}
+
+				_format = V3;
+				_recordLength = reclen;
+				_nsamp = C::ToLittleEndian(*SampleCount::Get(header));
+				_fsamp = C::ToLittleEndian(*SamplingRate::Get(header));
+
+				if ( _fsamp < 0 ) {
+					_fsamp = -1.0 / _fsamp;
+				}
+
+				_stime = Core::Time::FromYearDay(
+					C::ToLittleEndian(*Year::Get(header)),
+					C::ToLittleEndian(*YDay::Get(header))
+				);
+
+				_stime += Core::TimeSpan(
+					C::ToLittleEndian(*Hour::Get(header)) * 3600 +
+					C::ToLittleEndian(*Minute::Get(header)) * 60 +
+					C::ToLittleEndian(*Second::Get(header)),
+					C::ToLittleEndian(*Nanoseconds::Get(header)) / 1000
+				);
+
+				_endTime = _stime + Core::TimeSpan(0, _nsamp * 1000000 / _fsamp + 0.5);
+
+				if ( extraLength > 0 ) {
+					rapidjson::Document doc;
+					// Insitu parsing is valid as the buffer the record is pointing to is a
+					// private temporary buffer created in read().
+					// It will speed up the parser tremendously.
+					doc.Parse(buffer.data() + HeaderLength + sidLength, extraLength);
+					if ( !doc.HasParseError() ) {
+						auto it = doc.FindMember("FDSN");
+						if ( it != doc.MemberEnd() ) {
+							it = it->value.FindMember("Time");
+							if ( it != doc.MemberEnd() ) {
+								it = it->value.FindMember("Quality");
+								if ( it != doc.MemberEnd() ) {
+									if ( it->value.IsInt() ) {
+										_timequal = it->value.GetInt();
+									}
+								}
+							}
+						}
 					}
 					else {
-						if ( buffer.size() < MAXRECLEN ) {
-							buffer.resize(buffer.size() + sizeof(header));
-							memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
-						}
-						else
-							error(is, "Mini SEED Record exceeds 2**20 bytes", p);
+						// Mmmhhh, what to do? Ignore the entire record or just the extra header
+						// document?
 					}
 				}
-
-				if ( is.eof() and isPowerOfTwo(buffer.size()) )
-					reclen = buffer.size();
-			}
-
-			if ( reclen > 0 ) {
-				if ( reclen > MAXRECLEN )
-					throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
-
-				if ( !fill(is, buffer, reclen) )
-					error(is, "Fatal error occured while reading record from stream", p);
 
 				break;
 			}
 		}
-
-		// Skip over to the next header
 	}
 
 	if ( reclen <= 0 ) {
-		if ( is.eof() )
+		if ( is.eof() ) {
 			throw Core::EndOfStreamException();
-		else
+		}
+		else {
 			throw LibmseedException("Retrieving the record length failed");
+		}
 	}
 
-	if ( reclen < MINRECLEN ) {
-		throw Core::EndOfStreamException("Invalid Mini SEED record, too small");
+	if ( reclen < 40 ) {
+		throw Core::EndOfStreamException("Invalid miniSEED record, too small");
 	}
 
-	int r = msr_unpack(buffer.data(), reclen, &prec, 0, 0);
-	if ( r != MS_NOERROR ) {
-		throw LibmseedException(fmt::format("Unpacking of Mini SEED record failed: {}", r));
-	}
-
-	*this = MSeedRecord(prec, this->_datatype, this->_hint);
-	msr_free(&prec);
 	if ( _fsamp <= 0 ) {
-		throw LibmseedException("Unpacking of Mini SEED record failed, invalid sample rate");
+		throw LibmseedException("Unpacking of miniSEED record failed, invalid sample rate");
+	}
+
+	_encodingFlag = true;
+
+	if ( _hint != SAVE_RAW ) {
+		if ( _hint == DATA_ONLY ) {
+			try {
+				unpackData(_raw.typedData(), _raw.size());
+			}
+			catch ( LibmseedException &e ) {
+				_raw.clear();
+				_nsamp = 0;
+				_fsamp = 0;
+				_data = nullptr;
+				throw;
+			}
+		}
+		_raw.clear();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -874,127 +1138,105 @@ void MSeedRecord::read(std::istream &is) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::write(std::ostream& out) {
-	if (!_data) {
-		if (!_raw.data())
+void MSeedRecord::write(std::ostream &out) {
+	using namespace MSEED;
+
+	if ( !_data ) {
+		if ( !_raw.data() ) {
 			throw Core::StreamException("No writable data found");
-		else
+		}
+		else {
 			data();
+		}
 	}
 
-	MSRecord *pmsr;
-	pmsr = msr_init(nullptr);
-	if (!pmsr)
-		throw Core::StreamException("msr_init failed");
+	int freqn, freqd;
+	if ( !getFraction(freqn, freqd, _fsamp) ) {
+		SEISCOMP_ERROR("%s.%s.%s.%s: invalid sampling rate: %f",
+		               _net, _sta, _loc, _cha, _fsamp);
+		return;
+	}
 
-	/* Set MSRecord header values */
-	pmsr->reclen = _reclen;
-	pmsr->sequence_number = _seqno;
-	strcpy(pmsr->network,_net.c_str());
-	strcpy(pmsr->station,_sta.c_str());
-	strcpy(pmsr->location,_loc.c_str());
-	strcpy(pmsr->channel,_cha.c_str());
-	pmsr->dataquality = _rectype;
-	pmsr->starttime = ms_timestr2hptime(const_cast<char *>(_stime.iso().c_str()));
-	pmsr->samprate = _fsamp;
-	pmsr->byteorder = 1;
-	pmsr->numsamples = _data->size();
+	auto format = new V2::StandardFormat(_net, _sta, _loc, _cha, freqn, freqd);
+	auto exp = static_cast<int>(ceil(log2(_recordLength)) + 0.5);
+	format->recordSize = exp ? exp : 9;
+	format->bigEndian = !(_byteOrder & TargetLittleEndian);
+
 	ArrayPtr data;
+	EncoderPtr encoder;
 
-	struct blkt_1001_s blkt1001;
-	memset(&blkt1001, 0, sizeof (struct blkt_1001_s));
-
-	if ( _timequal >= 0 )
-		blkt1001.timing_qual = _timequal <= 100 ? uint8_t(_timequal) : 100;
-
-	if ( !msr_addblockette(pmsr, reinterpret_cast<char *>(&blkt1001), sizeof(struct blkt_1001_s), 1001, 0) ) {
-		throw LibmseedException("Error adding 1001 blockette");
-	}
-
-	if ( _encodingFlag ) {
-		switch ( _encoding ) {
-			case DE_ASCII: {
-				pmsr->encoding = DE_ASCII;
-				pmsr->sampletype = 'a';
+	if ( _encodingFlag && (_encoding >= 0) ) {
+		switch ( static_cast<EncodingType>(_encoding) ) {
+			case EncodingType::ASCII:
+				encoder = new Uncompressed<char*>(format, freqn, freqd);
 				data = ArrayFactory::Create(Array::CHAR, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
-			}
-			case DE_FLOAT32: {
-				pmsr->encoding = DE_FLOAT32;
-				pmsr->sampletype = 'f';
+			case EncodingType::FLOAT32:
+				encoder = new Uncompressed<float>(format, freqn, freqd);
 				data = ArrayFactory::Create(Array::FLOAT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
-			}
-			case DE_FLOAT64: {
-				pmsr->encoding = DE_FLOAT64;
-				pmsr->sampletype = 'd';
+			case EncodingType::FLOAT64:
+				encoder = new Uncompressed<double>(format, freqn, freqd);
 				data = ArrayFactory::Create(Array::DOUBLE, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
-			}
-			case DE_INT16:
-			case DE_INT32:
-			case DE_STEIM1:
-			case DE_STEIM2: {
-				pmsr->encoding = _encoding;
-				pmsr->sampletype = 'i';
+			case EncodingType::INT16:
+			case EncodingType::INT32:
+				encoder = new Uncompressed<int32_t>(format, freqn, freqd);
 				data = ArrayFactory::Create(Array::INT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
-			}
-			default: {
-				SEISCOMP_WARNING("Unknown encoding type found %s(%c)! Switch to Integer-Steim2 encoding", ms_encodingstr(_encoding), _encoding);
-				pmsr->encoding = DE_STEIM2;
-				pmsr->sampletype = 'i';
+			case EncodingType::STEIM1:
+				encoder = new Steim1<int32_t>(format, freqn, freqd);
 				data = ArrayFactory::Create(Array::INT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
-			}
+				break;
+			case EncodingType::STEIM2:
+				encoder = new Steim2<int32_t>(format, freqn, freqd);
+				data = ArrayFactory::Create(Array::INT, _data.get());
+				break;
+			default:
+				SEISCOMP_WARNING("Unknown encoding type found: %d, use to Steim2 "
+				                 "encoding", static_cast<int>(_encoding), _encoding);
+				encoder = new Steim2<int32_t>(format, freqn, freqd);
+				data = ArrayFactory::Create(Array::INT, _data.get());
+				break;
 		}
 	}
 	else {
-		switch ( _data->dataType() ) {
+		data = _data;
+
+		switch ( data->dataType() ) {
 			case Array::CHAR:
-				pmsr->encoding = DE_ASCII;
-				pmsr->sampletype = 'a';
-				pmsr->datasamples = const_cast<void*>(_data->data());
+				encoder = new Uncompressed<char*>(format, freqn, freqd);
 				break;
 			case Array::INT:
-				pmsr->encoding = DE_STEIM2;
-				pmsr->sampletype = 'i';
-				pmsr->datasamples = const_cast<void*>(_data->data());
+				encoder = new Steim2<int32_t>(format, freqn, freqd);
 				break;
 			case Array::FLOAT:
-				pmsr->encoding = DE_FLOAT32;
-				pmsr->sampletype = 'f';
-				pmsr->datasamples = const_cast<void*>(_data->data());
+				encoder = new Uncompressed<float>(format, freqn, freqd);
 				break;
 			case Array::DOUBLE:
-				pmsr->encoding = DE_FLOAT64;
-				pmsr->sampletype = 'd';
-				pmsr->datasamples = const_cast<void*>(_data->data());
+				encoder = new Uncompressed<double>(format, freqn, freqd);
 				break;
-			default: {
-				SEISCOMP_WARNING("Unknown data type %d! Switch to Integer-Steim2 encoding",
-				                 static_cast<int>(_data->dataType()));
-				pmsr->encoding = DE_STEIM2;
-				pmsr->sampletype = 'i';
-				data = ArrayFactory::Create(Array::INT,_data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
-			}
+			default:
+				SEISCOMP_WARNING("Unknown data type %d, use Steim2 encoding",
+				                 static_cast<int>(data->dataType()));
+				encoder = new Steim2<int32_t>(format, freqn, freqd);
+				data = ArrayFactory::Create(Array::INT, _data.get());
+				break;
 		}
 	}
 
-	/* Pack the record(s) */
-	CharArray packed;
-	int64_t psamples;
+	if ( !data ) {
+		SEISCOMP_ERROR("No data");
+		return;
+	}
 
-	msr_pack(pmsr, _Record_Handler, &packed, &psamples, 1, 0);
-	pmsr->datasamples = 0;
-	msr_free(&pmsr);
-
-	out.write(packed.typedData(), packed.size());
+	encoder->setBufferCallback([&out](CharArray *buf) {
+		out.write(buf->typedData(), buf->size());
+	});
+	encoder->setTime(_stime);
+	encoder->setTimingQuality(_timequal);
+	encoder->push(data->size(), data->data());
+	encoder->flush();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1003,4 +1245,4 @@ void MSeedRecord::write(std::ostream& out) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

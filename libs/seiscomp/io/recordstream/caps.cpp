@@ -31,10 +31,9 @@
 #include <seiscomp/core/genericrecord.h>
 #include <seiscomp/core/plugin.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/core/version.h>
 #include <seiscomp/io/records/mseedrecord.h>
 
-#include <libmseed.h>
-#include <ctype.h>
 #include <functional>
 #include <fstream>
 
@@ -131,53 +130,6 @@ class CAPSRecord : public GenericRecord {
 				target[i] = (T)val;
 			}
 			return true;
-		}
-};
-
-
-class MSeedRecord_ : public IO::MSeedRecord {
-	public:
-		MSeedRecord_() {}
-
-	public:
-		void read(std::istream &is) override {
-			int reclen = -1;
-			MSRecord *prec = nullptr;
-			const int LEN = 128;
-			char header[LEN];
-
-			if ( !is.read(header,LEN) )
-				throw Core::StreamException("Incomplete header");
-
-			if ( !MS_ISVALIDHEADER(header) )
-				throw IO::LibmseedException("Invalid header");
-
-			reclen = ms_detect(header, LEN);
-			if ( reclen <= 0 ) /* scan to the next header to retrieve the record length */
-				throw IO::LibmseedException("Retrieving the record length failed");
-
-			if ( reclen < LEN )
-				throw Core::EndOfStreamException("Invalid miniSEED record, too small");
-
-			if ( reclen > (1 << 20) )
-				throw Core::EndOfStreamException("Invalid miniSEED record, too large (> 1**20 bytes)");
-
-			std::vector<char> rawrec(reclen);
-			memmove(rawrec.data(), header, LEN);
-
-			if ( !is.read(&rawrec[LEN], reclen-LEN) )
-				throw Core::StreamException("Fatal error occured during reading from stream");
-
-			if ( msr_unpack(rawrec.data(), reclen, &prec, 0, 0) == MS_NOERROR ) {
-				*static_cast<IO::MSeedRecord*>(this) = IO::MSeedRecord(prec,this->_datatype,this->_hint);
-				msr_free(&prec);
-				if ( _fsamp <= 0 )
-					throw IO::LibmseedException("Unpacking of Mini SEED record failed.");
-			}
-			else {
-				msr_free(&prec);
-				throw IO::LibmseedException("Unpacking of Mini SEED record failed.");
-			}
 		}
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -903,7 +855,7 @@ Record *RecordStream::next() {
 						}
 							break;
 						case gc::MSEEDPacket:
-							_nextRecord = new MSeedRecord_;
+							_nextRecord = new IO::MSeedRecord;
 							break;
 						case gc::FixedRawDataPacket:
 						{

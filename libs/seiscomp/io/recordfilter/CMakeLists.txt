@@ -1,5 +1,4 @@
 SET(RECORDFILTER_SOURCES
-	encoder/mseed/format.cpp
 	pipe.cpp
 	iirfilter.cpp
 	resample.cpp

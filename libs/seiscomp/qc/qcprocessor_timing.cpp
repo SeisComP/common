@@ -18,10 +18,7 @@
  ***************************************************************************/
 
 
-// #ifdef HAVE_MSEED
 #include <seiscomp/io/records/mseedrecord.h>
-// #endif
-
 #include <seiscomp/qc/qcprocessor_timing.h>
 
 

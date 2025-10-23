@@ -1,7 +1,5 @@
-#ifndef __@LIBRARY@_CONFIG_H__
-#define __@LIBRARY@_CONFIG_H__
-
-@CMAKEDEFINE@ HAVE_MSEED
+#ifndef @LIBRARY@_CONFIG_H
+#define @LIBRARY@_CONFIG_H
 
 #include <seiscomp/io/records/@LIBRARY_NAME@api.h>
 

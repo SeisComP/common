@@ -3727,120 +3727,120 @@ namespace Swig {
 #define SWIGTYPE_p_Hours swig_types[13]
 #define SWIGTYPE_p_ImplType swig_types[14]
 #define SWIGTYPE_p_InplaceFilterType swig_types[15]
-#define SWIGTYPE_p_MSRecord_s swig_types[16]
-#define SWIGTYPE_p_MajorType swig_types[17]
-#define SWIGTYPE_p_MicroSeconds swig_types[18]
-#define SWIGTYPE_p_MilliSeconds swig_types[19]
-#define SWIGTYPE_p_MinorType swig_types[20]
-#define SWIGTYPE_p_Minutes swig_types[21]
-#define SWIGTYPE_p_OID swig_types[22]
-#define SWIGTYPE_p_PackType swig_types[23]
-#define SWIGTYPE_p_PatchType swig_types[24]
-#define SWIGTYPE_p_Properties swig_types[25]
-#define SWIGTYPE_p_PropertyValue swig_types[26]
-#define SWIGTYPE_p_ReferenceType swig_types[27]
-#define SWIGTYPE_p_RootType swig_types[28]
-#define SWIGTYPE_p_Seconds swig_types[29]
-#define SWIGTYPE_p_Seiscomp__Array swig_types[30]
-#define SWIGTYPE_p_Seiscomp__BitSet swig_types[31]
-#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[32]
-#define SWIGTYPE_p_Seiscomp__Core__ClassNotFound swig_types[33]
-#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[34]
-#define SWIGTYPE_p_Seiscomp__Core__DuplicateClassname swig_types[35]
-#define SWIGTYPE_p_Seiscomp__Core__EndOfStreamException swig_types[36]
-#define SWIGTYPE_p_Seiscomp__Core__EnumT_Seiscomp__IO__DatabaseInterface__EBackend_Seiscomp__IO__DatabaseInterface__EBackendQuantity_Seiscomp__IO__DatabaseInterface__EBackendNames_t swig_types[37]
-#define SWIGTYPE_p_Seiscomp__Core__GeneralException swig_types[38]
-#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[39]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[40]
-#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[41]
-#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[42]
-#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[43]
-#define SWIGTYPE_p_Seiscomp__Core__MemoryException swig_types[44]
-#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[45]
-#define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[46]
-#define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[47]
-#define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[48]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[49]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[50]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t swig_types[51]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t swig_types[52]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t swig_types[53]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t swig_types[54]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t swig_types[55]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t swig_types[56]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t swig_types[57]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t swig_types[58]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t swig_types[59]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t swig_types[60]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t swig_types[61]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t swig_types[62]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t swig_types[63]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t swig_types[64]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t swig_types[65]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t swig_types[66]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t swig_types[67]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t swig_types[68]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t swig_types[69]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t swig_types[70]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t swig_types[71]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t swig_types[72]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t swig_types[73]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t swig_types[74]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t swig_types[75]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t swig_types[76]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t swig_types[77]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t swig_types[78]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t swig_types[79]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t swig_types[80]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t swig_types[81]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t swig_types[82]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t swig_types[83]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t swig_types[84]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t swig_types[85]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t swig_types[86]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t swig_types[87]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t swig_types[88]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t swig_types[89]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t swig_types[90]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t swig_types[91]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t swig_types[92]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t swig_types[93]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t swig_types[94]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t swig_types[95]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t swig_types[96]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t swig_types[97]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t swig_types[98]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t swig_types[99]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t swig_types[100]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t swig_types[101]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t swig_types[102]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t swig_types[103]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t swig_types[104]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t swig_types[105]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t swig_types[106]
-#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t swig_types[107]
-#define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[108]
-#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[109]
-#define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[110]
-#define SWIGTYPE_p_Seiscomp__Core__TimeWindow swig_types[111]
-#define SWIGTYPE_p_Seiscomp__Core__TypeConversionException swig_types[112]
-#define SWIGTYPE_p_Seiscomp__Core__TypeException swig_types[113]
-#define SWIGTYPE_p_Seiscomp__Core__UnderflowException swig_types[114]
-#define SWIGTYPE_p_Seiscomp__Core__ValueError swig_types[115]
-#define SWIGTYPE_p_Seiscomp__Core__ValueException swig_types[116]
-#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[117]
-#define SWIGTYPE_p_Seiscomp__IO__BinaryArchive swig_types[118]
-#define SWIGTYPE_p_Seiscomp__IO__Cropper swig_types[119]
-#define SWIGTYPE_p_Seiscomp__IO__DatabaseInterface swig_types[120]
-#define SWIGTYPE_p_Seiscomp__IO__ExportSink swig_types[121]
-#define SWIGTYPE_p_Seiscomp__IO__Exporter swig_types[122]
-#define SWIGTYPE_p_Seiscomp__IO__GFArchive swig_types[123]
-#define SWIGTYPE_p_Seiscomp__IO__GFReceiver swig_types[124]
-#define SWIGTYPE_p_Seiscomp__IO__GFSource swig_types[125]
-#define SWIGTYPE_p_Seiscomp__IO__Importer swig_types[126]
-#define SWIGTYPE_p_Seiscomp__IO__LibmseedException swig_types[127]
-#define SWIGTYPE_p_Seiscomp__IO__MSeedEncoder swig_types[128]
-#define SWIGTYPE_p_Seiscomp__IO__MSeedRecord swig_types[129]
+#define SWIGTYPE_p_MajorType swig_types[16]
+#define SWIGTYPE_p_MicroSeconds swig_types[17]
+#define SWIGTYPE_p_MilliSeconds swig_types[18]
+#define SWIGTYPE_p_MinorType swig_types[19]
+#define SWIGTYPE_p_Minutes swig_types[20]
+#define SWIGTYPE_p_OID swig_types[21]
+#define SWIGTYPE_p_PackType swig_types[22]
+#define SWIGTYPE_p_PatchType swig_types[23]
+#define SWIGTYPE_p_Properties swig_types[24]
+#define SWIGTYPE_p_PropertyValue swig_types[25]
+#define SWIGTYPE_p_ReferenceType swig_types[26]
+#define SWIGTYPE_p_RootType swig_types[27]
+#define SWIGTYPE_p_Seconds swig_types[28]
+#define SWIGTYPE_p_Seiscomp__Array swig_types[29]
+#define SWIGTYPE_p_Seiscomp__BitSet swig_types[30]
+#define SWIGTYPE_p_Seiscomp__Core__BaseObject swig_types[31]
+#define SWIGTYPE_p_Seiscomp__Core__ClassNotFound swig_types[32]
+#define SWIGTYPE_p_Seiscomp__Core__DataMessage swig_types[33]
+#define SWIGTYPE_p_Seiscomp__Core__DuplicateClassname swig_types[34]
+#define SWIGTYPE_p_Seiscomp__Core__EndOfStreamException swig_types[35]
+#define SWIGTYPE_p_Seiscomp__Core__EnumT_Seiscomp__IO__DatabaseInterface__EBackend_Seiscomp__IO__DatabaseInterface__EBackendQuantity_Seiscomp__IO__DatabaseInterface__EBackendNames_t swig_types[36]
+#define SWIGTYPE_p_Seiscomp__Core__GeneralException swig_types[37]
+#define SWIGTYPE_p_Seiscomp__Core__GenericMessageT_Seiscomp__Core__BaseObject_t swig_types[38]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ArchiveT_Seiscomp__Core__BaseObject_t swig_types[39]
+#define SWIGTYPE_p_Seiscomp__Core__Generic__ClassFactoryInterfaceT_Seiscomp__Core__BaseObject_t swig_types[40]
+#define SWIGTYPE_p_Seiscomp__Core__GreensFunction swig_types[41]
+#define SWIGTYPE_p_Seiscomp__Core__InterruptibleObject swig_types[42]
+#define SWIGTYPE_p_Seiscomp__Core__MemoryException swig_types[43]
+#define SWIGTYPE_p_Seiscomp__Core__Message swig_types[44]
+#define SWIGTYPE_p_Seiscomp__Core__OperationInterrupted swig_types[45]
+#define SWIGTYPE_p_Seiscomp__Core__OverflowException swig_types[46]
+#define SWIGTYPE_p_Seiscomp__Core__RTTI swig_types[47]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_const_t swig_types[48]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Array_t swig_types[49]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_const_t swig_types[50]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__BitSet_t swig_types[51]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_const_t swig_types[52]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__BaseObject_t swig_types[53]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__DataMessage_t swig_types[54]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_const_t swig_types[55]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__GreensFunction_t swig_types[56]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_const_t swig_types[57]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__InterruptibleObject_t swig_types[58]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_const_t swig_types[59]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Core__Message_t swig_types[60]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_const_t swig_types[61]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__GenericRecord_t swig_types[62]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_const_t swig_types[63]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Cropper_t swig_types[64]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_const_t swig_types[65]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__DatabaseInterface_t swig_types[66]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_const_t swig_types[67]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Exporter_t swig_types[68]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_const_t swig_types[69]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__GFArchive_t swig_types[70]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_const_t swig_types[71]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__Importer_t swig_types[72]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_const_t swig_types[73]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__MSeedRecord_t swig_types[74]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_const_t swig_types[75]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordFilterInterface_t swig_types[76]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_const_t swig_types[77]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__IO__RecordInput_t swig_types[78]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_const_t swig_types[79]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Math__Restitution__FFT__TransferFunction_t swig_types[80]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_const_t swig_types[81]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_char_t_t swig_types[82]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_const_t swig_types[83]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_double_t_t swig_types[84]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_const_t swig_types[85]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_float_t_t swig_types[86]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_const_t swig_types[87]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__NumericArrayT_int_t_t swig_types[88]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_const_t swig_types[89]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__CombinedConnection_t swig_types[90]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_const_t swig_types[91]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__File_t swig_types[92]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_const_t swig_types[93]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream__SLConnection_t swig_types[94]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_const_t swig_types[95]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__RecordStream_t swig_types[96]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_const_t swig_types[97]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__Record_t swig_types[98]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_const_t swig_types[99]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_Seiscomp__Core__Time_t_t swig_types[100]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_const_t swig_types[101]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_double_t_t_t swig_types[102]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_const_t swig_types[103]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__complexT_float_t_t_t swig_types[104]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_const_t swig_types[105]
+#define SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__TypedArrayT_std__string_t_t swig_types[106]
+#define SWIGTYPE_p_Seiscomp__Core__StreamException swig_types[107]
+#define SWIGTYPE_p_Seiscomp__Core__Time swig_types[108]
+#define SWIGTYPE_p_Seiscomp__Core__TimeSpan swig_types[109]
+#define SWIGTYPE_p_Seiscomp__Core__TimeWindow swig_types[110]
+#define SWIGTYPE_p_Seiscomp__Core__TypeConversionException swig_types[111]
+#define SWIGTYPE_p_Seiscomp__Core__TypeException swig_types[112]
+#define SWIGTYPE_p_Seiscomp__Core__UnderflowException swig_types[113]
+#define SWIGTYPE_p_Seiscomp__Core__ValueError swig_types[114]
+#define SWIGTYPE_p_Seiscomp__Core__ValueException swig_types[115]
+#define SWIGTYPE_p_Seiscomp__GenericRecord swig_types[116]
+#define SWIGTYPE_p_Seiscomp__IO__BinaryArchive swig_types[117]
+#define SWIGTYPE_p_Seiscomp__IO__Cropper swig_types[118]
+#define SWIGTYPE_p_Seiscomp__IO__DatabaseInterface swig_types[119]
+#define SWIGTYPE_p_Seiscomp__IO__ExportSink swig_types[120]
+#define SWIGTYPE_p_Seiscomp__IO__Exporter swig_types[121]
+#define SWIGTYPE_p_Seiscomp__IO__GFArchive swig_types[122]
+#define SWIGTYPE_p_Seiscomp__IO__GFReceiver swig_types[123]
+#define SWIGTYPE_p_Seiscomp__IO__GFSource swig_types[124]
+#define SWIGTYPE_p_Seiscomp__IO__Importer swig_types[125]
+#define SWIGTYPE_p_Seiscomp__IO__LibmseedException swig_types[126]
+#define SWIGTYPE_p_Seiscomp__IO__MSeedEncoder swig_types[127]
+#define SWIGTYPE_p_Seiscomp__IO__MSeedRecord swig_types[128]
+#define SWIGTYPE_p_Seiscomp__IO__MSeedRecord__Format swig_types[129]
 #define SWIGTYPE_p_Seiscomp__IO__PipeFilter swig_types[130]
 #define SWIGTYPE_p_Seiscomp__IO__RecordDemuxFilter swig_types[131]
 #define SWIGTYPE_p_Seiscomp__IO__RecordFilterInterface swig_types[132]
@@ -26285,7 +26285,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_3(PyObject *self, Py_ssize_t no
   
   (void)self;
   if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MSRecord_s, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
   }
@@ -26334,7 +26334,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_4(PyObject *self, Py_ssize_t no
   
   (void)self;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MSRecord_s, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
   }
@@ -26375,7 +26375,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_5(PyObject *self, Py_ssize_t no
   
   (void)self;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MSRecord_s, 0 |  0 );
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
   }
@@ -26541,7 +26541,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
   if (argc == 1) {
     int _v = 0;
     void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MSRecord_s, 0);
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       return _wrap_new_MSeedRecord__SWIG_5(self, argc, argv);
@@ -26576,7 +26576,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
   if (argc == 2) {
     int _v = 0;
     void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MSRecord_s, 0);
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       {
@@ -26621,7 +26621,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
   if (argc == 3) {
     int _v = 0;
     void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MSRecord_s, 0);
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
       {
@@ -26656,24 +26656,37 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_delete_MSeedRecord(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_MSeedRecord_Detect__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
+  void *arg1 = (void *) 0 ;
+  size_t arg2 ;
+  Seiscomp::IO::MSeedRecord::Format *arg3 = (Seiscomp::IO::MSeedRecord::Format *) 0 ;
+  int res1 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  int64_t result;
   
   (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_DISOWN |  0 );
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0],SWIG_as_voidptrptr(&arg1), 0, 0);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_MSeedRecord" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_Detect" "', argument " "1"" of type '" "void const *""'"); 
   }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_Detect" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_Seiscomp__IO__MSeedRecord__Format, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "MSeedRecord_Detect" "', argument " "3"" of type '" "Seiscomp::IO::MSeedRecord::Format *""'"); 
+  }
+  arg3 = reinterpret_cast< Seiscomp::IO::MSeedRecord::Format * >(argp3);
   {
     try {
-      if (arg1) arg1->decrementReferenceCount();
+      result = (int64_t)Seiscomp::IO::MSeedRecord::Detect((void const *)arg1,SWIG_STD_MOVE(arg2),arg3);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26685,10 +26698,104 @@ SWIGINTERN PyObject *_wrap_delete_MSeedRecord(PyObject *self, PyObject *args) {
       SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
     }
   }
-  resultobj = SWIG_Py_Void();
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
   return resultobj;
 fail:
   return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MSeedRecord_Detect__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  void *arg1 = (void *) 0 ;
+  size_t arg2 ;
+  int res1 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  int64_t result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0],SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_Detect" "', argument " "1"" of type '" "void const *""'"); 
+  }
+  ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_Detect" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    try {
+      result = (int64_t)Seiscomp::IO::MSeedRecord::Detect((void const *)arg1,SWIG_STD_MOVE(arg2));
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MSeedRecord_Detect(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "MSeedRecord_Detect", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *ptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &ptr, 0, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_MSeedRecord_Detect__SWIG_1(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v = 0;
+    void *ptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &ptr, 0, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Seiscomp__IO__MSeedRecord__Format, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_MSeedRecord_Detect__SWIG_0(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'MSeedRecord_Detect'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::IO::MSeedRecord::Detect(void const *,size_t,Seiscomp::IO::MSeedRecord::Format *)\n"
+    "    Seiscomp::IO::MSeedRecord::Detect(void const *,size_t)\n");
+  return 0;
 }
 
 
@@ -26918,86 +27025,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_MSeedRecord_sequenceNumber(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_sequenceNumber" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->sequenceNumber();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_setSequenceNumber(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "MSeedRecord_setSequenceNumber", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_setSequenceNumber" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_setSequenceNumber" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  {
-    try {
-      (arg1)->setSequenceNumber(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_MSeedRecord_dataQuality(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
@@ -27060,166 +27087,6 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_setDataQuality(PyObject *self, PyObject *
   {
     try {
       (arg1)->setDataQuality(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_sampleRateFactor(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_sampleRateFactor" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->sampleRateFactor();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_setSampleRateFactor(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "MSeedRecord_setSampleRateFactor", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_setSampleRateFactor" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_setSampleRateFactor" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  {
-    try {
-      (arg1)->setSampleRateFactor(arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_sampleRateMultiplier(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_sampleRateMultiplier" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->sampleRateMultiplier();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_setSampleRateMultiplier(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject *swig_obj[2] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "MSeedRecord_setSampleRateMultiplier", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_setSampleRateMultiplier" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_setSampleRateMultiplier" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  {
-    try {
-      (arg1)->setSampleRateMultiplier(arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27312,117 +27179,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_MSeedRecord_sampleRateNumerator(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_sampleRateNumerator" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->sampleRateNumerator();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_sampleRateDenominator(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_sampleRateDenominator" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->sampleRateDenominator();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_frameNumber(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_frameNumber" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->frameNumber();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_MSeedRecord_endTime(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
@@ -27479,43 +27235,6 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_recordLength(PyObject *self, PyObject *ar
   {
     try {
       result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->recordLength();
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_MSeedRecord_leapSeconds(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject *swig_obj[1] ;
-  int result;
-  
-  (void)self;
-  if (!args) SWIG_fail;
-  swig_obj[0] = args;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_leapSeconds" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
-  {
-    try {
-      result = (int)((Seiscomp::IO::MSeedRecord const *)arg1)->leapSeconds();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27842,6 +27561,42 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_write(PyObject *self, PyObject *args) {
   {
     try {
       (arg1)->write(*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_MSeedRecord(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_MSeedRecord" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  {
+    try {
+      if (arg1) arg1->decrementReferenceCount();
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37498,28 +37253,18 @@ static PyMethodDef SwigMethods[] = {
 		"MSeedRecord(MSeedRecord ms)\n"
 		"MSeedRecord(Record rec, int reclen=512)\n"
 		""},
-	 { "delete_MSeedRecord", _wrap_delete_MSeedRecord, METH_O, "delete_MSeedRecord(MSeedRecord self)"},
+	 { "MSeedRecord_Detect", _wrap_MSeedRecord_Detect, METH_VARARGS, "MSeedRecord_Detect(void const * data, size_t len, Seiscomp::IO::MSeedRecord::Format * format=None) -> int64_t"},
 	 { "MSeedRecord_setNetworkCode", _wrap_MSeedRecord_setNetworkCode, METH_VARARGS, "MSeedRecord_setNetworkCode(MSeedRecord self, string net)"},
 	 { "MSeedRecord_setStationCode", _wrap_MSeedRecord_setStationCode, METH_VARARGS, "MSeedRecord_setStationCode(MSeedRecord self, string sta)"},
 	 { "MSeedRecord_setLocationCode", _wrap_MSeedRecord_setLocationCode, METH_VARARGS, "MSeedRecord_setLocationCode(MSeedRecord self, string loc)"},
 	 { "MSeedRecord_setChannelCode", _wrap_MSeedRecord_setChannelCode, METH_VARARGS, "MSeedRecord_setChannelCode(MSeedRecord self, string cha)"},
 	 { "MSeedRecord_setStartTime", _wrap_MSeedRecord_setStartTime, METH_VARARGS, "MSeedRecord_setStartTime(MSeedRecord self, Time time)"},
-	 { "MSeedRecord_sequenceNumber", _wrap_MSeedRecord_sequenceNumber, METH_O, "MSeedRecord_sequenceNumber(MSeedRecord self) -> int"},
-	 { "MSeedRecord_setSequenceNumber", _wrap_MSeedRecord_setSequenceNumber, METH_VARARGS, "MSeedRecord_setSequenceNumber(MSeedRecord self, int seqno)"},
 	 { "MSeedRecord_dataQuality", _wrap_MSeedRecord_dataQuality, METH_O, "MSeedRecord_dataQuality(MSeedRecord self) -> char"},
 	 { "MSeedRecord_setDataQuality", _wrap_MSeedRecord_setDataQuality, METH_VARARGS, "MSeedRecord_setDataQuality(MSeedRecord self, char qual)"},
-	 { "MSeedRecord_sampleRateFactor", _wrap_MSeedRecord_sampleRateFactor, METH_O, "MSeedRecord_sampleRateFactor(MSeedRecord self) -> int"},
-	 { "MSeedRecord_setSampleRateFactor", _wrap_MSeedRecord_setSampleRateFactor, METH_VARARGS, "MSeedRecord_setSampleRateFactor(MSeedRecord self, int srfact)"},
-	 { "MSeedRecord_sampleRateMultiplier", _wrap_MSeedRecord_sampleRateMultiplier, METH_O, "MSeedRecord_sampleRateMultiplier(MSeedRecord self) -> int"},
-	 { "MSeedRecord_setSampleRateMultiplier", _wrap_MSeedRecord_setSampleRateMultiplier, METH_VARARGS, "MSeedRecord_setSampleRateMultiplier(MSeedRecord self, int srmult)"},
 	 { "MSeedRecord_byteOrder", _wrap_MSeedRecord_byteOrder, METH_O, "MSeedRecord_byteOrder(MSeedRecord self) -> int8_t"},
 	 { "MSeedRecord_encoding", _wrap_MSeedRecord_encoding, METH_O, "MSeedRecord_encoding(MSeedRecord self) -> int8_t"},
-	 { "MSeedRecord_sampleRateNumerator", _wrap_MSeedRecord_sampleRateNumerator, METH_O, "MSeedRecord_sampleRateNumerator(MSeedRecord self) -> int"},
-	 { "MSeedRecord_sampleRateDenominator", _wrap_MSeedRecord_sampleRateDenominator, METH_O, "MSeedRecord_sampleRateDenominator(MSeedRecord self) -> int"},
-	 { "MSeedRecord_frameNumber", _wrap_MSeedRecord_frameNumber, METH_O, "MSeedRecord_frameNumber(MSeedRecord self) -> int"},
 	 { "MSeedRecord_endTime", _wrap_MSeedRecord_endTime, METH_O, "MSeedRecord_endTime(MSeedRecord self) -> Time"},
 	 { "MSeedRecord_recordLength", _wrap_MSeedRecord_recordLength, METH_O, "MSeedRecord_recordLength(MSeedRecord self) -> int"},
-	 { "MSeedRecord_leapSeconds", _wrap_MSeedRecord_leapSeconds, METH_O, "MSeedRecord_leapSeconds(MSeedRecord self) -> int"},
 	 { "MSeedRecord_data", _wrap_MSeedRecord_data, METH_O, "MSeedRecord_data(MSeedRecord self) -> Array"},
 	 { "MSeedRecord_raw", _wrap_MSeedRecord_raw, METH_O, "MSeedRecord_raw(MSeedRecord self) -> Array"},
 	 { "MSeedRecord_saveSpace", _wrap_MSeedRecord_saveSpace, METH_O, "MSeedRecord_saveSpace(MSeedRecord self)"},
@@ -37528,6 +37273,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "MSeedRecord_setOutputRecordLength", _wrap_MSeedRecord_setOutputRecordLength, METH_VARARGS, "MSeedRecord_setOutputRecordLength(MSeedRecord self, int reclen)"},
 	 { "MSeedRecord_read", _wrap_MSeedRecord_read, METH_VARARGS, "MSeedRecord_read(MSeedRecord self, std::istream & _in)"},
 	 { "MSeedRecord_write", _wrap_MSeedRecord_write, METH_VARARGS, "MSeedRecord_write(MSeedRecord self, std::ostream & out)"},
+	 { "delete_MSeedRecord", _wrap_delete_MSeedRecord, METH_O, "delete_MSeedRecord(MSeedRecord self)"},
 	 { "MSeedRecord_swigregister", MSeedRecord_swigregister, METH_O, NULL},
 	 { "MSeedRecord_swiginit", MSeedRecord_swiginit, METH_VARARGS, NULL},
 	 { "new_FileRecordStream", _wrap_new_FileRecordStream, METH_VARARGS, "\n"
@@ -38440,7 +38186,6 @@ static swig_type_info _swigt__p_F6 = {"_p_F6", "F6 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Hours = {"_p_Hours", "Hours *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ImplType = {"_p_ImplType", "ImplType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_InplaceFilterType = {"_p_InplaceFilterType", "InplaceFilterType *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_MSRecord_s = {"_p_MSRecord_s", "MSRecord *|MSRecord_s *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MajorType = {"_p_MajorType", "MajorType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MicroSeconds = {"_p_MicroSeconds", "MicroSeconds *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_MilliSeconds = {"_p_MilliSeconds", "MilliSeconds *", 0, 0, (void*)0, 0};
@@ -38598,6 +38343,7 @@ static swig_type_info _swigt__p_Seiscomp__IO__Importer = {"_p_Seiscomp__IO__Impo
 static swig_type_info _swigt__p_Seiscomp__IO__LibmseedException = {"_p_Seiscomp__IO__LibmseedException", "Seiscomp::IO::LibmseedException *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__MSeedEncoder = {"_p_Seiscomp__IO__MSeedEncoder", "Seiscomp::IO::MSeedEncoder *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__MSeedRecord = {"_p_Seiscomp__IO__MSeedRecord", "Seiscomp::IO::MSeedRecord *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__IO__MSeedRecord__Format = {"_p_Seiscomp__IO__MSeedRecord__Format", "Seiscomp::IO::MSeedRecord::Format *|enum Seiscomp::IO::MSeedRecord::Format *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__PipeFilter = {"_p_Seiscomp__IO__PipeFilter", "Seiscomp::IO::PipeFilter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__RecordDemuxFilter = {"_p_Seiscomp__IO__RecordDemuxFilter", "Seiscomp::IO::RecordDemuxFilter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__RecordFilterInterface = {"_p_Seiscomp__IO__RecordFilterInterface", "Seiscomp::IO::RecordFilterInterface *", 0, 0, (void*)0, 0};
@@ -38735,7 +38481,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Hours,
   &_swigt__p_ImplType,
   &_swigt__p_InplaceFilterType,
-  &_swigt__p_MSRecord_s,
   &_swigt__p_MajorType,
   &_swigt__p_MicroSeconds,
   &_swigt__p_MilliSeconds,
@@ -38849,6 +38594,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Seiscomp__IO__LibmseedException,
   &_swigt__p_Seiscomp__IO__MSeedEncoder,
   &_swigt__p_Seiscomp__IO__MSeedRecord,
+  &_swigt__p_Seiscomp__IO__MSeedRecord__Format,
   &_swigt__p_Seiscomp__IO__PipeFilter,
   &_swigt__p_Seiscomp__IO__RecordDemuxFilter,
   &_swigt__p_Seiscomp__IO__RecordFilterInterface,
@@ -39030,7 +38776,6 @@ static swig_cast_info _swigc__p_F6[] = {  {&_swigt__p_F6, 0, 0, 0},{0, 0, 0, 0}}
 static swig_cast_info _swigc__p_Hours[] = {  {&_swigt__p_Hours, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ImplType[] = {  {&_swigt__p_ImplType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_InplaceFilterType[] = {  {&_swigt__p_InplaceFilterType, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_MSRecord_s[] = {  {&_swigt__p_MSRecord_s, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MajorType[] = {  {&_swigt__p_MajorType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MicroSeconds[] = {  {&_swigt__p_MicroSeconds, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_MilliSeconds[] = {  {&_swigt__p_MilliSeconds, 0, 0, 0},{0, 0, 0, 0}};
@@ -39188,6 +38933,7 @@ static swig_cast_info _swigc__p_Seiscomp__IO__Importer[] = {  {&_swigt__p_Seisco
 static swig_cast_info _swigc__p_Seiscomp__IO__LibmseedException[] = {  {&_swigt__p_Seiscomp__IO__LibmseedException, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__MSeedEncoder[] = {  {&_swigt__p_Seiscomp__IO__MSeedEncoder, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__MSeedRecord[] = {  {&_swigt__p_Seiscomp__IO__MSeedRecord, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__IO__MSeedRecord__Format[] = {  {&_swigt__p_Seiscomp__IO__MSeedRecord__Format, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__PipeFilter[] = {  {&_swigt__p_Seiscomp__IO__PipeFilter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordDemuxFilter[] = {  {&_swigt__p_Seiscomp__IO__RecordDemuxFilter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__RecordFilterInterface[] = {  {&_swigt__p_Seiscomp__IO__RecordFilterInterface, 0, 0, 0},  {&_swigt__p_Seiscomp__IO__Cropper, _p_Seiscomp__IO__CropperTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__MSeedEncoder, _p_Seiscomp__IO__MSeedEncoderTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__PipeFilter, _p_Seiscomp__IO__PipeFilterTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordDemuxFilter, _p_Seiscomp__IO__RecordDemuxFilterTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_double_t, _p_Seiscomp__IO__RecordIIRFilterT_double_tTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordIIRFilterT_float_t, _p_Seiscomp__IO__RecordIIRFilterT_float_tTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerBase, _p_Seiscomp__IO__RecordResamplerBaseTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_double_t, _p_Seiscomp__IO__RecordResamplerT_double_tTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_float_t, _p_Seiscomp__IO__RecordResamplerT_float_tTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},  {&_swigt__p_Seiscomp__IO__RecordResamplerT_int_t, _p_Seiscomp__IO__RecordResamplerT_int_tTo_p_Seiscomp__IO__RecordFilterInterface, 0, 0},{0, 0, 0, 0}};
@@ -39325,7 +39071,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Hours,
   _swigc__p_ImplType,
   _swigc__p_InplaceFilterType,
-  _swigc__p_MSRecord_s,
   _swigc__p_MajorType,
   _swigc__p_MicroSeconds,
   _swigc__p_MilliSeconds,
@@ -39439,6 +39184,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Seiscomp__IO__LibmseedException,
   _swigc__p_Seiscomp__IO__MSeedEncoder,
   _swigc__p_Seiscomp__IO__MSeedRecord,
+  _swigc__p_Seiscomp__IO__MSeedRecord__Format,
   _swigc__p_Seiscomp__IO__PipeFilter,
   _swigc__p_Seiscomp__IO__RecordDemuxFilter,
   _swigc__p_Seiscomp__IO__RecordFilterInterface,
@@ -40094,6 +39840,8 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "MSeedEncoder_Steim2",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedEncoder::Steim2)));
   SWIG_Python_SetConstant(d, "XMLArchive_ZIP",SWIG_From_int(static_cast< int >(Seiscomp::IO::XMLArchive::ZIP)));
   SWIG_Python_SetConstant(d, "XMLArchive_GZIP",SWIG_From_int(static_cast< int >(Seiscomp::IO::XMLArchive::GZIP)));
+  SWIG_Python_SetConstant(d, "MSeedRecord_V2",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedRecord::V2)));
+  SWIG_Python_SetConstant(d, "MSeedRecord_V3",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedRecord::V3)));
   SWIG_Python_SetConstant(d, "FileRecordStream_Begin",SWIG_From_int(static_cast< int >(Seiscomp::RecordStream::File::Begin)));
   SWIG_Python_SetConstant(d, "FileRecordStream_Current",SWIG_From_int(static_cast< int >(Seiscomp::RecordStream::File::Current)));
   SWIG_Python_SetConstant(d, "FileRecordStream_End",SWIG_From_int(static_cast< int >(Seiscomp::RecordStream::File::End)));

@@ -24,7 +24,6 @@
 #include <string>
 #include <set>
 #include <utility>
-#include <limits>
 #include <cerrno>
 #include <fcntl.h>
 #ifndef WIN32
@@ -39,8 +38,9 @@
 #include <seiscomp/io/records/mseedrecord.h>
 #include <seiscomp/utils/base64.h>
 #include <seiscomp/utils/url.h>
-#include <libmseed.h>
+
 #include "fdsnws.h"
+
 
 #ifdef WIN32
 #undef min
@@ -605,7 +605,7 @@ Record *FDSNWSConnectionBase::next() {
 				// HACK to retrieve the record length
 				string data = readBinary(RECSIZE);
 				if ( !data.empty() ) {
-					int reclen = ms_detect(data.c_str(), RECSIZE);
+					auto reclen = IO::MSeedRecord::Detect(data.data(), RECSIZE);
 					std::istringstream stream(std::istringstream::in|std::istringstream::binary);
 					if ( reclen > RECSIZE ) {
 						stream.str(data + readBinary(reclen - RECSIZE));
