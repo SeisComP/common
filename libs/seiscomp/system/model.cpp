@@ -459,7 +459,7 @@ bool loadGroup(Container *c, SchemaGroup *group, const std::string &prefix) {
 
 void updateParameter(Parameter *param, Model::SymbolFileMap &symbols, int stage) {
 	SymbolMapItemPtr item = symbols[param->variableName];
-	if ( item == nullptr ) {
+	if ( !item ) {
 		item = new SymbolMapItem();
 		//item->symbol.name = param->variableName;
 		symbols[param->variableName] = item;
@@ -467,22 +467,24 @@ void updateParameter(Parameter *param, Model::SymbolFileMap &symbols, int stage)
 
 	// Tell the item that it is known and stored
 	item->known = true;
+	param->initial[stage] = new SymbolMapItem(*item);
 	param->symbols[stage] = item;
 }
 
 
 void updateContainer(Container *c, Model::SymbolFileMap &symbols, int stage) {
-	for ( size_t i = 0; i < c->parameters.size(); ++i )
+	for ( size_t i = 0; i < c->parameters.size(); ++i ) {
 		updateParameter(c->parameters[i].get(), symbols, stage);
+	}
 
-	for ( size_t i = 0; i < c->groups.size(); ++i )
+	for ( size_t i = 0; i < c->groups.size(); ++i ) {
 		updateContainer(c->groups[i].get(), symbols, stage);
+	}
 
 	for ( size_t i = 0; i < c->structureTypes.size(); ++i ) {
 		const string &xpath = c->structureTypes[i]->path;
 		set<string> structs;
-		Model::SymbolFileMap::iterator it;
-		for ( it = symbols.begin(); it != symbols.end(); ++it ) {
+		for ( auto it = symbols.begin(); it != symbols.end(); ++it ) {
 			// Parameter not from file?
 			if ( !it->second || it->second->symbol.uri.empty() ) {
 				continue;
@@ -508,15 +510,15 @@ void updateContainer(Container *c, Model::SymbolFileMap &symbols, int stage) {
 		}
 
 		// Instantiate available structures
-		set<string>::iterator sit;
-		for ( sit = structs.begin(); sit != structs.end(); ++sit )
+		for ( auto sit = structs.begin(); sit != structs.end(); ++sit )
 			// This may fail if another stage has added this struct
 			// already.
 			c->instantiate(c->structureTypes[i].get(), sit->c_str());
 	}
 
-	for ( size_t i = 0; i < c->structures.size(); ++i )
+	for ( size_t i = 0; i < c->structures.size(); ++i ) {
 		updateContainer(c->structures[i].get(), symbols, stage);
+	}
 }
 
 
@@ -526,44 +528,62 @@ void updateParameter(Parameter *param, int updateMaxStage) {
 
 
 void updateContainer(Container *c, int updateMaxStage) {
-	for ( size_t i = 0; i < c->parameters.size(); ++i )
+	for ( size_t i = 0; i < c->parameters.size(); ++i ) {
 		updateParameter(c->parameters[i].get(), updateMaxStage);
+	}
 
-	for ( size_t i = 0; i < c->groups.size(); ++i )
+	for ( size_t i = 0; i < c->groups.size(); ++i ) {
 		updateContainer(c->groups[i].get(), updateMaxStage);
+	}
 
-	for ( size_t i = 0; i < c->structures.size(); ++i )
+	for ( size_t i = 0; i < c->structures.size(); ++i ) {
 		updateContainer(c->structures[i].get(), updateMaxStage);
+	}
 }
 
 
 bool write(const Parameter *param, const Section *sec, int stage,
            set<string> &symbols, ofstream &ofs, const std::string &filename,
            bool withComment, bool multilineLists = false) {
-	if ( !param->symbols[stage] ) return true;
+	if ( !param->symbols[stage] ) {
+		param->initial[stage] = nullptr;
+		return true;
+	}
+
+	// Set initial to current content as it has been stored.
+	param->initial[stage] = new SymbolMapItem(*param->symbols[stage]);
 
 	// Do nothing
-	if ( param->symbols[stage]->symbol.stage == Environment::CS_UNDEFINED )
+	if ( param->symbols[stage]->symbol.stage == Environment::CS_UNDEFINED ) {
 		return true;
+	}
 
 	if ( !ofs.is_open() ) {
 		SEISCOMP_INFO("Updating %s", filename.c_str());
 		ofs.open(filename.c_str());
 		// Propagate error
-		if ( !ofs.is_open() ) return false;
+		if ( !ofs.is_open() ) {
+			return false;
+		}
 	}
 
 	// Already saved this symbol?
-	if ( symbols.find(param->variableName) != symbols.end() ) return true;
+	if ( symbols.find(param->variableName) != symbols.end() ) {
+		return true;
+	}
 
 	// Write description as comment.
 	if ( withComment ) {
 		if ( param->definition && !param->definition->description.empty() ) {
-			if ( !symbols.empty() ) ofs << endl;
+			if ( !symbols.empty() ) {
+				ofs << endl;
+			}
 			ofs << blockComment(param->definition->description, 80) << endl;
 		}
 		else if ( !param->symbols[stage]->symbol.comment.empty() ) {
-			if ( !symbols.empty() ) ofs << endl;
+			if ( !symbols.empty() ) {
+				ofs << endl;
+			}
 			ofs << param->symbols[stage]->symbol.comment << endl;
 		}
 	}
@@ -583,20 +603,23 @@ bool write(const Container *cont, const Section *sec, int stage,
            bool withComment, bool multilineLists = false) {
 	for ( size_t p = 0; p < cont->parameters.size(); ++p ) {
 		if ( !write(cont->parameters[p].get(), sec, stage,
-		            symbols, ofs, filename, withComment, multilineLists) )
+		            symbols, ofs, filename, withComment, multilineLists) ) {
 			return false;
+		}
 	}
 
 	for ( size_t g = 0; g < cont->groups.size(); ++g ) {
 		if ( !write(cont->groups[g].get(), sec, stage,
-		            symbols, ofs, filename, withComment, multilineLists) )
+		            symbols, ofs, filename, withComment, multilineLists) ) {
 			return false;
+		}
 	}
 
 	for ( size_t s = 0; s < cont->structures.size(); ++s ) {
 		if ( !write(cont->structures[s].get(), sec, stage,
-		            symbols, ofs, filename, withComment, multilineLists) )
+		            symbols, ofs, filename, withComment, multilineLists) ) {
 			return false;
+		}
 	}
 
 	return true;
@@ -687,8 +710,9 @@ Parameter *Parameter::clone() const {
 
 
 void Parameter::dump(std::ostream &os) const {
-	if ( !symbol.uri.empty() )
+	if ( !symbol.uri.empty() ) {
 		os << "[" << symbol.uri << "]" << endl;
+	}
 	os << variableName << " = " << symbol.content;
 
 	/*
@@ -707,7 +731,9 @@ void Parameter::dump(std::ostream &os) const {
 bool Parameter::inherits(const Parameter *param) const {
 	const Parameter *p = super;
 	while ( p ) {
-		if ( p == param ) return true;
+		if ( p == param ) {
+			return true;
+		}
 		p = p->super;
 	}
 
@@ -716,17 +742,19 @@ bool Parameter::inherits(const Parameter *param) const {
 
 
 void Parameter::updateFinalValue(int maxStage) {
-	symbol = Symbol();
+	symbol = {};
 	symbol.values.push_back(definition->defaultValue);
 	symbol.content = definition->defaultValue;
 
-	if ( maxStage >= Environment::CS_QUANTITY )
+	if ( maxStage >= Environment::CS_QUANTITY ) {
 		maxStage = Environment::CS_LAST;
+	}
 
 	for ( int i = 0; i <= maxStage; ++i ) {
 		SymbolMapItem *item = symbols[i].get();
-		if ( !item || item->symbol.stage == Environment::CS_UNDEFINED )
+		if ( !item || (item->symbol.stage == Environment::CS_UNDEFINED) ) {
 			continue;
+		}
 		symbol = item->symbol;
 	}
 }
@@ -2178,7 +2206,9 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 
 			SEISCOMP_DEBUG("reading config %s", uri.c_str());
 
-			if ( delegate ) delegate->aboutToRead(uri.c_str());
+			if ( delegate ) {
+				delegate->aboutToRead(uri.c_str());
+			}
 
 			Config::Config *cfg;
 			time_t lastModified = 0;
@@ -2186,17 +2216,22 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 			while ( true ) {
 				cfg = new Config::Config();
 
-				if ( delegate ) cfg->setLogger(delegate);
+				if ( delegate ) {
+					cfg->setLogger(delegate);
+				}
 
 				lastModified = lastModificationTime(uri);
 
 				if ( cfg->readConfig(uri, stage, true) ) {
-					if ( delegate ) delegate->finishedReading(uri.c_str());
+					if ( delegate ) {
+						delegate->finishedReading(uri.c_str());
+					}
 					break;
 				}
 
-				if ( delegate == nullptr || !delegate->handleReadError(uri.c_str()) )
+				if ( !delegate || !delegate->handleReadError(uri.c_str()) ) {
 					break;
+				}
 
 				delete cfg;
 			}
@@ -2205,12 +2240,12 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 			symbols[uri].lastModified = lastModified;
 
 			SymbolTable *symtab = cfg->symbolTable();
-			if ( symtab == nullptr ) {
+			if ( !symtab ) {
 				delete cfg;
 				continue;
 			}
 
-			for ( SymbolTable::iterator it = symtab->begin(); it != symtab->end(); ++it ) {
+			for ( auto it = symtab->begin(); it != symtab->end(); ++it ) {
 				symbols[uri][(*it)->name] = new SymbolMapItem(**it);
 			}
 
@@ -2246,11 +2281,12 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 			}
 
 			// Collect and store unknown symbols
-			SymbolFileMap::iterator it;
-			for ( it = fileMap->begin(); it != fileMap->end(); ++it ) {
-				if ( it->second->known ) continue;
+			for ( auto it = fileMap->begin(); it != fileMap->end(); ++it ) {
+				if ( it->second->known ) {
+					continue;
+				}
 				ParameterPtr param = unknowns[it->first];
-				if ( param == nullptr ) {
+				if ( !param ) {
 					param = new Parameter(nullptr, it->first);
 					unknowns[it->first] = param;
 					mod->unknowns.push_back(param);
@@ -2272,7 +2308,9 @@ bool Model::readConfig(int updateMaxStage, ConfigDelegate *delegate) {
 		for ( size_t p = 0; p < mod->unknowns.size(); ++ p ) {
 			ParameterPtr param = mod->unknowns[p];
 			for ( int stage = Environment::CS_FIRST; stage <= Environment::CS_LAST; ++stage ) {
-				if ( param->symbols[stage] == nullptr ) continue;
+				if ( !param->symbols[stage] ) {
+					continue;
+				}
 				CaseSensitivityCheck check(delegate, mod, stage, &param->symbols[stage]->symbol);
 				mod->accept(&check);
 			}
@@ -2524,8 +2562,9 @@ bool Model::writeConfig(bool multilineLists, int stage, ConfigDelegate *delegate
 
 bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
                         bool multilineLists, ConfigDelegate *delegate) {
-	if ( delegate )
+	if ( delegate ) {
 		delegate->aboutToWrite(filename.c_str());
+	}
 
 	ofstream ofs;
 	time_t lastModified = lastModificationTime(filename);
@@ -2533,8 +2572,9 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 	set<string> processedSymbols;
 
 	bool dump = false;
-	if ( dump )
+	if ( dump ) {
 		cerr << mod->definition->name << endl;
+	}
 
 	Config::Config cfg;
 	cfg.readConfig(filename, stage);
@@ -2545,22 +2585,25 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 	ConfigDelegate::ChangeList changes;
 
 	// Check all available parameters for corresponding
-	vector<Parameter*>::iterator pit;
-	for ( pit = pc.parameters.begin(); pit != pc.parameters.end(); ++pit ) {
+	for ( auto pit = pc.parameters.begin(); pit != pc.parameters.end(); ++pit ) {
 		Parameter *param = *pit;
 		Config::Symbol *sym = cfg.symbolTable()->get(param->variableName);
 
 		if ( dump ) {
 			cerr << " + " << param->variableName;
-			if ( sym ) cerr << " [cfg]";
+			if ( sym ) {
+				cerr << " [cfg]";
+			}
 			cerr << endl;
 		}
 
 		processedSymbols.insert(param->variableName);
 
 		if ( !param->symbols[stage] ) {
-			if ( sym != nullptr ) {
-				if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
+			if ( sym ) {
+				if ( changes.empty() ) {
+					cerr << "[" << filename << "]" << endl;
+				}
 				cerr << "- " << sym->name << "  '" << sym->content << "'" << endl;
 				changes.push_back(ConfigDelegate::Change(ConfigDelegate::Removed, sym->name, sym->content, ""));
 			}
@@ -2568,19 +2611,24 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		}
 
 		if ( param->symbols[stage]->symbol.stage == Environment::CS_UNDEFINED ) {
-			if ( sym != nullptr ) {
-				if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
+			if ( sym ) {
+				if ( changes.empty() ) {
+					cerr << "[" << filename << "]" << endl;
+				}
 				cerr << "- " << sym->name << "  '" << sym->content << "'" << endl;
 				changes.push_back(ConfigDelegate::Change(ConfigDelegate::Removed, sym->name, sym->content, ""));
 			}
 			continue;
 		}
 
-		if ( (sym != nullptr) && (sym->content == param->symbols[stage]->symbol.content) )
+		if ( sym && (sym->content == param->symbols[stage]->symbol.content) ) {
 			continue;
+		}
 
-		if ( changes.empty() ) cerr << "[" << filename << "]" << endl;
-		if ( sym == nullptr ) {
+		if ( changes.empty() ) {
+			cerr << "[" << filename << "]" << endl;
+		}
+		if ( !sym ) {
 			cerr << "+ " << param->variableName << "  '" << param->symbols[stage]->symbol.content << "'" << endl;
 			changes.push_back(ConfigDelegate::Change(ConfigDelegate::Added, param->variableName, "", param->symbols[stage]->symbol.content));
 		}
@@ -2590,42 +2638,46 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		}
 	}
 
-	SymbolMap::iterator it = symbols.find(filename);
+	auto it = symbols.find(filename);
 
-	Config::SymbolTable::iterator cit;
-	for ( cit = cfg.symbolTable()->begin(); cit != cfg.symbolTable()->end(); ++cit ) {
+	for ( auto cit = cfg.symbolTable()->begin(); cit != cfg.symbolTable()->end(); ++cit ) {
 		// Symbol not part of the already known parameters at load time?
 		if ( processedSymbols.find((*cit)->name) == processedSymbols.end() ) {
 			ParameterNameValidator validator((*cit)->name);
 			mod->definition->accept(&validator);
 			if ( validator.valid ) {
-				if ( dump )
+				if ( dump ) {
 					cerr << " ! " << (*cit)->name << endl;
+				}
 				changes.push_back(ConfigDelegate::Change(ConfigDelegate::Removed,
 				                                         (*cit)->name, "",
 				                                         (*cit)->content));
 				continue;
 			}
 
-			if ( dump )
+			if ( dump ) {
 				cerr << " U " << (*cit)->name << endl;
+			}
 
 			// Need to append this to the unknowns
 			ParameterPtr newParam = new Parameter(nullptr, (*cit)->name);
 			newParam->symbols[stage] = new SymbolMapItem(**cit);
-			if ( it != symbols.end() )
+			if ( it != symbols.end() ) {
 				it->second[newParam->variableName] = newParam->symbols[stage];
+			}
 			mod->unknowns.push_back(newParam);
 		}
 	}
 
 	// No update required?
 	if ( changes.empty() ) {
-		if ( it != symbols.end() )
+		if ( it != symbols.end() ) {
 			it->second.lastModified = lastModified;
+		}
 
-		if ( delegate )
+		if ( delegate ) {
 			delegate->finishedWriting(filename.c_str(), changes);
+		}
 		return true;
 	}
 
@@ -2635,8 +2687,9 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		if ( lastModified > it->second.lastModified ) {
 			cerr << filename << " has changed on disk" << endl;
 
-			if ( delegate && delegate->handleWriteTimeMismatch(filename.c_str(), changes) )
+			if ( delegate && delegate->handleWriteTimeMismatch(filename.c_str(), changes) ) {
 				return true;
+			}
 		}
 	}
 
@@ -2645,8 +2698,9 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		Section *paramSection = sec;
 
 		if ( !write(sec, paramSection, stage, processedSymbols, ofs, filename, true, multilineLists) ) {
-			if ( delegate )
+			if ( delegate ) {
 				delegate->hasWriteError(filename.c_str());
+			}
 			return false;
 		}
 	}
@@ -2654,8 +2708,9 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 	for ( size_t p = 0; p < mod->unknowns.size(); ++ p ) {
 		Parameter *param = mod->unknowns[p].get();
 		if ( !write(param, nullptr, stage, processedSymbols, ofs, filename, true, multilineLists) ) {
-			if ( delegate )
+			if ( delegate ) {
 				delegate->hasWriteError(filename.c_str());
+			}
 			return false;
 		}
 	}
@@ -2668,11 +2723,13 @@ bool Model::writeConfig(Module *mod, const std::string &filename, int stage,
 		catch ( ... ) {}
 	}
 
-	if ( it != symbols.end() )
+	if ( it != symbols.end() ) {
 		it->second.lastModified = lastModificationTime(filename);
+	}
 
-	if ( delegate )
+	if ( delegate ) {
 		delegate->finishedWriting(filename.c_str(), changes);
+	}
 
 	return true;
 }
