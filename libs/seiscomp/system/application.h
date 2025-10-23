@@ -1227,7 +1227,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 			BaseSettings();
 
 			std::string alternativeConfigFile;
-			bool        enableDaemon;
+			bool        enableDaemon{true};
 			std::string crashHandler;
 			std::string lockfile;
 			std::string plugins;
@@ -1242,7 +1242,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				bool          syslog{false};
 #endif
 				bool          context{false};
-				int           component{-1};
+				OPT(bool)     component;
 				bool          toStdout{false};
 				bool          UTC{false};
 				std::string   alternativeLogFile;

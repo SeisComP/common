@@ -430,14 +430,6 @@ Application::Application(int argc, char** argv) {
 
 	registerSignalHandler(_handleTermination, _handleCrash);
 
-	_baseSettings.enableDaemon = true;
-
-	_baseSettings.logging.verbosity = 2;
-	_baseSettings.logging.context = false;
-	_baseSettings.logging.component = -1; // -1=unset, 0=off, 1=on
-	_baseSettings.logging.toStdout = false;
-	_baseSettings.logging.UTC = false;
-
 	_returnCode = 0;
 	_exitRequested = false;
 
@@ -765,7 +757,7 @@ void Application::setLoggingContext(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoggingComponent(bool e) {
-	_baseSettings.logging.component = e ? 1 : 0;
+	_baseSettings.logging.component = e;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1527,7 +1519,7 @@ bool Application::initLogging() {
 		_baseSettings.logging.toStdout = true;
 		if ( _baseSettings.logging.trace ) {
 			_baseSettings.logging.context = true;
-			_baseSettings.logging.component = 1;
+			_baseSettings.logging.component = true;
 		}
 	}
 
@@ -1590,7 +1582,7 @@ bool Application::initLogging() {
 
 		if ( _logger ) {
 			_logger->setUTCEnabled(_baseSettings.logging.UTC);
-			_logger->logComponent(_baseSettings.logging.component < 0 ? !_baseSettings.logging.toStdout : _baseSettings.logging.component);
+			_logger->logComponent(_baseSettings.logging.component ? *_baseSettings.logging.component : !_baseSettings.logging.toStdout);
 			_logger->logContext(_baseSettings.logging.context);
 			if ( !_baseSettings.logging.components.empty() ) {
 				for ( ComponentList::iterator it = _baseSettings.logging.components.begin();
