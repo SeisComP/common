@@ -29804,6 +29804,67 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Parameter_initial_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::Parameter *arg1 = (Seiscomp::System::Parameter *) 0 ;
+  Seiscomp::System::SymbolMapItemPtr *arg2 = (Seiscomp::System::SymbolMapItemPtr *) (Seiscomp::System::SymbolMapItemPtr *)0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Parameter_initial_set", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Parameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Parameter_initial_set" "', argument " "1"" of type '" "Seiscomp::System::Parameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::Parameter * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__System__SymbolMapItem_t, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Parameter_initial_set" "', argument " "2"" of type '" "Seiscomp::System::SymbolMapItemPtr [Seiscomp::Environment::CS_QUANTITY]""'"); 
+  } 
+  arg2 = reinterpret_cast< Seiscomp::System::SymbolMapItemPtr * >(argp2);
+  {
+    if (arg2) {
+      size_t ii = 0;
+      for (; ii < (size_t)Seiscomp::Environment::CS_QUANTITY; ++ii) *(Seiscomp::System::SymbolMapItemPtr *)&arg1->initial[ii] = *((Seiscomp::System::SymbolMapItemPtr *)arg2 + ii);
+    } else {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in variable '""initial""' of type '""Seiscomp::System::SymbolMapItemPtr [Seiscomp::Environment::CS_QUANTITY]""'");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Parameter_initial_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::Parameter *arg1 = (Seiscomp::System::Parameter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::System::SymbolMapItemPtr *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__Parameter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Parameter_initial_get" "', argument " "1"" of type '" "Seiscomp::System::Parameter *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::Parameter * >(argp1);
+  result = (Seiscomp::System::SymbolMapItemPtr *)(Seiscomp::System::SymbolMapItemPtr *) ((arg1)->initial);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__SmartPointerT_Seiscomp__System__SymbolMapItem_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Parameter_symbols_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::Parameter *arg1 = (Seiscomp::System::Parameter *) 0 ;
@@ -50075,6 +50136,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "Parameter_super_get", _wrap_Parameter_super_get, METH_O, NULL},
 	 { "Parameter_definition_set", _wrap_Parameter_definition_set, METH_VARARGS, NULL},
 	 { "Parameter_definition_get", _wrap_Parameter_definition_get, METH_O, NULL},
+	 { "Parameter_initial_set", _wrap_Parameter_initial_set, METH_VARARGS, NULL},
+	 { "Parameter_initial_get", _wrap_Parameter_initial_get, METH_O, NULL},
 	 { "Parameter_symbols_set", _wrap_Parameter_symbols_set, METH_VARARGS, NULL},
 	 { "Parameter_symbols_get", _wrap_Parameter_symbols_get, METH_O, NULL},
 	 { "Parameter_symbol_set", _wrap_Parameter_symbol_set, METH_VARARGS, NULL},

@@ -1234,6 +1234,7 @@ class Parameter(seiscomp.core.BaseObject):
     parent = property(_system.Parameter_parent_get, _system.Parameter_parent_set)
     super = property(_system.Parameter_super_get, _system.Parameter_super_set)
     definition = property(_system.Parameter_definition_get, _system.Parameter_definition_set)
+    initial = property(_system.Parameter_initial_get, _system.Parameter_initial_set)
     symbols = property(_system.Parameter_symbols_get, _system.Parameter_symbols_set)
     symbol = property(_system.Parameter_symbol_get, _system.Parameter_symbol_set)
     variableName = property(_system.Parameter_variableName_get, _system.Parameter_variableName_set)
