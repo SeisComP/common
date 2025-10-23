@@ -35,13 +35,6 @@
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item row="1" column="1" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>GFZ Potsdam</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1" >
         <widget class="QLabel" name="labelVersion" >
          <property name="text" >
@@ -49,17 +42,24 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <widget class="QLabel" name="label_6" >
+       <item row="1" column="1" >
+        <widget class="QLabel" name="label_7" >
          <property name="text" >
-          <string>German Research Centre for Geosciences</string>
+          <string>gempa GmbH (http://www.gempa.de)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>GFZ Potsdam</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1" >
-        <widget class="QLabel" name="label_7" >
+        <widget class="QLabel" name="label_6" >
          <property name="text" >
-          <string>gempa GmbH (http://www.gempa.de)</string>
+          <string>German Research Centre for Geosciences</string>
          </property>
         </widget>
        </item>
