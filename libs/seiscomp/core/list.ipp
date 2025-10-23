@@ -99,15 +99,19 @@ void IntrusiveList<T>::push_back(T o) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
 void IntrusiveList<T>::erase(T o) {
-	if ( o->_ili_prev[_index] )
+	if ( o->_ili_prev[_index] ) {
 		o->_ili_prev[_index]->_ili_next[_index] = o->_ili_next[_index];
-	else
+	}
+	else {
 		_front = o->_ili_next[_index];
+	}
 
-	if ( o->_ili_next[_index] )
+	if ( o->_ili_next[_index] ) {
 		o->_ili_next[_index]->_ili_prev[_index] = o->_ili_prev[_index];
-	else
+	}
+	else {
 		_back = o->_ili_prev[_index];
+	}
 
 	o->reset(_index, o);
 
@@ -147,25 +151,33 @@ void IntrusiveList<T>::swap(T o1, T o2) {
 	o1->_ili_next[_index] = o2->_ili_next[_index];
 	o2->_ili_next[_index] = tmp;
 
-	if ( o1->_ili_prev[_index] == o1 )
+	if ( o1->_ili_prev[_index] == o1 ) {
 		o1->_ili_prev[_index] = o2;
-	if ( o2->_ili_prev[_index] == o2 )
+	}
+	if ( o2->_ili_prev[_index] == o2 ) {
 		o2->_ili_prev[_index] = o1;
+	}
 
-	if ( o1->_ili_next[_index] == o1 )
+	if ( o1->_ili_next[_index] == o1 ) {
 		o1->_ili_next[_index] = o2;
-	if ( o2->_ili_next[_index] == o2 )
+	}
+	if ( o2->_ili_next[_index] == o2 ) {
 		o2->_ili_next[_index] = o1;
+	}
 
-	if ( _front == o2 )
+	if ( _front == o2 ) {
 		_front = o1;
-	else if ( _front == o1 )
+	}
+	else if ( _front == o1 ) {
 		_front = o2;
+	}
 
-	if ( _back == o2 )
+	if ( _back == o2 ) {
 		_back = o1;
-	else if ( _back == o1 )
+	}
+	else if ( _back == o1 ) {
 		_back = o2;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

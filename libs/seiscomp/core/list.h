@@ -112,7 +112,7 @@ class IntrusiveList {
 				return item != other.item;
 			}
 
-			iterator& operator++() {
+			iterator &operator++() {
 				item = IntrusiveTraits<T>::toPointer(item->_ili_next[idx]);
 				return *this;
 			}
@@ -137,7 +137,7 @@ class IntrusiveList {
 				return item != other.item;
 			}
 
-			const_iterator& operator++() {
+			const_iterator &operator++() {
 				item = IntrusiveTraits<T>::toPointer(item->_ili_next[idx]);
 				return *this;
 			}
