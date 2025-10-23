@@ -605,7 +605,8 @@ Record *FDSNWSConnectionBase::next() {
 				// HACK to retrieve the record length
 				string data = readBinary(RECSIZE);
 				if ( !data.empty() ) {
-					int reclen = ms_detect(data.c_str(), RECSIZE);
+					uint8_t formatversion = 0;
+					auto reclen = ms3_detect(data.c_str(), RECSIZE, &formatversion);
 					std::istringstream stream(std::istringstream::in|std::istringstream::binary);
 					if ( reclen > RECSIZE ) {
 						stream.str(data + readBinary(reclen - RECSIZE));

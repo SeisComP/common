@@ -62,7 +62,6 @@
 #include <seiscomp/datamodel/diff.h>
 #include <seiscomp/io/recordstream/file.h>
 #include <seiscomp/io/recordstream/slconnection.h>
-#include <seiscomp/io/recordstream/arclink.h>
 #include <seiscomp/io/recordstream/combined.h>
 %}
 

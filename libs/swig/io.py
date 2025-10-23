@@ -1439,6 +1439,10 @@ class MSeedRecord(seiscomp.core.Record):
         ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> MSeedRecord
         """
         return _io.MSeedRecord_ConstCast(*args)
+    V2 = _io.MSeedRecord_V2
+    
+    V3 = _io.MSeedRecord_V3
+    
 
     def __init__(self, *args):
         r"""
@@ -1448,7 +1452,11 @@ class MSeedRecord(seiscomp.core.Record):
         __init__(MSeedRecord self, Record rec, int reclen=512) -> MSeedRecord
         """
         _io.MSeedRecord_swiginit(self, _io.new_MSeedRecord(*args))
-    __swig_destroy__ = _io.delete_MSeedRecord
+
+    @staticmethod
+    def TimeFromNST(arg1):
+        r"""TimeFromNST(int64_t arg1) -> Time"""
+        return _io.MSeedRecord_TimeFromNST(arg1)
 
     def setNetworkCode(self, net):
         r"""setNetworkCode(MSeedRecord self, string net)"""
@@ -1470,14 +1478,6 @@ class MSeedRecord(seiscomp.core.Record):
         r"""setStartTime(MSeedRecord self, Time time)"""
         return _io.MSeedRecord_setStartTime(self, time)
 
-    def sequenceNumber(self):
-        r"""sequenceNumber(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sequenceNumber(self)
-
-    def setSequenceNumber(self, seqno):
-        r"""setSequenceNumber(MSeedRecord self, int seqno)"""
-        return _io.MSeedRecord_setSequenceNumber(self, seqno)
-
     def dataQuality(self):
         r"""dataQuality(MSeedRecord self) -> char"""
         return _io.MSeedRecord_dataQuality(self)
@@ -1485,22 +1485,6 @@ class MSeedRecord(seiscomp.core.Record):
     def setDataQuality(self, qual):
         r"""setDataQuality(MSeedRecord self, char qual)"""
         return _io.MSeedRecord_setDataQuality(self, qual)
-
-    def sampleRateFactor(self):
-        r"""sampleRateFactor(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateFactor(self)
-
-    def setSampleRateFactor(self, srfact):
-        r"""setSampleRateFactor(MSeedRecord self, int srfact)"""
-        return _io.MSeedRecord_setSampleRateFactor(self, srfact)
-
-    def sampleRateMultiplier(self):
-        r"""sampleRateMultiplier(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateMultiplier(self)
-
-    def setSampleRateMultiplier(self, srmult):
-        r"""setSampleRateMultiplier(MSeedRecord self, int srmult)"""
-        return _io.MSeedRecord_setSampleRateMultiplier(self, srmult)
 
     def byteOrder(self):
         r"""byteOrder(MSeedRecord self) -> int8_t"""
@@ -1510,18 +1494,6 @@ class MSeedRecord(seiscomp.core.Record):
         r"""encoding(MSeedRecord self) -> int8_t"""
         return _io.MSeedRecord_encoding(self)
 
-    def sampleRateNumerator(self):
-        r"""sampleRateNumerator(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateNumerator(self)
-
-    def sampleRateDenominator(self):
-        r"""sampleRateDenominator(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_sampleRateDenominator(self)
-
-    def frameNumber(self):
-        r"""frameNumber(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_frameNumber(self)
-
     def endTime(self):
         r"""endTime(MSeedRecord self) -> Time"""
         return _io.MSeedRecord_endTime(self)
@@ -1529,10 +1501,6 @@ class MSeedRecord(seiscomp.core.Record):
     def recordLength(self):
         r"""recordLength(MSeedRecord self) -> int"""
         return _io.MSeedRecord_recordLength(self)
-
-    def leapSeconds(self):
-        r"""leapSeconds(MSeedRecord self) -> int"""
-        return _io.MSeedRecord_leapSeconds(self)
 
     def data(self):
         r"""data(MSeedRecord self) -> Array"""
@@ -1565,6 +1533,7 @@ class MSeedRecord(seiscomp.core.Record):
     def write(self, out):
         r"""write(MSeedRecord self, std::ostream & out)"""
         return _io.MSeedRecord_write(self, out)
+    __swig_destroy__ = _io.delete_MSeedRecord
 
 # Register MSeedRecord in _io:
 _io.MSeedRecord_swigregister(MSeedRecord)
@@ -1811,103 +1780,6 @@ class SLConnection(RecordStream):
 
 # Register SLConnection in _io:
 _io.SLConnection_swigregister(SLConnection)
-class ArclinkConnection(RecordStream):
-    r"""Proxy of C++ Seiscomp::RecordStream::Arclink::ArclinkConnection class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _io.ArclinkConnection_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _io.ArclinkConnection_TypeInfo()
-
-    def className(self):
-        r"""className(ArclinkConnection self) -> char const *"""
-        return _io.ArclinkConnection_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(ArclinkConnection self) -> RTTI"""
-        return _io.ArclinkConnection_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> ArclinkConnection
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> ArclinkConnection
-        """
-        return _io.ArclinkConnection_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> ArclinkConnection
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> ArclinkConnection
-        """
-        return _io.ArclinkConnection_ConstCast(*args)
-
-    def __init__(self, *args):
-        r"""
-        __init__(ArclinkConnection self) -> ArclinkConnection
-        __init__(ArclinkConnection self, string serverloc) -> ArclinkConnection
-        """
-        _io.ArclinkConnection_swiginit(self, _io.new_ArclinkConnection(*args))
-    __swig_destroy__ = _io.delete_ArclinkConnection
-
-    def setRecordType(self, arg2):
-        r"""setRecordType(ArclinkConnection self, char const * arg2) -> bool"""
-        return _io.ArclinkConnection_setRecordType(self, arg2)
-
-    def setSource(self, serverloc):
-        r"""setSource(ArclinkConnection self, string serverloc) -> bool"""
-        return _io.ArclinkConnection_setSource(self, serverloc)
-
-    def setUser(self, name, password):
-        r"""setUser(ArclinkConnection self, string name, string password) -> bool"""
-        return _io.ArclinkConnection_setUser(self, name, password)
-
-    def addStream(self, *args):
-        r"""
-        addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode) -> bool
-        addStream(ArclinkConnection self, string networkCode, string stationCode, string locationCode, string channelCode, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool
-        """
-        return _io.ArclinkConnection_addStream(self, *args)
-
-    def setStartTime(self, stime):
-        r"""setStartTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & stime) -> bool"""
-        return _io.ArclinkConnection_setStartTime(self, stime)
-
-    def setEndTime(self, etime):
-        r"""setEndTime(ArclinkConnection self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & etime) -> bool"""
-        return _io.ArclinkConnection_setEndTime(self, etime)
-
-    def setTimeout(self, seconds):
-        r"""setTimeout(ArclinkConnection self, int seconds) -> bool"""
-        return _io.ArclinkConnection_setTimeout(self, seconds)
-
-    def close(self):
-        r"""close(ArclinkConnection self)"""
-        return _io.ArclinkConnection_close(self)
-
-    def next(self):
-        r"""next(ArclinkConnection self) -> Record"""
-        return _io.ArclinkConnection_next(self)
-
-    def clear(self):
-        r"""clear(ArclinkConnection self) -> bool"""
-        return _io.ArclinkConnection_clear(self)
-
-    def reconnect(self):
-        r"""reconnect(ArclinkConnection self) -> bool"""
-        return _io.ArclinkConnection_reconnect(self)
-
-# Register ArclinkConnection in _io:
-_io.ArclinkConnection_swigregister(ArclinkConnection)
 class CombinedConnection(RecordStream):
     r"""Proxy of C++ Seiscomp::RecordStream::CombinedConnection class."""
 

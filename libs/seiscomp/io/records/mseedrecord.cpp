@@ -22,7 +22,10 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/records/mseedrecord.h>
 #include <seiscomp/core/arrayfactory.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/utils/certstore.h>
+
+#include <rapidjson/document.h>
 
 #include <openssl/asn1.h>
 #include <openssl/ecdsa.h>
@@ -37,27 +40,38 @@
 #endif
 
 #include <libmseed.h>
+#include <mseedformat.h>
+
 #include <cctype>
+#include <cstring>
+#include <string_view>
 
 
-namespace Seiscomp {
-namespace IO {
+// Some additional MS2 defines
+#define pMS2B1000_SIZE 4
+
+
+namespace Seiscomp::IO {
+
 
 namespace {
 
 
-/* callback function for libmseed-function msr_pack(...) */
-void _Record_Handler(char *record, int reclen, void *packed) {
-	/* to make the data available to the overloaded operator<< */
-	reinterpret_cast<CharArray *>(packed)->append(reclen, record);
+/* callback function for libmseed-function msr3_pack(...) */
+void _Record_Handler(char *record, int reclen, void *out) {
+	reinterpret_cast<std::ostream*>(out)->write(record, reclen);
 }
 
 
 bool isPowerOfTwo(size_t n) {
-	if ( !n ) return false;
+	if ( !n ) {
+		return false;
+	}
 
 	while ( n != 1 ) {
-		if ( n % 2 ) return false;
+		if ( n % 2 ) {
+			return false;
+		}
 		n >>= 1;
 	}
 
@@ -70,10 +84,10 @@ struct MSEEDLogger {
 		ms_loginit(MSEEDLogger::print, "[libmseed] ", MSEEDLogger::diag, "[libmseed] ");
 	}
 
-	static void print(char */*msg*/) {
+	static void print(const char */*msg*/) {
 		// SEISCOMP_DEBUG("%s", msg);
 	}
-	static void diag(char */*msg*/) {
+	static void diag(const char */*msg*/) {
 		// SEISCOMP_WARNING("%s", msg);
 	}
 };
@@ -85,6 +99,7 @@ static MSEEDLogger __logger__;
 }
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 IMPLEMENT_SC_CLASS_DERIVED(MSeedRecord, Record, "MSeedRecord");
 REGISTER_RECORD(MSeedRecord, "mseed");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -94,21 +109,7 @@ REGISTER_RECORD(MSeedRecord, "mseed");
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
-: Record(dt, h)
-, _data(0)
-, _seqno(0)
-, _rectype('D')
-, _srfact(0)
-, _srmult(0)
-, _byteorder(0)
-, _encoding(0)
-, _srnum(0)
-, _srdenom(0)
-, _reclen(0)
-, _nframes(0)
-, _leap(0)
-, _encodingFlag(true)
-{}
+: Record(dt, h) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -116,70 +117,8 @@ MSeedRecord::MSeedRecord(Array::DataType dt, Hint h)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
-: Record(dt, h, rec->network, rec->station, rec->location, rec->channel,
-         Seiscomp::Core::Time::FromEpoch(hptime_t(rec->starttime / HPTMODULUS),
-                                         hptime_t(rec->starttime % HPTMODULUS)),
-         int(rec->samplecnt), rec->samprate, rec->Blkt1001 ? rec->Blkt1001->timing_qual : -1)
-, _data(0)
-, _seqno(rec->sequence_number)
-, _rectype(rec->dataquality)
-, _srfact(rec->fsdh->samprate_fact)
-, _srmult(rec->fsdh->samprate_mult)
-, _byteorder(rec->byteorder)
-, _encoding(rec->encoding)
-, _reclen(rec->reclen)
-, _encodingFlag(true)
-{
-	if ( _hint == SAVE_RAW ) {
-		_raw.setData(rec->reclen,rec->record);
-	}
-	else if ( _hint == DATA_ONLY ) {
-		try {
-			_setDataAttributes(rec->reclen, rec->record);
-		}
-		catch ( LibmseedException &e ) {
-			_nsamp = 0;
-			_fsamp = 0;
-			_data = nullptr;
-			SEISCOMP_ERROR("%s", e.what());
-		}
-	}
-
-	_srnum = 0;
-	_srdenom = 1;
-
-	if ( (_srfact > 0) && (_srmult > 0) ) {
-		_srnum = _srfact*_srmult;
-		_srdenom = 1;
-	}
-
-	if ( _srfact > 0 && _srmult < 0 ) {
-		_srnum = _srfact;
-		_srdenom = -_srmult;
-	}
-
-	if ( (_srfact < 0) && (_srmult > 0) ) {
-		_srnum = _srmult;
-		_srdenom = -_srfact;
-	}
-
-	if ( (_srfact < 0) && (_srmult < 0) ) {
-		_srnum = 1;
-		_srdenom = _srfact*_srmult;
-	}
-
-	_nframes = 0;
-	if ( rec->Blkt1001 ) {
-		_nframes = rec->Blkt1001->framecnt;
-	}
-
-	_leap = 0;
-	if ( rec->fsdh->start_time.sec > 59 ) {
-		_leap = rec->fsdh->start_time.sec-59;
-	}
-
-	hptime_t hptime = msr_endtime(rec);
-	_etime = Seiscomp::Core::Time::FromEpoch(hptime_t(hptime / HPTMODULUS), hptime_t(hptime % HPTMODULUS));
+: Record(dt, h) {
+	set(rec);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -187,24 +126,8 @@ MSeedRecord::MSeedRecord(MSRecord *rec, Array::DataType dt, Hint h)
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord::MSeedRecord(const MSeedRecord &msrec)
-: Record(msrec)
-, _seqno(msrec.sequenceNumber())
-, _rectype(msrec.dataQuality())
-, _srfact(msrec.sampleRateFactor())
-, _srmult(msrec.sampleRateMultiplier())
-, _byteorder(msrec.byteOrder())
-, _encoding(msrec.encoding())
-, _srnum(msrec.sampleRateNumerator())
-, _srdenom(msrec.sampleRateDenominator())
-, _nframes(msrec.frameNumber())
-, _leap(msrec.leapSeconds())
-, _etime(msrec.endTime())
-, _encodingFlag(true)
-{
-	_reclen = msrec._reclen;
-	_raw = msrec._raw;
-	_data = msrec._data?msrec._data->clone():nullptr;
+MSeedRecord::MSeedRecord(const MSeedRecord &msrec) {
+	*this = msrec;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -213,30 +136,10 @@ MSeedRecord::MSeedRecord(const MSeedRecord &msrec)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MSeedRecord::MSeedRecord(const Record &rec, int reclen)
-: Record(rec)
-, _seqno(0)
-, _rectype('D')
-, _srfact(0)
-, _srmult(0)
-, _byteorder(0)
-, _encoding(0)
-, _srnum(0)
-, _srdenom(0)
-, _nframes(0)
-, _leap(0)
-, _etime(Seiscomp::Core::Time())
-, _encodingFlag(false)
-{
-	_reclen = reclen;
-	_data = rec.data()?rec.data()->clone():nullptr;
+: Record(rec) {
+	_recordLength = reclen;
+	_data = rec.data() ? rec.data()->clone() : nullptr;
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord::~MSeedRecord() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -245,10 +148,12 @@ MSeedRecord::~MSeedRecord() {}
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setNetworkCode(std::string net) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[3];
-		strncpy(tmp, net.c_str(), 2);
-		memcpy(header->network, tmp, 2);
+		if ( _format == V2 ) {
+			auto *netHeader = pMS2FSDH_NETWORK(_raw.typedData());
+			for ( size_t i = 0; i < 2; ++i ) {
+				netHeader[i] = net.size() > 0 ? net[i] : ' ';
+			}
+		}
 	}
 
 	Record::setNetworkCode(net);
@@ -261,10 +166,12 @@ void MSeedRecord::setNetworkCode(std::string net) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setStationCode(std::string sta) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[6];
-		strncpy(tmp, sta.c_str(), 5);
-		memcpy(header->station, tmp, 5);
+		if ( _format == V2 ) {
+			auto *staHeader = pMS2FSDH_STATION(_raw.typedData());
+			for ( size_t i = 0; i < 5; ++i ) {
+				staHeader[i] = sta.size() > i ? sta[i] : ' ';
+			}
+		}
 	}
 
 	Record::setStationCode(sta);
@@ -277,10 +184,12 @@ void MSeedRecord::setStationCode(std::string sta) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setLocationCode(std::string loc) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[3];
-		strncpy(tmp, loc.c_str(), 2);
-		memcpy(header->location, tmp, 2);
+		if ( _format == V2 ) {
+			auto *locHeader = pMS2FSDH_LOCATION(_raw.typedData());
+			for ( size_t i = 0; i < 2; ++i ) {
+				locHeader[i] = loc.size() > i ? loc[i] : ' ';
+			}
+		}
 	}
 
 	Record::setLocationCode(loc);
@@ -293,10 +202,12 @@ void MSeedRecord::setLocationCode(std::string loc) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setChannelCode(std::string cha) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		char tmp[4];
-		strncpy(tmp, cha.c_str(), 3);
-		memcpy(header->channel, tmp, 3);
+		if ( _format == V2 ) {
+			auto *chaHeader = pMS2FSDH_CHANNEL(_raw.typedData());
+			for ( size_t i = 0; i < 3; ++i ) {
+				chaHeader[i] = cha.size() > i ? cha[i] : ' ';
+			}
+		}
 	}
 
 	Record::setChannelCode(cha);
@@ -307,12 +218,28 @@ void MSeedRecord::setChannelCode(std::string cha) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setStartTime(const Core::Time& time) {
+void MSeedRecord::setStartTime(const Core::Time &time) {
 	if ( _hint == SAVE_RAW ) {
-		struct fsdh_s *header = reinterpret_cast<struct fsdh_s *>(_raw.typedData());
-		hptime_t hptime = hptime_t(time.epochSeconds() * HPTMODULUS) + hptime_t(time.microseconds());
-		ms_hptime2btime(hptime, &header->start_time);
-		MS_SWAPBTIME(&header->start_time);
+		if ( _format == V2 ) {
+			bool swapflag = _byteOrder & MSSWAP_HEADER;
+			int year, yday, hour, minute, second, microsecond;
+			time.get2(&year, &yday, &hour, &minute, &second, &microsecond);
+
+			uint16_t tmp;
+
+			tmp = year; tmp = HO2u(tmp, swapflag);
+			*pMS2FSDH_YEAR(_raw.typedData()) = tmp;
+
+			tmp = yday + 1; tmp = HO2u(tmp, swapflag);
+			*pMS2FSDH_DAY(_raw.typedData()) = tmp;
+
+			*pMS2FSDH_HOUR(_raw.typedData()) = uint8_t(hour);
+			*pMS2FSDH_MIN(_raw.typedData()) = uint8_t(minute);
+			*pMS2FSDH_SEC(_raw.typedData()) = uint8_t(second);
+			*pMS2FSDH_UNUSED(_raw.typedData()) = 0;
+			tmp = microsecond / 100; tmp = HO2u(tmp, swapflag);
+			*pMS2FSDH_FSEC(_raw.typedData()) = tmp;
+		}
 	}
 
 	Record::setStartTime(time);
@@ -323,53 +250,30 @@ void MSeedRecord::setStartTime(const Core::Time& time) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MSeedRecord& MSeedRecord::operator=(const MSeedRecord &msrec) {
+Core::Time MSeedRecord::TimeFromNST(int64_t t) {
+	return Core::Time::FromEpoch(t / NSTMODULUS, (t % NSTMODULUS) / (NSTMODULUS / 1000000));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+MSeedRecord &MSeedRecord::operator=(const MSeedRecord &msrec) {
 	if ( &msrec != this ) {
 		Record::operator=(msrec);
+		_format = msrec._format;
 		_raw = msrec._raw;
-		_data = msrec._data?msrec._data->clone():nullptr;
-		_seqno = msrec.sequenceNumber();
-		_rectype = msrec.dataQuality();
-		_srfact = msrec.sampleRateFactor();
-		_srmult = msrec.sampleRateMultiplier();
-		_byteorder = msrec.byteOrder();
-		_encoding = msrec.encoding();
-		_srnum = msrec.sampleRateNumerator();
-		_srdenom = msrec.sampleRateDenominator();
-		_reclen = msrec._reclen;
-		_nframes = msrec.frameNumber();
-		_leap = msrec.leapSeconds();
-		_etime = msrec.endTime();
+		_data = msrec._data ? msrec._data->clone() : nullptr;
+		_recordType = msrec._recordType;
+		_byteOrder = msrec._byteOrder;
+		_encoding = msrec._encoding;
+		_encodingFlag = msrec._encodingFlag;
+		_recordLength = msrec._recordLength;
+		_endTime = msrec._endTime;
 	}
 
-	return (*this);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sequenceNumber() const {
-	return _seqno;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSequenceNumber(int seqno) {
-	_seqno = seqno;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-char MSeedRecord::dataQuality() const {
-	return _rectype;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -378,115 +282,7 @@ char MSeedRecord::dataQuality() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setDataQuality(char qual) {
-	_rectype = qual;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateFactor() const {
-	return _srfact;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSampleRateFactor(int srfact) {
-	_srfact = srfact;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateMultiplier() const {
-	return _srmult;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::setSampleRateMultiplier(int srmult) {
-	_srmult = srmult;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int8_t MSeedRecord::byteOrder() const {
-	return _byteorder;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int8_t MSeedRecord::encoding() const {
-	return _encoding;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateNumerator() const {
-	return _srnum;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::sampleRateDenominator() const {
-	return _srdenom;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::frameNumber() const {
-	return _nframes;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const Core::Time& MSeedRecord::endTime() const {
-	return _etime;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::recordLength() const {
-	return _reclen;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int MSeedRecord::leapSeconds() const {
-	return _leap;
+	_recordType = qual;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -505,7 +301,7 @@ const Array *MSeedRecord::raw() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Array *MSeedRecord::data() const {
 	if ( _raw.data() && (!_data || _datatype != _data->dataType()) ) {
-		_setDataAttributes(_reclen, const_cast<char*>(_raw.typedData()));
+		unpackData(_recordLength, const_cast<char*>(_raw.typedData()));
 	}
 
 	return _data.get();
@@ -516,16 +312,35 @@ const Array *MSeedRecord::data() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
+void MSeedRecord::unpackData(int reclen, const char *data) const {
 	MSRecord *pmsr = nullptr;
 
-	if ( !data ) return;
-
-	int r = msr_unpack(data, reclen, &pmsr, 1, 0);
-	if ( r != MS_NOERROR ) {
-		throw LibmseedException(fmt::format("Unpacking of Mini SEED record failed: {}", r));
+	if ( !data ) {
+		return;
 	}
 
+	int r = msr3_parse(data, reclen, &pmsr, MSF_UNPACKDATA, 0);
+	if ( r != MS_NOERROR ) {
+		throw LibmseedException(fmt::format("Unpacking of MiniSEED record failed: {}", r));
+	}
+
+	try {
+		unpackData(pmsr);
+	}
+	catch ( ... ) {
+		msr3_free(&pmsr);
+		throw;
+	}
+
+	msr3_free(&pmsr);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MSeedRecord::unpackData(const MSRecord *pmsr) const {
 	Array::DataType dt = _datatype;
 	_data = nullptr;
 
@@ -542,108 +357,234 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 					// We need double precision in order to store doubles.
 					dt = Array::DOUBLE;
 				}
-
 				_data = ArrayFactory::Create(dt, Array::DOUBLE, _nsamp, pmsr->datasamples);
 				break;
 			case 'a':
+			case 't':
 				_data = ArrayFactory::Create(dt, Array::CHAR, _nsamp, pmsr->datasamples);
 				break;
 		}
+	}
+	else {
+		throw LibmseedException("The number of the unpacked data samples differs from the sample number in fixed data header.");
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-		// Check authentication
-		Util::CertificateStore &cs = Util::CertificateStore::global();
-		if ( cs.isValid() ) {
-			bool isSigned = false;
-			BlktLink *blk = pmsr->blkts;
-			for ( ; blk; blk = blk->next ) {
-				if ( blk->blkt_type == 2000 ) {
-					blkt_2000_s *opaq = reinterpret_cast<blkt_2000_s*>(blk->blktdata);
-					if ( opaq->numheaders != 1 ) continue;
 
-					int maxHeaderLength = opaq->data_offset - 15;
-					if ( maxHeaderLength < 6 ) continue;
 
-					const char *opaqHeaders = opaq->payload;
-					std::string header;
-					for ( int i = 0; i < maxHeaderLength; ++i ) {
-						if ( opaqHeaders[i] == '~' ) {
-							header.assign(opaqHeaders, opaqHeaders + i);
-							break;
-						}
-					}
 
-					if ( header.empty() ) continue;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MSeedRecord::set(int reclen, const char *data) {
+	MSRecord *prec{};
+	int r = msr3_parse(data, reclen, &prec, _hint == DATA_ONLY ? MSF_UNPACKDATA : 0, 0);
+	if ( r != MS_NOERROR ) {
+		throw LibmseedException(fmt::format("Unpacking of MiniSEED record failed: {}", r));
+	}
 
-					if ( !strncmp(header.c_str(), "SIGN/", 5) ) {
-						header.erase(header.begin(), header.begin() + 5);
-						long nSignature = opaq->length - opaq->data_offset;
+	set(prec);
+	msr3_free(&prec);
+	if ( _fsamp <= 0 ) {
+		throw LibmseedException("Unpacking of MiniSEED record failed, invalid sample rate");
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-						unsigned char digest[EVP_MAX_MD_SIZE];
-						unsigned int nDigest = 0;
 
-						EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-						EVP_DigestInit(mdctx, EVP_sha256());
-						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, dataquality), sizeof(pmsr->fsdh->dataquality));
-						EVP_DigestUpdate(mdctx, pmsr->record + offsetof(struct fsdh_s, station), offsetof(struct fsdh_s, data_offset) - offsetof(struct fsdh_s, station));
-						EVP_DigestUpdate(mdctx, pmsr->record + pmsr->fsdh->data_offset, (1 << pmsr->Blkt1000->reclen) - pmsr->fsdh->data_offset);
-						EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest), &nDigest);
 
-						EVP_MD_CTX_destroy(mdctx);
 
-						const unsigned char *pp = reinterpret_cast<const unsigned char *>(opaq) + opaq->data_offset - 4;
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MSeedRecord::set(const MSRecord *rec) noexcept {
+	char net[9];
+	char sta[9];
+	char loc[9];
+	char cha[4];
+	ms_sid2nslc_n(rec->sid, net, sizeof(net), sta, sizeof(sta), loc, sizeof(loc), cha, sizeof(cha));
+	_net = net; _sta = sta; _loc = loc; _cha = cha;
 
-						isSigned = true;
-						const X509 *cert;
-						if ( !cs.validate(header, reinterpret_cast<const char*>(digest),
-						                  nDigest, pp, nSignature, &cert) ) {
-							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATION_FAILED;
-							SEISCOMP_WARNING("MSEED: Signature validation failed");
-						}
-						else {
-							if ( cert ) {
-								X509_NAME *name = X509_get_subject_name(const_cast<X509*>(cert));
-								if ( name ) {
-									int pos = X509_NAME_get_index_by_NID(name, NID_organizationName, -1);
-									if ( pos != -1 ) {
-										X509_NAME_ENTRY *e = X509_NAME_get_entry(name, pos);
-										ASN1_STRING *str = X509_NAME_ENTRY_get_data(e);
-										if ( ASN1_STRING_type(str) != V_ASN1_UTF8STRING ) {
-											unsigned char *utf8 = 0;
-											int length = ASN1_STRING_to_UTF8(&utf8, str);
-											if ( length > 0 )
-												const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(utf8), size_t(length));
-											if ( utf8 )
-												OPENSSL_free(utf8);
-										}
-										else {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-											const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(ASN1_STRING_data(str)), size_t(ASN1_STRING_length(str)));
-#else
-											const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<const char*>(ASN1_STRING_get0_data(str)), ASN1_STRING_length(str));
-#endif
-										}
-									}
-									else
-										SEISCOMP_WARNING("MSEED: Failed to extract certificate authority (O)");
-								}
-							}
+	_stime = TimeFromNST(rec->starttime);
 
-							const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATED;
+	_byteOrder = rec->swapflag;
+	_format = rec->formatversion == 2 ? V2 : V3;
+	_recordLength = rec->reclen;
+	_nsamp = rec->samplecnt;
+	_encodingFlag = true;
+
+	if ( rec->samprate < 0 ) {
+		// Negative sampling rates are sampling distances.
+		_fsamp = 1.0 / rec->samprate;
+	}
+	else {
+		_fsamp = rec->samprate;
+	}
+
+	_data = nullptr;
+	_recordType = rec->sampletype;
+	_encoding = rec->encoding;
+	_encodingFlag = true;
+
+	if ( rec->extra && (rec->extralength > 0) ) {
+		rapidjson::Document doc;
+		doc.Parse(rec->extra, rec->extralength);
+		if ( !doc.HasParseError() ) {
+			auto it = doc.FindMember("FDSN");
+			if ( it != doc.MemberEnd() ) {
+				it = it->value.FindMember("Time");
+				if ( it != doc.MemberEnd() ) {
+					it = it->value.FindMember("Quality");
+					if ( it != doc.MemberEnd() ) {
+						if ( it->value.IsInt() ) {
+							_timequal = it->value.GetInt();
 						}
 					}
 				}
 			}
-
-			if ( !isSigned )
-				const_cast<MSeedRecord*>(this)->_authenticationStatus = NOT_SIGNED;
+		}
+		else {
+			// Mmmhhh, what to do? Ignore the entire record or just the extra header
+			// document?
 		}
 	}
+
+
+	if ( _hint == SAVE_RAW ) {
+		_raw.setData(rec->reclen, rec->record);
+	}
 	else {
-		msr_free(&pmsr);
-		throw LibmseedException("The number of the unpacked data samples differs from the sample number in fixed data header.");
+		_raw.clear();
+
+		if ( _hint == DATA_ONLY ) {
+			try {
+				unpackData(rec);
+			}
+			catch ( LibmseedException &e ) {
+				_nsamp = 0;
+				_fsamp = 0;
+				_data = nullptr;
+				SEISCOMP_ERROR("%s", e.what());
+			}
+		}
 	}
 
-	msr_free(&pmsr);
+	_endTime = TimeFromNST(msr3_endtime(rec));
+
+	// Check authentication
+	Util::CertificateStore &cs = Util::CertificateStore::global();
+	if ( (rec->formatversion == 2) && cs.isValid() ) {
+		bool isSigned = false;
+		bool swapflag = _byteOrder & MSSWAP_HEADER;
+
+		auto blkt_offset = HO2u(*pMS2FSDH_BLOCKETTEOFFSET(rec->record), swapflag);
+		uint16_t blkt_type;
+		uint16_t next_blkt;
+
+		while ( blkt_offset != 0 ) {
+			blkt_type = HO2u(*reinterpret_cast<const uint16_t*>(rec->record + blkt_offset), swapflag);
+			next_blkt = HO2u(*reinterpret_cast<const uint16_t*>(rec->record + blkt_offset + 2), swapflag);
+
+			if ( blkt_type == 2000 ) {
+				auto *blkt = rec->record + blkt_offset;
+
+				if ( *pMS2B2000_NUMHEADERS(blkt) != 1 ) {
+					continue;
+				}
+
+				if ( HO2u(*pMS2B2000_DATAOFFSET(blkt), swapflag) < 21 ) {
+					continue;
+				}
+
+				auto b2000DataOffset = HO2u(*pMS2B2000_DATAOFFSET(blkt), swapflag);
+				auto b2000DataLength = HO2u(*pMS2B2000_LENGTH(blkt), swapflag);
+				size_t maxHeaderLength = b2000DataOffset - 15;
+				const char *opaqHeaders = pMS2B2000_PAYLOAD(blkt);
+				std::string_view header;
+				for ( size_t i = 0; i < maxHeaderLength; ++i ) {
+					if ( opaqHeaders[i] == '~' ) {
+						header = { opaqHeaders, i };
+						break;
+					}
+				}
+
+				if ( header.empty() ) {
+					continue;
+				}
+
+				if ( !header.compare(0, 5, "SIGN/") ) {
+					header = header.substr(5);
+					size_t nSignature = b2000DataLength - b2000DataOffset;
+
+					unsigned char digest[EVP_MAX_MD_SIZE];
+					unsigned int nDigest = 0;
+
+					EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+					EVP_DigestInit(mdctx, EVP_sha256());
+					EVP_DigestUpdate(mdctx, pMS2FSDH_DATAQUALITY(rec->record), 1);
+					EVP_DigestUpdate(
+						mdctx,
+						pMS2FSDH_STATION(rec->record),
+						(char*)pMS2FSDH_DATAOFFSET(rec->record) - (char*)pMS2FSDH_STATION(rec->record)
+					);
+					EVP_DigestUpdate(
+						mdctx,
+						rec->record + HO2u(*pMS2FSDH_DATAOFFSET(rec->record), swapflag),
+						rec->reclen - HO2u(*pMS2FSDH_DATAOFFSET(rec->record), swapflag)
+					);
+					EVP_DigestFinal_ex(mdctx, reinterpret_cast<unsigned char*>(digest), &nDigest);
+					EVP_MD_CTX_destroy(mdctx);
+
+					const unsigned char *pp = reinterpret_cast<const unsigned char *>(blkt) + b2000DataOffset;
+
+					isSigned = true;
+					const X509 *cert;
+					if ( !cs.validate(header, reinterpret_cast<const char*>(digest),
+					                  nDigest, pp, nSignature, &cert) ) {
+						const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATION_FAILED;
+						SEISCOMP_WARNING("MSEED: Signature validation failed");
+					}
+					else {
+						if ( cert ) {
+							X509_NAME *name = X509_get_subject_name(const_cast<X509*>(cert));
+							if ( name ) {
+								int pos = X509_NAME_get_index_by_NID(name, NID_organizationName, -1);
+								if ( pos != -1 ) {
+									X509_NAME_ENTRY *e = X509_NAME_get_entry(name, pos);
+									ASN1_STRING *str = X509_NAME_ENTRY_get_data(e);
+									if ( ASN1_STRING_type(str) != V_ASN1_UTF8STRING ) {
+										unsigned char *utf8 = 0;
+										int length = ASN1_STRING_to_UTF8(&utf8, str);
+										if ( length > 0 ) {
+											const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(utf8), size_t(length));
+										}
+										if ( utf8 ) {
+											OPENSSL_free(utf8);
+										}
+									}
+									else {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+										const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<char*>(ASN1_STRING_data(str)), size_t(ASN1_STRING_length(str)));
+#else
+										const_cast<MSeedRecord*>(this)->_authority.assign(reinterpret_cast<const char*>(ASN1_STRING_get0_data(str)), ASN1_STRING_length(str));
+#endif
+									}
+								}
+								else {
+									SEISCOMP_WARNING("MSEED: Failed to extract certificate authority (O)");
+								}
+							}
+						}
+
+						const_cast<MSeedRecord*>(this)->_authenticationStatus = SIGNATURE_VALIDATED;
+					}
+				}
+			}
+
+			blkt_offset = next_blkt;
+		}
+
+		if ( !isSigned ) {
+			const_cast<MSeedRecord*>(this)->_authenticationStatus = NOT_SIGNED;
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -652,7 +593,7 @@ void MSeedRecord::_setDataAttributes(int reclen, char *data) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::saveSpace() const {
-	if (_hint == SAVE_RAW && _data) {
+	if ( _hint == SAVE_RAW && _data) {
 		_data = 0;
 	}
 }
@@ -681,7 +622,7 @@ void MSeedRecord::useEncoding(bool flag) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::setOutputRecordLength(int reclen) {
-	_reclen = reclen;
+	_recordLength = reclen;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -690,14 +631,14 @@ void MSeedRecord::setOutputRecordLength(int reclen) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool _isHeader(const char *header) {
-	return (std::isdigit(*(header+0))
-	     && std::isdigit(*(header+1))
-	     && std::isdigit(*(header+2))
-	     && std::isdigit(*(header+3))
-	     && std::isdigit(*(header+4))
-	     && std::isdigit(*(header+5))
-	     && std::isalpha(*(header+6))
-	     && (*(header+7) == ' ' || *(header+7) == '\0'));
+	return (std::isdigit(*(header + 0))
+	     && std::isdigit(*(header + 1))
+	     && std::isdigit(*(header + 2))
+	     && std::isdigit(*(header + 3))
+	     && std::isdigit(*(header + 4))
+	     && std::isdigit(*(header + 5))
+	     && std::isalpha(*(header + 6))
+	     && (*(header + 7) == ' ' || *(header + 7) == '\0'));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -737,109 +678,115 @@ void error(std::istream &is, const char *msg, size_t fp) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MSeedRecord::read(std::istream &is) {
-#define HEADER_BLOCK_LEN 64
+#define HEADER_BLOCK_LEN MINRECLEN
 	int reclen = -1;
-	MSRecord *prec = nullptr;
 	bool swapflag = false;
 	char header[HEADER_BLOCK_LEN];
 	std::vector<char> buffer;
 
 	while ( is.good() ) {
-		if ( is.read(header, sizeof(header))
-		 and MS_ISVALIDHEADER(header) ) {
-			buffer.reserve(512);
-			buffer.resize(sizeof(header));
-			memcpy(buffer.data(), header, sizeof(header));
+		if ( is.read(header, sizeof(header)) ) {
+			if ( MS2_ISVALIDHEADER(header) ) {
+				buffer.reserve(512);
+				buffer.resize(sizeof(header));
+				memcpy(buffer.data(), header, sizeof(header));
 
-			// Remember current position
-			size_t p = is.tellg();
-
-			fsdh_s *fsdh = reinterpret_cast<fsdh_s*>(buffer.data());
-			uint16_t blkt_offset;
-			uint16_t blkt_type;
-			uint16_t next_blkt;
-
-			if ( !MS_ISVALIDYEARDAY(fsdh->start_time.year, fsdh->start_time.day) )
-				swapflag = true;
-
-			blkt_offset = fsdh->blockette_offset;
-			if ( swapflag ) ms_gswap2(&blkt_offset);
-
-			while ( blkt_offset != 0 ) {
-				if ( !fill(is, buffer, blkt_offset + 4) )
-					error(is, "Blockette reading error", p);
-
-				blkt_type = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset);
-				next_blkt = *reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2);
-
-				if ( swapflag ) {
-					ms_gswap2(&blkt_type);
-					ms_gswap2(&next_blkt);
-				}
-
-				if ( next_blkt != 0 ) {
-					if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) )
-						error(is, "Invalid blockette offset less than or equal to current offset", p);
-
-					if ( !fill(is, buffer, next_blkt) )
+				if constexpr ( sizeof(header) < 64 ) {
+					auto p = is.tellg();
+					if ( !fill(is, buffer, 64) ) {
 						error(is, "Blockette reading error", p);
+					}
 				}
 
-				// Found a 1000 blockette
-				if ( blkt_type == 1000 ) {
-					if ( !fill(is, buffer, blkt_offset + 4 + sizeof(blkt_1000_s)) )
-						error(is, "Blockette 1000 reading error", p);
+				// Remember current position
+				auto p = is.tellg();
 
-					blkt_1000_s *blkt_1000;blkt_1000 = reinterpret_cast<blkt_1000_s*>(buffer.data() + blkt_offset + 4);
-					reclen = (unsigned int)1 << blkt_1000->reclen;
-					break;
+				if ( !MS_ISVALIDYEARDAY(*pMS2FSDH_YEAR(buffer.data()), *pMS2FSDH_DAY(buffer.data())) ) {
+					swapflag = true;
 				}
 
-				blkt_offset = next_blkt;
-			}
+				auto blkt_offset = HO2u(*pMS2FSDH_BLOCKETTEOFFSET(buffer.data()), swapflag);
+				uint16_t blkt_type;
+				uint16_t next_blkt;
 
-			if ( reclen < 0 ) {
-				// Read current record to next power of two
-				size_t oldSize = buffer.size();
-				size_t newSize = 1;
+				while ( blkt_offset != 0 ) {
+					if ( !fill(is, buffer, blkt_offset + 4) ) {
+						error(is, "Blockette reading error", p);
+					}
 
-				while ( newSize < oldSize )
-					newSize <<= 1;
+					blkt_type = HO2u(*reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset), swapflag);
+					next_blkt = HO2u(*reinterpret_cast<uint16_t*>(buffer.data() + blkt_offset + 2), swapflag);
 
-				if ( !fill(is, buffer, newSize) )
-					error(is, "Data read error", p);
+					if ( next_blkt != 0 ) {
+						if ( (next_blkt < 4 || (next_blkt - 4) <= blkt_offset) ) {
+							error(is, "Invalid blockette offset less than or equal to current offset", p);
+						}
 
-				while ( is.read(header, sizeof(header)) ) {
-					if ( MS_ISVALIDHEADER(header)
-					  or MS_ISVALIDBLANK(header)
-					  or _isHeader(header) ) {
-						reclen = buffer.size();
-						// Set current stream position back to header start
-						is.seekg(-sizeof(header), std::ios::cur);
+						if ( !fill(is, buffer, next_blkt) ) {
+							error(is, "Blockette reading error", p);
+						}
+					}
+
+					// Found a 1000 blockette
+					if ( blkt_type == 1000 ) {
+						if ( !fill(is, buffer, blkt_offset + 4 + pMS2B1000_SIZE) ) {
+							error(is, "Blockette 1000 reading error", p);
+						}
+
+						reclen = static_cast<uint64_t>(1) << *pMS2B1000_RECLEN (buffer.data() + blkt_offset);
 						break;
 					}
-					else {
-						if ( buffer.size() < MAXRECLEN ) {
-							buffer.resize(buffer.size() + sizeof(header));
-							memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
+
+					blkt_offset = next_blkt;
+				}
+
+				if ( reclen < 0 ) {
+					// Read current record to next power of two
+					size_t oldSize = buffer.size();
+					size_t newSize = 1;
+
+					while ( newSize < oldSize ) {
+						newSize <<= 1;
+					}
+
+					if ( !fill(is, buffer, newSize) ) {
+						error(is, "Data read error", p);
+					}
+
+					while ( is.read(header, sizeof(header)) ) {
+						if ( MS2_ISVALIDHEADER(header) || _isHeader(header) ) {
+							reclen = buffer.size();
+							// Set current stream position back to header start
+							is.seekg(-sizeof(header), std::ios::cur);
+							break;
 						}
-						else
-							error(is, "Mini SEED Record exceeds 2**20 bytes", p);
+						else {
+							if ( buffer.size() < MAXRECLENv2 ) {
+								buffer.resize(buffer.size() + sizeof(header));
+								memcpy(buffer.data() + buffer.size() - sizeof(header), header, sizeof(header));
+							}
+							else {
+								error(is, "MiniSEED Record exceeds " STR(MAXRECLENv2) " bytes", p);
+							}
+						}
+					}
+
+					if ( is.eof() and isPowerOfTwo(buffer.size()) ) {
+						reclen = buffer.size();
 					}
 				}
 
-				if ( is.eof() and isPowerOfTwo(buffer.size()) )
-					reclen = buffer.size();
-			}
+				if ( reclen > 0 ) {
+					if ( reclen > MAXRECLEN ) {
+						throw Core::StreamException("MiniSEED Record exceeds 2**20 bytes");
+					}
 
-			if ( reclen > 0 ) {
-				if ( reclen > MAXRECLEN )
-					throw Core::StreamException("Mini SEED Record exceeds 2**20 bytes");
+					if ( !fill(is, buffer, reclen) ) {
+						error(is, "Fatal error occured while reading record from stream", p);
+					}
 
-				if ( !fill(is, buffer, reclen) )
-					error(is, "Fatal error occured while reading record from stream", p);
-
-				break;
+					break;
+				}
 			}
 		}
 
@@ -847,26 +794,19 @@ void MSeedRecord::read(std::istream &is) {
 	}
 
 	if ( reclen <= 0 ) {
-		if ( is.eof() )
+		if ( is.eof() ) {
 			throw Core::EndOfStreamException();
-		else
+		}
+		else {
 			throw LibmseedException("Retrieving the record length failed");
+		}
 	}
 
 	if ( reclen < MINRECLEN ) {
-		throw Core::EndOfStreamException("Invalid Mini SEED record, too small");
+		throw Core::EndOfStreamException("Invalid MiniSEED record, too small");
 	}
 
-	int r = msr_unpack(buffer.data(), reclen, &prec, 0, 0);
-	if ( r != MS_NOERROR ) {
-		throw LibmseedException(fmt::format("Unpacking of Mini SEED record failed: {}", r));
-	}
-
-	*this = MSeedRecord(prec, this->_datatype, this->_hint);
-	msr_free(&prec);
-	if ( _fsamp <= 0 ) {
-		throw LibmseedException("Unpacking of Mini SEED record failed, invalid sample rate");
-	}
+	set(reclen, buffer.data());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -874,64 +814,56 @@ void MSeedRecord::read(std::istream &is) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MSeedRecord::write(std::ostream& out) {
-	if (!_data) {
-		if (!_raw.data())
+void MSeedRecord::write(std::ostream &out) {
+	if ( !_data ) {
+		if ( !_raw.data() ) {
 			throw Core::StreamException("No writable data found");
-		else
+		}
+		else {
 			data();
+		}
 	}
 
 	MSRecord *pmsr;
-	pmsr = msr_init(nullptr);
-	if (!pmsr)
+	pmsr = msr3_init(nullptr);
+	if (!pmsr) {
 		throw Core::StreamException("msr_init failed");
-
-	/* Set MSRecord header values */
-	pmsr->reclen = _reclen;
-	pmsr->sequence_number = _seqno;
-	strcpy(pmsr->network,_net.c_str());
-	strcpy(pmsr->station,_sta.c_str());
-	strcpy(pmsr->location,_loc.c_str());
-	strcpy(pmsr->channel,_cha.c_str());
-	pmsr->dataquality = _rectype;
-	pmsr->starttime = ms_timestr2hptime(const_cast<char *>(_stime.iso().c_str()));
-	pmsr->samprate = _fsamp;
-	pmsr->byteorder = 1;
-	pmsr->numsamples = _data->size();
-	ArrayPtr data;
-
-	struct blkt_1001_s blkt1001;
-	memset(&blkt1001, 0, sizeof (struct blkt_1001_s));
-
-	if ( _timequal >= 0 )
-		blkt1001.timing_qual = _timequal <= 100 ? uint8_t(_timequal) : 100;
-
-	if ( !msr_addblockette(pmsr, reinterpret_cast<char *>(&blkt1001), sizeof(struct blkt_1001_s), 1001, 0) ) {
-		throw LibmseedException("Error adding 1001 blockette");
 	}
 
-	if ( _encodingFlag ) {
+	pmsr->reclen = _recordLength ? _recordLength : 512;
+	pmsr->formatversion = 2;
+
+	ms_nslc2sid(
+		pmsr->sid, sizeof(pmsr->sid), 0,
+		_net.data(), _sta.data(), _loc.data(), _cha.data()
+	);
+
+	// Convert to nanoseconds
+	pmsr->starttime = startTime().repr().time_since_epoch().count() * 1000;
+	pmsr->samprate = _fsamp;
+	pmsr->sampletype = _recordType;
+	pmsr->numsamples = _data->size();
+
+	ArrayPtr data;
+
+	if ( _encodingFlag && (_encoding >= 0) ) {
 		switch ( _encoding ) {
 			case DE_ASCII: {
 				pmsr->encoding = DE_ASCII;
 				pmsr->sampletype = 'a';
 				data = ArrayFactory::Create(Array::CHAR, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
 			}
 			case DE_FLOAT32: {
 				pmsr->encoding = DE_FLOAT32;
 				pmsr->sampletype = 'f';
 				data = ArrayFactory::Create(Array::FLOAT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
 			}
 			case DE_FLOAT64: {
 				pmsr->encoding = DE_FLOAT64;
 				pmsr->sampletype = 'd';
 				data = ArrayFactory::Create(Array::DOUBLE, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
 			}
 			case DE_INT16:
@@ -941,60 +873,59 @@ void MSeedRecord::write(std::ostream& out) {
 				pmsr->encoding = _encoding;
 				pmsr->sampletype = 'i';
 				data = ArrayFactory::Create(Array::INT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
 				break;
 			}
-			default: {
+			default:
 				SEISCOMP_WARNING("Unknown encoding type found %s(%c)! Switch to Integer-Steim2 encoding", ms_encodingstr(_encoding), _encoding);
 				pmsr->encoding = DE_STEIM2;
 				pmsr->sampletype = 'i';
 				data = ArrayFactory::Create(Array::INT, _data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
-			}
+				break;
 		}
 	}
 	else {
+		data = _data;
+
 		switch ( _data->dataType() ) {
 			case Array::CHAR:
 				pmsr->encoding = DE_ASCII;
-				pmsr->sampletype = 'a';
-				pmsr->datasamples = const_cast<void*>(_data->data());
+				pmsr->sampletype = 't';
 				break;
 			case Array::INT:
 				pmsr->encoding = DE_STEIM2;
 				pmsr->sampletype = 'i';
-				pmsr->datasamples = const_cast<void*>(_data->data());
 				break;
 			case Array::FLOAT:
 				pmsr->encoding = DE_FLOAT32;
 				pmsr->sampletype = 'f';
-				pmsr->datasamples = const_cast<void*>(_data->data());
 				break;
 			case Array::DOUBLE:
 				pmsr->encoding = DE_FLOAT64;
 				pmsr->sampletype = 'd';
-				pmsr->datasamples = const_cast<void*>(_data->data());
 				break;
-			default: {
+			default:
 				SEISCOMP_WARNING("Unknown data type %d! Switch to Integer-Steim2 encoding",
-				                 static_cast<int>(_data->dataType()));
+				                 static_cast<int>(data->dataType()));
 				pmsr->encoding = DE_STEIM2;
 				pmsr->sampletype = 'i';
 				data = ArrayFactory::Create(Array::INT,_data.get());
-				pmsr->datasamples = const_cast<void*>(data->data());
-			}
+				break;
 		}
 	}
 
-	/* Pack the record(s) */
-	CharArray packed;
+	pmsr->datasamples = const_cast<void*>(data->data());
+	pmsr->datasize = data->size() * data->elementSize();
+	if ( _timequal > 0 ) {
+		auto json = Core::stringify("{\"FDSN\":{\"Time\":{\"Quality\":%d}}}", _timequal);
+		pmsr->extra = reinterpret_cast<char*>(libmseed_memory.malloc(json.size() + 1));
+		pmsr->extralength = json.size();
+		memcpy(pmsr->extra, json.data(), pmsr->extralength + 1);
+	}
+
 	int64_t psamples;
-
-	msr_pack(pmsr, _Record_Handler, &packed, &psamples, 1, 0);
-	pmsr->datasamples = 0;
-	msr_free(&pmsr);
-
-	out.write(packed.typedData(), packed.size());
+	msr3_pack(pmsr, _Record_Handler, &out, &psamples, MSF_FLUSHDATA, 0);
+	pmsr->datasamples = nullptr;
+	msr3_free(&pmsr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1003,4 +934,4 @@ void MSeedRecord::write(std::ostream& out) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -110,7 +110,7 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 
 		using IndexSet = std::set<Index>;
 		using IndexList = std::list<Index>;
-		using File = std::pair<std::string,bool>;
+		using File = std::pair<std::string, bool>;
 		using FileQueue = std::queue<File>;
 
 		std::vector<std::string>  _arcroots;

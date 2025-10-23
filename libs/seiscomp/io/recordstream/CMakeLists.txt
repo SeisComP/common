@@ -2,7 +2,6 @@ SET(RECORDSTREAM_SOURCES
 	file.cpp
 	memory.cpp
 	sdsarchive.cpp
-	arclink.cpp
 	slconnection.cpp
 	combined.cpp
 	concurrent.cpp
@@ -27,7 +26,6 @@ SET(RECORDSTREAM_HEADERS
 	memory.h
 	archive.h
 	sdsarchive.h
-	arclink.h
 	slconnection.h
 	combined.h
 	concurrent.h

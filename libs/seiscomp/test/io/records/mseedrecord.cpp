@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(WRITE_READ) {
 	MSeedRecord rec;
 	rec.setHint(Record::DATA_ONLY);
 	rec.setDataType(Array::INT);
-	BOOST_CHECK_NO_THROW(rec.read(ios));
+	rec.read(ios);
 
 	BOOST_CHECK_EQUAL(rec.streamID(), filledRec.streamID());
 	BOOST_CHECK(rec.startTime() == filledRec.startTime());
@@ -97,6 +97,8 @@ BOOST_AUTO_TEST_CASE(WRITE_READ) {
 	BOOST_CHECK_EQUAL(rec.timingQuality(), filledRec.timingQuality());
 	BOOST_CHECK_EQUAL(rec.dataType(), filledRec.dataType());
 	BOOST_CHECK_EQUAL(rec.sampleCount(), filledRec.sampleCount());
+	BOOST_REQUIRE(rec.data());
+	BOOST_CHECK_EQUAL(rec.data()->size(), filledRec.data()->size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

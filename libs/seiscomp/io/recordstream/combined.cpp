@@ -22,11 +22,9 @@
 
 #include <cstdio>
 #include <string>
-#include <iostream>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/strings.h>
-#include <seiscomp/io/recordstream/arclink.h>
 #include <seiscomp/io/recordstream/slconnection.h>
 
 #include "combined.h"

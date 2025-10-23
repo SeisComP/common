@@ -19,8 +19,7 @@
 
 
 #include <iostream>
-#include <math.h>
-#include <string.h>
+#include <cmath>
 #include <seiscomp/core/record.h>
 #include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/interfacefactory.ipp>
@@ -38,10 +37,8 @@ IMPLEMENT_INTERFACE_FACTORY(Record, SC_SYSTEM_CORE_API);
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record::Record(Array::DataType datatype, Hint h)
-: _net(""), _sta(""), _loc(""), _cha("")
-, _datatype(datatype)
-, _hint(h), _nsamp(0), _fsamp(0), _timequal(-1)
-, _authenticationStatus(NOT_SIGNED) {}
+: _datatype(datatype)
+, _hint(h) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -53,8 +50,7 @@ Record::Record(Array::DataType datatype, Hint h,
                Core::Time stime, int nsamp, double fsamp, int tqual)
 : _net(net), _sta(sta), _loc(loc), _cha(cha)
 , _stime(stime), _datatype(datatype)
-, _hint(h), _nsamp(nsamp), _fsamp(fsamp), _timequal(tqual)
-, _authenticationStatus(NOT_SIGNED) {}
+, _hint(h), _nsamp(nsamp), _fsamp(fsamp), _timequal(tqual) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
