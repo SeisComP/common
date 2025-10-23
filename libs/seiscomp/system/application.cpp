@@ -41,8 +41,6 @@
 #include <seiscomp/system/pluginregistry.h>
 #include <seiscomp/system/hostinfo.h>
 
-#include <sstream>
-
 #include <cerrno>
 #include <stdio.h>
 #include <stdlib.h>
