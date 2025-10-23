@@ -3356,8 +3356,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						);
 					}
 
-					if ( stream->antialiasing != isAntialiasing )
+					if ( stream->antialiasing != isAntialiasing ) {
 						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
+					}
 
 					int hMargin = stream->pen.width()-1;
 					if ( hMargin < 0 ) hMargin = 0;
@@ -5229,7 +5230,14 @@ void RecordWidget::drawTrace(QPainter &painter,
                              const Trace *trace,
                              const RecordSequence *seq, const QPen &pen,
                              const QPoint &paintOffset) const {
-	painter.setPen(pen);
+	if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+		auto p = pen;
+		p.setWidthF(p.widthF() / painter.device()->devicePixelRatioF());
+		painter.setPen(p);
+	}
+	else {
+		painter.setPen(pen);
+	}
 	painter.translate(paintOffset);
 	trace->poly->draw(painter);
 	drawRecordBorders(painter, seq);
