@@ -697,13 +697,21 @@ void FancyViewItem::updated() {
 	bool isInitial = index.sibling(index.row(), 3).data(Qt::DisplayRole).toBool() ==
 	                 index.sibling(index.row(), 3).data(ConfigurationTreeItemModel::Initial).toBool();
 
-	isInitial &= index.sibling(index.row(), 2).data(Qt::DisplayRole).toString() ==
-	             index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString();
+	if ( isInitial && !index.sibling(index.row(), 3).data(Qt::DisplayRole).toBool() ) {
+		isInitial &= index.sibling(index.row(), 2).data(Qt::DisplayRole).toString() ==
+		             index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString();
+	}
 
 	/*
-	std::cerr << qPrintable(index.sibling(index.row(), 0).data().toString()) << " "
-	          << qPrintable(index.sibling(index.row(), 2).data(Qt::DisplayRole).toString()) << " "
-	          << qPrintable(index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString()) << std::endl;
+	std::cerr << qPrintable(index.sibling(index.row(), 0).data().toString())
+	          << " "
+	          << index.sibling(index.row(), 3).data(ConfigurationTreeItemModel::Initial).toBool()
+	          << ":"
+	          << index.sibling(index.row(), 3).data(Qt::DisplayRole).toBool()
+	          << " "
+	          << "\"" << qPrintable(index.sibling(index.row(), 2).data(Qt::DisplayRole).toString()) << "\" "
+	          << "\"" << qPrintable(index.sibling(index.row(), 2).data(ConfigurationTreeItemModel::Initial).toString()) << "\""
+	          << std::endl;
 	*/
 
 	reset->setVisible(!isInitial);
