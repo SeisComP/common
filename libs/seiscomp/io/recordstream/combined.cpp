@@ -26,7 +26,6 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/strings.h>
-#include <seiscomp/io/recordstream/arclink.h>
 #include <seiscomp/io/recordstream/slconnection.h>
 
 #include "combined.h"
@@ -200,7 +199,7 @@ bool CombinedConnection::setSource(const std::string &serverloc) {
 	string type2;
 	p2 = serverloc.find('/', p1);
 	if ( p2 == string::npos ) {
-		type2 = "arclink";
+		type2 = "fdsnws";
 		p2 = p1;
 	}
 	else {

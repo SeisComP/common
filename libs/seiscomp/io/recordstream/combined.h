@@ -27,6 +27,7 @@
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/io/recordstream.h>
+#include <seiscomp/io/recordstream/streamidx.h>
 #include <seiscomp/core.h>
 
 
