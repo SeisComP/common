@@ -2057,9 +2057,17 @@ void Configurator::wizard() {
 	w.exec();
 
 	if ( w.ranSetup() ) {
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		QtConfigDelegate cd(&_settings);
 		_model->model()->readConfig(Environment::CS_USER_APP, &cd);
 		_model->setModel(_model->model(), _configurationStage);
+
+		foreach ( Panel p, _panels ) {
+			p.second->setModel(_model);
+		}
+
+		QApplication::restoreOverrideCursor();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
