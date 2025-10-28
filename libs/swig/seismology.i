@@ -59,7 +59,6 @@
 #include "seiscomp/io/records/mseedrecord.h"
 #include "seiscomp/io/recordstream/file.h"
 #include "seiscomp/io/recordstream/slconnection.h"
-#include "seiscomp/io/recordstream/arclink.h"
 #include "seiscomp/io/recordstream/combined.h"
 
 #include "seiscomp/datamodel/publicobjectcache.h"
