@@ -6963,27 +6963,27 @@ void setIconColor(CONTROL *control, const QColor &color) {
 }
 
 void PickerView::applyThemeColors() {
-	auto colorTheme = currentColorTheme();
-	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme.green);
-	setIconColor(SC_D.ui.actionSortByDistance, colorTheme.green);
-	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme.green);
-	setIconColor(SC_D.ui.actionSortByResidual, colorTheme.green);
-	setIconColor(SC_D.ui.actionShowZComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionShowNComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionShowEComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme.petrol);
-	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme.petrol);
-	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme.petrol);
-	setIconColor(SC_D.ui.actionPickP, colorTheme.blue);
-	setIconColor(SC_D.ui.actionPickS, colorTheme.blue);
+	auto colorTheme = ColorTheme::Current();
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortByResidual, colorTheme->green);
+	setIconColor(SC_D.ui.actionShowZComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowNComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowEComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->petrol);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->petrol);
+	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme->petrol);
+	setIconColor(SC_D.ui.actionPickP, colorTheme->blue);
+	setIconColor(SC_D.ui.actionPickS, colorTheme->blue);
 
 	{
 		QPalette pal = SC_D.btnApply->palette();
-		pal.setColor(QPalette::ButtonText, colorTheme.white);
-		pal.setColor(QPalette::Button, colorTheme.red);
+		pal.setColor(QPalette::ButtonText, colorTheme->foregroundConfirm);
+		pal.setColor(QPalette::Button, colorTheme->backgroundConfirm);
 		SC_D.btnApply->setPalette(pal);
 		SC_D.btnApply->setIcon(SC_D.btnApply->icon());
-		setIconColor(SC_D.btnApply, colorTheme.lightRed);
+		setIconColor(SC_D.btnApply, colorTheme->foregroundConfirm);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -9773,61 +9773,61 @@ void PickerView::changeRotation(int index) {
 
 	SC_D.currentRotationMode = index;
 
-	auto colorTheme = currentColorTheme();
+	auto colorTheme = ColorTheme::Current();
 
 	// Change icons depending on the current rotation mode
 	if ( index == PickerView::Config::RT_ZNE ) {
-		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
 		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
-		SC_D.ui.actionShowNComponent->setIcon(icon("component_N", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_N", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("North"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(icon("component_E", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_E", colorTheme->orange));
 		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("East"));
 		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
 	}
 	else if ( index == PickerView::Config::RT_ZRT ) {
-		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
 		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
-		SC_D.ui.actionShowNComponent->setIcon(icon("component_R", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_R", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme->orange));
 		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
 		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
 	}
 	else if ( index == PickerView::Config::RT_LQT ) {
-		SC_D.ui.actionShowZComponent->setIcon(icon("component_L", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_L", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Longitudinal"));
 		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Longitudinal Component (Z)"));
-		SC_D.ui.actionShowNComponent->setIcon(icon("component_Q", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_Q", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Quasi-Vertical"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Quasi-Vertical Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme->orange));
 		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
 		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
 	}
 	else if ( index == PickerView::Config::RT_ZH ) {
-		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
 		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
-		SC_D.ui.actionShowNComponent->setIcon(icon("component_L2", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_L2", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("L2"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Combined Horizontal Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(icon("component_0", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_0", colorTheme->orange));
 		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Zero"));
 		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Zero Component (E)"));
 	}
 	else {
-		SC_D.ui.actionShowZComponent->setIcon(icon("component_1", colorTheme.orange));
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_1", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("First"));
 		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show First Component (N)"));
-		SC_D.ui.actionShowNComponent->setIcon(icon("component_2", colorTheme.orange));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_2", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Second"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Second Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(icon("component_3", colorTheme.orange));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_3", colorTheme->orange));
 		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Third"));
 		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Third Component (E)"));
 	}

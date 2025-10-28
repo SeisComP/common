@@ -170,25 +170,47 @@ template <typename T>
 using ObjectChangeList = std::vector<std::pair<Core::SmartPointer<T>, bool>>;
 
 
-/**
- * @brief Figure if Dark Mode has been set.
- * @return true if dark mode, false otherwise.
- */
-bool isDarkMode();
+class ColorTheme {
+	private:
+		/**
+		 * @brief Private constructor
+		 * This avoids static instances in custom code and maintains binary compatibility
+		 * if more attributes are added as the only interface is via pointers.
+		 */
+		ColorTheme() = default;
 
+		/**
+		 * @brief Private copy constructor
+		 * This avoids static instances in custom code and maintains binary compatibility
+		 * if more attributes are added as the only interface is via pointers.
+		 */
+		ColorTheme(const ColorTheme &) = default;
 
-struct ColorTheme {
-	QColor green;
-	QColor orange;
-	QColor petrol;
-	QColor blue;
-	QColor red;
-	QColor lightRed;
-	QColor white;
+	public:
+		/**
+		 * @brief Figure if Dark Mode has been set.
+		 * @return true if dark mode, false otherwise.
+		 */
+		static bool IsDarkMode();
+
+		/**
+		 * @brief Returns the current color theme based on mode (light or dark).
+		 * @return A constant pointer to the current instance.
+		 */
+		static const ColorTheme *Current();
+
+	public:
+		QColor backgroundConfirm;
+		QColor foregroundConfirm;
+		QColor green;
+		QColor orange;
+		QColor petrol;
+		QColor blue;
+		QColor red;
+		QColor lightRed;
+		QColor white;
 };
 
-
-const ColorTheme &currentColorTheme();
 
 
 

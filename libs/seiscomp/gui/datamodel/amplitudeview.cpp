@@ -1804,23 +1804,23 @@ void setIconColor(CONTROL *control, const QColor &color) {
 }
 
 void AmplitudeView::applyThemeColors() {
-	auto colorTheme = currentColorTheme();
-	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme.green);
-	setIconColor(SC_D.ui.actionSortByDistance, colorTheme.green);
-	setIconColor(SC_D.ui.actionShowZComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionShowNComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionShowEComponent, colorTheme.orange);
-	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme.petrol);
-	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme.petrol);
-	setIconColor(SC_D.ui.actionPickAmplitude, colorTheme.blue);
+	auto colorTheme = ColorTheme::Current();
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->green);
+	setIconColor(SC_D.ui.actionShowZComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowNComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowEComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->petrol);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->petrol);
+	setIconColor(SC_D.ui.actionPickAmplitude, colorTheme->blue);
 
 	{
 		QPalette pal = SC_D.btnApply->palette();
-		pal.setColor(QPalette::ButtonText, colorTheme.white);
-		pal.setColor(QPalette::Button, colorTheme.red);
+		pal.setColor(QPalette::ButtonText, colorTheme->white);
+		pal.setColor(QPalette::Button, colorTheme->red);
 		SC_D.btnApply->setPalette(pal);
 		SC_D.btnApply->setIcon(SC_D.btnApply->icon());
-		setIconColor(SC_D.btnApply, colorTheme.lightRed);
+		setIconColor(SC_D.btnApply, colorTheme->lightRed);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

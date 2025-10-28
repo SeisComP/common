@@ -580,7 +580,7 @@ QIcon iconFromURL(const QString &url) {
 }
 
 
-bool isDarkMode() {
+bool ColorTheme::IsDarkMode() {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 	return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
 #else
@@ -592,29 +592,33 @@ bool isDarkMode() {
 }
 
 
-const ColorTheme &currentColorTheme() {
+const ColorTheme *ColorTheme::Current() {
 	static ColorTheme colorTheme[2] = {
 		{
-			QColor(52, 131, 105), // green
-			QColor(255, 116, 0),  // orange
-			QColor(0, 136, 159),  // petrol
-			QColor(31, 121, 181), // blue
+			QColor(106, 179, 50), // backgroundConfirm
+			QColor(255, 240, 214),// foregroundConfirm
+			QColor(0, 153, 102),  // green
+			QColor(255, 128, 0),  // orange
+			QColor(0, 152, 166),  // petrol
+			QColor(22, 133, 217), // blue
 			QColor(232, 45, 41),  // red
 			QColor(249, 221, 220),// lightRed
 			QColor(255, 255, 255) // white
 		},
 		{
-			QColor(63, 162, 129), // green
-			QColor(255, 139, 41), // orange
-			QColor(0, 155, 178),  // petrol
-			QColor(31, 141, 207), // blue
+			QColor(106, 179, 50), // backgroundConfirm
+			QColor(255, 240, 214),// foregroundConfirm
+			QColor(25, 178, 125), // green
+			QColor(255, 147, 38), // orange
+			QColor(0, 163, 178),  // petrol
+			QColor(21, 142, 217), // blue
 			QColor(232, 45, 41),  // red
 			QColor(249, 221, 220),// lightRed
 			QColor(255, 255, 255) // white
 		}
 	};
 
-	return colorTheme[isDarkMode() ? 1 : 0];
+	return &colorTheme[IsDarkMode() ? 1 : 0];
 }
 
 
