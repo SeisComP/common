@@ -3888,8 +3888,13 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 	QDateTime end;
 
 	if ( !SCScheme.dateTime.useLocalTime ) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+		start.setTimeZone(QTimeZone::UTC);
+		end.setTimeZone(QTimeZone::UTC);
+#else
 		start.setTimeZone(QTimeZone(Qt::UTC));
 		end.setTimeZone(QTimeZone(Qt::UTC));
+#endif
 		start.setSecsSinceEpoch(tw.startTime().epochSeconds());
 		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
