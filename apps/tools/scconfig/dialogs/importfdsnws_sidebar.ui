@@ -171,7 +171,7 @@
         </property>
         <property name="dateTime">
          <datetime>
-          <hour>20</hour>
+          <hour>19</hour>
           <minute>0</minute>
           <second>0</second>
           <year>1999</year>
@@ -587,6 +587,30 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>editServerURL</tabstop>
+  <tabstop>dtStart</tabstop>
+  <tabstop>dtEnd</tabstop>
+  <tabstop>dtStartBefore</tabstop>
+  <tabstop>dtStartAfter</tabstop>
+  <tabstop>dtEndBefore</tabstop>
+  <tabstop>dtEndAfter</tabstop>
+  <tabstop>editNetworks</tabstop>
+  <tabstop>editStations</tabstop>
+  <tabstop>editLocations</tabstop>
+  <tabstop>editChannels</tabstop>
+  <tabstop>comboGeoType</tabstop>
+  <tabstop>spinMinLatitude</tabstop>
+  <tabstop>spinMaxLatitude</tabstop>
+  <tabstop>spinMinLongitude</tabstop>
+  <tabstop>spinMaxLongitude</tabstop>
+  <tabstop>spinLatitude</tabstop>
+  <tabstop>spinLongitude</tabstop>
+  <tabstop>spinMinRadius</tabstop>
+  <tabstop>spinMaxRadius</tabstop>
+  <tabstop>checkResponses</tabstop>
+  <tabstop>editFilename</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -23,6 +23,7 @@
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/io/importer.h>
 #include <seiscomp/system/environment.h>
+#include <seiscomp/system/pluginregistry.h>
 
 #include <QMessageBox>
 #include <QTextEdit>
@@ -149,14 +150,22 @@ void ImportFDSNWSDialog::accept() {
 	else {
 		Seiscomp::IO::ImporterPtr imp = Seiscomp::IO::Importer::Create("fdsnxml");
 		if ( !imp ) {
-			QMessageBox::critical(nullptr,
-			                      tr("FDSN StationXML not supported"),
-			                      tr("Make sure that the plugin 'fdsnxml' is loaded. This "
-			                         "is configured in the default configuration file "
-			                         "but if the plugin list is overwritten (plugins = a,b,c) "
-			                         "rather than inherited (plugins = ${plugins},a,b,c) "
-			                         "then this plugin might have been removed."));
-			return;
+			auto registry = Seiscomp::System::PluginRegistry::Instance();
+			registry->addPluginName("fdsnxml");
+			registry->loadPlugins();
+			imp = Seiscomp::IO::Importer::Create("fdsnxml");
+			if ( !imp ) {
+				QStringList errors;
+				for ( const auto &err : registry->errors() ) {
+					errors.push_back(err.data());
+				}
+
+				QMessageBox::critical(nullptr,
+				                      tr("FDSN StationXML not supported"),
+				                      tr("The 'fdsnxml' plugin could not be loaded or does not "
+				                         "provide the required feature:\n%1").arg(errors.join("\n")));
+				return;
+			}
 		}
 
 		query = _query + "format=xml&level=response";
@@ -251,7 +260,7 @@ void ImportFDSNWSDialog::fetch() {
 	}
 
 	if ( !_uiSideBar.editStations->text().isEmpty() ) {
-		oss << "station=" << qPrintable(_uiSideBar.editLocations->text()) << "&";
+		oss << "station=" << qPrintable(_uiSideBar.editStations->text()) << "&";
 	}
 
 	if ( !_uiSideBar.editLocations->text().isEmpty() ) {
