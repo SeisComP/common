@@ -27,17 +27,16 @@
 #include <seiscomp/utils/files.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/version.h>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 
 #ifndef WIN32
 #include <dlfcn.h>
 #endif
-#include <stdlib.h>
+#include <cstdlib>
+#include <filesystem>
 
 
 using namespace std;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 namespace {
@@ -191,7 +190,7 @@ void PluginRegistry::addPluginName(const string &name) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PluginRegistry::addPluginPath(const string &path) {
 	if ( std::find(_paths.begin(), _paths.end(), path) == _paths.end() ) {
-		SEISCOMP_DEBUG("Adding plugin path: %s", path.c_str());
+		SEISCOMP_DEBUG("Adding plugin path: %s", path);
 		_paths.push_back(path);
 	}
 }
@@ -211,28 +210,39 @@ void PluginRegistry::addPackagePath(const string &package) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int PluginRegistry::loadPlugins() {
-	for ( const auto &name : _pluginNames ) {
-		if ( name.empty() ) continue;
-		string filename = find(name);
-		if ( filename.empty() ) {
-			SEISCOMP_ERROR("Did not find plugin %s", name.c_str());
-			return -1;
-		}
+	_errors.clear();
 
-		SEISCOMP_DEBUG("Trying to open plugin at %s", filename.c_str());
-		PluginEntry e = open(filename);
-		if ( e.plugin == nullptr ) {
-			if ( e.handle == nullptr ) {
-				SEISCOMP_ERROR("Unable to load plugin %s", name.c_str());
-				return -1;
-			}
-			else
-				SEISCOMP_WARNING("The plugin %s has been loaded already",
-				                 name.c_str());
+	for ( const auto &name : _pluginNames ) {
+		if ( name.empty() ) {
 			continue;
 		}
 
-		SEISCOMP_INFO("Plugin %s registered", name.c_str());
+		string filename = find(name);
+		if ( filename.empty() ) {
+			SEISCOMP_ERROR("Did not find plugin %s", name);
+			_errors.push_back("Did not find plugin " + name);
+			return -1;
+		}
+
+		SEISCOMP_DEBUG("Trying to open plugin at %s", filename);
+
+		string errorMsg;
+		PluginEntry e = open(filename, &errorMsg);
+		if ( !e.plugin ) {
+			if ( !e.handle ) {
+				if ( !errorMsg.empty() ) {
+					_errors.push_back(errorMsg);
+				}
+				SEISCOMP_ERROR("Unable to load plugin %s", name);
+				return -1;
+			}
+			else {
+				SEISCOMP_WARNING("The plugin %s has been loaded already", name);
+			}
+			continue;
+		}
+
+		SEISCOMP_INFO("Plugin %s registered", name);
 		_plugins.push_back(e);
 	}
 
@@ -291,7 +301,7 @@ string PluginRegistry::find(const string &name) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PluginRegistry::freePlugins() {
 	for ( auto &p : _plugins ) {
-		SEISCOMP_DEBUG("Unload plugin '%s'", p.plugin->description().description.c_str());
+		SEISCOMP_DEBUG("Unload plugin '%s'", p.plugin->description().description);
 
 		p.plugin = nullptr;
 #ifndef WIN32
@@ -336,6 +346,15 @@ PluginRegistry::iterator PluginRegistry::end() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const std::vector<std::string> &PluginRegistry::errors() const {
+	return _errors;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PluginRegistry::findLibrary(void *handle) const {
 	for ( const auto &p : _plugins ) {
 		if ( p.handle == handle ) {
@@ -351,7 +370,7 @@ bool PluginRegistry::findLibrary(void *handle) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
+PluginRegistry::PluginEntry PluginRegistry::open(const string &file, std::string *errorMsg) const {
 	// Load shared library
 #ifdef WIN32
 	void *handle = LoadLibrary(file.c_str());
@@ -359,7 +378,11 @@ PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
 	void *handle = dlopen(file.c_str(), RTLD_NOW | RTLD_GLOBAL);
 #endif
 	if ( !handle ) {
-		SEISCOMP_ERROR("Loading plugin %s failed: %s", file.c_str(), sysLastError().c_str());
+		auto sysErr = sysLastError();
+		if ( errorMsg ) {
+			*errorMsg = file + ": " + sysErr;
+		}
+		SEISCOMP_ERROR("Loading plugin %s failed: %s", file, sysErr);
 		return PluginEntry(nullptr, nullptr, file);
 	}
 
@@ -378,7 +401,13 @@ PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
 	Core::Plugin::CreateFunc func = (Core::Plugin::CreateFunc)GetProcAddress((HMODULE)handle, "createSCPlugin");
 #endif
 	if ( !func ) {
-		SEISCOMP_ERROR("Could not load symbol createPlugin: %s", sysLastError().c_str());
+		auto sysErr = sysLastError();
+
+		if ( errorMsg ) {
+			*errorMsg = file + "@createPlugin: " + sysErr;
+		}
+
+		SEISCOMP_ERROR("Could not load symbol createPlugin: %s", sysErr);
 #ifndef WIN32
 		dlclose(handle);
 #else
@@ -389,7 +418,11 @@ PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
 
 	Core::Plugin *plugin = func();
 	if ( !plugin ) {
-		SEISCOMP_ERROR("No plugin return from %s", file.c_str());
+		if ( errorMsg ) {
+			*errorMsg = file + "@createPlugin: void";
+		}
+
+		SEISCOMP_ERROR("No plugin return from %s", file);
 #ifndef WIN32
 		dlclose(handle);
 #else
@@ -406,7 +439,7 @@ PluginRegistry::PluginEntry PluginRegistry::open(const string &file) const {
 		                 SC_API_VERSION_MAJOR(plugin->description().apiVersion),
 		                 SC_API_VERSION_MINOR(plugin->description().apiVersion),
 		                 SC_API_VERSION_MAJOR(SC_API_VERSION), SC_API_VERSION_MINOR(SC_API_VERSION),
-		                 file.c_str());
+		                 file);
 	}
 
 	return PluginEntry(handle, plugin, file);
