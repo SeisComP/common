@@ -218,7 +218,7 @@ void Url::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Url::Status Url::parseScheme(const std::string &url) {
-	auto end = url.find(":");
+	auto end = url.find(':');
 	if ( end == std::string::npos ) {
 		return STATUS_SCHEME_ERROR;
 	}
@@ -240,9 +240,9 @@ Url::Status Url::parseScheme(const std::string &url) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Url::Status Url::parseAuthority(const std::string &url) {
-	auto slashPos = url.find("/", _currentPos);
-	auto markPos = url.find("?", _currentPos);
-	auto hashPos = url.find("#", _currentPos);
+	auto slashPos = url.find('/', _currentPos);
+	auto markPos = url.find('?', _currentPos);
+	auto hashPos = url.find('#', _currentPos);
 
 	auto end = std::min(slashPos, std::min(markPos, hashPos));
 	if ( end == std::string::npos ) {
@@ -256,14 +256,14 @@ Url::Status Url::parseAuthority(const std::string &url) {
 
 	_currentPos = end;
 
-	auto userInfoEnd = _authority.find("@");
+	auto userInfoEnd = _authority.find('@');
 	if ( userInfoEnd != std::string::npos ) {
 		std::string userInfo = _authority.substr(0, userInfoEnd);
 		if ( userInfo.empty() ) {
 			return STATUS_EMPTY_USER_INFO;
 		}
 
-		end = userInfo.find(":");
+		end = userInfo.find(':');
 		if ( end != std::string::npos ) {
 			_user = Decoded(userInfo.substr(0, end));
 			if ( _user.empty() ) {
@@ -286,7 +286,7 @@ Url::Status Url::parseAuthority(const std::string &url) {
 
 	if ( userInfoEnd < _authority.size() && _authority[userInfoEnd] == '[' ) {
 		// IPv6 specification
-		end = _authority.find("]", userInfoEnd + 1);
+		end = _authority.find(']', userInfoEnd + 1);
 		if ( end == std::string::npos ) {
 			return STATUS_INVALID_HOST;
 		}
@@ -305,7 +305,7 @@ Url::Status Url::parseAuthority(const std::string &url) {
 		}
 	}
 	else {
-		end = _authority.find(":", userInfoEnd);
+		end = _authority.find(':', userInfoEnd);
 	}
 
 	if ( end != std::string::npos ) {
@@ -342,8 +342,8 @@ Url::Status Url::parseAuthority(const std::string &url) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Url::Status Url::parsePath(const std::string &url) {
-	auto markPos = url.find("?", _currentPos);
-	auto hashPos = url.find("#", _currentPos);
+	auto markPos = url.find('?', _currentPos);
+	auto hashPos = url.find('#', _currentPos);
 	auto end = std::min(markPos, hashPos);
 	if ( end != std::string::npos ) {
 		_path = url.substr(_currentPos, end - _currentPos);
@@ -437,7 +437,7 @@ Url::Status Url::parse(const std::string &url, bool implyAuthority) {
 			return ret;
 		}
 	}
-	else if ( url.find(":") != std::string::npos ) {
+	else if ( url.find(':') != std::string::npos ) {
 		auto ret = parseScheme(url);
 		if ( ret != STATUS_OK ) {
 			return ret;
@@ -452,7 +452,7 @@ Url::Status Url::parse(const std::string &url, bool implyAuthority) {
 	}
 
 	// Fragment check
-	auto fragmentPos = url.find("#", _currentPos);
+	auto fragmentPos = url.find('#', _currentPos);
 	if ( fragmentPos == std::string::npos ) {
 		_query = url.substr(_currentPos, url.size() - _currentPos);
 	}
@@ -568,11 +568,13 @@ std::string Url::Encoded(std::string_view sv) {
 std::string Url::Decoded(std::string_view sv) {
 	std::string decoded = {};
 	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
-		if ( sv[i] == '+' )
+		if ( sv[i] == '+' ) {
 			decoded += ' ';
+		}
 		else if ( sv[i] == '%' ) {
 			++i;
-			char hi, lo;
+			char hi;
+			char lo;
 			if ( i < sv.length() ) {
 				hi = sv[i];
 			}
