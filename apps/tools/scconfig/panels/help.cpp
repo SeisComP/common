@@ -21,6 +21,7 @@
 #include "help.h"
 #include "../icon.h"
 
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/system/environment.h>
 
 #include <QAbstractTextDocumentLayout>
@@ -74,7 +75,7 @@ class IconBesideTextDelegate : public QAbstractItemDelegate {
 				)
 			);
 			auto tr = option.rect.adjusted(s.width() + spacing, 0, 0, 0);
-			if ( option.fontMetrics.horizontalAdvance(text) > tr.width() ) {
+			if ( QT_FM_WIDTH(option.fontMetrics, text) > tr.width() ) {
 				text = option.fontMetrics.elidedText(text, Qt::ElideRight, tr.width());
 			}
 

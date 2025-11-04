@@ -1685,7 +1685,7 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 
 		connect(panel, &ConfiguratorPanel::reloadRequested, this, &Configurator::resetAll);
 
-		auto requiredWidth = _listWidget->fontMetrics().horizontalAdvance(panel->title());
+		auto requiredWidth = QT_FM_WIDTH(_listWidget->fontMetrics(), panel->title());
 		if ( requiredWidth > _listWidget->width() ) {
 			_listWidget->setFixedWidth(requiredWidth + _listWidget->fontMetrics().averageCharWidth());
 		}

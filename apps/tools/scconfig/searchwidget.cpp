@@ -62,9 +62,9 @@ void findMatch(QModelIndexList &hits, QModelIndex start, const QString &text,
 
 		if ( !hit && withValues ) {
 			hit = fullMatch ?
-				idx.siblingAtColumn(2).data(Qt::DisplayRole).toString().compare(text, cs) == 0
+				idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().compare(text, cs) == 0
 				:
-				idx.siblingAtColumn(2).data(Qt::DisplayRole).toString().contains(text, cs);
+				idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().contains(text, cs);
 		}
 
 		if ( !hit && withHelp ) {
