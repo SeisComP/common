@@ -223,6 +223,24 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.path(), "/sear#ch");
 }
 
+BOOST_AUTO_TEST_CASE(Queries) {
+	Url url;
+	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test?debug"));
+	BOOST_CHECK_EQUAL(url.hasQueryItem("debug"), true);
+	BOOST_CHECK_EQUAL(url.queryItems().size(), 1);
+
+	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test?debug="));
+	BOOST_CHECK_EQUAL(url.hasQueryItem("debug"), true);
+	BOOST_CHECK_EQUAL(url.queryItems().size(), 1);
+
+	BOOST_CHECK(!url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test?=true"));
+
+	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test?debug&&verbose=false"));
+	BOOST_CHECK_EQUAL(url.hasQueryItem("debug"), true);
+	BOOST_CHECK_EQUAL(url.queryItemValue("verbose"), "false");
+	BOOST_CHECK_EQUAL(url.queryItems().size(), 2);
+}
+
 BOOST_AUTO_TEST_CASE(Extract) {
 	BOOST_CHECK_EQUAL(Url("http://localhost").withoutScheme(), "localhost");
 	BOOST_CHECK_EQUAL(Url("loc:/localhost").withoutScheme(), "loc:/localhost");

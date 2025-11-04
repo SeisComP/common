@@ -57,23 +57,27 @@ class SC_SYSTEM_CORE_API Url {
 			Status,
 			EVALUES(
 				STATUS_OK,
+				STATUS_ERROR,
 				STATUS_EMPTY,
 				STATUS_SCHEME_ERROR,
 				STATUS_EMPTY_USER_INFO,
 				STATUS_EMPTY_USERNAME,
 				STATUS_INVALID_HOST,
 				STATUS_PORT_IS_NO_NUMBER,
-				STATUS_PORT_OUT_OF_RANGE
+				STATUS_PORT_OUT_OF_RANGE,
+				STATUS_INVALID_QUERY
 			),
 			ENAMES(
 				"OK",
+				"Error",
 				"URL is empty",
 				"Scheme is required",
 				"Empty user info not allowed",
 				"Empty username not allowed",
 				"Invalid host",
 				"Expected port as number",
-				"Port out of range"
+				"Port out of range",
+				"Invalid query"
 			)
 		);
 
@@ -264,10 +268,9 @@ class SC_SYSTEM_CORE_API Url {
 
 		/**
 		 * @brief Parses query from the URL and builds key/value param lookup
-		 * @param url The URL
 		 * @return Status code
 		 */
-		Status parseQuery(const std::string &url);
+		Status parseQuery();
 
 		/**
 		 * @brief Loads scheme specific default values, e.g., for HTTP port 80

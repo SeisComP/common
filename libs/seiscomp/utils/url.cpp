@@ -364,33 +364,44 @@ Url::Status Url::parsePath(const std::string &url) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Url::Status Url::parseQuery(const std::string &url) {
+Url::Status Url::parseQuery() {
 	size_t start = 0;
+
 	do {
-		auto end = _query.find('=', start);
+		std::string param;
+		auto end = _query.find('&', start);
 		if ( end == std::string::npos ) {
-			break;
+			param = _query.substr(start);
 		}
-
-		std::string key = Decoded(_query.substr(start, end - start));
-		if ( key.empty() ) {
-			break;
-		}
-
-		start = end + 1;
-		if ( start == std::string::npos ) {
-			break;
-		}
-
-		end = _query.find('&', start);
-		if ( end == std::string::npos )
-			_queryItems[key] = Decoded(_query.substr(start));
 		else {
-			_queryItems[key] = Decoded(_query.substr(start, end - start));
-			++end;
+			param = _query.substr(start, end - start);
+		}
+
+		if ( !param.empty() ) {
+			std::string key;
+			auto pend = param.find('=');
+			if ( pend == std::string::npos ) {
+				key = Decoded(param);
+				if ( key.empty() ) {
+					return STATUS_INVALID_QUERY;
+				}
+
+				_queryItems[key] = "";
+			}
+			else {
+				key = Decoded(param.substr(0, pend));
+				if ( key.empty() ) {
+					return STATUS_INVALID_QUERY;
+				}
+
+				_queryItems[key] = Decoded(param.substr(pend + 1));
+			}
 		}
 
 		start = end;
+		if ( start != std::string::npos ) {
+			++start;
+		}
 	}
 	while ( start != std::string::npos );
 
@@ -452,7 +463,7 @@ Url::Status Url::parse(const std::string &url, bool implyAuthority) {
 
 	_fragment = Decoded(_fragment);
 
-	auto ret = parseQuery(url);
+	auto ret = parseQuery();
 	if ( ret != STATUS_OK ) {
 		return ret;
 	}
