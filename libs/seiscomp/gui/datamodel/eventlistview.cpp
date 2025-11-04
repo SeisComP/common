@@ -1726,10 +1726,10 @@ class EventTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], "");
 			}
 
-			if ( ev->preferredFocalMechanismID().empty() ) {
+			if ( ev->preferredFocalMechanismID().empty() && !ev->focalMechanismReferenceCount() ) {
 				setData(config.columnMap[COL_FM], Qt::DisplayRole, QVariant());
 				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QVariant());
-				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant());
+				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant());
 			}
 			else if ( treeWidget() && view ) {
 				if ( ev->focalMechanismReferenceCount() > 0 ) {
@@ -1738,8 +1738,16 @@ class EventTreeItem : public SchemeTreeItem {
 				else {
 					setText(config.columnMap[COL_FM], QObject::tr("Yes"));
 				}
+				if ( !ev->preferredFocalMechanismID().empty() ) {
+					QFont f = font(config.columnMap[COL_FM]);
+					f.setBold(true);
+					setData(config.columnMap[COL_FM], Qt::FontRole, f);
+				}
+				else {
+					setData(config.columnMap[COL_FM], Qt::FontRole, QVariant());
+				}
 				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
-				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant::fromValue<void*>(ev));
+				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant::fromValue<void*>(ev));
 			}
 
 			auto *origin = Origin::Find(ev->preferredOriginID());
@@ -4201,29 +4209,31 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		it.close();
 	}
 
-	if ( SC_D._withFocalMechanisms ) {
-		progress.setLabelText(tr("Reading focal mechanisms..."));
+	progress.setLabelText(tr("Reading focal mechanisms references..."));
 
-		it = getEventFocalMechanismReferences(SC_D._reader, filter);
+	it = getEventFocalMechanismReferences(SC_D._reader, filter);
 
-		FocalMechanismReferencePtr fmref;
+	FocalMechanismReferencePtr fmref;
 
-		for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
-			if ( progress.wasCanceled() ) {
-				break;
-			}
-
-			QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
-			if ( mit == eventIDs.end() ) {
-				continue;
-			}
-
-			const EventPtr &ev = mit.value();
-
-			ev->add(fmref.get());
+	for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
+		if ( progress.wasCanceled() ) {
+			break;
 		}
 
-		it.close();
+		QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
+		if ( mit == eventIDs.end() ) {
+			continue;
+		}
+
+		const EventPtr &ev = mit.value();
+
+		ev->add(fmref.get());
+	}
+
+	it.close();
+
+	if ( SC_D._withFocalMechanisms ) {
+		progress.setLabelText(tr("Reading focal mechanisms..."));
 
 		it = getEventFocalMechanisms(SC_D._reader, filter);
 
@@ -5702,7 +5712,7 @@ void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 	}
 
 	if ( column == SC_D._itemConfig.columnMap[COL_FM] ) {
-		auto *ev = static_cast<Event*>(item->data(column, Qt::UserRole+1).value<void*>());
+		auto *ev = static_cast<Event*>(item->data(column, Qt::UserRole + 1).value<void*>());
 		if ( ev ) {
 			emit eventFMSelected(ev);
 			return;
