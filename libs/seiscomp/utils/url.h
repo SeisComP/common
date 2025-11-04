@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API Url {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		Url(const std::string &url = {});
+		Url(std::string_view url = {});
 
 
 	// ----------------------------------------------------------------------
@@ -99,7 +99,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @return true if the URL could be parsed, false in case of any
 		 *         invalid URL.
 		 */
-		bool setUrl(const std::string &url);
+		bool setUrl(std::string_view url);
 
 		/**
 		 * @brief Returns the URL scheme
@@ -152,15 +152,17 @@ class SC_SYSTEM_CORE_API Url {
 
 		/**
 		 * @brief Checks if a specific query parameter is set
+		 * @param The query item key
 		 * @return True if the parameter is set
 		 */
-		bool hasQueryItem (const std::string&) const;
+		bool hasQueryItem (const std::string &key) const;
 
 		/**
 		 * @brief Returns the value of a specific query parameter
+		 * @param The query item key
 		 * @return The value
 		 */
-		std::string queryItemValue(const std::string&) const;
+		std::string queryItemValue(const std::string &key) const;
 
 		/**
 		 * @brief Returns a reference to a query item map
@@ -243,28 +245,28 @@ class SC_SYSTEM_CORE_API Url {
 		 *                       given.
 		 * @return Status code
 		 */
-		Status parse(const std::string &url, bool implyAuthority);
+		Status parse(std::string_view url, bool implyAuthority);
 
 		/**
 		 * @brief Parses scheme from URL
 		 * @param url The URL
 		 * @return Status code
 		 */
-		Status parseScheme(const std::string &url);
+		Status parseScheme(std::string_view url);
 
 		/**
 		 * @brief Parses authority from URL
 		 * @param The URL
 		 * @return Status code
 		 */
-		Status parseAuthority(const std::string &url);
+		Status parseAuthority(std::string_view url);
 
 		/**
 		 * @brief Parses path from URL
 		 * @param The URL
 		 * @return Status code
 		 */
-		Status parsePath(const std::string &url);
+		Status parsePath(std::string_view url);
 
 		/**
 		 * @brief Parses query from the URL and builds key/value param lookup
