@@ -122,14 +122,14 @@ class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
 			auto sourceFactory = AmplitudeProcessorFactory::Find(sourceType);
 			if ( !sourceFactory ) {
 				SEISCOMP_ERROR("alias: amplitude source factory '%s' does not exist",
-				               sourceType.c_str());
+				               sourceType);
 				return false;
 			}
 
 			auto factory = AmplitudeProcessorFactory::Find(aliasType);
 			if ( factory ) {
 				SEISCOMP_ERROR("alias: amplitude alias type '%s' is already registered",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -146,7 +146,7 @@ class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
 			auto factory = AmplitudeProcessorFactory::Find(aliasType);
 			if ( !factory ) {
 				SEISCOMP_ERROR("alias: amplitude alias type '%s' does not exist",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -320,10 +320,8 @@ class Context {
 						if ( pick->evaluationMode() != DataModel::MANUAL ) {
 							// We do not accept automatic picks
 							SEISCOMP_DEBUG("%s.%s.%s: arrival '%s' no accepted, origin evaluation  mode != manual",
-							               env.networkCode.c_str(),
-							               env.stationCode.c_str(),
-							               env.locationCode.c_str(),
-							               arr->phase().code().c_str());
+							               env.networkCode, env.stationCode,
+							               env.locationCode, arr->phase().code());
 							continue;
 						}
 					}
@@ -1885,10 +1883,10 @@ void AmplitudeProcessor::process(const Record *record) {
 			if ( progress >= 100 ) {
 				if ( status() == LowSNR )
 					SEISCOMP_DEBUG("Amplitude %s computation for stream %s failed because of low SNR (%.2f < %.2f)",
-					              _type.c_str(), record->streamID().c_str(), res.snr, _config.snrMin);
+					              _type, record->streamID(), res.snr, _config.snrMin);
 				else if ( status() < Terminated ) {
 					SEISCOMP_DEBUG("Amplitude %s computation for stream %s failed -> abort",
-					              _type.c_str(), record->streamID().c_str());
+					              _type, record->streamID());
 					setStatus(Error, 3);
 				}
 
@@ -2165,11 +2163,9 @@ bool AmplitudeProcessor::computeNoise(const DoubleArray &data, int i1, int i2, d
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("%s.%s.%s.%s - %s amplitude configuration:",
-	               settings.networkCode.c_str(),
-	               settings.stationCode.c_str(),
-	               settings.locationCode.c_str(),
-	               settings.channelCode.c_str(),
-	               _type.c_str());
+	               settings.networkCode, settings.stationCode,
+	               settings.locationCode, settings.channelCode,
+	               _type);
 
 	_environment.networkCode = settings.networkCode;
 	_environment.stationCode = settings.stationCode;
@@ -2248,11 +2244,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".noiseBegin");
 		if ( !_config.noiseBegin.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise begin '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2262,11 +2256,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".noiseEnd");
 		if ( !_config.noiseEnd.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise end '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2276,11 +2268,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".signalBegin");
 		if ( !_config.signalBegin.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal begin '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2290,11 +2280,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".signalEnd");
 		if ( !_config.signalEnd.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal end '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2327,10 +2315,10 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + maximum distance = %.5f deg", _config.maximumDistance);
 	SEISCOMP_DEBUG("  + minimum depth = %.3f km", _config.minimumDepth);
 	SEISCOMP_DEBUG("  + maximum depth = %.3f km", _config.maximumDepth);
-	SEISCOMP_DEBUG("  + noise begin = %s", _config.noiseBegin.toString().c_str());
-	SEISCOMP_DEBUG("  + noise end = %s", _config.noiseEnd.toString().c_str());
-	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString().c_str());
-	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString().c_str());
+	SEISCOMP_DEBUG("  + noise begin = %s", _config.noiseBegin.toString());
+	SEISCOMP_DEBUG("  + noise end = %s", _config.noiseEnd.toString());
+	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString());
+	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString());
 	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
 	SEISCOMP_DEBUG("  + minimum period = %.3f", _config.minimumPeriod);
 	SEISCOMP_DEBUG("  + maximum period = %.3f", _config.maximumPeriod);
@@ -2462,7 +2450,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 					if ( !cfg->getString("magnitudes." + type() + ".regions").empty() ) {
 						SEISCOMP_WARNING("%s magnitude: ignoring obsolete "
 						                 "configuration parameter: magnitudes.%s.regions",
-						                 type().c_str(), type().c_str());
+						                 type(), type());
 					}
 				}
 				catch ( ... ) {}
@@ -2474,7 +2462,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 
 					if ( !regionalizedSettings->regions ) {
 						SEISCOMP_ERROR("Failed to read/parse %s regions file: %s",
-						               type().c_str(), filename.c_str());
+						               type(), filename);
 						return false;
 					}
 
@@ -2493,13 +2481,13 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 						try {
 							if ( !cfg->getBool(cfgPrefix + "enable") ) {
 								SEISCOMP_DEBUG("%s: - region %s (disabled)",
-								               _type.c_str(), feature->name().c_str());
+								               _type, feature->name());
 								continue;
 							}
 						}
 						catch ( ... ) {
 							SEISCOMP_DEBUG("%s: - region %s (disabled)",
-							               _type.c_str(), feature->name().c_str());
+							               _type, feature->name());
 							continue;
 						}
 
