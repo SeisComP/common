@@ -1816,11 +1816,11 @@ void AmplitudeView::applyThemeColors() {
 
 	{
 		QPalette pal = SC_D.btnApply->palette();
-		pal.setColor(QPalette::ButtonText, colorTheme->white);
-		pal.setColor(QPalette::Button, colorTheme->red);
+		pal.setColor(QPalette::ButtonText, colorTheme->foregroundConfirm);
+		pal.setColor(QPalette::Button, colorTheme->backgroundConfirm);
 		SC_D.btnApply->setPalette(pal);
 		SC_D.btnApply->setIcon(SC_D.btnApply->icon());
-		setIconColor(SC_D.btnApply, colorTheme->lightRed);
+		setIconColor(SC_D.btnApply, colorTheme->foregroundConfirm);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
