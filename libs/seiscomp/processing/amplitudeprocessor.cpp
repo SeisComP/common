@@ -1293,9 +1293,7 @@ void AmplitudeProcessor::SignalTime::evaluate(const AmplitudeProcessor *proc, bo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor::AmplitudeProcessor() {
-	init();
-}
+AmplitudeProcessor::AmplitudeProcessor() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1303,21 +1301,7 @@ AmplitudeProcessor::AmplitudeProcessor() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeProcessor(const std::string& type)
-: _type(type) {
-	init();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor::init() {
-	_enableUpdates = false;
-	_enableResponses = false;
-	_responseApplied = false;
-	_config = Config();
-}
+: _type(type) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1738,7 +1722,7 @@ void AmplitudeProcessor::reset() {
 	_trigger = Core::None;
 	_noiseAmplitude = Core::None;
 	_noiseOffset = Core::None;
-	_responseApplied = false;
+	clear(State::ResponseApplied);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1961,7 +1945,7 @@ void AmplitudeProcessor::process(const Record *record) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::initFilter(double fsamp) {
-	if ( _enableResponses ) {
+	if ( _enableResponses || check(State::FilterCreated) ) {
 		TimeWindowProcessor::initFilter(fsamp);
 		return;
 	}
@@ -2000,6 +1984,10 @@ void AmplitudeProcessor::initFilter(double fsamp) {
 
 		_stream.filter = filter;
 	}
+
+	// Flag it as done to avoid creating another chain including the current filter
+	// again when reset() is called.
+	set(State::FilterCreated);
 
 	TimeWindowProcessor::initFilter(fsamp);
 }
@@ -2071,9 +2059,11 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 				return;
 		}
 
-		if ( _responseApplied ) return;
+		if ( check(State::ResponseApplied) ) {
+			return;
+		}
 
-		_responseApplied = true;
+		set(State::ResponseApplied);
 
 		if ( !deconvolveData(sensor->response(), _data, intSteps) ) {
 			setStatus(DeconvolutionFailed, 0);

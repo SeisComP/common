@@ -211,12 +211,12 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		};
 
 		struct Result {
-			StreamComponent component;
-			const Record   *record;
-			AmplitudeValue  amplitude;
-			AmplitudeTime   time;
-			double          period;
-			double          snr;
+			StreamComponents component;
+			const Record    *record;
+			AmplitudeValue   amplitude;
+			AmplitudeTime    time;
+			double           period;
+			double           snr;
 		};
 
 		using IDList = std::vector<std::string>;
@@ -509,8 +509,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		// pre-arrival offset and rms
 		OPT(double)     _noiseOffset, _noiseAmplitude, _lastAmplitude;
 
-		bool            _enableUpdates;
-		bool            _enableResponses;
+		bool            _enableUpdates{false};
+		bool            _enableResponses{false};
 
 		// config
 		Config          _config;
@@ -521,13 +521,30 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		std::string     _pickID;
 
-		bool            _responseApplied;
+		enum class State {
+			Empty           = 0x00,
+			ResponseApplied = 0x01, // The data has been deconvolved
+			FilterCreated   = 0x02  // The unit conversion filter has been created
+		};
+
+		void set(State flag) {
+			_state |= static_cast<unsigned>(flag);
+		}
+
+		void clear(State flag) {
+			_state &= ~static_cast<unsigned>(flag);
+		}
+
+		bool check(State flag) const {
+			return _state & static_cast<unsigned>(flag);
+		}
 
 
 	// ----------------------------------------------------------------------
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
+		unsigned    _state{static_cast<unsigned>(State::Empty)};
 		PublishFunc _func;
 
 
