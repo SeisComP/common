@@ -23,7 +23,6 @@
 
 
 #include <string>
-#include <iostream>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/timewindow.h>
 #include <seiscomp/io/recordstream.h>
