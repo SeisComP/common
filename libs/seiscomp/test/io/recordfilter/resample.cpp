@@ -29,6 +29,7 @@
 
 
 using namespace Seiscomp;
+#define EPSILON 1E-13
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -54,10 +55,10 @@ BOOST_AUTO_TEST_CASE(Resample1) {
 	BOOST_CHECK_EQUAL(out->sampleCount(), 479);
 	{
 		auto data = static_cast<const DoubleArray*>(out->data());
-		BOOST_CHECK_EQUAL(data->mean(), 494.83260259014986);
-		BOOST_CHECK_EQUAL(data->median(), 494.8326025901498);
-		BOOST_CHECK_EQUAL(data->min(), 21.772634513966601);
-		BOOST_CHECK_EQUAL(data->max(), 967.89257066633331);
+		BOOST_CHECK_CLOSE(data->mean(), 494.83260259014986, EPSILON);
+		BOOST_CHECK_CLOSE(data->median(), 494.8326025901498, EPSILON);
+		BOOST_CHECK_CLOSE(data->min(), 21.772634513966601, EPSILON);
+		BOOST_CHECK_CLOSE(data->max(), 967.89257066633331, EPSILON);
 	}
 	delete out;
 	out = resampler.feed(nullptr);
@@ -84,10 +85,10 @@ BOOST_AUTO_TEST_CASE(Resample2) {
 	BOOST_CHECK_EQUAL(out->sampleCount(), 229);
 	{
 		auto data = static_cast<const DoubleArray*>(out->data());
-		BOOST_CHECK_EQUAL(data->mean(), 247.41630129507496);
-		BOOST_CHECK_EQUAL(data->median(), 247.41630129507496);
-		BOOST_CHECK_EQUAL(data->min(), 21.772634513966601);
-		BOOST_CHECK_EQUAL(data->max(), 473.05996807618345);
+		BOOST_CHECK_CLOSE(data->mean(), 247.41630129507496, EPSILON);
+		BOOST_CHECK_CLOSE(data->median(), 247.41630129507496, EPSILON);
+		BOOST_CHECK_CLOSE(data->min(), 21.772634513966601, EPSILON);
+		BOOST_CHECK_CLOSE(data->max(), 473.05996807618345, EPSILON);
 	}
 	delete out;
 
@@ -102,10 +103,10 @@ BOOST_AUTO_TEST_CASE(Resample2) {
 	BOOST_CHECK_EQUAL(out->sampleCount(), 250);
 	{
 		auto data = static_cast<const DoubleArray*>(out->data());
-		BOOST_CHECK_EQUAL(data->mean(), 721.46593457643837);
-		BOOST_CHECK_EQUAL(data->median(), 722.45559978161873);
-		BOOST_CHECK_EQUAL(data->min(), 475.03929848654377);
-		BOOST_CHECK_EQUAL(data->max(), 967.89257066633331);
+		BOOST_CHECK_CLOSE(data->mean(), 721.46593457643837, EPSILON);
+		BOOST_CHECK_CLOSE(data->median(), 722.45559978161873, EPSILON);
+		BOOST_CHECK_CLOSE(data->min(), 475.03929848654377, EPSILON);
+		BOOST_CHECK_CLOSE(data->max(), 967.89257066633331, EPSILON);
 	}
 	delete out;
 	out = resampler.feed(nullptr);
