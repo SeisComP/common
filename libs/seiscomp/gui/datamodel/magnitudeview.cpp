@@ -1427,7 +1427,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	connect(_ui->btnWaveforms, SIGNAL(clicked()), this, SLOT(openWaveforms()));
 	connect(_ui->cbEvalStatus, SIGNAL(currentIndexChanged(int)), this, SLOT(evaluationStatusChanged(int)));
 
-	QMenu *selectMenu = new QMenu;
+	QMenu *selectMenu = new QMenu(_ui->btnSelect);
 	QAction *editSelectionFilter = new QAction(tr("Edit"), this);
 	editSelectionFilter->setShortcut(QKeySequence("shift+s"));
 	selectMenu->addAction(editSelectionFilter);
