@@ -1218,7 +1218,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 		                       const EventListViewPrivate::ItemConfig &config,
 		                       QTreeWidgetItem *parent = nullptr)
 		  : SchemeTreeItem(ST_FocalMechanism, origin, config, parent) {
-			update(nullptr);
+			FocalMechanismTreeItem::update(nullptr);
 		}
 
 		~FocalMechanismTreeItem() override = default;
@@ -1383,7 +1383,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 			}
 
-			update(nullptr);
+			EventTreeItem::update(nullptr);
 		}
 
 		~EventTreeItem() override = default;
@@ -1521,6 +1521,11 @@ class EventTreeItem : public SchemeTreeItem {
 
 		void resort() {
 			_resort = true;
+		}
+
+		void reset() {
+			_preferredOrigin = nullptr;
+			_preferredMagnitude = nullptr;
 		}
 
 		void updateHideState() {
@@ -1750,8 +1755,16 @@ class EventTreeItem : public SchemeTreeItem {
 				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant::fromValue<void*>(ev));
 			}
 
-			auto *origin = Origin::Find(ev->preferredOriginID());
-			auto *nm = Magnitude::Find(ev->preferredMagnitudeID());
+			if ( !_preferredOrigin ) {
+				_preferredOrigin = Origin::Find(ev->preferredOriginID());
+			}
+
+			if ( !_preferredMagnitude ) {
+				_preferredMagnitude = Magnitude::Find(ev->preferredMagnitudeID());
+			}
+
+			auto *origin = _preferredOrigin.get();
+			auto *nm = _preferredMagnitude.get();
 
 			setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
 			setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
@@ -2027,6 +2040,8 @@ class EventTreeItem : public SchemeTreeItem {
 		TreeItem *_origins;
 		TreeItem *_focalMechanisms;
 
+		OriginPtr _preferredOrigin;
+		MagnitudePtr _preferredMagnitude;
 		std::string _lastPreferredOriginID;
 		bool _showOnlyOnePerAgency;
 		bool _resort;
@@ -4972,6 +4987,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 						}
 					}
 
+					item->reset();
 					updateEventProcessColumns(item, true);
 					item->update(this);
 
