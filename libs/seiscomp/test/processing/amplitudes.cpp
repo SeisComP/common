@@ -21,10 +21,6 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 
 
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
-
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/core/strings.h>
@@ -38,6 +34,32 @@ using namespace Seiscomp::Processing;
 
 
 BOOST_AUTO_TEST_SUITE(seiscomp_processing_amplitudes)
+
+
+BOOST_AUTO_TEST_CASE(signalUnits) {
+	WaveformProcessor::SignalUnit fromUnit, toUnit;
+
+	fromUnit = WaveformProcessor::Meter; toUnit = WaveformProcessor::Meter;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 0);
+	fromUnit = WaveformProcessor::Meter; toUnit = WaveformProcessor::MeterPerSecond;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), -1);
+	fromUnit = WaveformProcessor::Meter; toUnit = WaveformProcessor::MeterPerSecondSquared;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), -2);
+
+	fromUnit = WaveformProcessor::MeterPerSecond; toUnit = WaveformProcessor::Meter;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 1);
+	fromUnit = WaveformProcessor::MeterPerSecond; toUnit = WaveformProcessor::MeterPerSecond;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 0);
+	fromUnit = WaveformProcessor::MeterPerSecond; toUnit = WaveformProcessor::MeterPerSecondSquared;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), -1);
+
+	fromUnit = WaveformProcessor::MeterPerSecondSquared; toUnit = WaveformProcessor::Meter;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 2);
+	fromUnit = WaveformProcessor::MeterPerSecondSquared; toUnit = WaveformProcessor::MeterPerSecond;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 1);
+	fromUnit = WaveformProcessor::MeterPerSecondSquared; toUnit = WaveformProcessor::MeterPerSecondSquared;
+	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 0);
+}
 
 
 BOOST_AUTO_TEST_CASE(signalTime) {
