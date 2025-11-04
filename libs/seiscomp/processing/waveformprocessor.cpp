@@ -38,18 +38,10 @@ IMPLEMENT_SC_ABSTRACT_CLASS(WaveformProcessor, "WaveformProcessor");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-WaveformProcessor::StreamState::StreamState()
-: lastSample(0), neededSamples(0), receivedSamples(0), initialized(false),
-  fsamp(0.0), filter(nullptr) {
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformProcessor::StreamState::~StreamState() {
-	if ( filter != nullptr ) delete filter;
+	if ( filter ) {
+		delete filter;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -59,14 +51,8 @@ WaveformProcessor::StreamState::~StreamState() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WaveformProcessor::WaveformProcessor(const Core::TimeSpan &initTime,
                                      const Core::TimeSpan &gapThreshold)
-: _enabled(true)
-, _initTime(initTime)
-, _gapThreshold(gapThreshold)
-, _usedComponent(Vertical) {
-	_gapTolerance = 0.;
-	_enableGapInterpolation = false;
-	_enableSaturationCheck = false;
-	_saturationThreshold = -1;
+: _initTime(initTime)
+, _gapThreshold(gapThreshold) {
 	reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -95,6 +81,30 @@ Stream &WaveformProcessor::streamConfig(Component c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Stream &WaveformProcessor::streamConfig(Component c) const {
 	return _streamConfig[c];
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void WaveformProcessor::setTargetComponent(Component c) {
+	_targetComponent = c;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void WaveformProcessor::setUsedComponent(StreamComponents c) {
+	_dataComponents = c;
+	if ( _dataComponents >= Vertical && _dataComponents <= SecondHorizontal ) {
+		_targetComponent = static_cast<Component>(_dataComponents);
+	}
+	else {
+		_targetComponent = NoComponent;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

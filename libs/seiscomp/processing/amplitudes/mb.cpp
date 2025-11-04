@@ -224,8 +224,9 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 	amplitude->value = amax;
 
-	if ( _streamConfig[_usedComponent].gain != 0.0 )
-		amplitude->value /= _streamConfig[_usedComponent].gain;
+	if ( _streamConfig[targetComponent()].gain != 0.0 ) {
+		amplitude->value /= _streamConfig[targetComponent()].gain;
+	}
 	else {
 		setStatus(MissingGain, 0.0);
 		return false;

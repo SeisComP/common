@@ -186,15 +186,11 @@ bool AmplitudeProcessor_msbb::computeAmplitude(const DoubleArray &data,
 	*period = pmax;
 	amplitude->value = amax;
 
-	if ( _usedComponent <= SecondHorizontal ) {
-		if ( _streamConfig[_usedComponent].gain != 0.0 )
-			amplitude->value /= _streamConfig[_usedComponent].gain;
-		else {
-			setStatus(MissingGain, 0.0);
-			return false;
-		}
+	if ( _streamConfig[targetComponent()].gain != 0.0 ) {
+		amplitude->value /= _streamConfig[targetComponent()].gain;
 	}
 	else {
+		setStatus(MissingGain, 0.0);
 		return false;
 	}
 

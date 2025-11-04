@@ -47,12 +47,13 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 	// ----------------------------------------------------------------------
 	public:
 		enum Component {
+			NoComponent               = -1,
 			VerticalComponent         = 0,  /* usually Z */
 			FirstHorizontalComponent  = 1,  /* usually N */
 			SecondHorizontalComponent = 2   /* usually E */
 		};
 
-		enum StreamComponent {
+		enum StreamComponents {
 			Vertical            = 0,  /* usually Z */
 			FirstHorizontal     = 1,  /* usually N */
 			SecondHorizontal    = 2,  /* usually E */
@@ -60,7 +61,7 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 			Any                       /* all available components */
 		};
 
-		typedef Math::Filtering::InPlaceFilter<double> Filter;
+		using Filter = Math::Filtering::InPlaceFilter<double>;
 
 		MAKEENUM(
 			SignalUnit,
@@ -247,11 +248,32 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 		Stream &streamConfig(Component c);
 		const Stream &streamConfig(Component c) const;
 
+		/**
+		 * @brief Sets the stream component(s) required.
+		 * This is actually what is being fed into the processor. Clients which
+		 * are using this class will be subscribing to the corresponding data
+		 * channels. This can either be a single channel or a set of channels
+		 * such as the horizontal components or all three components.
+		 * @param c The components which are required to be fed.
+		 */
+		void setDataComponents(StreamComponents c) { _dataComponents = c; }
+
+		//! Returns the required component(s)
+		constexpr StreamComponents dataComponents() const { return _dataComponents; }
+
 		//! Sets the component to use to calculate the amplitude for
-		void setUsedComponent(StreamComponent c) { _usedComponent = c; }
+		void setTargetComponent(Component c);
 
 		//! Returns the used component
-		StreamComponent usedComponent() const { return _usedComponent; }
+		constexpr Component targetComponent() const { return _targetComponent; }
+
+		/**
+		 * @brief Portability method to set data and target components.
+		 * @param c
+		 */
+		void setUsedComponent(StreamComponents c);
+		constexpr StreamComponents usedComponent() const { return dataComponents(); }
+
 
 		//! Sets the maximal gap length in seconds for that
 		//! missing samples are handled or tolerated. Default: no tolerance
@@ -357,18 +379,18 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 	protected:
 		//! Describes the current state of a component (e.g. Z or N)
 		struct StreamState {
-			StreamState();
+			StreamState() = default;
 			~StreamState();
 
 			//! Value of the last sample
-			double            lastSample;
+			double            lastSample{0};
 
 			//! Number of samples required to finish initialization
-			size_t            neededSamples;
+			size_t            neededSamples{0};
 			//! Number of samples already received
-			size_t            receivedSamples;
+			size_t            receivedSamples{0};
 			//! Initialization state
-			bool              initialized;
+			bool              initialized{false};
 
 			//! The last received record on this component
 			RecordCPtr        lastRecord;
@@ -376,12 +398,12 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 			Core::TimeWindow  dataTimeWindow;
 
 			//! The sampling frequency of the component
-			double            fsamp;
+			double            fsamp{0.0};
 			//! The filter (if used)
-			Filter           *filter;
+			Filter           *filter{nullptr};
 		};
 
-		bool                        _enabled;
+		bool                        _enabled{true};
 
 		Core::TimeSpan              _initTime;
 
@@ -391,16 +413,14 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 		Core::TimeSpan              _gapTolerance;
 
 		//! default: false
-		bool                        _enableSaturationCheck;
-		double                      _saturationThreshold;
+		bool                        _enableSaturationCheck{false};
+		double                      _saturationThreshold{-1};
 
 		//! default: false
-		bool                        _enableGapInterpolation;
+		bool                        _enableGapInterpolation{false};
 
 		StreamState                 _stream;
 
-		//! default: vertical
-		StreamComponent             _usedComponent;
 		Stream                      _streamConfig[3];
 
 
@@ -408,6 +428,9 @@ class SC_SYSTEM_CLIENT_API WaveformProcessor : public Processor {
 		Status                      _status;
 		double                      _statusValue;
 		WaveformOperatorPtr         _operator;
+		//! default: vertical
+		StreamComponents            _dataComponents{Vertical};
+		Component                   _targetComponent{VerticalComponent};
 
 		mutable Core::BaseObjectPtr _userData;
 };

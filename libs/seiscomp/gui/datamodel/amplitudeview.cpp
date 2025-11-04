@@ -1441,7 +1441,7 @@ void ThreeComponentTrace::transformedRecord(int comp, const Record *rec) {
 	}
 
 	if ( label->processor ) {
-		Processing::WaveformProcessor::StreamComponent c = label->processor->usedComponent();
+		auto c = label->processor->dataComponents();
 		switch ( c ) {
 			case Processing::WaveformProcessor::Vertical:
 				if ( comp == 0 ) {
@@ -3553,7 +3553,7 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 	SC_D.componentMap[2] = -1;
 	SC_D.slotCount = 0;
 
-	Processing::WaveformProcessor::StreamComponent c = procAmp->usedComponent();
+	auto c = procAmp->dataComponents();
 	switch ( c ) {
 		case Processing::WaveformProcessor::Vertical:
 			SC_D.componentMap[0] = 0;

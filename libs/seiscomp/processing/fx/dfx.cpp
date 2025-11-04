@@ -95,9 +95,9 @@ void DFX::setDefault() {
 	setNoiseEnd(-20.5);
 	setSignalStart(-1.5);
 	setSignalEnd(4);
-	setUsedComponent(Any);
+	setDataComponents(Any);
 	setMargin(Core::TimeSpan(0,0));
-	setFilter(NULL);
+	setFilter(nullptr);
 
 	_threeC = ThreeC();
 	_dumpData = false;
@@ -175,19 +175,20 @@ bool DFX::setup(const Settings &settings) {
 	settings.getValue(_dumpData, SETUP_PREFIX "dump");
 
 	Filter *f = 0;
-	if ( _fLo > 0 && _fHi > 0 )
+	if ( _fLo > 0 && _fHi > 0 ) {
 		f = new Math::Filtering::IIR::ButterworthBandpass<double>(_fOrder, _fLo, _fHi);
-	else if ( _fLo > 0 )
+	}
+	else if ( _fLo > 0 ) {
 		f = new Math::Filtering::IIR::ButterworthHighpass<double>(_fOrder, _fLo);
-	else if ( _fHi > 0 )
+	}
+	else if ( _fHi > 0 ) {
 		f = new Math::Filtering::IIR::ButterworthLowpass<double>(_fOrder, _fLo);
+	}
 
-	if ( f ) setFilter(f);
+	if ( f ) {
+		setFilter(f);
+	}
 
-	/* Do your setup here and read configuration parameters.
-	 * Return false if something went wrong and amplitude calculation should
-	 * be canceled or true in case of success.
-	 */
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -199,21 +200,28 @@ bool DFX::setup(const Settings &settings) {
 bool DFX::feed(const Record *rec) {
 	size_t component;
 
-	if ( isFinished() ) return false;
-
-	if ( _streamConfig[0].code() == rec->channelCode() )
-		component = 0;
-	else if ( _streamConfig[1].code() == rec->channelCode() )
-		component = 1;
-	else if ( _streamConfig[2].code() == rec->channelCode() )
-		component = 2;
-	else
+	if ( isFinished() ) {
 		return false;
+	}
+
+	if ( _streamConfig[VerticalComponent].code() == rec->channelCode() ) {
+		component = 0;
+	}
+	else if ( _streamConfig[FirstHorizontalComponent].code() == rec->channelCode() ) {
+		component = 1;
+	}
+	else if ( _streamConfig[SecondHorizontalComponent].code() == rec->channelCode() ) {
+		component = 2;
+	}
+	else {
+		return false;
+	}
 
 	if ( rec->timeWindow().overlaps(safetyTimeWindow()) ) {
 		_threeC[component].buffer.feed(rec);
-		if ( _threeC[component].buffer.back()->endTime() >= safetyTimeWindow().endTime() )
+		if ( _threeC[component].buffer.back()->endTime() >= safetyTimeWindow().endTime() ) {
 			_threeC[component].complete = true;
+		}
 
 		if ( _threeC.isComplete() ) {
 			GenericRecordPtr recs[NCOMPS];
@@ -275,18 +283,21 @@ bool DFX::feed(const Record *rec) {
 
 			extractFX(commonData, commonNumberOfSamples);
 
-			if ( !isFinished() )
+			if ( !isFinished() ) {
 				setStatus(Finished, 0.0);
+			}
 		}
 
 		return true;
 	}
 	else {
-		if ( rec->startTime() >= safetyTimeWindow().endTime() )
+		if ( rec->startTime() >= safetyTimeWindow().endTime() ) {
 			_threeC[component].finished = true;
+		}
 
-		if ( _threeC.isFinished() )
+		if ( _threeC.isFinished() ) {
 			setStatus(Terminated, 0.0);
+		}
 	}
 
 	return false;
@@ -454,7 +465,7 @@ void DFX::extractFX(double *data[3], size_t n) {
 	}
 
 	FX::Result res;
-	res.component = _usedComponent;
+	res.component = dataComponents();
 	res.record = _stream.lastRecord.get();
 
 	_result = Core::None;

@@ -44,13 +44,12 @@ class SC_SYSTEM_CLIENT_API SAICPicker : public SecondaryPicker {
 		};
 
 		struct State {
-			State();
-			bool        aicValid;
-			double      aicStart;
-			double      aicEnd;
+			bool        aicValid{false};
+			double      aicStart{0.0};
+			double      aicEnd{0.0};
 			Core::Time  detection;
 			Core::Time  pick;
-			double      snr;
+			double      snr{0.0};
 		};
 
 	// ----------------------------------------------------------------------
@@ -58,7 +57,7 @@ class SC_SYSTEM_CLIENT_API SAICPicker : public SecondaryPicker {
 	// ----------------------------------------------------------------------
 	public:
 		//! C'tor
-		SAICPicker(const std::string& methodID, StreamComponent c);
+		SAICPicker(const std::string& methodID, StreamComponents c);
 
 		//! D'tor
 		~SAICPicker();

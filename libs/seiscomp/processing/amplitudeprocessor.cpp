@@ -1796,7 +1796,7 @@ void AmplitudeProcessor::process(const Record *record) {
 	bool unlockCalculation = ((_enableUpdates && !_enableResponses) && progress > 0) || progress >= 100;
 
 	if ( unlockCalculation ) {
-		if ( _streamConfig[_usedComponent].gain == 0.0 ) {
+		if ( _streamConfig[targetComponent()].gain == 0.0 ) {
 			setStatus(MissingGain, 0);
 			return;
 		}
@@ -1825,7 +1825,7 @@ void AmplitudeProcessor::process(const Record *record) {
 
 		AmplitudeIndex index;
 		Result res;
-		res.component = _usedComponent;
+		res.component = dataComponents();
 		res.record = record;
 		res.period = -1;
 		res.snr = -1;
@@ -1952,7 +1952,7 @@ void AmplitudeProcessor::initFilter(double fsamp) {
 
 	SignalUnit unit;
 	// Valid value already checked in setup()
-	unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str());
+	unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str());
 
 	Filter *filter{nullptr};
 	Math::Filtering::ChainFilter<double> *chain{nullptr};
@@ -2018,7 +2018,7 @@ bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::prepareData(DoubleArray &data) {
-	Sensor *sensor = _streamConfig[_usedComponent].sensor();
+	Sensor *sensor = _streamConfig[targetComponent()].sensor();
 
 	// When using full responses then all information needs to be set up
 	// correctly otherwise an error is set
@@ -2038,7 +2038,7 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 		// cannot be correctly. We do not want to assume a unit here
 		// to prevent computation errors in case of bad configuration.
 		SignalUnit unit;
-		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+		if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
 			// Invalid unit string
 			setStatus(IncompatibleUnit, 2);
 			return;
@@ -2340,9 +2340,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 
 	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.iaspeiAmplitudes);
 
-	if ( _usedComponent >= Vertical && _usedComponent <= SecondHorizontal ) {
+	if ( targetComponent() >= VerticalComponent && targetComponent() <= SecondHorizontalComponent ) {
 		SignalUnit unit;
-		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+		if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
 			// Invalid unit string
 			setStatus(IncompatibleUnit, 0);
 			return false;
@@ -2584,10 +2584,13 @@ void AmplitudeProcessor::finalizeAmplitude(DataModel::Amplitude *) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const AmplitudeProcessor *
 AmplitudeProcessor::componentProcessor(Component comp) const {
-	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
+	if ( comp < VerticalComponent || comp > SecondHorizontalComponent ) {
 		return nullptr;
+	}
 
-	if ( comp != (Component)_usedComponent ) return nullptr;
+	if ( comp != targetComponent() ) {
+		return nullptr;
+	}
 
 	return this;
 }
@@ -2598,10 +2601,13 @@ AmplitudeProcessor::componentProcessor(Component comp) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor::processedData(Component comp) const {
-	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
+	if ( comp < VerticalComponent || comp > SecondHorizontalComponent ) {
 		return nullptr;
+	}
 
-	if ( comp != (Component)_usedComponent ) return nullptr;
+	if ( comp != targetComponent() ) {
+		return nullptr;
+	}
 
 	return &continuousData();
 }
@@ -2612,10 +2618,14 @@ const DoubleArray *AmplitudeProcessor::processedData(Component comp) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::writeData() const {
-	if ( !_stream.lastRecord ) return;
+	if ( !_stream.lastRecord ) {
+		return;
+	}
 
-	const DoubleArray *data = processedData((Component)_usedComponent);
-	if ( data == nullptr ) return;
+	const DoubleArray *data = processedData(targetComponent());
+	if ( !data ) {
+		return;
+	}
 
  	std::ofstream of((_stream.lastRecord->streamID() + "-" + type() + ".data").c_str());
 

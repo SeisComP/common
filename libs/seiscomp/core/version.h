@@ -102,6 +102,11 @@ namespace Core {
    - Added unary Seiscomp::Math::Vector3<T>::operator+
    - Added unary Seiscomp::Math::Vector3<T>::operator-
    - Added Seiscomp::Math::Vector3<T>::normalized
+   - Renamed Seiscomp::Processing::WaveformProcessor::StreamComponent to
+     Seiscomp::Processing::WaveformProcessor::StreamComponents
+   - Removed Seiscomp::Processing::WaveformProcessor::_usedComponent member
+   - Added Seiscomp::Processing::WaveformProcessor::setDataComponents
+   - Added Seiscomp::Processing::WaveformProcessor::setTargetComponent
 
  "16.4.0"   0x100400
    - Added Seiscomp::Math::double2frac
