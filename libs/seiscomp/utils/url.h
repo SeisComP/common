@@ -27,7 +27,7 @@
 
 #include <map>
 #include <string>
-#include <cinttypes>
+#include <string_view>
 
 
 namespace Seiscomp {
@@ -195,31 +195,13 @@ class SC_SYSTEM_CORE_API Url {
 		std::string withoutScheme() const;
 
 		/**
-		 * @brief Encodes STL string as defined in RFC 3986:
-		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
-		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
-		 * @param s STL string
-		 * @return Encoded STL string
-		 */
-		static std::string Encoded(const std::string &s);
-
-		/**
 		 * @brief Encodes C string based as defined in RFC 3986:
 		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
 		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Encoded(const char *s, int len);
-
-		/**
-		 * @brief Decodes STL string based as defined in RFC 3986:
-		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
-		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
-		 * @param s C string
-		 * @return Encoded STL string
-		 */
-		static std::string Decoded(const std::string &s);
+		static std::string Encoded(std::string_view sv);
 
 		/**
 		 * @brief Decodes C string based as defined in RFC 3986 defined:
@@ -228,7 +210,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Decoded(const char *s, int len);
+		static std::string Decoded(std::string_view sv);
 
 
 	// ----------------------------------------------------------------------

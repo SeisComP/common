@@ -525,7 +525,7 @@ std::string Url::withoutScheme() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Encoded(const std::string &s) {
+std::string Url::Encoded(std::string_view sv) {
 	//RFC 3986 section 2.2 Reserved Characters (January 2005)
 	//RFC 3986 section 2.3 Unreserved Characters (January 2005)
 
@@ -534,41 +534,14 @@ std::string Url::Encoded(const std::string &s) {
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
 
 	std::string escaped = {};
-	for ( size_t i = 0; i < s.length(); ++i ) {
-		if ( dontEscape.find_first_of(s[i]) != std::string::npos ) {
-			escaped += s[i];
-		} else {
-			escaped += '%';
-			char buf[3];
-			sprintf(buf, "%.2X", s[i]);
-			escaped += buf;
+	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
+		if ( dontEscape.find_first_of(sv[i]) != std::string::npos ) {
+			escaped += sv[i];
 		}
-	}
-
-	return escaped;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Encoded(const char *s, int len) {
-	//RFC 3986 section 2.2 Reserved Characters (January 2005)
-	//RFC 3986 section 2.3 Unreserved Characters (January 2005)
-
-	static const std::string dontEscape =
-		":/?#[]@!$&'()*+,;="
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
-
-	std::string escaped = {};
-	for ( int i = 0; i < len; ++i ) {
-		if ( dontEscape.find_first_of(s[i]) != std::string::npos )
-			escaped += s[i];
 		else {
 			escaped += '%';
 			char buf[3];
-			sprintf(buf, "%.2X", s[i]);
+			sprintf(buf, "%.2X", sv[i]);
 			escaped += buf;
 		}
 	}
@@ -581,58 +554,36 @@ std::string Url::Encoded(const char *s, int len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Decoded(const std::string &s) {
+std::string Url::Decoded(std::string_view sv) {
 	std::string decoded = {};
-	for( size_t i = 0; i < s.length(); ++i ) {
-		if ( s[i] == '+' )
+	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
+		if ( sv[i] == '+' )
 			decoded += ' ';
-		else if ( s[i] == '%' ) {
+		else if ( sv[i] == '%' ) {
 			++i;
 			char hi, lo;
-			if ( i < s.length() ) hi = s[i];
-			else break;
+			if ( i < sv.length() ) {
+				hi = sv[i];
+			}
+			else {
+				break;
+			}
 			++i;
-			if ( i < s.length() ) lo = s[i];
-			else break;
-
-			hi = (hi >= 'A' ? ((hi & 0xDF) - 'A') + 10 : (hi - '0'));
-			lo = (lo >= 'A' ? ((lo & 0xDF) - 'A') + 10 : (lo - '0'));
-
-			decoded += ((hi << 4) + lo);
-		}
-		else
-			decoded += s[i];
-	}
-
-	return decoded;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Decoded(const char *s, int len) {
-	std::string decoded = {};
-	for ( int i = 0; i < len; ++i ) {
-		if ( s[i] == '+' )
-			decoded += ' ';
-		else if ( s[i] == '%' ) {
-			++i;
-			char hi, lo;
-			if ( i < len ) hi = s[i];
-			else break;
-			++i;
-			if ( i < len ) lo = s[i];
-			else break;
+			if ( i < sv.length() ) {
+				lo = sv[i];
+			}
+			else {
+				break;
+			}
 
 			hi = (hi >= 'A'?((hi & 0xDF) - 'A') + 10 : (hi - '0'));
 			lo = (lo >= 'A'?((lo & 0xDF) - 'A') + 10 : (lo - '0'));
 
 			decoded += ((hi << 4) + lo);
 		}
-		else
-			decoded += s[i];
+		else {
+			decoded += sv[i];
+		}
 	}
 
 	return decoded;
