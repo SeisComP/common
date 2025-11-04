@@ -2128,8 +2128,8 @@ void AmplitudeView::init() {
 	SC_D.comboFilter->setDuplicatesEnabled(false);
 	SC_D.comboFilter->addItem(NO_FILTER_STRING);
 	SC_D.comboFilter->addItem(DEFAULT_FILTER_STRING);
-
 	SC_D.comboFilter->setCurrentIndex(1);
+	SC_D.ui.actionToggleFilter->setEnabled(false);
 	changeFilter(SC_D.comboFilter->currentIndex());
 
 	SC_D.spinSNR = new QDoubleSpinBox;
@@ -2425,10 +2425,12 @@ void AmplitudeView::init() {
 	SC_D.ui.frameZoom->setBackgroundRole(QPalette::Base);
 	SC_D.ui.frameZoom->setAutoFillBackground(true);
 
-	if ( RecordStreamState::Instance().connectionCount() )
+	if ( RecordStreamState::Instance().connectionCount() ) {
 		firstConnectionEstablished();
-	else
+	}
+	else {
 		lastConnectionClosed();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2439,10 +2441,12 @@ void AmplitudeView::init() {
 bool AmplitudeView::setConfig(const Config &c, QString *error) {
 	SC_D.config = c;
 
-	if ( SCScheme.unit.distanceInKM )
+	if ( SCScheme.unit.distanceInKM ) {
 		SC_D.spinDistance->setValue(Math::Geo::deg2km(SC_D.config.defaultAddStationsDistance));
-	else
+	}
+	else {
 		SC_D.spinDistance->setValue(SC_D.config.defaultAddStationsDistance);
+	}
 
 	//_config.filters.append(Config::FilterEntry("4 pole HP @2s", "BW_HP(4,0.5)"));
 
@@ -2456,19 +2460,24 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 
 		int defaultIndex = -1;
 		for ( int i = 0; i < SC_D.config.filters.count(); ++i ) {
-			if ( SC_D.config.filters[i].first.isEmpty() ) continue;
+			if ( SC_D.config.filters[i].first.isEmpty() ) {
+				continue;
+			}
 
 			if ( SC_D.config.filters[i].first[0] == '@' ) {
-				if ( defaultIndex == -1 ) defaultIndex = SC_D.comboFilter->count();
+				if ( defaultIndex == -1 ) {
+					defaultIndex = SC_D.comboFilter->count();
+				}
 				addFilter(SC_D.config.filters[i].first.mid(1), SC_D.config.filters[i].second);
 			}
-			else
+			else {
 				addFilter(SC_D.config.filters[i].first, SC_D.config.filters[i].second);
+			}
 		}
 
 		SC_D.comboFilter->blockSignals(false);
-
-		SC_D.comboFilter->setCurrentIndex(defaultIndex != -1?defaultIndex:1);
+		SC_D.comboFilter->setCurrentIndex(defaultIndex != -1 ? defaultIndex : 1);
+		SC_D.ui.actionToggleFilter->setEnabled(!SC_D.config.filters.empty());
 	}
 
 	RecordViewItem *item = SC_D.recordView->currentItem();
@@ -2490,28 +2499,37 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 		for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 			RecordViewItem* item = SC_D.recordView->itemAt(r);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
-			if ( isLinkedItem(item) ) continue;
+			if ( isLinkedItem(item) ) {
+				continue;
+			}
 
 			if ( !isTracePicked(item->widget()) && !label->hasGotData ) {
 				item->forceInvisibilty(true);
-				if ( item == SC_D.recordView->currentItem() )
+				if ( item == SC_D.recordView->currentItem() ) {
 					reselectCurrentItem = true;
+				}
 			}
 		}
 
-		if ( SC_D.recordView->currentItem() == nullptr ) reselectCurrentItem = true;
+		if ( !SC_D.recordView->currentItem() ) {
+			reselectCurrentItem = true;
+		}
 
-		if ( reselectCurrentItem )
+		if ( reselectCurrentItem ) {
 			selectFirstVisibleItem(SC_D.recordView);
+		}
 	}
 	else {
 		for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 			RecordViewItem* item = SC_D.recordView->itemAt(r);
 			AmplitudeRecordLabel *label = static_cast<AmplitudeRecordLabel*>(item->label());
-			if ( isLinkedItem(item) ) continue;
+			if ( isLinkedItem(item) ) {
+				continue;
+			}
 
-			if ( !isTracePicked(item->widget()) && !label->hasGotData )
+			if ( !isTracePicked(item->widget()) && !label->hasGotData ) {
 				item->forceInvisibilty(!label->isEnabledByConfig);
+			}
 		}
 	}
 

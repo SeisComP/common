@@ -622,6 +622,9 @@
    </attribute>
   </widget>
   <widget class="QToolBar" name="toolBarFilter">
+   <property name="windowTitle">
+    <string>Filter</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
