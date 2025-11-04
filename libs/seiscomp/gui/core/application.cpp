@@ -952,7 +952,7 @@ bool Application::initConfiguration() {
 		_eventTimeAgo = double(24*60*60);
 	}
 
-	_app->setOrganizationName(agencyID().c_str());
+	_app->setOrganizationName("gempa");
 	_app->setApplicationName(name().c_str());
 
 	return true;
@@ -1192,23 +1192,25 @@ ConnectionDialog *Application::cdlg() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::createSettingsDialog() {
-	if ( _dlgConnection ) return;
-
-	if ( _type == Tty )
+	if ( _dlgConnection ) {
 		return;
+	}
+
+	if ( _type == Tty ) {
+		return;
+	}
 
 	_dlgConnection = new ConnectionDialog(&_connection, &_database);
 	_dlgConnection->setMessagingEnabled(isMessagingEnabled());
 
-	connect(_dlgConnection, SIGNAL(aboutToConnect(QString, QString, QString,
-	                                              int, QString)),
-	        this, SLOT(createConnection(QString, QString, QString, int, QString)));
+	connect(_dlgConnection, &ConnectionDialog::aboutToConnect,
+	        this, &Application::createConnection);
 
-	connect(_dlgConnection, SIGNAL(aboutToDisconnect()),
-	        this, SLOT(destroyConnection()));
+	connect(_dlgConnection, &ConnectionDialog::aboutToDisconnect,
+	        this, &Application::destroyConnection);
 
-	connect(_dlgConnection, SIGNAL(databaseChanged()),
-	        this, SLOT(databaseChanged()));
+	connect(_dlgConnection, &ConnectionDialog::databaseChanged,
+	        this, &Application::databaseChanged);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
