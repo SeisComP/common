@@ -61,7 +61,9 @@ MySQLDatabase::~MySQLDatabase() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MySQLDatabase::handleURIParameter(const std::string &name,
                                        const std::string &value) {
-	if ( !DatabaseInterface::handleURIParameter(name, value) ) return false;
+	if ( !DatabaseInterface::handleURIParameter(name, value) ) {
+		return false;
+	}
 
 	if ( name == "debug" ) {
 		if ( value != "0" && value != "false" ) {
