@@ -206,14 +206,21 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_REQUIRE(url.setUrl("ldap://[2001:db8::7]/c=GB?objectClass?one"));
 	BOOST_REQUIRE(url.setUrl("telnet://192.0.2.16:80/"));
 
-	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test"));
+	BOOST_REQUIRE(url.setUrl("postgresql://sysop:sysop@127.0.0.1:5432/test?debug"));
+	BOOST_CHECK_EQUAL(url.scheme(), "postgresql");
+	BOOST_CHECK_EQUAL(url.username(), "sysop");
+	BOOST_CHECK_EQUAL(url.password(), "sysop");
+	BOOST_CHECK_EQUAL(url.host(), "127.0.0.1");
+	BOOST_CHECK_EQUAL(url.path(), "/test");
+	BOOST_CHECK_EQUAL(url.hasQueryItem("debug"), true);
+	BOOST_CHECK_EQUAL(url.queryItems().size(), 1);
 
-    BOOST_REQUIRE(url.setUrl("https://sys%2Fop:sys%2Fop@exam%3Aple.com/sear%23ch?q=Hello%20World%21&lang%3Den"));
-    BOOST_CHECK_EQUAL(url.scheme(), "https");
-    BOOST_CHECK_EQUAL(url.username(), "sys/op");
-    BOOST_CHECK_EQUAL(url.password(), "sys/op");
-    BOOST_CHECK_EQUAL(url.host(), "exam:ple.com");
-    BOOST_CHECK_EQUAL(url.path(), "/sear#ch");
+	BOOST_REQUIRE(url.setUrl("https://sys%2Fop:sys%2Fop@exam%3Aple.com/sear%23ch?q=Hello%20World%21&lang%3Den"));
+	BOOST_CHECK_EQUAL(url.scheme(), "https");
+	BOOST_CHECK_EQUAL(url.username(), "sys/op");
+	BOOST_CHECK_EQUAL(url.password(), "sys/op");
+	BOOST_CHECK_EQUAL(url.host(), "exam:ple.com");
+	BOOST_CHECK_EQUAL(url.path(), "/sear#ch");
 }
 
 BOOST_AUTO_TEST_CASE(Extract) {
