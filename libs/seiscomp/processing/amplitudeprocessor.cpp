@@ -1957,29 +1957,48 @@ void AmplitudeProcessor::initFilter(double fsamp) {
 	Filter *filter{nullptr};
 	Math::Filtering::ChainFilter<double> *chain{nullptr};
 
-	if ( unit == Meter ) {
-		SEISCOMP_DEBUG("Add derivation of data for amplitude computation");
-		filter = new Math::Filtering::IIRDifferentiate<double>;
-	}
-	else if ( unit == MeterPerSecondSquared ) {
-		SEISCOMP_DEBUG("Add integration of data for amplitude computation");
-		if ( _config.respMinFreq > 0 ) {
-			chain = new Math::Filtering::ChainFilter<double>;
-			chain->add(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+	auto addFilter = [&chain, &filter](Filter *f) {
+		if ( !filter ) {
+			filter = f;
+			return;
 		}
-		filter = new Math::Filtering::IIRIntegrate<double>;
-	}
 
-	if ( filter ) {
-		if ( _stream.filter || chain ) {
-			if ( !chain ) {
-				chain = new Math::Filtering::ChainFilter<double>;
-			}
+		// There is already a filter, add a chain
+		if ( !chain ) {
+			chain = new Math::Filtering::ChainFilter<double>;
 			chain->add(filter);
-			if ( _stream.filter ) {
-				chain->add(_stream.filter);
-			}
 			filter = chain;
+		}
+
+		chain->add(f);
+	};
+
+	// Negative distance: derive data
+	// Positive distance: integrate data
+	int distance = unit.toInt() - _config.unit.toInt();
+
+	if ( distance ) {
+		int absDistance = abs(distance);
+		SEISCOMP_DEBUG("%s.%s.%s.%s: %s: %dx %s from %s to %s",
+		               _environment.networkCode, _environment.stationCode,
+		               _environment.locationCode, _environment.channelCode,
+		               _type,
+		               absDistance, distance < 0 ? "derivation" : "integration",
+		               unit.toString(), _config.unit.toString());
+		for ( int i = 0; i < absDistance; ++i ) {
+			if ( distance < 0 ) {
+				addFilter(new Math::Filtering::IIRDifferentiate<double>);
+			}
+			else {
+				if ( _config.respMinFreq > 0 ) {
+					addFilter(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+				}
+				addFilter(new Math::Filtering::IIRIntegrate<double>);
+			}
+		}
+
+		if ( _stream.filter ) {
+			addFilter(_stream.filter);
 		}
 
 		_stream.filter = filter;
@@ -2022,7 +2041,7 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 
 	// When using full responses then all information needs to be set up
 	// correctly otherwise an error is set
-	if ( _enableResponses ) {
+	if ( _enableResponses && !check(State::ResponseApplied) ) {
 		if ( !sensor ) {
 			setStatus(MissingResponse, 1);
 			return;
@@ -2044,28 +2063,13 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 			return;
 		}
 
-		int intSteps = 0;
-		switch ( unit ) {
-			case Meter:
-				intSteps = -1;
-				break;
-			case MeterPerSecond:
-				break;
-			case MeterPerSecondSquared:
-				intSteps = 1;
-				break;
-			default:
-				setStatus(IncompatibleUnit, 1);
-				return;
-		}
-
-		if ( check(State::ResponseApplied) ) {
-			return;
-		}
+		// Negative distance: derive data
+		// Positive distance: integrate data
+		int distance = unit.toInt() - _config.unit.toInt();
 
 		set(State::ResponseApplied);
 
-		if ( !deconvolveData(sensor->response(), _data, intSteps) ) {
+		if ( !deconvolveData(sensor->response(), _data, distance) ) {
 			setStatus(DeconvolutionFailed, 0);
 			return;
 		}
@@ -2088,8 +2092,9 @@ bool AmplitudeProcessor::deconvolveData(Response *resp, DoubleArray &data,
 	                               _config.respMinFreq, _config.respMaxFreq,
 	                               numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( !ret )
+	if ( !ret ) {
 		return false;
+	}
 
 	// If number of integrations are negative, derive data
 	while ( numberOfIntegrations < 0 ) {
