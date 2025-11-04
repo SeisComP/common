@@ -11832,6 +11832,46 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_PluginRegistry_errors(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::PluginRegistry *arg1 = (Seiscomp::System::PluginRegistry *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::vector< std::string,std::allocator< std::string > > *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__PluginRegistry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PluginRegistry_errors" "', argument " "1"" of type '" "Seiscomp::System::PluginRegistry const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::PluginRegistry * >(argp1);
+  {
+    try {
+      result = (std::vector< std::string,std::allocator< std::string > > *) &((Seiscomp::System::PluginRegistry const *)arg1)->errors();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *PluginRegistry_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj = NULL;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -49736,6 +49776,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "PluginRegistry_loadConfiguredPlugins", _wrap_PluginRegistry_loadConfiguredPlugins, METH_VARARGS, NULL},
 	 { "PluginRegistry_freePlugins", _wrap_PluginRegistry_freePlugins, METH_O, NULL},
 	 { "PluginRegistry_pluginCount", _wrap_PluginRegistry_pluginCount, METH_O, NULL},
+	 { "PluginRegistry_errors", _wrap_PluginRegistry_errors, METH_O, NULL},
 	 { "PluginRegistry_swigregister", PluginRegistry_swigregister, METH_O, NULL},
 	 { "join", _wrap_join, METH_VARARGS, NULL},
 	 { "new_SystemApplication", _wrap_new_SystemApplication, METH_VARARGS, NULL},

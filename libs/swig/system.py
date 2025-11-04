@@ -281,6 +281,9 @@ class PluginRegistry(object):
     def pluginCount(self):
         return _system.PluginRegistry_pluginCount(self)
 
+    def errors(self):
+        return _system.PluginRegistry_errors(self)
+
 # Register PluginRegistry in _system:
 _system.PluginRegistry_swigregister(PluginRegistry)
 
