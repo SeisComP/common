@@ -307,8 +307,12 @@ class Module(kernel.CoreModule):
                         file=sys.stderr,
                     )
                     if runAsSuperUser:
-                        cmd = "{} seiscomp-python {} {}".format(
-                            binary, dbScript, " ".join(shlex.quote(o) for o in options)
+                        script = os.path.join(
+                            self.env.SEISCOMP_ROOT, "bin", "seiscomp-python"
+                        )
+
+                        cmd = "{} - {} {} {}".format(
+                            binary, script, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
                     else:
                         cmd = "{} {}".format(dbScript, " ".join(shlex.quote(o) for o in options))
@@ -373,7 +377,7 @@ class Module(kernel.CoreModule):
                             ),
                             file=sys.stderr,
                         )
-                        cmd = '{} su postgres -c "{}/seiscomp-python {} {}"'.format(
+                        cmd = '{} postgres "{}/seiscomp-python {} {}"'.format(
                             binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
 
