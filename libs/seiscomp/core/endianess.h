@@ -23,13 +23,11 @@
 
 
 #include <iostream>
-#include <stdint.h>
+#include <cstdint>
 #include <streambuf>
 
 
-namespace Seiscomp {
-namespace Core {
-namespace Endianess {
+namespace Seiscomp::Core::Endianess {
 
 
 template <typename T1, typename T2> inline const T1* lvalue(const T2 &value) {
@@ -37,49 +35,51 @@ template <typename T1, typename T2> inline const T1* lvalue(const T2 &value) {
 }
 
 
-template <typename T, int swap, int size>
+template <typename T, int swap, size_t size>
 struct Swapper {
-	static T Take(const T &v) {
+	constexpr static T Take(const T &v) {
 		return v;
 	}
 
-	static void Take(T *ar, int len) {}
+	constexpr static void Take(T *ar, size_t len) {}
 };
 
 
 template <typename T>
 struct Swapper<T,1,2> {
-	static T Take(const T &v) {
+	constexpr static T Take(const T &v) {
 		return *lvalue<T, uint16_t>((*reinterpret_cast<const uint16_t*>(&v) >> 0x08) |
 		       (*reinterpret_cast<const uint16_t*>(&v) << 0x08));
 	}
 
-	static void Take(T *ar, int len) {
-		for ( int i = 0; i < len; ++i )
+	constexpr static void Take(T *ar, size_t len) {
+		for ( size_t i = 0; i < len; ++i ) {
 			ar[i] = Take(ar[i]);
+		}
 	}
 };
 
 
 template <typename T>
 struct Swapper<T,1,4> {
-	static T Take(const T &v) {
+	constexpr static T Take(const T &v) {
 		return *lvalue<T, uint32_t>(((*reinterpret_cast<const uint32_t*>(&v) << 24) & 0xFF000000) |
 		       ((*reinterpret_cast<const uint32_t*>(&v) << 8)  & 0x00FF0000) |
 		       ((*reinterpret_cast<const uint32_t*>(&v) >> 8)  & 0x0000FF00) |
 		       ((*reinterpret_cast<const uint32_t*>(&v) >> 24) & 0x000000FF));
 	}
 
-	static void Take(T *ar, int len) {
-		for ( int i = 0; i < len; ++i )
+	constexpr static void Take(T *ar, size_t len) {
+		for ( size_t i = 0; i < len; ++i ) {
 			ar[i] = Take(ar[i]);
+		}
 	}
 };
 
 
 template <typename T>
 struct Swapper<T,1,8> {
-	static T Take(const T &v) {
+	constexpr static T Take(const T &v) {
 		return *lvalue<T, uint64_t>(((*reinterpret_cast<const uint64_t*>(&v) << 56) & 0xFF00000000000000LL) |
 		       ((*reinterpret_cast<const uint64_t*>(&v) << 40) & 0x00FF000000000000LL) |
 		       ((*reinterpret_cast<const uint64_t*>(&v) << 24) & 0x0000FF0000000000LL) |
@@ -90,89 +90,96 @@ struct Swapper<T,1,8> {
 		       ((*reinterpret_cast<const uint64_t*>(&v) >> 56) & 0x00000000000000FFLL));
 	}
 
-	static void Take(T *ar, int len) {
-		for ( int i = 0; i < len; ++i )
+	constexpr static void Take(T *ar, size_t len) {
+		for ( size_t i = 0; i < len; ++i ) {
 			ar[i] = Take(ar[i]);
+		}
 	}
 };
 
 
 template <int size>
 struct TypeMap {
-	typedef void ValueType;
+	using ValueType = void;
 };
 
 
 template <>
 struct TypeMap<1> {
-	typedef uint8_t ValueType;
+	using ValueType = uint8_t;
 };
 
 
 template <>
 struct TypeMap<2> {
-	typedef uint16_t ValueType;
+	using ValueType = uint16_t;
 };
 
 
 template <>
 struct TypeMap<4> {
-	typedef uint32_t ValueType;
+	using ValueType = uint32_t;
 };
 
 
 template <>
 struct TypeMap<8> {
-	typedef uint64_t ValueType;
+	using ValueType = uint64_t;
 };
 
 
-template <int swap, int size>
+template <int swap, size_t size>
 struct ByteSwapper {
-	static void Take(void *ar, int len) {}
+	constexpr static void Take(void *ar, size_t len) {}
 };
 
 
-template <int size>
-struct ByteSwapper<1,size> {
-	static void Take(void *ar, int len) {
-		typedef typename TypeMap<size>::ValueType T;
+template <size_t size>
+struct ByteSwapper<1, size> {
+	constexpr static void Take(void *ar, size_t len) {
+		using T = typename TypeMap<size>::ValueType;
 		Swapper<T,1,size>::Take(reinterpret_cast<T*>(ar), len);
 	}
 };
 
 
+template <typename T>
+constexpr void swap(T *ar, size_t len = 1) {
+	Swapper<T, 1, sizeof(T)>::Take(ar, len);
+}
+
+
 struct Current {
 	enum {
 		LittleEndian = ((0x1234 >> 8) == 0x12?1:0),
-		BigEndian = 1-LittleEndian
+		BigEndian = 1 - LittleEndian
 	};
 };
 
 
 struct Converter {
 	template <typename T>
-	static T ToLittleEndian(const T &v) {
+	constexpr static T ToLittleEndian(const T &v) {
 		return Swapper<T,Current::BigEndian,sizeof(T)>::Take(v);
 	}
 
 	template <typename T>
-	static void ToLittleEndian(T *data, int len) {
+	constexpr static void ToLittleEndian(T *data, size_t len) {
 		Swapper<T,Current::BigEndian,sizeof(T)>::Take(data, len);
 	}
 
 	template <typename T>
-	static T FromLittleEndian(const T &v) {
+	constexpr static T FromLittleEndian(const T &v) {
 		return Swapper<T,Current::BigEndian,sizeof(T)>::Take(v);
 	}
 
 	template <typename T>
-	static T ToBigEndian(const T &v) {
+	constexpr static T ToBigEndian(const T &v) {
 		return Swapper<T,Current::LittleEndian,sizeof(T)>::Take(v);
 	}
 
 	template <typename T>
-	static T FromBigEndian(const T &v) {
+	constexpr static T FromBigEndian(const T &v) {
 		return Swapper<T,Current::LittleEndian,sizeof(T)>::Take(v);
 	}
 };
@@ -212,8 +219,6 @@ struct Writer {
 };
 
 
-}
-}
 }
 
 
