@@ -19,6 +19,7 @@
 
 
 #include <seiscomp/core/endianess.h>
+#include <algorithm>
 
 #include "format.h"
 
@@ -40,60 +41,60 @@ namespace {
 
 /* SEED binary time (10 bytes) */
 struct SEEDBTime {
-  uint16_t  year;
-  uint16_t  day;
-  uint8_t   hour;
-  uint8_t   min;
-  uint8_t   sec;
-  uint8_t   unused;
-  uint16_t  fract;
+	uint16_t  year;
+	uint16_t  day;
+	uint8_t   hour;
+	uint8_t   min;
+	uint8_t   sec;
+	uint8_t   unused;
+	uint16_t  fract;
 } ATTR_PACKED;
 
 
 /* Fixed section data of header (48 bytes) */
 struct SEEDFixedHeader {
-  char      sequenceNumber[6];
-  char      dhqIndicator;
-  char      reserved;
-  char      station[5];
-  char      location[2];
-  char      channel[3];
-  char      network[2];
-  SEEDBTime startTime;
-  uint16_t  numberOfSamples;
-  int16_t   sampleRateFactor;
-  int16_t   sampleRateMultiplier;
-  uint8_t   activityFlags;
-  uint8_t   ioAndClockFlags;
-  uint8_t   dataQualityFlags;
-  uint8_t   numberOfBlockettes;
-  int32_t   timeCorrection;
-  uint16_t  dataOffset;
-  uint16_t  blocketteOffset;
+	char      sequenceNumber[6];
+	char      dhqIndicator;
+	char      reserved;
+	char      station[5];
+	char      location[2];
+	char      channel[3];
+	char      network[2];
+	SEEDBTime startTime;
+	uint16_t  numberOfSamples;
+	int16_t   sampleRateFactor;
+	int16_t   sampleRateMultiplier;
+	uint8_t   activityFlags;
+	uint8_t   ioAndClockFlags;
+	uint8_t   dataQualityFlags;
+	uint8_t   numberOfBlockettes;
+	int32_t   timeCorrection;
+	uint16_t  dataOffset;
+	uint16_t  blocketteOffset;
 } ATTR_PACKED;
 
 
 /* Generic struct for head of blockettes */
 struct SEEDBlocketteHeader {
-  uint16_t  type;
-  uint16_t  nextOffset;
+	uint16_t  type;
+	uint16_t  nextOffset;
 } ATTR_PACKED;
 
 
 /* 1000 Blockette (8 bytes) */
 struct SEEDBlockette1000 : SEEDBlocketteHeader {
-  uint8_t   encoding;
-  uint8_t   wordSwap;
-  uint8_t   recordLength;
-  uint8_t   reserved;
+	uint8_t   encoding;
+	uint8_t   wordSwap;
+	uint8_t   recordLength;
+	uint8_t   reserved;
 } ATTR_PACKED;
 
 /* 1001 Blockette (8 bytes) */
 struct SEEDBlockette1001 : SEEDBlocketteHeader {
-  int8_t    timingQuality;
-  int8_t    usec;
-  uint8_t   reserved;
-  int8_t    numberOfFrames;
+	int8_t    timingQuality;
+	int8_t    usec;
+	uint8_t   reserved;
+	int8_t    numberOfFrames;
 } ATTR_PACKED;
 
 
@@ -141,19 +142,19 @@ void Format::populateHeader(const Core::Time &time, int timingQuality,
 	fsdh->dhqIndicator = 'D';
 	fsdh->reserved = ' ';
 
-	strncpy(fsdh->station, stationCode.c_str(), 5);
+	memcpy(fsdh->station, stationCode.data(), std::min(stationCode.length(), size_t(5)));
 	if ( (n = stationCode.length()) < 5 ) {
 		memset(fsdh->station + n, 32, 5 - n);
 	}
-	strncpy(fsdh->location, locationCode.c_str(), 2);
+	memcpy(fsdh->location, locationCode.data(), std::min(locationCode.length(), size_t(2)));
 	if ( (n = locationCode.length()) < 2 ) {
 		memset(fsdh->location + n, 32, 2 - n);
 	}
-	strncpy(fsdh->channel, channelCode.c_str(), 3);
+	memcpy(fsdh->channel, channelCode.data(), std::min(channelCode.length(), size_t(3)));
 	if ( (n = channelCode.length()) < 3 ) {
 		memset(fsdh->channel + n, 32, 3 - n);
 	}
-	strncpy(fsdh->network, networkCode.c_str(), 2);
+	memcpy(fsdh->network, networkCode.data(), std::min(networkCode.length(), size_t(2)));
 	if ( (n = networkCode.length()) < 2 ) {
 		memset(fsdh->network + n, 32, 2 - n);
 	}
