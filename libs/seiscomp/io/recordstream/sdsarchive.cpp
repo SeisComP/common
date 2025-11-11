@@ -589,7 +589,6 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
 	Time stime = !_curidx->stime ? _stime.value_or(Time()) : *_curidx->stime;
-	int retcode;
 	long int offset = 0;
 	long int size;
 	bool result = true;
@@ -667,7 +666,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 			else if ( recstime > stime ) {
 				end = half;
 			}
-			else if ( recstime <= stime && recetime >= stime ) {
+			else if ( (recstime <= stime) && (recetime >= stime) ) {
 				if ( stime == recetime ) {
 					++half;
 				}
