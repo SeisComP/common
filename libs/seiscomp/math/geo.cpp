@@ -156,8 +156,12 @@ void delazi_wgs84(double elat, double elon, double slat, double slon,
 	as = fabs(slat-elat) + fabs(slon-elon);
 	if ( as < 1.0e-5 ) {
 		*distance = 0.0;
-		*azim = 0.0;
-		*bazim = 0.0;
+		if ( azim ) {
+			*azim = 0.0;
+		}
+		if ( bazim ) {
+			*bazim = 0.0;
+		}
 		return;
 	}
 
@@ -188,11 +192,15 @@ void delazi_wgs84(double elat, double elon, double slat, double slon,
 	xk = as*be - ae*bs;
 	cosz = (xi*sbls + xj*cbls)/sindt;
 	sinz = xk/(ds*sindt);
-	*bazim = mb_azm(cosz, sinz);
+	if ( bazim ) {
+		*bazim = mb_azm(cosz, sinz);
+	}
 	ble = deg2rad(elon);
 	cosz = -(xi*sin(ble) + xj*cos(ble))/sindt;
 	sinz = -xk/(de*sindt);
-	*azim = mb_azm(cosz, sinz);
+	if ( azim ) {
+		*azim = mb_azm(cosz, sinz);
+	}
 }
 
 
