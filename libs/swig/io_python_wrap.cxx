@@ -26272,138 +26272,6 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
-  MSRecord *arg1 = (MSRecord *) 0 ;
-  Seiscomp::Array::DataType arg2 ;
-  Seiscomp::Record::Hint arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  Seiscomp::IO::MSeedRecord *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< MSRecord * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_MSeedRecord" "', argument " "2"" of type '" "Seiscomp::Array::DataType""'");
-  } 
-  arg2 = static_cast< Seiscomp::Array::DataType >(val2);
-  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_MSeedRecord" "', argument " "3"" of type '" "Seiscomp::Record::Hint""'");
-  } 
-  arg3 = static_cast< Seiscomp::Record::Hint >(val3);
-  {
-    try {
-      result = (Seiscomp::IO::MSeedRecord *)new Seiscomp::IO::MSeedRecord(arg1,arg2,arg3);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_NEW |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  MSRecord *arg1 = (MSRecord *) 0 ;
-  Seiscomp::Array::DataType arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  Seiscomp::IO::MSeedRecord *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< MSRecord * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_MSeedRecord" "', argument " "2"" of type '" "Seiscomp::Array::DataType""'");
-  } 
-  arg2 = static_cast< Seiscomp::Array::DataType >(val2);
-  {
-    try {
-      result = (Seiscomp::IO::MSeedRecord *)new Seiscomp::IO::MSeedRecord(arg1,arg2);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_NEW |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_5(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
-  MSRecord *arg1 = (MSRecord *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  Seiscomp::IO::MSeedRecord *result = 0 ;
-  
-  (void)self;
-  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_MS3Record, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_MSeedRecord" "', argument " "1"" of type '" "MSRecord *""'"); 
-  }
-  arg1 = reinterpret_cast< MSRecord * >(argp1);
-  {
-    try {
-      result = (Seiscomp::IO::MSeedRecord *)new Seiscomp::IO::MSeedRecord(arg1);
-    }
-    catch ( const Seiscomp::Core::ValueException &e) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_NEW |  0 );
-  if (result) result->incrementReferenceCount();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_6(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
-  PyObject *resultobj = 0;
   Seiscomp::IO::MSeedRecord *arg1 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -26441,7 +26309,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_7(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Record *arg1 = 0 ;
   int arg2 ;
@@ -26488,7 +26356,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_8(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_MSeedRecord__SWIG_5(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::Record *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -26529,30 +26397,21 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
-  PyObject *argv[4] = {
+  PyObject *argv[3] = {
     0
   };
   
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_MSeedRecord", 0, 3, argv))) SWIG_fail;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_MSeedRecord", 0, 2, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
     return _wrap_new_MSeedRecord__SWIG_2(self, argc, argv);
   }
   if (argc == 1) {
     int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_new_MSeedRecord__SWIG_5(self, argc, argv);
-    }
-  }
-  if (argc == 1) {
-    int _v = 0;
     int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__IO__MSeedRecord, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_MSeedRecord__SWIG_6(self, argc, argv);
+      return _wrap_new_MSeedRecord__SWIG_3(self, argc, argv);
     }
   }
   if (argc == 1) {
@@ -26560,7 +26419,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Record, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_MSeedRecord__SWIG_8(self, argc, argv);
+      return _wrap_new_MSeedRecord__SWIG_5(self, argc, argv);
     }
   }
   if (argc == 1) {
@@ -26575,21 +26434,6 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
   }
   if (argc == 2) {
     int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_new_MSeedRecord__SWIG_4(self, argc, argv);
-      }
-    }
-  }
-  if (argc == 2) {
-    int _v = 0;
     int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_Seiscomp__Record, SWIG_POINTER_NO_NULL | 0);
     _v = SWIG_CheckState(res);
     if (_v) {
@@ -26598,7 +26442,7 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_new_MSeedRecord__SWIG_7(self, argc, argv);
+        return _wrap_new_MSeedRecord__SWIG_4(self, argc, argv);
       }
     }
   }
@@ -26618,27 +26462,6 @@ SWIGINTERN PyObject *_wrap_new_MSeedRecord(PyObject *self, PyObject *args) {
       }
     }
   }
-  if (argc == 3) {
-    int _v = 0;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_MS3Record, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_new_MSeedRecord__SWIG_3(self, argc, argv);
-        }
-      }
-    }
-  }
   
 fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_MSeedRecord'.\n"
@@ -26646,9 +26469,6 @@ fail:
     "    Seiscomp::IO::MSeedRecord::MSeedRecord(Seiscomp::Array::DataType,Seiscomp::Record::Hint)\n"
     "    Seiscomp::IO::MSeedRecord::MSeedRecord(Seiscomp::Array::DataType)\n"
     "    Seiscomp::IO::MSeedRecord::MSeedRecord()\n"
-    "    Seiscomp::IO::MSeedRecord::MSeedRecord(MSRecord *,Seiscomp::Array::DataType,Seiscomp::Record::Hint)\n"
-    "    Seiscomp::IO::MSeedRecord::MSeedRecord(MSRecord *,Seiscomp::Array::DataType)\n"
-    "    Seiscomp::IO::MSeedRecord::MSeedRecord(MSRecord *)\n"
     "    Seiscomp::IO::MSeedRecord::MSeedRecord(Seiscomp::IO::MSeedRecord const &)\n"
     "    Seiscomp::IO::MSeedRecord::MSeedRecord(Seiscomp::Record const &,int)\n"
     "    Seiscomp::IO::MSeedRecord::MSeedRecord(Seiscomp::Record const &)\n");
@@ -27426,6 +27246,49 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_useEncoding(PyObject *self, PyObject *arg
   {
     try {
       (arg1)->useEncoding(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MSeedRecord_setLittleEndian(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::MSeedRecord *arg1 = (Seiscomp::IO::MSeedRecord *) 0 ;
+  bool arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "MSeedRecord_setLittleEndian", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_setLittleEndian" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "MSeedRecord_setLittleEndian" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  {
+    try {
+      (arg1)->setLittleEndian(arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37249,7 +37112,6 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { "new_MSeedRecord", _wrap_new_MSeedRecord, METH_VARARGS, "\n"
 		"MSeedRecord(Seiscomp::Array::DataType dt=DOUBLE, Seiscomp::Record::Hint h=SAVE_RAW)\n"
-		"MSeedRecord(MSRecord * msrec, Seiscomp::Array::DataType dt=DOUBLE, Seiscomp::Record::Hint h=SAVE_RAW)\n"
 		"MSeedRecord(MSeedRecord ms)\n"
 		"MSeedRecord(Record rec, int reclen=512)\n"
 		""},
@@ -37270,6 +37132,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "MSeedRecord_saveSpace", _wrap_MSeedRecord_saveSpace, METH_O, "MSeedRecord_saveSpace(MSeedRecord self)"},
 	 { "MSeedRecord_copy", _wrap_MSeedRecord_copy, METH_O, "MSeedRecord_copy(MSeedRecord self) -> Record"},
 	 { "MSeedRecord_useEncoding", _wrap_MSeedRecord_useEncoding, METH_VARARGS, "MSeedRecord_useEncoding(MSeedRecord self, bool flag)"},
+	 { "MSeedRecord_setLittleEndian", _wrap_MSeedRecord_setLittleEndian, METH_VARARGS, "MSeedRecord_setLittleEndian(MSeedRecord self, bool flag)"},
 	 { "MSeedRecord_setOutputRecordLength", _wrap_MSeedRecord_setOutputRecordLength, METH_VARARGS, "MSeedRecord_setOutputRecordLength(MSeedRecord self, int reclen)"},
 	 { "MSeedRecord_read", _wrap_MSeedRecord_read, METH_VARARGS, "MSeedRecord_read(MSeedRecord self, std::istream & _in)"},
 	 { "MSeedRecord_write", _wrap_MSeedRecord_write, METH_VARARGS, "MSeedRecord_write(MSeedRecord self, std::ostream & out)"},

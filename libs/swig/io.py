@@ -1447,7 +1447,6 @@ class MSeedRecord(seiscomp.core.Record):
     def __init__(self, *args):
         r"""
         __init__(MSeedRecord self, Seiscomp::Array::DataType dt=DOUBLE, Seiscomp::Record::Hint h=SAVE_RAW) -> MSeedRecord
-        __init__(MSeedRecord self, MSRecord * msrec, Seiscomp::Array::DataType dt=DOUBLE, Seiscomp::Record::Hint h=SAVE_RAW) -> MSeedRecord
         __init__(MSeedRecord self, MSeedRecord ms) -> MSeedRecord
         __init__(MSeedRecord self, Record rec, int reclen=512) -> MSeedRecord
         """
@@ -1521,6 +1520,10 @@ class MSeedRecord(seiscomp.core.Record):
     def useEncoding(self, flag):
         r"""useEncoding(MSeedRecord self, bool flag)"""
         return _io.MSeedRecord_useEncoding(self, flag)
+
+    def setLittleEndian(self, flag):
+        r"""setLittleEndian(MSeedRecord self, bool flag)"""
+        return _io.MSeedRecord_setLittleEndian(self, flag)
 
     def setOutputRecordLength(self, reclen):
         r"""setOutputRecordLength(MSeedRecord self, int reclen)"""
