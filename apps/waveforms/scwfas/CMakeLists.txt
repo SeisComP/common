@@ -12,7 +12,6 @@ SET(
 )
 
 
-INCLUDE_DIRECTORIES(${LIBMSEED_INCLUDE_DIR})
 SC_INSTALL_INIT(${APP_NAME} ../../templates/initd.py)
 
 FILE(GLOB descs "${CMAKE_CURRENT_SOURCE_DIR}/descriptions/*.xml")
