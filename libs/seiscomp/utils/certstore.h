@@ -29,6 +29,7 @@
 #include <openssl/x509.h>
 #include <mutex>
 #include <string>
+#include <string_view>
 #include <map>
 
 
@@ -193,21 +194,27 @@ class SC_SYSTEM_CORE_API CertificateStore : public Core::BaseObject {
 		 * @brief Validates an ECDSA signature against the certificates in
 		 *        the store.
 		 * @param authority The authority
-		 * @param len Then length of the authority string in bytes
+		 * @param nAuthority Then length of the authority string in bytes
 		 * @param digest The digest block
 		 * @param nDigest The length of the digest block in bytes
 		 * @param signature The ECDSA signature to check against
+		 * @param nSignature The length of the signature in bytes
 		 * @param matchedCertificate The matched certificate if requested
 		 * @return Success flag
 		 */
-		bool validate(const char *authority, size_t len,
+		bool validate(const char *authority, size_t nAuthority,
 		              const char *digest, size_t nDigest,
-		              const unsigned char *sig, unsigned int siglen,
+		              const unsigned char *signature, unsigned int nSignature,
 		              const X509 **matchedCertificate = 0);
 
 		bool validate(const std::string &authority,
 		              const char *digest, size_t nDigest,
-		             const  unsigned char *sig, unsigned int siglen,
+		              const unsigned char *signature, unsigned int nSignature,
+		              const X509 **matchedCertificate = 0);
+
+		bool validate(std::string_view authority,
+		              const char *digest, size_t nDigest,
+		              const unsigned char *signature, unsigned int nSignature,
 		              const X509 **matchedCertificate = 0);
 
 		/**
@@ -231,6 +238,7 @@ class SC_SYSTEM_CORE_API CertificateStore : public Core::BaseObject {
 		 */
 		bool loadCRLs(CertificateContext::CRLs &crls, const std::string &hash,
 		              const std::string &baseDirectory);
+
 
 	// ----------------------------------------------------------------------
 	//  Members

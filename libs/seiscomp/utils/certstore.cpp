@@ -470,16 +470,16 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CertificateStore::validate(const char *authority, size_t len,
+bool CertificateStore::validate(const char *authority, size_t nAuthority,
                                 const char *digest, size_t nDigest,
-                                const unsigned char *sig, unsigned int siglen,
+                                const unsigned char *signature, unsigned int nSignature,
                                 const X509 **matchedCertificate) {
-	const CertificateContext *ctx = getContext(authority, len);
+	const CertificateContext *ctx = getContext(authority, nAuthority);
 	if ( !ctx ) {
 		return false;
 	}
 
-	const X509 *cert = ctx->findCertificate(digest, nDigest, sig, siglen);
+	const X509 *cert = ctx->findCertificate(digest, nDigest, signature, nSignature);
 	if ( !cert ) {
 		return false;
 	}
@@ -496,13 +496,28 @@ bool CertificateStore::validate(const char *authority, size_t len,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CertificateStore::validate(const std::string &hash,
+bool CertificateStore::validate(const std::string &authority,
                                 const char *digest, size_t nDigest,
-                                const unsigned char *sig, unsigned int siglen,
+                                const unsigned char *signature, unsigned int nSignature,
                                 const X509 **matchedCertificate) {
 	return validate(
-		hash.data(), hash.size(),
-		digest, nDigest, sig, siglen, matchedCertificate
+		authority.data(), authority.size(),
+		digest, nDigest, signature, nSignature, matchedCertificate
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool CertificateStore::validate(std::string_view authority,
+                                const char *digest, size_t nDigest,
+                                const unsigned char *signature, unsigned int nSignature,
+                                const X509 **matchedCertificate) {
+	return validate(
+		authority.data(), authority.size(),
+		digest, nDigest, signature, nSignature, matchedCertificate
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
