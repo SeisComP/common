@@ -265,7 +265,7 @@
 											in the next steps.
 											</description>
 										</input>
-										<input name="runAsSuperUser" type="boolean" default="false">
+										<input name="runAsSuperUser" type="boolean" default="true">
 											<text>Run as super user.</text>
 											<description>
 											Usually the creation of the SeisComP database
