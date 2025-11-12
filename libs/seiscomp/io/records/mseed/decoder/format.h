@@ -58,6 +58,9 @@ inline constexpr bool isValidHeader(const void *ptr) {
 }
 
 
+uint16_t blocketteLength(uint16_t type, const void *ptrBlockette, bool swapflag);
+
+
 }
 
 

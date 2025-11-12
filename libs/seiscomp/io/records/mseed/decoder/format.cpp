@@ -21,6 +21,8 @@
 #include <seiscomp/core/strings.h>
 #include <string>
 
+#include "./format.h"
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp::IO::MSEED {
@@ -74,6 +76,61 @@ bool sid2nslc(std::string_view sid, std::string &net, std::string &sta,
 	}
 
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace V2 {
+
+uint16_t blocketteLength(uint16_t type, const void *ptr, bool swapflag) {
+	switch ( type ) {
+		// Sampling Rate
+		case 100:
+			return 12;
+		// Generic Event Detection
+		case 200:
+			return 28;
+		// Murdock Event Detection
+		case 201:
+			return 36;
+		// Step Calibration
+		case 300:
+			return 32;
+		// Sine Calibration
+		case 310:
+			return 32;
+		// Pseudo-random Calibration
+		case 320:
+			return 28;
+		// Generic Calibration
+		case 390:
+			return 28;
+		// Calibration Abort
+		case 395:
+			return 16;
+		// Beam
+		case 400:
+			return 16;
+		// Timing
+		case 500:
+			return 8;
+		// Data Only SEED
+		case 1000:
+			return 8;
+		// Data Extension
+		case 1001:
+			return 8;
+		// Opaque Data
+		case 2000:
+			return swap(*B2000Length::Get(ptr), swapflag);
+	}
+
+	return 0;
+}
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
