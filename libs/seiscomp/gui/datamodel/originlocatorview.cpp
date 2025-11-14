@@ -5541,20 +5541,21 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 
 	SC_D.residuals->setValueColor(id, PC_REDUCEDTRAVELTIME, c);
 
-	try {
+	if ( dist >= 0 ) {
 		if ( SCScheme.unit.distanceInKM ) {
 			SC_D.residuals->setValue(id, PC_DISTANCE, Math::Geo::deg2km(dist));
 		}
 		else {
 			SC_D.residuals->setValue(id, PC_DISTANCE, dist);
 		}
+
+		SC_D.modelArrivals.setDistance(id, SC_D.residuals->value(id, PC_DISTANCE));
 	}
-	catch ( ValueException& ) {
+	else {
 		SC_D.residuals->setValue(id, PC_DISTANCE, 0.0);
 		SC_D.residuals->setValueValid(id, PC_DISTANCE, false);
+		SC_D.modelArrivals.setDistance(id, QVariant());
 	}
-
-	SC_D.modelArrivals.setDistance(id, SC_D.residuals->value(id, PC_DISTANCE));
 
 	try {
 		double residual = arrival->timeResidual();
