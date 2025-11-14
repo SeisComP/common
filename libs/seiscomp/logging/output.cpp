@@ -41,7 +41,9 @@ Output::Output() : _logComponent(true), _logContext(false), _useUTC(false) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Output::subscribe(Channel* ch) {
-	if ( !ch ) return false;
+	if ( !ch ) {
+		return false;
+	}
 
 	addPublisher(ch);
 	ch->isInterested(this, true);
@@ -55,7 +57,9 @@ bool Output::subscribe(Channel* ch) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Output::unsubscribe(Channel* ch) {
-	if ( !ch ) return false;
+	if ( !ch ) {
+		return false;
+	}
 
 	dropPublisher(ch);
 	ch->isInterested(this, false);

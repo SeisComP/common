@@ -24,7 +24,6 @@
 
 #include <cstdarg>
 #include <iomanip>
-#include <sstream>
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -37,7 +36,7 @@ namespace Logging {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FileOutput::FileOutput()
- : _stream() {
+: _stream() {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -46,8 +45,7 @@ FileOutput::FileOutput()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 FileOutput::FileOutput(const char* filename)
- : _filename(filename), _stream(filename, std::ios_base::out | std::ios_base::app) {
-}
+: _filename(filename), _stream(filename, std::ios_base::out | std::ios_base::app) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

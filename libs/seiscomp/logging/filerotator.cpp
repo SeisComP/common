@@ -22,10 +22,8 @@
 #include <seiscomp/logging/filerotator.h>
 
 #include <cstdarg>
-#include <iostream>
-#include <iomanip>
+#include <cstdio>
 #include <sstream>
-#include <stdio.h>
 #include <unistd.h>
 
 #ifndef WIN32
@@ -46,8 +44,7 @@ FileRotatorOutput::FileRotatorOutput(int timeSpan, int historySize, int maxFileS
 : _timeSpan(timeSpan)
 , _historySize(historySize)
 , _maxFileSize(maxFileSize)
-, _lastInterval(-1) {
-}
+, _lastInterval(-1) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -59,8 +56,7 @@ FileRotatorOutput::FileRotatorOutput(const char* filename, int timeSpan, int his
 , _timeSpan(timeSpan)
 , _historySize(historySize)
 , _maxFileSize(maxFileSize)
-, _lastInterval(-1) {
-}
+, _lastInterval(-1) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -68,12 +64,15 @@ FileRotatorOutput::FileRotatorOutput(const char* filename, int timeSpan, int his
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FileRotatorOutput::open(const char* filename) {
-	if ( !FileOutput::open(filename) ) return false;
+	if ( !FileOutput::open(filename) ) {
+		return false;
+	}
 
 #ifndef WIN32
 	struct stat st;
-	if ( stat(filename, &st) == 0 )
+	if ( stat(filename, &st) == 0 ) {
 		_lastInterval = st.st_mtime / _timeSpan;
+	}
 
 #endif
 	return true;
@@ -100,8 +99,9 @@ void FileRotatorOutput::log(const char* channelName,
 		_lastInterval = currentInterval;
 	}
 	else if ( _maxFileSize > 0 ) {
-		if ( _stream.tellp() > (std::ofstream::pos_type)_maxFileSize )
+		if ( _stream.tellp() > (std::ofstream::pos_type)_maxFileSize ) {
 			rotateLogs();
+		}
 	}
 
 	FileOutput::log(channelName, level, msg, time);
@@ -126,12 +126,14 @@ void FileRotatorOutput::removeLog(int index) {
 void FileRotatorOutput::renameLog(int oldIndex, int newIndex) {
 	std::stringstream oldFile, newFile;
 	oldFile << _filename;
-	if ( oldIndex > 0 )
+	if ( oldIndex > 0 ) {
 		oldFile << "." << oldIndex;
+	}
 
 	newFile << _filename;
-	if ( newIndex > 0 )
+	if ( newIndex > 0 ) {
 		newFile << "." << newIndex;
+	}
 
 	rename(oldFile.str().c_str(), newFile.str().c_str());
 }
@@ -143,14 +145,16 @@ void FileRotatorOutput::renameLog(int oldIndex, int newIndex) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FileRotatorOutput::rotateLogs() {
 	// Close current stream
-	if ( _stream.is_open() )
+	if ( _stream.is_open() ) {
 		_stream.close();
+	}
 
 	// Rotate the log files
 	removeLog(_historySize);
 
-	for ( int i = _historySize-1; i >= 0; --i )
+	for ( int i = _historySize-1; i >= 0; --i ) {
 		renameLog(i, i+1);
+	}
 
 	// Open the new stream
 	int tmp(_lastInterval);
