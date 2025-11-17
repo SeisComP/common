@@ -225,7 +225,7 @@
 		<setup>
 			<group name="database">
 				<input name="enable" type="boolean" default="true">
-					<text>Enable database storage.</text>
+					<text>Enable database storage</text>
 					<description>
 					Enable/disable the database.
 					If the database is not enabled, the processed data is not
@@ -245,22 +245,22 @@
 							<option value="mysql/mariadb">
 								<description>MySQL/MariaDB server.</description>
 								<input name="create" type="boolean" default="true">
-									<text>Create database</text>
+									<text>Create the SeisComP database</text>
 									<description>
-									If you already have a database and want to
-									reuse it, you can skip this step.
-									If you want to let setup create the database
-									for you, check this option.
+									Check this option for creating the SeisComP
+									database.
+									Uncheck if a SeisComP database exists which
+									you want to use.
 									</description>
 									<option value="true">
 										<input name="runAsSuperUser" type="boolean" default="true">
-											<text>Run as super user.</text>
+											<text>Run as super user</text>
 											<description>
-											Usually the creation of the SeisComP database
-											requires super user rights. By default the database
-											scripts are executed as system super user. Deactivate
-											this option to use the database root account for
-											database creation instead.
+											SeisComP databases are created by
+											scripts usually executed with super
+											user rights. Deactivate this option to
+											use the database root account for
+											creating a database.
 											</description>
 											<option value="true"/>
 											<option value="false">
@@ -279,7 +279,7 @@
 											</option>
 										</input>
 										<input name="drop" type="boolean" default="false">
-											<text>Drop existing database.</text>
+											<text>Drop existing database</text>
 											<description>
 											When a database with the same name
 											exists already, should it be destroyed
@@ -305,7 +305,7 @@
 									<option value="false"/>
 								</input>
 								<input name="db" type="string" default="seiscomp">
-									<text>Database name.</text>
+									<text>Database name</text>
 									<description>
 									Database name to use.
 									If you want to avoid conflicts with existing
@@ -315,7 +315,7 @@
 									</description>
 								</input>
 								<input name="rwhost" type="string" default="localhost">
-									<text>Database hostname.</text>
+									<text>Database hostname</text>
 									<description>
 									The hostname of the computer running the
 									database server.
@@ -325,7 +325,7 @@
 									</description>
 								</input>
 								<input name="rwuser" type="string" default="sysop">
-									<text>Database read-write user.</text>
+									<text>Database read-write user</text>
 									<description>
 									The database username for read-write access
 									to the database.
@@ -335,7 +335,7 @@
 									</description>
 								</input>
 								<input name="rwpwd" type="string" default="sysop">
-									<text>Database read-write password.</text>
+									<text>Database read-write password</text>
 									<description>
 									The database user password for read-write
 									access to the database.
@@ -345,7 +345,7 @@
 									</description>
 								</input>
 								<input name="rohost" type="string" default="localhost">
-									<text>Database public hostname.</text>
+									<text>Database public hostname</text>
 									<description>
 									The hostname of the computer running the
 									database server.
@@ -357,7 +357,7 @@
 									</description>
 								</input>
 								<input name="rouser" type="string" default="sysop">
-									<text>Database read-only user.</text>
+									<text>Database read-only user</text>
 									<description>
 									The database user that will have read-only
 									access to the database.
@@ -366,7 +366,7 @@
 									</description>
 								</input>
 								<input name="ropwd" type="string" default="sysop">
-									<text>Database read-only password.</text>
+									<text>Database read-only password</text>
 									<description>
 									The database user password for read-only
 									access to the database.
@@ -382,11 +382,12 @@
 								<input name="create" type="boolean" default="true">
 									<text>Create database</text>
 									<description>
-									If you already have a database and want to
-									reuse it, you can skip this step.
-									If you want to let setup create the database
-									for you, check this option.&lt;br&gt;&lt;br&gt;
-									Note: By default, the PostgresSQL server do
+									Check this option for creating the SeisComP
+									database.
+									Uncheck if a SeisComP database exists which
+									you want to use.
+									&lt;br&gt;&lt;br&gt;
+									Note: By default, PostgresSQL servers do
 									not allow to login with username and password.
 									Due to this reason, the SeisComP scmaster
 									module can establish a connection after database
@@ -396,7 +397,7 @@
 									</description>
 									<option value="true">
 										<input name="drop" type="boolean" default="false">
-											<text>Drop existing database.</text>
+											<text>Drop existing database</text>
 											<description>
 											When a database with the same name
 											exists already, should it be
@@ -410,7 +411,7 @@
 									<option value="false"/>
 								</input>
 								<input name="db" type="string" default="seiscomp">
-									<text>Database name.</text>
+									<text>Database name</text>
 									<description>
 									Database name to use. If you want to avoid
 									conflicts with existing databases, or if you
@@ -419,7 +420,7 @@
 									</description>
 								</input>
 								<input name="rwhost" type="string" default="localhost">
-									<text>Database hostname.</text>
+									<text>Database hostname</text>
 									<description>
 									The hostname of the computer running the
 									database server.
@@ -429,7 +430,7 @@
 									</description>
 								</input>
 								<input name="rwuser" type="string" default="sysop">
-									<text>Database read-write user.</text>
+									<text>Database read-write user</text>
 									<description>
 									The database username for read-write access
 									to the database.
@@ -439,7 +440,7 @@
 									</description>
 								</input>
 								<input name="rwpwd" type="string" default="sysop">
-									<text>Database read-write password.</text>
+									<text>Database read-write password</text>
 									<description>
 									The database user password for read-write
 									access to the database.
@@ -449,7 +450,7 @@
 									</description>
 								</input>
 								<input name="rohost" type="string" default="localhost">
-									<text>Database public hostname.</text>
+									<text>Database public hostname</text>
 									<description>
 									The hostname of the computer running the
 									database server.
@@ -461,7 +462,7 @@
 									</description>
 								</input>
 								<input name="rouser" type="string" default="sysop">
-									<text>Database read-only user.</text>
+									<text>Database read-only user</text>
 									<description>
 									The database user that will have read-only
 									access to the database.
@@ -470,7 +471,7 @@
 									</description>
 								</input>
 								<input name="ropwd" type="string" default="sysop">
-									<text>Database read-only password.</text>
+									<text>Database read-only password</text>
 									<description>
 									The database user password for read-only
 									access to the database.
@@ -484,14 +485,14 @@
 								<input name="create" type="boolean" default="true">
 									<text>Create database</text>
 									<description>
-									If you already have a database and want to
-									reuse it, you can skip this step.
-									If you want to let setup create the database
-									for you, check this option.
+									Check this option for creating the SeisComP
+									database.
+									Uncheck if a SeisComP database exists which
+									you want to use.
 									</description>
 									<option value="true">
 										<input name="override" type="boolean" default="false">
-											<text>Override existing database file.</text>
+											<text>Override existing database file</text>
 											<description>
 											When a database with the same name
 											exists already, should it be overriden?
