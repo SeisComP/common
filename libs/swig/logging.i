@@ -23,16 +23,18 @@
 #include "seiscomp/logging/log.h"
 #include "seiscomp/logging/channel.h"
 #include "seiscomp/logging/node.h"
-#include "seiscomp/logging/fd.h"
-#include "seiscomp/logging/file.h"
-#include "seiscomp/logging/filerotator.h"
-#include "seiscomp/logging/syslog.h"
+#include "seiscomp/logging/output/fd.h"
+#include "seiscomp/logging/output/file.h"
+#include "seiscomp/logging/output/filerotator.h"
+#include "seiscomp/logging/output/syslog.h"
 %}
+
+%ignore Seiscomp::Logging::Output::setup;
 
 %include "seiscomp/core.h"
 %include "seiscomp/logging/log.h"
 %include "seiscomp/logging/output.h"
-%include "seiscomp/logging/fd.h"
-%include "seiscomp/logging/file.h"
-%include "seiscomp/logging/filerotator.h"
-%include "seiscomp/logging/syslog.h"
+%include "seiscomp/logging/output/fd.h"
+%include "seiscomp/logging/output/file.h"
+%include "seiscomp/logging/output/filerotator.h"
+%include "seiscomp/logging/output/syslog.h"
