@@ -3,9 +3,6 @@ SET(LOG_SOURCES
 	channel.cpp
 	node.cpp
 	publisher.cpp
-	fd.cpp
-	file.cpp
-	filerotator.cpp
 	output.cpp
 )
 
@@ -18,15 +15,8 @@ SET(LOG_HEADERS
 	publisher.h
 	publishloc.h
 	output.h
-	fd.h
-	file.h
-	filerotator.h
 )
 
-IF(NOT WIN32)
-	SET(LOG_SOURCES ${LOG_SOURCES} syslog.cpp)
-	SET(LOG_HEADERS ${LOG_HEADERS} syslog.h
-	)
-ENDIF(NOT WIN32)
+SC_ADD_SUBDIR_SOURCES(LOG output)
 
 SC_SETUP_LIB_SUBDIR(LOG)

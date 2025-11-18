@@ -20,15 +20,15 @@
 
 #define SEISCOMP_COMPONENT log
 
-#include <seiscomp/logging/file.h>
+#include <seiscomp/logging/output/file.h>
+#include <seiscomp/core/interfacefactory.ipp>
 
 #include <cstdarg>
 #include <iomanip>
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -61,7 +61,16 @@ FileOutput::~FileOutput() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FileOutput::open(const char* filename) {
+bool FileOutput::setup(const Util::Url &url) {
+	return open((url.host() + url.path()).data());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool FileOutput::open(const char *filename) {
 	_filename = filename;
 	_stream.open(filename, std::ios_base::out | std::ios_base::app);
 	return _stream.is_open();
@@ -119,5 +128,19 @@ void FileOutput::log(const char* channelName,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+using namespace Seiscomp::Logging;
+
+REGISTER_LOGGING_OUTPUT_INTERFACE(FileOutput, "file");
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

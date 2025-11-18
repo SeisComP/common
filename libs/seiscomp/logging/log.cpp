@@ -22,7 +22,7 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/logging/channel.h>
 #include <seiscomp/logging/publisher.h>
-#include <seiscomp/logging/fd.h>
+#include <seiscomp/logging/output/fd.h>
 
 #include <unistd.h>
 #include <mutex>

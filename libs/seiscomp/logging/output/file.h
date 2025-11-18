@@ -18,20 +18,28 @@
  ***************************************************************************/
 
 
-#ifndef SC_LOGGING_FD_H
-#define SC_LOGGING_FD_H
+#ifndef SC_LOGGING_OUTPUT_FILE_H
+#define SC_LOGGING_OUTPUT_FILE_H
+
 
 #include <seiscomp/logging/output.h>
+#include <fstream>
 
 
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 
 
-class SC_SYSTEM_CORE_API FdOutput : public Output {
+class SC_SYSTEM_CORE_API FileOutput : public Output {
 	public:
-		FdOutput(int fdOut = 2);
-		~FdOutput();
+		FileOutput();
+		FileOutput(const char* filename);
+		~FileOutput();
+
+	public:
+		bool setup(const Util::Url &url) override;
+
+		virtual bool open(const char *filename);
+		bool isOpen();
 
 	protected:
 		/** Callback method for receiving log messages */
@@ -40,13 +48,13 @@ class SC_SYSTEM_CORE_API FdOutput : public Output {
 		         const char* msg,
 		         time_t time) override;
 
-	private:
-		bool _colorize;
-		int _fdOut;
+	protected:
+		std::string _filename;
+		mutable std::ofstream _stream;
 };
 
 
 }
-}
+
 
 #endif

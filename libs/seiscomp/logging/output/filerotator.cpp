@@ -19,12 +19,14 @@
 
 
 #define SEISCOMP_COMPONENT log
-#include <seiscomp/logging/filerotator.h>
+#include <seiscomp/logging/output/filerotator.h>
+#include <seiscomp/core/interfacefactory.ipp>
+#include <seiscomp/core/strings.h>
 
 #include <cstdarg>
 #include <cstdio>
-#include <sstream>
 #include <unistd.h>
+#include <sstream>
 
 #ifndef WIN32
 #include <sys/stat.h>
@@ -32,8 +34,7 @@
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -63,14 +64,41 @@ FileRotatorOutput::FileRotatorOutput(const char* filename, int timeSpan, int his
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FileRotatorOutput::open(const char* filename) {
+bool FileRotatorOutput::setup(const Util::Url &url) {
+	if ( url.hasQueryItem("ts") ) {
+		if ( !Core::fromString(_timeSpan, url.queryItemValue("ts")) ) {
+			return false;
+		}
+	}
+
+	if ( url.hasQueryItem("n") ) {
+		if ( !Core::fromString(_historySize, url.queryItemValue("n")) || (_historySize <= 0) ) {
+			return false;
+		}
+	}
+
+	if ( url.hasQueryItem("sz") ) {
+		if ( !Core::fromString(_maxFileSize, url.queryItemValue("sz")) || (_maxFileSize <= 0) ) {
+			return false;
+		}
+	}
+
+	return !FileOutput::setup(url);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool FileRotatorOutput::open(const char *filename) {
 	if ( !FileOutput::open(filename) ) {
 		return false;
 	}
 
 #ifndef WIN32
 	struct stat st;
-	if ( stat(filename, &st) == 0 ) {
+	if ( stat(_filename.data(), &st) == 0 ) {
 		_lastInterval = st.st_mtime / _timeSpan;
 	}
 
@@ -158,7 +186,7 @@ void FileRotatorOutput::rotateLogs() {
 
 	// Open the new stream
 	int tmp(_lastInterval);
-	open(_filename.c_str());
+	open(_filename.data());
 	_lastInterval = tmp;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -168,5 +196,19 @@ void FileRotatorOutput::rotateLogs() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+using namespace Seiscomp::Logging;
+
+REGISTER_LOGGING_OUTPUT_INTERFACE(FileRotatorOutput, "rotator");
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

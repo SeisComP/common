@@ -23,7 +23,9 @@
 
 #ifndef WIN32
 
-#include <seiscomp/logging/syslog.h>
+#include <seiscomp/logging/output/syslog.h>
+#include <seiscomp/core/interfacefactory.ipp>
+
 #include <syslog.h>
 
 #include <cstring>
@@ -35,8 +37,7 @@
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -53,8 +54,8 @@ SyslogOutput::SyslogOutput()
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SyslogOutput::SyslogOutput(const char* ident, const char *facility)
-    : _openFlag(false), _facility(SYSLOG_FACILITY) {
-	SyslogOutput::open(ident, facility);
+: _openFlag(false), _facility(SYSLOG_FACILITY) {
+	open(ident, facility);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -161,6 +162,20 @@ void SyslogOutput::log(const char* channelName,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+using namespace Seiscomp::Logging;
+
+REGISTER_LOGGING_OUTPUT_INTERFACE(SyslogOutput, "syslog");
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

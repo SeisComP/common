@@ -17,16 +17,20 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+
 #define SEISCOMP_COMPONENT log
 
-#include <seiscomp/logging/fd.h>
-#include <stdio.h>
+
+#include <seiscomp/logging/output/fd.h>
+#include <seiscomp/core/interfacefactory.ipp>
+#include <seiscomp/core/strings.h>
+
+#include <cstdio>
 #include <sstream>
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -73,7 +77,12 @@ FdOutput::FdOutput(int fdOut) : _fdOut(fdOut) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FdOutput::~FdOutput() {
+bool FdOutput::setup(const Util::Url &url) {
+	if ( !url.path().empty() ) {
+		return false;
+	}
+
+	return Core::fromString(_fdOut, url.host());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -163,5 +172,19 @@ void FdOutput::log(const char* channelName,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+using namespace Seiscomp::Logging;
+
+REGISTER_LOGGING_OUTPUT_INTERFACE(FdOutput, "fd");
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

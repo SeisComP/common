@@ -18,16 +18,16 @@
  ***************************************************************************/
 
 
-#ifndef SC_LOGGING_SYSLOG_H
-#define SC_LOGGING_SYSLOG_H
+#ifndef SC_LOGGING_OUTPUT_SYSLOG_H
+#define SC_LOGGING_OUTPUT_SYSLOG_H
 
 #ifndef WIN32
+
 
 #include <seiscomp/logging/output.h>
 
 
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 
 
 class SC_SYSTEM_CORE_API SyslogOutput : public Output {
@@ -36,11 +36,13 @@ class SC_SYSTEM_CORE_API SyslogOutput : public Output {
 		SyslogOutput(const char *ident, const char *facility = nullptr);
 		~SyslogOutput();
 
+	public:
 		int facility() const { return _facility; }
 
-		bool open(const char *ident, const char *facility = nullptr);
+		bool open(const char* ident, const char *facility);
 		bool isOpen() const;
 		void close();
+
 
 	protected:
 		/** Callback method for receiving log messages */
@@ -56,7 +58,7 @@ class SC_SYSTEM_CORE_API SyslogOutput : public Output {
 
 
 }
-}
+
 
 #endif
 

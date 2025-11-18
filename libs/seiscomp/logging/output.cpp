@@ -21,6 +21,10 @@
 #define SEISCOMP_COMPONENT log
 #include <seiscomp/logging/output.h>
 #include <seiscomp/logging/channel.h>
+#include <seiscomp/core/interfacefactory.ipp>
+
+
+IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Logging::Output, SC_SYSTEM_CORE_API);
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -32,7 +36,37 @@ namespace Logging {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Output::Output() : _logComponent(true), _logContext(false), _useUTC(false) {
+Output *Output::Create(const char* service) {
+	return service ? OutputFactory::Create(service) : nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Output *Output::Open(const char* uri) {
+	Util::Url url;
+	if ( !url.setUrl(uri) ) {
+		return nullptr;
+	}
+
+	auto output = url.scheme().empty() ? Create("file") : Create(url.scheme().data());
+	if ( output && !output->setup(url)) {
+		delete output;
+		output = nullptr;
+	}
+
+	return output;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Output::setup(const Util::Url &url) {
+	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -18,16 +18,15 @@
  ***************************************************************************/
 
 
-#ifndef SC_LOGGING_FILEROTATOR_H
-#define SC_LOGGING_FILEROTATOR_H
+#ifndef SC_LOGGING_OUTPUT_FILEROTATOR_H
+#define SC_LOGGING_OUTPUT_FILEROTATOR_H
 
 
-#include <seiscomp/logging/file.h>
+#include <seiscomp/logging/output/file.h>
 #include <mutex>
 
 
-namespace Seiscomp {
-namespace Logging {
+namespace Seiscomp::Logging {
 
 
 class SC_SYSTEM_CORE_API FileRotatorOutput : public FileOutput {
@@ -43,7 +42,9 @@ class SC_SYSTEM_CORE_API FileRotatorOutput : public FileOutput {
 		FileRotatorOutput(const char* filename, int timeSpan = 60*60*24,
 		                  int historySize = 7, int maxFileSize = 100*1024*1024);
 
-		bool open(const char* filename) override;
+	public:
+		bool setup(const Util::Url &url) override;
+		bool open(const char *filename) override;
 
 	protected:
 		/** Callback method for receiving log messages */
@@ -75,7 +76,6 @@ class SC_SYSTEM_CORE_API FileRotatorOutput : public FileOutput {
 };
 
 
-}
 }
 
 #endif
