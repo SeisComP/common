@@ -259,6 +259,7 @@ class NewCatBindingDialog : public QDialog {
 		                    const std::string &type,
 		                    QWidget *parent = 0)
 		    : QDialog(parent), _cat(c), _type(type) {
+			setWindowTitle(tr("New %1 binding name").arg(c->name.data()));
 			QVBoxLayout *layout = new QVBoxLayout;
 			setLayout(layout);
 
@@ -2569,7 +2570,7 @@ void FancyView::addCategoryBinding() {
 		return;
 	}
 
-	NewCatBindingDialog dlg(cat, type.toStdString());
+	NewCatBindingDialog dlg(cat, type.toStdString(), this);
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	Binding *nb = cat->instantiate(typeBinding, dlg.name().c_str());
