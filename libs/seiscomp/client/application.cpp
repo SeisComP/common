@@ -20,16 +20,12 @@
 
 #define SEISCOMP_COMPONENT Application
 
+#include <seiscomp/logging/log.h>
+
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/core/system.h>
-
-#include <seiscomp/logging/fd.h>
-#include <seiscomp/logging/filerotator.h>
-#ifndef WIN32
-#include <seiscomp/logging/syslog.h>
-#endif
 
 #include <seiscomp/system/pluginregistry.h>
 

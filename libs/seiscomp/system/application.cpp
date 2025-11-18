@@ -27,10 +27,10 @@
 
 #include <seiscomp/datamodel/version.h>
 
-#include <seiscomp/logging/fd.h>
-#include <seiscomp/logging/filerotator.h>
+#include <seiscomp/logging/output/fd.h>
+#include <seiscomp/logging/output/filerotator.h>
 #ifndef WIN32
-#include <seiscomp/logging/syslog.h>
+#include <seiscomp/logging/output/syslog.h>
 #endif
 
 #include <seiscomp/utils/certstore.h>
@@ -1562,10 +1562,11 @@ bool Application::initLogging() {
 					_baseSettings.logging.file.rotator.archiveSize,
 					_baseSettings.logging.file.rotator.maxFileSize
 				);
-			else
+			else {
 				logger = new Logging::FileOutput();
+			}
 
-			if ( logger->open(logFile.c_str()) ) {
+			if ( logger->open(Util::Url(logFile)) ) {
 				//cerr << "using logfile: " << logFile << endl;
 				_logger = logger;
 			}

@@ -29,7 +29,7 @@
 #include <seiscomp/io/archive/binarchive.h>
 #include <seiscomp/io/archive/jsonarchive.h>
 #include <seiscomp/io/archive/xmlarchive.h>
-#include <seiscomp/logging/fd.h>
+#include <seiscomp/logging/output/fd.h>
 
 #include <seiscomp/unittest/unittests.h>
 
