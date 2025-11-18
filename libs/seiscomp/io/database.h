@@ -28,13 +28,11 @@
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core.h>
 
-#include <vector>
 #include <string>
-#include <stdint.h>
+#include <cstdint>
 
 
-namespace Seiscomp {
-namespace IO {
+namespace Seiscomp::IO {
 
 
 DEFINE_SMARTPOINTER(DatabaseInterface);
@@ -358,7 +356,7 @@ DEFINE_INTERFACE_FACTORY(DatabaseInterface);
 #define REGISTER_DB_INTERFACE(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::IO::DatabaseInterface, Class> __##Class##InterfaceFactory__(Service)
 
-}
+
 }
 
 
