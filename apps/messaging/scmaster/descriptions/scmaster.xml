@@ -268,11 +268,11 @@
 										<input name="runAsSuperUser" type="boolean" default="false">
 											<text>Run as super user.</text>
 											<description>
-											Activate this option to run the database
-											setup script with super user rights.
-											For instance, some MariaDB installation
-											do not allow root access per password
-											and require privileged system access.
+											Usually the creation of the SeisComP database
+											requires super user rights. By default the database
+											scripts are executed as system super user. Deactivate
+											this option to use the database root account for
+											database creation instead.
 											</description>
 										</input>
 										<input name="drop" type="boolean" default="false">
