@@ -237,7 +237,6 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 			EVALUES(
 				Binary,
 				JSON,
-				BSON,
 				XML,
 				IMPORTED_XML,
 				Text
@@ -245,7 +244,6 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 			ENAMES(
 				"application/x-sc-bin",
 				"text/json",
-				"application/x-sc-bson",
 				"application/x-sc-xml",
 				"text/xml",
 				"text/plain"

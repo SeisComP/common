@@ -54,7 +54,6 @@ struct SC_SYSTEM_CORE_API Buffer : Seiscomp::Core::BaseObject {
 		Plain,
 		XML,
 		JSON,
-		BSON,
 		Octetts,
 		Custom
 	};

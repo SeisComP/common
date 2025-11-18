@@ -27,7 +27,6 @@
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/io/archive/binarchive.h>
 #include <seiscomp/io/archive/jsonarchive.h>
-#include <seiscomp/io/archive/bsonarchive.h>
 #include <seiscomp/io/streams/filter/lz4.h>
 
 #include <boost/iostreams/stream.hpp>
@@ -186,9 +185,6 @@ bool Message::decode() {
 			case JSON:
 				schemaVersion = parse<IO::JSONArchive>(object, payload, ce);
 				break;
-			case BSON:
-				schemaVersion = parse<IO::BSONArchive>(object, payload, ce);
-				break;
 			case XML:
 				schemaVersion = parse<IO::XMLArchive>(object, payload, ce);
 				break;
@@ -238,8 +234,6 @@ bool Message::encode() {
 			return write<IO::VBinaryArchive>(payload, object.get(), ce, schemaVersion);
 		case JSON:
 			return write<IO::JSONArchive>(payload, object.get(), ce, schemaVersion);
-		case BSON:
-			return write<IO::BSONArchive>(payload, object.get(), ce, schemaVersion);
 		case XML:
 			return write<IO::XMLArchive>(payload, object.get(), ce, schemaVersion);
 		case IMPORTED_XML:

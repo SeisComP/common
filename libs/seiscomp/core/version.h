@@ -107,6 +107,8 @@ namespace Core {
    - Removed Seiscomp::Processing::WaveformProcessor::_usedComponent member
    - Added Seiscomp::Processing::WaveformProcessor::setDataComponents
    - Added Seiscomp::Processing::WaveformProcessor::setTargetComponent
+   - Removed Seiscomp::IO::BSONArchive
+   - Removed Seiscomp::IO::HMBConnection
 
  "16.4.0"   0x100400
    - Added Seiscomp::Math::double2frac

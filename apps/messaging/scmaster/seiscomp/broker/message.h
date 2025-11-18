@@ -67,7 +67,6 @@ MAKEENUM(
 	EVALUES(
 		Binary,
 		JSON,
-		BSON,
 		XML,
 		IMPORTED_XML,
 		Text
@@ -75,7 +74,6 @@ MAKEENUM(
 	ENAMES(
 		"application/x-sc-bin",
 		"text/json",
-		"application/x-sc-bson",
 		"application/x-sc-xml",
 		"text/xml",
 		"text/plain"
