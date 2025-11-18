@@ -150,6 +150,40 @@ BOOST_AUTO_TEST_CASE(WRITE_READ2) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(MODIFY) {
+	MSeedRecord mseed(filledRec);
+
+	stringbuf buf;
+	iostream ios(&buf);
+
+	BOOST_CHECK_NO_THROW(mseed.write(ios));
+	MSeedRecord rec;
+	rec.setHint(Record::SAVE_RAW);
+	rec.read(ios);
+
+	rec.setStartTime(Time(2025, 11, 9, 12, 34, 56, 789));
+	rec.setNetworkCode("XX");
+	rec.setStationCode("YYYYY");
+	rec.setLocationCode("ZZ");
+	rec.setChannelCode("123");
+	auto raw = CharArray::ConstCast(rec.raw());
+	BOOST_CHECK(raw);
+
+	InputStringViewStream is({ raw->typedData(), static_cast<size_t>(raw->size()) });
+	MSeedRecord mseed2;
+	mseed2.read(is);
+	BOOST_CHECK_EQUAL(mseed2.networkCode(), "XX");
+	BOOST_CHECK_EQUAL(mseed2.stationCode(), "YYYYY");
+	BOOST_CHECK_EQUAL(mseed2.locationCode(), "ZZ");
+	BOOST_CHECK_EQUAL(mseed2.channelCode(), "123");
+	BOOST_CHECK_EQUAL(mseed2.startTime(), Time(2025, 11, 9, 12, 34, 56, 789));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_SUITE_END()
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -218,14 +218,41 @@ void MSeedRecord::setStartTime(const Core::Time &time) {
 			int year, yday, hour, minute, second, microsecond;
 			time.get2(&year, &yday, &hour, &minute, &second, &microsecond);
 
-			*Year::Get(_raw.typedData()) = swap(year, swapflag);
-			*YDay::Get(_raw.typedData()) = swap(yday + 1, swapflag);
+			auto ptr = _raw.typedData();
+			auto size = _raw.size();
 
-			*Hour::Get(_raw.typedData()) = hour;
-			*Minute::Get(_raw.typedData()) = minute;
-			*Second::Get(_raw.typedData()) = second;
-			*Unused::Get(_raw.typedData()) = 0;
-			*FSecond::Get(_raw.typedData()) = swap(microsecond / 100, swapflag);
+			*Year::Get(ptr) = swap(static_cast<uint16_t>(year), swapflag);
+			*YDay::Get(ptr) = swap(static_cast<uint16_t>(yday + 1), swapflag);
+
+			*Hour::Get(ptr) = hour;
+			*Minute::Get(ptr) = minute;
+			*Second::Get(ptr) = second;
+			*Unused::Get(ptr) = 0;
+			*FSecond::Get(ptr) = swap(static_cast<uint16_t>(microsecond / 100), swapflag);
+
+			auto rem = microsecond % 100;
+
+			// Store remainder in blockette 1001 if available
+			auto offset = swap(*BlocketteOffset::Get(ptr), swapflag);
+			uint16_t type;
+			uint16_t next;
+
+			while ( (offset >= HeaderLength) && (offset < (size - BHeadLength)) ) {
+				type = swap(*BlocketteType::Get(ptr + offset), swapflag);
+				next = swap(*BlocketteNext::Get(ptr + offset), swapflag);
+
+				// Found a 1000 blockette
+				if ( type == 1001 ) {
+					*B1001MicroSecond::Get(ptr + offset) = rem;
+					break;
+				}
+
+				if ( next < offset + BHeadLength ) {
+					break;
+				}
+
+				offset = next;
+			}
 		}
 	}
 
