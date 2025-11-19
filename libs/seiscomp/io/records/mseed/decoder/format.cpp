@@ -42,7 +42,7 @@ bool sid2nslc(std::string_view sid, std::string &net, std::string &sta,
 
 	int token = 0;
 
-	for ( auto sv = Core::tokenize(sid, "_"); sv.data(); sv = Core::tokenize(sid, "_"), ++token ) {
+	for ( auto sv = Core::tokenize2(sid, "_"); sv.data(); sv = Core::tokenize2(sid, "_"), ++token ) {
 		if ( token == 0 ) {
 			net = sv;
 		}
