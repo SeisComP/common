@@ -131,6 +131,14 @@ class Output(object):
     __repr__ = _swig_repr
     __swig_destroy__ = _logging.delete_Output
 
+    @staticmethod
+    def Create(service):
+        return _logging.Output_Create(service)
+
+    @staticmethod
+    def Open(uri):
+        return _logging.Output_Open(uri)
+
     def subscribe(self, channel):
         return _logging.Output_subscribe(self, channel)
 
@@ -198,7 +206,7 @@ class SyslogOutput(Output):
     def facility(self):
         return _logging.SyslogOutput_facility(self)
 
-    def open(self, ident, facility=None):
+    def open(self, ident, facility):
         return _logging.SyslogOutput_open(self, ident, facility)
 
     def isOpen(self):
