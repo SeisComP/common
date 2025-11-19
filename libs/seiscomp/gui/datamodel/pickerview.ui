@@ -609,6 +609,8 @@
      <string>&amp;Filter</string>
     </property>
     <addaction name="actionToggleFilter"/>
+    <addaction name="actionNextFilter"/>
+    <addaction name="actionPreviousFilter"/>
     <addaction name="actionLimitFilterToZoomTrace"/>
    </widget>
    <widget class="QMenu" name="menu_Locate">
@@ -654,25 +656,23 @@
     </widget>
     <widget class="QMenu" name="menuTraces">
      <property name="title">
-      <string>&amp;Traces</string>
+      <string>&amp;Scaling</string>
      </property>
-     <widget class="QMenu" name="menuAlignArrival">
-      <property name="title">
-       <string>Align</string>
-      </property>
-      <addaction name="actionAlignOnOriginTime"/>
-     </widget>
      <addaction name="actionIncreaseRowHeight"/>
      <addaction name="actionDecreaseRowHeight"/>
      <addaction name="actionIncreaseRowTimescale"/>
      <addaction name="actionDecreaseRowTimescale"/>
      <addaction name="actionMaximizeAmplitudes"/>
-     <addaction name="separator"/>
-     <addaction name="menuAlignArrival"/>
+    </widget>
+    <widget class="QMenu" name="menuAlignArrival">
+     <property name="title">
+      <string>&amp;Alignment</string>
+     </property>
+     <addaction name="actionAlignOnOriginTime"/>
     </widget>
     <widget class="QMenu" name="menu_Zoomtrace">
      <property name="title">
-      <string>&amp;Zoomtrace</string>
+      <string>&amp;Zoom trace</string>
      </property>
      <addaction name="actionIncreaseAmplitudeScale"/>
      <addaction name="actionDecreaseAmplitudeScale"/>
@@ -692,6 +692,7 @@
     <addaction name="separator"/>
     <addaction name="menu_Zoomtrace"/>
     <addaction name="menuTraces"/>
+    <addaction name="menuAlignArrival"/>
     <addaction name="menuComponents"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -834,10 +835,10 @@
   </action>
   <action name="actionIncreaseRowHeight">
    <property name="text">
-    <string>Increase row height</string>
+    <string>Increase trace amplitudes</string>
    </property>
    <property name="toolTip">
-    <string>Increases the row height in traceview (Shift+Y)</string>
+    <string>Increases amplitudes in traceview (Shift+Y)</string>
    </property>
    <property name="shortcut">
     <string>Shift+Y</string>
@@ -845,10 +846,10 @@
   </action>
   <action name="actionDecreaseRowHeight">
    <property name="text">
-    <string>Decrease row height</string>
+    <string>Decrease trace amplitudes</string>
    </property>
    <property name="toolTip">
-    <string>Decreases the row height in traceview (Y)</string>
+    <string>Decreases amplitudes in traceview (Y)</string>
    </property>
    <property name="shortcut">
     <string>Y</string>
@@ -856,10 +857,10 @@
   </action>
   <action name="actionIncreaseRowTimescale">
    <property name="text">
-    <string>Increase row timescale</string>
+    <string>Increase row time window</string>
    </property>
    <property name="toolTip">
-    <string>Increases the timescale in traceview (&gt;)</string>
+    <string>Increases the time window in traceview (&gt;)</string>
    </property>
    <property name="shortcut">
     <string>&gt;</string>
@@ -867,10 +868,10 @@
   </action>
   <action name="actionDecreaseRowTimescale">
    <property name="text">
-    <string>Decrease row timescale</string>
+    <string>Decrease row time window</string>
    </property>
    <property name="toolTip">
-    <string>Decreases the timescale in traceview (&lt;)</string>
+    <string>Decreases the time window in traceview (&lt;)</string>
    </property>
    <property name="shortcut">
     <string>&lt;</string>
@@ -951,7 +952,7 @@
     <string>&amp;Default view</string>
    </property>
    <property name="toolTip">
-    <string>Default view (Shift+N)</string>
+    <string>Default view (Ctrl+N)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -999,7 +1000,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Toggle filter</string>
+    <string>&amp;Toggle filtering</string>
    </property>
    <property name="toolTip">
     <string>Toggles using a filter before displaying the traces (F)</string>
@@ -1448,7 +1449,7 @@
   </action>
   <action name="actionResetScale">
    <property name="text">
-    <string>Reset scale</string>
+    <string>Reset time and amplitude scale</string>
    </property>
    <property name="shortcut">
     <string>W</string>

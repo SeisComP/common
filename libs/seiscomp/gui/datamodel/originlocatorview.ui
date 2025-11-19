@@ -1062,6 +1062,9 @@
            <property name="shortcut">
             <string>R</string>
            </property>
+           <property name="toolTip" >
+            <string>Relocate and create new origin (R)</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1465,6 +1468,9 @@
            <property name="shortcut">
             <string>P</string>
            </property>
+           <property name="toolTip" >
+            <string>Open phase picker window (P)</string>
+           </property>
           </widget>
          </item>
          <item>
@@ -1487,6 +1493,9 @@
            </property>
            <property name="shortcut">
             <string>M</string>
+           </property>
+           <property name="toolTip" >
+            <string>Compute magnitudes (M)</string>
            </property>
           </widget>
          </item>

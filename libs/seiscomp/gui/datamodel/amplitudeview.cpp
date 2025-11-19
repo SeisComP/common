@@ -1805,14 +1805,14 @@ void setIconColor(CONTROL *control, const QColor &color) {
 
 void AmplitudeView::applyThemeColors() {
 	auto colorTheme = ColorTheme::Current();
-	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->green);
-	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->slateBlue);
 	setIconColor(SC_D.ui.actionShowZComponent, colorTheme->orange);
 	setIconColor(SC_D.ui.actionShowNComponent, colorTheme->orange);
 	setIconColor(SC_D.ui.actionShowEComponent, colorTheme->orange);
-	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->petrol);
-	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->petrol);
-	setIconColor(SC_D.ui.actionPickAmplitude, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->blue);
+	setIconColor(SC_D.ui.actionPickAmplitude, colorTheme->green);
 
 	{
 		QPalette pal = SC_D.btnApply->palette();
@@ -1910,6 +1910,7 @@ void AmplitudeView::init() {
 	SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, false);
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
+	SC_D.connectionState->setPixmaps(Gui::pixmap(this, "connection_loading"), Gui::pixmap(this, "connection_finished"));
 	connect(SC_D.connectionState, &ConnectionStateLabel::customInfoWidgetRequested,
 	        this, &AmplitudeView::openConnectionInfo);
 
@@ -2058,7 +2059,7 @@ void AmplitudeView::init() {
 	SC_D.ui.actionToggleFilter->setIcon(icon("filter"));
 	SC_D.ui.actionMaximizeAmplitudes->setIcon(icon("trace_ampl_max"));
 	SC_D.ui.actionAddStationsInDistanceRange->setIcon(icon("add"));
-	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off|visibility_on"));
+	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off_active|visibility_off"));
 	SC_D.ui.actionComputeMagnitudes->setIcon(icon("apply_changes"));
 	applyThemeColors();
 
@@ -2157,15 +2158,15 @@ void AmplitudeView::init() {
 	        this, SLOT(recalculateAmplitudes()));
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboFilter);
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.checkOverrideSNR);
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, new QLabel("Min SNR:"));
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.spinSNR);
-	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionRecalculateAmplitude);
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.labelAmpType = new QLabel("Amp.type:"));
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.comboAmpType);
-	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionRecalculateAmplitude);
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.labelAmpCombiner = new QLabel("Amp.combiner:"));
-	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionRecalculateAmplitude, SC_D.comboAmpCombiner);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.checkOverrideSNR);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, new QLabel("Min SNR:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.spinSNR);
+	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionPickAmplitude);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.labelAmpType = new QLabel("Amp.type:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.comboAmpType);
+	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionPickAmplitude);
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.labelAmpCombiner = new QLabel("Amp.combiner:"));
+	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.comboAmpCombiner);
 
 	// TTT selection
 	SC_D.comboTTT = new QComboBox;
@@ -2923,13 +2924,19 @@ void AmplitudeView::setCursorText(const QString& text) {
 	SC_D.currentRecord->setActive(text != "");
 
 	if ( SC_D.currentRecord->isActive() ) {
+		SC_D.ui.actionPickAmplitude->setChecked(true);
 		//_centerSelection = true;
 		RecordMarker* m = SC_D.currentRecord->marker(text);
-		if ( m )
+		if ( m ) {
 			setCursorPos(m->correctedTime());
-		else if ( SC_D.recordView->currentItem() )
+		}
+		else if ( SC_D.recordView->currentItem() ) {
 			setCursorPos(SC_D.recordView->currentItem()->widget()->visibleTimeWindow().startTime() +
 			             Core::TimeSpan(SC_D.recordView->currentItem()->widget()->visibleTimeWindow().length()*0.5));
+		}
+	}
+	else {
+		SC_D.ui.actionPickAmplitude->setChecked(false);
 	}
 
 	updateCurrentRowState();
@@ -3107,25 +3114,34 @@ void AmplitudeView::showFullscreen(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::recalculateAmplitude() {
+	setCursorText("");
 	RecordViewItem *item = SC_D.recordView->currentItem();
-	if ( item == nullptr ) return;
+	if ( !item ) {
+		return;
+	}
 
 	AmplitudeRecordLabel *l = static_cast<AmplitudeRecordLabel*>(item->label());
-	if ( !l->processor ) return;
+	if ( !l->processor ) {
+		return;
+	}
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	if ( SC_D.checkOverrideSNR->isChecked() )
+	if ( SC_D.checkOverrideSNR->isChecked() ) {
 		l->processor->setMinSNR(SC_D.spinSNR->value());
-	else
+	}
+	else {
 		l->processor->setMinSNR(l->initialMinSNR);
+	}
 
 	resetAmplitude(item, SC_D.amplitudeType.c_str(), false);
 
-	if ( SC_D.comboAmpType->isEnabled() )
+	if ( SC_D.comboAmpType->isEnabled() ) {
 		l->processor->setParameter(Processing::AmplitudeProcessor::MeasureType, SC_D.comboAmpType->currentText().toStdString());
-	if ( SC_D.comboAmpCombiner->isEnabled() )
+	}
+	if ( SC_D.comboAmpCombiner->isEnabled() ) {
 		l->processor->setParameter(Processing::AmplitudeProcessor::Combiner, SC_D.comboAmpCombiner->currentText().toStdString());
+	}
 
 	if ( l->processor->isFinished() ) {
 		l->processor->setPublishFunction(bind(&AmplitudeView::newAmplitudeAvailable, this, placeholders::_1, placeholders::_2));
@@ -3133,7 +3149,9 @@ void AmplitudeView::recalculateAmplitude() {
 
 		for ( int i = 0; i < 3; ++i ) {
 			const Processing::AmplitudeProcessor *compProc = l->processor->componentProcessor((Processing::WaveformProcessor::Component)i);
-			if ( compProc == nullptr ) continue;
+			if ( !compProc ) {
+				continue;
+			}
 
 			const DoubleArray *processedData = compProc->processedData((Processing::WaveformProcessor::Component)i);
 
@@ -3170,6 +3188,7 @@ void AmplitudeView::recalculateAmplitude() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::recalculateAmplitudes() {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	setCursorText("");
 
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem *item = SC_D.recordView->itemAt(r);

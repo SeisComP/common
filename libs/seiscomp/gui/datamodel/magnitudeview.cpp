@@ -1998,7 +1998,7 @@ void MagnitudeView::computeMagnitudes() {
 			CheckBox *check = new CheckBox;
 			check->setChecked(std::find(_currentMagnitudeTypes.begin(), _currentMagnitudeTypes.end(), _availableMagTypes->at(i)) != _currentMagnitudeTypes.end());
 			connect(selectAll, &CheckBox::clicked, check, &CheckBox::check);
-			connect(deselectAll, &CheckBox::clicked, check, &CheckBox::check);
+			connect(deselectAll, &CheckBox::clicked, check, &CheckBox::unCheck);
 
 			QLabel *label = new QLabel;
 			label->setText(_availableMagTypes->at(i).c_str());

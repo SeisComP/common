@@ -205,6 +205,7 @@ class ColorTheme {
 		QColor green;
 		QColor orange;
 		QColor petrol;
+		QColor slateBlue;
 		QColor blue;
 		QColor red;
 		QColor lightRed;

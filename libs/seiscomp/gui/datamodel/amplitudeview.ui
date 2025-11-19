@@ -494,27 +494,6 @@
    <addaction name="actionAddStationsInDistanceRange"/>
    <addaction name="actionShowUsedStations"/>
   </widget>
-  <widget class="QToolBar" name="toolBarPicking">
-   <property name="windowTitle">
-    <string>Picking</string>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionPickAmplitude"/>
-  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -530,7 +509,7 @@
     </property>
     <widget class="QMenu" name="menuZoomtrace">
      <property name="title">
-      <string>&amp;Zoomtrace</string>
+      <string>&amp;Zoom trace</string>
      </property>
 	 <addaction name="actionTimeScaleUp"/>
      <addaction name="actionTimeScaleDown"/>
@@ -542,15 +521,8 @@
     </widget>
     <widget class="QMenu" name="menuTraces">
      <property name="title">
-      <string>&amp;Traces</string>
+      <string>&amp;Scaling</string>
      </property>
-     <widget class="QMenu" name="menuAlignArrival">
-      <property name="title">
-       <string>Align</string>
-      </property>
-	  <addaction name="actionAlignOnOriginTime"/>
-      <addaction name="actionAlignOnPArrival"/>
-     </widget>
      <addaction name="actionIncreaseRowHeight"/>
      <addaction name="actionDecreaseRowHeight"/>
      <addaction name="actionIncreaseRowTimescale"/>
@@ -558,8 +530,13 @@
      <addaction name="actionMaximizeAmplitudes"/>
      <addaction name="separator"/>
      <addaction name="actionResetDefaultConfig"/>
-     <addaction name="separator"/>
-     <addaction name="menuAlignArrival"/>
+    </widget>
+    <widget class="QMenu" name="menuAlignArrival">
+     <property name="title">
+      <string>&amp;Alignment</string>
+     </property>
+     <addaction name="actionAlignOnOriginTime"/>
+     <addaction name="actionAlignOnPArrival"/>
     </widget>
     <widget class="QMenu" name="menuComponents">
      <property name="title">
@@ -576,6 +553,7 @@
     <addaction name="separator"/>
     <addaction name="menuZoomtrace"/>
     <addaction name="menuTraces"/>
+    <addaction name="menuAlignArrival"/>
     <addaction name="menuComponents"/>
    </widget>
    <widget class="QMenu" name="menuNavigation">
@@ -591,8 +569,10 @@
     <property name="title">
      <string>&amp;Amplitudes</string>
     </property>
-    <addaction name="actionPickAmplitude"/>
     <addaction name="actionDisablePicking"/>
+    <addaction name="actionPickAmplitude"/>
+   <addaction name="actionRecalculateAmplitude"/>
+   <addaction name="actionRecalculateAmplitudes"/>
     <addaction name="separator"/>
     <addaction name="actionComputeMagnitudes"/>
    </widget>
@@ -661,6 +641,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionPickAmplitude"/>
    <addaction name="actionRecalculateAmplitude"/>
    <addaction name="actionRecalculateAmplitudes"/>
   </widget>
@@ -700,7 +681,7 @@
     <string>Scale amplitudes down</string>
    </property>
    <property name="toolTip">
-    <string>Descrease amplitude scale of current trace</string>
+    <string>Decrease amplitude scale of current trace</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Down</string>
@@ -892,10 +873,10 @@
     <string>&amp;Default view</string>
    </property>
    <property name="toolTip">
-    <string>Default view (Shift+N)</string>
+    <string>Default view (Ctrl+N)</string>
    </property>
    <property name="shortcut">
-    <string>Shift+N</string>
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionSortAlphabetically">
@@ -937,7 +918,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Toggle filter</string>
+    <string>&amp;Toggle filtering</string>
    </property>
    <property name="toolTip">
     <string>Toggles using a filter before displaying the traces (F)</string>
@@ -1205,11 +1186,14 @@
    </property>
   </action>
   <action name="actionPickAmplitude">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Pick amplitudes</string>
    </property>
    <property name="toolTip">
-    <string>Drag time window for measuring amplitudes</string>
+    <string>Drag time window for measuring amplitudes (1)</string>
    </property>
    <property name="shortcut">
     <string>1</string>

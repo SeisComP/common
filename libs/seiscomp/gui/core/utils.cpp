@@ -595,26 +595,28 @@ bool ColorTheme::IsDarkMode() {
 const ColorTheme *ColorTheme::Current() {
 	static ColorTheme colorTheme[2] = {
 		{
-			QColor(106, 179, 50), // backgroundConfirm
-			QColor(255, 240, 214),// foregroundConfirm
-			QColor(0, 153, 102),  // green
-			QColor(255, 128, 0),  // orange
-			QColor(0, 152, 166),  // petrol
-			QColor(22, 133, 217), // blue
-			QColor(232, 45, 41),  // red
-			QColor(249, 221, 220),// lightRed
-			QColor(255, 255, 255) // white
+			QColor(13, 166, 0),    // backgroundConfirm
+			QColor(255, 240, 214), // foregroundConfirm
+			QColor(13, 166, 0),    // green
+			QColor(255, 128, 0),   // orange
+			QColor(0, 152, 166),   // petrol
+			QColor(113, 107, 255), // slateBlue
+			QColor(64, 111, 255),  // blue
+			QColor(232, 45, 41),   // red
+			QColor(249, 221, 220), // lightRed
+			QColor(255, 255, 255)  // white
 		},
 		{
-			QColor(106, 179, 50), // backgroundConfirm
-			QColor(255, 240, 214),// foregroundConfirm
-			QColor(25, 178, 125), // green
-			QColor(255, 147, 38), // orange
-			QColor(0, 163, 178),  // petrol
-			QColor(21, 142, 217), // blue
-			QColor(232, 45, 41),  // red
-			QColor(249, 221, 220),// lightRed
-			QColor(255, 255, 255) // white
+			QColor(13, 166, 0),    // backgroundConfirm
+			QColor(255, 240, 214), // foregroundConfirm
+			QColor(13, 166, 0),    // green
+			QColor(255, 147, 38),  // orange
+			QColor(0, 163, 178),   // petrol
+			QColor(113, 107, 255), // slateBlue
+			QColor(64, 111, 255),  // blue
+			QColor(232, 45, 41),   // red
+			QColor(249, 221, 220), // lightRed
+			QColor(255, 255, 255)  // white
 		}
 	};
 

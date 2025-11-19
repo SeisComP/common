@@ -6,25 +6,22 @@
    version="1.1"
    xml:space="preserve"
    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
-   id="svg3"
+   id="svg2"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs3">
+   id="defs2">
         
     
             
             
-            
-        
-                
-            
-                
-            </defs>
-    <path
-   d="m 1.0254464,12.99476 h 6.0000264 v 2.000001 H 1.0254464 Z m 0,4.000002 h 9.0000396 v 2 H 1.0254464 Z m 0,4.000001 H 13.025499 v 2.000001 H 1.0254464 Z"
+        </defs>
+    <g
+   transform="matrix(0.47683807,0,0,0.36509878,-98.867366,-1.5638998)"
+   id="g1"
+   style="fill:#000000;fill-opacity:1">
+                <path
+   d="M 209.501,37.173 V 18 h 4.194 v 13.695 h 6.291 v -8.217 h 4.195 v 8.217 h 6.291 v -8.217 h 4.195 v 8.217 h 6.291 v -8.217 h 4.194 v 8.217 h 6.292 V 18 h 4.194 v 19.173 z m 0,24.614 h 18.874 v 5.478 h -18.874 z m 0,-10.956 h 12.583 v 5.478 h -12.583 z"
    id="path1"
-   style="stroke-width:0.0250001;fill:#000000;fill-opacity:1" /><path
-   d="M 23.025691,9.0077944 H 8.0257955 V 4.0077629 h 1.9998585 v 2.9998972 h 2.999789 V 5.00783 h 1.000406 v 1.9998301 h 2.999788 V 5.00783 h 0.99993 v 1.9998301 h 3.000265 V 4.0077629 h 1.999859 z"
-   id="path2"
-   style="stroke-width:0.380891;fill:#000000;fill-opacity:1" />
+   style="fill:#000000;fill-opacity:1" />
+            </g>
 </svg>

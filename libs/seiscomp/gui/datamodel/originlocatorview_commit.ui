@@ -23,7 +23,9 @@
    <item>
     <widget class="QCheckBox" name="cbAssociate">
      <property name="toolTip">
-      <string>If checked this origin will be associated with the current event. If unchecked, scevent will decide whether to assoiciate the origin with the current event or to create a new one.</string>
+      <string>If checked, this origin will be associated with the current event.
+       If unchecked, scevent will decide whether to associate the origin with
+       the current event or to create a new one.</string>
      </property>
      <property name="text">
       <string>Force association with event %1</string>

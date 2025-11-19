@@ -2642,6 +2642,7 @@ void PickerView::init() {
 	//SC_D.recordView->setDefaultActions();
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
+	SC_D.connectionState->setPixmaps(Gui::pixmap(this, "connection_loading"), Gui::pixmap(this, "connection_finished"));
 	connect(SC_D.connectionState, SIGNAL(customInfoWidgetRequested(QPoint)),
 	        this, SLOT(openConnectionInfo(QPoint)));
 
@@ -2798,7 +2799,7 @@ void PickerView::init() {
 	SC_D.ui.actionToggleFilter->setIcon(icon("filter"));
 	SC_D.ui.actionMaximizeAmplitudes->setIcon(icon("trace_ampl_max"));
 	SC_D.ui.actionAddStationsInDistanceRange->setIcon(icon("add"));
-	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off|visibility_on"));
+	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off_active|visibility_off"));
 	SC_D.ui.actionRelocate->setIcon(icon("apply_changes"));
 	applyThemeColors();
 
@@ -6965,18 +6966,18 @@ void setIconColor(CONTROL *control, const QColor &color) {
 
 void PickerView::applyThemeColors() {
 	auto colorTheme = ColorTheme::Current();
-	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->green);
-	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->green);
-	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme->green);
-	setIconColor(SC_D.ui.actionSortByResidual, colorTheme->green);
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByResidual, colorTheme->slateBlue);
 	setIconColor(SC_D.ui.actionShowZComponent, colorTheme->orange);
 	setIconColor(SC_D.ui.actionShowNComponent, colorTheme->orange);
 	setIconColor(SC_D.ui.actionShowEComponent, colorTheme->orange);
-	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->petrol);
-	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->petrol);
-	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme->petrol);
-	setIconColor(SC_D.ui.actionPickP, colorTheme->blue);
-	setIconColor(SC_D.ui.actionPickS, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme->blue);
+	setIconColor(SC_D.ui.actionPickP, colorTheme->green);
+	setIconColor(SC_D.ui.actionPickS, colorTheme->green);
 
 	{
 		QPalette pal = SC_D.btnApply->palette();

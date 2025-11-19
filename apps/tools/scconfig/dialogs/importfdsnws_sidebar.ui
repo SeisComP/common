@@ -559,10 +559,10 @@
       <item row="1" column="1">
        <widget class="QLineEdit" name="editFilename">
         <property name="toolTip">
-         <string>Sets the output filename. If set empty then it will be generated.</string>
+         <string>Sets the output filename. If empty, then it will be generated.</string>
         </property>
         <property name="whatsThis">
-         <string>Definition of the output filename. If set empty then it will be generated.</string>
+         <string>Definition of the output filename. If empty, then it will be generated.</string>
         </property>
         <property name="text">
          <string/>

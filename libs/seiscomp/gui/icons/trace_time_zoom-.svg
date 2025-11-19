@@ -6,65 +6,31 @@
    version="1.1"
    xml:space="preserve"
    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
-   id="svg6"
+   id="svg3"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-    <path
-   d="m 21.027116,17.006357 -6.00001,-4.99999 6.00001,-4.9999889 z"
-   style="fill:#000000;fill-rule:nonzero;stroke-width:0.0526656;fill-opacity:1"
-   id="path1" /><path
-   d="M 3.0138074,17.006357 9.013817,12.006367 3.0138074,7.0063781 Z"
-   style="fill:#000000;fill-rule:nonzero;stroke-width:0.0526656;fill-opacity:1"
-   id="path2" /><rect
-   x="9.0070143"
-   y="-13.013778"
-   width="5.9995713"
-   height="2.0000136"
-   id="rect2"
-   transform="rotate(90)"
-   style="stroke-width:0.417245;fill:#000000;fill-opacity:1" />
-    <defs
-   id="defs6">
-        <linearGradient
-   id="_Linear1"
-   x1="0"
-   y1="0"
-   x2="1"
-   y2="0"
-   gradientUnits="userSpaceOnUse"
-   gradientTransform="matrix(0,-4.550947,-5.4611568,0,-5132.8311,-44399.004)"><stop
-     offset="0"
-     style="stop-color:black;stop-opacity:1"
-     id="stop3" /><stop
-     offset="1"
-     style="stop-color:black;stop-opacity:1"
-     id="stop4" /></linearGradient>
-        <linearGradient
-   id="_Linear2"
-   x1="0"
-   y1="0"
-   x2="1"
-   y2="0"
-   gradientUnits="userSpaceOnUse"
-   gradientTransform="matrix(0,-4.550947,5.4611568,0,5156.8721,-44399.004)"><stop
-     offset="0"
-     style="stop-color:black;stop-opacity:1"
-     id="stop5" /><stop
-     offset="1"
-     style="stop-color:black;stop-opacity:1"
-     id="stop6" /></linearGradient>
-    
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs3">
         
     
             
             
             
-            
-        
-                
-            
-                
-            
-                
-            </defs>
+        </defs>
+    <g
+   transform="matrix(0,-0.05288447,0.0576924,0,24.366705,37.456538)"
+   id="g1"
+   style="fill:#000000;fill-opacity:1">
+                <path
+   d="m 376,-352.667 h 208 c 3.749,0 7.144,2.031 8.654,5.177 1.51,3.146 0.849,6.813 -1.685,9.346 l -104,104 c -1.79,1.791 -4.319,2.811 -6.969,2.811 -2.65,0 -5.179,-1.02 -6.969,-2.811 l -104,-104 c -2.534,-2.533 -3.195,-6.2 -1.685,-9.346 1.51,-3.146 4.905,-5.177 8.654,-5.177 z"
+   id="path1"
+   style="fill:#000000;fill-opacity:1" />
+            </g><g
+   transform="matrix(0,-0.05288447,-0.0576924,0,-0.32578194,37.456538)"
+   id="g2"
+   style="fill:#000000;fill-opacity:1">
+                <path
+   d="m 376,-352.667 h 208 c 3.749,0 7.144,2.031 8.654,5.177 1.51,3.146 0.849,6.813 -1.685,9.346 l -104,104 c -1.79,1.791 -4.319,2.811 -6.969,2.811 -2.65,0 -5.179,-1.02 -6.969,-2.811 l -104,-104 c -2.534,-2.533 -3.195,-6.2 -1.685,-9.346 1.51,-3.146 4.905,-5.177 8.654,-5.177 z"
+   id="path2"
+   style="fill:#000000;fill-opacity:1" />
+            </g>
 </svg>

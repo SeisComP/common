@@ -12,6 +12,7 @@
         <file>icons/chevron_up.svg</file>
         <file>icons/clear.svg</file>
         <file>icons/close.svg</file>
+        <file>icons/close_red.svg</file>
         <file>icons/comment.svg</file>
         <file>icons/component_0.svg</file>
         <file>icons/component_1.svg</file>
@@ -25,6 +26,8 @@
         <file>icons/component_R.svg</file>
         <file>icons/component_T.svg</file>
         <file>icons/component_Z.svg</file>
+        <file>icons/connection_finished.svg</file>
+        <file>icons/connection_loading.svg</file>
         <file>icons/connection_off.svg</file>
         <file>icons/connection_on.svg</file>
         <file>icons/database.svg</file>
@@ -90,6 +93,7 @@
         <file>icons/unlink.svg</file>
         <file>icons/up.svg</file>
         <file>icons/visibility_off.svg</file>
+        <file>icons/visibility_off_active.svg</file>
         <file>icons/visibility_on.svg</file>
         <file>icons/zoom_in.svg</file>
         <file>icons/zoom_out.svg</file>
