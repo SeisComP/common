@@ -2218,7 +2218,7 @@ void BindingsPanel::addProfile() {
 	profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 	profItem->setData(TypeProfile, Type);
 	profItem->setData(QVariant::fromValue((void*)profile), Link);
-	profItem->setData(icons().binding, Qt::DecorationRole);
+	profItem->setData(icons().profile, Qt::DecorationRole);
 
 	auto *item = _profilesModel->itemFromIndex(_modulesFolderView->rootIndex());
 	item->appendRow(profItem);

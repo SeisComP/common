@@ -1652,11 +1652,11 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	centralLayout->addWidget(_listWidget, 1, 0);
 
 	QList<ConfiguratorPanel*> panels;
-	panels.append(new InformationPanel);
 	panels.append(new SystemPanel);
-	panels.append(new InventoryPanel);
 	panels.append(new ModulesPanel);
 	panels.append(new BindingsPanel);
+	panels.append(new InventoryPanel);
+	panels.append(new InformationPanel);
 	panels.append(new HelpPanel);
 
 	_statusLabel = new StatusLabel;
@@ -1694,8 +1694,6 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	centralLayout->addLayout(vlayout, 1, 1);
 
 	connect(_listWidget, &QListWidget::currentItemChanged, this, &Configurator::sectionChanged);
-
-	_listWidget->setCurrentRow(0);
 
 	QAction *whatsThis = QWhatsThis::createAction(this);
 	whatsThis->setShortcut(QKeySequence::WhatsThis);
@@ -1787,6 +1785,8 @@ bool Configurator::setModel(System::Model *model) {
 	foreach ( Panel p, _panels ) {
 		p.second->setModel(_model);
 	}
+
+	_listWidget->setCurrentRow(0);
 
 	//_treeView->hideColumn(1);
 	return true;
