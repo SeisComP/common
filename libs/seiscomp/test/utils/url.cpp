@@ -248,17 +248,55 @@ BOOST_AUTO_TEST_CASE(Extract) {
 	BOOST_CHECK_EQUAL(Url("urn:localhost:proc").withoutScheme(), "urn:localhost:proc");
 }
 
+BOOST_AUTO_TEST_CASE(encode) {
+	BOOST_CHECK_EQUAL(
+		Url("http", {}, {}, "localhost", {}, "index.html", {}, {}).encoded(),
+		"http://localhost/index.html"
+	);
+	BOOST_CHECK_NE(
+		Url("http", {}, {}, "localhost", {}, "index.html", "anker", {
+			{ "page", "4" },
+			{ "limit", "20" },
+		}).encoded(),
+		"http://localhost/index.html#anker?page=4&limit=20"
+	);
+	BOOST_CHECK_EQUAL(
+		Url("http", {}, {}, "localhost", {}, "index.html", "anker", {
+			{ "page", "4" },
+			{ "limit", "20" },
+		}).encoded(),
+		"http://localhost/index.html#anker?limit=20&page=4"
+	);
+	BOOST_CHECK_EQUAL(
+		Url("my scheme", {}, {}, "my computer", {}, "&path%", "frag ment", {
+			{ "&page", "4%" },
+			{ "&limit", "20%" },
+		}).encoded(),
+		"my%20scheme://my%20computer/%26path%25#frag%20ment?%26limit=20%25&%26page=4%25"
+	);
+}
+
 BOOST_AUTO_TEST_CASE(Encode) {
-	BOOST_CHECK_EQUAL(Url::Encoded("Hello World!"), "Hello%20World!");
-	BOOST_CHECK_EQUAL(Url::Encoded("https://example.com/search?q=Hello World!&lang=en"),
+	BOOST_CHECK_EQUAL(Url::Encode("Hello World!"), "Hello%20World!");
+	BOOST_CHECK_EQUAL(Url::Encode("https://example.com/search?q=Hello World!&lang=en"),
 	                  "https://example.com/search?q=Hello%20World!&lang=en");
+	BOOST_CHECK_EQUAL(Url::Encode("Hello World & Others!"), "Hello%20World%20&%20Others!");
+}
+
+BOOST_AUTO_TEST_CASE(EncodeComponent) {
+	BOOST_CHECK_EQUAL(Url::EncodeComponent("Hello World!"), "Hello%20World!");
+	BOOST_CHECK_EQUAL(Url::EncodeComponent("https://example.com/search?q=Hello World!&lang=en"),
+	                  "https%3A%2F%2Fexample.com%2Fsearch%3Fq%3DHello%20World!%26lang%3Den");
+	BOOST_CHECK_EQUAL(Url::EncodeComponent("Hello World & Others!"), "Hello%20World%20%26%20Others!");
 }
 
 BOOST_AUTO_TEST_CASE(Decode) {
-	BOOST_CHECK_EQUAL(Url::Decoded("Hello%20World!"), "Hello World!");
-	BOOST_CHECK_EQUAL(Url::Decoded("https://exam%3Aple.com/sear%23ch"),
+	BOOST_CHECK_EQUAL(Url::Decode("Hello%20World!"), "Hello World!");
+	BOOST_CHECK_EQUAL(Url::Decode("https://exam%3Aple.com/sear%23ch"),
 	                  "https://exam:ple.com/sear#ch");
-	BOOST_CHECK_EQUAL(Url::Decoded("https://example.com/search?q=Hello%20World%21&lang%3Den"),
+	BOOST_CHECK_EQUAL(Url::Decode("https://example.com/search?q=Hello%20World%21&lang%3Den"),
+	                  "https://example.com/search?q=Hello World!&lang=en");
+	BOOST_CHECK_EQUAL(Url::Decode("https%3A%2F%2Fexample.com%2Fsearch%3Fq%3DHello%20World!%26lang%3Den"),
 	                  "https://example.com/search?q=Hello World!&lang=en");
 }
 

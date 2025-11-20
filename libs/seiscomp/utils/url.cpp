@@ -45,6 +45,26 @@ Url::Url(std::string_view url) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Url::Url(std::string_view scheme,
+         std::string_view username, std::string_view password,
+         std::string_view host, OPT(uint16_t) port,
+         std::string_view path, std::string_view fragment,
+         QueryItems queryItems) {
+	setScheme(scheme);
+	setUsername(username);
+	setPassword(username);
+	setHost(host);
+	setPort(port);
+	setPath(path);
+	setFragment(fragment);
+	setQueryItems(queryItems);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Url::setUrl(std::string_view url) {
 	reset();
 
@@ -58,6 +78,15 @@ bool Url::setUrl(std::string_view url) {
 	_isValid = ret == STATUS_OK;
 
 	return _isValid;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setScheme(std::string_view scheme) {
+	_scheme = scheme;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -83,8 +112,26 @@ const std::string &Url::authority() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setUsername(std::string_view username) {
+	_user = username;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Url::username() const {
 	return _user;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setPassword(std::string_view password) {
+	_password = password;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -101,6 +148,15 @@ const std::string &Url::password() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setHost(std::string_view host) {
+	_host = host;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Url::host() const {
 	return _host;
 }
@@ -110,8 +166,26 @@ const std::string &Url::host() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setPort(OPT(uint16_t) port) {
+	_port = port;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 OPT(uint16_t) Url::port() const {
 	return _port;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setPath(std::string_view path) {
+	_path = path;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -137,8 +211,26 @@ const std::string &Url::query() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setFragment(std::string_view fragment) {
+	_fragment = fragment;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const std::string &Url::fragment() const {
 	return _fragment;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Url::setQueryItems(QueryItems items) {
+	_queryItems = items;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -228,7 +320,7 @@ Url::Status Url::parseScheme(std::string_view url) {
 		return STATUS_SCHEME_ERROR;
 	}
 
-	_scheme = Decoded(_scheme);
+	_scheme = Decode(_scheme);
 
 	_currentPos = end + 1;
 	return STATUS_OK;
@@ -266,17 +358,17 @@ Url::Status Url::parseAuthority(std::string_view url) {
 
 		end = userInfo.find(':');
 		if ( end != std::string::npos ) {
-			_user = Decoded(userInfo.substr(0, end));
+			_user = Decode(userInfo.substr(0, end));
 			if ( _user.empty() ) {
 				return STATUS_EMPTY_USERNAME;
 			}
 
 			if ( userInfo.size() > end ) {
-				_password = Decoded(userInfo.substr(end + 1, userInfo.size() - end));
+				_password = Decode(userInfo.substr(end + 1, userInfo.size() - end));
 			}
 		}
 		else {
-			_user = Decoded(userInfo);
+			_user = Decode(userInfo);
 		}
 
 		++userInfoEnd;
@@ -310,7 +402,7 @@ Url::Status Url::parseAuthority(std::string_view url) {
 	}
 
 	if ( end != std::string::npos ) {
-		_host = Decoded(_authority.substr(userInfoEnd, end - userInfoEnd));
+		_host = Decode(_authority.substr(userInfoEnd, end - userInfoEnd));
 		if ( _host.empty() ) {
 			return STATUS_INVALID_HOST;
 		}
@@ -331,7 +423,7 @@ Url::Status Url::parseAuthority(std::string_view url) {
 		}
 	}
 	else {
-		_host = Decoded(_authority.substr(userInfoEnd, _authority.size() - userInfoEnd));
+		_host = Decode(_authority.substr(userInfoEnd, _authority.size() - userInfoEnd));
 	}
 
 	return STATUS_OK;
@@ -355,7 +447,7 @@ Url::Status Url::parsePath(std::string_view url) {
 		_currentPos = std::string::npos;
 	}
 
-	_path = Decoded(_path);
+	_path = Decode(_path);
 
 	return STATUS_OK;
 }
@@ -383,7 +475,7 @@ Url::Status Url::parseQuery() {
 		if ( !param.empty() ) {
 			auto pend = param.find('=');
 			if ( pend == std::string::npos ) {
-				auto key = Decoded(param);
+				auto key = Decode(param);
 				if ( key.empty() ) {
 					return STATUS_INVALID_QUERY;
 				}
@@ -391,12 +483,12 @@ Url::Status Url::parseQuery() {
 				_queryItems[key] = "";
 			}
 			else {
-				auto key = Decoded(param.substr(0, pend));
+				auto key = Decode(param.substr(0, pend));
 				if ( key.empty() ) {
 					return STATUS_INVALID_QUERY;
 				}
 
-				_queryItems[key] = Decoded(param.substr(pend + 1));
+				_queryItems[key] = Decode(param.substr(pend + 1));
 			}
 		}
 
@@ -463,7 +555,7 @@ Url::Status Url::parse(std::string_view url, bool implyAuthority) {
 		_fragment = url.substr(fragmentPos + 1, url.size() - fragmentPos);
 	}
 
-	_fragment = Decoded(_fragment);
+	_fragment = Decode(_fragment);
 
 	auto ret = parseQuery();
 	if ( ret != STATUS_OK ) {
@@ -538,13 +630,80 @@ std::string Url::withoutScheme() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Encoded(std::string_view sv) {
-	//RFC 3986 section 2.2 Reserved Characters (January 2005)
-	//RFC 3986 section 2.3 Unreserved Characters (January 2005)
+std::string Url::encoded() const {
+	std::string url = EncodeComponent(_scheme);
+
+	url += "://";
+
+	if ( !_user.empty() ) {
+		url += EncodeComponent(_user);
+	}
+
+	if ( !_password.empty() ) {
+		url += ':';
+		url += EncodeComponent(_password);
+	}
+
+	if ( !_user.empty() || !_password.empty() ) {
+		url += '@';
+	}
+
+	url += EncodeComponent(_host);
+	if ( _port ) {
+		url += ':';
+		url += Core::toString(*_port);
+	}
+
+	if ( !_path.empty() ) {
+		if ( _path[0] != '/' ) {
+			url += '/';
+		}
+		url += EncodeComponent(_path);
+	}
+
+	if ( !_fragment.empty() ) {
+		url += '#';
+		url += EncodeComponent(_fragment);
+	}
+
+	if ( !_queryItems.empty() ) {
+		url += '?';
+		bool first = true;
+		for ( const auto &[key, value] : _queryItems ) {
+			if ( key.empty() ) {
+				continue;
+			}
+
+			if ( !first ) {
+				url += '&';
+			}
+
+			url += EncodeComponent(key);
+			if ( !value.empty() ) {
+				url += '=';
+				url += EncodeComponent(value);
+			}
+			first = false;
+		}
+	}
+
+	return url;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Url::Encode(std::string_view sv) {
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI#description
+	// RFC 3986 section 2.2 Reserved Characters (January 2005)
+	// RFC 3986 section 2.3 Unreserved Characters (January 2005)
 
 	static const std::string dontEscape =
-		":/?#[]@!$&'()*+,;="
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+		"-_.!~*'()"
+		";/?:@&=+$,#";
 
 	std::string escaped = {};
 	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
@@ -567,7 +726,35 @@ std::string Url::Encoded(std::string_view sv) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::Decoded(std::string_view sv) {
+std::string Url::EncodeComponent(std::string_view sv) {
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#description
+
+	static const std::string dontEscape =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+		"-_.!~*'()";
+
+	std::string escaped = {};
+	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
+		if ( dontEscape.find_first_of(sv[i]) != std::string::npos ) {
+			escaped += sv[i];
+		}
+		else {
+			escaped += '%';
+			char buf[3];
+			sprintf(buf, "%.2X", sv[i]);
+			escaped += buf;
+		}
+	}
+
+	return escaped;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string Url::Decode(std::string_view sv) {
 	std::string decoded = {};
 	for ( decltype(sv.length()) i = 0; i < sv.length(); ++i ) {
 		if ( sv[i] == '+' ) {

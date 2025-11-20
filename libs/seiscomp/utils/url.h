@@ -86,6 +86,11 @@ class SC_SYSTEM_CORE_API Url {
 	// ----------------------------------------------------------------------
 	public:
 		Url(std::string_view url = {});
+		Url(std::string_view scheme,
+		    std::string_view username, std::string_view password,
+		    std::string_view host, OPT(uint16_t) port,
+		    std::string_view path, std::string_view fragment,
+		    QueryItems queryItems);
 
 
 	// ----------------------------------------------------------------------
@@ -102,16 +107,28 @@ class SC_SYSTEM_CORE_API Url {
 		bool setUrl(std::string_view url);
 
 		/**
+		 * @brief Sets the URL scheme.
+		 * @param The URL scheme
+		 */
+		void setScheme(std::string_view scheme);
+
+		/**
 		 * @brief Returns the URL scheme
 		 * @return The URL scheme
 		 */
 		const std::string &scheme() const;
 
 		/**
-		 * @brief Returns the authoriry part of the URL
+		 * @brief Returns the authority part of the URL
 		 * @return The authority
 		 */
 		const std::string &authority() const;
+
+		/**
+		 * @brief Sets the username
+		 * @param username The username
+		 */
+		void setUsername(std::string_view username);
 
 		/**
 		 * @brief Returns the username as extracted from the user info
@@ -120,10 +137,22 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &username() const;
 
 		/**
+		 * @brief Sets the password
+		 * @param password The password
+		 */
+		void setPassword(std::string_view password);
+
+		/**
 		 * @brief Returns the password as extracted from the user info
 		 * @return  The password
 		 */
 		const std::string &password() const;
+
+		/**
+		 * @brief Sets the host
+		 * @param host The host
+		 */
+		void setHost(std::string_view host);
 
 		/**
 		 * @brief Returns the host from the authority part
@@ -132,10 +161,22 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &host() const;
 
 		/**
+		 * @brief Sets the port.
+		 * @param port The optional port
+		 */
+		void setPort(OPT(uint16_t) port);
+
+		/**
 		 * @brief Returns the optional port from authority part.
 		 * @return Returns the port
 		 */
 		OPT(uint16_t) port() const;
+
+		/**
+		 * @brief Set the path.
+		 * @param path The path
+		 */
+		void setPath(std::string_view path);
 
 		/**
 		 * @brief Returns the path of the URL. If the scheme and authority are
@@ -149,6 +190,12 @@ class SC_SYSTEM_CORE_API Url {
 		 * @return The query string
 		 */
 		const std::string &query() const;
+
+		/**
+		 * @brief Sets the query items.
+		 * @param items The query items
+		 */
+		void setQueryItems(QueryItems items);
 
 		/**
 		 * @brief Checks if a specific query parameter is set
@@ -169,6 +216,12 @@ class SC_SYSTEM_CORE_API Url {
 		 * @return Reference to query item map
 		 */
 		const QueryItems &queryItems() const;
+
+		/**
+		 * @brief Sets the fragment.
+		 * @param fragment The fragment
+		 */
+		void setFragment(std::string_view fragment);
 
 		/**
 		 * @brief Returns the fragement part of the URL
@@ -201,13 +254,44 @@ class SC_SYSTEM_CORE_API Url {
 		std::string withoutScheme() const;
 
 		/**
+		 * @brief Returns an encoded copy of the URL.
+		 * This method combines the following attributes to a URL:
+		 * - scheme
+		 * - username
+		 * - password
+		 * - host
+		 * - port
+		 * - path
+		 * - fragment
+		 * - query items
+		 * Each of the values is properly encoded.
+		 * Note that query items are sorted by key when they are encoded in
+		 * the final URL.
+		 * @return The encoded URL.
+		 */
+		std::string encoded() const;
+
+		/**
 		 * @brief Encodes C string based as defined in RFC 3986:
 		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
 		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
+		 *
+		 * @note This method does not take & (ampersand) into account.
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Encoded(std::string_view sv);
+		static std::string Encode(std::string_view sv);
+
+		/**
+		 * @brief Encodes C string based as defined in RFC 3986:
+		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
+		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
+		 *
+		 * @note This method takes & (ampersand) into account.
+		 * @param s C string
+		 * @return Encoded STL string
+		 */
+		static std::string EncodeComponent(std::string_view sv);
 
 		/**
 		 * @brief Decodes C string based as defined in RFC 3986 defined:
@@ -216,7 +300,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Decoded(std::string_view sv);
+		static std::string Decode(std::string_view sv);
 
 
 	// ----------------------------------------------------------------------
