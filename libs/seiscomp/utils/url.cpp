@@ -58,6 +58,7 @@ Url::Url(std::string_view scheme,
 	setPath(path);
 	setFragment(fragment);
 	setQueryItems(queryItems);
+	encode();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -85,8 +86,9 @@ bool Url::setUrl(std::string_view url) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setScheme(std::string_view scheme) {
+Util::Url &Url::setScheme(std::string_view scheme) {
 	_scheme = scheme;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -112,8 +114,9 @@ const std::string &Url::authority() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setUsername(std::string_view username) {
+Util::Url &Url::setUsername(std::string_view username) {
 	_user = username;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -130,8 +133,9 @@ const std::string &Url::username() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setPassword(std::string_view password) {
+Util::Url &Url::setPassword(std::string_view password) {
 	_password = password;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -148,8 +152,9 @@ const std::string &Url::password() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setHost(std::string_view host) {
+Util::Url &Url::setHost(std::string_view host) {
 	_host = host;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -166,8 +171,9 @@ const std::string &Url::host() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setPort(OPT(uint16_t) port) {
+Url &Url::setPort(OPT(uint16_t) port) {
 	_port = port;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -184,8 +190,9 @@ OPT(uint16_t) Url::port() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setPath(std::string_view path) {
+Url &Url::setPath(std::string_view path) {
 	_path = path;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -229,8 +236,9 @@ const std::string &Url::fragment() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Url::setQueryItems(QueryItems items) {
+Url &Url::setQueryItems(QueryItems items) {
 	_queryItems = items;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -263,15 +271,6 @@ std::string Url::queryItemValue(const std::string &key) const{
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Url::QueryItems &Url::queryItems() const {
 	return _queryItems;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Url::isValid() const {
-	return _isValid;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -580,6 +579,7 @@ void Url::debug() const {
 	std::cerr << "Path: " << _path << std::endl
 	          << "Query: " << _query << std::endl
 	          << "Query items: " << std::endl;
+
 	for ( const auto &[key, value] : _queryItems ) {
 		std::cerr << "  " << key << " " << value << std::endl;
 	}
@@ -630,44 +630,44 @@ std::string Url::withoutScheme() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string Url::encoded() const {
-	std::string url = EncodeComponent(_scheme);
+Url &Url::encode() {
+	_url = EncodeComponent(_scheme);
 
-	url += "://";
+	_url += "://";
 
 	if ( !_user.empty() ) {
-		url += EncodeComponent(_user);
+		_url += EncodeComponent(_user);
 	}
 
 	if ( !_password.empty() ) {
-		url += ':';
-		url += EncodeComponent(_password);
+		_url += ':';
+		_url += EncodeComponent(_password);
 	}
 
 	if ( !_user.empty() || !_password.empty() ) {
-		url += '@';
+		_url += '@';
 	}
 
-	url += EncodeComponent(_host);
+	_url += EncodeComponent(_host);
 	if ( _port ) {
-		url += ':';
-		url += Core::toString(*_port);
+		_url += ':';
+		_url += Core::toString(*_port);
 	}
 
 	if ( !_path.empty() ) {
 		if ( _path[0] != '/' ) {
-			url += '/';
+			_url += '/';
 		}
-		url += EncodeComponent(_path);
+		_url += EncodeComponent(_path);
 	}
 
 	if ( !_fragment.empty() ) {
-		url += '#';
-		url += EncodeComponent(_fragment);
+		_url += '#';
+		_url += EncodeComponent(_fragment);
 	}
 
 	if ( !_queryItems.empty() ) {
-		url += '?';
+		_url += '?';
 		bool first = true;
 		for ( const auto &[key, value] : _queryItems ) {
 			if ( key.empty() ) {
@@ -675,19 +675,19 @@ std::string Url::encoded() const {
 			}
 
 			if ( !first ) {
-				url += '&';
+				_url += '&';
 			}
 
-			url += EncodeComponent(key);
+			_url += EncodeComponent(key);
 			if ( !value.empty() ) {
-				url += '=';
-				url += EncodeComponent(value);
+				_url += '=';
+				_url += EncodeComponent(value);
 			}
 			first = false;
 		}
 	}
 
-	return url;
+	return *this;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

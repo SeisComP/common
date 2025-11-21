@@ -62,24 +62,25 @@ BOOST_AUTO_TEST_CASE(urls) {
 	Url url;
 
 	BOOST_REQUIRE(url.setUrl("slink://localhost:18000"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "slink://localhost:18000");
+	BOOST_CHECK_EQUAL(url.toString(), "slink://localhost:18000");
 	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "slink");
 	BOOST_CHECK_EQUAL(url.host(), "localhost");
 	BOOST_CHECK_EQUAL(*url.port(), 18000);
 	BOOST_CHECK(url.path().empty());
 
 	BOOST_REQUIRE(url.setUrl("test.mseed"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "test.mseed");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "test.mseed");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "");
 	BOOST_CHECK_EQUAL(url.host(), "test.mseed");
 	BOOST_CHECK_EQUAL(url.port(), Seiscomp::Core::None);
 	BOOST_CHECK_EQUAL(url.path(), "");
 
 	BOOST_REQUIRE(url.setUrl("http://username:pass:word@example.org/"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://username:pass:word@example.org/");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://username:pass:word@example.org/");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "username");
 	BOOST_CHECK_EQUAL(url.password(), "pass:word");
@@ -88,8 +89,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.path(), "/");
 
 	BOOST_REQUIRE(url.setUrl("http://example.org/@foo"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://example.org/@foo");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://example.org/@foo");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -98,8 +99,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.path(), "/@foo");
 
 	BOOST_REQUIRE(url.setUrl("fdsnws://localhost:8080/fdsnws/1/station?max-dist=12&cha=BHZ#help"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "fdsnws://localhost:8080/fdsnws/1/station?max-dist=12&cha=BHZ#help");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "fdsnws://localhost:8080/fdsnws/1/station?max-dist=12&cha=BHZ#help");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "fdsnws");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -112,8 +113,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.fragment(), "help");
 
 	BOOST_REQUIRE(url.setUrl("http://localhost:18100/testing"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://localhost:18100/testing");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://localhost:18100/testing");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -122,8 +123,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.path(), "/testing");
 
 	BOOST_REQUIRE(url.setUrl("http://localhost:18100/testing?ack-window=30"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://localhost:18100/testing?ack-window=30");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://localhost:18100/testing?ack-window=30");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -134,8 +135,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.queryItemValue("ack-window"), "30");
 
 	BOOST_REQUIRE(url.setUrl("http://localhost:18100/testing?ack-window=30&ssl=true"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://localhost:18100/testing?ack-window=30&ssl=true");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://localhost:18100/testing?ack-window=30&ssl=true");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -148,8 +149,8 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.queryItemValue("ssl"), "true");
 
 	BOOST_REQUIRE(url.setUrl("http://[::1]:18100/testing?ack-window=30&ssl=true"));
-	BOOST_CHECK_EQUAL(static_cast<const char*>(url), "http://[::1]:18100/testing?ack-window=30&ssl=true");
-	BOOST_CHECK_EQUAL(static_cast<bool>(url), true);
+	BOOST_CHECK_EQUAL(url.toString(), "http://[::1]:18100/testing?ack-window=30&ssl=true");
+	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "http");
 	BOOST_CHECK_EQUAL(url.username(), "");
 	BOOST_CHECK_EQUAL(url.password(), "");
@@ -250,28 +251,28 @@ BOOST_AUTO_TEST_CASE(Extract) {
 
 BOOST_AUTO_TEST_CASE(encode) {
 	BOOST_CHECK_EQUAL(
-		Url("http", {}, {}, "localhost", {}, "index.html", {}, {}).encoded(),
+		Url("http", {}, {}, "localhost", {}, "index.html", {}, {}).encode().toString(),
 		"http://localhost/index.html"
 	);
 	BOOST_CHECK_NE(
 		Url("http", {}, {}, "localhost", {}, "index.html", "anker", {
 			{ "page", "4" },
 			{ "limit", "20" },
-		}).encoded(),
+		}).encode().toString(),
 		"http://localhost/index.html#anker?page=4&limit=20"
 	);
 	BOOST_CHECK_EQUAL(
 		Url("http", {}, {}, "localhost", {}, "index.html", "anker", {
 			{ "page", "4" },
 			{ "limit", "20" },
-		}).encoded(),
+		}).encode(),
 		"http://localhost/index.html#anker?limit=20&page=4"
 	);
 	BOOST_CHECK_EQUAL(
 		Url("my scheme", {}, {}, "my computer", {}, "&path%", "frag ment", {
 			{ "&page", "4%" },
 			{ "&limit", "20%" },
-		}).encoded(),
+		}).encode(),
 		"my%20scheme://my%20computer/%26path%25#frag%20ment?%26limit=20%25&%26page=4%25"
 	);
 }

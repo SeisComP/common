@@ -107,10 +107,24 @@ class SC_SYSTEM_CORE_API Url {
 		bool setUrl(std::string_view url);
 
 		/**
+		 * @brief Checks if the URL is valid
+		 * @return True is the URL is not empty and valid.
+		 */
+		bool isValid() const;
+
+		/**
+		 * @brief Returns the string representation of the URL.
+		 * @note After setting individual member, encode() must be called to update
+		 *       the internal string!
+		 * @return The URL as string
+		 */
+		const std::string &toString() const;
+
+		/**
 		 * @brief Sets the URL scheme.
 		 * @param The URL scheme
 		 */
-		void setScheme(std::string_view scheme);
+		Url &setScheme(std::string_view scheme);
 
 		/**
 		 * @brief Returns the URL scheme
@@ -128,7 +142,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Sets the username
 		 * @param username The username
 		 */
-		void setUsername(std::string_view username);
+		Url &setUsername(std::string_view username);
 
 		/**
 		 * @brief Returns the username as extracted from the user info
@@ -140,7 +154,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Sets the password
 		 * @param password The password
 		 */
-		void setPassword(std::string_view password);
+		Url &setPassword(std::string_view password);
 
 		/**
 		 * @brief Returns the password as extracted from the user info
@@ -152,7 +166,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Sets the host
 		 * @param host The host
 		 */
-		void setHost(std::string_view host);
+		Url &setHost(std::string_view host);
 
 		/**
 		 * @brief Returns the host from the authority part
@@ -164,7 +178,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Sets the port.
 		 * @param port The optional port
 		 */
-		void setPort(OPT(uint16_t) port);
+		Url &setPort(OPT(uint16_t) port);
 
 		/**
 		 * @brief Returns the optional port from authority part.
@@ -176,7 +190,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Set the path.
 		 * @param path The path
 		 */
-		void setPath(std::string_view path);
+		Url &setPath(std::string_view path);
 
 		/**
 		 * @brief Returns the path of the URL. If the scheme and authority are
@@ -195,7 +209,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @brief Sets the query items.
 		 * @param items The query items
 		 */
-		void setQueryItems(QueryItems items);
+		Url &setQueryItems(QueryItems items);
 
 		/**
 		 * @brief Checks if a specific query parameter is set
@@ -230,12 +244,6 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &fragment() const;
 
 		/**
-		 * @brief Checks if the URL is valid
-		 * @return True is the URL is not empty and valid.
-		 */
-		bool isValid() const;
-
-		/**
 		 * @brief Returns the status of the URL
 		 * @return The status
 		 */
@@ -254,8 +262,8 @@ class SC_SYSTEM_CORE_API Url {
 		std::string withoutScheme() const;
 
 		/**
-		 * @brief Returns an encoded copy of the URL.
-		 * This method combines the following attributes to a URL:
+		 * @brief Encodes the URL from its attributes.
+		 * This method combines the following attributes:
 		 * - scheme
 		 * - username
 		 * - password
@@ -267,9 +275,9 @@ class SC_SYSTEM_CORE_API Url {
 		 * Each of the values is properly encoded.
 		 * Note that query items are sorted by key when they are encoded in
 		 * the final URL.
-		 * @return The encoded URL.
+		 * After this method was called, the
 		 */
-		std::string encoded() const;
+		Url &encode();
 
 		/**
 		 * @brief Encodes C string based as defined in RFC 3986:
@@ -308,8 +316,9 @@ class SC_SYSTEM_CORE_API Url {
 	// ----------------------------------------------------------------------
 	public:
 		operator bool() const;
-		operator const char*() const;
-		operator const std::string &() const;
+
+		bool operator==(std::string_view sv) const;
+		bool operator!=(std::string_view sv) const;
 
 
 	// ----------------------------------------------------------------------
@@ -386,16 +395,25 @@ class SC_SYSTEM_CORE_API Url {
 };
 
 
-inline Url::operator bool() const {
+
+inline bool Url::isValid() const {
 	return _isValid;
 }
 
-inline Url::operator const char*() const {
-	return _url.c_str();
+inline Url::operator bool() const {
+	return isValid();
 }
 
-inline Url::operator const std::string &() const {
+inline const std::string &Url::toString() const {
 	return _url;
+}
+
+inline bool Url::operator==(std::string_view sv) const {
+	return _url == sv;
+}
+
+inline bool Url::operator!=(std::string_view sv) const {
+	return _url != sv;
 }
 
 
