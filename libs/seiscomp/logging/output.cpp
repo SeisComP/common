@@ -45,19 +45,13 @@ Output *Output::Create(const char* service) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Output *Output::Open(const char* uri) {
+Output *Output::Open(const char *uri) {
 	Util::Url url;
 	if ( !url.setUrl(uri) ) {
 		return nullptr;
 	}
 
-	auto output = url.scheme().empty() ? Create("file") : Create(url.scheme().data());
-	if ( output && !output->setup(url)) {
-		delete output;
-		output = nullptr;
-	}
-
-	return output;
+	return Open(url);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -65,8 +59,14 @@ Output *Output::Open(const char* uri) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Output::setup(const Util::Url &url) {
-	return false;
+Output *Output::Open(const Util::Url &url) {
+	auto output = url.scheme().empty() ? Create("file") : Create(url.scheme().data());
+	if ( output && !output->setup(url)) {
+		delete output;
+		output = nullptr;
+	}
+
+	return output;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

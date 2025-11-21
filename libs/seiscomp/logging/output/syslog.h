@@ -37,6 +37,8 @@ class SC_SYSTEM_CORE_API SyslogOutput : public Output {
 		~SyslogOutput();
 
 	public:
+		bool setup(const Util::Url &url) override;
+
 		int facility() const { return _facility; }
 
 		bool open(const char* ident, const char *facility);

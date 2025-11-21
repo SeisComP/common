@@ -72,6 +72,16 @@ SyslogOutput::~SyslogOutput() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool SyslogOutput::setup(const Util::Url &url) {
+	bool startsWithSlash = !url.path().empty() && (url.path().front() == '/');
+	return open(url.host().data(), url.path().data() + (startsWithSlash ? 1 : 0));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SyslogOutput::open(const char* ident, const char *facility) {
 	const CODE *names = facilitynames;
 	_facility = SYSLOG_FACILITY;
@@ -105,7 +115,7 @@ bool SyslogOutput::open(const char* ident, const char *facility) {
 void SyslogOutput::close() {
 	if ( _openFlag )
 		closelog();
-	
+
 	_openFlag = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -127,7 +137,7 @@ void SyslogOutput::log(const char* channelName,
                        LogLevel level,
                        const char* msg,
                        time_t time) {
-	
+
 	int priority = LOG_ALERT;
 	switch ( level ) {
 		case LL_CRITICAL:

@@ -1523,61 +1523,72 @@ bool Application::initLogging() {
 
 	if ( enableLogging ) {
 		//cerr << "using loglevel " << _verbosity << endl;
-#ifndef WIN32
-		if ( _baseSettings.logging.syslog ) {
-			Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
-			const char *facility = nullptr;
-			string tmp_facility;
-
-			try {
-				tmp_facility = configGetString("logging.syslog.facility");
-				facility = tmp_facility.c_str();
-			}
-			catch ( ... ) {}
-
-			if ( syslogOutput->open(_name.c_str(), facility) ) {
-				cerr << "using syslog: " << _name << ", "
-				     << (facility?facility:"default") << "(code="
-				     << syslogOutput->facility() << ")" << endl;
-				_logger = syslogOutput;
-			}
-			else {
-				cerr << "failed to open syslog: " << _name << endl;
-				delete syslogOutput;
-				syslogOutput = nullptr;
-				return false;
-			}
-		}
-		else
-#endif
 		if ( !_baseSettings.logging.toStdout ) {
-			string logFile = _baseSettings.logging.alternativeLogFile;
-			if ( logFile.empty() )
-				logFile = Environment::Instance()->logFile(_name.c_str());
-
-			Logging::FileOutput* logger;
-			if ( _baseSettings.logging.file.rotator.enable )
-				logger = new Logging::FileRotatorOutput(
-					_baseSettings.logging.file.rotator.timeSpan,
-					_baseSettings.logging.file.rotator.archiveSize,
-					_baseSettings.logging.file.rotator.maxFileSize
-				);
-			else {
-				logger = new Logging::FileOutput();
+			if ( !_baseSettings.logging.output.empty() ) {
+				_logger = Logging::Output::Open(_baseSettings.logging.output.data());
+				if ( !_logger ) {
+					cerr << "Failed to set logging output '" << _baseSettings.logging.output << "'" << endl;
+					return false;
+				}
 			}
+#ifndef WIN32
+			else if ( _baseSettings.logging.syslog ) {
+				Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
+				const char *facility = nullptr;
+				string tmp_facility;
 
-			if ( logger->open(Util::Url(logFile)) ) {
-				//cerr << "using logfile: " << logFile << endl;
-				_logger = logger;
+				try {
+					tmp_facility = configGetString("logging.syslog.facility");
+					facility = tmp_facility.c_str();
+				}
+				catch ( ... ) {}
+
+				if ( syslogOutput->open(_name.c_str(), facility) ) {
+					cerr << "using syslog: " << _name << ", "
+					     << (facility?facility:"default") << "(code="
+					     << syslogOutput->facility() << ")" << endl;
+					_logger = syslogOutput;
+				}
+				else {
+					cerr << "failed to open syslog: " << _name << endl;
+					delete syslogOutput;
+					syslogOutput = nullptr;
+					return false;
+				}
 			}
+#endif
 			else {
-				cerr << "failed to open logfile: " << logFile << endl;
-				delete logger;
-				logger = nullptr;
+				string logFile = _baseSettings.logging.alternativeLogFile;
+				if ( logFile.empty() ) {
+					logFile = Environment::Instance()->logFile(_name.c_str());
+				}
+
+				Logging::FileOutput* logger;
+				if ( _baseSettings.logging.file.rotator.enable ) {
+					logger = new Logging::FileRotatorOutput(
+						_baseSettings.logging.file.rotator.timeSpan,
+						_baseSettings.logging.file.rotator.archiveSize,
+						_baseSettings.logging.file.rotator.maxFileSize
+					);
+				}
+				else {
+					logger = new Logging::FileOutput();
+				}
+
+				if ( logger->open(logFile.data()) ) {
+					//cerr << "using logfile: " << logFile << endl;
+					_logger = logger;
+				}
+				else {
+					cerr << "failed to open logfile: " << logFile << endl;
+					delete logger;
+					logger = nullptr;
+				}
 			}
 		}
-		else
+		else {
 			_logger = new Logging::FdOutput(STDERR_FILENO);
+		}
 
 		if ( _logger ) {
 			_logger->setUTCEnabled(_baseSettings.logging.UTC);

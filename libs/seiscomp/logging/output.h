@@ -67,7 +67,23 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		 */
 		static Output *Open(const char* uri);
 
-		virtual bool setup(const Util::Url &url);
+		/**
+		 * @brief Creates and opens an output from a URL.
+		 * @param url An URL of the output target.
+		 * @return A pointer to the output.
+		 * @note The returned pointer has to be deleted by the caller!
+		 */
+		static Output *Open(const Util::Url &url);
+
+		/**
+		 * @brief Set up an output and return the success flag.
+		 * Set up an output involves parsing the URL, settings internal
+		 * parameters and open the output. After a successful setup call,
+		 * the output must be in the state to receive and process log messages.
+		 * @param url The url to open.
+		 * @return Success flag
+		 */
+		virtual bool setup(const Util::Url &url) = 0;
 
 	public:
 		/** Subscribe to a particular channel */

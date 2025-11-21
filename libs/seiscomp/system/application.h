@@ -1241,6 +1241,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 #ifndef WIN32
 				bool          syslog{false};
 #endif
+				std::string   output;
 				bool          context{false};
 				OPT(bool)     component;
 				bool          toStdout{false};
@@ -1276,6 +1277,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					& cfg(context, "context")
 					& cfg(component, "component")
 					& cfg(components, "components")
+					& cfg(output, "output")
 					& cfg(syslog, "syslog")
 					& cfg(toStdout, "stderr")
 					& cfg(UTC, "utc")
