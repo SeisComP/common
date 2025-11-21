@@ -8696,9 +8696,11 @@ void PickerView::getChangedPicks(ObjectChangeList<DataModel::Pick> &list) const 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setDefaultDisplay() {
+	SC_D.recordView->setDefaultDisplay();
 	//alignByState();
 	alignOnOriginTime();
 	selectFirstVisibleItem(SC_D.recordView);
+	scaleReset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

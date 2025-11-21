@@ -6118,9 +6118,11 @@ void AmplitudeView::commit() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::setDefaultDisplay() {
+	SC_D.recordView->setDefaultDisplay();
 	//alignByState();
 	alignOnPArrivals();
 	selectFirstVisibleItem(SC_D.recordView);
+	scaleReset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
