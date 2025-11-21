@@ -2896,6 +2896,7 @@ void PickerView::init() {
 		SC_D.comboRotation->addItem(PickerView::Config::ERotationTypeNames::name(i));
 	}
 	SC_D.comboRotation->setCurrentIndex(SC_D.currentRotationMode);
+	changeRotation(SC_D.comboRotation->currentIndex());
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboRotation);
 
