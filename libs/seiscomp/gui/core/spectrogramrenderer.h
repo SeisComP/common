@@ -236,11 +236,11 @@ class SC_GUI_API SpectrogramRenderer {
 
 
 inline QPair<double,double> SpectrogramRenderer::amplitudeRange() const {
-	return QPair<double,double>(_normalizationAmpRange[0], _normalizationAmpRange[1]);
+	return { _normalizationAmpRange[0], _normalizationAmpRange[1] };
 }
 
 inline QPair<double,double> SpectrogramRenderer::frequencyRange() const {
-	return QPair<double,double>(_renderedFmin, _renderedFmax);
+	return { _renderedFmin, _renderedFmax };
 }
 
 
