@@ -6651,7 +6651,7 @@ void OriginLocatorView::computeMagnitudes() {
 	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
 		emit magnitudesAdded(SC_D.currentOrigin.get(), SC_D.baseEvent.get());
 		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
-					   SC_D.localOrigin, false);
+		               SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
