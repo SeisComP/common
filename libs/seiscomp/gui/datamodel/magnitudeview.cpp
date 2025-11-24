@@ -1997,8 +1997,8 @@ void MagnitudeView::computeMagnitudes() {
 		for ( size_t i = 0; i < _availableMagTypes->size(); ++i ) {
 			CheckBox *check = new CheckBox;
 			check->setChecked(std::find(_currentMagnitudeTypes.begin(), _currentMagnitudeTypes.end(), _availableMagTypes->at(i)) != _currentMagnitudeTypes.end());
-			connect(selectAll, SIGNAL(clicked()), check, SLOT(check()));
-			connect(deselectAll, SIGNAL(clicked()), check, SLOT(unCheck()));
+			connect(selectAll, &CheckBox::clicked, check, &CheckBox::check);
+			connect(deselectAll, &CheckBox::clicked, check, &CheckBox::check);
 
 			QLabel *label = new QLabel;
 			label->setText(_availableMagTypes->at(i).c_str());
@@ -2040,29 +2040,38 @@ void MagnitudeView::computeMagnitudes() {
 
 		// Main buttons
 		hl = new QHBoxLayout;
+
 		QPushButton *ok = new QPushButton(tr("OK"));
-		connect(ok, SIGNAL(clicked()), &setupTypesDlg, SLOT(accept()));
+		connect(ok, &QPushButton::clicked, &setupTypesDlg, &QDialog::accept);
 		QPushButton *cancel = new QPushButton(tr("Cancel"));
-		connect(cancel, SIGNAL(clicked()), &setupTypesDlg, SLOT(reject()));
+		connect(cancel, &QPushButton::clicked, &setupTypesDlg, &QDialog::reject);
+
 		hl->addStretch();
 		hl->addWidget(ok);
 		hl->addWidget(cancel);
 
 		ml->addLayout(hl);
 
+		ok->setDefault(true);
+		ok->setAutoDefault(true);
+		ok->setFocus();
+
 		setupTypesDlg.setLayout(ml);
 
-		if ( setupTypesDlg.exec() != QDialog::Accepted )
+		if ( setupTypesDlg.exec() != QDialog::Accepted ) {
 			return;
+		}
 
 		for ( int i = 0; i < typeChecks.size(); ++i ) {
 			QCheckBox *check = typeChecks[i];
-			if ( check->isChecked() )
+			if ( check->isChecked() ) {
 				magnitudeTypes.push_back(_availableMagTypes->at(i));
+			}
 		}
 	}
-	else
+	else {
 		magnitudeTypes = _magnitudeTypes;
+	}
 
 	// Save the last choice
 	_currentMagnitudeTypes = magnitudeTypes;
@@ -2115,8 +2124,9 @@ void MagnitudeView::computeMagnitudes() {
 			}
 		}
 
-		if ( !found )
+		if ( !found ) {
 			_amplitudes.insert(PickAmplitudeMap::value_type(it->first, it->second));
+		}
 	}
 
 	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
