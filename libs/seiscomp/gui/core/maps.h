@@ -47,7 +47,7 @@ namespace Gui {
  *     success and cancellation
  * 5 - Add ImageTree::lockCache and ImageTree::unlockCache.
  */
-#define TILESTORE_VERSION 5
+#define TILESTORE_VERSION 6
 
 
 struct SC_GUI_API MapsDesc {

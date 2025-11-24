@@ -25,7 +25,6 @@
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/logging/log.h>
 
-#include <iostream>
 #include <cstdio>
 #include <clocale>
 
@@ -95,11 +94,8 @@ QString generatePath(int level, int col, int row,
 			path += pattern[i];
 		else {
 			++i;
-			int len = 0;
 			while ( i < pattern.size() ) {
 				if ( pattern[i] >= '0' && pattern[i] <= '9' ) {
-					len *= 10;
-					len += int(pattern[i] - '0');
 					++i;
 					continue;
 				}
@@ -137,10 +133,16 @@ class TileDirectory : public TileStore {
 				QString id = generatePath(0, 0, 0, _filePattern);
 				QImage img(id);
 				_tilesize = img.size();
-
+				if ( img.width() == img.height() ) {
+					_projection = Mercator;
+				}
+				else {
+					_projection = Rectangular;
+				}
 				return true;
 			}
 
+			_projection = Unknown;
 			return false;
 		}
 
@@ -165,7 +167,7 @@ class TileDirectory : public TileStore {
 
 
 	protected:
-		bool validate(int level, int column, int row) const {
+		bool validate(int level, int column, int row) const override {
 			QString id = generatePath(level, column, row, _filePattern);
 
 			FILE* fp = fopen(id.toLatin1(), "rb");
@@ -249,10 +251,12 @@ void TileStore::invalidate(const TileIndex &tile) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ImageTree::ImageTree(const MapsDesc &meta) {
-	if ( meta.type.isEmpty() )
+	if ( meta.type.isEmpty() ) {
 		_store = new TileDirectory;
-	else
+	}
+	else {
 		_store = TileStoreFactory::Create(meta.type.toLatin1());
+	}
 
 	if ( _store ) {
 		_store->setImageTree(this);
@@ -267,7 +271,12 @@ ImageTree::ImageTree(const MapsDesc &meta) {
 			_store = nullptr;
 		}
 		else {
-			_isMercatorProjected = desc.isMercatorProjected;
+			if ( _store->projection() == TileStore::Unknown ) {
+				_isMercatorProjected = desc.isMercatorProjected;
+			}
+			else {
+				_isMercatorProjected = _store->projection() == TileStore::Mercator;
+			}
 			_cacheSize = desc.cacheSize;
 		}
 
@@ -297,8 +306,9 @@ ImageTree::~ImageTree() {
 TextureCache *ImageTree::getCache() {
 	if ( !_cache && _store ) {
 		_cache = new TextureCache(_store.get(), _isMercatorProjected);
-		if ( _cacheSize > 0 )
+		if ( _cacheSize > 0 ) {
 			_cache->setCacheLimit(_cacheSize);
+		}
 	}
 
 	return _cache.get();

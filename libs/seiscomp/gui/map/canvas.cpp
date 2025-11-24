@@ -27,7 +27,6 @@
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/gui/map/layer.h>
 #include <seiscomp/gui/map/projection.h>
-#include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/geo.h>
 
@@ -48,9 +47,7 @@
 #define CFG_LAYER_INTERFACES_PREFIX "map.customLayers"
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -272,8 +269,9 @@ Canvas::~Canvas() {
 	}
 
 	// Remove this from Layers parent
-	for ( Layers::const_iterator it = _layers.begin(); it != _layers.end(); ++it )
+	for ( Layers::const_iterator it = _layers.begin(); it != _layers.end(); ++it ) {
 		(*it)->_canvas = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -291,13 +289,18 @@ void Canvas::setBackgroundColor(QColor c) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Canvas::setProjectionByName(const char *name) {
-	Projection *newProjection = Map::ProjectionFactory::Create(name);
-	if ( newProjection == nullptr )
+	auto *proj = Map::ProjectionFactory::Create(name);
+	if ( !proj ) {
 		return false;
+	}
 
-	if ( _projection ) { delete _projection; _projection = nullptr; }
+	if ( _projection ) {
+		delete _projection;
+		_projection = nullptr;
+	}
+
 	_projectionName = name;
-	_projection = newProjection;
+	_projection = proj;
 	_projection->setView(_center, _zoomLevel);
 
 	projectionChanged(_projection);
@@ -386,12 +389,19 @@ void Canvas::init() {
 	if ( !SCScheme.map.projection.empty() ) {
 		Map::ProjectionFactory::ServiceNames *services = Map::ProjectionFactory::Services();
 		if ( services && std::find(services->begin(), services->end(),
-		                           SCScheme.map.projection) != services->end() )
+		                           SCScheme.map.projection) != services->end() ) {
 			projection = SCScheme.map.projection.c_str();
-		else
+		}
+		else {
 			SEISCOMP_WARNING("Projection %s not available, defaulting to %s",
 			                 SCScheme.map.projection.c_str(), projection);
-		if ( services ) delete services;
+		}
+		if ( services ) {
+			delete services;
+		}
+	}
+	else if ( _maptree->projection() == TileStore::Mercator ) {
+		projection = "Mercator";
 	}
 
 	setProjectionByName(projection);
@@ -1967,6 +1977,4 @@ bool Canvas::renderingComplete() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
-}
 }
