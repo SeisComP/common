@@ -139,15 +139,10 @@ class SC_GUI_API EllipsisDrawer : public QObject {
 
 /**
  * @brief Constructs an icon from a file path, application resource file or
- * fontawsome identifier. Supported schemes:
- *  - qrc:  Application resource read from qrc file
+ * SeisComP icon identifier. Supported schemes:
  *  - file: File path
- *  - fa:   Fontawesome symbol, regular style
- *  - far:  Fontawesome symbol, regular style
- *  - fas:  Fontawesome symbol, solid style
- *  - fa6:  Fontawesome6 symbol, regular style
- *  - far6: Fontawesome6 symbol, regular style
- *  - fas6: Fontawesome6 symbol, solid style
+ *  - qrc:  Application resource read from qrc file
+ *  - sc:   SeisComP::Gui icon
  *
  *  If the URL contains no scheme the default QIcon(QString) constructor is
  *  used.
@@ -157,8 +152,7 @@ class SC_GUI_API EllipsisDrawer : public QObject {
  *   /path/to/file.png                  File path, same as above
  *   qrc:images/images/connect_no.png   Application resource read from qrc file
  *   :images/images/connect_no.png      Application resource, same as above
- *   fa:ballon                          Fontawesome ballon, regular
- *   fas:ballon                         Fontawesome ballon, solid
+ *   sc:check                           SeisComP check icon
  *
  * @param url Icon URL string.
  * @return QIcon instanance.
