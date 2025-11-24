@@ -146,7 +146,7 @@ QPixmap createPixmap(const QString &name, const QSize &size, double dpr,
 	}
 
 	pm = QPixmap::fromImage(img);
-	pm.setDevicePixelRatio(qApp->devicePixelRatio());
+	pm.setDevicePixelRatio(dpr);
 
 	QPixmapCache::insert(cacheId, pm);
 
