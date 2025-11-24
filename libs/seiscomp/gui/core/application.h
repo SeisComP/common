@@ -88,6 +88,7 @@ namespace Gui {
 
 class ConnectionDialog;
 class ProcessManager;
+class LogManager;
 
 
 struct MessageGroups {
@@ -222,6 +223,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		void setPalette(const QPalette &pal);
 
 		ProcessManager *processManager();
+		LogManager *logManager();
 
 
 	protected:
@@ -349,6 +351,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		int                 _signalSocketFd[2];
 
 		ProcessManager     *_processManager{nullptr};
+		LogManager         *_logManager{nullptr};
 };
 
 

@@ -70,7 +70,7 @@ DEFINE_SMARTPOINTER(Object);
 
 namespace Gui {
 
-class ProcessManager;
+class LogStateLabel;
 class ProcessStateLabel;
 
 
@@ -125,12 +125,13 @@ class SC_GUI_API MainWindow : public QMainWindow {
 
 
 	private:
-		QMenuBar *_menuBar{nullptr};
-		QWidget *_menuWidget{nullptr};
+		QMenuBar             *_menuBar{nullptr};
+		QWidget              *_menuWidget{nullptr};
 		ConnectionStateLabel *_connectionState{nullptr};
-		ProcessStateLabel *_processState{nullptr};
-		QString _title;
-		bool _showFullscreen{false};
+		LogStateLabel        *_logState{nullptr};
+		ProcessStateLabel    *_processState{nullptr};
+		QString               _title;
+		bool                  _showFullscreen{false};
 };
 
 
