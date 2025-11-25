@@ -28,6 +28,7 @@
 #include <seiscomp/math/math.h>
 #include <seiscomp/math/filter/butterworth.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/utils.h>
 
 using namespace std;
@@ -62,6 +63,7 @@ namespace {
 
 bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
             double &ofs, double &min, double &max, bool globalOffset = false) {
+	std::cerr << seq->front()->streamID() << " " << tw << std::endl;
 	ofs = 0;
 	double tmpOfs = 0;
 	int sampleCount = 0;
@@ -3855,7 +3857,7 @@ void RecordWidget::drawActiveCursor(QPainter &painter, int x, int y) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mousePressEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::MiddleButton ) {
-		emit clickedOnTime(unmapTime(event->x()));
+		emit clickedOnTime(unmapTime(QT_EVENT_POS(event).x()));
 		return;
 	}
 
@@ -3879,7 +3881,7 @@ void RecordWidget::mousePressEvent(QMouseEvent *event) {
 		return;
 	}
 	else if ( event->button() == Qt::RightButton ) {
-		RecordMarker* m = nearestMarker(unmapTime(event->x()));
+		RecordMarker* m = nearestMarker(unmapTime(QT_EVENT_POS(event).x()));
 		if ( m )
 			setCursorPos(m->correctedTime());
 
@@ -3922,11 +3924,11 @@ void RecordWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 	}
 
 	if ( event->button() == Qt::LeftButton ) {
-		emit selectedTime(unmapTime(event->x()));
+		emit selectedTime(unmapTime(QT_EVENT_POS(event).x()));
 		return;
 	}
 	else if ( event->button() == Qt::RightButton ) {
-		RecordMarker* m = nearestMarker(unmapTime(event->x()));
+		RecordMarker* m = nearestMarker(unmapTime(QT_EVENT_POS(event).x()));
 		if ( m )
 			emit selectedTime(m->correctedTime());
 		return;
@@ -3947,7 +3949,7 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 		if ( _hoveredMarker != hovered ) {
 			_hoveredMarker = hovered;
 			setToolTip(_hoveredMarker?_hoveredMarker->toolTip():QString());
-			QToolTip::showText(event->globalPos(), toolTip());
+			QToolTip::showText(QT_EVENT_GLOBALPOS(event), toolTip());
 			update();
 		}
 
