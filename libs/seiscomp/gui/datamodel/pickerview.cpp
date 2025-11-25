@@ -7201,8 +7201,9 @@ void PickerView::setTimeRange(double tmin, double tmax) {
 	auto amplScale = SC_D.currentRecord->amplScale();
 	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
-	if ( SC_D.autoScaleZoomTrace )
+	if ( SC_D.autoScaleZoomTrace ) {
 		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
+	}
 
 	/*
 	std::cout << "ScaleWindow: " << Core::toString(SC_D.currentRecord->visibleTimeWindow().startTime()) << ", "
