@@ -114,9 +114,11 @@
 // 6.0:
 //  Q[*]Event::pos() -> position().toPoint()
 #if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
-	#define QT_EVENT_POS(dropEvent) dropEvent->position().toPoint()
+	#define QT_EVENT_POS(event) event->position().toPoint()
+	#define QT_EVENT_GLOBALPOS(event) event->globalPosition().toPoint()
 #else
-	#define QT_EVENT_POS(dropEvent) dropEvent->pos()
+	#define QT_EVENT_POS(event) event->pos()
+	#define QT_EVENT_GLOBALPOS(event) event->globalPos()
 #endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(6,7,0)
