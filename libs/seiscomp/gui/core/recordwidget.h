@@ -422,7 +422,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 		//! Causes the widget to rebuild its internal data
 		//! according its size and parameters
-		void setDirty();
+		void setDirty(bool includingData = false);
 
 		//! Whether to show the current selected recordstream or
 		//! both recordstreams
@@ -684,7 +684,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 			Stream(bool owner);
 			~Stream();
 
-			void setDirty();
+			void setDirty(bool includingData = false);
 			void free();
 
 			RecordSequence *records[2];

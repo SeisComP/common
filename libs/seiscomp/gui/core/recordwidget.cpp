@@ -934,12 +934,16 @@ RecordWidget::Stream::~Stream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::Stream::setDirty() {
+void RecordWidget::Stream::setDirty(bool includingData) {
 	traces[Stream::Raw].reset();
 	traces[Stream::Filtered].reset();
 
 	traces[Stream::Raw].dirty = true;
 	traces[Stream::Filtered].dirty = true;
+	if ( includingData ) {
+		traces[Stream::Raw].dirtyData = true;
+		traces[Stream::Filtered].dirtyData = true;
+	}
 
 	axisDirty = true;
 }
@@ -2010,7 +2014,7 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 	}
 
 	if ( copyMarker ) {
-		for ( auto *m : qAsConst(_marker) ) {
+		for ( auto *m : as_const(_marker) ) {
 			_shadowWidget->addMarker(m->copy());
 		}
 	}
@@ -2563,7 +2567,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				}
 			}
 			else {
-				for ( auto *s : qAsConst(_streams) ) {
+				for ( auto *s : as_const(_streams) ) {
 					int frontIndex = s->filtering ? Stream::Filtered : Stream::Raw;
 					if ( s->visible && s->traces[frontIndex].visible ) {
 						stream = s;
@@ -2772,11 +2776,11 @@ void RecordWidget::showEngineeringValues(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setDirty() {
+void RecordWidget::setDirty(bool includingData) {
 	_drawRecords = true;
-	for ( Stream *s : qAsConst(_streams) ) {
+	for ( Stream *s : as_const(_streams) ) {
 		if ( s ) {
-			s->setDirty();
+			s->setDirty(includingData);
 		}
 	}
 }
@@ -2983,7 +2987,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -3028,7 +3032,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 			// Second pass draws all records
 			slot = 0;
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					continue;
 				}
@@ -3055,7 +3059,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -4163,7 +4167,6 @@ void RecordWidget::enableFiltering(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::enableGlobalOffset(bool enable) {
 	_useGlobalOffset = enable;
-
 	setDirty();
 	update();
 }
@@ -4271,7 +4274,7 @@ void RecordWidget::setAutoMaxScale(bool e) {
 		setNormalizationWindow(visibleTimeWindow());
 	}
 	else {
-		for ( Stream *s : qAsConst(_streams) ) {
+		for ( Stream *s : as_const(_streams) ) {
 			if ( s ) {
 				s->traces[Stream::Raw].dirtyData = true;
 				s->traces[Stream::Filtered].dirtyData = true;
@@ -4288,7 +4291,7 @@ void RecordWidget::setAutoMaxScale(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_normalizationWindow = tw;
-	setDirty();
+	setDirty(!_normalizationWindow || _useGlobalOffset);
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

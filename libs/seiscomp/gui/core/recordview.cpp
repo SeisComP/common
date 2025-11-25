@@ -2525,8 +2525,9 @@ void RecordView::scaleAmplitudesDown() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scaleVisibleAmplitudes() {
-	foreach (RecordViewItem* item, _items)
+	foreach (RecordViewItem* item, _items) {
 		item->widget()->setNormalizationWindow(item->widget()->visibleTimeWindow());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2535,10 +2536,9 @@ void RecordView::scaleVisibleAmplitudes() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scaleAllRecords() {
-	Core::TimeWindow tw;
-
-	foreach (RecordViewItem* item, _items)
-		item->widget()->setNormalizationWindow(tw);
+	foreach (RecordViewItem* item, _items) {
+		item->widget()->setNormalizationWindow({});
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2965,15 +2965,18 @@ void RecordView::restoreSelectionMode() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setDefaultDisplay() {
-	if ( rowCount() == 0 ) return;
+	if ( rowCount() == 0 ) {
+		return;
+	}
 
 	int w = _scrollArea->viewport()->width();
 	int h = _scrollArea->viewport()->height();
 
 	double pos = 0;
 
-	if ( _scrollArea->widget()->height() > 0 )
+	if ( _scrollArea->widget()->height() > 0 ) {
 		pos = double(_scrollArea->verticalScrollBar()->sliderPosition() + h/2) / (double)_scrollArea->widget()->height();
+	}
 
 	_minRowHeight = _defaultRowHeight;
 	_maxRowHeight = -1;
