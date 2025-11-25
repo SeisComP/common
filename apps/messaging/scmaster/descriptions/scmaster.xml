@@ -253,18 +253,6 @@
 									for you, check this option.
 									</description>
 									<option value="true">
-										<input name="rootpw" type="string" echo="password">
-											<text>MYSQL root password.</text>
-											<description>
-											To create the database root access to
-											the database is required.
-											Please enter the root password to
-											the database server you are going to
-											use.
-											The server hostname will be entered
-											in the next steps.
-											</description>
-										</input>
 										<input name="runAsSuperUser" type="boolean" default="true">
 											<text>Run as super user.</text>
 											<description>
@@ -274,6 +262,21 @@
 											this option to use the database root account for
 											database creation instead.
 											</description>
+											<option value="true"/>
+											<option value="false">
+												<input name="rootpw" type="string" echo="password">
+													<text>MYSQL root password.</text>
+													<description>
+													To create the database root access to
+													the database is required.
+													Please enter the root password to
+													the database server you are going to
+													use.
+													The server hostname will be entered
+													in the next steps.
+													</description>
+												</input>
+											</option>
 										</input>
 										<input name="drop" type="boolean" default="false">
 											<text>Drop existing database.</text>
