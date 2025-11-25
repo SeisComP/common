@@ -294,7 +294,7 @@ class Module(kernel.CoreModule):
                         params.rouser,
                         params.ropwd,
                         params.rwhost,
-                        rootpwd,
+                        rootpwd or "-",
                         str(params.drop),
                         schemapath,
                     ]
