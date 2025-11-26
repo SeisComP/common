@@ -63,7 +63,6 @@ namespace {
 
 bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
             double &ofs, double &min, double &max, bool globalOffset = false) {
-	std::cerr << seq->front()->streamID() << " " << tw << std::endl;
 	ofs = 0;
 	double tmpOfs = 0;
 	int sampleCount = 0;
