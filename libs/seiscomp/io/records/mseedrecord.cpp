@@ -506,7 +506,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 			auto fdata = new FloatArray(_nsamp);
 			nsamples = decodeGEOSCOPE(
 				const_cast<char*>(data), _nsamp,
-				fdata->typedData(), _data->size() * _data->elementSize(),
+				fdata->typedData(), fdata->size() * fdata->elementSize(),
 				static_cast<EncodingType>(_encoding), _byteOrder & SwapPayload
 			);
 			_data = fdata;
@@ -517,7 +517,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeCDSN(
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
-				idata->typedData(), _data->size() * _data->elementSize(),
+				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
 			);
 			_data = idata;
@@ -528,7 +528,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeSRO(
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
-				idata->typedData(), _data->size() * _data->elementSize(),
+				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
 			);
 			_data = idata;
@@ -539,9 +539,10 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeDWWSSN(
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
-				idata->typedData(), _data->size() * _data->elementSize(),
+				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
 			);
+			_data = idata;
 			break;
 		}
 	}
