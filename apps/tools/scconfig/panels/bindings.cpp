@@ -1574,6 +1574,8 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					clearModuleBindings(idx);
 				}
+
+				updateIndication();
 			}
 			else if ( a == deleteAction ) {
 				deleteItem();
@@ -1591,6 +1593,8 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				foreach ( const QModelIndex &idx, sel->selectedIndexes() ) {
 					removeModuleBindings(idx, moduleName, bindingNameFilter);
 				}
+
+				updateIndication();
 			}
 		}
 		else if ( type == TypeModule ) {
