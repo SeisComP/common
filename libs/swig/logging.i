@@ -30,6 +30,7 @@
 %}
 
 %ignore Seiscomp::Logging::Output::setup;
+%ignore Seiscomp::Logging::Output::Open(const Util::Url &);
 
 %include "seiscomp/core.h"
 %include "seiscomp/logging/log.h"
