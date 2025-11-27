@@ -3,7 +3,7 @@
 	<module name="global" category="System">
 		<description>Global parameters for all trunk applications.</description>
 		<configuration>
-			<parameter name="agencyID" type="string" default="GFZ">
+			<parameter name="agencyID" type="string" default="Unset">
 				<description>
 				Agency ID used to set creationInfo.agencyID in
 				data model objects. Should not contain spaces.
