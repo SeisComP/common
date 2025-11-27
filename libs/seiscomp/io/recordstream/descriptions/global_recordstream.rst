@@ -6,7 +6,7 @@ The following tables lists available implementations:
 
    ":ref:`rs-balanced`", "``balanced``", "Distributes requests to multiple proxy streams"
    ":ref:`rs-routing`", "``routing``", "Distributes requests to multiple proxy streams according to user defined rules"
-   ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a `gempa CAPS server <https://www.gempa.de/products/caps/>`_"
+   ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a CAPS server :cite:p:`caps`"
    ":ref:`rs-combined`", "``combined``", "Combines archive and real-time stream"
    ":ref:`rs-dec`", "``dec``", "Decimates (downsamples) a proxy stream"
    ":ref:`rs-fdsnws`", "``fdsnws``, ``fdsnwss``", "Connects to :ref:`FDSN web service <fdsnws>`"
@@ -69,10 +69,14 @@ Examples
 - ``slink://localhost:18000``
 
 
+.. _rs-fdsnws:
+
 FDSNWS
 ------
 
-This RecordStream fetches data from a FDSN web service.
+This RecordStream fetches data from a server offering FDSN web services, such as
+by the |scname| :ref:`fdsnws`. See also :cite:t:`fdsn` and
+:cite:t:`fdsn-datacenters`.
 
 
 Definition
@@ -197,6 +201,7 @@ Examples
 ^^^^^^^^
 
 - ``sdsarchive://``
+- ``sdsarchive://@ROOTDIR@/var/lib/archive``
 - ``sdsarchive:///home/sysop/seiscomp/var/lib/archive``
 - ``sdsarchive:///SDSA,/SDSB,/SDSC``
 
@@ -206,8 +211,7 @@ Examples
 CAPS
 ----
 
-This RecordStream reads data from a
-`gempa CAPS server <https://www.gempa.de/products/caps/>`_.
+This RecordStream reads data from a CAPS server :cite:p:`caps`.
 
 Definition
 ^^^^^^^^^^
@@ -260,7 +264,7 @@ Combined
 --------
 
 This RecordStream combines one archive and one real-time RecordStream, e.g.
-:ref:`rs-arclink` and :ref:`rs-slink`. First the archive stream is read up to
+:ref:`rs-fdsnws` and :ref:`rs-slink`. First the archive stream is read up to
 the size of the real-time buffer. Then the acquisition is switched to the
 real-time stream. The syntax for the source is similar to an URL:
 
@@ -271,7 +275,7 @@ Definition
 URL-like: ``combined://[real-time-stream];[archive-stream][??parameters]``
 
 By default the real-time stream is set to :ref:`rs-slink` and the
-archive-stream is set to :ref:`rs-arclink`. Any other streams may be configured.
+archive-stream is set to :ref:`rs-fdsnws`. Any other streams may be configured.
 
 The definition of the proxy streams has slightly changed: Scheme and source are
 only separated by a slash, e.g. `slink://localhost` needs to be defined as
@@ -317,14 +321,14 @@ Examples
 .. csv-table::
    :header: "URL", "Description"
 
-   "``combined://localhost:18000;localhost:18001``", "Seedlink on localhost:18000 combined with Arclink on localhost 18001"
-   "``combined://slink/localhost:18000;arclink/localhost:18001``", "Same as above"
-   "``combined://;``", "Same as above"
-   "``combined://:18042;?user=foo&pwd=secret??rtMax=1800``", "Seedlink on localhost:18042 combined with Arclink on localhost 18001, real-time (SeedLink) buffer size set to 30min"
-   "``combined://slink/localhost:18000;sdsarchive//home/sysop/seiscomp/var/lib/archive``", Seedlink combined with SDS archive
-   "``combined://slink/localhost:18000;combined/(arclink/localhost:18001;arclink/localhost:18002??1stMax=30d)??1stMax=1h``", Seedlink combined with a combined record stream using two Arclink sources
-   "``combined://slink/localhost:18000;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive2017;sdsarchive//home/sysop/seiscomp/var/lib/archive2016??splitTime=2017)??splitTime=2018)``", "Seedlink combined with a combined recordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two contain the data from 2016 and 2017."
-   "``combined://slink/localhost:18000;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive;combined/(sdsarchive//home/sysop/seiscomp/var/lib/archive2017;sdsarchive//home/sysop/seiscomp/var/lib/archive2016??splitTime=2017-06-01T00:00:00Z)??splitTime=2018-06-01T00:00:00Z)``", "Seedlink combined with a combined recordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two are separated in mid of 2016."
+   "``combined://localhost:18000;sdsarchive/@ROOTDIR@/var/lib/archive``", "Seedlink on localhost:18000 combined with SDS archive"
+   "``combined://slink/localhost:18000;fdsnws/localhost:8080``",  "Seedlink on localhost:18000 combined with FDSNWS on default port 8080"
+   "``combined://slink/localhost:18000;fdsnws/localhost``",  "Seedlink on localhost:18000 combined with FDSNWS on standard port 80"
+   "``combined://slink/localhost:;``", "Same as above"
+   "``combined://:18042;sdsarchive/@ROOTDIR@/var/lib/archive??rtMax=1800``", "Seedlink on localhost:18042 combined with SDS archive, real-time (SeedLink) buffer size set to 30min"
+   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;fdsnws/remote-host:80??1stMax=30d)??1stMax=1h``", Seedlink combined with a combined record stream using one SDS and one FDSNWS source
+   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017)??splitTime=2018)``", "Seedlink combined with a combined RecordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two contain the data from 2016 and 2017."
+   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017-06-01T00:00:00Z)??splitTime=2018-06-01T00:00:00Z)``", "Seedlink combined with a combined RecordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two are separated in mid of 2016."
 
 .. _rs-balanced:
 
@@ -404,7 +408,7 @@ Examples
    "``routing://slink/server1:18000??match=TMP?.*.*.*;slink/server2:18000??match=NET.*.*.*``", "Requests for network `TMPX` go to server1, for network `NET` go to server 2, all the rest are not fulfilled"
    "``routing://slink/server1:18000??match=*.*.*.(HH|EH)?;slink/server2:18000??match=*.*.*.*``", "Requests for channels `HH` and `EH` go to server1, all the rest to server2"   
    "``routing://combined/(server1:18000;server1:18001??rtMax=1800)??match=NET1.*.*.*;combined/(server2:18000;server2:18001??rtMax=1800)??match=NET2.*.*.*``", "Split requests to 2 :ref:`rs-combined` RecordStreams according to the network code `STA1` or `STA2`. Other network codes are not fullfilled"
-   "``routing://combined/(slink/special-server:18000;sdsarchive//home/sysop/seiscomp/var/lib/special-archive)??match=SP.*.*.*;combined/(slink/default-server:18000;sdsarchive//home/sysop/seiscomp/var/lib/default-archive)??match=*.*.*.*``", "Requests for special network `SP` are fullfilled by seedlink `special-server` and sdsarchive `/home/sysop/seiscomp/var/lib/special-archive`, all the rest are fullfilled by seedlink `default-server` and archive `/home/sysop/seiscomp/var/lib/default-archive`"
+   "``routing://combined/(slink/special-server:18000;sdsarchive/@ROOTDIR@/var/lib/special-archive)??match=SP.*.*.*;combined/(slink/default-server:18000;sdsarchive/@ROOTDIR@/var/lib/default-archive)??match=*.*.*.*``", "Requests for special network `SP` are fullfilled by seedlink `special-server` and sdsarchive `@ROOTDIR@/var/lib/special-archive`, all the rest are fullfilled by seedlink `default-server` and archive `@ROOTDIR@/var/lib/default-archive`"
    
 .. _rs-dec:
 
