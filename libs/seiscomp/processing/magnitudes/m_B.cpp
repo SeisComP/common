@@ -82,12 +82,14 @@ bool MagnitudeProcessor_mB::setup(const Settings &settings) {
 		return false;
 	}
 
-	if ( (_minimumDepthKm < 0.) || (_minimumDepthKm > 700.) ) {
+	if ( (_minimumDepthKm && (*_minimumDepthKm < 0.)) ||
+	     (_maximumDepthKm && (*_maximumDepthKm > 700.)) ) {
 		SEISCOMP_WARNING("%s: configured minimum/maximum depth is out of allowed range [0, 700]km", type());
 		return false;
 	}
 
-	if ( (_minimumDistanceDeg < 5) || (_maximumDistanceDeg > 105) ) {
+	if ( (_minimumDistanceDeg && (*_minimumDistanceDeg < 5)) ||
+	     (_maximumDistanceDeg && (*_maximumDistanceDeg > 105)) ) {
 		SEISCOMP_WARNING("%s: configured minimum/maximum distance is out of allowed range [5, 105]°", type());
 		return false;
 	}
