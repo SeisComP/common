@@ -4,7 +4,6 @@ The following tables lists available implementations:
 .. csv-table::
    :header: "Name", "URL Scheme(s)", "Description"
 
-   ":ref:`rs-arclink`", "``arclink``", "Connects to an ArcLink server"
    ":ref:`rs-balanced`", "``balanced``", "Distributes requests to multiple proxy streams"
    ":ref:`rs-routing`", "``routing``", "Distributes requests to multiple proxy streams according to user defined rules"
    ":ref:`rs-caps`", "``caps``, ``capss``", "Connects to a `gempa CAPS server <https://www.gempa.de/products/caps/>`_"
@@ -68,38 +67,6 @@ Examples
 - ``slink://``
 - ``slink://geofon.gfz.de?timeout=60&retries=5``
 - ``slink://localhost:18000``
-
-.. _rs-arclink:
-
-
-ArcLink
--------
-
-This RecordStream fetches data from a ArcLink server.
-
-
-Definition
-^^^^^^^^^^
-
-URL: ``arclink://[host][:port][?parameters]``
-
-The default host is set to `localhost`, the default port to `18001`. Optional
-URL encoded parameters are:
-
-- `user` - user name required on some servers
-- `pwd` - password required on some servers
-- `dump` - optional output file for all records being received
-
-
-Examples
-^^^^^^^^
-
-- ``arclink://``
-- ``arclink://geofon.gfz.de?user=foo&pwd=secret``
-- ``arclink://localhost:18042``
-- ``arclink://localhost?dump=test.mseed``
-
-.. _rs-fdsnws:
 
 
 FDSNWS
