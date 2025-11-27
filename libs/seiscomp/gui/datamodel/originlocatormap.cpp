@@ -33,11 +33,13 @@
 #include <seiscomp/gui/datamodel/stationsymbol.h>
 #include <seiscomp/gui/datamodel/ttdecorator.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/map/layers/annotationlayer.h>
 
 #include <QMenu>
 
 #include <algorithm>
+#include <utility>
 
 
 #ifdef WIN32
@@ -70,14 +72,14 @@ struct StationLayer : Map::Layer {
 	void setVisible(bool v) {
 		Map::Layer::setVisible(v);
 		if ( !v ) {
-			for ( auto entry : qAsConst(stations) ) {
+			for ( auto entry : std::as_const(stations) ) {
 				if ( entry->annotation ) {
 					entry->annotation->visible = false;
 				}
 			}
 		}
 		else {
-			for ( auto entry : qAsConst(stations) ) {
+			for ( auto entry : std::as_const(stations) ) {
 				if ( entry->annotation ) {
 					entry->annotation->visible = entry->isVisible();
 				}
@@ -86,7 +88,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void calculateMapPosition(const Map::Canvas *canvas) override {
-		for ( auto entry : qAsConst(stations) ) {
+		for ( auto entry : std::as_const(stations) ) {
 			if ( !entry->validLocation ) {
 				entry->setVisible(false);
 			}
@@ -103,13 +105,14 @@ struct StationLayer : Map::Layer {
 
 	bool isInside(const QMouseEvent *event, const QPointF &) override {
 		int tmpHoverId = -1;
+		auto p = QT_EVENT_POS(event);
 
 		for ( int i = 0; i < stations.count(); ++i ) {
 			if ( !stations[i]->isVisible() ) {
 				continue;
 			}
 
-			if ( stations[i]->isInside(event->x(), event->y()) ) {
+			if ( stations[i]->isInside(p.x(), p.y()) ) {
 				tmpHoverId = i;
 				break;
 			}
@@ -165,7 +168,7 @@ struct StationLayer : Map::Layer {
 			}
 
 			p.setPen(SCScheme.colors.map.lines);
-			for ( auto s : qAsConst(stations) ) {
+			for ( auto s : std::as_const(stations) ) {
 				if ( !s->validLocation || !s->isArrival ) {
 					continue;
 				}
@@ -179,7 +182,7 @@ struct StationLayer : Map::Layer {
 
 			if ( drawDirectivity ) {
 				p.setPen(SCScheme.colors.map.directivity);
-				for ( auto s : qAsConst(stations) ) {
+				for ( auto s : std::as_const(stations) ) {
 					if ( s->backAzimuth ) {
 						QPointF p0;
 						Math::Geo::delandaz2coord(s->distance * 0.5, *s->backAzimuth,
@@ -242,7 +245,7 @@ struct StationLayer : Map::Layer {
 	}
 
 	void clear() {
-		for ( auto symbol : qAsConst(stations) ) {
+		for ( auto symbol : std::as_const(stations) ) {
 			delete symbol;
 		}
 		stations.clear();
@@ -405,7 +408,7 @@ void OriginLocatorMap::mousePressEvent(QMouseEvent *event) {
 		else if ( event->button() == Qt::MiddleButton && _enabledCreateOrigin ) {
 			QPointF epicenter;
 			if ( canvas().projection()->unproject(epicenter, event->pos()) )
-				emit artificialOriginRequested(epicenter, event->globalPos());
+				emit artificialOriginRequested(epicenter, QT_EVENT_GLOBALPOS(event));
 		}
 	}
 
@@ -639,7 +642,7 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 		}
 	}
 
-	for ( auto symbol : qAsConst(SYMBOLLAYER->stations) ) {
+	for ( auto symbol : std::as_const(SYMBOLLAYER->stations) ) {
 		if ( symbol->annotation ) {
 			symbol->annotation->highlighted = symbol->isActive && symbol->isArrival;
 		}
