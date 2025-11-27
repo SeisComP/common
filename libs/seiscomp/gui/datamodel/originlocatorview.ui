@@ -425,9 +425,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
-           <string>GFZ Potsdam</string>
-          </property>
          </widget>
         </item>
         <item row="8" column="2" >
