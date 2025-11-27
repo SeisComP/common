@@ -93,7 +93,7 @@ bool FdOutput::setup(const Util::Url &url) {
 void FdOutput::log(const char* channelName,
                    LogLevel level,
                    const char* msg,
-                   time_t time) {
+                   time_t time, uint32_t microseconds) {
 	char timeStamp[32];
 
 	tm currentTime;

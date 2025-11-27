@@ -114,7 +114,7 @@ bool FileRotatorOutput::open(const char *filename) {
 void FileRotatorOutput::log(const char* channelName,
                             LogLevel level,
                             const char* msg,
-                            time_t time) {
+                            time_t time, uint32_t microseconds) {
 	std::lock_guard<std::mutex> l(outputMutex);
 
 	int currentInterval = (int)(time / (time_t)_timeSpan);
@@ -132,7 +132,7 @@ void FileRotatorOutput::log(const char* channelName,
 		}
 	}
 
-	FileOutput::log(channelName, level, msg, time);
+	FileOutput::log(channelName, level, msg, time, microseconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -22,11 +22,12 @@
 #define SC_LOGGING_OUTPUT_H
 
 
-
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/utils/url.h>
 #include <seiscomp/logging/node.h>
 #include <seiscomp/logging/log.h>
+
+#include <cstdint>
 
 
 namespace Seiscomp::Logging {
@@ -98,7 +99,7 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		virtual void log(const char* channelName,
 		                 LogLevel level,
 		                 const char* msg,
-		                 time_t time) = 0;
+		                 time_t time, uint32_t microseconds) = 0;
 
 		/** The following methods calls are only valid inside the
 		    log(...) method */

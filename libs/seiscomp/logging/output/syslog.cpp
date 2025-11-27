@@ -136,7 +136,7 @@ bool SyslogOutput::isOpen() const {
 void SyslogOutput::log(const char* channelName,
                        LogLevel level,
                        const char* msg,
-                       time_t time) {
+                       time_t time, uint32_t microseconds) {
 
 	int priority = LOG_ALERT;
 	switch ( level ) {

@@ -28,9 +28,26 @@
 #include <mutex>
 
 
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Logging {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+inline void tag(Data &data) {
+	data.time = time(nullptr);
+	data.microseconds = 0;
+}
+
+
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -298,8 +315,8 @@ void log(Channel *ch, const std::string &msg) {
 void Publish(PublishLoc *loc, Channel *, const char *msg) {
 	Data data;
 
+	tag(data);
 	data.publisher = loc;
-	data.time = time(0);
 	data.msg = msg;
 
 	loc->pub->publish(data);
@@ -313,8 +330,8 @@ void Publish(PublishLoc *loc, Channel *, const char *msg) {
 void Publish(PublishLoc *loc, Channel *, const std::string &msg) {
 	Data data;
 
+	tag(data);
 	data.publisher = loc;
-	data.time = time(0);
 	data.msg = msg.c_str();
 
 	loc->pub->publish(data);
@@ -328,8 +345,8 @@ void Publish(PublishLoc *loc, Channel *, const std::string &msg) {
 void VPublish(PublishLoc *loc, Channel *, const char *format, va_list ap) {
 	Data data;
 
+	tag(data);
 	data.publisher = loc;
-	data.time = time(0);
 	data.msg = 0;
 
 	char msgBuf[64];
@@ -398,8 +415,8 @@ void VPublish(PublishLoc *loc, Channel *,
 
 	Data data;
 
+	tag(data);
 	data.publisher = loc;
-	data.time = time(0);
 	data.msg = line.c_str();
 
 	loc->pub->publish(data);
@@ -416,8 +433,8 @@ void VPublish(PublishLoc *loc, Channel *,
 
 	Data data;
 
+	tag(data);
 	data.publisher = loc;
-	data.time = time(0);
 	data.msg = line.c_str();
 
 	loc->pub->publish(data);

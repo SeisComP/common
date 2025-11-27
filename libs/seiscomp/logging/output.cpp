@@ -110,10 +110,8 @@ void Output::publish(const Data &data) {
 	LogLevel level = data.publisher->channel->logLevel();
 
 	_publisher = data.publisher;
-	log(_publisher->channel->name().c_str(),
-	    level,
-	    data.msg,
-	    data.time);
+	log(_publisher->channel->name().c_str(), level, data.msg,
+	    data.time, data.microseconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

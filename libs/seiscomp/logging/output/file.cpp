@@ -93,7 +93,7 @@ bool FileOutput::isOpen() {
 void FileOutput::log(const char* channelName,
                      LogLevel level,
                      const char* msg,
-                     time_t time) {
+                     time_t time, uint32_t microseconds) {
 	tm currentTime;
 
 	currentTime = _useUTC ? *gmtime(&time) : *localtime(&time);
