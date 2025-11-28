@@ -362,11 +362,13 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 				throw GeneralException("server sent invalid response: " + line);
 
 			int code;
-			if ( !fromString(code, line.substr(0, pos)) )
+			if ( !fromString(code, line.substr(0, pos)) ) {
 				throw GeneralException("server sent invalid status code: " + line.substr(0, pos));
+			}
 
-			if ( code != 200 )
+			if ( code != 200 ) {
 				throw GeneralException("proxy returned code: " + line.substr(0, pos));
+			}
 		}
 	}
 	else {
@@ -458,8 +460,9 @@ void FDSNWSConnectionBase::handshake() {
 		throw GeneralException("server sent invalid response: " + line);
 
 	int code;
-	if ( !fromString(code, line.substr(0, pos)) )
+	if ( !fromString(code, line.substr(0, pos)) ) {
 		throw GeneralException("server sent invalid status code: " + line.substr(0, pos));
+	}
 
 	if ( code == 200 ) {
 		// Keep on reading body
@@ -504,10 +507,12 @@ void FDSNWSConnectionBase::handshake() {
 			}
 		}
 		else if ( line.compare(0, 15, "CONTENT-LENGTH:") == 0 ) {
-			if ( !fromString(_remainingBytes, line.substr(15)) )
+			if ( !fromString(_remainingBytes, trim(line.substr(15))) ) {
 				throw GeneralException("invalid Content-Length response");
-			if ( _remainingBytes < 0 )
+			}
+			if ( _remainingBytes < 0 ) {
 				throw GeneralException("Content-Length must be positive");
+			}
 		}
 		else if ( line.compare(0, 9, "LOCATION:") == 0 ) {
 			redirectLocation = line.substr(pos+1);
