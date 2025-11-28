@@ -617,7 +617,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 	connect(inspectFileAction, SIGNAL(triggered()), this, SLOT(inspectFile()));
 
 	QAction *checkFileAction = new QAction(tr("Check"), this);
-	checkFileAction->setShortcut(QKeySequence(Qt::Key_F1));
+	checkFileAction->setShortcut(QKeySequence(Qt::Key_F3));
 	connect(checkFileAction, SIGNAL(triggered(bool)), this, SLOT(testInventoryFile()));
 
 	_folderTree = new QTreeView;

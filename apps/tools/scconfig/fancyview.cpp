@@ -1832,6 +1832,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 void FancyView::showSearchButton(bool v) {
 	if ( _btnSearch ) {
 		_btnSearch->setVisible(v);
+		_btnSearch->setToolTip(tr("Search - Ctrl + F"));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
