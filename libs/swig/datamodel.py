@@ -2560,242 +2560,6 @@ class Phase(seiscomp.core.BaseObject):
 
 # Register Phase in _datamodel:
 _datamodel.Phase_swigregister(Phase)
-class CommentIndex(object):
-    r"""Proxy of C++ Seiscomp::DataModel::CommentIndex class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def __init__(self, *args):
-        r"""
-        __init__(CommentIndex self) -> CommentIndex
-        __init__(CommentIndex self, std::string const & id) -> CommentIndex
-        __init__(CommentIndex self, CommentIndex arg2) -> CommentIndex
-        """
-        _datamodel.CommentIndex_swiginit(self, _datamodel.new_CommentIndex(*args))
-
-    def __eq__(self, arg2):
-        r"""__eq__(CommentIndex self, CommentIndex arg2) -> bool"""
-        return _datamodel.CommentIndex___eq__(self, arg2)
-
-    def __ne__(self, arg2):
-        r"""__ne__(CommentIndex self, CommentIndex arg2) -> bool"""
-        return _datamodel.CommentIndex___ne__(self, arg2)
-    id = property(_datamodel.CommentIndex_id_get, _datamodel.CommentIndex_id_set, doc=r"""id : std::string""")
-    __swig_destroy__ = _datamodel.delete_CommentIndex
-
-# Register CommentIndex in _datamodel:
-_datamodel.CommentIndex_swigregister(CommentIndex)
-class Comment(Object):
-    r"""Proxy of C++ Seiscomp::DataModel::Comment class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    @staticmethod
-    def ClassName():
-        r"""ClassName() -> char const *"""
-        return _datamodel.Comment_ClassName()
-
-    @staticmethod
-    def TypeInfo():
-        r"""TypeInfo() -> RTTI"""
-        return _datamodel.Comment_TypeInfo()
-
-    def className(self):
-        r"""className(Comment self) -> char const *"""
-        return _datamodel.Comment_className(self)
-
-    def typeInfo(self):
-        r"""typeInfo(Comment self) -> RTTI"""
-        return _datamodel.Comment_typeInfo(self)
-
-    @staticmethod
-    def Cast(*args):
-        r"""
-        Cast(BaseObject o) -> Comment
-        Cast(Seiscomp::Core::BaseObjectPtr o) -> Comment
-        """
-        return _datamodel.Comment_Cast(*args)
-
-    @staticmethod
-    def ConstCast(*args):
-        r"""
-        ConstCast(BaseObject o) -> Comment
-        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Comment
-        """
-        return _datamodel.Comment_ConstCast(*args)
-
-    def serialize(self, ar):
-        r"""serialize(Comment self, GenericArchive ar)"""
-        return _datamodel.Comment_serialize(self, ar)
-
-    @staticmethod
-    def Meta():
-        r"""Meta() -> MetaObject"""
-        return _datamodel.Comment_Meta()
-
-    def meta(self):
-        r"""meta(Comment self) -> MetaObject"""
-        return _datamodel.Comment_meta(self)
-
-    def __init__(self, *args):
-        r"""
-        __init__(Comment self) -> Comment
-        __init__(Comment self, Comment other) -> Comment
-        """
-        _datamodel.Comment_swiginit(self, _datamodel.new_Comment(*args))
-    __swig_destroy__ = _datamodel.delete_Comment
-
-    def __eq__(self, other):
-        r"""__eq__(Comment self, Comment other) -> bool"""
-        return _datamodel.Comment___eq__(self, other)
-
-    def __ne__(self, other):
-        r"""__ne__(Comment self, Comment other) -> bool"""
-        return _datamodel.Comment___ne__(self, other)
-
-    def equal(self, other):
-        r"""equal(Comment self, Comment other) -> bool"""
-        return _datamodel.Comment_equal(self, other)
-
-    def setText(self, text):
-        r"""setText(Comment self, std::string const & text)"""
-        return _datamodel.Comment_setText(self, text)
-
-    def text(self):
-        r"""text(Comment self) -> std::string const &"""
-        return _datamodel.Comment_text(self)
-
-    def setId(self, id):
-        r"""setId(Comment self, std::string const & id)"""
-        return _datamodel.Comment_setId(self, id)
-
-    def id(self):
-        r"""id(Comment self) -> std::string const &"""
-        return _datamodel.Comment_id(self)
-
-    def setStart(self, start):
-        r"""setStart(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & start)"""
-        return _datamodel.Comment_setStart(self, start)
-
-    def start(self):
-        r"""start(Comment self) -> Time"""
-        return _datamodel.Comment_start(self)
-
-    def setEnd(self, end):
-        r"""setEnd(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
-        return _datamodel.Comment_setEnd(self, end)
-
-    def end(self):
-        r"""end(Comment self) -> Time"""
-        return _datamodel.Comment_end(self)
-
-    def setCreationInfo(self, creationInfo):
-        r"""setCreationInfo(Comment self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
-        return _datamodel.Comment_setCreationInfo(self, creationInfo)
-
-    def creationInfo(self, *args):
-        r"""
-        creationInfo(Comment self) -> CreationInfo
-        creationInfo(Comment self) -> CreationInfo
-        """
-        return _datamodel.Comment_creationInfo(self, *args)
-
-    def index(self):
-        r"""index(Comment self) -> CommentIndex"""
-        return _datamodel.Comment_index(self)
-
-    def equalIndex(self, lhs):
-        r"""equalIndex(Comment self, Comment lhs) -> bool"""
-        return _datamodel.Comment_equalIndex(self, lhs)
-
-    def momentTensor(self):
-        r"""momentTensor(Comment self) -> MomentTensor"""
-        return _datamodel.Comment_momentTensor(self)
-
-    def focalMechanism(self):
-        r"""focalMechanism(Comment self) -> FocalMechanism"""
-        return _datamodel.Comment_focalMechanism(self)
-
-    def amplitude(self):
-        r"""amplitude(Comment self) -> Amplitude"""
-        return _datamodel.Comment_amplitude(self)
-
-    def magnitude(self):
-        r"""magnitude(Comment self) -> Magnitude"""
-        return _datamodel.Comment_magnitude(self)
-
-    def stationMagnitude(self):
-        r"""stationMagnitude(Comment self) -> StationMagnitude"""
-        return _datamodel.Comment_stationMagnitude(self)
-
-    def pick(self):
-        r"""pick(Comment self) -> Pick"""
-        return _datamodel.Comment_pick(self)
-
-    def event(self):
-        r"""event(Comment self) -> Event"""
-        return _datamodel.Comment_event(self)
-
-    def catalog(self):
-        r"""catalog(Comment self) -> Seiscomp::DataModel::Catalog *"""
-        return _datamodel.Comment_catalog(self)
-
-    def origin(self):
-        r"""origin(Comment self) -> Origin"""
-        return _datamodel.Comment_origin(self)
-
-    def parameter(self):
-        r"""parameter(Comment self) -> Parameter"""
-        return _datamodel.Comment_parameter(self)
-
-    def parameterSet(self):
-        r"""parameterSet(Comment self) -> ParameterSet"""
-        return _datamodel.Comment_parameterSet(self)
-
-    def stream(self):
-        r"""stream(Comment self) -> Stream"""
-        return _datamodel.Comment_stream(self)
-
-    def sensorLocation(self):
-        r"""sensorLocation(Comment self) -> SensorLocation"""
-        return _datamodel.Comment_sensorLocation(self)
-
-    def station(self):
-        r"""station(Comment self) -> Station"""
-        return _datamodel.Comment_station(self)
-
-    def network(self):
-        r"""network(Comment self) -> Network"""
-        return _datamodel.Comment_network(self)
-
-    def assign(self, other):
-        r"""assign(Comment self, Object other) -> bool"""
-        return _datamodel.Comment_assign(self, other)
-
-    def attachTo(self, parent):
-        r"""attachTo(Comment self, PublicObject parent) -> bool"""
-        return _datamodel.Comment_attachTo(self, parent)
-
-    def detachFrom(self, parent):
-        r"""detachFrom(Comment self, PublicObject parent) -> bool"""
-        return _datamodel.Comment_detachFrom(self, parent)
-
-    def detach(self):
-        r"""detach(Comment self) -> bool"""
-        return _datamodel.Comment_detach(self)
-
-    def clone(self):
-        r"""clone(Comment self) -> Object"""
-        return _datamodel.Comment_clone(self)
-
-    def accept(self, visitor):
-        r"""accept(Comment self, Visitor visitor)"""
-        return _datamodel.Comment_accept(self, visitor)
-
-# Register Comment in _datamodel:
-_datamodel.Comment_swigregister(Comment)
 class ComplexArray(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::DataModel::ComplexArray class."""
 
@@ -4882,6 +4646,242 @@ class EventDescription(Object):
 
 # Register EventDescription in _datamodel:
 _datamodel.EventDescription_swigregister(EventDescription)
+class CommentIndex(object):
+    r"""Proxy of C++ Seiscomp::DataModel::CommentIndex class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(CommentIndex self) -> CommentIndex
+        __init__(CommentIndex self, std::string const & id) -> CommentIndex
+        __init__(CommentIndex self, CommentIndex arg2) -> CommentIndex
+        """
+        _datamodel.CommentIndex_swiginit(self, _datamodel.new_CommentIndex(*args))
+
+    def __eq__(self, arg2):
+        r"""__eq__(CommentIndex self, CommentIndex arg2) -> bool"""
+        return _datamodel.CommentIndex___eq__(self, arg2)
+
+    def __ne__(self, arg2):
+        r"""__ne__(CommentIndex self, CommentIndex arg2) -> bool"""
+        return _datamodel.CommentIndex___ne__(self, arg2)
+    id = property(_datamodel.CommentIndex_id_get, _datamodel.CommentIndex_id_set, doc=r"""id : std::string""")
+    __swig_destroy__ = _datamodel.delete_CommentIndex
+
+# Register CommentIndex in _datamodel:
+_datamodel.CommentIndex_swigregister(CommentIndex)
+class Comment(Object):
+    r"""Proxy of C++ Seiscomp::DataModel::Comment class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Comment_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Comment_TypeInfo()
+
+    def className(self):
+        r"""className(Comment self) -> char const *"""
+        return _datamodel.Comment_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Comment self) -> RTTI"""
+        return _datamodel.Comment_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Comment
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Comment
+        """
+        return _datamodel.Comment_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Comment
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Comment
+        """
+        return _datamodel.Comment_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Comment self, GenericArchive ar)"""
+        return _datamodel.Comment_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Comment_Meta()
+
+    def meta(self):
+        r"""meta(Comment self) -> MetaObject"""
+        return _datamodel.Comment_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Comment self) -> Comment
+        __init__(Comment self, Comment other) -> Comment
+        """
+        _datamodel.Comment_swiginit(self, _datamodel.new_Comment(*args))
+    __swig_destroy__ = _datamodel.delete_Comment
+
+    def __eq__(self, other):
+        r"""__eq__(Comment self, Comment other) -> bool"""
+        return _datamodel.Comment___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Comment self, Comment other) -> bool"""
+        return _datamodel.Comment___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Comment self, Comment other) -> bool"""
+        return _datamodel.Comment_equal(self, other)
+
+    def setText(self, text):
+        r"""setText(Comment self, std::string const & text)"""
+        return _datamodel.Comment_setText(self, text)
+
+    def text(self):
+        r"""text(Comment self) -> std::string const &"""
+        return _datamodel.Comment_text(self)
+
+    def setId(self, id):
+        r"""setId(Comment self, std::string const & id)"""
+        return _datamodel.Comment_setId(self, id)
+
+    def id(self):
+        r"""id(Comment self) -> std::string const &"""
+        return _datamodel.Comment_id(self)
+
+    def setStart(self, start):
+        r"""setStart(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & start)"""
+        return _datamodel.Comment_setStart(self, start)
+
+    def start(self):
+        r"""start(Comment self) -> Time"""
+        return _datamodel.Comment_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Comment self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
+        return _datamodel.Comment_setEnd(self, end)
+
+    def end(self):
+        r"""end(Comment self) -> Time"""
+        return _datamodel.Comment_end(self)
+
+    def setCreationInfo(self, creationInfo):
+        r"""setCreationInfo(Comment self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
+        return _datamodel.Comment_setCreationInfo(self, creationInfo)
+
+    def creationInfo(self, *args):
+        r"""
+        creationInfo(Comment self) -> CreationInfo
+        creationInfo(Comment self) -> CreationInfo
+        """
+        return _datamodel.Comment_creationInfo(self, *args)
+
+    def index(self):
+        r"""index(Comment self) -> CommentIndex"""
+        return _datamodel.Comment_index(self)
+
+    def equalIndex(self, lhs):
+        r"""equalIndex(Comment self, Comment lhs) -> bool"""
+        return _datamodel.Comment_equalIndex(self, lhs)
+
+    def momentTensor(self):
+        r"""momentTensor(Comment self) -> MomentTensor"""
+        return _datamodel.Comment_momentTensor(self)
+
+    def focalMechanism(self):
+        r"""focalMechanism(Comment self) -> FocalMechanism"""
+        return _datamodel.Comment_focalMechanism(self)
+
+    def amplitude(self):
+        r"""amplitude(Comment self) -> Amplitude"""
+        return _datamodel.Comment_amplitude(self)
+
+    def magnitude(self):
+        r"""magnitude(Comment self) -> Magnitude"""
+        return _datamodel.Comment_magnitude(self)
+
+    def stationMagnitude(self):
+        r"""stationMagnitude(Comment self) -> StationMagnitude"""
+        return _datamodel.Comment_stationMagnitude(self)
+
+    def pick(self):
+        r"""pick(Comment self) -> Pick"""
+        return _datamodel.Comment_pick(self)
+
+    def event(self):
+        r"""event(Comment self) -> Event"""
+        return _datamodel.Comment_event(self)
+
+    def catalog(self):
+        r"""catalog(Comment self) -> Catalog"""
+        return _datamodel.Comment_catalog(self)
+
+    def origin(self):
+        r"""origin(Comment self) -> Origin"""
+        return _datamodel.Comment_origin(self)
+
+    def parameter(self):
+        r"""parameter(Comment self) -> Parameter"""
+        return _datamodel.Comment_parameter(self)
+
+    def parameterSet(self):
+        r"""parameterSet(Comment self) -> ParameterSet"""
+        return _datamodel.Comment_parameterSet(self)
+
+    def stream(self):
+        r"""stream(Comment self) -> Stream"""
+        return _datamodel.Comment_stream(self)
+
+    def sensorLocation(self):
+        r"""sensorLocation(Comment self) -> SensorLocation"""
+        return _datamodel.Comment_sensorLocation(self)
+
+    def station(self):
+        r"""station(Comment self) -> Station"""
+        return _datamodel.Comment_station(self)
+
+    def network(self):
+        r"""network(Comment self) -> Network"""
+        return _datamodel.Comment_network(self)
+
+    def assign(self, other):
+        r"""assign(Comment self, Object other) -> bool"""
+        return _datamodel.Comment_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Comment self, PublicObject parent) -> bool"""
+        return _datamodel.Comment_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Comment self, PublicObject parent) -> bool"""
+        return _datamodel.Comment_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Comment self) -> bool"""
+        return _datamodel.Comment_detach(self)
+
+    def clone(self):
+        r"""clone(Comment self) -> Object"""
+        return _datamodel.Comment_clone(self)
+
+    def accept(self, visitor):
+        r"""accept(Comment self, Visitor visitor)"""
+        return _datamodel.Comment_accept(self, visitor)
+
+# Register Comment in _datamodel:
+_datamodel.Comment_swigregister(Comment)
 class DataUsed(Object):
     r"""Proxy of C++ Seiscomp::DataModel::DataUsed class."""
 
@@ -8527,7 +8527,7 @@ class Event(PublicObject):
         return _datamodel.Event_focalMechanismReference(self, *args)
 
     def catalog(self):
-        r"""catalog(Event self) -> Seiscomp::DataModel::Catalog *"""
+        r"""catalog(Event self) -> Catalog"""
         return _datamodel.Event_catalog(self)
 
     def eventParameters(self):
@@ -8564,6 +8564,225 @@ class Event(PublicObject):
 
 # Register Event in _datamodel:
 _datamodel.Event_swigregister(Event)
+class Catalog(PublicObject):
+    r"""Proxy of C++ Seiscomp::DataModel::Catalog class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    @staticmethod
+    def ClassName():
+        r"""ClassName() -> char const *"""
+        return _datamodel.Catalog_ClassName()
+
+    @staticmethod
+    def TypeInfo():
+        r"""TypeInfo() -> RTTI"""
+        return _datamodel.Catalog_TypeInfo()
+
+    def className(self):
+        r"""className(Catalog self) -> char const *"""
+        return _datamodel.Catalog_className(self)
+
+    def typeInfo(self):
+        r"""typeInfo(Catalog self) -> RTTI"""
+        return _datamodel.Catalog_typeInfo(self)
+
+    @staticmethod
+    def Cast(*args):
+        r"""
+        Cast(BaseObject o) -> Catalog
+        Cast(Seiscomp::Core::BaseObjectPtr o) -> Catalog
+        """
+        return _datamodel.Catalog_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        r"""
+        ConstCast(BaseObject o) -> Catalog
+        ConstCast(Seiscomp::Core::BaseObjectCPtr o) -> Catalog
+        """
+        return _datamodel.Catalog_ConstCast(*args)
+
+    def serialize(self, ar):
+        r"""serialize(Catalog self, GenericArchive ar)"""
+        return _datamodel.Catalog_serialize(self, ar)
+
+    @staticmethod
+    def Meta():
+        r"""Meta() -> MetaObject"""
+        return _datamodel.Catalog_Meta()
+
+    def meta(self):
+        r"""meta(Catalog self) -> MetaObject"""
+        return _datamodel.Catalog_meta(self)
+
+    def __init__(self, *args):
+        r"""
+        __init__(Catalog self, Catalog other) -> Catalog
+        __init__(Catalog self, std::string const & publicID) -> Catalog
+        """
+        _datamodel.Catalog_swiginit(self, _datamodel.new_Catalog(*args))
+    __swig_destroy__ = _datamodel.delete_Catalog
+
+    @staticmethod
+    def Create(*args):
+        r"""
+        Create() -> Catalog
+        Create(std::string const & publicID) -> Catalog
+        """
+        return _datamodel.Catalog_Create(*args)
+
+    @staticmethod
+    def Find(publicID):
+        r"""Find(std::string const & publicID) -> Catalog"""
+        return _datamodel.Catalog_Find(publicID)
+
+    def __eq__(self, other):
+        r"""__eq__(Catalog self, Catalog other) -> bool"""
+        return _datamodel.Catalog___eq__(self, other)
+
+    def __ne__(self, other):
+        r"""__ne__(Catalog self, Catalog other) -> bool"""
+        return _datamodel.Catalog___ne__(self, other)
+
+    def equal(self, other):
+        r"""equal(Catalog self, Catalog other) -> bool"""
+        return _datamodel.Catalog_equal(self, other)
+
+    def setName(self, name):
+        r"""setName(Catalog self, std::string const & name)"""
+        return _datamodel.Catalog_setName(self, name)
+
+    def name(self):
+        r"""name(Catalog self) -> std::string const &"""
+        return _datamodel.Catalog_name(self)
+
+    def setDescription(self, description):
+        r"""setDescription(Catalog self, std::string const & description)"""
+        return _datamodel.Catalog_setDescription(self, description)
+
+    def description(self):
+        r"""description(Catalog self) -> std::string const &"""
+        return _datamodel.Catalog_description(self)
+
+    def setCreationInfo(self, creationInfo):
+        r"""setCreationInfo(Catalog self, Seiscomp::Core::Optional< Seiscomp::DataModel::CreationInfo > const & creationInfo)"""
+        return _datamodel.Catalog_setCreationInfo(self, creationInfo)
+
+    def creationInfo(self, *args):
+        r"""
+        creationInfo(Catalog self) -> CreationInfo
+        creationInfo(Catalog self) -> CreationInfo
+        """
+        return _datamodel.Catalog_creationInfo(self, *args)
+
+    def setStart(self, start):
+        r"""setStart(Catalog self, Time start)"""
+        return _datamodel.Catalog_setStart(self, start)
+
+    def start(self):
+        r"""start(Catalog self) -> Time"""
+        return _datamodel.Catalog_start(self)
+
+    def setEnd(self, end):
+        r"""setEnd(Catalog self, Seiscomp::Core::Optional< Seiscomp::Core::Time > const & end)"""
+        return _datamodel.Catalog_setEnd(self, end)
+
+    def end(self):
+        r"""end(Catalog self) -> Time"""
+        return _datamodel.Catalog_end(self)
+
+    def setDynamic(self, dynamic):
+        r"""setDynamic(Catalog self, bool dynamic)"""
+        return _datamodel.Catalog_setDynamic(self, dynamic)
+
+    def dynamic(self):
+        r"""dynamic(Catalog self) -> bool"""
+        return _datamodel.Catalog_dynamic(self)
+
+    def add(self, *args):
+        r"""
+        add(Catalog self, Comment obj) -> bool
+        add(Catalog self, Event obj) -> bool
+        """
+        return _datamodel.Catalog_add(self, *args)
+
+    def remove(self, *args):
+        r"""
+        remove(Catalog self, Comment obj) -> bool
+        remove(Catalog self, Event obj) -> bool
+        """
+        return _datamodel.Catalog_remove(self, *args)
+
+    def removeComment(self, *args):
+        r"""
+        removeComment(Catalog self, size_t i) -> bool
+        removeComment(Catalog self, CommentIndex i) -> bool
+        """
+        return _datamodel.Catalog_removeComment(self, *args)
+
+    def removeEvent(self, i):
+        r"""removeEvent(Catalog self, size_t i) -> bool"""
+        return _datamodel.Catalog_removeEvent(self, i)
+
+    def commentCount(self):
+        r"""commentCount(Catalog self) -> size_t"""
+        return _datamodel.Catalog_commentCount(self)
+
+    def eventCount(self):
+        r"""eventCount(Catalog self) -> size_t"""
+        return _datamodel.Catalog_eventCount(self)
+
+    def comment(self, *args):
+        r"""
+        comment(Catalog self, size_t i) -> Comment
+        comment(Catalog self, CommentIndex i) -> Comment
+        """
+        return _datamodel.Catalog_comment(self, *args)
+
+    def event(self, i):
+        r"""event(Catalog self, size_t i) -> Event"""
+        return _datamodel.Catalog_event(self, i)
+
+    def findEvent(self, publicID):
+        r"""findEvent(Catalog self, std::string const & publicID) -> Event"""
+        return _datamodel.Catalog_findEvent(self, publicID)
+
+    def eventParameters(self):
+        r"""eventParameters(Catalog self) -> EventParameters"""
+        return _datamodel.Catalog_eventParameters(self)
+
+    def assign(self, other):
+        r"""assign(Catalog self, Object other) -> bool"""
+        return _datamodel.Catalog_assign(self, other)
+
+    def attachTo(self, parent):
+        r"""attachTo(Catalog self, PublicObject parent) -> bool"""
+        return _datamodel.Catalog_attachTo(self, parent)
+
+    def detachFrom(self, parent):
+        r"""detachFrom(Catalog self, PublicObject parent) -> bool"""
+        return _datamodel.Catalog_detachFrom(self, parent)
+
+    def detach(self):
+        r"""detach(Catalog self) -> bool"""
+        return _datamodel.Catalog_detach(self)
+
+    def clone(self):
+        r"""clone(Catalog self) -> Object"""
+        return _datamodel.Catalog_clone(self)
+
+    def updateChild(self, child):
+        r"""updateChild(Catalog self, Object child) -> bool"""
+        return _datamodel.Catalog_updateChild(self, child)
+
+    def accept(self, visitor):
+        r"""accept(Catalog self, Visitor visitor)"""
+        return _datamodel.Catalog_accept(self, visitor)
+
+# Register Catalog in _datamodel:
+_datamodel.Catalog_swigregister(Catalog)
 class ArrivalIndex(object):
     r"""Proxy of C++ Seiscomp::DataModel::ArrivalIndex class."""
 
@@ -9288,7 +9507,7 @@ class EventParameters(PublicObject):
         add(EventParameters self, Reading obj) -> bool
         add(EventParameters self, Origin obj) -> bool
         add(EventParameters self, FocalMechanism obj) -> bool
-        add(EventParameters self, Seiscomp::DataModel::Catalog * obj) -> bool
+        add(EventParameters self, Catalog obj) -> bool
         add(EventParameters self, Event obj) -> bool
         """
         return _datamodel.EventParameters_add(self, *args)
@@ -9300,7 +9519,7 @@ class EventParameters(PublicObject):
         remove(EventParameters self, Reading obj) -> bool
         remove(EventParameters self, Origin obj) -> bool
         remove(EventParameters self, FocalMechanism obj) -> bool
-        remove(EventParameters self, Seiscomp::DataModel::Catalog * obj) -> bool
+        remove(EventParameters self, Catalog obj) -> bool
         remove(EventParameters self, Event obj) -> bool
         """
         return _datamodel.EventParameters_remove(self, *args)
@@ -9382,7 +9601,7 @@ class EventParameters(PublicObject):
         return _datamodel.EventParameters_focalMechanism(self, i)
 
     def catalog(self, i):
-        r"""catalog(EventParameters self, size_t i) -> Seiscomp::DataModel::Catalog *"""
+        r"""catalog(EventParameters self, size_t i) -> Catalog"""
         return _datamodel.EventParameters_catalog(self, i)
 
     def event(self, i):
@@ -9410,7 +9629,7 @@ class EventParameters(PublicObject):
         return _datamodel.EventParameters_findFocalMechanism(self, publicID)
 
     def findCatalog(self, publicID):
-        r"""findCatalog(EventParameters self, std::string const & publicID) -> Seiscomp::DataModel::Catalog *"""
+        r"""findCatalog(EventParameters self, std::string const & publicID) -> Catalog"""
         return _datamodel.EventParameters_findCatalog(self, publicID)
 
     def findEvent(self, publicID):
@@ -19360,7 +19579,7 @@ class DatabaseReader(DatabaseArchive):
     def loadEvents(self, *args):
         r"""
         loadEvents(DatabaseReader self, EventParameters arg2) -> int
-        loadEvents(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
+        loadEvents(DatabaseReader self, Catalog arg2) -> int
         """
         return _datamodel.DatabaseReader_loadEvents(self, *args)
 
@@ -19505,7 +19724,7 @@ class DatabaseReader(DatabaseArchive):
         loadComments(DatabaseReader self, Magnitude arg2) -> int
         loadComments(DatabaseReader self, FocalMechanism arg2) -> int
         loadComments(DatabaseReader self, MomentTensor arg2) -> int
-        loadComments(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
+        loadComments(DatabaseReader self, Catalog arg2) -> int
         loadComments(DatabaseReader self, Event arg2) -> int
         loadComments(DatabaseReader self, ParameterSet arg2) -> int
         loadComments(DatabaseReader self, Parameter arg2) -> int
@@ -19584,7 +19803,7 @@ class DatabaseReader(DatabaseArchive):
         load(DatabaseReader self, FocalMechanism arg2) -> int
         load(DatabaseReader self, MomentTensor arg2) -> int
         load(DatabaseReader self, MomentTensorStationContribution arg2) -> int
-        load(DatabaseReader self, Seiscomp::DataModel::Catalog * arg2) -> int
+        load(DatabaseReader self, Catalog arg2) -> int
         load(DatabaseReader self, Event arg2) -> int
         load(DatabaseReader self, Config arg2) -> int
         load(DatabaseReader self, ParameterSet arg2) -> int
