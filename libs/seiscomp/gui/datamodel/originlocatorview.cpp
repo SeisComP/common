@@ -3937,7 +3937,6 @@ void OriginLocatorView::commandStart() {
 
 	SEISCOMP_DEBUG("Starting command: %s", command.toStdString());
 	QT_PROCESS_START(process, command);
-	process->waitForStarted();
 
 	// check if process could be started
 	if ( !manager->waitForStarted(process) ) {
@@ -3962,7 +3961,7 @@ void OriginLocatorView::commandStart() {
 
 	process->closeWriteChannel();
 	if ( ca.showProcess ) {
-		SCApp->processManager()->show();
+		manager->show();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
