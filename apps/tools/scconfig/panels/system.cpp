@@ -297,22 +297,21 @@ void SystemPanel::showLog(const QString fileName, const QString &text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SystemPanel::setModel(ConfigurationTreeItemModel *model) {
-	if ( _model ) _model->disconnect(this);
+	if ( model == _model ) {
+		return;
+	}
+
+	if ( _model ) {
+		_model->disconnect(this);
+	}
 
 	ConfiguratorPanel::setModel(model);
 
+	updateModuleState();
+	modificationChanged(_model->isModified());
+
 	connect(_model, SIGNAL(modificationChanged(bool)),
 	        this, SLOT(modificationChanged(bool)));
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SystemPanel::activated() {
-	modificationChanged(_model->isModified());
-	updateModuleState();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -329,8 +328,9 @@ void SystemPanel::modificationChanged(bool changed) {
 
 		_status->show();
 	}
-	else
+	else {
 		_status->hide();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

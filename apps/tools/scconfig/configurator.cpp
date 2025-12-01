@@ -1092,6 +1092,8 @@ void ConfigurationTreeItemModel::setModel(System::Model *tree,
 	setColumnCount(4);
 	setHorizontalHeaderLabels(QStringList() << "Name" << "Type" << "Value" << "Locked");
 
+	beginResetModel();
+
 	QStandardItem *root = invisibleRootItem();
 
 	for ( size_t i = 0; i < tree->modules.size(); ++i ) {
@@ -1127,6 +1129,8 @@ void ConfigurationTreeItemModel::setModel(System::Model *tree,
 			}
 		}
 	}
+
+	endResetModel();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1781,11 +1785,6 @@ bool Configurator::setModel(System::Model *model) {
 	updateModeLabel();
 
 	_model->setModel(model, _configurationStage);
-
-	foreach ( Panel p, _panels ) {
-		p.second->setModel(_model);
-	}
-
 	_listWidget->setCurrentRow(0);
 
 	//_treeView->hideColumn(1);
@@ -1918,10 +1917,6 @@ void Configurator::switchToSystemMode() {
 	_configurationStage = Environment::CS_CONFIG_APP;
 	_model->setModel(_model->model(), _configurationStage);
 
-	foreach ( Panel p, _panels ) {
-		p.second->setModel(_model);
-	}
-
 	updateModeLabel();
 
 	QApplication::restoreOverrideCursor();
@@ -1957,10 +1952,6 @@ void Configurator::switchToUserMode() {
 
 	_configurationStage = Environment::CS_USER_APP;
 	_model->setModel(_model->model(), _configurationStage);
-
-	foreach ( Panel p, _panels ) {
-		p.second->setModel(_model);
-	}
 
 	updateModeLabel();
 
@@ -2063,10 +2054,6 @@ void Configurator::wizard() {
 		_model->model()->readConfig(Environment::CS_USER_APP, &cd);
 		_model->setModel(_model->model(), _configurationStage);
 
-		foreach ( Panel p, _panels ) {
-			p.second->setModel(_model);
-		}
-
 		QApplication::restoreOverrideCursor();
 	}
 }
@@ -2089,10 +2076,6 @@ void Configurator::resetAll() {
 		_model->setModified(false);
 		errors = cd.hasErrors;
 		cd.showConflicts();
-	}
-
-	foreach ( Panel p, _panels ) {
-		p.second->setModel(_model);
 	}
 
 	if ( errors ) {
@@ -2189,11 +2172,11 @@ void Configurator::sectionChanged(QListWidgetItem *curr, QListWidgetItem *prev) 
 	}
 
 	if ( cw ) {
+		cw->setModel(_model);
 		cw->show();
 		connect(cw, &ConfiguratorPanel::headlineChanged, this, &Configurator::panelHeadlineChanged);
 		connect(cw, &ConfiguratorPanel::descriptionChanged, this, &Configurator::panelDescriptionChanged);
 		connect(cw, &ConfiguratorPanel::reloadRequested, this, &Configurator::resetAll);
-		cw->activated();
 	}
 
 	if ( curr ) {

@@ -982,6 +982,10 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
+	if ( model == _model ) {
+		return;
+	}
+
 	ConfiguratorPanel::setModel(model);
 
 	_bindingView->setModel(nullptr, nullptr);

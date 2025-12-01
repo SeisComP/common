@@ -185,7 +185,7 @@ class FancyView : public QAbstractItemView {
 		 */
 		bool evaluateValue(const std::string& value,
 		                   const Seiscomp::System::Parameter *param,
-		                   QString &eval, bool verbose);
+		                   QString &eval, bool verbose = false);
 
 
 	private:

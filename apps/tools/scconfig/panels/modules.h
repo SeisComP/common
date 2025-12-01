@@ -42,6 +42,8 @@ class ModulesPanel : public ConfiguratorPanel {
 
 
 	private slots:
+		void applyModel();
+
 		void moduleSelectionChanged(QTreeWidgetItem*,QTreeWidgetItem*);
 		void moduleSelected(QTreeWidgetItem*,int);
 		void moduleChanged(const QModelIndex &index);

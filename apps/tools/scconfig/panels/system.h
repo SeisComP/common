@@ -36,8 +36,7 @@ class SystemPanel : public ConfiguratorPanel {
 		SystemPanel(QWidget *parent = 0);
 
 	public:
-		void setModel(ConfigurationTreeItemModel *model);
-		void activated();
+		void setModel(ConfigurationTreeItemModel *model) override;
 
 	private slots:
 		void onContextMenuRequested(const QPoint&);

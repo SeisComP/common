@@ -2035,7 +2035,7 @@ void FancyView::resetValue() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FancyView::evaluateValue(const std::string& valueTest,
                               const Seiscomp::System::Parameter *param,
-                              QString &eval, bool verbose=false) {
+                              QString &eval, bool verbose) {
 	auto evalSize = eval.size();
 
 	// test values types
@@ -2321,8 +2321,8 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 			// value to test contains a comma which is not supported
 			string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
 			if ( valueTest.find(',') != std::string::npos ) {
-					cerr << symbolURIString << param->variableName << " = '"
-					     << valueTest << "' is not described as list " << endl;
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' is not described as list " << endl;
 				eval += "<b>Value is not described as list</b>";
 			}
 		}
