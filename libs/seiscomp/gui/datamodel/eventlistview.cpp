@@ -31,6 +31,7 @@
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/messages.h>
+#include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/gui/core/scheme.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/gui/datamodel/utils.h>
@@ -5755,6 +5756,7 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	auto *actionCopyRow = popup.addAction(tr("Copy row to clipboard"));
 	auto *actionCopyRows = popup.addAction(tr("Copy selected rows to clipboard"));
 	auto *actionExportEventIDs = popup.addAction(tr("Export eventIDs of selected rows"));
+	actionExportEventIDs->setIcon(icon("publish_event"));
 	actionExportEventIDs->setToolTip(tr("Export all selected event ids and run a script configured with 'eventlist.scripts.export'."));
 
 	QAction *actionNewEvent = nullptr;
@@ -5826,32 +5828,42 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		}
 
 		if ( !list.isEmpty() ) {
-			SEISCOMP_DEBUG("Executing script %s", SC_D._exportScript.toStdString());
-			QProcess script;
-			#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
-			script.start(SC_D._exportScript, QStringList(), QProcess::WriteOnly);
-			#else
-			script.start(SC_D._exportScript, QProcess::WriteOnly);
-			#endif
-			if ( !script.waitForStarted() ) {
-				SEISCOMP_ERROR("Failed executing script %s", SC_D._exportScript.toStdString());
-				QMessageBox::warning(this, tr("Export"), tr("Can't execute script %1\n%2")
-				                     .arg(SC_D._exportScript, script.errorString()));
+			auto *manager = SCApp->processManager();
+			auto *process = manager->createProcess(
+			    actionExportEventIDs->text(),
+			    "External script processing selected event ID",
+			    icon("publish-event")
+			);
+			SEISCOMP_DEBUG("Starting event ID processing script: %s",
+			               SC_D._exportScript.toStdString());
+			QT_PROCESS_START(process, SC_D._exportScript);
+
+			// check if process could be started
+			if ( !manager->waitForStarted(process, 30000) ) {
+				return;
 			}
-			else {
-				script.write(list.toUtf8());
-				script.closeWriteChannel();
-				QProgressDialog dlgProgress;
-				dlgProgress.setRange(0, 0);
-				dlgProgress.setLabelText(SC_D._exportScript);
-				dlgProgress.setCancelButtonText("Stop");
-				connect(&script, SIGNAL(finished(int)), &dlgProgress, SLOT(accept()));
-				if ( dlgProgress.exec() != QDialog::Accepted ) {
-					script.kill();
-					dlgProgress.setLabelText(tr("Wait for script to finish"));
-					dlgProgress.setCancelButtonText(QString());
-					dlgProgress.exec();
-				}
+
+			auto msg = QString("Writing event IDs to stdin of process");
+			SEISCOMP_DEBUG(msg.toStdString());
+			manager->log(process, msg);
+
+			if ( process->write(list.toUtf8()) < 0 ) {
+				auto error = QString("Could not write event ids to stdin of process");
+				manager->log(process, error);
+				QMessageBox::critical(this, "Error", error, QMessageBox::Ok);
+				return;
+			}
+
+			process->closeWriteChannel();
+
+			if ( manager->isHidden() ) {
+				manager->show();
+			}
+			if ( manager->isMinimized() ) {
+				manager->showNormal();
+			}
+			if ( !manager->isActiveWindow() ) {
+				manager->activateWindow();
 			}
 		}
 	}
