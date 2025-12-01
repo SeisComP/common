@@ -146,10 +146,6 @@ class ConfiguratorPanel : public QWidget {
 		virtual void setModel(ConfigurationTreeItemModel *model);
 		virtual void saved();
 
-		//! Event handler that can be reimplemented in derived classes. It
-		//! is called whenever a panel is activated and shown.
-		virtual void activated() {}
-
 		bool isExternalConfigurationUsed() const { return _usesExternalConfiguration; }
 
 		QString title() const { return _name; }

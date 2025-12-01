@@ -210,9 +210,27 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
-	ConfiguratorPanel::setModel(model);
+	if ( model == _model ) {
+		return;
+	}
 
-	((FancyView*)_moduleView)->setConfigStage(model->configStage());
+	if ( _model ) {
+		_model->disconnect(this);
+	}
+
+	ConfiguratorPanel::setModel(model);
+	applyModel();
+
+	connect(_model, &QAbstractItemModel::modelReset, this, &ModulesPanel::applyModel);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ModulesPanel::applyModel() {
+	((FancyView*)_moduleView)->setConfigStage(_model->configStage());
 	_moduleView->setModel(_model);
 
 	while ( _moduleTree->topLevelItemCount() > 0 ) {
@@ -227,7 +245,7 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 	QFont italicFont = _moduleTree->font();
 	italicFont.setItalic(true);
 
-	System::Model *base = model->model();
+	System::Model *base = _model->model();
 
 	QTreeWidgetItem *firstModule = nullptr;
 	QTreeWidgetItem *emptyItem = nullptr;
