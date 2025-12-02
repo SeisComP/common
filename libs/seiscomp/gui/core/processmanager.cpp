@@ -38,7 +38,7 @@
 
 #include <cerrno>
 
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 
 namespace Seiscomp::Gui {
@@ -536,6 +536,15 @@ QProcess *ProcessManager::createProcess(QString name, QString description,
 
 	_items[process] = item;
 	_model->addItem(item);
+
+	// if the process manager is not the active window and no process is running select
+	// the process just created
+	if ( !isActiveWindow() && _running.empty() ) {
+		auto index = proxyIndexForItem(item);
+		if ( index.isValid() ) {
+			_ui.table->selectRow(index.row());
+		}
+	}
 
 	updateControls();
 
@@ -1064,8 +1073,6 @@ void ProcessManager::onProgressAnimationChanged(const QVariant &value) {
 void ProcessManager::onTableContextMenuRequested(const QPoint &pos) {
 	QMenu menu;
 
-	//bool hasSelection = _ui.table->selectionModel()->hasSelection();
-
 	QAction *actionCopyCellClipboard = menu.addAction("Copy cell to clipboard");
 	QAction *actionCopyToClipboard = menu.addAction("Copy selected rows to clipboard");
 
@@ -1097,6 +1104,8 @@ void ProcessManager::init() {
 
 	_proxyModel = new QSortFilterProxyModel(_ui.table);
 	_proxyModel->setSourceModel(_model);
+	_proxyModel->setDynamicSortFilter(true);
+	_proxyModel->sort(Model::ColStarted, Qt::DescendingOrder);
 
 	// table
 	_ui.table->setModel(_proxyModel);
@@ -1106,17 +1115,14 @@ void ProcessManager::init() {
 	_ui.table->setMouseTracking(true);
 	_ui.table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	_ui.table->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_ui.table->resizeColumnToContents(0);
+	_ui.table->resizeColumnToContents(Model::ColState);
 
 	_ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	_ui.table->horizontalHeader()->setSectionsMovable(true);
 	_ui.table->horizontalHeader()->setSortIndicatorShown(true);
 	_ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	_ui.table->horizontalHeader()->setSortIndicator(1, Qt::DescendingOrder);
+	_ui.table->horizontalHeader()->setSortIndicator(Model::ColStarted, Qt::DescendingOrder);
 	_ui.table->verticalHeader()->hide();
-
-	// _ui.table->hideColumn(1);
-	// _ui.table->hideColumn(2);
 
 	connect(_ui.table->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)),
 	        _ui.table, SLOT(sortByColumn(int,Qt::SortOrder)));
@@ -1182,7 +1188,7 @@ void ProcessManager::updateControls() {
 		for ( auto &index : selectionModel->selectedRows() ) {
 			const auto *item = itemForProxyIndex(index);
 			if ( item && item->process->state() == QProcess::Running ) {
-				_ui.btnStop->setEnabled(true);//!item->stopped);
+				_ui.btnStop->setEnabled(true);
 				_ui.btnContinue->setEnabled(true);
 				_ui.btnTerminate->setEnabled(true);
 				_ui.btnKill->setEnabled(true);
