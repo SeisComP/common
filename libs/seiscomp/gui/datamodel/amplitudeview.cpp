@@ -540,7 +540,7 @@ class AmplitudeViewMarker : public RecordMarker {
 				}
 
 				try {
-					text += QString("\nperiod: %1").arg(_referencedAmplitude->period());
+					text += QString("\nperiod: %1").arg(_referencedAmplitude->period().value());
 				}
 				catch ( ... ) {}
 
@@ -573,7 +573,7 @@ class AmplitudeViewMarker : public RecordMarker {
 
 				try {
 					if ( _manualAmplitude->period() > 0 )
-						text += QString("\nperiod: %1").arg(_manualAmplitude->period());
+						text += QString("\nperiod: %1").arg(_manualAmplitude->period().value());
 				}
 				catch ( ... ) {}
 
