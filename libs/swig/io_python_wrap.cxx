@@ -3985,17 +3985,17 @@ namespace Swig {
 #define SWIGTYPE_p_std__streambuf swig_types[271]
 #define SWIGTYPE_p_std__vectorT_Seiscomp__Core__BaseObject_p_t swig_types[272]
 #define SWIGTYPE_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t swig_types[273]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[274]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[275]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[276]
-#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[277]
-#define SWIGTYPE_p_std__vectorT_double_t swig_types[278]
-#define SWIGTYPE_p_std__vectorT_float_t swig_types[279]
-#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[280]
-#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[281]
-#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[282]
-#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[283]
-#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[284]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[274]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[275]
+#define SWIGTYPE_p_std__vectorT_char_std__allocatorT_char_t_t swig_types[276]
+#define SWIGTYPE_p_std__vectorT_double_t swig_types[277]
+#define SWIGTYPE_p_std__vectorT_float_t swig_types[278]
+#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[279]
+#define SWIGTYPE_p_std__vectorT_long_long_std__allocatorT_long_long_t_t swig_types[280]
+#define SWIGTYPE_p_std__vectorT_short_std__allocatorT_short_t_t swig_types[281]
+#define SWIGTYPE_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t swig_types[282]
+#define SWIGTYPE_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t swig_types[283]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[284]
 #define SWIGTYPE_p_swig__SwigPyIterator swig_types[285]
 #define SWIGTYPE_p_traits_type swig_types[286]
 #define SWIGTYPE_p_unsigned_char swig_types[287]
@@ -20202,7 +20202,7 @@ SWIGINTERN PyObject *_wrap_XMLArchive_read__SWIG_18(PyObject *self, Py_ssize_t n
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XMLArchive_read" "', argument " "1"" of type '" "Seiscomp::IO::XMLArchive *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::XMLArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XMLArchive_read" "', argument " "2"" of type '" "std::vector< std::complex< double >,std::allocator< std::complex< double > > > &""'"); 
   }
@@ -20588,7 +20588,7 @@ SWIGINTERN PyObject *_wrap_XMLArchive_read(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_XMLArchive_read__SWIG_18(self, argc, argv);
@@ -21457,7 +21457,7 @@ SWIGINTERN PyObject *_wrap_XMLArchive_write__SWIG_18(PyObject *self, Py_ssize_t 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XMLArchive_write" "', argument " "1"" of type '" "Seiscomp::IO::XMLArchive *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::XMLArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XMLArchive_write" "', argument " "2"" of type '" "std::vector< std::complex< double >,std::allocator< std::complex< double > > > &""'"); 
   }
@@ -21745,7 +21745,7 @@ SWIGINTERN PyObject *_wrap_XMLArchive_write(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_XMLArchive_write__SWIG_18(self, argc, argv);
@@ -23242,7 +23242,7 @@ SWIGINTERN PyObject *_wrap_BinaryArchive_read__SWIG_18(PyObject *self, Py_ssize_
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BinaryArchive_read" "', argument " "1"" of type '" "Seiscomp::IO::BinaryArchive *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::BinaryArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "BinaryArchive_read" "', argument " "2"" of type '" "std::vector< std::complex< double >,std::allocator< std::complex< double > > > &""'"); 
   }
@@ -23628,7 +23628,7 @@ SWIGINTERN PyObject *_wrap_BinaryArchive_read(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_BinaryArchive_read__SWIG_18(self, argc, argv);
@@ -24497,7 +24497,7 @@ SWIGINTERN PyObject *_wrap_BinaryArchive_write__SWIG_18(PyObject *self, Py_ssize
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BinaryArchive_write" "', argument " "1"" of type '" "Seiscomp::IO::BinaryArchive *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::BinaryArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t,  0 );
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t,  0 );
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "BinaryArchive_write" "', argument " "2"" of type '" "std::vector< std::complex< double >,std::allocator< std::complex< double > > > &""'"); 
   }
@@ -24785,7 +24785,7 @@ SWIGINTERN PyObject *_wrap_BinaryArchive_write(PyObject *self, PyObject *args) {
     _v = SWIG_CheckState(res);
     if (_v) {
       void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t, SWIG_POINTER_NO_NULL);
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_std__vectorT_std__complexT_double_t_t, SWIG_POINTER_NO_NULL);
       _v = SWIG_CheckState(res);
       if (_v) {
         return _wrap_BinaryArchive_write__SWIG_18(self, argc, argv);
@@ -36975,14 +36975,14 @@ static PyMethodDef SwigMethods[] = {
 		"XMLArchive_read(XMLArchive self, std::vector< int16_t,std::allocator< int16_t > > & value)\n"
 		"XMLArchive_read(XMLArchive self, std::vector< int32_t,std::allocator< int32_t > > & value)\n"
 		"XMLArchive_read(XMLArchive self, std::vector< int64_t,std::allocator< int64_t > > & value)\n"
-		"XMLArchive_read(XMLArchive self, vectorf value)\n"
-		"XMLArchive_read(XMLArchive self, vectord value)\n"
+		"XMLArchive_read(XMLArchive self, FloatVector value)\n"
+		"XMLArchive_read(XMLArchive self, DoubleVector value)\n"
 		"XMLArchive_read(XMLArchive self, std::vector< std::string,std::allocator< std::string > > & value)\n"
 		"XMLArchive_read(XMLArchive self, std::vector< Seiscomp::Core::Time,std::allocator< Seiscomp::Core::Time > > & value)\n"
 		"XMLArchive_read(XMLArchive self, std::complex< float > & value)\n"
 		"XMLArchive_read(XMLArchive self, std::complex< double > & value)\n"
 		"XMLArchive_read(XMLArchive self, bool & value)\n"
-		"XMLArchive_read(XMLArchive self, vectorc value)\n"
+		"XMLArchive_read(XMLArchive self, ComplexDoubleVector value)\n"
 		"XMLArchive_read(XMLArchive self, string value)\n"
 		"XMLArchive_read(XMLArchive self, Time value)\n"
 		""},
@@ -36998,14 +36998,14 @@ static PyMethodDef SwigMethods[] = {
 		"XMLArchive_write(XMLArchive self, std::vector< int16_t,std::allocator< int16_t > > & value)\n"
 		"XMLArchive_write(XMLArchive self, std::vector< int32_t,std::allocator< int32_t > > & value)\n"
 		"XMLArchive_write(XMLArchive self, std::vector< int64_t,std::allocator< int64_t > > & value)\n"
-		"XMLArchive_write(XMLArchive self, vectorf value)\n"
-		"XMLArchive_write(XMLArchive self, vectord value)\n"
+		"XMLArchive_write(XMLArchive self, FloatVector value)\n"
+		"XMLArchive_write(XMLArchive self, DoubleVector value)\n"
 		"XMLArchive_write(XMLArchive self, std::vector< std::string,std::allocator< std::string > > & value)\n"
 		"XMLArchive_write(XMLArchive self, std::vector< Seiscomp::Core::Time,std::allocator< Seiscomp::Core::Time > > & value)\n"
 		"XMLArchive_write(XMLArchive self, std::complex< float > & value)\n"
 		"XMLArchive_write(XMLArchive self, std::complex< double > & value)\n"
 		"XMLArchive_write(XMLArchive self, bool value)\n"
-		"XMLArchive_write(XMLArchive self, vectorc value)\n"
+		"XMLArchive_write(XMLArchive self, ComplexDoubleVector value)\n"
 		"XMLArchive_write(XMLArchive self, string value)\n"
 		"XMLArchive_write(XMLArchive self, Time value)\n"
 		""},
@@ -37037,14 +37037,14 @@ static PyMethodDef SwigMethods[] = {
 		"BinaryArchive_read(BinaryArchive self, std::vector< int16_t,std::allocator< int16_t > > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::vector< int32_t,std::allocator< int32_t > > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::vector< int64_t,std::allocator< int64_t > > & value)\n"
-		"BinaryArchive_read(BinaryArchive self, vectorf value)\n"
-		"BinaryArchive_read(BinaryArchive self, vectord value)\n"
+		"BinaryArchive_read(BinaryArchive self, FloatVector value)\n"
+		"BinaryArchive_read(BinaryArchive self, DoubleVector value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::vector< std::string,std::allocator< std::string > > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::vector< Seiscomp::Core::Time,std::allocator< Seiscomp::Core::Time > > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::complex< float > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, std::complex< double > & value)\n"
 		"BinaryArchive_read(BinaryArchive self, bool & value)\n"
-		"BinaryArchive_read(BinaryArchive self, vectorc value)\n"
+		"BinaryArchive_read(BinaryArchive self, ComplexDoubleVector value)\n"
 		"BinaryArchive_read(BinaryArchive self, string value)\n"
 		"BinaryArchive_read(BinaryArchive self, Time value)\n"
 		""},
@@ -37060,14 +37060,14 @@ static PyMethodDef SwigMethods[] = {
 		"BinaryArchive_write(BinaryArchive self, std::vector< int16_t,std::allocator< int16_t > > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::vector< int32_t,std::allocator< int32_t > > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::vector< int64_t,std::allocator< int64_t > > & value)\n"
-		"BinaryArchive_write(BinaryArchive self, vectorf value)\n"
-		"BinaryArchive_write(BinaryArchive self, vectord value)\n"
+		"BinaryArchive_write(BinaryArchive self, FloatVector value)\n"
+		"BinaryArchive_write(BinaryArchive self, DoubleVector value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::vector< std::string,std::allocator< std::string > > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::vector< Seiscomp::Core::Time,std::allocator< Seiscomp::Core::Time > > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::complex< float > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, std::complex< double > & value)\n"
 		"BinaryArchive_write(BinaryArchive self, bool value)\n"
-		"BinaryArchive_write(BinaryArchive self, vectorc value)\n"
+		"BinaryArchive_write(BinaryArchive self, ComplexDoubleVector value)\n"
 		"BinaryArchive_write(BinaryArchive self, string value)\n"
 		"BinaryArchive_write(BinaryArchive self, Time value)\n"
 		""},
@@ -38307,7 +38307,6 @@ static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t 
 static swig_type_info _swigt__p_std__streambuf = {"_p_std__streambuf", "std::streambuf *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__BaseObject_p_t = {"_p_std__vectorT_Seiscomp__Core__BaseObject_p_t", "Seiscomp::IO::ExportObjectList *|std::vector< Seiscomp::Core::BaseObject *,std::allocator< Seiscomp::Core::BaseObject * > > *|std::vector< Seiscomp::Core::BaseObject * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t = {"_p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t", "std::vector< Seiscomp::Core::Time,std::allocator< Seiscomp::Core::Time > > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Complex_t = {"_p_std__vectorT_Seiscomp__Math__Complex_t", "Seiscomp::Math::ComplexArray *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t = {"_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t", "Seiscomp::Math::Filtering::IIR::Biquads *|std::vector< Seiscomp::Math::Filtering::IIR::BiquadCoefficients,std::allocator< Seiscomp::Math::Filtering::IIR::BiquadCoefficients > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t = {"_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t", "Seiscomp::Math::SeismometerResponse::FAPs *|std::vector< Seiscomp::Math::SeismometerResponse::FAP,std::allocator< Seiscomp::Math::SeismometerResponse::FAP > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_char_std__allocatorT_char_t_t = {"_p_std__vectorT_char_std__allocatorT_char_t_t", "std::vector< char,std::allocator< char > > *", 0, 0, (void*)0, 0};
@@ -38318,6 +38317,7 @@ static swig_type_info _swigt__p_std__vectorT_long_long_std__allocatorT_long_long
 static swig_type_info _swigt__p_std__vectorT_short_std__allocatorT_short_t_t = {"_p_std__vectorT_short_std__allocatorT_short_t_t", "std::vector< int16_t,std::allocator< int16_t > > *|std::vector< short,std::allocator< short > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t = {"_p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t", "std::vector< int8_t,std::allocator< int8_t > > *|std::vector< signed char,std::allocator< signed char > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t = {"_p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t", "std::vector< std::string,std::allocator< std::string > > *|std::vector< std::basic_string< char,std::char_traits< char >,std::allocator< char > >,std::allocator< std::basic_string< char,std::char_traits< char >,std::allocator< char > > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_t = {"_p_std__vectorT_std__complexT_double_t_t", "Seiscomp::Math::ComplexArray *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_traits_type = {"_p_traits_type", "traits_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "uint8_t *|uint_fast8_t *|uint_least8_t *|unsigned char *", 0, 0, (void*)0, 0};
@@ -38602,7 +38602,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__streambuf,
   &_swigt__p_std__vectorT_Seiscomp__Core__BaseObject_p_t,
   &_swigt__p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t,
-  &_swigt__p_std__vectorT_Seiscomp__Math__Complex_t,
   &_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   &_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   &_swigt__p_std__vectorT_char_std__allocatorT_char_t_t,
@@ -38613,6 +38612,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorT_short_std__allocatorT_short_t_t,
   &_swigt__p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t,
   &_swigt__p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t,
+  &_swigt__p_std__vectorT_std__complexT_double_t_t,
   &_swigt__p_swig__SwigPyIterator,
   &_swigt__p_traits_type,
   &_swigt__p_unsigned_char,
@@ -38897,7 +38897,6 @@ static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[
 static swig_cast_info _swigc__p_std__streambuf[] = {  {&_swigt__p_std__streambuf, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Core__BaseObject_p_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Core__BaseObject_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__Complex_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__Complex_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_char_std__allocatorT_char_t_t[] = {  {&_swigt__p_std__vectorT_char_std__allocatorT_char_t_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -38908,6 +38907,7 @@ static swig_cast_info _swigc__p_std__vectorT_long_long_std__allocatorT_long_long
 static swig_cast_info _swigc__p_std__vectorT_short_std__allocatorT_short_t_t[] = {  {&_swigt__p_std__vectorT_short_std__allocatorT_short_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t[] = {  {&_swigt__p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t[] = {  {&_swigt__p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_std__complexT_double_t_t[] = {  {&_swigt__p_std__vectorT_std__complexT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_traits_type[] = {  {&_swigt__p_traits_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -39192,7 +39192,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__streambuf,
   _swigc__p_std__vectorT_Seiscomp__Core__BaseObject_p_t,
   _swigc__p_std__vectorT_Seiscomp__Core__Time_std__allocatorT_Seiscomp__Core__Time_t_t,
-  _swigc__p_std__vectorT_Seiscomp__Math__Complex_t,
   _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   _swigc__p_std__vectorT_char_std__allocatorT_char_t_t,
@@ -39203,6 +39202,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorT_short_std__allocatorT_short_t_t,
   _swigc__p_std__vectorT_signed_char_std__allocatorT_signed_char_t_t,
   _swigc__p_std__vectorT_std__basic_stringT_char_t_std__allocatorT_std__basic_stringT_char_t_t_t,
+  _swigc__p_std__vectorT_std__complexT_double_t_t,
   _swigc__p_swig__SwigPyIterator,
   _swigc__p_traits_type,
   _swigc__p_unsigned_char,

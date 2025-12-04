@@ -16969,10 +16969,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "LocatorInterface_name", _wrap_LocatorInterface_name, METH_O, "LocatorInterface_name(LocatorInterface self) -> std::string const &"},
 	 { "LocatorInterface_setSensorLocationDelegate", _wrap_LocatorInterface_setSensorLocationDelegate, METH_VARARGS, "LocatorInterface_setSensorLocationDelegate(LocatorInterface self, SensorLocationDelegate delegate)"},
 	 { "LocatorInterface_init", _wrap_LocatorInterface_init, METH_VARARGS, "LocatorInterface_init(LocatorInterface self, Config config) -> bool"},
-	 { "LocatorInterface_parameters", _wrap_LocatorInterface_parameters, METH_O, "LocatorInterface_parameters(LocatorInterface self) -> VectorStr"},
+	 { "LocatorInterface_parameters", _wrap_LocatorInterface_parameters, METH_O, "LocatorInterface_parameters(LocatorInterface self) -> StringVector"},
 	 { "LocatorInterface_parameter", _wrap_LocatorInterface_parameter, METH_VARARGS, "LocatorInterface_parameter(LocatorInterface self, std::string const & name) -> std::string"},
 	 { "LocatorInterface_setParameter", _wrap_LocatorInterface_setParameter, METH_VARARGS, "LocatorInterface_setParameter(LocatorInterface self, std::string const & name, std::string const & value) -> bool"},
-	 { "LocatorInterface_profiles", _wrap_LocatorInterface_profiles, METH_O, "LocatorInterface_profiles(LocatorInterface self) -> VectorStr"},
+	 { "LocatorInterface_profiles", _wrap_LocatorInterface_profiles, METH_O, "LocatorInterface_profiles(LocatorInterface self) -> StringVector"},
 	 { "LocatorInterface_setProfile", _wrap_LocatorInterface_setProfile, METH_VARARGS, "LocatorInterface_setProfile(LocatorInterface self, std::string const & name)"},
 	 { "LocatorInterface_capabilities", _wrap_LocatorInterface_capabilities, METH_O, "LocatorInterface_capabilities(LocatorInterface self) -> int"},
 	 { "LocatorInterface_locate", _wrap_LocatorInterface_locate, METH_VARARGS, "\n"

@@ -2023,13 +2023,13 @@ class RealArray(seiscomp.core.BaseObject):
         return _datamodel.RealArray_equal(self, other)
 
     def setContent(self, arg2):
-        r"""setContent(RealArray self, vectord arg2)"""
+        r"""setContent(RealArray self, DoubleVector arg2)"""
         return _datamodel.RealArray_setContent(self, arg2)
 
     def content(self, *args):
         r"""
-        content(RealArray self) -> vectord
-        content(RealArray self) -> vectord
+        content(RealArray self) -> DoubleVector
+        content(RealArray self) -> DoubleVector
         """
         return _datamodel.RealArray_content(self, *args)
 
@@ -2634,13 +2634,13 @@ class ComplexArray(seiscomp.core.BaseObject):
         return _datamodel.ComplexArray_equal(self, other)
 
     def setContent(self, arg2):
-        r"""setContent(ComplexArray self,  arg2)"""
+        r"""setContent(ComplexArray self, ComplexDoubleVector arg2)"""
         return _datamodel.ComplexArray_setContent(self, arg2)
 
     def content(self, *args):
         r"""
-        content(ComplexArray self)
-        content(ComplexArray self)
+        content(ComplexArray self) -> ComplexDoubleVector
+        content(ComplexArray self) -> ComplexDoubleVector
         """
         return _datamodel.ComplexArray_content(self, *args)
 
@@ -5791,13 +5791,13 @@ class MomentTensorComponentContribution(Object):
         return _datamodel.MomentTensorComponentContribution_timeShift(self)
 
     def setDataTimeWindow(self, arg2):
-        r"""setDataTimeWindow(MomentTensorComponentContribution self, vectord arg2)"""
+        r"""setDataTimeWindow(MomentTensorComponentContribution self, DoubleVector arg2)"""
         return _datamodel.MomentTensorComponentContribution_setDataTimeWindow(self, arg2)
 
     def dataTimeWindow(self, *args):
         r"""
-        dataTimeWindow(MomentTensorComponentContribution self) -> vectord
-        dataTimeWindow(MomentTensorComponentContribution self) -> vectord
+        dataTimeWindow(MomentTensorComponentContribution self) -> DoubleVector
+        dataTimeWindow(MomentTensorComponentContribution self) -> DoubleVector
         """
         return _datamodel.MomentTensorComponentContribution_dataTimeWindow(self, *args)
 
