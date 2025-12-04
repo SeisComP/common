@@ -414,7 +414,7 @@ class LocatorInterface(seiscomp.core.BaseObject):
         return _seismology.LocatorInterface_init(self, config)
 
     def parameters(self):
-        r"""parameters(LocatorInterface self) -> VectorStr"""
+        r"""parameters(LocatorInterface self) -> StringVector"""
         return _seismology.LocatorInterface_parameters(self)
 
     def parameter(self, name):
@@ -426,7 +426,7 @@ class LocatorInterface(seiscomp.core.BaseObject):
         return _seismology.LocatorInterface_setParameter(self, name, value)
 
     def profiles(self):
-        r"""profiles(LocatorInterface self) -> VectorStr"""
+        r"""profiles(LocatorInterface self) -> StringVector"""
         return _seismology.LocatorInterface_profiles(self)
 
     def setProfile(self, name):

@@ -121,338 +121,504 @@ class SwigPyIterator(object):
 # Register SwigPyIterator in _math:
 _math.SwigPyIterator_swigregister(SwigPyIterator)
 import seiscomp.core
-class vectorf(object):
+class FloatVector(object):
     r"""Proxy of C++ std::vector< float > class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
     def iterator(self):
-        r"""iterator(vectorf self) -> SwigPyIterator"""
-        return _math.vectorf_iterator(self)
+        r"""iterator(FloatVector self) -> SwigPyIterator"""
+        return _math.FloatVector_iterator(self)
     def __iter__(self):
         return self.iterator()
 
     def __nonzero__(self):
-        r"""__nonzero__(vectorf self) -> bool"""
-        return _math.vectorf___nonzero__(self)
+        r"""__nonzero__(FloatVector self) -> bool"""
+        return _math.FloatVector___nonzero__(self)
 
     def __bool__(self):
-        r"""__bool__(vectorf self) -> bool"""
-        return _math.vectorf___bool__(self)
+        r"""__bool__(FloatVector self) -> bool"""
+        return _math.FloatVector___bool__(self)
 
     def __len__(self):
-        r"""__len__(vectorf self) -> std::vector< float >::size_type"""
-        return _math.vectorf___len__(self)
+        r"""__len__(FloatVector self) -> std::vector< float >::size_type"""
+        return _math.FloatVector___len__(self)
 
     def __getslice__(self, i, j):
-        r"""__getslice__(vectorf self, std::vector< float >::difference_type i, std::vector< float >::difference_type j) -> vectorf"""
-        return _math.vectorf___getslice__(self, i, j)
+        r"""__getslice__(FloatVector self, std::vector< float >::difference_type i, std::vector< float >::difference_type j) -> FloatVector"""
+        return _math.FloatVector___getslice__(self, i, j)
 
     def __setslice__(self, *args):
         r"""
-        __setslice__(vectorf self, std::vector< float >::difference_type i, std::vector< float >::difference_type j)
-        __setslice__(vectorf self, std::vector< float >::difference_type i, std::vector< float >::difference_type j, vectorf v)
+        __setslice__(FloatVector self, std::vector< float >::difference_type i, std::vector< float >::difference_type j)
+        __setslice__(FloatVector self, std::vector< float >::difference_type i, std::vector< float >::difference_type j, FloatVector v)
         """
-        return _math.vectorf___setslice__(self, *args)
+        return _math.FloatVector___setslice__(self, *args)
 
     def __delslice__(self, i, j):
-        r"""__delslice__(vectorf self, std::vector< float >::difference_type i, std::vector< float >::difference_type j)"""
-        return _math.vectorf___delslice__(self, i, j)
+        r"""__delslice__(FloatVector self, std::vector< float >::difference_type i, std::vector< float >::difference_type j)"""
+        return _math.FloatVector___delslice__(self, i, j)
 
     def __delitem__(self, *args):
         r"""
-        __delitem__(vectorf self, std::vector< float >::difference_type i)
-        __delitem__(vectorf self, SWIGPY_SLICEOBJECT * slice)
+        __delitem__(FloatVector self, std::vector< float >::difference_type i)
+        __delitem__(FloatVector self, SWIGPY_SLICEOBJECT * slice)
         """
-        return _math.vectorf___delitem__(self, *args)
+        return _math.FloatVector___delitem__(self, *args)
 
     def __getitem__(self, *args):
         r"""
-        __getitem__(vectorf self, SWIGPY_SLICEOBJECT * slice) -> vectorf
-        __getitem__(vectorf self, std::vector< float >::difference_type i) -> std::vector< float >::value_type const &
+        __getitem__(FloatVector self, SWIGPY_SLICEOBJECT * slice) -> FloatVector
+        __getitem__(FloatVector self, std::vector< float >::difference_type i) -> std::vector< float >::value_type const &
         """
-        return _math.vectorf___getitem__(self, *args)
+        return _math.FloatVector___getitem__(self, *args)
 
     def __setitem__(self, *args):
         r"""
-        __setitem__(vectorf self, SWIGPY_SLICEOBJECT * slice, vectorf v)
-        __setitem__(vectorf self, SWIGPY_SLICEOBJECT * slice)
-        __setitem__(vectorf self, std::vector< float >::difference_type i, std::vector< float >::value_type const & x)
+        __setitem__(FloatVector self, SWIGPY_SLICEOBJECT * slice, FloatVector v)
+        __setitem__(FloatVector self, SWIGPY_SLICEOBJECT * slice)
+        __setitem__(FloatVector self, std::vector< float >::difference_type i, std::vector< float >::value_type const & x)
         """
-        return _math.vectorf___setitem__(self, *args)
+        return _math.FloatVector___setitem__(self, *args)
 
     def pop(self):
-        r"""pop(vectorf self) -> std::vector< float >::value_type"""
-        return _math.vectorf_pop(self)
+        r"""pop(FloatVector self) -> std::vector< float >::value_type"""
+        return _math.FloatVector_pop(self)
 
     def append(self, x):
-        r"""append(vectorf self, std::vector< float >::value_type const & x)"""
-        return _math.vectorf_append(self, x)
+        r"""append(FloatVector self, std::vector< float >::value_type const & x)"""
+        return _math.FloatVector_append(self, x)
 
     def empty(self):
-        r"""empty(vectorf self) -> bool"""
-        return _math.vectorf_empty(self)
+        r"""empty(FloatVector self) -> bool"""
+        return _math.FloatVector_empty(self)
 
     def size(self):
-        r"""size(vectorf self) -> std::vector< float >::size_type"""
-        return _math.vectorf_size(self)
+        r"""size(FloatVector self) -> std::vector< float >::size_type"""
+        return _math.FloatVector_size(self)
 
     def swap(self, v):
-        r"""swap(vectorf self, vectorf v)"""
-        return _math.vectorf_swap(self, v)
+        r"""swap(FloatVector self, FloatVector v)"""
+        return _math.FloatVector_swap(self, v)
 
     def begin(self):
-        r"""begin(vectorf self) -> std::vector< float >::iterator"""
-        return _math.vectorf_begin(self)
+        r"""begin(FloatVector self) -> std::vector< float >::iterator"""
+        return _math.FloatVector_begin(self)
 
     def end(self):
-        r"""end(vectorf self) -> std::vector< float >::iterator"""
-        return _math.vectorf_end(self)
+        r"""end(FloatVector self) -> std::vector< float >::iterator"""
+        return _math.FloatVector_end(self)
 
     def rbegin(self):
-        r"""rbegin(vectorf self) -> std::vector< float >::reverse_iterator"""
-        return _math.vectorf_rbegin(self)
+        r"""rbegin(FloatVector self) -> std::vector< float >::reverse_iterator"""
+        return _math.FloatVector_rbegin(self)
 
     def rend(self):
-        r"""rend(vectorf self) -> std::vector< float >::reverse_iterator"""
-        return _math.vectorf_rend(self)
+        r"""rend(FloatVector self) -> std::vector< float >::reverse_iterator"""
+        return _math.FloatVector_rend(self)
 
     def clear(self):
-        r"""clear(vectorf self)"""
-        return _math.vectorf_clear(self)
+        r"""clear(FloatVector self)"""
+        return _math.FloatVector_clear(self)
 
     def get_allocator(self):
-        r"""get_allocator(vectorf self) -> std::vector< float >::allocator_type"""
-        return _math.vectorf_get_allocator(self)
+        r"""get_allocator(FloatVector self) -> std::vector< float >::allocator_type"""
+        return _math.FloatVector_get_allocator(self)
 
     def pop_back(self):
-        r"""pop_back(vectorf self)"""
-        return _math.vectorf_pop_back(self)
+        r"""pop_back(FloatVector self)"""
+        return _math.FloatVector_pop_back(self)
 
     def erase(self, *args):
         r"""
-        erase(vectorf self, std::vector< float >::iterator pos) -> std::vector< float >::iterator
-        erase(vectorf self, std::vector< float >::iterator first, std::vector< float >::iterator last) -> std::vector< float >::iterator
+        erase(FloatVector self, std::vector< float >::iterator pos) -> std::vector< float >::iterator
+        erase(FloatVector self, std::vector< float >::iterator first, std::vector< float >::iterator last) -> std::vector< float >::iterator
         """
-        return _math.vectorf_erase(self, *args)
+        return _math.FloatVector_erase(self, *args)
 
     def __init__(self, *args):
         r"""
-        __init__(vectorf self) -> vectorf
-        __init__(vectorf self, vectorf other) -> vectorf
-        __init__(vectorf self, std::vector< float >::size_type size) -> vectorf
-        __init__(vectorf self, std::vector< float >::size_type size, std::vector< float >::value_type const & value) -> vectorf
+        __init__(FloatVector self) -> FloatVector
+        __init__(FloatVector self, FloatVector other) -> FloatVector
+        __init__(FloatVector self, std::vector< float >::size_type size) -> FloatVector
+        __init__(FloatVector self, std::vector< float >::size_type size, std::vector< float >::value_type const & value) -> FloatVector
         """
-        _math.vectorf_swiginit(self, _math.new_vectorf(*args))
+        _math.FloatVector_swiginit(self, _math.new_FloatVector(*args))
 
     def push_back(self, x):
-        r"""push_back(vectorf self, std::vector< float >::value_type const & x)"""
-        return _math.vectorf_push_back(self, x)
+        r"""push_back(FloatVector self, std::vector< float >::value_type const & x)"""
+        return _math.FloatVector_push_back(self, x)
 
     def front(self):
-        r"""front(vectorf self) -> std::vector< float >::value_type const &"""
-        return _math.vectorf_front(self)
+        r"""front(FloatVector self) -> std::vector< float >::value_type const &"""
+        return _math.FloatVector_front(self)
 
     def back(self):
-        r"""back(vectorf self) -> std::vector< float >::value_type const &"""
-        return _math.vectorf_back(self)
+        r"""back(FloatVector self) -> std::vector< float >::value_type const &"""
+        return _math.FloatVector_back(self)
 
     def assign(self, n, x):
-        r"""assign(vectorf self, std::vector< float >::size_type n, std::vector< float >::value_type const & x)"""
-        return _math.vectorf_assign(self, n, x)
+        r"""assign(FloatVector self, std::vector< float >::size_type n, std::vector< float >::value_type const & x)"""
+        return _math.FloatVector_assign(self, n, x)
 
     def resize(self, *args):
         r"""
-        resize(vectorf self, std::vector< float >::size_type new_size)
-        resize(vectorf self, std::vector< float >::size_type new_size, std::vector< float >::value_type const & x)
+        resize(FloatVector self, std::vector< float >::size_type new_size)
+        resize(FloatVector self, std::vector< float >::size_type new_size, std::vector< float >::value_type const & x)
         """
-        return _math.vectorf_resize(self, *args)
+        return _math.FloatVector_resize(self, *args)
 
     def insert(self, *args):
         r"""
-        insert(vectorf self, std::vector< float >::iterator pos, std::vector< float >::value_type const & x) -> std::vector< float >::iterator
-        insert(vectorf self, std::vector< float >::iterator pos, std::vector< float >::size_type n, std::vector< float >::value_type const & x)
+        insert(FloatVector self, std::vector< float >::iterator pos, std::vector< float >::value_type const & x) -> std::vector< float >::iterator
+        insert(FloatVector self, std::vector< float >::iterator pos, std::vector< float >::size_type n, std::vector< float >::value_type const & x)
         """
-        return _math.vectorf_insert(self, *args)
+        return _math.FloatVector_insert(self, *args)
 
     def reserve(self, n):
-        r"""reserve(vectorf self, std::vector< float >::size_type n)"""
-        return _math.vectorf_reserve(self, n)
+        r"""reserve(FloatVector self, std::vector< float >::size_type n)"""
+        return _math.FloatVector_reserve(self, n)
 
     def capacity(self):
-        r"""capacity(vectorf self) -> std::vector< float >::size_type"""
-        return _math.vectorf_capacity(self)
-    __swig_destroy__ = _math.delete_vectorf
+        r"""capacity(FloatVector self) -> std::vector< float >::size_type"""
+        return _math.FloatVector_capacity(self)
+    __swig_destroy__ = _math.delete_FloatVector
 
-# Register vectorf in _math:
-_math.vectorf_swigregister(vectorf)
-class vectord(object):
+# Register FloatVector in _math:
+_math.FloatVector_swigregister(FloatVector)
+class DoubleVector(object):
     r"""Proxy of C++ std::vector< double > class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
     def iterator(self):
-        r"""iterator(vectord self) -> SwigPyIterator"""
-        return _math.vectord_iterator(self)
+        r"""iterator(DoubleVector self) -> SwigPyIterator"""
+        return _math.DoubleVector_iterator(self)
     def __iter__(self):
         return self.iterator()
 
     def __nonzero__(self):
-        r"""__nonzero__(vectord self) -> bool"""
-        return _math.vectord___nonzero__(self)
+        r"""__nonzero__(DoubleVector self) -> bool"""
+        return _math.DoubleVector___nonzero__(self)
 
     def __bool__(self):
-        r"""__bool__(vectord self) -> bool"""
-        return _math.vectord___bool__(self)
+        r"""__bool__(DoubleVector self) -> bool"""
+        return _math.DoubleVector___bool__(self)
 
     def __len__(self):
-        r"""__len__(vectord self) -> std::vector< double >::size_type"""
-        return _math.vectord___len__(self)
+        r"""__len__(DoubleVector self) -> std::vector< double >::size_type"""
+        return _math.DoubleVector___len__(self)
 
     def __getslice__(self, i, j):
-        r"""__getslice__(vectord self, std::vector< double >::difference_type i, std::vector< double >::difference_type j) -> vectord"""
-        return _math.vectord___getslice__(self, i, j)
+        r"""__getslice__(DoubleVector self, std::vector< double >::difference_type i, std::vector< double >::difference_type j) -> DoubleVector"""
+        return _math.DoubleVector___getslice__(self, i, j)
 
     def __setslice__(self, *args):
         r"""
-        __setslice__(vectord self, std::vector< double >::difference_type i, std::vector< double >::difference_type j)
-        __setslice__(vectord self, std::vector< double >::difference_type i, std::vector< double >::difference_type j, vectord v)
+        __setslice__(DoubleVector self, std::vector< double >::difference_type i, std::vector< double >::difference_type j)
+        __setslice__(DoubleVector self, std::vector< double >::difference_type i, std::vector< double >::difference_type j, DoubleVector v)
         """
-        return _math.vectord___setslice__(self, *args)
+        return _math.DoubleVector___setslice__(self, *args)
 
     def __delslice__(self, i, j):
-        r"""__delslice__(vectord self, std::vector< double >::difference_type i, std::vector< double >::difference_type j)"""
-        return _math.vectord___delslice__(self, i, j)
+        r"""__delslice__(DoubleVector self, std::vector< double >::difference_type i, std::vector< double >::difference_type j)"""
+        return _math.DoubleVector___delslice__(self, i, j)
 
     def __delitem__(self, *args):
         r"""
-        __delitem__(vectord self, std::vector< double >::difference_type i)
-        __delitem__(vectord self, SWIGPY_SLICEOBJECT * slice)
+        __delitem__(DoubleVector self, std::vector< double >::difference_type i)
+        __delitem__(DoubleVector self, SWIGPY_SLICEOBJECT * slice)
         """
-        return _math.vectord___delitem__(self, *args)
+        return _math.DoubleVector___delitem__(self, *args)
 
     def __getitem__(self, *args):
         r"""
-        __getitem__(vectord self, SWIGPY_SLICEOBJECT * slice) -> vectord
-        __getitem__(vectord self, std::vector< double >::difference_type i) -> std::vector< double >::value_type const &
+        __getitem__(DoubleVector self, SWIGPY_SLICEOBJECT * slice) -> DoubleVector
+        __getitem__(DoubleVector self, std::vector< double >::difference_type i) -> std::vector< double >::value_type const &
         """
-        return _math.vectord___getitem__(self, *args)
+        return _math.DoubleVector___getitem__(self, *args)
 
     def __setitem__(self, *args):
         r"""
-        __setitem__(vectord self, SWIGPY_SLICEOBJECT * slice, vectord v)
-        __setitem__(vectord self, SWIGPY_SLICEOBJECT * slice)
-        __setitem__(vectord self, std::vector< double >::difference_type i, std::vector< double >::value_type const & x)
+        __setitem__(DoubleVector self, SWIGPY_SLICEOBJECT * slice, DoubleVector v)
+        __setitem__(DoubleVector self, SWIGPY_SLICEOBJECT * slice)
+        __setitem__(DoubleVector self, std::vector< double >::difference_type i, std::vector< double >::value_type const & x)
         """
-        return _math.vectord___setitem__(self, *args)
+        return _math.DoubleVector___setitem__(self, *args)
 
     def pop(self):
-        r"""pop(vectord self) -> std::vector< double >::value_type"""
-        return _math.vectord_pop(self)
+        r"""pop(DoubleVector self) -> std::vector< double >::value_type"""
+        return _math.DoubleVector_pop(self)
 
     def append(self, x):
-        r"""append(vectord self, std::vector< double >::value_type const & x)"""
-        return _math.vectord_append(self, x)
+        r"""append(DoubleVector self, std::vector< double >::value_type const & x)"""
+        return _math.DoubleVector_append(self, x)
 
     def empty(self):
-        r"""empty(vectord self) -> bool"""
-        return _math.vectord_empty(self)
+        r"""empty(DoubleVector self) -> bool"""
+        return _math.DoubleVector_empty(self)
 
     def size(self):
-        r"""size(vectord self) -> std::vector< double >::size_type"""
-        return _math.vectord_size(self)
+        r"""size(DoubleVector self) -> std::vector< double >::size_type"""
+        return _math.DoubleVector_size(self)
 
     def swap(self, v):
-        r"""swap(vectord self, vectord v)"""
-        return _math.vectord_swap(self, v)
+        r"""swap(DoubleVector self, DoubleVector v)"""
+        return _math.DoubleVector_swap(self, v)
 
     def begin(self):
-        r"""begin(vectord self) -> std::vector< double >::iterator"""
-        return _math.vectord_begin(self)
+        r"""begin(DoubleVector self) -> std::vector< double >::iterator"""
+        return _math.DoubleVector_begin(self)
 
     def end(self):
-        r"""end(vectord self) -> std::vector< double >::iterator"""
-        return _math.vectord_end(self)
+        r"""end(DoubleVector self) -> std::vector< double >::iterator"""
+        return _math.DoubleVector_end(self)
 
     def rbegin(self):
-        r"""rbegin(vectord self) -> std::vector< double >::reverse_iterator"""
-        return _math.vectord_rbegin(self)
+        r"""rbegin(DoubleVector self) -> std::vector< double >::reverse_iterator"""
+        return _math.DoubleVector_rbegin(self)
 
     def rend(self):
-        r"""rend(vectord self) -> std::vector< double >::reverse_iterator"""
-        return _math.vectord_rend(self)
+        r"""rend(DoubleVector self) -> std::vector< double >::reverse_iterator"""
+        return _math.DoubleVector_rend(self)
 
     def clear(self):
-        r"""clear(vectord self)"""
-        return _math.vectord_clear(self)
+        r"""clear(DoubleVector self)"""
+        return _math.DoubleVector_clear(self)
 
     def get_allocator(self):
-        r"""get_allocator(vectord self) -> std::vector< double >::allocator_type"""
-        return _math.vectord_get_allocator(self)
+        r"""get_allocator(DoubleVector self) -> std::vector< double >::allocator_type"""
+        return _math.DoubleVector_get_allocator(self)
 
     def pop_back(self):
-        r"""pop_back(vectord self)"""
-        return _math.vectord_pop_back(self)
+        r"""pop_back(DoubleVector self)"""
+        return _math.DoubleVector_pop_back(self)
 
     def erase(self, *args):
         r"""
-        erase(vectord self, std::vector< double >::iterator pos) -> std::vector< double >::iterator
-        erase(vectord self, std::vector< double >::iterator first, std::vector< double >::iterator last) -> std::vector< double >::iterator
+        erase(DoubleVector self, std::vector< double >::iterator pos) -> std::vector< double >::iterator
+        erase(DoubleVector self, std::vector< double >::iterator first, std::vector< double >::iterator last) -> std::vector< double >::iterator
         """
-        return _math.vectord_erase(self, *args)
+        return _math.DoubleVector_erase(self, *args)
 
     def __init__(self, *args):
         r"""
-        __init__(vectord self) -> vectord
-        __init__(vectord self, vectord other) -> vectord
-        __init__(vectord self, std::vector< double >::size_type size) -> vectord
-        __init__(vectord self, std::vector< double >::size_type size, std::vector< double >::value_type const & value) -> vectord
+        __init__(DoubleVector self) -> DoubleVector
+        __init__(DoubleVector self, DoubleVector other) -> DoubleVector
+        __init__(DoubleVector self, std::vector< double >::size_type size) -> DoubleVector
+        __init__(DoubleVector self, std::vector< double >::size_type size, std::vector< double >::value_type const & value) -> DoubleVector
         """
-        _math.vectord_swiginit(self, _math.new_vectord(*args))
+        _math.DoubleVector_swiginit(self, _math.new_DoubleVector(*args))
 
     def push_back(self, x):
-        r"""push_back(vectord self, std::vector< double >::value_type const & x)"""
-        return _math.vectord_push_back(self, x)
+        r"""push_back(DoubleVector self, std::vector< double >::value_type const & x)"""
+        return _math.DoubleVector_push_back(self, x)
 
     def front(self):
-        r"""front(vectord self) -> std::vector< double >::value_type const &"""
-        return _math.vectord_front(self)
+        r"""front(DoubleVector self) -> std::vector< double >::value_type const &"""
+        return _math.DoubleVector_front(self)
 
     def back(self):
-        r"""back(vectord self) -> std::vector< double >::value_type const &"""
-        return _math.vectord_back(self)
+        r"""back(DoubleVector self) -> std::vector< double >::value_type const &"""
+        return _math.DoubleVector_back(self)
 
     def assign(self, n, x):
-        r"""assign(vectord self, std::vector< double >::size_type n, std::vector< double >::value_type const & x)"""
-        return _math.vectord_assign(self, n, x)
+        r"""assign(DoubleVector self, std::vector< double >::size_type n, std::vector< double >::value_type const & x)"""
+        return _math.DoubleVector_assign(self, n, x)
 
     def resize(self, *args):
         r"""
-        resize(vectord self, std::vector< double >::size_type new_size)
-        resize(vectord self, std::vector< double >::size_type new_size, std::vector< double >::value_type const & x)
+        resize(DoubleVector self, std::vector< double >::size_type new_size)
+        resize(DoubleVector self, std::vector< double >::size_type new_size, std::vector< double >::value_type const & x)
         """
-        return _math.vectord_resize(self, *args)
+        return _math.DoubleVector_resize(self, *args)
 
     def insert(self, *args):
         r"""
-        insert(vectord self, std::vector< double >::iterator pos, std::vector< double >::value_type const & x) -> std::vector< double >::iterator
-        insert(vectord self, std::vector< double >::iterator pos, std::vector< double >::size_type n, std::vector< double >::value_type const & x)
+        insert(DoubleVector self, std::vector< double >::iterator pos, std::vector< double >::value_type const & x) -> std::vector< double >::iterator
+        insert(DoubleVector self, std::vector< double >::iterator pos, std::vector< double >::size_type n, std::vector< double >::value_type const & x)
         """
-        return _math.vectord_insert(self, *args)
+        return _math.DoubleVector_insert(self, *args)
 
     def reserve(self, n):
-        r"""reserve(vectord self, std::vector< double >::size_type n)"""
-        return _math.vectord_reserve(self, n)
+        r"""reserve(DoubleVector self, std::vector< double >::size_type n)"""
+        return _math.DoubleVector_reserve(self, n)
 
     def capacity(self):
-        r"""capacity(vectord self) -> std::vector< double >::size_type"""
-        return _math.vectord_capacity(self)
-    __swig_destroy__ = _math.delete_vectord
+        r"""capacity(DoubleVector self) -> std::vector< double >::size_type"""
+        return _math.DoubleVector_capacity(self)
+    __swig_destroy__ = _math.delete_DoubleVector
 
-# Register vectord in _math:
-_math.vectord_swigregister(vectord)
+# Register DoubleVector in _math:
+_math.DoubleVector_swigregister(DoubleVector)
+class ComplexDoubleVector(object):
+    r"""Proxy of C++ std::vector< std::complex< double > > class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self):
+        r"""iterator(ComplexDoubleVector self) -> SwigPyIterator"""
+        return _math.ComplexDoubleVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self):
+        r"""__nonzero__(ComplexDoubleVector self) -> bool"""
+        return _math.ComplexDoubleVector___nonzero__(self)
+
+    def __bool__(self):
+        r"""__bool__(ComplexDoubleVector self) -> bool"""
+        return _math.ComplexDoubleVector___bool__(self)
+
+    def __len__(self):
+        r"""__len__(ComplexDoubleVector self) -> std::vector< std::complex< double > >::size_type"""
+        return _math.ComplexDoubleVector___len__(self)
+
+    def __getslice__(self, i, j):
+        r"""__getslice__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j) -> ComplexDoubleVector"""
+        return _math.ComplexDoubleVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args):
+        r"""
+        __setslice__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j)
+        __setslice__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j, ComplexDoubleVector v)
+        """
+        return _math.ComplexDoubleVector___setslice__(self, *args)
+
+    def __delslice__(self, i, j):
+        r"""__delslice__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j)"""
+        return _math.ComplexDoubleVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args):
+        r"""
+        __delitem__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i)
+        __delitem__(ComplexDoubleVector self, SWIGPY_SLICEOBJECT * slice)
+        """
+        return _math.ComplexDoubleVector___delitem__(self, *args)
+
+    def __getitem__(self, *args):
+        r"""
+        __getitem__(ComplexDoubleVector self, SWIGPY_SLICEOBJECT * slice) -> ComplexDoubleVector
+        __getitem__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i) -> std::vector< std::complex< double > >::value_type const &
+        """
+        return _math.ComplexDoubleVector___getitem__(self, *args)
+
+    def __setitem__(self, *args):
+        r"""
+        __setitem__(ComplexDoubleVector self, SWIGPY_SLICEOBJECT * slice, ComplexDoubleVector v)
+        __setitem__(ComplexDoubleVector self, SWIGPY_SLICEOBJECT * slice)
+        __setitem__(ComplexDoubleVector self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::value_type const & x)
+        """
+        return _math.ComplexDoubleVector___setitem__(self, *args)
+
+    def pop(self):
+        r"""pop(ComplexDoubleVector self) -> std::vector< std::complex< double > >::value_type"""
+        return _math.ComplexDoubleVector_pop(self)
+
+    def append(self, x):
+        r"""append(ComplexDoubleVector self, std::vector< std::complex< double > >::value_type const & x)"""
+        return _math.ComplexDoubleVector_append(self, x)
+
+    def empty(self):
+        r"""empty(ComplexDoubleVector self) -> bool"""
+        return _math.ComplexDoubleVector_empty(self)
+
+    def size(self):
+        r"""size(ComplexDoubleVector self) -> std::vector< std::complex< double > >::size_type"""
+        return _math.ComplexDoubleVector_size(self)
+
+    def swap(self, v):
+        r"""swap(ComplexDoubleVector self, ComplexDoubleVector v)"""
+        return _math.ComplexDoubleVector_swap(self, v)
+
+    def begin(self):
+        r"""begin(ComplexDoubleVector self) -> std::vector< std::complex< double > >::iterator"""
+        return _math.ComplexDoubleVector_begin(self)
+
+    def end(self):
+        r"""end(ComplexDoubleVector self) -> std::vector< std::complex< double > >::iterator"""
+        return _math.ComplexDoubleVector_end(self)
+
+    def rbegin(self):
+        r"""rbegin(ComplexDoubleVector self) -> std::vector< std::complex< double > >::reverse_iterator"""
+        return _math.ComplexDoubleVector_rbegin(self)
+
+    def rend(self):
+        r"""rend(ComplexDoubleVector self) -> std::vector< std::complex< double > >::reverse_iterator"""
+        return _math.ComplexDoubleVector_rend(self)
+
+    def clear(self):
+        r"""clear(ComplexDoubleVector self)"""
+        return _math.ComplexDoubleVector_clear(self)
+
+    def get_allocator(self):
+        r"""get_allocator(ComplexDoubleVector self) -> std::vector< std::complex< double > >::allocator_type"""
+        return _math.ComplexDoubleVector_get_allocator(self)
+
+    def pop_back(self):
+        r"""pop_back(ComplexDoubleVector self)"""
+        return _math.ComplexDoubleVector_pop_back(self)
+
+    def erase(self, *args):
+        r"""
+        erase(ComplexDoubleVector self, std::vector< std::complex< double > >::iterator pos) -> std::vector< std::complex< double > >::iterator
+        erase(ComplexDoubleVector self, std::vector< std::complex< double > >::iterator first, std::vector< std::complex< double > >::iterator last) -> std::vector< std::complex< double > >::iterator
+        """
+        return _math.ComplexDoubleVector_erase(self, *args)
+
+    def __init__(self, *args):
+        r"""
+        __init__(ComplexDoubleVector self) -> ComplexDoubleVector
+        __init__(ComplexDoubleVector self, ComplexDoubleVector other) -> ComplexDoubleVector
+        __init__(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type size) -> ComplexDoubleVector
+        __init__(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type size, std::vector< std::complex< double > >::value_type const & value) -> ComplexDoubleVector
+        """
+        _math.ComplexDoubleVector_swiginit(self, _math.new_ComplexDoubleVector(*args))
+
+    def push_back(self, x):
+        r"""push_back(ComplexDoubleVector self, std::vector< std::complex< double > >::value_type const & x)"""
+        return _math.ComplexDoubleVector_push_back(self, x)
+
+    def front(self):
+        r"""front(ComplexDoubleVector self) -> std::vector< std::complex< double > >::value_type const &"""
+        return _math.ComplexDoubleVector_front(self)
+
+    def back(self):
+        r"""back(ComplexDoubleVector self) -> std::vector< std::complex< double > >::value_type const &"""
+        return _math.ComplexDoubleVector_back(self)
+
+    def assign(self, n, x):
+        r"""assign(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type n, std::vector< std::complex< double > >::value_type const & x)"""
+        return _math.ComplexDoubleVector_assign(self, n, x)
+
+    def resize(self, *args):
+        r"""
+        resize(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type new_size)
+        resize(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type new_size, std::vector< std::complex< double > >::value_type const & x)
+        """
+        return _math.ComplexDoubleVector_resize(self, *args)
+
+    def insert(self, *args):
+        r"""
+        insert(ComplexDoubleVector self, std::vector< std::complex< double > >::iterator pos, std::vector< std::complex< double > >::value_type const & x) -> std::vector< std::complex< double > >::iterator
+        insert(ComplexDoubleVector self, std::vector< std::complex< double > >::iterator pos, std::vector< std::complex< double > >::size_type n, std::vector< std::complex< double > >::value_type const & x)
+        """
+        return _math.ComplexDoubleVector_insert(self, *args)
+
+    def reserve(self, n):
+        r"""reserve(ComplexDoubleVector self, std::vector< std::complex< double > >::size_type n)"""
+        return _math.ComplexDoubleVector_reserve(self, n)
+
+    def capacity(self):
+        r"""capacity(ComplexDoubleVector self) -> std::vector< std::complex< double > >::size_type"""
+        return _math.ComplexDoubleVector_capacity(self)
+    __swig_destroy__ = _math.delete_ComplexDoubleVector
+
+# Register ComplexDoubleVector in _math:
+_math.ComplexDoubleVector_swigregister(ComplexDoubleVector)
 
 def double2frac(value):
     r"""double2frac(double value) -> Seiscomp::Math::Fraction"""
@@ -1414,7 +1580,7 @@ class InPlaceFilterF(seiscomp.core.BaseObject):
 
     def apply(self, *args):
         r"""
-        apply(InPlaceFilterF self, vectorf f)
+        apply(InPlaceFilterF self, FloatVector f)
         apply(InPlaceFilterF self, FloatArrayT arr)
         """
         return _math.InPlaceFilterF_apply(self, *args)
@@ -1462,7 +1628,7 @@ class InPlaceFilterD(seiscomp.core.BaseObject):
 
     def apply(self, *args):
         r"""
-        apply(InPlaceFilterD self, vectord f)
+        apply(InPlaceFilterD self, DoubleVector f)
         apply(InPlaceFilterD self, DoubleArrayT arr)
         """
         return _math.InPlaceFilterD_apply(self, *args)
@@ -2400,7 +2566,7 @@ class PolesAndZeros(object):
     def __init__(self, *args):
         r"""
         __init__(PolesAndZeros self) -> PolesAndZeros
-        __init__(PolesAndZeros self, vectorc poles, vectorc zeros, double norm) -> PolesAndZeros
+        __init__(PolesAndZeros self, ComplexDoubleVector poles, ComplexDoubleVector zeros, double norm) -> PolesAndZeros
         __init__(PolesAndZeros self, PolesAndZeros other) -> PolesAndZeros
         """
         _math.PolesAndZeros_swiginit(self, _math.new_PolesAndZeros(*args))
@@ -2446,7 +2612,7 @@ class SeismometerFilterF(PolesAndZeros, InPlaceFilterF):
     def __init__(self, *args):
         r"""
         __init__(SeismometerFilterF self) -> SeismometerFilterF
-        __init__(SeismometerFilterF self, vectorc poles, vectorc zeros, double norm) -> SeismometerFilterF
+        __init__(SeismometerFilterF self, ComplexDoubleVector poles, ComplexDoubleVector zeros, double norm) -> SeismometerFilterF
         __init__(SeismometerFilterF self, SeismometerFilterF other) -> SeismometerFilterF
         """
         _math.SeismometerFilterF_swiginit(self, _math.new_SeismometerFilterF(*args))
@@ -2475,7 +2641,7 @@ class SeismometerFilterD(PolesAndZeros, InPlaceFilterD):
     def __init__(self, *args):
         r"""
         __init__(SeismometerFilterD self) -> SeismometerFilterD
-        __init__(SeismometerFilterD self, vectorc poles, vectorc zeros, double norm) -> SeismometerFilterD
+        __init__(SeismometerFilterD self, ComplexDoubleVector poles, ComplexDoubleVector zeros, double norm) -> SeismometerFilterD
         __init__(SeismometerFilterD self, SeismometerFilterD other) -> SeismometerFilterD
         """
         _math.SeismometerFilterD_swiginit(self, _math.new_SeismometerFilterD(*args))
@@ -2838,21 +3004,21 @@ class TransferFunction(seiscomp.core.BaseObject):
     def evaluate(self, *args):
         r"""
         evaluate(TransferFunction self, Seiscomp::Math::Complex * out, int n, double const * x)
-        evaluate(TransferFunction self, vectorc out, vectord x)
+        evaluate(TransferFunction self, ComplexDoubleVector out, DoubleVector x)
         """
         return _math.TransferFunction_evaluate(self, *args)
 
     def deconvolve(self, *args):
         r"""
         deconvolve(TransferFunction self, int n, Seiscomp::Math::Complex * spec, double startFreq, double df)
-        deconvolve(TransferFunction self, vectorc spec, double startFreq, double df)
+        deconvolve(TransferFunction self, ComplexDoubleVector spec, double startFreq, double df)
         """
         return _math.TransferFunction_deconvolve(self, *args)
 
     def convolve(self, *args):
         r"""
         convolve(TransferFunction self, int n, Seiscomp::Math::Complex * spec, double startFreq, double df)
-        convolve(TransferFunction self, vectorc spec, double startFreq, double df)
+        convolve(TransferFunction self, ComplexDoubleVector spec, double startFreq, double df)
         """
         return _math.TransferFunction_convolve(self, *args)
     __swig_destroy__ = _math.delete_TransferFunction
@@ -2902,170 +3068,4 @@ def fft(spec, data):
 def ifft(out, spec):
     r"""ifft(DoubleArray out, ComplexDoubleArray spec)"""
     return _math.ifft(out, spec)
-class vectorc(object):
-    r"""Proxy of C++ std::vector< Seiscomp::Math::Complex > class."""
-
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self):
-        r"""iterator(vectorc self) -> SwigPyIterator"""
-        return _math.vectorc_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self):
-        r"""__nonzero__(vectorc self) -> bool"""
-        return _math.vectorc___nonzero__(self)
-
-    def __bool__(self):
-        r"""__bool__(vectorc self) -> bool"""
-        return _math.vectorc___bool__(self)
-
-    def __len__(self):
-        r"""__len__(vectorc self) -> std::vector< std::complex< double > >::size_type"""
-        return _math.vectorc___len__(self)
-
-    def __getslice__(self, i, j):
-        r"""__getslice__(vectorc self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j) -> vectorc"""
-        return _math.vectorc___getslice__(self, i, j)
-
-    def __setslice__(self, *args):
-        r"""
-        __setslice__(vectorc self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j)
-        __setslice__(vectorc self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j, vectorc v)
-        """
-        return _math.vectorc___setslice__(self, *args)
-
-    def __delslice__(self, i, j):
-        r"""__delslice__(vectorc self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::difference_type j)"""
-        return _math.vectorc___delslice__(self, i, j)
-
-    def __delitem__(self, *args):
-        r"""
-        __delitem__(vectorc self, std::vector< std::complex< double > >::difference_type i)
-        __delitem__(vectorc self, SWIGPY_SLICEOBJECT * slice)
-        """
-        return _math.vectorc___delitem__(self, *args)
-
-    def __getitem__(self, *args):
-        r"""
-        __getitem__(vectorc self, SWIGPY_SLICEOBJECT * slice) -> vectorc
-        __getitem__(vectorc self, std::vector< std::complex< double > >::difference_type i) -> std::vector< std::complex< double > >::value_type const &
-        """
-        return _math.vectorc___getitem__(self, *args)
-
-    def __setitem__(self, *args):
-        r"""
-        __setitem__(vectorc self, SWIGPY_SLICEOBJECT * slice, vectorc v)
-        __setitem__(vectorc self, SWIGPY_SLICEOBJECT * slice)
-        __setitem__(vectorc self, std::vector< std::complex< double > >::difference_type i, std::vector< std::complex< double > >::value_type const & x)
-        """
-        return _math.vectorc___setitem__(self, *args)
-
-    def pop(self):
-        r"""pop(vectorc self) -> std::vector< std::complex< double > >::value_type"""
-        return _math.vectorc_pop(self)
-
-    def append(self, x):
-        r"""append(vectorc self, std::vector< std::complex< double > >::value_type const & x)"""
-        return _math.vectorc_append(self, x)
-
-    def empty(self):
-        r"""empty(vectorc self) -> bool"""
-        return _math.vectorc_empty(self)
-
-    def size(self):
-        r"""size(vectorc self) -> std::vector< std::complex< double > >::size_type"""
-        return _math.vectorc_size(self)
-
-    def swap(self, v):
-        r"""swap(vectorc self, vectorc v)"""
-        return _math.vectorc_swap(self, v)
-
-    def begin(self):
-        r"""begin(vectorc self) -> std::vector< std::complex< double > >::iterator"""
-        return _math.vectorc_begin(self)
-
-    def end(self):
-        r"""end(vectorc self) -> std::vector< std::complex< double > >::iterator"""
-        return _math.vectorc_end(self)
-
-    def rbegin(self):
-        r"""rbegin(vectorc self) -> std::vector< std::complex< double > >::reverse_iterator"""
-        return _math.vectorc_rbegin(self)
-
-    def rend(self):
-        r"""rend(vectorc self) -> std::vector< std::complex< double > >::reverse_iterator"""
-        return _math.vectorc_rend(self)
-
-    def clear(self):
-        r"""clear(vectorc self)"""
-        return _math.vectorc_clear(self)
-
-    def get_allocator(self):
-        r"""get_allocator(vectorc self) -> std::vector< std::complex< double > >::allocator_type"""
-        return _math.vectorc_get_allocator(self)
-
-    def pop_back(self):
-        r"""pop_back(vectorc self)"""
-        return _math.vectorc_pop_back(self)
-
-    def erase(self, *args):
-        r"""
-        erase(vectorc self, std::vector< std::complex< double > >::iterator pos) -> std::vector< std::complex< double > >::iterator
-        erase(vectorc self, std::vector< std::complex< double > >::iterator first, std::vector< std::complex< double > >::iterator last) -> std::vector< std::complex< double > >::iterator
-        """
-        return _math.vectorc_erase(self, *args)
-
-    def __init__(self, *args):
-        r"""
-        __init__(vectorc self) -> vectorc
-        __init__(vectorc self, vectorc other) -> vectorc
-        __init__(vectorc self, std::vector< std::complex< double > >::size_type size) -> vectorc
-        __init__(vectorc self, std::vector< std::complex< double > >::size_type size, std::vector< std::complex< double > >::value_type const & value) -> vectorc
-        """
-        _math.vectorc_swiginit(self, _math.new_vectorc(*args))
-
-    def push_back(self, x):
-        r"""push_back(vectorc self, std::vector< std::complex< double > >::value_type const & x)"""
-        return _math.vectorc_push_back(self, x)
-
-    def front(self):
-        r"""front(vectorc self) -> std::vector< std::complex< double > >::value_type const &"""
-        return _math.vectorc_front(self)
-
-    def back(self):
-        r"""back(vectorc self) -> std::vector< std::complex< double > >::value_type const &"""
-        return _math.vectorc_back(self)
-
-    def assign(self, n, x):
-        r"""assign(vectorc self, std::vector< std::complex< double > >::size_type n, std::vector< std::complex< double > >::value_type const & x)"""
-        return _math.vectorc_assign(self, n, x)
-
-    def resize(self, *args):
-        r"""
-        resize(vectorc self, std::vector< std::complex< double > >::size_type new_size)
-        resize(vectorc self, std::vector< std::complex< double > >::size_type new_size, std::vector< std::complex< double > >::value_type const & x)
-        """
-        return _math.vectorc_resize(self, *args)
-
-    def insert(self, *args):
-        r"""
-        insert(vectorc self, std::vector< std::complex< double > >::iterator pos, std::vector< std::complex< double > >::value_type const & x) -> std::vector< std::complex< double > >::iterator
-        insert(vectorc self, std::vector< std::complex< double > >::iterator pos, std::vector< std::complex< double > >::size_type n, std::vector< std::complex< double > >::value_type const & x)
-        """
-        return _math.vectorc_insert(self, *args)
-
-    def reserve(self, n):
-        r"""reserve(vectorc self, std::vector< std::complex< double > >::size_type n)"""
-        return _math.vectorc_reserve(self, n)
-
-    def capacity(self):
-        r"""capacity(vectorc self) -> std::vector< std::complex< double > >::size_type"""
-        return _math.vectorc_capacity(self)
-    __swig_destroy__ = _math.delete_vectorc
-
-# Register vectorc in _math:
-_math.vectorc_swigregister(vectorc)
 

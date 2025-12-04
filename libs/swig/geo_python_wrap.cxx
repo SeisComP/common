@@ -3395,10 +3395,10 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__Category_p_t swig_types[185]
 #define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t swig_types[186]
 #define SWIGTYPE_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t swig_types[187]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Complex_t swig_types[188]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[189]
-#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[190]
-#define SWIGTYPE_p_std__vectorT_size_t_t swig_types[191]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t swig_types[188]
+#define SWIGTYPE_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t swig_types[189]
+#define SWIGTYPE_p_std__vectorT_size_t_t swig_types[190]
+#define SWIGTYPE_p_std__vectorT_std__complexT_double_t_t swig_types[191]
 #define SWIGTYPE_p_swig__SwigPyIterator swig_types[192]
 #define SWIGTYPE_p_unsigned_char swig_types[193]
 #define SWIGTYPE_p_unsigned_int swig_types[194]
@@ -23204,10 +23204,10 @@ static swig_type_info _swigt__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t 
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__Category_p_t = {"_p_std__vectorT_Seiscomp__Geo__Category_p_t", "Seiscomp::Geo::GeoFeatureSet::Categories *|std::vector< Seiscomp::Geo::Category *,std::allocator< Seiscomp::Geo::Category * > > *|std::vector< Seiscomp::Geo::Category * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t = {"_p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t", "Seiscomp::Geo::GeoFeature::GeoCoordinates *|std::vector< Seiscomp::Geo::GeoCoordinate,std::allocator< Seiscomp::Geo::GeoCoordinate > > *|std::vector< Seiscomp::Geo::GeoCoordinate > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t = {"_p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t", "Seiscomp::Geo::GeoFeatureSet::Features *|std::vector< Seiscomp::Geo::GeoFeature *,std::allocator< Seiscomp::Geo::GeoFeature * > > *|std::vector< Seiscomp::Geo::GeoFeature * > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Complex_t = {"_p_std__vectorT_Seiscomp__Math__Complex_t", "Seiscomp::Math::ComplexArray *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t = {"_p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t", "Seiscomp::Math::Filtering::IIR::Biquads *|std::vector< Seiscomp::Math::Filtering::IIR::BiquadCoefficients,std::allocator< Seiscomp::Math::Filtering::IIR::BiquadCoefficients > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t = {"_p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t", "Seiscomp::Math::SeismometerResponse::FAPs *|std::vector< Seiscomp::Math::SeismometerResponse::FAP,std::allocator< Seiscomp::Math::SeismometerResponse::FAP > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_size_t_t = {"_p_std__vectorT_size_t_t", "Seiscomp::Geo::GeoFeature::SubFeatures *|std::vector< size_t,std::allocator< size_t > > *|std::vector< size_t > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_std__complexT_double_t_t = {"_p_std__vectorT_std__complexT_double_t_t", "Seiscomp::Math::ComplexArray *|Seiscomp::Math::Restitution::Poles *|Seiscomp::Math::Restitution::Zeros *|Seiscomp::Math::SeismometerResponse::Poles *|Seiscomp::Math::SeismometerResponse::Zeros *|std::vector< std::complex< double >,std::allocator< std::complex< double > > > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "uint8_t *|uint_fast8_t *|uint_least8_t *|unsigned char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|uint_fast16_t *|uint_fast32_t *|uint_least32_t *|uintptr_t *|unsigned int *", 0, 0, (void*)0, 0};
@@ -23405,10 +23405,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorT_Seiscomp__Geo__Category_p_t,
   &_swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t,
   &_swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t,
-  &_swigt__p_std__vectorT_Seiscomp__Math__Complex_t,
   &_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   &_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   &_swigt__p_std__vectorT_size_t_t,
+  &_swigt__p_std__vectorT_std__complexT_double_t_t,
   &_swigt__p_swig__SwigPyIterator,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
@@ -23606,10 +23606,10 @@ static swig_cast_info _swigc__p_std__shared_ptrT_Seiscomp__Core__MetaProperty_t[
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__Category_p_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__Category_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__Complex_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__Complex_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t[] = {  {&_swigt__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_size_t_t[] = {  {&_swigt__p_std__vectorT_size_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_std__complexT_double_t_t[] = {  {&_swigt__p_std__vectorT_std__complexT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
@@ -23807,10 +23807,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorT_Seiscomp__Geo__Category_p_t,
   _swigc__p_std__vectorT_Seiscomp__Geo__GeoCoordinate_t,
   _swigc__p_std__vectorT_Seiscomp__Geo__GeoFeature_p_t,
-  _swigc__p_std__vectorT_Seiscomp__Math__Complex_t,
   _swigc__p_std__vectorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_std__allocatorT_Seiscomp__Math__Filtering__IIR__BiquadCoefficients_t_t,
   _swigc__p_std__vectorT_Seiscomp__Math__SeismometerResponse__FAP_std__allocatorT_Seiscomp__Math__SeismometerResponse__FAP_t_t,
   _swigc__p_std__vectorT_size_t_t,
+  _swigc__p_std__vectorT_std__complexT_double_t_t,
   _swigc__p_swig__SwigPyIterator,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,

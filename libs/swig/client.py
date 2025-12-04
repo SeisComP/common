@@ -1419,7 +1419,7 @@ class Application(seiscomp.system.SystemApplication):
         return _client.Application_printConfigVariables(self)
 
     def schemaValidationNames(self, modules, plugins):
-        r"""schemaValidationNames(Application self, VectorStr modules, VectorStr plugins)"""
+        r"""schemaValidationNames(Application self, StringVector modules, StringVector plugins)"""
         return _client.Application_schemaValidationNames(self, modules, plugins)
 
     def validateSchemaParameters(self):
@@ -1588,7 +1588,7 @@ class StreamApplication(Application):
         return _client.StreamApplication_printConfigVariables(self)
 
     def schemaValidationNames(self, modules, plugins):
-        r"""schemaValidationNames(StreamApplication self, VectorStr modules, VectorStr plugins)"""
+        r"""schemaValidationNames(StreamApplication self, StringVector modules, StringVector plugins)"""
         return _client.StreamApplication_schemaValidationNames(self, modules, plugins)
 
     def validateSchemaParameters(self):
