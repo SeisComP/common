@@ -46,7 +46,7 @@ def addEntry(cfg, param, item):
         if len(items) == 1 and items[0] == "":
             items.clear()
     except ValueError:
-        items = config.VectorStr()
+        items = config.StringVector()
 
     if item not in items:
         items.push_back(item)
