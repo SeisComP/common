@@ -400,7 +400,7 @@ void Canvas::init() {
 			delete services;
 		}
 	}
-	else if ( _maptree->projection() == TileStore::Mercator ) {
+	else if ( _maptree && (_maptree->projection() == TileStore::Mercator) ) {
 		projection = "Mercator";
 	}
 
