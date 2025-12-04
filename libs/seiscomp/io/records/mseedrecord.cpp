@@ -309,9 +309,9 @@ int64_t MSeedRecord::Detect(const void *ptr, size_t len, Format *format) {
 		}
 
 		return V3::HeaderLength +
-		       Core::Endianess::Converter::ToLittleEndian(*V3::SIDLength::Get(ptr)) +
-		       Core::Endianess::Converter::ToLittleEndian(*V3::ExtraLength::Get(ptr)) +
-		       Core::Endianess::Converter::ToLittleEndian(*V3::DataLength::Get(ptr));
+		       Core::Endianess::Converter::FromLittleEndian(*V3::SIDLength::Get(ptr)) +
+		       Core::Endianess::Converter::FromLittleEndian(*V3::ExtraLength::Get(ptr)) +
+		       Core::Endianess::Converter::FromLittleEndian(*V3::DataLength::Get(ptr));
 	}
 
 	return -1;
@@ -399,9 +399,9 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		using namespace V3;
 
 		auto sidLength = *SIDLength::Get(rec);
-		auto extraLength = C::ToLittleEndian(*ExtraLength::Get(rec));
+		auto extraLength = C::FromLittleEndian(*ExtraLength::Get(rec));
 		size_t dataOffset = HeaderLength + sidLength + extraLength;
-		dataLength = C::ToLittleEndian(*DataLength::Get(rec));
+		dataLength = C::FromLittleEndian(*DataLength::Get(rec));
 
 		if ( dataOffset >= reclen ) {
 			throw LibmseedException("Data section outside of record");
@@ -1026,7 +1026,7 @@ void MSeedRecord::read(std::istream &is) {
 					_byteOrder |= SwapHeader;
 				}
 
-				_encoding = C::ToLittleEndian(*Encoding::Get(header));
+				_encoding = C::FromLittleEndian(*Encoding::Get(header));
 
 				if ( (_encoding == static_cast<int16_t>(EncodingType::STEIM1)) ||
 				     (_encoding == static_cast<int16_t>(EncodingType::STEIM2)) ) {
@@ -1045,8 +1045,8 @@ void MSeedRecord::read(std::istream &is) {
 				uint32_t dataLength;
 
 				sidLength = *SIDLength::Get(header);
-				extraLength = C::ToLittleEndian(*ExtraLength::Get(header));
-				dataLength = C::ToLittleEndian(*DataLength::Get(header));
+				extraLength = C::FromLittleEndian(*ExtraLength::Get(header));
+				dataLength = C::FromLittleEndian(*DataLength::Get(header));
 
 				reclen = HeaderLength + sidLength + extraLength + dataLength;
 
@@ -1073,23 +1073,23 @@ void MSeedRecord::read(std::istream &is) {
 
 				_format = V3;
 				_recordLength = reclen;
-				_nsamp = C::ToLittleEndian(*SampleCount::Get(header));
-				_fsamp = C::ToLittleEndian(*SamplingRate::Get(header));
+				_nsamp = C::FromLittleEndian(*SampleCount::Get(header));
+				_fsamp = C::FromLittleEndian(*SamplingRate::Get(header));
 
 				if ( _fsamp < 0 ) {
 					_fsamp = -1.0 / _fsamp;
 				}
 
 				_stime = Core::Time::FromYearDay(
-					C::ToLittleEndian(*Year::Get(header)),
-					C::ToLittleEndian(*YDay::Get(header))
+					C::FromLittleEndian(*Year::Get(header)),
+					C::FromLittleEndian(*YDay::Get(header))
 				);
 
 				_stime += Core::TimeSpan(
-					C::ToLittleEndian(*Hour::Get(header)) * 3600 +
-					C::ToLittleEndian(*Minute::Get(header)) * 60 +
-					C::ToLittleEndian(*Second::Get(header)),
-					C::ToLittleEndian(*Nanoseconds::Get(header)) / 1000
+					C::FromLittleEndian(*Hour::Get(header)) * 3600 +
+					C::FromLittleEndian(*Minute::Get(header)) * 60 +
+					C::FromLittleEndian(*Second::Get(header)),
+					C::FromLittleEndian(*Nanoseconds::Get(header)) / 1000
 				);
 
 				_endTime = _stime + Core::TimeSpan(0, _nsamp * 1000000 / _fsamp + 0.5);
