@@ -34,7 +34,7 @@ namespace Math {
 
 
 typedef std::complex<double> Complex;
-typedef std::vector<Math::Complex> ComplexArray;
+typedef std::vector<std::complex<double>> ComplexArray;
 
 
 template <typename T>
