@@ -92,11 +92,6 @@
 optional(Seiscomp::DataModel::Operation);
 enum(Seiscomp::DataModel::Operation);
 
-namespace std {
-   %template(vectord) vector<double>;
-   %template(vectorc) vector< std::complex<double> >;
-};
-
 %ignore Seiscomp::DataModel::PublicObjectCache::const_iterator;
 %ignore Seiscomp::DataModel::PublicObjectCache::begin;
 %ignore Seiscomp::DataModel::PublicObjectCache::end;
