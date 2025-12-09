@@ -192,6 +192,8 @@ void AmplitudeProcessor_MLc2h::setDefaultConfiguration() {
 	setMaxDist(8);
 	setMinDepth(-10);
 	setMaxDepth(80);
+	setMinPeriod(-1);
+	setMaxPeriod(-1);
 
 	_amplitudeScale = 1.0;
 	_combiner = TakeMax;
