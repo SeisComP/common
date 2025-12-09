@@ -107,19 +107,34 @@
 				by adding an amplitude type profile 'MLc',
 				</description>
 				<parameter name="minSNR" type="double" default="0"/>
-				<parameter name="maxDist" type="string" unit="deg" default="8"/>
-				<parameter name="minDepth" type="string" unit="km" default="-10"/>
-				<parameter name="maxDepth" type="string" unit="km" default="80"/>
-				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
-				<parameter name="preFilter" type="string" default="BW(3,0.5,12)">
+				<parameter name="minPeriod" type="double" unit="s" default="-1">
 					<description>
-					The filter applied to raw records before applying
-					Wood-Anderson simulation.
+					No period is measured along with MLc amplitudes and this
+					value should not be changed. Setting a value > 0 will
+					cause failure of MLc amplitude measurements.
 					</description>
 				</parameter>
+				<parameter name="maxPeriod" type="double" unit="s" default="-1">
+					<description>
+					No period is measured along with MLc amplitudes and this
+					value should not be changed. Setting a value > 0 will
+					cause failure of MLc amplitude measurements.
+					</description>
+				</parameter>
+				<parameter name="minDist" type="string" unit="deg" default="0"/>
+				<parameter name="maxDist" type="string" unit="deg" default="8"/>
+				<parameter name="minDepth" type="string" unit="km" default="-10"/>
+				<parameter name="maxDepth" type="double" unit="km" default="80">
+					<description>
+					The maximum source depth up to which magnitudes are
+					computed. Can extended beyond 80 km for MLc.
+					</description>
+				</parameter>
+				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
+				<parameter name="preFilter" type="string" default="BW(3,0.5,12)"/>
 				<parameter name="applyWoodAnderson" type="boolean" default="true">
 					<description>
-					Applying Wood-Anderson simulation. To achieve displacement
+					Apply Wood-Anderson simulation. To achieve displacement
 					records without WA simulation, an integration filter can
 					be applied with the pre-filter.
 					</description>
@@ -139,7 +154,7 @@
 					take the unit of gain-corrected data considering the
 					preFilter:
 					amplitudeScale converts between units of measured and
-					excpected amplitude.
+					expected amplitude.
 					</description>
 				</parameter>
 				<parameter name="measureType" type="string" default="AbsMax" values="AbsMax,MinMax,PeakTrough">
@@ -157,13 +172,13 @@
 				<parameter name="combiner" type="string" default="max" values="min,max,average,geometric_mean">
 					<description>
 					Define how to combine the amplitudes measured on both
-					horizontals components:
+					horizontal components:
 
 					min: take the minimum
 
-					max: take the maxium
+					max: take the maximum
 
-					avgerage: form the average
+					average: form the average
 
 					geometric_mean: form the geometric mean
 					</description>
@@ -173,8 +188,29 @@
 				<description>
 				Parameters for computing MLc magnitudes from MLc amplitudes.
 				</description>
+				<parameter name="minDist" type="string" unit="deg" default="0"/>
 				<parameter name="maxDist" type="string" unit="deg" default="8"/>
-				<parameter name="maxDepth" type="string" unit="km" default="80"/>
+				<parameter name="minDepth" type="string" unit="km" default="-10"/>
+				<parameter name="maxDepth" type="double" default="80" unit="km">
+					<description>
+					The maximum source depth up to which magnitudes are
+					computed. Can extended beyond 80 km for MLc.
+					</description>
+				</parameter>
+				<parameter name="minPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with MLc amplitudes and this
+					value should not be changed. Setting any value will
+					cause failure of MLc magnitude computation.
+					</description>
+				</parameter>
+				<parameter name="maxPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with MLc amplitudes and this
+					value should not be changed. Setting any value will
+					cause failure of MLc magnitude computation.
+					</description>
+				</parameter>
 				<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
 					<description>
 					Considered distance measure between source and receiver.
@@ -182,28 +218,6 @@
 					hypocentral: hypocentral distance
 
 					epicentral: epicentral distance
-					</description>
-				</parameter>
-				<parameter name="minDist" type="double" default="-1.0" unit="deg">
-					<description>
-					The minimum distance for computing magnitudes from amplitudes.
-					Negative values deactivate the check.
-					</description>
-				</parameter>
-				<parameter name="maxDist" type="double" default="8" unit="deg">
-					<description>
-					The maximum distance for computing magnitudes from amplitudes.
-					Negative values deactivate the check.
-					</description>
-				</parameter>
-				<parameter name="minDepth" type="double" default="-10" unit="km">
-					<description>
-					The minimum source depth below which magnitudes are computed.
-					</description>
-				</parameter>
-				<parameter name="maxDepth" type="double" default="80" unit="km">
-					<description>
-					The maximum source depth up to which magnitudes are computed.
 					</description>
 				</parameter>
 				<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="" values="parametric,A0">
