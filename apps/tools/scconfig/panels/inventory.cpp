@@ -361,7 +361,7 @@ int ProcessWidget::start(const QString &cmd, const QStringList &params) {
 	connect(_process, &QProcess::errorOccurred, this, &ProcessWidget::error);
 	connect(_process, &QProcess::readyReadStandardError, this, &ProcessWidget::readStderr);
 	connect(_process, &QProcess::readyReadStandardOutput, this, &ProcessWidget::readStdout);
-	connect(_process, &QProcess::finished, this, &ProcessWidget::processFinished);
+	connect(_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &ProcessWidget::processFinished);
 	connect(_btnStop, &QPushButton::clicked, _process, &QProcess::terminate);
 
 	_btnOK->setEnabled(false);
