@@ -34,6 +34,20 @@
 				<parameter name="maxDist" type="string" unit="deg" default="8"/>
 				<parameter name="maxDepth" type="string" unit="km" default="80"/>
 				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
+				<parameter name="minPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with ML amplitudes and this
+					value should not be changed. Setting a value > 0 will
+					cause failure of ML amplitude measurements.
+					</description>
+				</parameter>
+				<parameter name="maxPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with ML amplitudes and this
+					value should not be changed. Setting a value > 0 will
+					cause failure of ML amplitude measurements.
+					</description>
+				</parameter>
 				<parameter name="preFilter" type="string" default="">
 					<description>
 					The filter applied to raw records before applying
@@ -47,26 +61,30 @@
 					be applied with the pre-filter.
 					</description>
 				</parameter>
-				<parameter name="measureType" type="string" default="AbsMax">
+				<parameter name="measureType" type="string" default="AbsMax" values="AbsMax,MinMax,PeakTrough">
 					<description>
-					This parameter allows to set how the amplitude is measured.
-					Either by finding the absolute maximum of the demeaned
-					trace (AbsMax), the difference of maximum and minimum of
-					the signal window (MinMax) or the maximum peak-trough
-					of one cycle (PeakTrough).
+					Type for measuring amplitudes.
 
-					Note that if absMax is already explicitly configured, this
-					parameter has no effect.
+					AbsMax: absolute maximum
+
+					MinMax: half difference between absolute maximum and minimum
+
+					PeakTrough: half difference between maximum and minimum
+					on a half cycle
 					</description>
 				</parameter>
-				<parameter name="combiner" type="string" default="average">
+				<parameter name="combiner" type="string" default="average" values="min,max,average,geometric_mean">
 					<description>
-					Defines the combiner operation for the amplitudes measured
-					on either both horizontal component. The default is to
-					use the average. Allowed values are: &quot;average&quot;,
-					&quot;min&quot;, &quot;max&quot; and &quot;geometric_mean&quot;.
-					&quot;geometric_mean&quot; corresponds to averaging single-trace
-					magnitudes instead of their amplitudes.
+					Define how to combine the amplitudes measured on both
+					horizontal components:
+
+					min: take the minimum
+
+					max: take the maximum
+
+					average: form the average
+
+					geometric_mean: form the geometric mean
 					</description>
 				</parameter>
 			</extend-struct>
@@ -74,6 +92,20 @@
 				<description>
 				Parameters for computing ML magnitudes from ML amplitudes.
 				</description>
+				<parameter name="minPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with ML amplitudes and this
+					value should not be changed. Setting any value will
+					cause failure of ML magnitude computation.
+					</description>
+				</parameter>
+				<parameter name="maxPeriod" type="double" unit="s" default="">
+					<description>
+					No period is measured along with ML amplitudes and this
+					value should not be changed. Setting any value will
+					cause failure of ML magnitude computation.
+					</description>
+				</parameter>
 				<parameter name="maxDist" type="string" unit="deg" default="8"/>
 				<parameter name="maxDepth" type="string" unit="km" default="80"/>
 				<parameter name="logA0" type="string" default="0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85">
