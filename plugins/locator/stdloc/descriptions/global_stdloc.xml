@@ -24,21 +24,22 @@
 							OctTree, GridSearch+LeastSquares or OctTree+LeastSquares.
 							</description>
 						</parameter>
-						<parameter name="tableType" type="string" default="LOCSAT">
+						<parameter name="tableType" type="string" default="LOCSAT" values="homogeneous,libtau,LOCSAT">
 							<description>
-							Travel time table format type. Also consider
+							Type of travel-time interface. Also consider
 							&quot;tableModel&quot;!
 							</description>
 						</parameter>
 						<parameter name="tableModel" type="string" default="iasp91">
 							<description>
-							The model to be used. The format depends on
+							The travel-time model to be used. The
+							availability of models depends on
 							&quot;tableType&quot;.
 							</description>
 						</parameter>
 						<parameter name="PSTableOnly" type="boolean" default="true">
 							<description>
-							If enabled the arrival travel time information are fetched
+							If enabled, the arrival travel time information are fetched
 							using 'P' and 'S' tables only and the user selected
 							specific phase type is not considered (e.g. Pg, Sg,
 							PmP, SmS, P1, S1, etc).
