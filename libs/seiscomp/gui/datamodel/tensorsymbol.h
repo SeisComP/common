@@ -55,7 +55,7 @@ class SC_GUI_API TensorSymbol : public Map::Symbol
 
 	protected:
 		void customDraw(const Map::Canvas *canvas, QPainter& painter) override;
-		void resize(int w, int h);
+		void resize(int w, int h, qreal dpr = 1.0);
 
 
 	protected:

@@ -504,7 +504,7 @@ struct StationLayer : Map::Layer {
 		refSymbol = symbol;
 	}
 
-	void setVisible(bool v) {
+	void setVisible(bool v) override {
 		Map::Layer::setVisible(v);
 		if ( !v ) {
 			for ( auto &entry : stations ) {
@@ -539,7 +539,7 @@ struct StationLayer : Map::Layer {
 				continue;
 			}
 
-			if ( stations[i]->isInside(event->x(), event->y()) ) {
+			if ( stations[i]->isInside(event->pos().x(), event->pos().y()) ) {
 				tmpHoverId = i;
 				break;
 			}
@@ -778,7 +778,7 @@ void ExtTensorSymbol::customDraw(const Map::Canvas *c, QPainter &p) {
 
 	if ( size() != _lastSize ) {
 		_lastSize = size();
-		resize(_lastSize.width(), _lastSize.height());
+		resize(_lastSize.width(), _lastSize.height(), p.device()->devicePixelRatioF());
 	}
 
 	QPoint symbolPos;
@@ -2580,8 +2580,9 @@ void EventEdit::insertOriginRow(Origin *org) {
 
 	for ( int i = 0; i < OriginListColumns::Quantity; ++i )
 		item->setTextAlignment(_originColumnMap[i], OriginColAligns[i]);
-	if ( _customColumn >= 0 )
+	if ( _customColumn >= 0 ) {
 		item->setTextAlignment(_customColumn, Qt::AlignCenter);
+	}
 
 	// Register script calls
 	if ( !_scriptColumns.empty() ) {
