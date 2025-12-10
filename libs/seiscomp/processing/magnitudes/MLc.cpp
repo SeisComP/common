@@ -81,6 +81,7 @@ MagnitudeProcessor_MLc::MagnitudeProcessor_MLc()
 void MagnitudeProcessor_MLc::setDefaults() {
 	_maximumDistanceDeg = 8.0;
 	_maximumDepthKm = 80.0;
+	_minimumDepthKm = -10;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
