@@ -50,24 +50,24 @@ class SC_GUI_API TensorSymbol : public Map::Symbol
 
 
 	public:
-		virtual bool isInside(int x, int y) const;
+		bool isInside(int x, int y) const override;
 
 
 	protected:
-		virtual void customDraw(const Map::Canvas *canvas, QPainter& painter);
+		void customDraw(const Map::Canvas *canvas, QPainter& painter) override;
 		void resize(int w, int h);
 
 
 	protected:
-		TensorRenderer     _renderer;
-		QImage             _buffer;
-		Math::Tensor2Sd    _tensor;
-		Math::Matrix3f     _rotation;
+		TensorRenderer  _renderer;
+		QImage          _buffer;
+		Math::Tensor2Sd _tensor;
+		Math::Matrix3f  _rotation;
 
-		QSize              _lastSize;
-		QPoint             _offset;
+		QSize           _lastSize;
+		QPoint          _offset;
 
-		bool               _drawLocationConnector;
+		bool            _drawLocationConnector;
 
 };
 
