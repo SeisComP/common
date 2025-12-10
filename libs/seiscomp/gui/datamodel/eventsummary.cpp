@@ -1056,7 +1056,8 @@ void EventSummary::setFocalMechanism(FocalMechanism* fm) {
 
 	if ( strike && dip && rake ) {
 		const QSize& size = _ui->momentTensor->size();
-		QImage img(size, QImage::Format_ARGB32);
+		QImage img(size * qApp->devicePixelRatio(), QImage::Format_ARGB32);
+		img.setDevicePixelRatio(qApp->devicePixelRatio());
 
 		Gui::TensorRenderer renderer;
 		renderer.setTColor(c);
