@@ -129,13 +129,14 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_ms20, "Ms_20");
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 : AmplitudeProcessor("Ms_20") {
-	setSignalStart(0.);
-	setSignalEnd(0.);
+	setSignalStart("max(OT+R/4,-5)");
+	setSignalEnd("min(OT+R/3,3000)");
 	setMinSNR(0);
 	setMinPeriod(18);
 	setMaxPeriod(22);
 	setMinDist(20);
 	setMaxDist(160);
+	setMinDepth(0);
 	setMaxDepth(100);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
