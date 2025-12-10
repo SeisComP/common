@@ -2064,6 +2064,8 @@ void Configurator::wizard() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Configurator::resetAll() {
+	qApp->setOverrideCursor(Qt::WaitCursor);
+
 	bool errors = false;
 
 	if ( _model->model() ) {
@@ -2077,6 +2079,8 @@ void Configurator::resetAll() {
 		errors = cd.hasErrors;
 		cd.showConflicts();
 	}
+
+	qApp->restoreOverrideCursor();
 
 	if ( errors ) {
 		showWarningMessage("Configuration reset got errors");
@@ -2166,6 +2170,8 @@ void Configurator::sectionChanged(QListWidgetItem *curr, QListWidgetItem *prev) 
 			save();
 	}
 
+	qApp->setOverrideCursor(Qt::WaitCursor);
+
 	if ( pw ) {
 		pw->hide();
 		pw->disconnect(this);
@@ -2178,6 +2184,8 @@ void Configurator::sectionChanged(QListWidgetItem *curr, QListWidgetItem *prev) 
 		connect(cw, &ConfiguratorPanel::descriptionChanged, this, &Configurator::panelDescriptionChanged);
 		connect(cw, &ConfiguratorPanel::reloadRequested, this, &Configurator::resetAll);
 	}
+
+	qApp->restoreOverrideCursor();
 
 	if ( curr ) {
 		panelHeadlineChanged(cw->headline(), cw->subHeadline());

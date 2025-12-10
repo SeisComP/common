@@ -37,7 +37,7 @@ class ModulesPanel : public ConfiguratorPanel {
 
 
 	public:
-		void setModel(ConfigurationTreeItemModel *model);
+		void setModel(ConfigurationTreeItemModel *model) override;
 		void aboutToClose();
 
 
