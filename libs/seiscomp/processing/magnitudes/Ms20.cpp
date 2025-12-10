@@ -78,6 +78,36 @@ void MagnitudeProcessor_ms20::setDefaults() {
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_ms20::setup(const Settings &settings) {
+	if ( !MagnitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	// obsolete constraints
+	try {
+		settings.getDouble("magnitudes." + _type + ".lowerPeriod");
+		SEISCOMP_WARNING("Found configuration of unconsidered parameter "
+		                 "'magnitudes.%s.lowerPeriod': Set minPeriod instead.",
+		                 _type);
+	}
+	catch ( ... ) {}
+	try {
+		settings.getDouble("magnitudes." + _type + ".upperPeriod");
+		SEISCOMP_WARNING("Found configuration of unconsidered parameter "
+		                 "'magnitudes.%s.upperPeriod': Set maxPeriod instead.",
+		                 _type);
+	}
+	catch ( ... ) {}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_ms20::computeMagnitude(
