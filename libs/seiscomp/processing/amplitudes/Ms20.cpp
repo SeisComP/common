@@ -145,6 +145,35 @@ AmplitudeProcessor_ms20::AmplitudeProcessor_ms20()
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor_ms20::setup(const Settings &settings) {
+	if ( !AmplitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	// obsolete constraints
+	try {
+		settings.getDouble("amplitudes." + _type + ".minVelocity");
+		SEISCOMP_WARNING("Found configuration of unconsidered parameter "
+		                 "'amplitudes.%s.minVelocity': Set signalEnd instead.",
+		                 _type);
+	}
+	catch ( ... ) {}
+	try {
+		settings.getDouble("amplitudes." + _type + ".maxVelocity");
+		SEISCOMP_WARNING("Found configuration of unconsidered parameter "
+		                 "'amplitudes.%s.maxVelocity': Set signalBegin instead.",
+		                 _type);
+	}
+	catch ( ... ) {}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor_ms20::AmplitudeProcessor_ms20::initFilter(double fsamp) {
 	AmplitudeProcessor::setFilter(
 		new Math::Filtering::IIR::WWSSN_LP_Filter<double>(Math::Velocity)
