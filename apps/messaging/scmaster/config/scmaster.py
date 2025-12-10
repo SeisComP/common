@@ -249,7 +249,7 @@ class Module(kernel.CoreModule):
                 dbBackend = "mysql"
                 try:
                     rootpwd = setup_config.getString(
-                        self.name + ".database.enable.backend.create.rootpw"
+                        self.name + ".database.enable.backend.create.runAsSuperUser.rootpw"
                     )
                 except ValueError:
                     rootpwd = ""
