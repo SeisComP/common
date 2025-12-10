@@ -19,6 +19,7 @@
 
 
 #define SEISCOMP_COMPONENT log
+#include <seiscomp/core/datetime.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/logging/channel.h>
 #include <seiscomp/logging/publisher.h>
@@ -42,8 +43,9 @@ namespace {
 
 
 inline void tag(Data &data) {
-	data.time = time(nullptr);
-	data.microseconds = 0;
+	Core::Time t = Core::Time::UTC();
+	data.time = t.epochSeconds();
+	data.microseconds = t.microseconds();
 }
 
 
