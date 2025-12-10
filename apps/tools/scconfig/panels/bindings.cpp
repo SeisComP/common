@@ -987,7 +987,17 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	}
 
 	ConfiguratorPanel::setModel(model);
+	applyModel();
 
+	connect(_model, &QAbstractItemModel::modelReset, this, &BindingsPanel::applyModel);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BindingsPanel::applyModel() {
 	_bindingView->setModel(nullptr, nullptr);
 	_stationsTreeView->setModel(nullptr);
 	_stationsFolderView->setModel(nullptr);
@@ -997,7 +1007,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 	delete _bindingsModel;
 	delete _profilesModel;
 
-	if ( !model ) {
+	if ( !_model ) {
 		return;
 	}
 
@@ -1014,7 +1024,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 
 	auto *root = _bindingsModel->invisibleRootItem();
 
-	auto *base = model->model();
+	auto *base = _model->model();
 
 	using Bindings = QVector<ModuleBinding*>;
 	using Stations = QMap<QString, Bindings>;
@@ -1105,7 +1115,7 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 		}
 	}
 
-	_bindingView->setModel(model, _bindingsModel);
+	_bindingView->setModel(_model, _bindingsModel);
 
 	_stationsTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	_stationsTreeView->setModel(_bindingsModel);

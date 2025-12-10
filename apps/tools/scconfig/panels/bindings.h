@@ -96,6 +96,8 @@ class BindingsPanel : public ConfiguratorPanel {
 		                   const QString &profile);
 
 	private slots:
+		void applyModel();
+
 		// BindingsView slots
 		void moduleBindingsChanged(const QModelIndex &, const QModelIndex &);
 
