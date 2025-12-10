@@ -16,44 +16,46 @@
 				<description>
 				Parameters for computing Ms_20 amplitudes.
 				</description>
+				<parameter name="minSNR" type="double" unit="s" default="0"/>
+				<parameter name="minPeriod" type="double" unit="s" default="18"/>
+				<parameter name="maxPeriod" type="double" unit="s" default="22"/>
+				<parameter name="minDist" type="string" unit="deg" default="20"/>
+				<parameter name="maxDist" type="string" unit="deg" default="160"/>
+				<parameter name="minDepth" type="string" unit="km" default="0"/>
+				<parameter name="maxDepth" type="string" unit="km" default="100"/>
+				<parameter name="signalBegin" type="string" unit="time grammar" default="min(OT + R / 4, 3000)"/>
+				<parameter name="signalEnd" type="string" unit="time grammar" default="max(OT + R / 3, -5)"/>
 				<parameter name="minVelocity" type="double" unit="km/s" default="3">
 					<description>
-					Minimum group velocity used to compute signal time window.
+					Unused parameter. Consider signalEnd instead.
+					Formerly used as minimum group velocity used to compute
+					signal time window.
 					</description>
 				</parameter>
 				<parameter name="maxVelocity" type="double" unit="km/s" default="4">
 					<description>
-					Maximum group velocity used to compute signal time window.
+					Unused parameter. Consider signalBegin instead.
+					Formerly used as maximum group velocity used to compute
+					signal time window.
 					</description>
 				</parameter>
 			</extend-struct>
 			<extend-struct type="GlobalBindingsMagnitudeProfile" match-name="Ms_20">
-				<description>
-				Parameters for computing Ms_20 magnitudes from Ms_20 amplitudes.
-				</description>
+				<parameter name="minSNR" type="double" unit="s" default="0"/>
+				<parameter name="minPeriod" type="double" unit="s" default="18"/>
+				<parameter name="maxPeriod" type="double" unit="s" default="22"/>
+				<parameter name="minDist" type="string" unit="deg" default="20"/>
+				<parameter name="maxDist" type="string" unit="deg" default="160"/>
+				<parameter name="minDepth" type="string" unit="km" default="0"/>
+				<parameter name="maxDepth" type="string" unit="km" default="100"/>
 				<parameter name="lowerPeriod" type="double" unit="s" default="18">
 					<description>
-					Lower period limit of the signal for computing Ms_20.
+					Unused parameter. Consider minPeriod instead.
 					</description>
 				</parameter>
 				<parameter name="upperPeriod" type="double" unit="s" default="22">
 					<description>
-					Upper period limit of the signal for computing Ms_20.
-					</description>
-				</parameter>
-				<parameter name="minDist" type="double" unit="deg" default="20">
-					<description>
-					Minimum epicentral distance for computing Ms_20.
-					</description>
-				</parameter>
-				<parameter name="maxDist" type="double" unit="deg" default="160">
-					<description>
-					Maximum epicentral distance for computing Ms_20.
-					</description>
-				</parameter>
-				<parameter name="maxDepth" type="double" unit="km" default="100">
-					<description>
-					Maximum depth for computing Ms_20.
+					Unused parameter. Consider maxPeriod instead.
 					</description>
 				</parameter>
 			</extend-struct>
