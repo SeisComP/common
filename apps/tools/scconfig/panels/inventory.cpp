@@ -357,18 +357,12 @@ int ProcessWidget::start(const QString &cmd, const QStringList &params) {
 
 	_process = new QProcess(this);
 
-	connect(_process, SIGNAL(started()), this, SLOT(started()));
-	connect(_process, SIGNAL(error(QProcess::ProcessError)),
-	        this, SLOT(error(QProcess::ProcessError)));
-
-	connect(_process, SIGNAL(readyReadStandardError()),
-	        this, SLOT(readStderr()));
-	connect(_process, SIGNAL(readyReadStandardOutput()),
-	        this, SLOT(readStdout()));
-	connect(_process, SIGNAL(finished(int,QProcess::ExitStatus)),
-	        this, SLOT(processFinished(int,QProcess::ExitStatus)));
-
-	connect(_btnStop, SIGNAL(clicked()), _process, SLOT(terminate()));
+	connect(_process, &QProcess::started, this, &ProcessWidget::started);
+	connect(_process, &QProcess::errorOccurred, this, &ProcessWidget::error);
+	connect(_process, &QProcess::readyReadStandardError, this, &ProcessWidget::readStderr);
+	connect(_process, &QProcess::readyReadStandardOutput, this, &ProcessWidget::readStdout);
+	connect(_process, &QProcess::finished, this, &ProcessWidget::processFinished);
+	connect(_btnStop, &QPushButton::clicked, _process, &QProcess::terminate);
 
 	_btnOK->setEnabled(false);
 	_btnStop->setEnabled(true);
