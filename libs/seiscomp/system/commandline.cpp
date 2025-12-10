@@ -112,7 +112,8 @@ bool CommandLine::parse(const std::vector<std::string> &args) {
 	}
 
 	try {
-		parsed_options parsed = command_line_parser(args).options(*_options).allow_unregistered().run();
+		auto style = command_line_style::default_style & ~command_line_style::allow_guessing;
+		parsed_options parsed = command_line_parser(args).options(*_options).style(style).allow_unregistered().run();
 		store(parsed, _variableMap, false);
 
 		// NOTE: To enable a configuration file for commandline options uncomment the following lines
