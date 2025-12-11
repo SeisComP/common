@@ -771,11 +771,14 @@ class SC_SYSTEM_CORE_API FrameworkVersion {
 	public:
 		FrameworkVersion();
 
+	public:
 		//! Returns the version string
 		std::string toString() const;
 
 		//! Returns additional system build information
 		std::string systemInfo() const;
+
+		std::string release() const;
 
 		const Version &version() const;
 		const Version &api() const;
