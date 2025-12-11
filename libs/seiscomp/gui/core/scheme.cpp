@@ -443,14 +443,14 @@ void Scheme::fetch() {
 			[](unsigned char c) { return std::tolower(c); }
 		);
 
-		if ( mode == "box" ) {
-			records.recordBorders.drawMode = Gui::RecordWidget::Box;
+		if ( mode == "topline" ) {
+			records.recordBorders.drawMode = Gui::RecordWidget::TopLine;
 		}
 		else if ( mode == "bottomline" ) {
 			records.recordBorders.drawMode = Gui::RecordWidget::BottomLine;
 		}
 		else {
-			records.recordBorders.drawMode = Gui::RecordWidget::TopLine;
+			records.recordBorders.drawMode = Gui::RecordWidget::Box;
 		}
 	}
 	catch ( ... ) {}

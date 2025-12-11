@@ -5254,7 +5254,9 @@ void RecordWidget::drawTrace(QPainter &painter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::drawRecordBorders(QPainter &painter, const RecordSequence *seq) const {
-	if ( !_showRecordBorders ) return;
+	if ( !_showRecordBorders ) {
+		return;
+	}
 
 	painter.setRenderHint(QPainter::Antialiasing, false);
 
@@ -5262,20 +5264,25 @@ void RecordWidget::drawRecordBorders(QPainter &painter, const RecordSequence *se
 	Core::Time start = leftTime(),
 	           end = rightTime();
 
-	for ( RecordSequence::const_iterator it = seq->begin();
-	      it != seq->end(); ++it ) {
-		const Record *rec = it->get();
-
+	for ( const auto &rec : *seq ) {
 		// Skip records that are out of time window [start:end]
 		try {
-			if ( rec->endTime() <= start ) continue;
+			if ( rec->endTime() <= start ) {
+				continue;
+			}
 		}
-		catch ( ... ) { continue; }
+		catch ( ... ) {
+			continue;
+		}
 
-		if ( rec->startTime() >= end ) break;
+		if ( rec->startTime() >= end ) {
+			break;
+		}
 
 		int nsamp = rec->sampleCount();
-		if ( nsamp == 0 ) continue;
+		if ( nsamp == 0 ) {
+			continue;
+		}
 
 		int xMin = int(-(_tmin + static_cast<double>((_alignment - rec->startTime()))) *_pixelPerSecond);
 		int xMax = int(-(_tmin + static_cast<double>((_alignment - rec->endTime()))) *_pixelPerSecond);
