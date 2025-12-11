@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/scconfig">
+        <file>assets/splash.png</file>
+        <file>assets/splash@x2.png</file>
+    </qresource>
+</RCC>

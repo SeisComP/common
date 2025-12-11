@@ -60,9 +60,6 @@ using namespace std;
 using namespace Seiscomp::DataModel;
 
 
-#define BLUR_SPLASH_TEXT 0
-
-
 bool fromString(QString &qstring, const std::string &stdstring) {
 	qstring = stdstring.c_str();
 	return true;
@@ -74,9 +71,6 @@ std::string toString(const QString &qstring) {
 
 
 namespace {
-
-
-QString splashDefaultImage = ":/sc/assets/splash-default.png";
 
 
 // Don't catch signal on windows since that path hasn't tested.
@@ -130,90 +124,48 @@ class ShowPlugins : public QDialog {
 void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
 	QRect r(hotspot, hotspot);
 
-#if BLUR_SPLASH_TEXT
-	QRect tr = p.fontMetrics().boundingRect(s);
-	int radius = 2;
-	QImage blur(tr.width()+radius*2+2, tr.height()+radius*2+2, QImage::Format_ARGB32);
-	blur.fill(0);
-
-	QPoint blurpos = hotspot - QPoint(radius+1, radius+1);
-	QPainter pi(&blur);
-	pi.setFont(p.font());
-	QPen pen = p.pen();
-	QColor c = pen.color();
-	c.setAlpha(112);
-	pen.setColor(c);
-	pi.setPen(pen);
-	pi.drawText(pi.window().adjusted(radius+1,radius+1,-radius-1,-radius-1),
-	            align, s);
-	pi.end();
-	blurImage(blur, radius);
-#endif
-
-	if ( align & Qt::AlignLeft )
+	if ( align & Qt::AlignLeft ) {
 		r.setRight(p.window().right());
-	else if ( align & Qt::AlignRight ) {
+	}
+	else if ( align & Qt::AlignRight ) { {
 		r.setLeft(p.window().left());
-#if BLUR_SPLASH_TEXT
-		blurpos.setX(blurpos.x()-tr.width());
-#endif
+	}
 	}
 	else if ( align & Qt::AlignHCenter ) {
 		r.setLeft(hotspot.x()-p.window().width());
 		r.setRight(hotspot.x()+p.window().width());
-#if BLUR_SPLASH_TEXT
-		blurpos.setX(blurpos.x()-tr.width()/2);
-#endif
 	}
 
-	if ( align & Qt::AlignTop )
+	if ( align & Qt::AlignTop ) {
 		r.setBottom(p.window().bottom());
+	}
 	else if ( align & Qt::AlignBottom ) {
 		r.setTop(p.window().top());
-#if BLUR_SPLASH_TEXT
-		blurpos.setY(blurpos.y()-tr.height());
-#endif
 	}
 	else if ( align & Qt::AlignVCenter ) {
 		r.setTop(hotspot.y()-p.window().height());
 		r.setBottom(hotspot.y()+p.window().height());
-#if BLUR_SPLASH_TEXT
-		blurpos.setY(blurpos.y()-tr.height()/2);
-#endif
 	}
 
-#if BLUR_SPLASH_TEXT
-	p.drawImage(blurpos+QPoint(radius, radius),blur);
-#endif
 	p.drawText(r, align, s);
 }
 
 
 class SplashScreen : public QSplashScreen {
 	public:
-		SplashScreen(const QPixmap & pixmap = QPixmap(), Qt::WindowFlags f = Qt::WindowFlags())
-		: QSplashScreen(pixmap, f), updated(false) {}
-
-		void setMessage(const QString &str, QApplication *app) {
-			updated = false;
-			message = str;
-			update();
-
-			int maxCount = 5;
-			while ( !updated && maxCount-- ) {
-				app->processEvents();
-			}
-		}
+		SplashScreen(const QPixmap & pixmap = QPixmap())
+		: QSplashScreen(pixmap) {}
 
 		void drawContents(QPainter *painter) {
 			painter->setPen(SCScheme.colors.splash.message);
-			drawText(*painter, SCScheme.splash.message.pos,
-			         SCScheme.splash.message.align, message);
-			updated = true;
+			painter->drawText(
+				SCScheme.splash.message.pos.x(),
+				SCScheme.splash.message.pos.y() + painter->fontMetrics().descent() - painter->fontMetrics().height(),
+				190, painter->fontMetrics().height(),
+				SCScheme.splash.message.align,
+				message()
+			);
 		}
-
-		QString message;
-		bool updated;
 };
 
 
@@ -984,50 +936,72 @@ bool Application::validateParameters() {
 	// and after the possible early exit because of the "--help" flag.
 	if ( _flags & SHOW_SPLASH ) {
 		QPixmap pmSplash;
-		const Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 
-		try {
-			std::string splashFile = env->absolutePath(configGetString("scheme.splash.image"));
-			if ( Util::fileExists(splashFile) )
-				pmSplash = QPixmap(splashFile.c_str());
+		if ( splashImagePath().isEmpty() ) {
+			if ( _app->devicePixelRatio() >= 1.5 ) {
+				pmSplash = QPixmap(":/sc/assets/splash-default@x2.png");
+				pmSplash.setDevicePixelRatio(2);
+			}
+			else {
+				pmSplash = QPixmap(":/sc/assets/splash-default.png");
+			}
 		}
-		catch ( ... ) {}
-
-		if ( pmSplash.isNull() ) {
-			if ( env && Util::fileExists(env->shareDir() + "/splash.png") )
-				pmSplash = QPixmap((env->shareDir() + "/splash.png").c_str());
-			else
-				pmSplash = QPixmap(splashImagePath());
-
-			QPainter p(&pmSplash);
-
-			const char *appVersion = version();
-			if ( !appVersion )
-				appVersion = frameworkVersion();
-
-			p.setFont(SCScheme.fonts.splashVersion);
-			p.setPen(SCScheme.colors.splash.version);
-			drawText(p, SCScheme.splash.version.pos,
-			         SCScheme.splash.version.align, QString("Version %1").arg(appVersion));
+		else {
+			pmSplash = QPixmap(splashImagePath());
 		}
+
+		QRect bbox;
+		QPainter p(&pmSplash);
+
+		QFont f;
+		f.setFamilies({ "Noto Sans", "sans" });
+
+		f.setPointSize(14);
+		f.setBold(true);
+		p.setFont(f);
+		p.setPen(QColor(25, 25, 25));
+		p.drawText(30, 98 + f.pointSize(), Seiscomp::Core::CurrentVersion.version().toString().data());
+
+		f.setBold(false);
+		p.setFont(f);
+		p.drawText(30, 120 + f.pointSize(), Core::CurrentVersion.release().data());
+		p.drawText(30, 186 + f.pointSize(), name().data());
+
+		f.setPointSize(28);
+		f.setBold(true);
+		p.setFont(f);
+		p.setPen(QColor(255, 255, 255));
+		p.drawText(
+			0, 203, 695, p.window().height() - 203,
+			Qt::AlignRight | Qt::AlignTop,
+			QString(" / %1").arg(Core::CurrentVersion.version().majorTag()),
+			&bbox
+		);
+
+		f.setBold(false);
+		p.setFont(f);
+		p.setPen(QColor(128, 194, 209));
+		p.drawText(0, 203, 695 - bbox.width(), p.window().height() - 203, Qt::AlignRight | Qt::AlignTop, Core::CurrentVersion.release().data());
 
 		// Reset LC_ALL locale to "C" since it is overwritten during
 		// first usage of QPixmap
 		setlocale(LC_ALL, "C");
 
 		_splash = new SplashScreen(pmSplash);
-		_splash->setFont(SCScheme.fonts.splashMessage);
-		_splash->setContentsMargins(10,10,10,100);
+		f.setPointSize(10);
+		f.setBold(false);
+		_splash->setFont(f);
 
 		_splash->setAttribute(Qt::WA_DeleteOnClose);
 		connect(_splash, SIGNAL(destroyed(QObject*)),
 		        this, SLOT(objectDestroyed(QObject*)));
 
-		if ( _mainWidget )
+		if ( _mainWidget ) {
 			_splash->finish(_mainWidget);
+		}
 
 		_splash->show();
-		static_cast<SplashScreen*>(_splash)->setMessage(QString(), _app);
+		_splash->showMessage(QString());
 	}
 
 	return true;
@@ -1173,7 +1147,7 @@ bool Application::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString Application::splashImagePath() const {
-	return splashDefaultImage;
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1325,8 +1299,9 @@ void Application::done() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::showMessage(const char* msg) {
-	if ( _splash )
-		static_cast<SplashScreen*>(_splash)->setMessage(msg, _app);
+	if ( _splash ) {
+		_splash->showMessage(msg);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1335,8 +1310,9 @@ void Application::showMessage(const char* msg) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::showWarning(const char* msg) {
-	if ( _type != Tty )
+	if ( _type != Tty ) {
 		QMessageBox::warning(nullptr, "Warning", msg);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
