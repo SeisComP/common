@@ -126,6 +126,7 @@ void SchemaStructure::serialize(Archive& ar) {
 	ar & NAMED_OBJECT("link", link);
 	ar & NAMED_OBJECT_HINT("type", type, Archive::XML_MANDATORY);
 	ar & NAMED_OBJECT("title", title);
+	ar & NAMED_OBJECT("aliases", aliases);
 	ar & NAMED_OBJECT_HINT("description", description, Archive::XML_ELEMENT);
 	if ( ar.isReading() ) convertDoc(description);
 }
