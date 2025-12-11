@@ -85,6 +85,11 @@ std::string FrameworkVersion::systemInfo() const {
 }
 
 
+std::string FrameworkVersion::release() const {
+	return _release;
+}
+
+
 const Version &FrameworkVersion::version() const {
 	return _version;
 }
