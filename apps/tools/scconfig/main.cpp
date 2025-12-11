@@ -31,11 +31,13 @@
 #include "gui.h"
 
 #include <QApplication>
-#include <QMessageBox>
-#include <QToolBar>
-#include <QSharedMemory>
-#include <QSystemSemaphore>
 #include <QCryptographicHash>
+#include <QMessageBox>
+#include <QPainter>
+#include <QSharedMemory>
+#include <QSplashScreen>
+#include <QSystemSemaphore>
+#include <QToolBar>
 
 
 using namespace std;
@@ -133,6 +135,67 @@ class RunGuard {
 };
 
 
+class SplashScreen : public QSplashScreen {
+	public:
+		SplashScreen() {
+			QPixmap pixmap;
+			if ( devicePixelRatioF() >= 1.5 ) {
+				pixmap = QPixmap(":/scconfig/assets/splash@x2.png");
+				pixmap.setDevicePixelRatio(2);
+			}
+			else {
+				pixmap = QPixmap(":/scconfig/assets/splash.png");
+			}
+
+			QRect bbox;
+			QPainter painter(&pixmap);
+
+			painter.drawPixmap(QRect(30, 30, 64, 64), QPixmap(":/sc/icons/seiscomp-logo.svg"));
+
+			QFont f;
+			f.setFamilies({ "Noto Sans", "sans" });
+
+			f.setPointSize(14);
+			f.setBold(true);
+			painter.setFont(f);
+			painter.setPen(QColor(25, 25, 25));
+			painter.drawText(30, 98 + f.pointSize(), Core::CurrentVersion.version().toString().data());
+
+			f.setBold(false);
+			painter.setFont(f);
+			painter.drawText(30, 120 + f.pointSize(), Core::CurrentVersion.release().data());
+			painter.drawText(30, 186 + f.pointSize(), "scconfig");
+
+			f.setPointSize(28);
+			f.setBold(true);
+			painter.setFont(f);
+			painter.setPen(QColor(255, 255, 255));
+			painter.drawText(
+				0, 203, 695, painter.window().height() - 203,
+				Qt::AlignRight | Qt::AlignTop,
+				QString(" / %1").arg(Core::CurrentVersion.version().majorTag()),
+				&bbox
+			);
+
+			f.setBold(false);
+			painter.setFont(f);
+			painter.setPen(QColor(128, 194, 209));
+			painter.drawText(0, 203, 695 - bbox.width(), painter.window().height() - 203, Qt::AlignRight | Qt::AlignTop, Core::CurrentVersion.release().data());
+
+			f.setPointSize(10);
+			setFont(f);
+
+			setPixmap(pixmap);
+		}
+
+	protected:
+		void drawContents(QPainter *painter) override {
+			painter->setPen(QColor(123, 123, 123));
+			painter->drawText(30, 361 + painter->font().pointSize(), message());
+		}
+};
+
+
 int main(int argc, char **argv) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// This is especially important for displays with a display pixel ratio
@@ -154,9 +217,16 @@ int main(int argc, char **argv) {
 		                                                   "Do you want to continue?\n")
 		                                            .arg(filebase.c_str()),
 		                                            QMessageBox::Yes | QMessageBox::No,
-		                                            QMessageBox::No) != QMessageBox::Yes )
+		                                            QMessageBox::No) != QMessageBox::Yes ) {
 			return 0;
+		}
 	}
+
+	SplashScreen splash;
+	splash.show();
+	splash.showMessage(app.tr("Setup app"));
+
+	Configurator c(Seiscomp::Environment::CS_CONFIG_APP);
 
 	if ( filebase.empty() ) {
 		filebase = ".";
@@ -178,8 +248,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	splash.showMessage(app.tr("Loading definitions"));
 	System::SchemaDefinitions defs;
-	cerr << "Loading definitions from: " << filebase << module_desc << endl;
 	if ( !defs.load((filebase + module_desc).c_str()) ) {
 		cerr << "read error: not a directory" << endl;
 		return 1;
@@ -190,20 +260,20 @@ int main(int argc, char **argv) {
 		return 2;
 	}
 
+	splash.showMessage(app.tr("Create model"));
 	System::Model model;
 	model.create(&defs);
 
-	cerr << "Loading stations from: " << model.stationConfigDir(true) << endl;
-
-	Configurator c(Seiscomp::Environment::CS_CONFIG_APP);
-	c.resize(800,600);
+	splash.showMessage(app.tr("Setup interface"));
 	if ( !c.setModel(&model) ) {
-		return 1;
+		return 3;
 	}
 
+	splash.showMessage(app.tr("Done"));
+	splash.close();
+	app.processEvents();
+	c.resize(800, 600);
 	c.show();
 
-	app.exec();
-
-	return 0;
+	return app.exec();
 }

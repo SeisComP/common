@@ -36,6 +36,7 @@ IF (SC_GLOBAL_GUI)
 
 	SET(
 		SCCONFIG_RESOURCES
+			assets.qrc
 			icons.qrc
 	)
 

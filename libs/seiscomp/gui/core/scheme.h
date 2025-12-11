@@ -50,8 +50,8 @@ class SC_GUI_API Scheme {
 			Colors();
 
 			struct Splash {
-				QColor version{0, 104, 158,255};
-				QColor message{128, 128, 128, 255};
+				QColor version{0, 104, 158};
+				QColor message{123, 123, 123};
 			};
 
 			struct Picks {
@@ -252,7 +252,7 @@ class SC_GUI_API Scheme {
 			};
 
 			Pos version{{390, 145}, Qt::AlignRight | Qt::AlignTop};
-			Pos message{{200, 260}, Qt::AlignHCenter | Qt::AlignBottom};
+			Pos message{{30, 371}, Qt::AlignLeft | Qt::AlignBottom};
 		};
 
 		struct Map {

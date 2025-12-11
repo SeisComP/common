@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/sc">
         <file>assets/splash-default.png</file>
+        <file>assets/splash-default@x2.png</file>
         <file>assets/loader.mng</file>
         <file>assets/mt.mng</file>
     </qresource>
