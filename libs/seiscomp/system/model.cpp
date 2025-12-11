@@ -929,8 +929,64 @@ Structure *Structure::instantiate(const char *n) const {
 
 	Structure *struc = loadStructure(definition, path, n);
 
+	Module *module{nullptr};
+	string_view aliasOf = n;
+
+	if ( !definition->aliases.empty() ) {
+		if ( definition->aliases.compare(0, 7, "config:") == 0 ) {
+			auto paramName = definition->aliases.substr(7);
+
+			auto p = parent;
+			while ( p ) {
+				auto c = Container::Cast(p);
+				if ( c ) {
+					p = c->parent;
+					continue;
+				}
+
+				auto mb = ModuleBinding::Cast(p);
+				if ( mb ) {
+					p = mb->parent;
+					continue;
+				}
+
+				module = Module::Cast(p);
+				if ( module ) {
+					break;
+				}
+			}
+
+			if ( module ) {
+				auto p = module->findParameter(paramName);
+				if ( p ) {
+					vector<string> values;
+					if ( Config::Config::Eval(p->symbol.content, values) ) {
+						for ( const auto &v : values ) {
+							string_view sv = v;
+							auto pos = sv.find(':');
+							if ( pos != string::npos ) {
+								auto aliasName = v.substr(0, pos);
+								auto name = v.substr(pos + 1);
+								pos = name.find(':');
+								if ( pos != string::npos ) {
+									name = name.substr(0, pos);
+								}
+
+								if ( aliasName == n ) {
+									aliasOf = name;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	for ( auto &e : extensions ) {
-		if ( e->matchName.empty() || boost::regex_match(n, boost::regex(e->matchName)) ) {
+		if ( e->matchName.empty()
+		  || boost::regex_match(aliasOf.begin(), aliasOf.end(), boost::regex(e->matchName)) ) {
 			populate(struc, e.get(), struc->path);
 			injectExtensions(struc, e.get());
 		}

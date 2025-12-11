@@ -109,6 +109,8 @@ DEFINE_SMARTPOINTER(Group);
 DEFINE_SMARTPOINTER(Structure);
 DEFINE_SMARTPOINTER(Parameter);
 class SC_SYSTEM_CORE_API Container : public Core::BaseObject {
+	DECLARE_CASTS(Container)
+
 	// ------------------------------------------------------------------
 	//  X'truction
 	// ------------------------------------------------------------------
@@ -422,6 +424,7 @@ class SC_SYSTEM_CORE_API BindingCategory : public Core::BaseObject {
 
 DEFINE_SMARTPOINTER(ModuleBinding);
 class SC_SYSTEM_CORE_API ModuleBinding : public Binding {
+	DECLARE_CASTS(ModuleBinding)
 	DECLARE_RTTI;
 
 	// ------------------------------------------------------------------
@@ -486,6 +489,7 @@ struct SC_SYSTEM_CORE_API StationID {
 
 
 class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
+	DECLARE_CASTS(Module)
 	DECLARE_RTTI;
 
 	// ------------------------------------------------------------------
