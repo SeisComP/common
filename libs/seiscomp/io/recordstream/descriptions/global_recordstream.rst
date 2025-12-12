@@ -23,29 +23,42 @@ Application
 The RecordStream parameters considered by an application are provided as a *URL*
 in 2 alternative ways:
 
-* Specification of the *URL* on the command line. Use the option ``-I URL``
 * Configuration of the *URL* using the global parameter :confval:`recordstream`.
+* Specification of the *URL* on the command line. Use the option ``-I URL``
 
-The URL scheme defines the specific RecordStream implementation. If the scheme
+The *URL* scheme defines the specific RecordStream implementation. If the scheme
 is omitted, the :ref:`rs-file` implementation is used as default.
 
 .. note::
 
-   Older SeisComP versions used to split the URL into the parameters
+   SeisComP in version < 5.0.0 used to split the URL into the parameters
    :confval:`recordstream.service` and :confval:`recordstream.source`.
-   These parameters are not being used anymore.
+   These parameters are not supported anymore.
 
+Optional parameters may be given depending on the
+:ref:`RecordStream implementation <rs-implementations>`. The parameters are
+appended to the *URL* of the implementation by a _?_ except for the
+:ref:`combined RecordStream <rs-combined>`.
+
+
+.. _rs-implementations:
 
 Implementations
 ===============
 
-.. _rs-slink:
 
+.. _rs-slink:
 
 SeedLink
 --------
 
 This RecordStream fetches data from a SeedLink 3.x server.
+It is referred to as *slink*.
+
+.. warning::
+
+   Do not use *slink* for modules which must not read from real-time sources
+   such as :ref:`fdsnws`.
 
 
 Definition
@@ -56,17 +69,19 @@ URL: ``slink://[host][:port][?parameter]``
 The default host is set to `localhost`, the default port to `18000`. Optional
 URL encoded parameters are:
 
-- `timeout` - connection timeout in seconds, default: 300
-- `retries` - number of connection retry attempts, default: -1
-- `no-batch` - disables BATCH mode to request data, does not take a value
+* `timeout` - connection timeout in seconds, default: 300
+* `retries` - number of connection retry attempts, default: -1
+* `no-batch` - disables BATCH mode to request data, does not take a value
 
 
 Examples
 ^^^^^^^^
 
-- ``slink://``
-- ``slink://geofon.gfz.de?timeout=60&retries=5``
-- ``slink://localhost:18000``
+.. code-block:: properties
+
+   slink://
+   slink://geofon.gfz.de?timeout=60&retries=5
+   slink://localhost:18000
 
 
 .. _rs-slink4:
@@ -124,8 +139,8 @@ URL: ``fdsnws[s]://host[:port][path]``
 The host is a mandatory parameter. The default port depends on the URL scheme
 used:
 
-- `fdsnws`: `80` (HTTP)
-- `fdsnwss`: `443` (HTTPS)
+* `fdsnws`: `80` (HTTP)
+* `fdsnwss`: `443` (HTTPS)
 
 The default path is set to `/fdsnws/dataselect/1/query`. If a path is specified,
 it needs to be complete up until the `query` resource.
@@ -156,8 +171,9 @@ Definition
 
 URL: ``file://path``
 
-The path may be a absolute or relative path to a file. Environment variables
-are **not** resolved. If path is set to ``-`` the data is read from `stdin`.
+The path may be an absolute or relative path to a file or *stdin* (``-``).
+|scname| environment variables such as *@DATADIR@* are resolved. If path is set
+to ``-``, the data is read from *stdin*.
 
 Supported files types are:
 
@@ -170,33 +186,61 @@ By default the record type is set to `mseed`. SAC data can be read using the *#s
 descriptor. If a file name extension is available, then the record type is set as
 follows:
 
-========= ===========
-Extension Record Type
-========= ===========
-`*.xml`   `xml`
-`*.bin`   `binary`
-`*.mseed` `mseed`
-========= ===========
+.. csv-table::
+   :header: "Extension", "Record Type"
+   :delim: ;
+   :widths: 10 10
+
+   `*.xml`;   XML
+   `*.bin`;   binary
+   `*.mseed`; :term:`miniSeed`
 
 Optional descriptor:
 
-- `sac` - input data are in SAC format.
+* `sac` - input data are in SAC format.
 
 
 Examples
 ^^^^^^^^
 
-- ``file://-``
-- ``file:///tmp/input.mseed``
-- ``file:///tmp/input.sac#sac``
+* Read data from :term:`miniSEED` files
 
-.. note ::
+  .. code-block:: properties
 
-   When defining the File RecordStream on the command line using the option `-I`,
-   the file name can also be passed without the URL scheme, e.g. ::
+     file:///tmp/input.mseed
+     file://@DATADIR@/input.mseed
+
+* Read data from *stdin*
+
+  .. code-block:: properties
+
+     file://-
+
+  where ``-`` refers to input of data from *stdin*
+
+* Read data from a file in SAC format
+
+  .. code-block:: properties
+
+     file:///tmp/input.sac#sac
+
+.. note::
+
+   When defining the File RecordStream on the command line using the
+   :option:`-I`, the file name can also be passed without the URL scheme, e.g.
+
+   .. code-block:: sh
 
       -I -
       -I /tmp/input.mseed
+
+   Reading from *stdin* allows passing the data to a processing modules without
+   intermediate storage to file. Example: A combination of :ref:`scart` with
+   :ref:`scautopick`
+
+   .. code-block:: sh
+
+      scart -dsE -l list.txt | scautopick --playback --ep -d localhost -I -
 
 
 .. _rs-sdsarchive:
@@ -204,8 +248,8 @@ Examples
 SDSArchive
 ----------
 
-This RecordStream reads data from one or more |scname| (:term:`SDS`) archives using the
-:ref:`rs-file` RecordStream.
+This RecordStream reads data from one or more |scname| (:term:`SDS`) archives
+using the :ref:`rs-file` RecordStream.
 
 
 Definition
@@ -213,10 +257,11 @@ Definition
 
 URL: ``sdsarchive://[path[,path2[, ...]]]``
 
-The default path is set to `$SEISCOMP_ROOT/var/lib/archive`.
+The default path is set to :file:`$SEISCOMP_ROOT/var/lib/archive`.
 
-In contrast to a formal URL definition, the URL path is interpreted as a directory path list
-separated by commas.
+In contrast to a formal URL definition, the URL path is interpreted as a
+directory path list separated by commas. |scname| environment variables such as
+*@ROOTDIR@* are resolved.
 
 .. note::
 
@@ -230,27 +275,39 @@ data existence. If a requested file is missing in the current SDS archive, it is
 searched for in the archive next in the list. On success it will deliver all
 the rest of files for the current channel from this SDS archive. On failure the
 next SDS archive is searched.
-
 This process is repeated for each requested channel individually. It always
 starts to search data from the first given SDS to the last one, for each data
-channel.
+channel. An alternative to searching the archives sequentially is to organize
+the different archives by unique time windows and then access them by the
+:ref:`combined RecordStream<rs-combined>` using the `splitTime` parameter.
 
 
 Examples
 ^^^^^^^^
 
-- ``sdsarchive://``
-- ``sdsarchive://@ROOTDIR@/var/lib/archive``
-- ``sdsarchive:///home/sysop/seiscomp/var/lib/archive``
-- ``sdsarchive:///SDSA,/SDSB,/SDSC``
+.. code-block:: properties
+
+   sdsarchive://
+   sdsarchive:///home/sysop/seiscomp/var/lib/archive
+   sdsarchive://@ROOTDIR@/var/lib/archive
+   "sdsarchive:///SDSA,/SDSB,/SDSC"
+   sdsarchive:///SDSA\,/SDSB\,/SDSC
+
+.. note::
+
+   When different archives are configured the entire value must be enclosed by
+   quotes or the comma must be protected by backslash as ``\,``. Otherwise, the
+   the value is interpreted as a list of RecordStreams and not as a single one
+   with multiple archives.
+
 
 .. _rs-caps:
-
 
 CAPS
 ----
 
 This RecordStream reads data from a CAPS server :cite:p:`caps`.
+
 
 Definition
 ^^^^^^^^^^
@@ -260,34 +317,42 @@ URL: ``caps[s]://[user:pass@][host[:port]][?parameters]``
 The default host is set to `localhost`. The default port depends on the URL scheme
 used:
 
-- `caps`: `18002`
-- `capss`: `18022` (SSL)
+* `caps`: `18002`
+* `capss`: `18022` (SSL)
 
 Optional URL encoded parameters are:
 
-- `arch` - No parameter. Retrieve only archived data. In this mode the connection
+* `arch` - No parameter. Retrieve only archived data. In this mode the connection
    finished when all available data has been sent. It won't wait for additional
    real-time data.
-- `ooo` - Allow out-of-order data
-- `timeout` - The socket timeout in seconds
-- `user` - **Deprecated:** The user name of an authenticated request. Please use
+
+   .. warning::
+
+      Use `arch` for modules which must not read from real-time sources such as
+      :ref:`fdsnws`.
+
+* `ooo` - Allow out-of-order data
+* `timeout` - The socket timeout in seconds
+* `user` - **Deprecated:** The user name of an authenticated request. Please use
    the standard URL userinfo in front of the host instead.
-- `pwd` - **Deprecated:** The password of an authenticated request. Please use
+* `pwd` - **Deprecated:** The password of an authenticated request. Please use
    the standard URL userinfo in front of the host instead.
-- `request-file` - Use the given file to feed the request
+* `request-file` - Use the given file to feed the request
 
 
-Example
-^^^^^^^
+Examples
+^^^^^^^^
 
-- ``caps://``
-- ``caps://localhost:18002``
-- ``capss://localhost:18022``
-- ``caps://localhost:18002?arch``
-- ``capss://user:mysecret@localhost``
+.. code-block:: properties
+
+   caps://
+   caps://localhost:18002
+   capss://localhost:18022
+   caps://localhost:18002?arch
+   capss://user:mysecret@localhost
+
 
 .. _rs-memory:
-
 
 Memory
 ------
@@ -296,16 +361,23 @@ This RecordStream reads data from memory and is only useful for developing
 applications. For instance a record sequence stored in an internal buffer could
 be passed to an instance of this RecordStream for reading.
 
-.. _rs-combined:
 
+.. _rs-combined:
 
 Combined
 --------
 
-This RecordStream combines one archive and one real-time RecordStream, e.g.
-:ref:`rs-fdsnws` and :ref:`rs-slink`. First the archive stream is read up to
-the size of the real-time buffer. Then the acquisition is switched to the
-real-time stream. The syntax for the source is similar to an URL:
+This RecordStream combines one real-time RecordStream and one archive, e.g.
+ref:`rs-slink` and :ref:`rs-fdsnws`. First the archive stream is read up to
+the size of the real-time buffer. Then, the acquisition is switched to the
+real-time stream. The syntax for the source is similar to a URL.
+Use ``??`` for parameters of the combined RecordStream instead of `?`. In this
+way parameters my be added, e.g. for the archive RecordStream by `?` followed
+by ``??`` for combined.
+
+.. note::
+
+   Instead of an real-time RecordStream any other RecordStream can be used.
 
 
 Definition
@@ -316,61 +388,113 @@ URL-like: ``combined://[real-time-stream];[archive-stream][??parameters]``
 By default the real-time stream is set to :ref:`rs-slink` and the
 archive-stream is set to :ref:`rs-fdsnws`. Any other streams may be configured.
 
+.. warning::
+
+   Do not use *slink* for modules which must not read from real-time sources
+   such as :ref:`fdsnws`.
+
 The definition of the proxy streams has slightly changed: Scheme and source are
 only separated by a slash, e.g. `slink://localhost` needs to be defined as
 `slink/localhost`.
 
 The URL parameters of the combined stream are separated by 2 question marks
-(`??`) in order to distinguish them from the parameters used in the proxy
-streams:
+(``??``) in order to distinguish them from the parameters used in the proxy
+streams. Optional URL encoded parameters are:
 
-- `slinkMax|rtMax|1stMax` - Buffer size in seconds of the first stream
-  (typically the real-time stream), default: 3600
+* `slinkMax`, `rtMax` or `1stMax` (all have identical meaning) - Buffer size in
+  seconds of the first stream (typically a real-time stream). Default value:
+  3600.
 
-  Time spans can be configured with an additional and optional suffix:
+  Time spans can be configured with an additional and optional suffix (see
+  examples below):
 
-  ======  =============
-  Suffix  Multiplicator
-  ======  =============
-  s       1
-  m       60
-  h       3600
-  d       86400
-  w       86400*7
-  ======  =============
+  .. csv-table::
+     :header: "Suffix", "Multiplier"
+     :delim: ;
+     :widths: 10 10
 
-- `splitTime` - The absolute time of the separation of both sources. The argument
+     s;       1
+     m;       60
+     h;       3600
+     d;       86400
+     w;       86400*7
+
+* `splitTime` - The absolute time of the separation of both sources. The argument
   is an ISO time string, e.g. 2018-05-10T12:00:00Z or a year, e.g. 2018, which is
   the same as 2018-01-01T00:00:00.000Z.
   `splitTime` can be used if the waveform archives are spread over several
-  directories or hard disks. See also the :ref:`examples<rs_splitTime>`.
+  directories or hard disks. See also the :ref:`examples<rs_combined-examples>`.
 
-The combined record stream may be nested allowing the configuration of a
-(theoretically) infinite number of archive streams. The URL syntax for a nested
-configuration uses parenthesis:
+The combined RecordStream may be nested allowing the configuration of a
+(theoretically) infinite number of archive streams. Read the
+:ref:`examples<rs_combined-examples>` below. The URL syntax for a nested
+configuration uses parenthesis. ``??parameters`` defines a parameter for the
+combined RecordStream:
 
-``combined://real-time-stream;combined/(archive-stream1;archive-stream2??parameters)??parameters``
+.. code-block:: properties
 
-.. _rs_splitTime:
+   combined://real-time-stream;combined/(archive-stream1;archive-stream2??parameters)??parameters
 
+
+.. _rs_combined-examples:
 
 Examples
 ^^^^^^^^
 
-.. csv-table::
-   :header: "URL", "Description"
+* **Default:** Seedlink on localhost:18000 combined with FDSNWS on standard port
+  80 (all examples result in identical requests)
 
-   "``combined://localhost:18000;sdsarchive/@ROOTDIR@/var/lib/archive``", "Seedlink on localhost:18000 combined with SDS archive"
-   "``combined://slink/localhost:18000;fdsnws/localhost:8080``",  "Seedlink on localhost:18000 combined with FDSNWS on default port 8080"
-   "``combined://slink/localhost:18000;fdsnws/localhost``",  "Seedlink on localhost:18000 combined with FDSNWS on standard port 80"
-   "``combined://slink/localhost:;``", "Same as above"
-   "``combined://:18042;sdsarchive/@ROOTDIR@/var/lib/archive??rtMax=1800``", "Seedlink on localhost:18042 combined with SDS archive, real-time (SeedLink) buffer size set to 30min"
-   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;fdsnws/remote-host:80??1stMax=30d)??1stMax=1h``", Seedlink combined with a combined record stream using one SDS and one FDSNWS source
-   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017)??splitTime=2018)``", "Seedlink combined with a combined RecordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two contain the data from 2016 and 2017."
-   "``combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017-06-01T00:00:00Z)??splitTime=2018-06-01T00:00:00Z)``", "Seedlink combined with a combined RecordStream providing access to 3 different SDS archives separated by time. The first SDS archive contains the most recent archived data. The other two are separated in mid of 2016."
+  .. code-block:: properties
+
+     combined://slink/localhost:18000;fdsnws/localhost:80
+     combined://slink/localhost:18000;fdsnws/localhost
+     combined://slink/localhost;
+     combined://;
+
+* Seedlink on localhost:18000 combined with SDS archive
+
+  .. code-block:: properties
+
+     combined://localhost:18000;sdsarchive/@ROOTDIR@/var/lib/archive
+
+* Seedlink on localhost:18000 combined with FDSNWS on default port 8080
+
+  .. code-block:: properties
+
+     combined://slink/localhost:18000;fdsnws/localhost:8080
+
+* Seedlink on localhost:18042 combined with SDS archive, real-time (SeedLink)
+  buffer size set to 1800 seconds instead of the default
+
+  .. code-block:: properties
+
+     combined://:18042;sdsarchive/@ROOTDIR@/var/lib/archive??rtMax=1800
+
+* Seedlink combined with a combined record stream using one SDS and one FDSNWS
+  source
+
+  .. code-block:: properties
+
+     combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;fdsnws/remote-host:80??1stMax=30d)??1stMax=1h
+
+* Seedlink combined with a combined RecordStream providing access to 3 different
+  SDS archives separated by time. The first SDS archive contains the most recent
+  archived data. The other two contain the data from 2016 and 2017.
+
+  .. code-block:: properties
+
+     combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017)??splitTime=2018)
+
+* Seedlink combined with a combined RecordStream providing access to 3 different
+  SDS archives separated by time. The first SDS archive contains the most recent
+  archived data. The other two are separated in mid of 2016.
+
+  .. code-block:: properties
+
+     combined://slink/localhost:18000;combined/(sdsarchive/@ROOTDIR@/var/lib/archive;combined/(sdsarchive/@ROOTDIR@/var/lib/archive2017;sdsarchive/@ROOTDIR@/var/lib/archive2016??splitTime=2017-06-01T00:00:00Z)??splitTime=2018-06-01T00:00:00Z)
+
 
 .. _rs-balanced:
-
 
 Balanced
 --------
@@ -405,14 +529,20 @@ are only separated by a slash, e.g. `slink://localhost` needs to be defined as
 Examples
 ^^^^^^^^
 
-.. csv-table::
-   :header: "URL", "Description"
+* Distribute requests to 2 :ref:`rs-slink` RecordStreams
 
-   "``balanced://slink/server1:18000;slink/server2:18000``", "Distribute requests to 2 :ref:`rs-slink` RecordStreams"
-   "``balanced://combined/(server1:18000;server1:18001);combined/(server2:18000;server2:18001)``", "Distribute requests to 2 :ref:`rs-combined` RecordStreams"
+  .. code-block:: properties
+
+     balanced://slink/server1:18000;slink/server2:18000
+
+* Distribute requests to two :ref:`rs-combined` RecordStreams
+
+  .. code-block:: properties
+
+     balanced://combined/(server1:18000;server1:18001);combined/(server2:18000;server2:18001)
+
 
 .. _rs-routing:
-
 
 Routing
 --------
@@ -420,6 +550,7 @@ Routing
 This RecordStream distributes requests to multiple proxy streams according to
 user supplied routing rules, which allow to route specific network, station,
 location or channel codes to fixed proxy streams.
+
 
 Definition
 ^^^^^^^^^^
@@ -431,26 +562,52 @@ are only separated by a slash, e.g. `slink://localhost` needs to be defined as
 `slink/localhost`.
 
 The URL parameters of the routing stream are separated by 2 question marks
-(`??`) in order to distinguish them from the parameters used in the proxy
+(``??``) in order to distinguish them from the parameters used in the proxy
 streams.
 
 `pattern` defines the rule used to route the request to the proxy stream and it is
 in `NET.STA.LOC.CHA` format. The special characters `?` `*` `|` `(` `)` are allowed.
 
+
 Examples
 ^^^^^^^^
 
-.. csv-table::
-   :header: "URL", "Description"
+* Requests for network `NET1` and `NET2` go to server1, all the rest to server2
 
-   "``routing://slink/server1:18000??match=(NET1|NET2).*.*.*;slink/server2:18000??match=*.*.*.*``", "Requests for network `NET1` and `NET2` go to server1, all the rest to server2"
-   "``routing://slink/server1:18000??match=TMP?.*.*.*;slink/server2:18000??match=NET.*.*.*``", "Requests for network `TMPX` go to server1, for network `NET` go to server 2, all the rest are not fulfilled"
-   "``routing://slink/server1:18000??match=*.*.*.(HH|EH)?;slink/server2:18000??match=*.*.*.*``", "Requests for channels `HH` and `EH` go to server1, all the rest to server2"   
-   "``routing://combined/(server1:18000;server1:18001??rtMax=1800)??match=NET1.*.*.*;combined/(server2:18000;server2:18001??rtMax=1800)??match=NET2.*.*.*``", "Split requests to 2 :ref:`rs-combined` RecordStreams according to the network code `STA1` or `STA2`. Other network codes are not fullfilled"
-   "``routing://combined/(slink/special-server:18000;sdsarchive/@ROOTDIR@/var/lib/special-archive)??match=SP.*.*.*;combined/(slink/default-server:18000;sdsarchive/@ROOTDIR@/var/lib/default-archive)??match=*.*.*.*``", "Requests for special network `SP` are fullfilled by seedlink `special-server` and sdsarchive `@ROOTDIR@/var/lib/special-archive`, all the rest are fullfilled by seedlink `default-server` and archive `@ROOTDIR@/var/lib/default-archive`"
-   
+  .. code-block:: properties
+
+     routing://slink/server1:18000??match=(NET1|NET2).*.*.*;slink/server2:18000??match=*.*.*.*
+
+* Requests for network `TMPX` go to server1, for network `NET` go to server 2,
+  all others are not fulfilled
+
+  .. code-block:: properties
+
+     routing://slink/server1:18000??match=TMP?.*.*.*;slink/server2:18000??match=NET.*.*.*
+
+* Requests for channels `HH` and `EH` go to server1, all the rest to server2
+
+  .. code-block:: properties
+
+     routing://slink/server1:18000??match=*.*.*.(HH|EH)?;slink/server2:18000??match=*.*.*.*
+
+* Split requests to 2 :ref:`rs-combined` RecordStreams according to the network
+  code `STA1` or `STA2`. Other network codes are not fulfilled
+
+  .. code-block:: properties
+
+     routing://combined/(server1:18000;server1:18001??rtMax=1800)??match=NET1.*.*.*;combined/(server2:18000;server2:18001??rtMax=1800)??match=NET2.*.*.
+
+* Requests for special network `SP` are fulfilled by seedlink `special-server`
+  and sdsarchive `@ROOTDIR@/var/lib/special-archive`, all the rest are fulfilled
+  by seedlink `default-server` and archive `@ROOTDIR@/var/lib/default-archive`
+
+  .. code-block:: properties
+
+     routing://combined/(slink/special-server:18000;sdsarchive/@ROOTDIR@/var/lib/special-archive)??match=SP.*.*.*;combined/(slink/default-server:18000;sdsarchive/@ROOTDIR@/var/lib/default-archive)??match=*.*.*.*
+
+
 .. _rs-dec:
-
 
 Decimation
 ----------
@@ -479,12 +636,17 @@ Optional decimation parameters are:
 Examples
 ^^^^^^^^
 
-- ``dec://slink/localhost:18000``
-- ``dec://file?rate=2/-``
-- ``dec://combined/;``
+.. code-block:: properties
+
+   dec://slink/localhost:18000
+   dec://file?rate=2/-
+   dec://combined/;
+
+The last example considers defaults for the
+:ref:`combined RecordStream<rs-combined>`.
+
 
 .. _rs-resample:
-
 
 Resample
 --------
@@ -505,17 +667,22 @@ stream scheme.
 
 Optional resample parameters are:
 
-- `rate` - target sampling rate in Hz, default: 1
-- `fp` - default: 0.7
-- `fs` - default: 0.9
-- `cs` - coefficient scale, default: 10
-- `lw` - lanczos kernel width, default: 3
-- `debug` - enables debug output, default: false
+* `rate` - target sampling rate in Hz, default: 1
+* `fp` - default: 0.7
+* `fs` - default: 0.9
+* `cs` - coefficient scale, default: 10
+* `lw` - lanczos kernel width, default: 3
+* `debug` - enables debug output, default: false
 
 
 Examples
 ^^^^^^^^
 
-- ``resample://slink/localhost:18000``
-- ``resample://file?rate=2/-``
-- ``resample://combined/;``
+.. code-block:: properties
+
+   resample://slink/localhost:18000
+   resample://file?rate=2/-
+   resample://combined/;
+
+The last example considers defaults for the
+:ref:`combined RecordStream<rs-combined>`.
