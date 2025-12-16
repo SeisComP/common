@@ -159,12 +159,12 @@ class SplashScreen : public QSplashScreen {
 			f.setBold(true);
 			painter.setFont(f);
 			painter.setPen(QColor(25, 25, 25));
-			painter.drawText(30, 98 + f.pointSize(), Core::CurrentVersion.version().toString().data());
+			painter.drawText(35, 103 + f.pointSize(), Core::CurrentVersion.version().toString().data());
 
 			f.setBold(false);
 			painter.setFont(f);
-			painter.drawText(30, 120 + f.pointSize(), Core::CurrentVersion.release().data());
-			painter.drawText(30, 186 + f.pointSize(), "scconfig");
+			painter.drawText(35, 125 + f.pointSize(), Core::CurrentVersion.release().data());
+			painter.drawText(35, 191 + f.pointSize(), "scconfig");
 
 			f.setPointSize(28);
 			f.setBold(true);
@@ -191,7 +191,7 @@ class SplashScreen : public QSplashScreen {
 	protected:
 		void drawContents(QPainter *painter) override {
 			painter->setPen(QColor(123, 123, 123));
-			painter->drawText(30, 361 + painter->font().pointSize(), message());
+			painter->drawText(45, 356 + painter->font().pointSize(), message());
 		}
 };
 
