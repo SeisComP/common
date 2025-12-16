@@ -252,7 +252,7 @@ class SC_GUI_API Scheme {
 			};
 
 			Pos version{{390, 145}, Qt::AlignRight | Qt::AlignTop};
-			Pos message{{30, 371}, Qt::AlignLeft | Qt::AlignBottom};
+			Pos message{{45, 366}, Qt::AlignLeft | Qt::AlignBottom};
 		};
 
 		struct Map {

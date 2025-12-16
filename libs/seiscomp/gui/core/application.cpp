@@ -161,7 +161,7 @@ class SplashScreen : public QSplashScreen {
 			painter->drawText(
 				SCScheme.splash.message.pos.x(),
 				SCScheme.splash.message.pos.y() + painter->fontMetrics().descent() - painter->fontMetrics().height(),
-				190, painter->fontMetrics().height(),
+				180, painter->fontMetrics().height(),
 				SCScheme.splash.message.align,
 				message()
 			);
@@ -960,12 +960,12 @@ bool Application::validateParameters() {
 		f.setBold(true);
 		p.setFont(f);
 		p.setPen(QColor(25, 25, 25));
-		p.drawText(30, 98 + f.pointSize(), Seiscomp::Core::CurrentVersion.version().toString().data());
+		p.drawText(35, 103 + f.pointSize(), Seiscomp::Core::CurrentVersion.version().toString().data());
 
 		f.setBold(false);
 		p.setFont(f);
-		p.drawText(30, 120 + f.pointSize(), Core::CurrentVersion.release().data());
-		p.drawText(30, 186 + f.pointSize(), name().data());
+		p.drawText(35, 125 + f.pointSize(), Core::CurrentVersion.release().data());
+		p.drawText(35, 191 + f.pointSize(), name().data());
 
 		f.setPointSize(28);
 		f.setBold(true);
