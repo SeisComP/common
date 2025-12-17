@@ -143,13 +143,16 @@ void SpinningLabel::paintEvent(QPaintEvent *event) {
 		if ( pmPtr ) {
 			auto &pm = *pmPtr;
 #endif
+			QSizeF pmLayoutSize = pm.size() / pm.devicePixelRatioF();
+			auto ofs = (size().toSizeF() - pmLayoutSize) * 0.5;
+
 			QPainter p(this);
-			QTransform transform;
-			QSize size = pm.size();
 			p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-			transform.translate(0.5 * size.width(), 0.5 * size.height());
+			QTransform transform;
+			transform.translate(0.5 * pmLayoutSize.width() + ofs.width(),
+			                    0.5 * pmLayoutSize.height() + ofs.height());
 			transform.rotate(_angle, Qt::ZAxis);
-			transform.translate(-0.5 * size.width(), -0.5 * size.height());
+			transform.translate(-0.5 * pmLayoutSize.width(), -0.5 * pmLayoutSize.height());
 			p.setTransform(transform);
 			p.drawPixmap(0, 0, pm);
 			return;
