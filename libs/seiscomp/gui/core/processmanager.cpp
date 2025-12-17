@@ -382,15 +382,18 @@ class ProcessManager::Model : public QAbstractTableModel {
 						case ColState:
 							// progress activity
 							if ( item->state() == Item::Running && !item->stopped ) {
-								auto size = _statePixmaps[Item::Running].size();
-								QPixmap rotatedPixmap(size);
+								const auto &pm = _statePixmaps[Item::Running];
+								auto pmSize = pm.size();
+								auto pmLayoutSize = pmSize / pm.devicePixelRatioF();
+								QPixmap rotatedPixmap(pmSize);
+								rotatedPixmap.setDevicePixelRatio(pm.devicePixelRatioF());
 								rotatedPixmap.fill(Qt::transparent);
 								QPainter p(&rotatedPixmap);
 								p.setRenderHint(QPainter::SmoothPixmapTransform);
-								p.translate(0.5 * size.width(), 0.5 * size.height());
+								p.translate(0.5 * pmLayoutSize.width(), 0.5 * pmLayoutSize.height());
 								p.rotate(_progressAngle);
-								p.translate(-0.5 * size.width(), -0.5 * size.height());
-								p.drawPixmap(0, 0, _statePixmaps[Item::Running]);
+								p.translate(-0.5 * pmLayoutSize.width(), -0.5 * pmLayoutSize.height());
+								p.drawPixmap(0, 0, pm);
 								p.end();
 								return rotatedPixmap;
 							}
