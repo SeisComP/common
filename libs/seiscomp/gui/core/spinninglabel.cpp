@@ -144,7 +144,7 @@ void SpinningLabel::paintEvent(QPaintEvent *event) {
 			auto &pm = *pmPtr;
 #endif
 			QSizeF pmLayoutSize = pm.size() / pm.devicePixelRatioF();
-			auto ofs = (size().toSizeF() - pmLayoutSize) * 0.5;
+			auto ofs = (size() - pmLayoutSize) * 0.5;
 
 			QPainter p(this);
 			p.setRenderHint(QPainter::SmoothPixmapTransform, true);
