@@ -33,7 +33,7 @@
 				<parameter name="minSNR" type="double" default="0"/>
 				<parameter name="maxDist" type="string" unit="deg" default="8"/>
 				<parameter name="maxDepth" type="string" unit="km" default="80"/>
-				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
+				<parameter name="signalEnd" type="string" unit="s" default="min(R / 3 + 30, 150)"/>
 				<parameter name="minPeriod" type="double" unit="s" default="">
 					<description>
 					No period is measured along with ML amplitudes and this

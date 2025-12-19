@@ -48,7 +48,7 @@
 				</parameter>
 				<parameter name="maxDist" type="string" unit="deg" default="8"/>
 				<parameter name="maxDepth" type="string" unit="km" default="1000"/>
-				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
+				<parameter name="signalEnd" type="string" unit="s" default="min(R / 3 + 30, 150)"/>
 				<parameter name="preFilter" type="string" default="">
 					<description>
 					The filter applied to raw records before applying

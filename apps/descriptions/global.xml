@@ -1179,7 +1179,7 @@
 						provide the period, no amplitude is sent.
 						</description>
 					</parameter>
-					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
+					<parameter name="noiseBegin" type="string" unit="s" default="-35">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
@@ -1188,7 +1188,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="noiseEnd" type="string" unit="time grammar" default="-5">
+					<parameter name="noiseEnd" type="string" unit="s" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
@@ -1197,7 +1197,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalBegin" type="string" unit="time grammar" default="-5">
+					<parameter name="signalBegin" type="string" unit="s" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
@@ -1206,7 +1206,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalEnd" type="string" unit="time grammar" default="30">
+					<parameter name="signalEnd" type="string" unit="s" default="30">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
