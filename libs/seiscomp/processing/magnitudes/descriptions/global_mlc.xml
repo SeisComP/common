@@ -130,7 +130,7 @@
 					computed. Can extended beyond 80 km for MLc.
 					</description>
 				</parameter>
-				<parameter name="signalEnd" type="string" unit="time grammar" default="min(R / 3 + 30, 150)"/>
+				<parameter name="signalEnd" type="string" unit="s" default="min(R / 3 + 30, 150)"/>
 				<parameter name="preFilter" type="string" default="BW(3,0.5,12)"/>
 				<parameter name="applyWoodAnderson" type="boolean" default="true">
 					<description>
