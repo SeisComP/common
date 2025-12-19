@@ -23,19 +23,19 @@
 				<parameter name="maxDist" type="string" unit="deg" default="160"/>
 				<parameter name="minDepth" type="string" unit="km" default="0"/>
 				<parameter name="maxDepth" type="string" unit="km" default="100"/>
-				<parameter name="signalBegin" type="string" unit="s" default="min(OT + R / 4, 3000)"/>
-				<parameter name="signalEnd" type="string" unit="s" default="max(OT + R / 3, -5)"/>
+				<parameter name="signalBegin" type="string" unit="s" default="max(OT + R / 4, -5)"/>
+				<parameter name="signalEnd" type="string" unit="s" default="min(OT + R / 3, 3000)"/>
 				<parameter name="minVelocity" type="double" unit="km/s" default="3">
 					<description>
 					Unused parameter. Consider signalEnd instead.
-					Formerly used as minimum group velocity used to compute
+					Formerly used as minimum group velocity to compute the
 					signal time window.
 					</description>
 				</parameter>
 				<parameter name="maxVelocity" type="double" unit="km/s" default="4">
 					<description>
 					Unused parameter. Consider signalBegin instead.
-					Formerly used as maximum group velocity used to compute
+					Formerly used as maximum group velocity to compute the
 					signal time window.
 					</description>
 				</parameter>
