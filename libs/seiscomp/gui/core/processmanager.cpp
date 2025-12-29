@@ -592,10 +592,10 @@ bool ProcessManager::waitForStarted(QProcess *process, int timeout) {
 			         "process. For example, the process may not be running.";
 			break;
 		default:
-			detail = "An unknown errror occurred.";
+			detail = "An unknown error occurred.";
 	}
 
-	auto msg = QString("Failed to start comand %1: %2")
+	auto msg = QString("Failed to start command %1: %2")
 	           .arg(process->program(), detail);
 	SEISCOMP_ERROR(msg.toStdString());
 
@@ -632,13 +632,13 @@ bool ProcessManager::setConsoleLimits(QProcess *process, int charsOut,
 		QString tt;
 
 		if ( charsOut ) {
-			tt = "Standard ouput of current process";
+			tt = "Standard output of current process";
 			if ( charsOut > 0 ) {
 				tt = QString("%1 limited to %2 characters").arg(tt, charsOut);
 			}
 		}
 		else {
-			tt = "Capture of standard ouput disabled";
+			tt = "Capture of standard output disabled";
 		}
 		item->stdOut->setToolTip(tt);
 
@@ -649,7 +649,7 @@ bool ProcessManager::setConsoleLimits(QProcess *process, int charsOut,
 			}
 		}
 		else {
-			tt = "Capture of error ouput disabled";
+			tt = "Capture of error output disabled";
 		}
 		item->stdErr->setToolTip(tt);
 
