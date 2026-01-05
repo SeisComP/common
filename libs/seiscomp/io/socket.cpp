@@ -750,6 +750,7 @@ void SSLSocket::open(const std::string &serverLocation) {
 	snprintf(buf, 6, "%d", port);
 	BIO_set_conn_hostname(_bio, host.c_str());
 	BIO_set_conn_port(_bio, buf);
+	SSL_set_tlsext_host_name(_ssl, host.c_str());
 
 	if ( BIO_do_connect(_bio) <= 0 ) {
 		throw SocketException(string("error establishing secure socket "
