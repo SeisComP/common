@@ -464,11 +464,12 @@ void FDSNWSConnectionBase::handshake() {
 		_remainingBytes = 0;
 		return;
 	}
-	else if ( code == 301 or code == 302 ) {
+	else if ( code / 100 == 3 ) {
 		// Redirect
 	}
-	else
+	else {
 		_error = "server request error: " + line;
+	}
 
 	_remainingBytes = -1;
 
@@ -516,7 +517,7 @@ void FDSNWSConnectionBase::handshake() {
 		_remainingBytes = 0;
 	}
 
-	if ( code == 301 or code == 302 ) {
+	if ( code / 100 == 3 ) {
 		if ( redirectLocation.empty() ) {
 			_error = "Invalid redirect response";
 			SEISCOMP_ERROR("302 returned but empty Location header");
