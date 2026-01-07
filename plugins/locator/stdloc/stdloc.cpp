@@ -2007,7 +2007,7 @@ void StdLoc::locateLeastSquares(
 	travelTimes.resize(pickList.size());
 
 	vector<double> residuals(pickList.size());
-	vector<double> backazis(pickList.size());
+	vector<double> azimuths(pickList.size());
 	vector<double> dtdds(pickList.size());
 	vector<double> dtdhs(pickList.size());
 
@@ -2101,11 +2101,11 @@ void StdLoc::locateLeastSquares(
 			dtdds[i] = tt.dtdd;
 			dtdhs[i] = tt.dtdh;
 			if ( tt.azi ) { // 3D model
-				backazis[i] = *tt.azi;
+				azimuths[i] = *tt.azi;
 			}
 			else {
 				computeDistance(curr.lat, curr.lon, sensorLat[i], sensorLon[i],
-				                nullptr, &backazis[i]);
+				                &azimuths[i]);
 			}
 			residuals[i] =
 			    (pick->time().value() - (curr.time + Core::TimeSpan(travelTimes[i])))
@@ -2151,14 +2151,16 @@ void StdLoc::locateLeastSquares(
 
 			eq.r[i] = residuals[i];
 
-			const double bazi = deg2rad(backazis[i]);
-			eq.G[i][0] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * sin(bazi); // dx [sec/deg-> sec/km]
-			eq.G[i][1] = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE * cos(bazi); // dy [sec/deg-> sec/km]
-			eq.G[i][2] = dtdhs[i];                            // dz [sec/km]
-			eq.G[i][3] = 1.;                                  // dtime [sec]
+			const double angle = deg2rad(90 - azimuths[i]);
+			const double dtdd = dtdds[i] / Math::Geo::WGS84_KM_OF_DEGREE; // [sec/deg] -> [sec/km]
+
+			eq.G[i][0] = dtdd * -std::cos(angle); // dx [sec/km]
+			eq.G[i][1] = dtdd * -std::sin(angle); // dy [sec/km]
+			eq.G[i][2] = -dtdhs[i];               // dz [sec/km]
+			eq.G[i][3] = 1.;                      // dtime [sec]
 
 			if ( usingFixedDepth() && !(lastIteration && computeCovMtrx) ) {
-				eq.G[i][2] = 0;                  // dz [sec/km]
+				eq.G[i][2] = 0;                   // dz [sec/km]
 			}
 		}
 
@@ -2226,24 +2228,21 @@ void StdLoc::locateLeastSquares(
 		//
 		// Load the solution
 		//
-		double lonCorrection   = eq.m[0]; // km
-		double latCorrection   = eq.m[1]; // km
-		double depthCorrection = eq.m[2]; // km
-		double timeCorrection  = eq.m[3]; // sec
+		double deltaX    = eq.m[0]; // km
+		double deltaY    = eq.m[1]; // km
+		double deltaZ    = eq.m[2]; // km
+		double deltaTime = eq.m[3]; // sec
 
 		//
 		// update source parameters, which will be used in the next iteration
 		//
-		curr.depth += depthCorrection;
-		curr.time += Core::TimeSpan(timeCorrection);
-
-		// compute distance and azimuth of the event to the new location
-		double distance = sqrt(lonCorrection * lonCorrection +
-		                       latCorrection * latCorrection); // km
-		double azimuth = rad2deg(atan2(lonCorrection, latCorrection));
-
-		// Computes the coordinates (lat, lon) of the point which is at a degree
-		// azimuth and km distance as seen from the original event location
+		curr.depth -= deltaZ; // depth has opposite sign of Z -> subtract
+		curr.time  += Core::TimeSpan(deltaTime);
+		// Computes curr.lat and curr.lon as the point which is at azimuth [deg]
+        // and distance [km] from the previous location
+		double distance = sqrt(deltaX * deltaX + deltaY * deltaY); // [km]
+        // Since azimuth=PI/2-angle we use the identity atan2(x,y)=PI/2-atan2(y,x) 
+		double azimuth = rad2deg(atan2(deltaX, deltaY));           // [deg]
 		computeCoordinates(distance, azimuth, curr.lat, curr.lon, curr.lat, curr.lon);
 	}
 
@@ -2463,10 +2462,10 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 
 		if ( eq.W[ob] == 0 ) continue;
 
-		double gLon = eq.G[ob][0];  // dx [sec/km]
-		double gLat = eq.G[ob][1];  // dy [sec/km]
-		double gDepth = eq.G[ob][2];// dz [sec/km]
-		double gTime = eq.G[ob][3]; // 1  [sec]
+		double gLon   = eq.G[ob][0]; // dx [sec/km]
+		double gLat   = eq.G[ob][1]; // dy [sec/km]
+		double gDepth = eq.G[ob][2]; // dz [sec/km]
+		double gTime  = eq.G[ob][3]; // 1  [sec]
 		GtG[0][0] += gLon   * gLon;
 		GtG[0][1] += gLon   * gLat;
 		GtG[0][2] += gLon   * gDepth;
