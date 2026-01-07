@@ -1671,6 +1671,12 @@ void BindingsPanel::folderViewContextMenu(const QPoint &p) {
 				m->setData(hoveredIdx, QVariant::fromValue((void*)b), Link);
 				m->setData(hoveredIdx.sibling(hoveredIdx.row(), 1), b->name.c_str(), Qt::EditRole);
 
+				_bindingView->setModel(_model, _bindingsModel);
+				_bindingView->setRootIndex(hoveredIdx);
+
+				// Change decoration roles
+				_currentBinding = b;
+
 				updateIndication();
 			}
 		}
