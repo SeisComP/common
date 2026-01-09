@@ -654,6 +654,7 @@ Record *SLConnection::next() {
 			stream.rdbuf()->pubsetbuf(const_cast<char*>(data) + HEADSIZE, RECSIZE);
 
 			auto *rec = new IO::MSeedRecord();
+			setupRecord(rec);
 			try {
 				rec->read(stream);
 				if ( (rec->samplingFrequency() == 0.0) && !rec->sampleCount() ) {
