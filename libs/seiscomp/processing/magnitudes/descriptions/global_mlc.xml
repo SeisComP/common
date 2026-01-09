@@ -8,7 +8,7 @@
 		<configuration>
 			<extend-struct type="GlobalMagnitudeProfile" match-name="MLc">
 				<extend-struct type="GlobalMagnitudeRegionProfile">
-					<parameter name="distMode" type="string">
+					<parameter name="distMode" type="string" values="epicentral,hypocentral">
 						<description>
 						Considered distance measure between source and receiver.
 						Possible values are
@@ -18,7 +18,7 @@
 						epicentral: epicentral distance
 						</description>
 					</parameter>
-					<parameter name="calibrationType" type="string" unit="">
+					<parameter name="calibrationType" type="string" values="parametric,A0">
 						<description>
 						Type of magnitude calibration formula to be considered.
 						The calibration parameters are considered accordingly.
@@ -127,7 +127,7 @@
 				<parameter name="maxDepth" type="double" unit="km" default="80">
 					<description>
 					The maximum source depth up to which magnitudes are
-					computed. Can extended beyond 80 km for MLc.
+					computed. Can be extended beyond 80 km for MLc.
 					</description>
 				</parameter>
 				<parameter name="signalEnd" type="string" unit="s" default="min(R / 3 + 30, 150)"/>
@@ -194,7 +194,7 @@
 				<parameter name="maxDepth" type="double" default="80" unit="km">
 					<description>
 					The maximum source depth up to which magnitudes are
-					computed. Can extended beyond 80 km for MLc.
+					computed. Can be extended beyond 80 km for MLc.
 					</description>
 				</parameter>
 				<parameter name="minPeriod" type="double" unit="s" default="">
@@ -211,7 +211,7 @@
 					cause failure of MLc magnitude computation.
 					</description>
 				</parameter>
-				<parameter name="distMode" type="string" default="hypocentral" values="hypocentral,epicentral">
+				<parameter name="distMode" type="string" default="hypocentral" values="epicentral,hypocentral">
 					<description>
 					Considered distance measure between source and receiver.
 
@@ -220,7 +220,7 @@
 					epicentral: epicentral distance
 					</description>
 				</parameter>
-				<parameter name="calibrationType" type="string" default="&quot;parametric&quot;" unit="" values="parametric,A0">
+				<parameter name="calibrationType" type="string" default="parametric" values="parametric,A0">
 					<description>
 					Type of magnitude calibration formula to be considered.
 					The calibration parameters are considered accordingly.
