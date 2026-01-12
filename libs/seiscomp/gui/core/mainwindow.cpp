@@ -118,8 +118,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 
 	setAcceptDrops(true);
 
-	setWindowIcon(icon("seiscomp-logo"));
-
 	// create process state toolbar widget once process manager is created
 	connect(SCApp, &Gui::Application::processManagerCreated, [this]() {
 		if ( !_processState && statusBar() ) {
