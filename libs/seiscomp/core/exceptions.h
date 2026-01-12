@@ -21,11 +21,12 @@
 #ifndef SEISCOMP_CORE_EXCEPTIONS_H
 #define SEISCOMP_CORE_EXCEPTIONS_H
 
+
 #include <seiscomp/core.h>
 
 #include <string>
 #include <exception>
-#include <typeinfo>
+
 
 namespace Seiscomp {
 namespace Core {
