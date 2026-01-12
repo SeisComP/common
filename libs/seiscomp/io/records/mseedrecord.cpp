@@ -481,6 +481,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeSteim1(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				reinterpret_cast<int32_t*>(const_cast<char*>(data)), dataLength, _nsamp,
 				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
@@ -492,6 +493,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeSteim2(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				reinterpret_cast<int32_t*>(const_cast<char*>(data)), dataLength, _nsamp,
 				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
@@ -505,6 +507,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto fdata = new FloatArray(_nsamp);
 			nsamples = decodeGEOSCOPE(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				const_cast<char*>(data), _nsamp,
 				fdata->typedData(), fdata->size() * fdata->elementSize(),
 				static_cast<EncodingType>(_encoding), _byteOrder & SwapPayload
@@ -516,6 +519,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeCDSN(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
 				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
@@ -527,6 +531,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeSRO(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
 				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload
@@ -538,6 +543,7 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		{
 			auto idata = new IntArray(_nsamp);
 			nsamples = decodeDWWSSN(
+				_net.data(), _sta.data(), _loc.data(), _cha.data(),
 				reinterpret_cast<int16_t*>(const_cast<char*>(data)), _nsamp,
 				idata->typedData(), idata->size() * idata->elementSize(),
 				_byteOrder & SwapPayload

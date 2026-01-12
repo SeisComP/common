@@ -80,17 +80,23 @@ inline constexpr bool isValidHeader(const void *ptr) {
 
 
 // Sample decoding functions.
-int64_t decodeSteim1(int32_t *input, size_t inputLength, size_t sampleCount,
+int64_t decodeSteim1(const char *net, const char *sta, const char *loc, const char *cha,
+                     int32_t *input, size_t inputLength, size_t sampleCount,
                      int32_t *output, size_t outputLength, bool swapflag);
-int64_t decodeSteim2(int32_t *input, size_t inputLength, size_t sampleCount,
+int64_t decodeSteim2(const char *net, const char *sta, const char *loc, const char *cha,
+                     int32_t *input, size_t inputLength, size_t sampleCount,
                      int32_t *output, size_t outputLength, bool swapflag);
-int64_t decodeGEOSCOPE(char *input, size_t sampleCount, float *output, size_t outputLength,
+int64_t decodeGEOSCOPE(const char *net, const char *sta, const char *loc, const char *cha,
+                       char *input, size_t sampleCount, float *output, size_t outputLength,
                        EncodingType encoding, bool swapflag);
-int64_t decodeCDSN(int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
+int64_t decodeCDSN(const char *net, const char *sta, const char *loc, const char *cha,
+                   int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
                    bool swapflag);
-int64_t decodeSRO(int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
+int64_t decodeSRO(const char *net, const char *sta, const char *loc, const char *cha,
+                  int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
                   bool swapflag);
-int64_t decodeDWWSSN(int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
+int64_t decodeDWWSSN(const char *net, const char *sta, const char *loc, const char *cha,
+                     int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
                      bool swapflag);
 
 
