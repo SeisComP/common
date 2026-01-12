@@ -432,11 +432,15 @@ void MSeedRecord::unpackData(const char *rec, size_t reclen) const {
 		case EncodingType::INT16:
 		{
 			auto idata = new IntArray(_nsamp);
-			for ( int i = 0 ; i < _nsamp; ++i ) {
-				(*idata)[i] = reinterpret_cast<const int16_t*>(data)[i];
-			}
 			if ( _byteOrder & SwapPayload ) {
-				Core::Endianess::swap(idata->typedData(), idata->size());
+				for ( int i = 0 ; i < _nsamp; ++i ) {
+					(*idata)[i] = Core::Endianess::Swapper<int16_t, 1, sizeof(int16_t)>::Take(reinterpret_cast<const int16_t*>(data)[i]);
+				}
+			}
+			else {
+				for ( int i = 0 ; i < _nsamp; ++i ) {
+					(*idata)[i] = reinterpret_cast<const int16_t*>(data)[i];
+				}
 			}
 			nsamples = _nsamp;
 			_data = idata;
