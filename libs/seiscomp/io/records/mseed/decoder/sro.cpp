@@ -56,7 +56,8 @@ namespace Seiscomp::IO::MSEED {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int64_t decodeSRO(int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
+int64_t decodeSRO(const char *net, const char *sta, const char *loc, const char *cha,
+                  int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
                   bool swapflag) {
 	uint32_t idx = 0;
 	int32_t mantissa;   // mantissa
@@ -99,7 +100,8 @@ int64_t decodeSRO(int16_t *input, size_t sampleCount, int32_t *output, size_t ou
 		exponent = (mult * (gainrange + add2gr)) + add2result;
 
 		if ( (exponent < 0) || (exponent > 10) ) {
-			SEISCOMP_ERROR("SRO gain ranging exponent out of range: %d", exponent);
+			SEISCOMP_ERROR("%s.%s.%s.%s: SRO gain ranging exponent out of range: %d",
+			               net, sta, loc, cha, exponent);
 			return -1;
 		}
 

@@ -52,7 +52,8 @@ namespace Seiscomp::IO::MSEED {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int64_t decodeDWWSSN(int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
+int64_t decodeDWWSSN(const char *net, const char *sta, const char *loc, const char *cha,
+                     int16_t *input, size_t sampleCount, int32_t *output, size_t outputLength,
                      bool swapflag) {
 	uint32_t idx = 0;
 	int32_t sample;

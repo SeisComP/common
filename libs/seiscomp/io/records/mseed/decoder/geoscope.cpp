@@ -58,7 +58,8 @@ namespace Seiscomp::IO::MSEED {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int64_t decodeGEOSCOPE(char *input, size_t sampleCount, float *output, size_t outputLength,
+int64_t decodeGEOSCOPE(const char *net, const char *sta, const char *loc, const char *cha,
+                       char *input, size_t sampleCount, float *output, size_t outputLength,
                        EncodingType encoding, bool swapflag) {
   uint32_t idx = 0;
   int32_t mantissa;  /* mantissa from SEED data */
@@ -85,7 +86,8 @@ int64_t decodeGEOSCOPE(char *input, size_t sampleCount, float *output, size_t ou
 	// Make sure we recognize this as a GEOSCOPE encoding format
 	if ( encoding != EncodingType::GEOSCOPE24 && encoding != EncodingType::GEOSCOPE163 &&
 	     encoding != EncodingType::GEOSCOPE164 ) {
-		SEISCOMP_ERROR("unrecognized GEOSCOPE encoding: %d", static_cast<int>(encoding));
+		SEISCOMP_ERROR("%s.%s.%s.%s: unrecognized GEOSCOPE encoding: %d",
+		               net, sta, loc, cha, static_cast<int>(encoding));
 		return -1;
 	}
 

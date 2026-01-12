@@ -52,7 +52,8 @@ namespace Seiscomp::IO::MSEED {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 __attribute__((optimize("O3", "unroll-loops")))
-int64_t decodeSteim1(int32_t *input, size_t inputLength, size_t sampleCount,
+int64_t decodeSteim1(const char *net, const char *sta, const char *loc, const char *cha,
+                     int32_t *input, size_t inputLength, size_t sampleCount,
                      int32_t *output, size_t outputLength, bool swapflag) {
 	uint32_t frame[16]; /* Frame, 16 x 32-bit quantities = 64 bytes */
 	int32_t diff[60];   /* Difference values for a frame, max is 15 x 4 (8-bit samples) */
@@ -181,8 +182,8 @@ int64_t decodeSteim1(int32_t *input, size_t inputLength, size_t sampleCount,
 
 	// Check data integrity by comparing last sample to Xn (reverse integration constant)
 	if ( outputidx == sampleCount && output[outputidx - 1] != Xn ) {
-		SEISCOMP_WARNING("Data integrity check for Steim1 failed, Last sample=%d, Xn=%d\n",
-		                 output[outputidx - 1], Xn);
+		SEISCOMP_WARNING("%s.%s.%s.%s: data integrity check for Steim1 failed, Last sample=%d, Xn=%d\n",
+		                 net, sta, loc, cha, output[outputidx - 1], Xn);
 	}
 
 	return outputidx;
