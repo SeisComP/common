@@ -249,6 +249,8 @@ class SC_SYSTEM_CORE_API Url {
 		 */
 		Status status() const;
 
+		const std::string &errorMessage() const;
+
 		/**
 		 * @brief Print parsed URL components
 		 */
@@ -414,6 +416,10 @@ inline bool Url::operator==(std::string_view sv) const {
 
 inline bool Url::operator!=(std::string_view sv) const {
 	return _url != sv;
+}
+
+inline const std::string &Url::errorMessage() const {
+	return _errorString;
 }
 
 
