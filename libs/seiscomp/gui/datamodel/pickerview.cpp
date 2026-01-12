@@ -2570,7 +2570,6 @@ RecordLabel* PickerView::createLabel(RecordViewItem *item) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::init() {
 	setObjectName("Picker");
-	setWindowIcon(icon("seiscomp-logo"));
 
 #ifdef MACOSX
 	Mac::addFullscreen(this);

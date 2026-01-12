@@ -1846,7 +1846,6 @@ void AmplitudeView::figureOutTravelTimeTable() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::init() {
 	setObjectName("Amplitudes");
-	setWindowIcon(icon("seiscomp-logo"));
 
 #ifdef MACOSX
 	Mac::addFullscreen(this);

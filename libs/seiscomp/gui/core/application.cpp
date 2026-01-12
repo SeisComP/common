@@ -25,6 +25,7 @@
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/aboutwidget.h>
 #include <seiscomp/gui/core/processmanager.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/messaging/connection.h>
@@ -328,8 +329,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	setConnectionRetries(0);
 
 #ifndef WIN32
-	if ( ::socketpair(AF_UNIX, SOCK_STREAM, 0, _signalSocketFd) )
+	if ( ::socketpair(AF_UNIX, SOCK_STREAM, 0, _signalSocketFd) ) {
 		qFatal("Couldn't create HUP socketpair");
+	}
 
 	_signalNotifier = new QSocketNotifier(_signalSocketFd[1], QSocketNotifier::Read, this);
 	connect(_signalNotifier, SIGNAL(activated(int)), this, SLOT(handleSignalNotification()));
@@ -1089,6 +1091,10 @@ bool Application::init() {
 
 	if ( Client::Application::_settings.soh.interval > 0 ) {
 		_timerSOH.setInterval(Client::Application::_settings.soh.interval * 1000);
+	}
+
+	if ( _type == GuiClient ) {
+		_app->setWindowIcon(icon("seiscomp-logo"));
 	}
 
 	if ( isMessagingEnabled() && (_type != Tty) ) {
