@@ -19,6 +19,7 @@
 
 
 #include <seiscomp/utils/url.h>
+#include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/strings.h>
 
 #include <iostream>
@@ -300,6 +301,7 @@ void Url::reset() {
 	_fragment = {};
 	_isValid = false;
 	_currentPos = 0;
+	_errorString = {};
 	_status = STATUS_EMPTY;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -319,7 +321,14 @@ Url::Status Url::parseScheme(std::string_view url) {
 		return STATUS_SCHEME_ERROR;
 	}
 
-	_scheme = Decode(_scheme);
+	try {
+		_scheme = Decode(_scheme);
+	}
+	catch ( std::exception &e ) {
+		_errorString = "@scheme: ";
+		_errorString += e.what();
+		return STATUS_ERROR;
+	}
 
 	_currentPos = end + 1;
 	return STATUS_OK;
@@ -357,17 +366,38 @@ Url::Status Url::parseAuthority(std::string_view url) {
 
 		end = userInfo.find(':');
 		if ( end != std::string::npos ) {
-			_user = Decode(userInfo.substr(0, end));
+			try {
+				_user = Decode(userInfo.substr(0, end));
+			}
+			catch ( std::exception &e ) {
+				_errorString = "@user: ";
+				_errorString += e.what();
+				return STATUS_ERROR;
+			}
 			if ( _user.empty() ) {
 				return STATUS_EMPTY_USERNAME;
 			}
 
 			if ( userInfo.size() > end ) {
-				_password = Decode(userInfo.substr(end + 1, userInfo.size() - end));
+				try {
+					_password = Decode(userInfo.substr(end + 1, userInfo.size() - end));
+				}
+				catch ( std::exception &e ) {
+					_errorString = "@password: ";
+					_errorString += e.what();
+					return STATUS_ERROR;
+				}
 			}
 		}
 		else {
-			_user = Decode(userInfo);
+			try {
+				_user = Decode(userInfo);
+			}
+			catch ( std::exception &e ) {
+				_errorString = "@user: ";
+				_errorString += e.what();
+				return STATUS_ERROR;
+			}
 		}
 
 		++userInfoEnd;
@@ -401,7 +431,15 @@ Url::Status Url::parseAuthority(std::string_view url) {
 	}
 
 	if ( end != std::string::npos ) {
-		_host = Decode(_authority.substr(userInfoEnd, end - userInfoEnd));
+		try {
+			_host = Decode(_authority.substr(userInfoEnd, end - userInfoEnd));
+		}
+		catch ( std::exception &e ) {
+			_errorString = "@host: ";
+			_errorString += e.what();
+			return STATUS_ERROR;
+		}
+
 		if ( _host.empty() ) {
 			return STATUS_INVALID_HOST;
 		}
@@ -422,7 +460,14 @@ Url::Status Url::parseAuthority(std::string_view url) {
 		}
 	}
 	else {
-		_host = Decode(_authority.substr(userInfoEnd, _authority.size() - userInfoEnd));
+		try {
+			_host = Decode(_authority.substr(userInfoEnd, _authority.size() - userInfoEnd));
+		}
+		catch ( std::exception &e ) {
+			_errorString = "@host: ";
+			_errorString += e.what();
+			return STATUS_ERROR;
+		}
 	}
 
 	return STATUS_OK;
@@ -446,7 +491,14 @@ Url::Status Url::parsePath(std::string_view url) {
 		_currentPos = std::string::npos;
 	}
 
-	_path = Decode(_path);
+	try {
+		_path = Decode(_path);
+	}
+	catch ( std::exception &e ) {
+		_errorString = "@path: ";
+		_errorString += e.what();
+		return STATUS_ERROR;
+	}
 
 	return STATUS_OK;
 }
@@ -474,20 +526,35 @@ Url::Status Url::parseQuery() {
 		if ( !param.empty() ) {
 			auto pend = param.find('=');
 			if ( pend == std::string::npos ) {
-				auto key = Decode(param);
-				if ( key.empty() ) {
-					return STATUS_INVALID_QUERY;
-				}
+				try {
+					auto key = Decode(param);
 
-				_queryItems[key] = "";
+					if ( key.empty() ) {
+						return STATUS_INVALID_QUERY;
+					}
+
+					_queryItems[key] = "";
+				}
+				catch ( std::exception &e ) {
+					_errorString = "@query-key: ";
+					_errorString += e.what();
+					return STATUS_ERROR;
+				}
 			}
 			else {
-				auto key = Decode(param.substr(0, pend));
-				if ( key.empty() ) {
-					return STATUS_INVALID_QUERY;
-				}
+				try {
+					auto key = Decode(param.substr(0, pend));
+					if ( key.empty() ) {
+						return STATUS_INVALID_QUERY;
+					}
 
-				_queryItems[key] = Decode(param.substr(pend + 1));
+					_queryItems[key] = Decode(param.substr(pend + 1));
+				}
+				catch ( std::exception &e ) {
+					_errorString = "@query-param: ";
+					_errorString += e.what();
+					return STATUS_ERROR;
+				}
 			}
 		}
 
@@ -554,7 +621,14 @@ Url::Status Url::parse(std::string_view url, bool implyAuthority) {
 		_fragment = url.substr(fragmentPos + 1, url.size() - fragmentPos);
 	}
 
-	_fragment = Decode(_fragment);
+	try {
+		_fragment = Decode(_fragment);
+	}
+	catch ( std::exception &e ) {
+		_errorString = "@fragment: ";
+		_errorString += e.what();
+		return STATUS_ERROR;
+	}
 
 	auto ret = parseQuery();
 	if ( ret != STATUS_OK ) {
@@ -762,24 +836,67 @@ std::string Url::Decode(std::string_view sv) {
 		}
 		else if ( sv[i] == '%' ) {
 			++i;
+
 			char hi;
 			char lo;
 			if ( i < sv.length() ) {
 				hi = sv[i];
 			}
 			else {
-				break;
+				throw Core::GeneralException(
+					Core::stringify(
+						"percent-decoding error: hi byte exceeds string length at index %d", i
+					)
+				);
 			}
+
+			if ( (hi >= '0') && (hi <= '9') ) {
+				hi = hi - '0';
+			}
+			else if ( (hi >= 'a') && (hi <= 'f') ) {
+				hi = (hi - 'a') + 10;
+			}
+			else if ( (hi >= 'A') && (hi <= 'F') ) {
+				hi = (hi - 'A') + 10;
+			}
+			else {
+				throw Core::GeneralException(
+					Core::stringify(
+						"percent-decoding error: hi byte is not a hex character at index %d: %c",
+						i, hi
+					)
+				);
+			}
+
 			++i;
 			if ( i < sv.length() ) {
 				lo = sv[i];
 			}
 			else {
-				break;
+				throw Core::GeneralException(
+					Core::stringify(
+						"percent-decoding error: lo byte exceeds string length at index %d", i
+					)
+				);
 			}
 
-			hi = (hi >= 'A'?((hi & 0xDF) - 'A') + 10 : (hi - '0'));
-			lo = (lo >= 'A'?((lo & 0xDF) - 'A') + 10 : (lo - '0'));
+			if ( (lo >= '0') && (lo <= '9') ) {
+				lo = lo - '0';
+			}
+			else if ( (lo >= 'a') && (lo <= 'f') ) {
+				lo = (lo - 'a') + 10;
+			}
+			else if ( (lo >= 'A') && (lo <= 'F') ) {
+				lo = (lo - 'A') + 10;
+			}
+			else {
+				throw Core::GeneralException(
+					Core::stringify(
+						"percent-decoding error: lo byte is not a hex character at index %d: %c",
+						i, lo
+					)
+				);
+			}
 
 			decoded += ((hi << 4) + lo);
 		}

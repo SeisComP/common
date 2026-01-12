@@ -21,9 +21,10 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 
 
+#include <seiscomp/core/exceptions.h>
 #include <seiscomp/core/optional.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/utils/url.h>
-
 
 
 namespace std {
@@ -52,6 +53,7 @@ ostream &operator<<(ostream &os, const optional<T> &value) {
 #include <seiscomp/unittest/unittests.h>
 
 
+using namespace Seiscomp::Core;
 using namespace Seiscomp::Util;
 
 
@@ -75,7 +77,7 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.isValid(), true);
 	BOOST_CHECK_EQUAL(url.scheme(), "");
 	BOOST_CHECK_EQUAL(url.host(), "test.mseed");
-	BOOST_CHECK_EQUAL(url.port(), Seiscomp::Core::None);
+	BOOST_CHECK_EQUAL(url.port(), None);
 	BOOST_CHECK_EQUAL(url.path(), "");
 
 	BOOST_REQUIRE(url.setUrl("http://username:pass:word@example.org/"));
@@ -180,7 +182,7 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_REQUIRE(url.setUrl("custom://[::1]"));
 	BOOST_CHECK_EQUAL(url.scheme(), "custom");
 	BOOST_CHECK_EQUAL(url.host(), "::1");
-	BOOST_CHECK_EQUAL(url.port(), Seiscomp::Core::None);
+	BOOST_CHECK_EQUAL(url.port(), None);
 
 	BOOST_REQUIRE(url.setUrl("custom://[::1]:1234"));
 	BOOST_CHECK_EQUAL(url.scheme(), "custom");
@@ -299,6 +301,25 @@ BOOST_AUTO_TEST_CASE(Decode) {
 	                  "https://example.com/search?q=Hello World!&lang=en");
 	BOOST_CHECK_EQUAL(Url::Decode("https%3A%2F%2Fexample.com%2Fsearch%3Fq%3DHello%20World!%26lang%3Den"),
 	                  "https://example.com/search?q=Hello World!&lang=en");
+
+	for ( int i = 0; i < 10; ++i ) {
+		for ( int j = 0; j < 10; ++j ) {
+			BOOST_CHECK_EQUAL(Url::Decode(stringify("%%%d%d", i, j)), stringify("%c", i * 16 + j));
+		}
+	}
+
+	for ( int i = 0; i < 6; ++i ) {
+		for ( int j = 0; j < 6; ++j ) {
+			BOOST_CHECK_EQUAL(Url::Decode(stringify("%%%c%c", 'a' + i, 'a' + j)), stringify("%c", (10 + i) * 16 + 10 + j));
+			BOOST_CHECK_EQUAL(Url::Decode(stringify("%%%c%c", 'A' + i, 'A' + j)), stringify("%c", (10 + i) * 16 + 10 + j));
+		}
+	}
+
+	BOOST_CHECK_THROW(Url::Decode("AB%"), GeneralException);
+	BOOST_CHECK_THROW(Url::Decode("AB%1"), GeneralException);
+	BOOST_CHECK_THROW(Url::Decode("AB%K"), GeneralException);
+	BOOST_CHECK_THROW(Url::Decode("AB%1K"), GeneralException);
+	BOOST_CHECK_THROW(Url::Decode("AB%KK"), GeneralException);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
