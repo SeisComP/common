@@ -105,13 +105,13 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseInterface::connect(const char* con) {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return false;
+	}
 
 	_timeout = 0;
 
 	Util::Url url(con);
-
 	auto path = url.path();
 	if ( !path.empty() ) {
 		if ( path[0] == '/' ) {
@@ -130,6 +130,11 @@ bool DatabaseInterface::connect(const char* con) {
 	}
 	if ( url.port().has_value() ) {
 		_port = *url.port();
+	}
+
+	if ( !url.isValid() ) {
+		SEISCOMP_ERROR("Invalid database URL: %s", url.errorMessage());
+		return false;
 	}
 
 	for ( auto [key, value] : url.queryItems() ) {
