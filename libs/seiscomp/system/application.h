@@ -319,11 +319,15 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 		//! Enables the daemon mode to be selectable via commandline
 		void setDaemonEnabled(bool enable);
 
+		int logVerbosity() const;
+
 		//! Enables/disables logging of context (source file + line number)
 		void setLoggingContext(bool);
+		bool logContext() const;
 
 		//! Enables/disables logging of component
 		void setLoggingComponent(bool);
+		bool logComponent() const;
 
 		//! Enables/disables logging to stderr
 		void setLoggingToStdErr(bool);
@@ -1362,6 +1366,13 @@ inline CommandLine &Application::commandline() {
 inline const CommandLine &Application::commandline() const {
 	return *_commandline;
 }
+
+inline int Application::logVerbosity() const { return _baseSettings.logging.verbosity; }
+inline bool Application::logContext() const { return _baseSettings.logging.context; }
+inline bool Application::logComponent() const {
+	return _baseSettings.logging.component ? *_baseSettings.logging.component : !_baseSettings.logging.toStdout;
+}
+
 
 
 }

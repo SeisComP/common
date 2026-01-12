@@ -1415,6 +1415,15 @@ void Application::createCommandLineDescription() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::validateParameters() {
+	if ( _baseSettings.logging.trace || _baseSettings.logging.debug ) {
+		_baseSettings.logging.verbosity = 4;
+		_baseSettings.logging.toStdout = true;
+		if ( _baseSettings.logging.trace ) {
+			_baseSettings.logging.context = true;
+			_baseSettings.logging.component = true;
+		}
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1509,19 +1518,7 @@ bool Application::initLogging() {
 		return true;
 	}
 
-	bool enableLogging = _baseSettings.logging.verbosity > 0;
-
-	if ( _baseSettings.logging.trace || _baseSettings.logging.debug ) {
-		enableLogging = true;
-		_baseSettings.logging.verbosity = 4;
-		_baseSettings.logging.toStdout = true;
-		if ( _baseSettings.logging.trace ) {
-			_baseSettings.logging.context = true;
-			_baseSettings.logging.component = true;
-		}
-	}
-
-	if ( enableLogging ) {
+	if ( _baseSettings.logging.verbosity > 0 ) {
 		//cerr << "using loglevel " << _verbosity << endl;
 		if ( !_baseSettings.logging.toStdout ) {
 			if ( !_baseSettings.logging.output.empty() ) {
@@ -1592,8 +1589,8 @@ bool Application::initLogging() {
 
 		if ( _logger ) {
 			_logger->setUTCEnabled(_baseSettings.logging.UTC);
-			_logger->logComponent(_baseSettings.logging.component ? *_baseSettings.logging.component : !_baseSettings.logging.toStdout);
-			_logger->logContext(_baseSettings.logging.context);
+			_logger->logComponent(logComponent());
+			_logger->logContext(logContext());
 			if ( !_baseSettings.logging.components.empty() ) {
 				for ( ComponentList::iterator it = _baseSettings.logging.components.begin();
 				      it != _baseSettings.logging.components.end(); ++it ) {
