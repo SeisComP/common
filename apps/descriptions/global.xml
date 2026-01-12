@@ -390,11 +390,15 @@
 				<parameter name="target" type="string">
 					<description>
 					A regular expression of all clients that should handle
-					a command message usually send to the GUI messaging group.
+					a command message usually sent to the GUI messaging group.
 					Currently this flag is only used by GUI applications to
 					set an artificial origin and to tell other clients to
 					show this origin. To let all connected clients handle the
 					command, ".*$" can be used.
+
+					You may add specific SeisComP connection usernames or
+					host names and system variables like $USER for more
+					detailed selection of clients.
 					</description>
 				</parameter>
 			</group>
@@ -656,7 +660,7 @@
 								maxDepth = 500km
 								</description>
 							</parameter>
-							<parameter name="check" type="string" default="source">
+							<parameter name="check" type="string" default="source" values="raypath,source,source-receiver">
 								<description>
 								Define how the region check is performed to accept
 								a source receiver pair for further processing.
@@ -992,7 +996,7 @@
 				minimum signal-to-noise ratio, amplitude thresholds and
 				restitution for measuring amplitudes of a certain type.
 
-				Standard amplitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
+				Standard amplitude types supported in SeisComP: AMN,Md,Mjma,ML,MLc,MLh,MLv,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 					<description>
@@ -1321,7 +1325,7 @@
 				magnitudes from measured amplitudes including static corrections.
 				The parameters are independent of amplitude-type profiles.
 
-				Standard magnitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
+				Standard magnitude types supported in SeisComP: MN,Md,Mjma,ML,MLc,MLh,MLv,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile: Use name of magnitude type" aliases="config:magnitudes.aliases">
 					<description>
@@ -1496,7 +1500,7 @@
 					</parameter>
 					<parameter name="minSNR" type="double" default="3">
 						<description>
-						Mininum SNR as returned from AIC for accepting picks.
+						Minimum SNR as returned from AIC for accepting picks.
 						</description>
 					</parameter>
 				</group>
@@ -1691,7 +1695,7 @@
 					</parameter>
 					<parameter name="minSNR" type="double" default="15">
 						<description>
-						Define the mininum SNR as returned from AIC.
+						Define the minimum SNR as returned from AIC.
 						</description>
 					</parameter>
 				</group>
