@@ -109,3 +109,14 @@
 %include "seiscomp/seismology/locatorinterface.h"
 %include "seiscomp/seismology/ttt.h"
 %include "seiscomp/seismology/locator/locsat.h"
+
+%ignore Seiscomp::TravelTime::azi;  // prevent default direct wrapping
+
+%extend Seiscomp::TravelTime {
+    Seiscomp::Core::Optional<double> get_azi() {
+        return $self->azi;
+    }
+    void set_azi(const Seiscomp::Core::Optional<double>& v) {
+        $self->azi = v;
+    }
+}
