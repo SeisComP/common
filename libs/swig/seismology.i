@@ -84,6 +84,24 @@
 
 %template(TravelTimeList_internal) std::list<Seiscomp::TravelTime>;
 
+// Prevent default direct wrapping to work around missing typemaps for attributes.
+// Setter and getter will be added instead and in Python a property with the same name
+// will be added to grant access using the correct typemaps.
+%ignore Seiscomp::TravelTime::azi;
+
+%extend Seiscomp::TravelTime {
+    Seiscomp::Core::Optional<double> getAzi() {
+        return $self->azi;
+    }
+    void setAzi(const Seiscomp::Core::Optional<double>& v) {
+        $self->azi = v;
+    }
+
+    %pythoncode %{
+       azi = property(getAzi, setAzi)
+    %}
+}
+
 %exception {
   try {
     $action
