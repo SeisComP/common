@@ -125,5 +125,6 @@
 
 %include "seiscomp/core.h"
 %include "seiscomp/seismology/regions.h"
+%include "seiscomp/seismology/regions/polygon.h"
 %include "seiscomp/seismology/locatorinterface.h"
 %include "seiscomp/seismology/ttt.h"
