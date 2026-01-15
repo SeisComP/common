@@ -6390,9 +6390,6 @@ SWIG_AsCharPtrAndSize(PyObject *obj, char **cptr, size_t *psize, int *alloc)
 }
 
 
-
-
-
 SWIGINTERN int
 SWIG_AsPtr_std_string (PyObject * obj, std::string **val) 
 {
@@ -6418,6 +6415,9 @@ SWIG_AsPtr_std_string (PyObject * obj, std::string **val)
   }
   return SWIG_ERROR;
 }
+
+
+
 
 
 SWIGINTERN int
@@ -10192,6 +10192,539 @@ SWIGINTERN PyObject *Regions_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObje
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_new_PolyRegions__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
+  {
+    try {
+      result = (Seiscomp::Geo::PolyRegions *)new Seiscomp::Geo::PolyRegions();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Geo__PolyRegions, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_PolyRegions__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::string *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  Seiscomp::Geo::PolyRegions *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  {
+    std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_PolyRegions" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "new_PolyRegions" "', argument " "1"" of type '" "std::string const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  {
+    try {
+      result = (Seiscomp::Geo::PolyRegions *)new Seiscomp::Geo::PolyRegions((std::string const &)*arg1);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Geo__PolyRegions, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_PolyRegions(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_PolyRegions", 0, 1, argv))) SWIG_fail;
+  --argc;
+  if (argc == 0) {
+    return _wrap_new_PolyRegions__SWIG_0(self, argc, argv);
+  }
+  if (argc == 1) {
+    int _v = 0;
+    int res = SWIG_AsPtr_std_string(argv[0], (std::string**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_PolyRegions__SWIG_1(self, argc, argv);
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_PolyRegions'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Geo::PolyRegions::PolyRegions()\n"
+    "    Seiscomp::Geo::PolyRegions::PolyRegions(std::string const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_PolyRegions(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_PolyRegions" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    try {
+      delete arg1;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions__print(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions__print" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    try {
+      (arg1)->print();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_info(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_info" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    try {
+      (arg1)->info();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_findRegion(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  double arg2 ;
+  double arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject *swig_obj[3] ;
+  Seiscomp::Geo::GeoFeature *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "PolyRegions_findRegion", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_findRegion" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PolyRegions_findRegion" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "PolyRegions_findRegion" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = (Seiscomp::Geo::GeoFeature *)((Seiscomp::Geo::PolyRegions const *)arg1)->findRegion(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Geo__GeoFeature, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_findRegionName(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  double arg2 ;
+  double arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject *swig_obj[3] ;
+  std::string result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "PolyRegions_findRegionName", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_findRegionName" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PolyRegions_findRegionName" "', argument " "2"" of type '" "double""'");
+  } 
+  arg2 = static_cast< double >(val2);
+  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "PolyRegions_findRegionName" "', argument " "3"" of type '" "double""'");
+  } 
+  arg3 = static_cast< double >(val3);
+  {
+    try {
+      result = ((Seiscomp::Geo::PolyRegions const *)arg1)->findRegionName(arg2,arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_regionCount(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  size_t result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_regionCount" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::Geo::PolyRegions const *)arg1)->regionCount();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_addRegion(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  Seiscomp::Geo::GeoFeature *arg2 = (Seiscomp::Geo::GeoFeature *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "PolyRegions_addRegion", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_addRegion" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Geo__GeoFeature, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PolyRegions_addRegion" "', argument " "2"" of type '" "Seiscomp::Geo::GeoFeature *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Geo::GeoFeature * >(argp2);
+  {
+    try {
+      (arg1)->addRegion(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_region(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::Geo::GeoFeature *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "PolyRegions_region", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_region" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "PolyRegions_region" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = (Seiscomp::Geo::GeoFeature *)((Seiscomp::Geo::PolyRegions const *)arg1)->region(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Geo__GeoFeature, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_read(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  size_t result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "PolyRegions_read", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_read" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "PolyRegions_read" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "PolyRegions_read" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (arg1)->read((std::string const &)*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_PolyRegions_dataDir(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Geo::PolyRegions *arg1 = (Seiscomp::Geo::PolyRegions *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Geo__PolyRegions, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "PolyRegions_dataDir" "', argument " "1"" of type '" "Seiscomp::Geo::PolyRegions const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Geo::PolyRegions * >(argp1);
+  {
+    try {
+      result = (std::string *) &((Seiscomp::Geo::PolyRegions const *)arg1)->dataDir();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *PolyRegions_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj = NULL;
+  if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Seiscomp__Geo__PolyRegions, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *PolyRegions_swiginit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  return SWIG_Python_InitShadowInstance(args);
+}
+
 SWIGINTERN PyObject *_wrap_SensorLocationDelegate_getSensorLocation(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Seismology::SensorLocationDelegate *arg1 = (Seiscomp::Seismology::SensorLocationDelegate *) 0 ;
@@ -13090,7 +13623,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TravelTime__getAzi(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TravelTime_getAzi(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::TravelTime *arg1 = (Seiscomp::TravelTime *) 0 ;
   void *argp1 = 0 ;
@@ -13103,7 +13636,7 @@ SWIGINTERN PyObject *_wrap_TravelTime__getAzi(PyObject *self, PyObject *args) {
   swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__TravelTime, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime__getAzi" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime_getAzi" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::TravelTime * >(argp1);
   {
@@ -13135,7 +13668,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TravelTime__setAzi(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TravelTime_setAzi(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::TravelTime *arg1 = (Seiscomp::TravelTime *) 0 ;
   Seiscomp::Core::Optional< double > *arg2 = 0 ;
@@ -13145,10 +13678,10 @@ SWIGINTERN PyObject *_wrap_TravelTime__setAzi(PyObject *self, PyObject *args) {
   PyObject *swig_obj[2] ;
   
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "TravelTime__setAzi", 2, 2, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "TravelTime_setAzi", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__TravelTime, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime__setAzi" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TravelTime_setAzi" "', argument " "1"" of type '" "Seiscomp::TravelTime *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::TravelTime * >(argp1);
   {
@@ -17004,9 +17537,25 @@ static PyMethodDef SwigMethods[] = {
 	 { "Regions_getFlinnEngdahlRegionById", _wrap_Regions_getFlinnEngdahlRegionById, METH_O, "Regions_getFlinnEngdahlRegionById(int id) -> std::string"},
 	 { "Regions_load", _wrap_Regions_load, METH_NOARGS, "Regions_load()"},
 	 { "Regions_getRegionName", _wrap_Regions_getRegionName, METH_VARARGS, "Regions_getRegionName(double lat, double lon) -> std::string"},
-	 { "Regions_polyRegions", _wrap_Regions_polyRegions, METH_NOARGS, "Regions_polyRegions() -> Seiscomp::Geo::PolyRegions &"},
+	 { "Regions_polyRegions", _wrap_Regions_polyRegions, METH_NOARGS, "Regions_polyRegions() -> PolyRegions"},
 	 { "delete_Regions", _wrap_delete_Regions, METH_O, "delete_Regions(Regions self)"},
 	 { "Regions_swigregister", Regions_swigregister, METH_O, NULL},
+	 { "new_PolyRegions", _wrap_new_PolyRegions, METH_VARARGS, "\n"
+		"PolyRegions()\n"
+		"new_PolyRegions(std::string const & location) -> PolyRegions\n"
+		""},
+	 { "delete_PolyRegions", _wrap_delete_PolyRegions, METH_O, "delete_PolyRegions(PolyRegions self)"},
+	 { "PolyRegions__print", _wrap_PolyRegions__print, METH_O, "PolyRegions__print(PolyRegions self)"},
+	 { "PolyRegions_info", _wrap_PolyRegions_info, METH_O, "PolyRegions_info(PolyRegions self)"},
+	 { "PolyRegions_findRegion", _wrap_PolyRegions_findRegion, METH_VARARGS, "PolyRegions_findRegion(PolyRegions self, double lat, double lon) -> GeoFeature"},
+	 { "PolyRegions_findRegionName", _wrap_PolyRegions_findRegionName, METH_VARARGS, "PolyRegions_findRegionName(PolyRegions self, double lat, double lon) -> std::string"},
+	 { "PolyRegions_regionCount", _wrap_PolyRegions_regionCount, METH_O, "PolyRegions_regionCount(PolyRegions self) -> size_t"},
+	 { "PolyRegions_addRegion", _wrap_PolyRegions_addRegion, METH_VARARGS, "PolyRegions_addRegion(PolyRegions self, GeoFeature r)"},
+	 { "PolyRegions_region", _wrap_PolyRegions_region, METH_VARARGS, "PolyRegions_region(PolyRegions self, int i) -> GeoFeature"},
+	 { "PolyRegions_read", _wrap_PolyRegions_read, METH_VARARGS, "PolyRegions_read(PolyRegions self, std::string const & location) -> size_t"},
+	 { "PolyRegions_dataDir", _wrap_PolyRegions_dataDir, METH_O, "PolyRegions_dataDir(PolyRegions self) -> std::string const &"},
+	 { "PolyRegions_swigregister", PolyRegions_swigregister, METH_O, NULL},
+	 { "PolyRegions_swiginit", PolyRegions_swiginit, METH_VARARGS, NULL},
 	 { "SensorLocationDelegate_getSensorLocation", _wrap_SensorLocationDelegate_getSensorLocation, METH_VARARGS, "SensorLocationDelegate_getSensorLocation(SensorLocationDelegate self, Pick pick) -> SensorLocation"},
 	 { "delete_SensorLocationDelegate", _wrap_delete_SensorLocationDelegate, METH_O, "delete_SensorLocationDelegate(SensorLocationDelegate self)"},
 	 { "SensorLocationDelegate_swigregister", SensorLocationDelegate_swigregister, METH_O, NULL},
@@ -17093,8 +17642,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "TravelTime_dddp_get", _wrap_TravelTime_dddp_get, METH_O, "TravelTime_dddp_get(TravelTime self) -> double"},
 	 { "TravelTime_takeoff_set", _wrap_TravelTime_takeoff_set, METH_VARARGS, "TravelTime_takeoff_set(TravelTime self, double takeoff)"},
 	 { "TravelTime_takeoff_get", _wrap_TravelTime_takeoff_get, METH_O, "TravelTime_takeoff_get(TravelTime self) -> double"},
-	 { "TravelTime__getAzi", _wrap_TravelTime__getAzi, METH_O, "TravelTime__getAzi(TravelTime self) -> Seiscomp::Core::Optional< double >"},
-	 { "TravelTime__setAzi", _wrap_TravelTime__setAzi, METH_VARARGS, "TravelTime__setAzi(TravelTime self, Seiscomp::Core::Optional< double > const & v)"},
+	 { "TravelTime_getAzi", _wrap_TravelTime_getAzi, METH_O, "TravelTime_getAzi(TravelTime self) -> Seiscomp::Core::Optional< double >"},
+	 { "TravelTime_setAzi", _wrap_TravelTime_setAzi, METH_VARARGS, "TravelTime_setAzi(TravelTime self, Seiscomp::Core::Optional< double > const & v)"},
 	 { "delete_TravelTime", _wrap_delete_TravelTime, METH_O, "delete_TravelTime(TravelTime self)"},
 	 { "TravelTime_swigregister", TravelTime_swigregister, METH_O, NULL},
 	 { "TravelTime_swiginit", TravelTime_swiginit, METH_VARARGS, NULL},
@@ -18103,7 +18652,6 @@ static swig_type_info _swigt__p_Seiscomp__DataModel__StationReference = {"_p_Sei
 static swig_type_info _swigt__p_Seiscomp__DataModel__Stream = {"_p_Seiscomp__DataModel__Stream", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__DataModel__WaveformQuality = {"_p_Seiscomp__DataModel__WaveformQuality", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__GenericRecord = {"_p_Seiscomp__GenericRecord", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_Seiscomp__Geo__GeoFeature = {"_p_Seiscomp__Geo__GeoFeature", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__Geo__GeoFeatureSet = {"_p_Seiscomp__Geo__GeoFeatureSet", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__Cropper = {"_p_Seiscomp__IO__Cropper", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_Seiscomp__IO__DatabaseInterface = {"_p_Seiscomp__IO__DatabaseInterface", 0, 0, 0, 0, 0};
@@ -18525,6 +19073,7 @@ static swig_type_info _swigt__p_Seiscomp__DataModel__TimeWindow = {"_p_Seiscomp_
 static swig_type_info _swigt__p_Seiscomp__DataModel__WaveformStreamID = {"_p_Seiscomp__DataModel__WaveformStreamID", "Seiscomp::DataModel::WaveformStreamID *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__FileNotFoundError = {"_p_Seiscomp__FileNotFoundError", "Seiscomp::FileNotFoundError *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Geo__GeoCoordinate = {"_p_Seiscomp__Geo__GeoCoordinate", "Seiscomp::Geo::Vertex *|Seiscomp::Geo::GeoCoordinate *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Seiscomp__Geo__GeoFeature = {"_p_Seiscomp__Geo__GeoFeature", "Seiscomp::Geo::GeoFeature *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Geo__PolyRegions = {"_p_Seiscomp__Geo__PolyRegions", "Seiscomp::Geo::PolyRegions *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Geo__CityT_double_t = {"_p_Seiscomp__Math__Geo__CityT_double_t", "Seiscomp::Math::Geo::CityD *|Seiscomp::Math::Geo::City< double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Seiscomp__Math__Geo__CityT_float_t = {"_p_Seiscomp__Math__Geo__CityT_float_t", "Seiscomp::Math::Geo::CityF *|Seiscomp::Math::Geo::City< float > *", 0, 0, (void*)0, 0};
@@ -19410,7 +19959,6 @@ static swig_cast_info _swigc__p_Seiscomp__DataModel__StationReference[] = {{&_sw
 static swig_cast_info _swigc__p_Seiscomp__DataModel__Stream[] = {{&_swigt__p_Seiscomp__DataModel__Stream, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__WaveformQuality[] = {{&_swigt__p_Seiscomp__DataModel__WaveformQuality, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__GenericRecord[] = {{&_swigt__p_Seiscomp__GenericRecord, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__Geo__GeoFeature[] = {{&_swigt__p_Seiscomp__Geo__GeoFeature, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Geo__GeoFeatureSet[] = {{&_swigt__p_Seiscomp__Geo__GeoFeatureSet, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__Cropper[] = {{&_swigt__p_Seiscomp__IO__Cropper, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__IO__DatabaseInterface[] = {{&_swigt__p_Seiscomp__IO__DatabaseInterface, 0, 0, 0},{0, 0, 0, 0}};
@@ -19833,6 +20381,7 @@ static swig_cast_info _swigc__p_Seiscomp__DataModel__TimeWindow[] = {  {&_swigt_
 static swig_cast_info _swigc__p_Seiscomp__DataModel__WaveformStreamID[] = {  {&_swigt__p_Seiscomp__DataModel__WaveformStreamID, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__FileNotFoundError[] = {  {&_swigt__p_Seiscomp__FileNotFoundError, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Geo__GeoCoordinate[] = {  {&_swigt__p_Seiscomp__Geo__GeoCoordinate, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__Geo__GeoFeature[] = {  {&_swigt__p_Seiscomp__Geo__GeoFeature, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Geo__PolyRegions[] = {  {&_swigt__p_Seiscomp__Geo__PolyRegions, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Geo__CityT_double_t[] = {  {&_swigt__p_Seiscomp__Math__Geo__CityT_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__Math__Geo__CityT_float_t[] = {  {&_swigt__p_Seiscomp__Math__Geo__CityT_float_t, 0, 0, 0},{0, 0, 0, 0}};

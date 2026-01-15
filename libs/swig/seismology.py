@@ -334,12 +334,64 @@ class Regions(object):
 
     @staticmethod
     def polyRegions():
-        r"""polyRegions() -> Seiscomp::Geo::PolyRegions &"""
+        r"""polyRegions() -> PolyRegions"""
         return _seismology.Regions_polyRegions()
     __swig_destroy__ = _seismology.delete_Regions
 
 # Register Regions in _seismology:
 _seismology.Regions_swigregister(Regions)
+class PolyRegions(object):
+    r"""Proxy of C++ Seiscomp::Geo::PolyRegions class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, *args):
+        r"""
+        __init__(PolyRegions self) -> PolyRegions
+        __init__(PolyRegions self, std::string const & location) -> PolyRegions
+        """
+        _seismology.PolyRegions_swiginit(self, _seismology.new_PolyRegions(*args))
+    __swig_destroy__ = _seismology.delete_PolyRegions
+
+    def _print(self):
+        r"""_print(PolyRegions self)"""
+        return _seismology.PolyRegions__print(self)
+
+    def info(self):
+        r"""info(PolyRegions self)"""
+        return _seismology.PolyRegions_info(self)
+
+    def findRegion(self, lat, lon):
+        r"""findRegion(PolyRegions self, double lat, double lon) -> GeoFeature"""
+        return _seismology.PolyRegions_findRegion(self, lat, lon)
+
+    def findRegionName(self, lat, lon):
+        r"""findRegionName(PolyRegions self, double lat, double lon) -> std::string"""
+        return _seismology.PolyRegions_findRegionName(self, lat, lon)
+
+    def regionCount(self):
+        r"""regionCount(PolyRegions self) -> size_t"""
+        return _seismology.PolyRegions_regionCount(self)
+
+    def addRegion(self, r):
+        r"""addRegion(PolyRegions self, GeoFeature r)"""
+        return _seismology.PolyRegions_addRegion(self, r)
+
+    def region(self, i):
+        r"""region(PolyRegions self, int i) -> GeoFeature"""
+        return _seismology.PolyRegions_region(self, i)
+
+    def read(self, location):
+        r"""read(PolyRegions self, std::string const & location) -> size_t"""
+        return _seismology.PolyRegions_read(self, location)
+
+    def dataDir(self):
+        r"""dataDir(PolyRegions self) -> std::string const &"""
+        return _seismology.PolyRegions_dataDir(self)
+
+# Register PolyRegions in _seismology:
+_seismology.PolyRegions_swigregister(PolyRegions)
 SC3_LOCATOR_INTERFACE_VERSION = _seismology.SC3_LOCATOR_INTERFACE_VERSION
 
 class SensorLocationDelegate(seiscomp.core.BaseObject):
@@ -624,15 +676,15 @@ class TravelTime(object):
     dddp = property(_seismology.TravelTime_dddp_get, _seismology.TravelTime_dddp_set, doc=r"""dddp : double""")
     takeoff = property(_seismology.TravelTime_takeoff_get, _seismology.TravelTime_takeoff_set, doc=r"""takeoff : double""")
 
-    def _getAzi(self):
-        r"""_getAzi(TravelTime self) -> Seiscomp::Core::Optional< double >"""
-        return _seismology.TravelTime__getAzi(self)
+    def getAzi(self):
+        r"""getAzi(TravelTime self) -> Seiscomp::Core::Optional< double >"""
+        return _seismology.TravelTime_getAzi(self)
 
-    def _setAzi(self, v):
-        r"""_setAzi(TravelTime self, Seiscomp::Core::Optional< double > const & v)"""
-        return _seismology.TravelTime__setAzi(self, v)
+    def setAzi(self, v):
+        r"""setAzi(TravelTime self, Seiscomp::Core::Optional< double > const & v)"""
+        return _seismology.TravelTime_setAzi(self, v)
 
-    azi = property(_getAzi, _setAzi)
+    azi = property(getAzi, setAzi)
 
     __swig_destroy__ = _seismology.delete_TravelTime
 

@@ -351,11 +351,20 @@ class SystemApplication(object):
     def setDaemonEnabled(self, enable):
         return _system.SystemApplication_setDaemonEnabled(self, enable)
 
+    def logVerbosity(self):
+        return _system.SystemApplication_logVerbosity(self)
+
     def setLoggingContext(self, arg2):
         return _system.SystemApplication_setLoggingContext(self, arg2)
 
+    def logContext(self):
+        return _system.SystemApplication_logContext(self)
+
     def setLoggingComponent(self, arg2):
         return _system.SystemApplication_setLoggingComponent(self, arg2)
+
+    def logComponent(self):
+        return _system.SystemApplication_logComponent(self)
 
     def setLoggingToStdErr(self, arg2):
         return _system.SystemApplication_setLoggingToStdErr(self, arg2)
@@ -742,6 +751,7 @@ class SchemaStructure(SchemaParameters):
         return _system.SchemaStructure_serialize(self, ar)
     type = property(_system.SchemaStructure_type_get, _system.SchemaStructure_type_set)
     title = property(_system.SchemaStructure_title_get, _system.SchemaStructure_title_set)
+    aliases = property(_system.SchemaStructure_aliases_get, _system.SchemaStructure_aliases_set)
     link = property(_system.SchemaStructure_link_get, _system.SchemaStructure_link_set)
     description = property(_system.SchemaStructure_description_get, _system.SchemaStructure_description_set)
     __swig_destroy__ = _system.delete_SchemaStructure
@@ -1144,6 +1154,14 @@ class Container(seiscomp.core.BaseObject):
         raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
 
+    @staticmethod
+    def Cast(*args):
+        return _system.Container_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        return _system.Container_ConstCast(*args)
+
     def parameter(self, i):
         return _system.Container_parameter(self, i)
 
@@ -1452,6 +1470,14 @@ class ModuleBinding(Binding):
     __repr__ = _swig_repr
 
     @staticmethod
+    def Cast(*args):
+        return _system.ModuleBinding_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        return _system.ModuleBinding_ConstCast(*args)
+
+    @staticmethod
     def ClassName():
         return _system.ModuleBinding_ClassName()
 
@@ -1518,6 +1544,14 @@ _system.StationID_swigregister(StationID)
 class Module(seiscomp.core.BaseObject):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+
+    @staticmethod
+    def Cast(*args):
+        return _system.Module_Cast(*args)
+
+    @staticmethod
+    def ConstCast(*args):
+        return _system.Module_ConstCast(*args)
 
     @staticmethod
     def ClassName():
