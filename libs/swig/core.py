@@ -504,6 +504,9 @@ class FrameworkVersion(object):
     def systemInfo(self):
         return _core.FrameworkVersion_systemInfo(self)
 
+    def release(self):
+        return _core.FrameworkVersion_release(self)
+
     def version(self):
         return _core.FrameworkVersion_version(self)
 

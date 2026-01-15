@@ -10400,6 +10400,43 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_FrameworkVersion_release(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Core::FrameworkVersion *arg1 = (Seiscomp::Core::FrameworkVersion *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  std::string result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Core__FrameworkVersion, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FrameworkVersion_release" "', argument " "1"" of type '" "Seiscomp::Core::FrameworkVersion const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Core::FrameworkVersion * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::Core::FrameworkVersion const *)arg1)->release();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_FrameworkVersion_version(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::FrameworkVersion *arg1 = (Seiscomp::Core::FrameworkVersion *) 0 ;
@@ -52930,6 +52967,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "new_FrameworkVersion", _wrap_new_FrameworkVersion, METH_NOARGS, NULL},
 	 { "FrameworkVersion_toString", _wrap_FrameworkVersion_toString, METH_O, NULL},
 	 { "FrameworkVersion_systemInfo", _wrap_FrameworkVersion_systemInfo, METH_O, NULL},
+	 { "FrameworkVersion_release", _wrap_FrameworkVersion_release, METH_O, NULL},
 	 { "FrameworkVersion_version", _wrap_FrameworkVersion_version, METH_O, NULL},
 	 { "FrameworkVersion_api", _wrap_FrameworkVersion_api, METH_O, NULL},
 	 { "delete_FrameworkVersion", _wrap_delete_FrameworkVersion, METH_O, NULL},
