@@ -95,7 +95,8 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 
 		//! Blocking read from socket
 		std::string readBinary(int size);
-		void handshake();
+		std::string createPostData();
+		void handshake(const std::string &postData, size_t redirectCount = 0);
 
 
 	private:

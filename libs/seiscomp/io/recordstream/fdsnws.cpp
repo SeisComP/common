@@ -92,11 +92,6 @@ bool FDSNWSConnectionBase::setSource(const std::string &source) {
 		_host = source;
 	}
 
-	if ( _host.find(':') == string::npos ) {
-		_host += ":";
-		_host += Core::toString(_defaultPort);
-	}
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -291,113 +286,119 @@ const char *FDSNWSConnectionBase::getProxy() const {
 void FDSNWSConnectionBase::openConnection(const std::string &host) {
 	const char *proxyHost = getProxy();
 
-	if ( proxyHost ) {
-		Util::Url url(proxyHost);
-		string proxyScheme = url.scheme();
-		if ( proxyScheme.empty() ) {
-			proxyScheme = "http";
-		}
-
-		if ( proxyScheme != _protocol ) {
-			if ( proxyScheme == "http" ) {
-				_socket = new IO::Socket;
-			}
-			else if ( proxyScheme == "https" ) {
-				_socket = new IO::SSLSocket;
-			}
-			else {
-				throw GeneralException("Request and proxy protocol mismatch");
-			}
-		}
-
-		size_t port = url.port() ? *url.port() : 3128;
-
-		if ( url.username().empty() || url.password().empty() ) {
-			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%zu",
-			               proxyScheme, url.host(), port);
+	if ( !proxyHost ) {
+		if ( host.find(':') == string::npos ) {
+			_socket->open(host + ":" + Core::toString(_defaultPort));
 		}
 		else {
-			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:****@%s:%zu",
-			               proxyScheme, url.username(), url.host(), port);
+			_socket->open(host);
 		}
 
-		_socket->open(url.host() + ":" + toString(port));
+		return;
+	}
 
-		if ( !strcmp(_protocol, "https") ) {
-			// Issue connect
-			_socket->sendRequest("CONNECT " + _host + " HTTP/1.1", false);
-			if ( !url.username().empty() && !url.password().empty() ) {
-				string authHeader = "Proxy-Authorization: Basic ";
-				Util::encodeBase64(authHeader, url.username() + ":" + url.password());
-				_socket->sendRequest(authHeader, false);
-			}
-			_socket->sendRequest("Host: " + _host, false);
-			_socket->sendRequest("", false);
+	Util::Url url(proxyHost);
+	string proxyScheme = url.scheme();
+	if ( proxyScheme.empty() ) {
+		proxyScheme = "http";
+	}
 
-			string line;
-
-			if ( proxyScheme == "http" ) {
-				// Now read result unbuffered and blocking
-				int fd = _socket->takeFd();
-				int flags = fcntl(fd, F_GETFL, 0);
-				flags &= ~O_NONBLOCK;
-				fcntl(fd, F_SETFL, flags);
-
-				char c;
-				while ( ::read(fd, &c, 1) == 1 ) {
-					if ( c == '\r' ) {
-						continue;
-					}
-					if ( c == '\n' ) {
-						break;
-					}
-
-					line += c;
-				}
-
-				while ( ::read(fd, &c, 1) == 1 ) {
-					if ( c == '\n' ) {
-						break;
-					}
-				}
-
-				_socket = new IO::SSLSocket;
-				static_cast<IO::SSLSocket*>(_socket.get())->setFd(fd);
-			}
-			else {
-				line = _socket->readline();
-			}
-
-			SEISCOMP_DEBUG_S(line);
-			if ( line.compare(0, 7, "HTTP/1.") != 0 ) {
-				throw GeneralException("server sent invalid response: " + line);
-			}
-
-			size_t pos;
-			pos = line.find(' ');
-			if ( pos == string::npos ) {
-				throw GeneralException("server sent invalid response: " + line);
-			}
-
-			line.erase(0, pos+1);
-
-			pos = line.find(' ');
-			if ( pos == string::npos ) {
-				throw GeneralException("server sent invalid response: " + line);
-			}
-
-			int code;
-			if ( !fromString(code, line.substr(0, pos)) ) {
-				throw GeneralException("server sent invalid status code: " + line.substr(0, pos));
-			}
-
-			if ( code != 200 ) {
-				throw GeneralException("proxy returned code: " + line.substr(0, pos));
-			}
+	if ( proxyScheme != _protocol ) {
+		if ( proxyScheme == "http" ) {
+			_socket = new IO::Socket;
+		}
+		else if ( proxyScheme == "https" ) {
+			_socket = new IO::SSLSocket;
+		}
+		else {
+			throw GeneralException("Request and proxy protocol mismatch");
 		}
 	}
+
+	size_t port = url.port() ? *url.port() : 3128;
+
+	if ( url.username().empty() || url.password().empty() ) {
+		SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%zu",
+		               proxyScheme, url.host(), port);
+	}
 	else {
-		_socket->open(host);
+		SEISCOMP_DEBUG("Connect to web proxy at %s://%s:****@%s:%zu",
+		               proxyScheme, url.username(), url.host(), port);
+	}
+
+	_socket->open(url.host() + ":" + toString(port));
+
+	if ( !strcmp(_protocol, "https") ) {
+		// Issue connect
+		_socket->sendRequest("CONNECT " + _host + " HTTP/1.1", false);
+		if ( !url.username().empty() && !url.password().empty() ) {
+			string authHeader = "Proxy-Authorization: Basic ";
+			Util::encodeBase64(authHeader, url.username() + ":" + url.password());
+			_socket->sendRequest(authHeader, false);
+		}
+		_socket->sendRequest("Host: " + _host, false);
+		_socket->sendRequest("", false);
+
+		string line;
+
+		if ( proxyScheme == "http" ) {
+			// Now read result unbuffered and blocking
+			int fd = _socket->takeFd();
+			int flags = fcntl(fd, F_GETFL, 0);
+			flags &= ~O_NONBLOCK;
+			fcntl(fd, F_SETFL, flags);
+
+			char c;
+			while ( ::read(fd, &c, 1) == 1 ) {
+				if ( c == '\r' ) {
+					continue;
+				}
+				if ( c == '\n' ) {
+					break;
+				}
+
+				line += c;
+			}
+
+			while ( ::read(fd, &c, 1) == 1 ) {
+				if ( c == '\n' ) {
+					break;
+				}
+			}
+
+			_socket = new IO::SSLSocket;
+			static_cast<IO::SSLSocket*>(_socket.get())->setFd(fd);
+		}
+		else {
+			line = _socket->readline();
+		}
+
+		SEISCOMP_DEBUG_S(line);
+		if ( line.compare(0, 7, "HTTP/1.") != 0 ) {
+			throw GeneralException("server sent invalid response: " + line);
+		}
+
+		size_t pos;
+		pos = line.find(' ');
+		if ( pos == string::npos ) {
+			throw GeneralException("server sent invalid response: " + line);
+		}
+
+		line.erase(0, pos+1);
+
+		pos = line.find(' ');
+		if ( pos == string::npos ) {
+			throw GeneralException("server sent invalid response: " + line);
+		}
+
+		int code;
+		if ( !fromString(code, line.substr(0, pos)) ) {
+			throw GeneralException("server sent invalid status code: " + line.substr(0, pos));
+		}
+
+		if ( code != 200 ) {
+			throw GeneralException("proxy returned code: " + line.substr(0, pos));
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -406,14 +407,14 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FDSNWSConnectionBase::handshake() {
+string FDSNWSConnectionBase::createPostData() {
 	string request;
 
 	for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
-		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime));
 		if ( (!it->startTime() && !_stime) || (!it->endTime() && !_etime) ) {
 			/* invalid time window ignore stream */
-			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
+			SEISCOMP_WARNING("Ignoring request with invalid time window: %s",
+			                 it->str(_stime, _etime));
 			continue;
 		}
 
@@ -445,8 +446,16 @@ void FDSNWSConnectionBase::handshake() {
 		request += "\r\n";
 	}
 
-	SEISCOMP_DEBUG("POST %s://%s%s", _protocol, _host, _url);
-	SEISCOMP_DEBUG("Sending request:\n%s", request);
+	return request;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCount) {
+	SEISCOMP_DEBUG("POST %s://%s%s\n%s", _protocol, _host, _url, postData);
 
 	const char *proxyServer = getProxy();
 	if ( proxyServer && !strcmp(_protocol, "http") ) {
@@ -466,11 +475,13 @@ void FDSNWSConnectionBase::handshake() {
 	_socket->sendRequest("Host: " + _host, false);
 	_socket->sendRequest("User-Agent: Mosaic/1.0", false);
 	_socket->sendRequest("Content-Type: text/plain", false);
-	_socket->sendRequest("Content-Length: " + toString(request.size()), false);
+	_socket->sendRequest("Content-Length: " + toString(postData.size()), false);
 	_socket->sendRequest("", false);
-	_socket->write(request);
+	_socket->write(postData);
 
 	string line = _socket->readline();
+	SEISCOMP_DEBUG("[00] %s", line);
+
 	if ( line.compare(0, 7, "HTTP/1.") != 0 ) {
 		throw GeneralException("server sent invalid response: " + line);
 	}
@@ -503,15 +514,19 @@ void FDSNWSConnectionBase::handshake() {
 	}
 	else if ( code / 100 == 3 ) {
 		// Redirect
+		if ( redirectCount > 5 ) {
+			throw GeneralException("redirect limit of 5 exceeded");
+		}
 	}
 	else {
-		_error = "server request error: " + line;
+		throw GeneralException("server request error: " + line);
 	}
 
 	_remainingBytes = -1;
 
 	int lc = 0;
 	string redirectLocation;
+	bool keepAlive = false;
 
 	while ( !_socket->isInterrupted() ) {
 		++lc;
@@ -551,6 +566,14 @@ void FDSNWSConnectionBase::handshake() {
 			redirectLocation = line.substr(pos+1);
 			trim(redirectLocation);
 		}
+		else if ( line.compare(0, 11, "CONNECTION:") == 0 ) {
+			line.erase(line.begin(), line.begin()+11);
+			trim(line);
+			if ( line == "keep-alive" ) {
+				keepAlive = true;
+				SEISCOMP_DEBUG(" -> enabled 'keep-alive'");
+			}
+		}
 	}
 
 	if ( _chunkMode ) {
@@ -561,50 +584,56 @@ void FDSNWSConnectionBase::handshake() {
 		_remainingBytes = 0;
 	}
 
+	// Handle redirect
 	if ( code / 100 == 3 ) {
 		if ( redirectLocation.empty() ) {
-			_error = "Invalid redirect response";
-			SEISCOMP_ERROR("%i returned but empty Location header", code);
+			throw GeneralException("Invalid redirect location protocol: "
+			                       "location header empty");
+		}
+
+		SEISCOMP_INFO("FDSNWS request was redirected (%i) to %s",
+		              code, redirectLocation);
+		pos = redirectLocation.find("://");
+
+		// Location on same host and protocol
+		if ( pos == string::npos ) {
+			if ( redirectLocation[0] != '/' ) {
+				throw GeneralException("Invalid redirect location protocol: " +
+				                       redirectLocation);
+			}
+
+			_url = redirectLocation;
+
+			if ( !keepAlive ) {
+				_socket->close();
+				openConnection(_host);
+			}
+
+			handshake(postData, ++redirectCount);
+			return;
+		}
+
+		// Location on different host or protocol
+		if ( redirectLocation.compare(0, pos, "http") == 0 ) {
+			_socket = new IO::Socket;
+			_protocol = "http";
+			_defaultPort = 80;
+		}
+		else if ( redirectLocation.compare(0, pos, "https") == 0 ) {
+			_socket = new IO::SSLSocket;
+			_protocol = "https";
+			_defaultPort = 443;
 		}
 		else {
-			SEISCOMP_DEBUG("FDSNWS request was redirected (%i) to %s",
-			               code, redirectLocation);
-			pos = redirectLocation.find("://");
-			if ( pos == string::npos ) {
-				if ( redirectLocation[0] == '/' ) {
-					redirectLocation = _host + redirectLocation;
-					_socket->close();
-				}
-				else {
-					_error = "Invalid redirect location protocol";
-					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation);
-					return;
-				}
-			}
-			else {
-				if ( redirectLocation.compare(0, pos, "http") == 0 ) {
-					_socket = new IO::Socket;
-					_protocol = "http";
-					_defaultPort = 80;
-				}
-				else if ( redirectLocation.compare(0, pos, "https") == 0 ) {
-					_socket = new IO::SSLSocket;
-					_protocol = "https";
-					_defaultPort = 443;
-				}
-				else {
-					_error = "Invalid redirect location protocol";
-					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation);
-					return;
-				}
-
-				redirectLocation.erase(0, pos+3);
-			}
-
-			setSource(redirectLocation);
-			openConnection(_host);
-			handshake();
+			throw GeneralException("Invalid redirect location protocol: " +
+			                       redirectLocation);
 		}
+
+		redirectLocation.erase(0, pos+3);
+
+		setSource(redirectLocation);
+		openConnection(_host);
+		handshake(postData, ++redirectCount);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -623,7 +652,7 @@ Record *FDSNWSConnectionBase::next() {
 	if ( !_readingData ) {
 		try {
 			openConnection(_host);
-			handshake();
+			handshake(createPostData());
 		}
 		catch ( const GeneralException &e ) {
 			SEISCOMP_ERROR("fdsnws: %s", e.what());
