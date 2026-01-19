@@ -99,12 +99,14 @@ Authentication via the `queryauth` resource is currently not supported.
 Examples
 ^^^^^^^^
 
-- ``fdsnws://service.iris.edu``
-- ``fdsnws://service.iris.edu:80/fdsnws/dataselect/1/query``
-- ``fdsnwss://geofon.gfz.de``
+.. code-block:: properties
+
+   fdsnws://service.earthscope.org
+   fdsnws://service.earthscope.org:80/fdsnws/dataselect/1/query
+   fdsnwss://geofon.gfz.de
+
 
 .. _rs-file:
-
 
 File
 ----
