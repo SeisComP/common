@@ -45,6 +45,7 @@
 #include <QImage>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QStatusBar>
 #include <QtSvg/QSvgRenderer>
 
@@ -243,6 +244,39 @@ void MainWindow::showEvent(QShowEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MainWindow::closeEvent(QCloseEvent *e) {
+	if ( !statusBar() || _processState ) {
+		auto *pm = SCApp->processManager();
+		int runningCount = pm->runningCount();
+		if ( runningCount > 0 ) {
+			pm->showNormal();
+			pm->activateWindow();
+
+			QMessageBox mb;
+			mb.setWindowTitle("Close aborted");
+			if ( runningCount == 1 ) {
+				mb.setText(QString("Found running process.").arg(runningCount));
+				mb.setInformativeText("Do you want to terminate it?");
+			}
+			else {
+				mb.setText(QString("Found %1 running processes.").arg(runningCount));
+				mb.setInformativeText("Do you want to terminate them?");
+			}
+			mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+			int ret = mb.exec();
+			if ( ret == QMessageBox::Yes ) {
+				auto procs = pm->processes();
+				for ( auto *p : std::as_const(procs) ) {
+					pm->terminate(p);
+				}
+			}
+
+			e->ignore();
+			return;
+		}
+
+		pm->close();
+	}
+
 	auto *lm = SCApp->logManager();
 	if ( lm ) {
 		lm->close();
