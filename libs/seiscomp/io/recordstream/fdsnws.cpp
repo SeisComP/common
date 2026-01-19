@@ -114,10 +114,13 @@ bool FDSNWSConnectionBase::setRecordType(const char* type) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
-                                     const string &loc, const string &cha) {
+bool FDSNWSConnectionBase::addStream(const string &networkCode,
+                                     const string &stationCode,
+                                     const string &locationCode,
+                                     const string &channelCode) {
 	pair<set<StreamIdx>::iterator, bool> result;
-	result = _streams.insert(StreamIdx(net, sta, loc, cha));
+	result = _streams.insert(StreamIdx(networkCode, stationCode,
+	                                   locationCode, channelCode));
 	return result.second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -126,12 +129,16 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
-                                     const string &loc, const string &cha,
-                                     const OPT(Time) &stime,
-                                     const OPT(Time) &etime) {
+bool FDSNWSConnectionBase::addStream(const string &networkCode,
+                                     const string &stationCode,
+                                     const string &locationCode,
+                                     const string &channelCode,
+                                     const OPT(Time) &startTime,
+                                     const OPT(Time) &endTime) {
 	pair<set<StreamIdx>::iterator, bool> result;
-	result = _streams.insert(StreamIdx(net, sta, loc, cha, stime, etime));
+	result = _streams.insert(StreamIdx(networkCode, stationCode,
+	                                   locationCode, channelCode,
+	                                   startTime, endTime));
 	return result.second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -140,8 +147,8 @@ bool FDSNWSConnectionBase::addStream(const string &net, const string &sta,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setStartTime(const OPT(Time) &stime) {
-	_stime = stime;
+bool FDSNWSConnectionBase::setStartTime(const OPT(Time) &startTime) {
+	_stime = startTime;
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -150,8 +157,8 @@ bool FDSNWSConnectionBase::setStartTime(const OPT(Time) &stime) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FDSNWSConnectionBase::setEndTime(const OPT(Time) &etime) {
-	_etime = etime;
+bool FDSNWSConnectionBase::setEndTime(const OPT(Time) &endTime) {
+	_etime = endTime;
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -193,8 +200,9 @@ void FDSNWSConnectionBase::close() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FDSNWSConnectionBase::reconnect() {
-	if ( _socket->isOpen() )
+	if ( _socket->isOpen() ) {
 		_socket->close();
+	}
 
 	_readingData = false;
 	return true;
@@ -209,12 +217,14 @@ const char *FDSNWSConnectionBase::getProxy() const {
 	const char *proxy = nullptr;
 
 	proxy = getenv("NO_PROXY");
-	if ( !proxy )
+	if ( !proxy ) {
 		proxy = getenv("no_proxy");
+	}
 
 	if ( proxy ) {
-		if ( !strcmp(proxy, "*") )
+		if ( !strcmp(proxy, "*") ) {
 			return nullptr;
+		}
 
 		string remoteHostname = _host;
 		size_t pos = remoteHostname.rfind(':');
@@ -223,16 +233,20 @@ const char *FDSNWSConnectionBase::getProxy() const {
 		}
 
 		// Check no proxy configuration
-		size_t lproxy = strlen(proxy), ltok;
+		size_t lproxy = strlen(proxy);
+		size_t ltok;
 		const char *tok;
 		while ( (tok = Core::tokenize(proxy, ",", lproxy, ltok)) ) {
 			Core::trimFront(tok, ltok);
 			Core::trimBack(tok, ltok);
-			if ( !ltok ) continue;
+			if ( !ltok ) {
+				continue;
+			}
 
 			// Match from right
-			if ( ltok > remoteHostname.size() )
+			if ( ltok > remoteHostname.size() ) {
 				continue;
+			}
 
 			bool match = true;
 			for ( size_t i = 0; i < ltok; ++i ) {
@@ -245,7 +259,7 @@ const char *FDSNWSConnectionBase::getProxy() const {
 			// Match!
 			if ( match ) {
 				SEISCOMP_DEBUG("'%s' in no_proxy, ignore proxy configuration",
-				               remoteHostname.c_str());
+				               remoteHostname);
 				return nullptr;
 			}
 		}
@@ -255,13 +269,15 @@ const char *FDSNWSConnectionBase::getProxy() const {
 
 	if ( !strcmp(_protocol, "http") ) {
 		proxy = getenv("http_proxy");
-		if ( !proxy )
+		if ( !proxy ) {
 			proxy = getenv("HTTP_PROXY");
+		}
 	}
 	else if ( !strcmp(_protocol, "https") ) {
 		proxy = getenv("HTTPS_PROXY");
-		if ( !proxy )
+		if ( !proxy ) {
 			proxy = getenv("https_proxy");
+		}
 	}
 
 	return proxy;
@@ -278,8 +294,9 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 	if ( proxyHost ) {
 		Util::Url url(proxyHost);
 		string proxyScheme = url.scheme();
-		if ( proxyScheme.empty() )
+		if ( proxyScheme.empty() ) {
 			proxyScheme = "http";
+		}
 
 		if ( proxyScheme != _protocol ) {
 			if ( proxyScheme == "http" ) {
@@ -295,14 +312,14 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 
 		size_t port = url.port() ? *url.port() : 3128;
 
-		if ( url.username().empty() || url.password().empty() )
-			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%d",
-			               proxyScheme.c_str(),
-			               url.host().c_str(), int(port));
-		else
-			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:****@%s:%d",
-			               proxyScheme.c_str(),
-			               url.username().c_str(), url.host().c_str(), int(port));
+		if ( url.username().empty() || url.password().empty() ) {
+			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:%zu",
+			               proxyScheme, url.host(), port);
+		}
+		else {
+			SEISCOMP_DEBUG("Connect to web proxy at %s://%s:****@%s:%zu",
+			               proxyScheme, url.username(), url.host(), port);
+		}
 
 		_socket->open(url.host() + ":" + toString(port));
 
@@ -328,38 +345,46 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 
 				char c;
 				while ( ::read(fd, &c, 1) == 1 ) {
-					if ( c == '\r' ) continue;
-					if ( c == '\n' )
+					if ( c == '\r' ) {
+						continue;
+					}
+					if ( c == '\n' ) {
 						break;
+					}
 
 					line += c;
 				}
 
 				while ( ::read(fd, &c, 1) == 1 ) {
-					if ( c == '\n' )
+					if ( c == '\n' ) {
 						break;
+					}
 				}
 
 				_socket = new IO::SSLSocket;
 				static_cast<IO::SSLSocket*>(_socket.get())->setFd(fd);
 			}
-			else
+			else {
 				line = _socket->readline();
+			}
 
-			SEISCOMP_DEBUG("%s", line.c_str());
-			if ( line.compare(0, 7, "HTTP/1.") != 0 )
+			SEISCOMP_DEBUG_S(line);
+			if ( line.compare(0, 7, "HTTP/1.") != 0 ) {
 				throw GeneralException("server sent invalid response: " + line);
+			}
 
 			size_t pos;
 			pos = line.find(' ');
-			if ( pos == string::npos )
+			if ( pos == string::npos ) {
 				throw GeneralException("server sent invalid response: " + line);
+			}
 
 			line.erase(0, pos+1);
 
 			pos = line.find(' ');
-			if ( pos == string::npos )
+			if ( pos == string::npos ) {
 				throw GeneralException("server sent invalid response: " + line);
+			}
 
 			int code;
 			if ( !fromString(code, line.substr(0, pos)) ) {
@@ -385,7 +410,7 @@ void FDSNWSConnectionBase::handshake() {
 	string request;
 
 	for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
-		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime).c_str());
+		SEISCOMP_DEBUG("Request: %s", it->str(_stime, _etime));
 		if ( (!it->startTime() && !_stime) || (!it->endTime() && !_etime) ) {
 			/* invalid time window ignore stream */
 			SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
@@ -420,8 +445,8 @@ void FDSNWSConnectionBase::handshake() {
 		request += "\r\n";
 	}
 
-	SEISCOMP_DEBUG("POST %s://%s%s", _protocol, _host.c_str(), _url.c_str());
-	SEISCOMP_DEBUG("Sending request:\n%s", request.c_str());
+	SEISCOMP_DEBUG("POST %s://%s%s", _protocol, _host, _url);
+	SEISCOMP_DEBUG("Sending request:\n%s", request);
 
 	const char *proxyServer = getProxy();
 	if ( proxyServer && !strcmp(_protocol, "http") ) {
@@ -435,8 +460,9 @@ void FDSNWSConnectionBase::handshake() {
 			_socket->sendRequest(authHeader, false);
 		}
 	}
-	else
+	else {
 		_socket->sendRequest("POST " + _url + " HTTP/1.1", false);
+	}
 	_socket->sendRequest("Host: " + _host, false);
 	_socket->sendRequest("User-Agent: Mosaic/1.0", false);
 	_socket->sendRequest("Content-Type: text/plain", false);
@@ -445,19 +471,22 @@ void FDSNWSConnectionBase::handshake() {
 	_socket->write(request);
 
 	string line = _socket->readline();
-	if ( line.compare(0, 7, "HTTP/1.") != 0 )
+	if ( line.compare(0, 7, "HTTP/1.") != 0 ) {
 		throw GeneralException("server sent invalid response: " + line);
+	}
 
 	size_t pos;
 	pos = line.find(' ');
-	if ( pos == string::npos )
+	if ( pos == string::npos ) {
 		throw GeneralException("server sent invalid response: " + line);
+	}
 
 	line.erase(0, pos+1);
 
 	pos = line.find(' ');
-	if ( pos == string::npos )
+	if ( pos == string::npos ) {
 		throw GeneralException("server sent invalid response: " + line);
+	}
 
 	int code;
 	if ( !fromString(code, line.substr(0, pos)) ) {
@@ -487,17 +516,20 @@ void FDSNWSConnectionBase::handshake() {
 	while ( !_socket->isInterrupted() ) {
 		++lc;
 		line = _socket->readline();
-		if ( line.empty() ) break;
+		if ( line.empty() ) {
+			break;
+		}
 
-		SEISCOMP_DEBUG("[%02d] %s", lc, line.c_str());
+		SEISCOMP_DEBUG("[%02d] %s", lc, line);
 
 		// Remove whitespaces
 		trim(line);
 
 		pos = line.find(':');
-		if ( pos != string::npos )
+		if ( pos != string::npos ) {
 			// Transform header values to upper case
 			transform(line.begin(), line.begin()+pos, line.begin(), ::toupper);
+		}
 
 		if ( line.compare(0, 18, "TRANSFER-ENCODING:") == 0 ) {
 			line.erase(line.begin(), line.begin()+18);
@@ -522,18 +554,21 @@ void FDSNWSConnectionBase::handshake() {
 	}
 
 	if ( _chunkMode ) {
-		if ( _remainingBytes >= 0 )
-			throw GeneralException("protocol error: transfer encoding is chunked and content length given");
+		if ( _remainingBytes >= 0 ) {
+			throw GeneralException("protocol error: transfer encoding is chunked and "
+			                       "content length given");
+		}
 		_remainingBytes = 0;
 	}
 
 	if ( code / 100 == 3 ) {
 		if ( redirectLocation.empty() ) {
 			_error = "Invalid redirect response";
-			SEISCOMP_ERROR("302 returned but empty Location header");
+			SEISCOMP_ERROR("%i returned but empty Location header", code);
 		}
 		else {
-			SEISCOMP_DEBUG("FDSNWS request was redirected to %s", redirectLocation.c_str());
+			SEISCOMP_DEBUG("FDSNWS request was redirected (%i) to %s",
+			               code, redirectLocation);
 			pos = redirectLocation.find("://");
 			if ( pos == string::npos ) {
 				if ( redirectLocation[0] == '/' ) {
@@ -542,7 +577,7 @@ void FDSNWSConnectionBase::handshake() {
 				}
 				else {
 					_error = "Invalid redirect location protocol";
-					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation.c_str());
+					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation);
 					return;
 				}
 			}
@@ -559,7 +594,7 @@ void FDSNWSConnectionBase::handshake() {
 				}
 				else {
 					_error = "Invalid redirect location protocol";
-					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation.c_str());
+					SEISCOMP_ERROR("Redirect URL invalid: %s", redirectLocation);
 					return;
 				}
 
@@ -579,8 +614,9 @@ void FDSNWSConnectionBase::handshake() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Record *FDSNWSConnectionBase::next() {
-	if ( _readingData && !_socket->isOpen() )
+	if ( _readingData && !_socket->isOpen() ) {
 		return nullptr;
+	}
 
 	_socket->startTimer();
 
@@ -623,7 +659,7 @@ Record *FDSNWSConnectionBase::next() {
 						stream.str(data);
 					}
 
-					IO::MSeedRecord *rec = new IO::MSeedRecord;
+					auto *rec = new IO::MSeedRecord;
 					setupRecord(rec);
 					try {
 						rec->read(stream);
@@ -635,17 +671,15 @@ Record *FDSNWSConnectionBase::next() {
 
 					return rec;
 				}
-				else {
-					_socket->close();
-					break;
-				}
-			}
-			else
-				_error += readBinary(_chunkMode?512:_remainingBytes);
 
-			if ( !_socket->isOpen() ) {
-				if ( _error.size() )
-					throw GeneralException(_error.c_str());
+				_socket->close();
+				break;
+			}
+
+			_error += readBinary(_chunkMode?512:_remainingBytes);
+
+			if ( !_socket->isOpen() && !_error.empty() ) {
+				throw GeneralException(_error);
 			}
 		}
 	}
@@ -663,7 +697,9 @@ Record *FDSNWSConnectionBase::next() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::string FDSNWSConnectionBase::readBinary(int size) {
-	if ( size <= 0 ) return "";
+	if ( size <= 0 ) {
+		return "";
+	}
 
 	string data;
 	int bytesLeft = size;
@@ -674,21 +710,25 @@ std::string FDSNWSConnectionBase::readBinary(int size) {
 			size_t pos = r.find(' ');
 			unsigned int remainingBytes;
 
-			if ( sscanf(r.substr(0, pos).c_str(), "%X", &remainingBytes) !=  1 )
+			if ( sscanf(r.substr(0, pos).c_str(), "%X", &remainingBytes) !=  1 ) {
 				throw GeneralException("invalid chunk header: " + r);
+			}
 
 			_remainingBytes = remainingBytes;
 
 			if ( _remainingBytes <= 0 ) {
-				if ( _error.size() )
+				if ( !_error.empty() ) {
 					throw GeneralException(_error);
+				}
 				_socket->close();
 				break;
 			}
 		}
 
 		int toBeRead = bytesLeft > BUFSIZE ? BUFSIZE : bytesLeft;
-		if ( toBeRead > _remainingBytes ) toBeRead = _remainingBytes;
+		if ( toBeRead > _remainingBytes ) {
+			toBeRead = _remainingBytes;
+		}
 
 		int bytesRead = (int)data.size();
 		data += _socket->read(toBeRead);
