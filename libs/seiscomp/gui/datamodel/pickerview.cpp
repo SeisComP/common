@@ -525,10 +525,10 @@ class PickerMarker : public RecordMarker {
 	public:
 		PickerMarker(RecordWidget *parent,
 		             const Seiscomp::Core::Time& pos,
-		             Type type, bool newPick)
+		             Type type, bool newPick, bool isIncorrect = false)
 		: RecordMarker(parent, pos)
 		, _type(type)
-		, _slot(-1), _rot(PickerView::Config::RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123), _isIncorrect(isIncorrect) {
 			setMovable(newPick);
 			init();
 		}
@@ -536,10 +536,10 @@ class PickerMarker : public RecordMarker {
 		PickerMarker(RecordWidget *parent,
 		             const Seiscomp::Core::Time& pos,
 		             const QString& text,
-		             Type type, bool newPick)
+		             Type type, bool newPick, bool isIncorrect = false)
 		: RecordMarker(parent, pos, text)
 		, _type(type)
-		, _slot(-1), _rot(PickerView::Config::RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123), _isIncorrect(isIncorrect) {
 			setMovable(newPick);
 			init();
 		}
@@ -861,7 +861,12 @@ class PickerMarker : public RecordMarker {
 			static QPoint poly[3];
 			int em = painter.fontMetrics().height();
 
-			painter.setPen(QPen(color, lineWidth));
+			if ( _isIncorrect ) {
+				painter.setPen(QPen(color, lineWidth, Qt::DashLine));
+			}
+			else {
+				painter.setPen(QPen(color, lineWidth));
+			}
 			painter.drawLine(x, y1, x, y2);
 
 			int onsetOffset = -2;
@@ -1107,6 +1112,7 @@ class PickerMarker : public RecordMarker {
 		int               _slot;
 		int               _rot;
 		bool              _drawUncertaintyValues;
+		bool              _isIncorrect{false};
 		std::string       _channelCode;
 };
 
@@ -5484,7 +5490,26 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		item->label()->setAlignment(Qt::AlignRight, 2);
 		item->label()->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
-		auto ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
+		TravelTimeList *ttt = nullptr;
+		bool fallback = false;
+
+		try {
+			ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_ERROR("%s", e.what());
+			if ( edep < 0.001 ) {
+				// Fallback to compute with depth 1m.
+				SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
+				try {
+					ttt = SC_D.ttTable->compute(elat, elon, 0.001, slat, slon, salt);
+					fallback = true;
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_ERROR("Fallback: %s", e.what());
+				}
+			}
+		}
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;
@@ -5502,12 +5527,12 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					continue;
 				}
 
-				PickerMarker* marker = new PickerMarker(
+				auto marker = new PickerMarker(
 					item->widget(),
 					(Core::Time)SC_D.origin->time() + Core::TimeSpan(tt->time),
 					phase + THEORETICAL_POSTFIX,
 					PickerMarker::Theoretical,
-					false
+					false, fallback
 				);
 
 				marker->setVisible(SC_D.ui.actionShowTheoreticalArrivals->isChecked());
@@ -5537,7 +5562,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					(Core::Time)SC_D.origin->time() + Core::TimeSpan(tt->time),
 					phase + THEORETICAL_POSTFIX,
 					PickerMarker::Theoretical,
-					false
+					false, fallback
 				);
 
 				marker->setVisible(SC_D.ui.actionShowTheoreticalArrivals->isChecked());
