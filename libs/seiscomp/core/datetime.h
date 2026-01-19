@@ -221,18 +221,18 @@ class TimeSpan {
 namespace Literals {
 
 
-TimeSpan operator "" _weeks(long double weeks);
-TimeSpan operator "" _weeks(unsigned long long int weeks);
-TimeSpan operator "" _days(long double days);
-TimeSpan operator "" _days(unsigned long long int days);
-TimeSpan operator "" _hours(long double hours);
-TimeSpan operator "" _hours(unsigned long long int hours);
-TimeSpan operator "" _minutes(long double minutes);
-TimeSpan operator "" _minutes(unsigned long long int minutes);
-TimeSpan operator "" _seconds(long double seconds);
-TimeSpan operator "" _seconds(unsigned long long int seconds);
-TimeSpan operator "" _milliseconds(long double milliseconds);
-TimeSpan operator "" _milliseconds(unsigned long long int milliseconds);
+TimeSpan operator ""_weeks(long double weeks);
+TimeSpan operator ""_weeks(unsigned long long int weeks);
+TimeSpan operator ""_days(long double days);
+TimeSpan operator ""_days(unsigned long long int days);
+TimeSpan operator ""_hours(long double hours);
+TimeSpan operator ""_hours(unsigned long long int hours);
+TimeSpan operator ""_minutes(long double minutes);
+TimeSpan operator ""_minutes(unsigned long long int minutes);
+TimeSpan operator ""_seconds(long double seconds);
+TimeSpan operator ""_seconds(unsigned long long int seconds);
+TimeSpan operator ""_milliseconds(long double milliseconds);
+TimeSpan operator ""_milliseconds(unsigned long long int milliseconds);
 
 
 }

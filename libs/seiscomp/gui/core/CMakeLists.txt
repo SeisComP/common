@@ -1,41 +1,42 @@
 SET(
 	GUI_CORE_SOURCES
-		application.cpp
 		aboutwidget.cpp
-		messages.cpp
+		application.cpp
 		connectiondialog.cpp
 		connectionstatelabel.cpp
+		diagramwidget.cpp
 		flowlayout.cpp
-		questionbox.cpp
+		gradient.cpp
 		icon.cpp
 		infotext.cpp
-		diagramwidget.cpp
+		inspector.cpp
 		locator.cpp
+		logmanager.cpp
 		mainwindow.cpp
+		messages.cpp
 		messagethread.cpp
 		optionaldoublespinbox.cpp
+		processmanager.cpp
+		questionbox.cpp
 		recordpolyline.cpp
 		recordstreamthread.cpp
 		recordview.cpp
 		recordviewitem.cpp
 		recordwidget.cpp
-		streamwidget.cpp
 		ruler.cpp
-		vruler.cpp
 		scheme.cpp
-		timescale.cpp
-		xmlview.cpp
-		gradient.cpp
-		utils.cpp
-		inspector.cpp
-		tensorrenderer.cpp
-		uncertainties.cpp
 		spectrogramrenderer.cpp
-		spectrogramwidget.cpp
 		spectrogramsettings.cpp
+		spectrogramwidget.cpp
 		spectrumwidget.cpp
 		spinninglabel.cpp
-		processmanager.cpp
+		streamwidget.cpp
+		tensorrenderer.cpp
+		timescale.cpp
+		uncertainties.cpp
+		utils.cpp
+		vruler.cpp
+		xmlview.cpp
 )
 
 IF(MACOSX)
@@ -48,63 +49,67 @@ ENDIF(MACOSX)
 
 SET(
 	GUI_CORE_HEADERS
-		maps.h
-		messages.h
-		scheme.h
+		gradient.h
 		icon.h
 		infotext.h
 		locator.h
-		recordpolyline.h
-		gradient.h
-		questionbox.h
-		utils.h
-		tensorrenderer.h
-		spectrogramrenderer.h
+		logmanager.h
+		maps.h
+		messages.h
 		processmanager.h
+		questionbox.h
+		recordpolyline.h
+		scheme.h
+		spectrogramrenderer.h
+		tensorrenderer.h
+		utils.h
 )
 
 SET(
 	GUI_CORE_MOC_HEADERS
-		application.h
 		aboutwidget.h
+		application.h
 		connectiondialog.h
 		connectionstatelabel.h
 		diagramwidget.h
 		flowlayout.h
+		inspector.h
+		logmanager.h
 		mainwindow.h
 		messagethread.h
+		optionaldoublespinbox.h
+		processmanager.h
 		recordstreamthread.h
 		recordview.h
 		recordviewitem.h
 		recordwidget.h
-		streamwidget.h
 		ruler.h
-		vruler.h
-		timescale.h
-		xmlview.h
-		inspector.h
-		uncertainties.h
-		spectrogramwidget.h
 		spectrogramsettings.h
+		spectrogramwidget.h
 		spectrumwidget.h
 		spinninglabel.h
-		optionaldoublespinbox.h
-		processmanager.h
+		streamwidget.h
+		timescale.h
+		uncertainties.h
+		vruler.h
+		xmlview.h
 )
 
 SET(
 	GUI_CORE_UI
 		aboutwidget.ui
 		connectiondialog.ui
-		questionbox.ui
-		infotext.ui
-		xmlview.ui
-		inspector.ui
-		uncertainties.ui
 		diagramfilter.ui
-		showplugins.ui
+		infotext.ui
+		inspector.ui
+		logmanager.ui
+		logmanagersettings.ui
 		processmanager.ui
+		questionbox.ui
+		showplugins.ui
 		spectrogramsettings.ui
+		uncertainties.ui
+		xmlview.ui
 )
 
 SC_SETUP_GUI_LIB_SUBDIR(GUI_CORE)
