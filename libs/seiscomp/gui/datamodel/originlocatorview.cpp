@@ -6163,9 +6163,11 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 			catch ( ... ) {}
 
 			try {
-				double ttime = SC_D.ttTable.computeTime(arrival->phase().code().c_str(),
-									  org->latitude().value(), org->longitude().value(), depth,
-									  sloc->latitude(), sloc->longitude(), elev);
+				double ttime = SC_D.ttTable.computeTime(
+					arrival->phase().code().c_str(),
+					org->latitude().value(), org->longitude().value(), depth,
+					sloc->latitude(), sloc->longitude(), elev
+				);
 
 				double at = (double)(additionalPicks[i].pick->time().value()-org->time().value());
 				arrival->setTimeResidual(at-ttime);
