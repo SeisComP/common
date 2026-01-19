@@ -27,6 +27,7 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/inspector.h>
+#include <seiscomp/gui/core/logmanager.h>
 #include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/database.h>
@@ -83,7 +84,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	_actionShowSettings->setEnabled(SCApp->isMessagingEnabled() || SCApp->isDatabaseEnabled());
 
 	connect(_actionToggleFullScreen, SIGNAL(triggered(bool)), this, SLOT(toggleFullScreen()));
-	connect(_actionShowSettings, SIGNAL(triggered(bool)), SCApp, SLOT(showSettings()));	
+	connect(_actionShowSettings, SIGNAL(triggered(bool)), SCApp, SLOT(showSettings()));
 
 	addAction(_actionToggleFullScreen);
 	addAction(_actionShowSettings);
@@ -200,6 +201,11 @@ void MainWindow::paintEvent(QPaintEvent *e) {
 void MainWindow::showEvent(QShowEvent *e) {
 	QMainWindow::showEvent(e);
 
+	if ( !_logState && SCApp->logManager() ) {
+		_logState = new LogStateLabel(SCApp->logManager(), statusBar());
+		statusBar()->addPermanentWidget(_logState);
+	}
+
 	if ( _connectionState ) {
 		return;
 	}
@@ -229,6 +235,20 @@ void MainWindow::showEvent(QShowEvent *e) {
 
 	connect(SCApp, SIGNAL(changedConnection()),
 	        this, SLOT(onChangedConnection()));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MainWindow::closeEvent(QCloseEvent *e) {
+	auto *lm = SCApp->logManager();
+	if ( lm ) {
+		lm->close();
+	}
+
+	QMainWindow::closeEvent(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

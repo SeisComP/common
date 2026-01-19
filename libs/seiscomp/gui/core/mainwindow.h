@@ -87,10 +87,11 @@ class SC_GUI_API MainWindow : public QMainWindow {
 
 
 	protected:
-		void paintEvent(QPaintEvent *e);
-		void showEvent(QShowEvent*);
-		void dropEvent(QDropEvent *);
-		void dragEnterEvent(QDragEnterEvent *);
+		void paintEvent(QPaintEvent *e) override;
+		void showEvent(QShowEvent *) override;
+		void closeEvent(QCloseEvent *e) override;
+		void dropEvent(QDropEvent *) override;
+		void dragEnterEvent(QDragEnterEvent *) override;
 
 		virtual void toggledFullScreen(bool isFullScreen);
 

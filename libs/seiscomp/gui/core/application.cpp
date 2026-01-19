@@ -26,6 +26,7 @@
 #include <seiscomp/gui/core/aboutwidget.h>
 #include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/logmanager.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/messaging/connection.h>
@@ -122,36 +123,6 @@ class ShowPlugins : public QDialog {
 };
 
 
-void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
-	QRect r(hotspot, hotspot);
-
-	if ( align & Qt::AlignLeft ) {
-		r.setRight(p.window().right());
-	}
-	else if ( align & Qt::AlignRight ) { {
-		r.setLeft(p.window().left());
-	}
-	}
-	else if ( align & Qt::AlignHCenter ) {
-		r.setLeft(hotspot.x()-p.window().width());
-		r.setRight(hotspot.x()+p.window().width());
-	}
-
-	if ( align & Qt::AlignTop ) {
-		r.setBottom(p.window().bottom());
-	}
-	else if ( align & Qt::AlignBottom ) {
-		r.setTop(p.window().top());
-	}
-	else if ( align & Qt::AlignVCenter ) {
-		r.setTop(hotspot.y()-p.window().height());
-		r.setBottom(hotspot.y()+p.window().height());
-	}
-
-	p.drawText(r, align, s);
-}
-
-
 class SplashScreen : public QSplashScreen {
 	public:
 		SplashScreen(const QPixmap & pixmap = QPixmap())
@@ -173,8 +144,7 @@ class SplashScreen : public QSplashScreen {
 }
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 Application* Application::_instance = nullptr;
@@ -273,6 +243,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	_app->setDesktopFileName(("de.gempa.seiscomp." + name()).data());
 #endif
 
+	_app->setOrganizationName("gempa");
+	_app->setApplicationName(name().c_str());
+
 	setDaemonEnabled(false);
 
 	if ( _instance != this && _instance != nullptr ) {
@@ -346,10 +319,13 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::~Application() {
-	if ( _dlgConnection ) delete _dlgConnection;
-	if ( _qSettings ) delete _qSettings;
-	if ( _scheme ) delete _scheme;
-	if ( _app ) delete _app;
+	delete _processManager;
+	delete _logManager;
+	delete _dlgConnection;
+	delete _qSettings;
+	delete _scheme;
+	delete _app;
+
 #ifndef WIN32
 	close(_signalSocketFd[0]);
 	close(_signalSocketFd[1]);
@@ -454,9 +430,9 @@ void Application::copyToClipboard(const QAbstractItemView *view,
 void Application::setMainWidget(QWidget* w) {
 	_mainWidget = w;
 
-	QMainWindow *mw = dynamic_cast<QMainWindow*>(w);
+	auto *mw = dynamic_cast<QMainWindow*>(w);
 	if ( mw ) {
-		QMenu *helpMenu = mw->menuBar()->findChild<QMenu*>("menuHelp");
+		auto *helpMenu = mw->menuBar()->findChild<QMenu*>("menuHelp");
 		if ( helpMenu == nullptr ) {
 			helpMenu = new QMenu(mw->menuBar());
 			helpMenu->setObjectName("menuHelp");
@@ -464,7 +440,7 @@ void Application::setMainWidget(QWidget* w) {
 			mw->menuBar()->addAction(helpMenu->menuAction());
 		}
 
-		QAction *a = helpMenu->addAction("&About SeisComP");
+		auto *a = helpMenu->addAction("&About SeisComP");
 		connect(a, SIGNAL(triggered()), this, SLOT(showAbout()));
 
 		a = helpMenu->addAction("&Documentation index");
@@ -479,8 +455,9 @@ void Application::setMainWidget(QWidget* w) {
 		connect(a, SIGNAL(triggered()), this, SLOT(showPlugins()));
 	}
 
-	if ( _splash )
+	if ( _splash ) {
 		_splash->finish(w);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -906,9 +883,6 @@ bool Application::initConfiguration() {
 		_eventTimeAgo = double(24*60*60);
 	}
 
-	_app->setOrganizationName("gempa");
-	_app->setApplicationName(name().c_str());
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -921,6 +895,8 @@ bool Application::validateParameters() {
 	if ( !Client::Application::validateParameters() ) {
 		return false;
 	}
+
+	_logManager = new LogManager();
 
 	if ( _settings.mapsDesc.format == "mercator" ) {
 		_settings.mapsDesc.isMercatorProjected = true;
@@ -1905,7 +1881,7 @@ void Application::setPalette(const QPalette &pal) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessManager *Application::processManager() {
 	if ( !_processManager ) {
-		_processManager = new ProcessManager(_mainWidget);
+		_processManager = new ProcessManager();
 		emit processManagerCreated();
 	}
 
@@ -1917,5 +1893,13 @@ ProcessManager *Application::processManager() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+LogManager *Application::logManager() {
+	return _logManager;
 }
-}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns Seiscomp::Gui
