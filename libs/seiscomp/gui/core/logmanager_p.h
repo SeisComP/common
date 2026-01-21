@@ -55,7 +55,6 @@ class LogManagerPrivate {
 		Ui::LogManager         ui;
 		QStandardItemModel    *model{nullptr};
 		QSortFilterProxyModel *proxyModel{nullptr};
-		QLineEdit             *filter{nullptr};
 		QActionGroup          *filterActions{nullptr};
 		QWidget               *settings{nullptr};
 

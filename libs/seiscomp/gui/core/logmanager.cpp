@@ -116,7 +116,7 @@ MAKEENUM(
 	),
 	ENAMES(
 		"Time",
-		"!",
+		"",
 		"Component",
 		"Context",
 		"Message"
@@ -296,7 +296,10 @@ class LogManagerSettings : public QDialog {
 
 class LogLevelSortFilterModel : public QSortFilterProxyModel {
 	public:
-		LogLevelSortFilterModel(QObject *parent) : QSortFilterProxyModel(parent) {}
+		LogLevelSortFilterModel(QObject *parent) : QSortFilterProxyModel(parent) {
+			setDynamicSortFilter(true);
+			setSortRole(Qt::UserRole);
+		}
 
 		using LogLevels = QList<int>;
 
@@ -313,10 +316,10 @@ class LogLevelSortFilterModel : public QSortFilterProxyModel {
 		[[nodiscard]]
 		bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
 			int level = sourceModel()->index(
-				sourceRow, filterKeyColumn(), sourceParent
+				sourceRow, Level, sourceParent
 			).data(Qt::UserRole).toInt();
 
-			if ( !_levels.contains(level) ) {
+			if ( !_levels.isEmpty() && !_levels.contains(level) ) {
 				return false;
 			}
 
@@ -485,6 +488,10 @@ void LogManagerSettings::loadUi() {
 		item = grid->itemAtPosition(row, int(ChannelColumns::Notify));
 		static_cast<QCheckBox*>(item->widget())->setChecked(_notifications.indexOf(level) >= 0);
 	}
+
+	_ui.sendOnly->setChecked(_onlyIncreasingWarnLevel);
+	_ui.logComponent->setChecked(_logComponent);
+	_ui.logContext->setChecked(_logContext);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -541,64 +548,13 @@ void LogManagerSettings::restoreSettings() {
 
 	settings.endGroup(); // buffer
 
-	/*
-	// channels
-	settings.beginGroup("channels");
-
-	auto grid = static_cast<QGridLayout*>(_ui.frameChannels->layout());
-	for ( int level = Logging::LL_CRITICAL, row = 1;
-	      level < Logging::LL_QUANTITY; ++level, ++row ) {
-		QString tmp = QString::number(level);
-
-		settings.beginGroup("subscriptions");
-		QVariant value = settings.value(tmp);
-		settings.endGroup();
-
-		if ( value.isValid() ) {
-			auto item = grid->itemAtPosition(row, int(ChannelColumns::Subscribe));
-			static_cast<QCheckBox*>(item->widget())->setChecked(value.toInt());
-			if ( value.toInt() && subscriptions.indexOf(level) == -1 ) {
-				subscriptions.append(level);
-			}
-		}
-
-		settings.beginGroup("notifications");
-		value = settings.value(tmp);
-		settings.endGroup();
-
-		if ( value.isValid() ) {
-			auto item = grid->itemAtPosition(row, int(ChannelColumns::Notify));
-			static_cast<QCheckBox*>(item->widget())->setChecked(value.toInt());
-
-			if ( value.toInt() && notifications.indexOf(level) == -1 ) {
-				notifications.append(level);
-			}
-		}
-	}
-
-	settings.endGroup(); // channels
-	*/
-
 	value = settings.value("increasingWarnLevel");
 	if ( value.isValid() ) {
 		_onlyIncreasingWarnLevel = value.toBool();
 	}
 
-	value = settings.value("logComponent");
-	if ( value.isValid() ) {
-		_logComponent = value.toBool();
-	}
-	else {
-		_logComponent = SCCoreApp->logComponent();
-	}
-
-	value = settings.value("logContext");
-	if ( value.isValid() ) {
-		_logContext = value.toBool();
-	}
-	else {
-		_logContext = SCCoreApp->logContext();
-	}
+	_logComponent = SCCoreApp->logComponent();
+	_logContext = SCCoreApp->logContext();
 
 	settings.endGroup(); // LogManager
 }
@@ -617,30 +573,7 @@ void LogManagerSettings::saveSettings() const {
 	settings.setValue("lines", _bufferSize);
 	settings.endGroup();
 
-	/*
-	// channels
-	auto grid = static_cast<QGridLayout*>(_ui.frameChannels->layout());
-	settings.beginGroup("channels");
-	for ( int level = Logging::LL_CRITICAL, row = 1;
-	      level < Logging::LL_QUANTITY; ++level, ++row ) {
-		QString tmp = QString::number(level);
-
-		settings.beginGroup("subscriptions");
-		auto item = grid->itemAtPosition(row, int(ChannelColumns::Subscribe));
-		settings.setValue(tmp, static_cast<int>(static_cast<QCheckBox*>(item->widget())->isChecked() ? 1 : 0));
-		settings.endGroup();
-
-		settings.beginGroup("notifications");
-		item = grid->itemAtPosition(row, int(ChannelColumns::Notify));
-		settings.setValue(tmp, static_cast<int>(static_cast<QCheckBox*>(item->widget())->isChecked() ? 1 : 0));
-		settings.endGroup();
-	}
-	settings.endGroup(); // channels
-	*/
-
 	settings.setValue("increasingWarnLevel", _onlyIncreasingWarnLevel);
-	settings.setValue("logComponent", _logComponent);
-	settings.setValue("logContext", _logContext);
 
 	settings.endGroup(); // LogManager
 }
@@ -661,13 +594,13 @@ void LogManagerSettings::confirm() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 struct LogManager::LogEntry {
-	time_t time;
+	time_t   time;
 	uint32_t microseconds;
-	int level;
-	QString msg;
-	QString component;
-	QString fileName;
-	int lineNum;
+	int      level;
+	QString  msg;
+	QString  component;
+	QString  fileName;
+	int      lineNum;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -693,20 +626,17 @@ LogManager::LogManager(QWidget *parent)
 	connect(SC_D.ui.clear, &QAction::triggered, this, &LogManager::clearView);
 
 	// Create filter input field and use the place holder frame as container
-	SC_D.filter = new QLineEdit(this);
-	SC_D.filter->setToolTip("Apply filter string to table column 'Log'");
-	connect(SC_D.filter, &QLineEdit::textChanged, this, &LogManager::filterChanged);
+	connect(SC_D.ui.editFilter, &QLineEdit::textChanged, this, &LogManager::filterChanged);
 
-	auto *hLayout = new QHBoxLayout;
-	hLayout->addWidget(SC_D.filter);
-	hLayout->setContentsMargins(0, 0, 0, 0);
-	SC_D.ui.placeHolder->setLayout(hLayout);
+	connect(SC_D.ui.actionFilter, &QAction::triggered, this, [this](bool) {
+		SC_D.ui.editFilter->setFocus();
+	});
+	addAction(SC_D.ui.actionFilter);
+	SC_D.ui.labelFilter->setPixmap(icon("filter").pixmap(24));
 
 	SC_D.model = new QStandardItemModel(this);
 
 	SC_D.proxyModel = new LogLevelSortFilterModel(this);
-	SC_D.proxyModel->setDynamicSortFilter(true);
-	SC_D.proxyModel->setSortRole(Qt::UserRole);
 	SC_D.proxyModel->setSourceModel(SC_D.model);
 
 	auto *header = new HeaderView(Qt::Horizontal);
@@ -733,6 +663,28 @@ LogManager::LogManager(QWidget *parent)
 	header->setSectionsMovable(true);
 	header->setSectionsClickable(true);
 
+	SC_D.ui.comboFilterSource->clear();
+	SC_D.ui.comboFilterSource->addItem(tr("Message"));
+	SC_D.ui.comboFilterSource->addItem(tr("Component"));
+	SC_D.ui.comboFilterSource->addItem(tr("Context"));
+	SC_D.ui.comboFilterSource->setCurrentIndex(0);
+	SC_D.proxyModel->setFilterKeyColumn(Message);
+	connect(SC_D.ui.comboFilterSource, qOverload<int>(&QComboBox::currentIndexChanged),
+	        this, [this](int index) {
+		switch ( index ) {
+			default:
+			case 0:
+				SC_D.proxyModel->setFilterKeyColumn(Message);
+				break;
+			case 1:
+				SC_D.proxyModel->setFilterKeyColumn(Component);
+				break;
+			case 2:
+				SC_D.proxyModel->setFilterKeyColumn(Context);
+				break;
+		}
+	});
+
 	SC_D.filterActions = new QActionGroup(this);
 	SC_D.filterActions->setExclusive(false);
 	connect(SC_D.filterActions, &QActionGroup::triggered,
@@ -748,7 +700,6 @@ LogManager::LogManager(QWidget *parent)
 	SC_D.ui.tableView->viewport()->setMouseTracking(true);
 
 	logLevelSelectionChanged();
-
 
 	setWindowTitle("Client application log");
 	setObjectName("LogManager");
@@ -767,8 +718,6 @@ LogManager::LogManager(QWidget *parent)
 	SC_D.ui.toolBar->addAction(SC_D.ui.debug);
 
 	SC_D.model->setColumnCount(Columns::Quantity);
-
-	static_cast<LogLevelSortFilterModel*>(SC_D.proxyModel)->setFilterKeyColumn(Level);
 
 	SC_D.ui.tableView->horizontalHeader()->setSortIndicator(Time, Qt::DescendingOrder);
 
@@ -825,6 +774,23 @@ LogManager::~LogManager() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool LogManager::setup(const Seiscomp::Util::Url &url) {
 	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void LogManager::activate() {
+	if ( isHidden() ) {
+		show();
+	}
+	if ( isMinimized() ) {
+		showNormal();
+	}
+	if ( !isActiveWindow() ) {
+		activateWindow();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -945,6 +911,11 @@ void LogManager::restoreSettings() {
 		}
 	}
 
+	value = settings.value("state");
+	if ( value.isValid() ) {
+		restoreState(value.toByteArray());
+	}
+
 	// table header
 	QVariant data = settings.value("header");
 	if ( data.isValid() ) {
@@ -972,6 +943,9 @@ void LogManager::saveSettings() {
 
 	// geometry
 	settings.setValue("geometry", saveGeometry());
+
+	// state
+	settings.setValue("state", saveState());
 
 	// table header
 	settings.setValue("header",  SC_D.ui.tableView->horizontalHeader()->saveState());
@@ -1189,15 +1163,7 @@ LogStateLabel::LogStateLabel(LogManager *manager, QWidget *parent)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LogStateLabel::mousePressEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::LeftButton ) {
-		if ( _manager->isHidden() ) {
-			_manager->show();
-		}
-		if ( _manager->isMinimized() ) {
-			_manager->showNormal();
-		}
-		if ( !_manager->isActiveWindow() ) {
-			_manager->activateWindow();
-		}
+		_manager->activate();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

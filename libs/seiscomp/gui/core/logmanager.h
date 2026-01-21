@@ -51,12 +51,20 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 
 	struct LogEntry;
 
+	// ------------------------------------------------------------------
+	// X'truction
+	// ------------------------------------------------------------------
 	public:
 		LogManager(QWidget *parent = nullptr);
 		~LogManager() override;
 
+
+	// ------------------------------------------------------------------
+	// Public interface
+	// ------------------------------------------------------------------
 	public:
 		int level() const { return _level; };
+
 
 	// ------------------------------------------------------------------
 	//  Logging::Output interface
@@ -72,6 +80,9 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 		QWidget *dataView();
 
 
+	// ------------------------------------------------------------------
+	//  Logging::Output interface
+	// ------------------------------------------------------------------
 	protected:
 		/**
 		 * @brief restoreSettings Restores last session settings
@@ -96,11 +107,20 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 		bool eventFilter(QObject *obj, QEvent *ev) override;
 		void subscribe();
 
+
+	// ------------------------------------------------------------------
+	//  Signals
+	// ------------------------------------------------------------------
 	signals:
 		void levelChanged(int level);
 		void newLog(const LogEntry &entry);
 
+
+	// ------------------------------------------------------------------
+	//  Slots
+	// ------------------------------------------------------------------
 	public slots:
+		void activate();
 		void clearView();
 
 	protected slots:
@@ -139,6 +159,10 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 	private slots:
 		void addLog(const LogEntry &entry);
 
+
+	// ------------------------------------------------------------------
+	//  Members
+	// ------------------------------------------------------------------
 	protected:
 		int _level{Logging::LogLevel::LL_QUANTITY};
 
@@ -151,7 +175,7 @@ class LogStateLabel : public QLabel {
 	Q_OBJECT
 
 	// ------------------------------------------------------------------
-	// X'struction
+	// X'truction
 	// ------------------------------------------------------------------
 	public:
 		LogStateLabel(LogManager *manager, QWidget *parent = nullptr);

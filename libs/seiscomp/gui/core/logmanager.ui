@@ -55,24 +55,43 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelFilter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Filter:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="placeHolder">
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+       <widget class="QComboBox" name="comboFilterSource">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="editFilter">
+        <property name="toolTip">
+         <string>Apply filter string to table column 'Log'</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>&amp;Close</string>
         </property>
@@ -84,7 +103,7 @@
    <action name="clear">
     <property name="icon">
      <iconset>
-      <normaloff>.</normaloff>.</iconset>
+      <normaloff>../../../../../../../../../.designer/backup</normaloff>../../../../../../../../../.designer/backup</iconset>
     </property>
     <property name="text">
      <string>Clear</string>
@@ -96,7 +115,7 @@
    <action name="settings">
     <property name="icon">
      <iconset>
-      <normaloff>.</normaloff>.</iconset>
+      <normaloff>../../../../../../../../../.designer/backup</normaloff>../../../../../../../../../.designer/backup</iconset>
     </property>
     <property name="text">
      <string>Settings</string>
@@ -110,7 +129,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Critical</string>
@@ -124,7 +143,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Error</string>
@@ -138,7 +157,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Warning</string>
@@ -152,7 +171,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Notice</string>
@@ -166,7 +185,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Info</string>
@@ -180,7 +199,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="text">
      <string>Debug</string>
@@ -220,7 +239,24 @@
     <string>Copy cell to clipboard</string>
    </property>
   </action>
+  <action name="actionFilter">
+   <property name="text">
+    <string>Filter</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit filter text</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>tableView</tabstop>
+  <tabstop>comboFilterSource</tabstop>
+  <tabstop>editFilter</tabstop>
+  <tabstop>pushButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

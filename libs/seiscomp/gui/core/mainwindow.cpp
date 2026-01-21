@@ -103,6 +103,16 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	addAction(inspectConfig);
 	addAction(inspectInventory);
 
+	if ( SCApp->logManager() ) {
+		auto *inspectLog = new QAction(this);
+		inspectLog->setObjectName(QString::fromUtf8("inspectLog"));
+		inspectLog->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+L", nullptr));
+		inspectLog->setText(QApplication::translate("MainWindow", "Inspect &log...", nullptr));
+		addAction(inspectLog);
+		connect(inspectLog, &QAction::triggered,
+		        SCApp->logManager(), &LogManager::activate);
+	}
+
 	connect(inspectConfig, &QAction::triggered,
 	        this, &MainWindow::inspectConfig);
 
