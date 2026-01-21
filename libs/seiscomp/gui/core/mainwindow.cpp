@@ -109,24 +109,23 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 		inspectLog->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+L", nullptr));
 		inspectLog->setText(QApplication::translate("MainWindow", "Inspect &log...", nullptr));
 		addAction(inspectLog);
-		connect(inspectLog, &QAction::triggered,
-		        SCApp->logManager(), &LogManager::activate);
+		connect(inspectLog, &QAction::triggered, SCApp->logManager(), &LogManager::activate);
 	}
 
-	connect(inspectConfig, &QAction::triggered,
-	        this, &MainWindow::inspectConfig);
+	if ( SCApp->processManager() ) {
+		auto *inspectProcesses = new QAction(this);
+		inspectProcesses->setObjectName(QString::fromUtf8("inspectProcesses"));
+		inspectProcesses->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+P", nullptr));
+		inspectProcesses->setText(QApplication::translate("MainWindow", "Inspect &processes...", nullptr));
+		addAction(inspectProcesses);
+		connect(inspectProcesses, &QAction::triggered, SCApp->processManager(), &ProcessManager::activate);
+	}
 
-	connect(inspectInventory, &QAction::triggered,
-	        this, &MainWindow::inspectInventory);
-
-	connect(SCApp, &Application::connectionEstablished,
-	        this, &MainWindow::connectionEstablished);
-
-	connect(SCApp, &Application::connectionLost,
-	        this, &MainWindow::connectionLost);
-
-	connect(SCApp, &Application::showNotification,
-	        this, &MainWindow::showNotification);
+	connect(inspectConfig, &QAction::triggered, this, &MainWindow::inspectConfig);
+	connect(inspectInventory, &QAction::triggered, this, &MainWindow::inspectInventory);
+	connect(SCApp, &Application::connectionEstablished, this, &MainWindow::connectionEstablished);
+	connect(SCApp, &Application::connectionLost, this, &MainWindow::connectionLost);
+	connect(SCApp, &Application::showNotification, this, &MainWindow::showNotification);
 
 	setAcceptDrops(true);
 

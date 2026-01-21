@@ -203,8 +203,11 @@ class SC_GUI_API ProcessManager : public QMainWindow {
 		void stateChanged();
 
 	// ------------------------------------------------------------------
-	// Protected Slots
+	// Slots
 	// ------------------------------------------------------------------
+	public slots:
+		void activate();
+
 	protected slots:
 		void onDataChanged(const QModelIndex &topLeft,
 		                   const QModelIndex &bottomRight,
