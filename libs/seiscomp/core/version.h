@@ -48,6 +48,10 @@ namespace Core {
  ******************************************************************************
  "17.1.0"   0x110100
    - Added Seiscomp::Gui::LogManager
+   - Added Seiscomp::System::Application::logVerbosity()
+   - Added Seiscomp::System::Application::logContext()
+   - Added Seiscomp::System::Application::logComponent()
+   - Added Seiscomp::Util::Url::errorMessage()
 
  "17.0.0"   0x110000
    - Added Seiscomp::Gui::Scheme::records.showEngineeringValues
