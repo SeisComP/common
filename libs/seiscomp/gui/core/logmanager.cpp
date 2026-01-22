@@ -664,22 +664,30 @@ LogManager::LogManager(QWidget *parent)
 	header->setSectionsClickable(true);
 
 	SC_D.ui.comboFilterSource->clear();
+	SC_D.ui.comboFilterSource->addItem(tr("Search all"));
 	SC_D.ui.comboFilterSource->addItem(tr("Message"));
+	SC_D.ui.comboFilterSource->addItem(tr("Time"));
 	SC_D.ui.comboFilterSource->addItem(tr("Component"));
 	SC_D.ui.comboFilterSource->addItem(tr("Context"));
 	SC_D.ui.comboFilterSource->setCurrentIndex(0);
-	SC_D.proxyModel->setFilterKeyColumn(Message);
+	SC_D.proxyModel->setFilterKeyColumn(-1);
 	connect(SC_D.ui.comboFilterSource, qOverload<int>(&QComboBox::currentIndexChanged),
 	        this, [this](int index) {
 		switch ( index ) {
 			default:
 			case 0:
-				SC_D.proxyModel->setFilterKeyColumn(Message);
+				SC_D.proxyModel->setFilterKeyColumn(-1);
 				break;
 			case 1:
-				SC_D.proxyModel->setFilterKeyColumn(Component);
+				SC_D.proxyModel->setFilterKeyColumn(Message);
 				break;
 			case 2:
+				SC_D.proxyModel->setFilterKeyColumn(Time);
+				break;
+			case 3:
+				SC_D.proxyModel->setFilterKeyColumn(Component);
+				break;
+			case 4:
 				SC_D.proxyModel->setFilterKeyColumn(Context);
 				break;
 		}
