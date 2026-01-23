@@ -664,7 +664,7 @@ LogManager::LogManager(QWidget *parent)
 	header->setSectionsClickable(true);
 
 	SC_D.ui.comboFilterSource->clear();
-	SC_D.ui.comboFilterSource->addItem(tr("Search all"));
+	SC_D.ui.comboFilterSource->addItem(tr("Filter all"));
 	SC_D.ui.comboFilterSource->addItem(tr("Message"));
 	SC_D.ui.comboFilterSource->addItem(tr("Time"));
 	SC_D.ui.comboFilterSource->addItem(tr("Component"));
