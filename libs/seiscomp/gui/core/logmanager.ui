@@ -80,7 +80,10 @@
       <item>
        <widget class="QLineEdit" name="editFilter">
         <property name="toolTip">
-         <string>Apply filter string to table column 'Log'</string>
+         <string>Show only rows where any column to be checked contains the filter text.</string>
+        </property>
+        <property name="placeholderText">
+         <string>Filter text</string>
         </property>
        </widget>
       </item>
