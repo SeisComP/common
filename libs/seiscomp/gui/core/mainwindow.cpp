@@ -128,14 +128,6 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	connect(SCApp, &Application::showNotification, this, &MainWindow::showNotification);
 
 	setAcceptDrops(true);
-
-	// create process state toolbar widget once process manager is created
-	connect(SCApp, &Gui::Application::processManagerCreated, [this]() {
-		if ( !_processState && statusBar() ) {
-			_processState = new ProcessStateLabel(SCApp->processManager(), this);
-			statusBar()->addPermanentWidget(_processState);
-		}
-	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -211,11 +203,6 @@ void MainWindow::paintEvent(QPaintEvent *e) {
 void MainWindow::showEvent(QShowEvent *e) {
 	QMainWindow::showEvent(e);
 
-	if ( !_logState && SCApp->logManager() ) {
-		_logState = new LogStateLabel(SCApp->logManager(), statusBar());
-		statusBar()->addPermanentWidget(_logState);
-	}
-
 	if ( _connectionState ) {
 		return;
 	}
@@ -235,6 +222,16 @@ void MainWindow::showEvent(QShowEvent *e) {
 		return;
 	}
 
+	if ( SCApp->logManager() ) {
+		_logState = new LogStateLabel(SCApp->logManager(), statusBar());
+		statusBar()->addPermanentWidget(_logState);
+	}
+
+	if ( SCApp->processManager() ) {
+		_processState = new ProcessStateLabel(SCApp->processManager(), this);
+		statusBar()->addPermanentWidget(_processState);
+	}
+
 	_connectionState = new ConnectionStateLabel(statusBar());
 	connect(_connectionState, &ConnectionStateLabel::customInfoWidgetRequested,
 	        [](const QPoint &pos) { SCApp->showSettings(); } );
@@ -243,8 +240,7 @@ void MainWindow::showEvent(QShowEvent *e) {
 
 	onChangedConnection();
 
-	connect(SCApp, SIGNAL(changedConnection()),
-	        this, SLOT(onChangedConnection()));
+	connect(SCApp, SIGNAL(changedConnection()), this, SLOT(onChangedConnection()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

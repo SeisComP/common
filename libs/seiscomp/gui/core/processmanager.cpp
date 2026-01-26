@@ -1458,7 +1458,6 @@ QModelIndex ProcessManager::proxyIndexForItem(const Item *item) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessStateLabel::ProcessStateLabel(ProcessManager *manager, QWidget *parent)
 : SpinningLabel(parent), _manager(manager) {
-
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
