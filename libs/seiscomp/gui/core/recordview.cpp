@@ -1214,15 +1214,18 @@ RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
 	          << std::endl;
 	*/
 
-	RecordWidget *widget = createRecordWidget(streamID);
-	if ( widget == nullptr ) widget = new RecordWidget(streamID);
+	auto widget = createRecordWidget(streamID);
+	if ( !widget ) {
+		widget = new RecordWidget(streamID);
+	}
 
-	RecordViewItem *item = new RecordViewItem(this, widget, seq, _frames, _frameMargin, _horizontalSpacing);
+	auto item = new RecordViewItem(this, widget, seq, _frames, _frameMargin, _horizontalSpacing);
 	item->widget()->setSlotCount(slotCount);
 
 	RecordLabel* label = createLabel(item);
-	if ( label == nullptr )
+	if ( !label ) {
 		label = new StandardRecordLabel(_labelColumns);
+	}
 
 	item->setLabel(label);
 
