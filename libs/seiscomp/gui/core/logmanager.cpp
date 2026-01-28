@@ -116,7 +116,7 @@ MAKEENUM(
 	),
 	ENAMES(
 		"Time",
-		"",
+		"LL",
 		"Component",
 		"Context",
 		"Message"
@@ -397,7 +397,7 @@ LogManagerSettings::LogManagerSettings(QWidget *parent)
 	auto *gridLayout = new QGridLayout;
 	gridLayout->setContentsMargins({});
 	gridLayout->setHorizontalSpacing(QFontMetrics(font()).averageCharWidth() * 4);
-	_ui.frameChannels->setLayout(gridLayout);
+	_ui.frameLogLevel->setLayout(gridLayout);
 
 	connect(_ui.okButton, &QPushButton::clicked, this, &LogManagerSettings::confirm);
 
@@ -420,7 +420,7 @@ LogManagerSettings::LogManagerSettings(QWidget *parent)
 			break;
 	}
 
-	auto *label = new QLabel(tr("Channel"));
+	auto *label = new QLabel(tr("Level"));
 	setBold(label, true);
 	gridLayout->addWidget(label, 0, int(ChannelColumns::Name));
 
@@ -480,7 +480,7 @@ LogManagerSettings::LogManagerSettings(QWidget *parent)
 void LogManagerSettings::loadUi() {
 	_ui.spinBufferSize->setValue(_bufferSize);
 
-	auto *grid = static_cast<QGridLayout*>(_ui.frameChannels->layout());
+	auto *grid = static_cast<QGridLayout*>(_ui.frameLogLevel->layout());
 	for ( int level = Logging::LL_CRITICAL, row = 1;
 	      level < Logging::LL_QUANTITY; ++level, ++row ) {
 		auto *item = grid->itemAtPosition(row, int(ChannelColumns::Subscribe));
@@ -505,7 +505,7 @@ void LogManagerSettings::saveUi() {
 	_subscriptions.clear();
 	_notifications.clear();
 
-	auto *grid = static_cast<QGridLayout*>(_ui.frameChannels->layout());
+	auto *grid = static_cast<QGridLayout*>(_ui.frameLogLevel->layout());
 	for ( int level = Logging::LL_CRITICAL, row = 1;
 	      level < Logging::LL_QUANTITY; ++level, ++row ) {
 		auto *item = grid->itemAtPosition(row, int(ChannelColumns::Subscribe));
@@ -630,6 +630,7 @@ LogManager::LogManager(QWidget *parent)
 
 	connect(SC_D.ui.actionFilter, &QAction::triggered, this, [this](bool) {
 		SC_D.ui.editFilter->setFocus();
+		SC_D.ui.editFilter->selectAll();
 	});
 	addAction(SC_D.ui.actionFilter);
 	SC_D.ui.labelFilter->setPixmap(icon("filter").pixmap(24));
@@ -645,6 +646,7 @@ LogManager::LogManager(QWidget *parent)
 	SC_D.ui.tableView->setHorizontalHeader(header);
 
 	SC_D.ui.tableView->setShowGrid(false);
+	SC_D.ui.tableView->setAlternatingRowColors(true);
 	SC_D.ui.tableView->setItemDelegateForColumn(Level, new IconItemDelegate(SC_D.ui.tableView));
 	SC_D.ui.tableView->setModel(SC_D.proxyModel);
 	SC_D.ui.tableView->setSortingEnabled(true);
@@ -731,11 +733,12 @@ LogManager::LogManager(QWidget *parent)
 
 	for ( int i = 0; i < Columns::Quantity; ++i ) {
 		SC_D.model->setHeaderData(
-		    i, Qt::Horizontal, EColumnsNames::name(i), Qt::DisplayRole
+			i, Qt::Horizontal, EColumnsNames::name(i), Qt::DisplayRole
 		);
 
 		SC_D.model->setHeaderData(
-		    i, Qt::Horizontal, i == Level? "Log level": EColumnsNames::name(i), Qt::ToolTipRole
+			i, Qt::Horizontal, i == Level ? "Log Level" : EColumnsNames::name(i),
+			Qt::ToolTipRole
 		);
 	}
 
@@ -928,6 +931,7 @@ void LogManager::restoreSettings() {
 	QVariant data = settings.value("header");
 	if ( data.isValid() ) {
 		SC_D.ui.tableView->horizontalHeader()->restoreState(data.toByteArray());
+		SC_D.isHeaderInitialized = true;
 	}
 	else {
 		SC_D.ui.tableView->setColumnHidden(Component, !static_cast<LogManagerSettings*>(SC_D.settings)->logComponent());
@@ -1110,6 +1114,11 @@ void LogManager::addLog(const LogEntry &entry) {
 	if ( !hasFocus() && static_cast<LogManagerSettings*>(SC_D.settings)->notifications().contains(entry.level) &&
 	     (!static_cast<LogManagerSettings*>(SC_D.settings)->onlyIncreasingWarnLevel() || _level > entry.level) ) {
 		setLevel(entry.level);
+	}
+
+	if ( !SC_D.isHeaderInitialized ) {
+		SC_D.ui.tableView->resizeColumnsToContents();
+		SC_D.isHeaderInitialized = true;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

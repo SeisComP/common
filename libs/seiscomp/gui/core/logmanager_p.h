@@ -50,13 +50,13 @@ namespace Seiscomp::Gui {
 
 
 class LogManagerPrivate {
-
 	private:
 		Ui::LogManager         ui;
 		QStandardItemModel    *model{nullptr};
 		QSortFilterProxyModel *proxyModel{nullptr};
 		QActionGroup          *filterActions{nullptr};
 		QWidget               *settings{nullptr};
+		bool                   isHeaderInitialized{false};
 
 	friend class LogManager;
 };
