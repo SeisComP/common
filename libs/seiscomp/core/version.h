@@ -52,6 +52,8 @@ namespace Core {
    - Added Seiscomp::System::Application::logContext()
    - Added Seiscomp::System::Application::logComponent()
    - Added Seiscomp::Util::Url::errorMessage()
+   - Added Seiscomp::Gui::RecordWidget::setRecordAxisTickIntervals
+   - Added Seiscomp::Gui::RecordWidget::unsetRecordAxisTickIntervals
 
  "17.0.0"   0x110000
    - Added Seiscomp::Gui::Scheme::records.showEngineeringValues
