@@ -56,9 +56,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupChannels">
+    <widget class="QGroupBox" name="groupLogLevel">
      <property name="title">
-      <string>Channels</string>
+      <string>Subscriptions &amp;&amp; Notifications</string>
      </property>
      <layout class="QVBoxLayout">
       <property name="spacing">
@@ -79,7 +79,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QFrame" name="frameChannels">
+         <widget class="QFrame" name="frameLogLevel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
