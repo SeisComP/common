@@ -2557,7 +2557,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 				std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
 				             "has changed to 'MType', please update your configuration" << std::endl;
 			}
-			configuredCols.push_back(v);
+			if ( std::find(configuredCols.begin(), configuredCols.end(), v) == configuredCols.end() ) {
+				configuredCols.push_back(v);
+			}
 		}
 
 		// register columns keeping default order of invisible columns while
