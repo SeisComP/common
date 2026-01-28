@@ -221,7 +221,7 @@ bool SDSArchive::setSource(const string &src) {
 
 	for ( string &root : _arcroots ) {
 		root = Environment::Instance()->absolutePath(root);
-		SEISCOMP_DEBUG("+ Archive root: %s", root.c_str());
+		SEISCOMP_DEBUG("+ Archive root: %s", root);
 	}
 
 	_closeRequested = false;
@@ -486,12 +486,12 @@ bool SDSArchive::resolveLoc(string &pathStr,
 				first = false;
 			}
 
-			SEISCOMP_DEBUG("+ %s", fpath.c_str());
+			SEISCOMP_DEBUG("+ %s", fpath);
 			_fnames.push(File(fpath,first));
 		}
 		/*
 		else
-			SEISCOMP_DEBUG("ignore duplicate read: %s", path.c_str());
+			SEISCOMP_DEBUG("ignore duplicate read: %s", path);
 		*/
 		return true;
 	}
@@ -517,7 +517,7 @@ bool SDSArchive::resolveLoc(string &pathStr,
 					resolveLoc(pathStr, net, sta, loc, cha, requestStartTime, doy+1, year, first);
 				}
 
-				SEISCOMP_DEBUG("+ %s", fpath.c_str());
+				SEISCOMP_DEBUG("+ %s", fpath);
 				_fnames.push(File(fpath,first));
 			}
 		}
@@ -590,18 +590,17 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 	Time recstime, recetime;
 	Time stime = !_curidx->stime ? _stime.value_or(Time()) : *_curidx->stime;
 	long int offset = 0;
-	long int size;
 	bool result = true;
 
 	_file.seekg(0, ios::end);
-	size = (long int)_file.tellg();
+	const auto size = (long int)_file.tellg();
+	_file.seekg(0, ios::beg);
+
 	if ( size <= 0 ) {
 		return false;
 	}
 
 	if ( bsearch ) {
-		_file.seekg(0, ios::beg);
-
 		//! binary search
 		IO::MSeedRecord mseed;
 		mseed.setHint(Record::META_ONLY);
@@ -609,7 +608,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 		try {
 			mseed.read(_file);
 		}
-		catch ( ... ) {
+		catch ( exception &e ) {
 			return false;
 		}
 
@@ -629,7 +628,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 		long start = 0;
 		long half = 0;
 		long end = 0;
-		int reclen = mseed.recordLength();
+		const int reclen = mseed.recordLength();
 
 		if ( recstime < stime ) {
 			end = static_cast<long>(size / reclen);
@@ -641,20 +640,26 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 
 			try {
 				mseed.read(_file);
+				if ( mseed.recordLength() != reclen ) {
+					SEISCOMP_WARNING("[%s] Detected mixed record length (%d != %d), abort binary search",
+					                 fname, reclen, mseed.recordLength());
+					return false;
+				}
 				samprate = mseed.samplingFrequency();
 				recstime = mseed.startTime();
 				if ( samprate > 0. ) {
 					recetime = mseed.endTime();
 				}
 				else {
-					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!", fname.c_str(), half*reclen, samprate);
+					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!",
+					                 fname, half*reclen, samprate);
 					recetime = recstime + TimeSpan(1, 0);
 					result = false;
 				}
 			}
 			catch ( ... ) {
 				SEISCOMP_WARNING("[%s@%d] Couldn't read mseed header", fname, half * reclen);
-				break;
+				return false;
 			}
 
 			if ( recetime < stime ) {
@@ -692,7 +697,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 			try {
 				mseed.read(_file);
 			}
-			catch ( ... ) {
+			catch ( exception &e ) {
 				continue;
 			}
 
@@ -710,7 +715,8 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 					}
 				}
 				else {
-					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!", fname.c_str(), offset, samprate);
+					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!",
+					                 fname, offset, samprate);
 					result = false;
 				}
 			}
@@ -806,9 +812,10 @@ Seiscomp::Record *SDSArchive::next() {
 					// File part of start time
 					if ( file.second ) {
 						if ( !setStart(file.first, true) ) {
+							SEISCOMP_DEBUG("W %s (linear search)", file.first);
 							if ( !setStart(file.first, false) ) {
 								SEISCOMP_WARNING("Error reading file %s; start of time window maybe incorrect",
-								                 file.first.c_str());
+								                 file.first);
 								_file.close();
 								continue;
 							}
