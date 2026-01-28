@@ -805,7 +805,7 @@ void MSeedRecord::read(std::istream &is) {
 	_encoding = -1;
 	_net = _sta = _loc = _cha = {};
 
-	while ( is.good() ) {
+	if ( is.good() ) {
 		if ( is.read(header, std::min(V2::HeaderLength, V3::HeaderLength)) ) {
 			if ( V2::isValidHeader(header) ) {
 				if constexpr ( V2::HeaderLength > V3::HeaderLength ) {
@@ -957,7 +957,7 @@ void MSeedRecord::read(std::istream &is) {
 				}
 
 				if ( reclen <= 0 ) {
-					continue;
+					throw Core::StreamException("miniSEED2 records has invalid size");
 				}
 
 				if ( size_t(reclen) > MaximumRecordLength ) {
@@ -1016,8 +1016,6 @@ void MSeedRecord::read(std::istream &is) {
 				if ( ofsB2000 ) {
 					updateAuthentication(buffer.data(), reclen, ofsB2000);
 				}
-
-				break;
 			}
 			else if ( V3::isValidHeader(header) ) {
 				using namespace V3;
@@ -1059,11 +1057,6 @@ void MSeedRecord::read(std::istream &is) {
 				dataLength = C::FromLittleEndian(*DataLength::Get(header));
 
 				reclen = HeaderLength + sidLength + extraLength + dataLength;
-
-				if ( !dataLength ) {
-					// Skip empty records
-					continue;
-				}
 
 				buffer.reserve(reclen);
 				buffer.resize(V3::HeaderLength);
@@ -1129,8 +1122,6 @@ void MSeedRecord::read(std::istream &is) {
 						// document?
 					}
 				}
-
-				break;
 			}
 		}
 	}
