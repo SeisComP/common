@@ -69,12 +69,12 @@ class SC_SYSTEM_CORE_API TravelTime {
 		bool operator<(const TravelTime &other) const;
 
 		std::string phase; //!< phase code like "P", "pP", "PKiKP" etc.
-		double time;       //!< actual travel time in seconds
-		double dtdd;       //!< dt/dd angular slowness in sec/deg
-		double dtdh;       //!< dt/dh dependence of time on source depth
+		double time;       //!< [sec] actual travel time
+		double dtdd;       //!< [sec/deg] dt/dd angular slowness
+		double dtdh;       //!< [sec/km] dt/dh dependence of time on source depth
 		double dddp;       //!< dd/dp
-		double takeoff;    //!< take-off angle at source
-		OPT(double) azi;   //!< azimuth angle at source (for 3D models)
+		double takeoff;    //!< [deg] take-off angle at source: 0(down):180(up)
+		OPT(double) azi;   //!< [deg] azimuth angle at source (for 3D models)
 };
 
 
