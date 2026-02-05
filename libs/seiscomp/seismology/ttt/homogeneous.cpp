@@ -111,7 +111,7 @@ double computeDistance(double lat1, double lon1,
                        double *backAzimuth = nullptr) {
 	double dist;
 	Math::Geo::delazi(lat1, lon1, lat2, lon2, &dist, azimuth, backAzimuth);
-	return Math::Geo::deg2km(dist);
+	return dist;
 }
 
 
@@ -189,7 +189,8 @@ Homogeneous::isInside(double lat, double lon, double dep)
 	if ( dep < _minDepth || dep > _maxDepth ) {
 		return false;
 	}
-	double dist = computeDistance(lat, lon, _centerLat, _centerLon);
+	double dist = 
+	    Math::Geo::deg2km(computeDistance(lat, lon, _centerLat, _centerLon));
 	if ( dist > _radius ) {
 		return false;
 	}
@@ -220,7 +221,7 @@ Homogeneous::compute(const char *phase,
 	}
 
 	// straight ray path since we are in a homogeneous media
-	double Hdist = computeDistance(lat1, lon1, lat2, lon2);
+	double Hdist = Math::Geo::deg2km(computeDistance(lat1, lon1, lat2, lon2));
 	double Vdist = dep1 + alt2/1000.;
 	double distance = sqrt(Hdist*Hdist + Vdist*Vdist); // [km]
 
@@ -262,7 +263,7 @@ Homogeneous::computeTime(const char *phase,
 	}
 
 	// straight ray path since we are in a homogeneous media
-	double Hdist = computeDistance(lat1, lon1, lat2, lon2);
+	double Hdist = Math::Geo::deg2km(computeDistance(lat1, lon1, lat2, lon2));
 	double Vdist = dep1 + alt2/1000.;
 	double distance = sqrt(Hdist*Hdist + Vdist*Vdist); // [km]
 
