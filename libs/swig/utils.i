@@ -20,10 +20,28 @@
 %module(package="seiscomp") utils
 
 %{
+#include "seiscomp/core/exceptions.h"
 #include "seiscomp/utils/files.h"
 #include "seiscomp/utils/timer.h"
 #include "seiscomp/utils/units.h"
 %}
+
+%import core.i
+
+%exception {
+  try {
+    $action
+  }
+  catch ( const Seiscomp::Core::ValueException &e) {
+    SWIG_exception_fail(SWIG_ValueError, e.what());
+  }
+  catch ( const std::exception &e) {
+    SWIG_exception_fail(SWIG_RuntimeError, e.what());
+  }
+  catch ( ... ) {
+    SWIG_exception_fail(SWIG_UnknownError, "C++ anonymous exception");
+  }
+}
 
 %include stl.i
 %include "seiscomp/core.h"
