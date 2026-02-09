@@ -151,26 +151,50 @@ class CommandLine(object):
     def optionInt(self, option):
         return _system.CommandLine_optionInt(self, option)
 
+    def optionInts(self, option):
+        return _system.CommandLine_optionInts(self, option)
+
     def optionBool(self, option):
         return _system.CommandLine_optionBool(self, option)
+
+    def optionBools(self, option):
+        return _system.CommandLine_optionBools(self, option)
 
     def optionDouble(self, option):
         return _system.CommandLine_optionDouble(self, option)
 
+    def optionDoubles(self, option):
+        return _system.CommandLine_optionDoubles(self, option)
+
     def optionString(self, option):
         return _system.CommandLine_optionString(self, option)
+
+    def optionStrings(self, option):
+        return _system.CommandLine_optionStrings(self, option)
 
     def addIntOption(self, *args):
         return _system.CommandLine_addIntOption(self, *args)
 
+    def addIntsOption(self, group, option, description):
+        return _system.CommandLine_addIntsOption(self, group, option, description)
+
     def addDoubleOption(self, *args):
         return _system.CommandLine_addDoubleOption(self, *args)
+
+    def addDoublesOption(self, group, option, description):
+        return _system.CommandLine_addDoublesOption(self, group, option, description)
 
     def addBoolOption(self, *args):
         return _system.CommandLine_addBoolOption(self, *args)
 
+    def addBoolsOption(self, group, option, description):
+        return _system.CommandLine_addBoolsOption(self, group, option, description)
+
     def addStringOption(self, *args):
         return _system.CommandLine_addStringOption(self, *args)
+
+    def addStringsOption(self, group, option, description):
+        return _system.CommandLine_addStringsOption(self, group, option, description)
     __swig_destroy__ = _system.delete_CommandLine
 
 # Register CommandLine in _system:
