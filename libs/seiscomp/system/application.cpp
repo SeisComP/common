@@ -364,17 +364,21 @@ void Application::BaseSettings::accept(SettingsLinker &linker) {
 	& cliAsPath(
 		alternativeConfigFile,
 		"Generic", "config-file",
-		"Use alternative configuration file"
+		"The alternative module configuration file. When this option is used, "
+		"the module configuration is only read from the given file and no other "
+		"configuration stage is considered. Therefore, all configuration "
+		"including the definition of plugins must be contained in that file or "
+		"given along with other command-line options such as --plugins."
 	)
 	& cli(
 		plugins,
 		"Generic", "plugins",
-		"Load given plugins"
+		"Load given plugins."
 	)
 	& cli(
 		lockfile,
 		"Verbose", "lockfile,l",
-		"Path to lock file"
+		"Path to lock file."
 	)
 	& cfg(certificateStoreDirectory, "certStore");
 }

@@ -723,14 +723,14 @@
 					<description>Show version information.</description>
 				</option>
 
-				<option flag="" long-flag="config-file" argument="arg" publicID="generic#config-file">
+				<option flag="" long-flag="config-file" argument="file" publicID="generic#config-file">
 					<description>
-					Use alternative configuration file. When this option is
-					used the loading of all stages is disabled. Only the
-					given configuration file is parsed and used. To use
-					another name for the configuration create a symbolic
-					link of the application or copy it. Example:
-					scautopick -> scautopick2.
+					The alternative module configuration file. When this option
+					is used, the module configuration is only read from the
+					given file and no other configuration stage is considered.
+					Therefore, all configuration including the definition of
+					plugins must be contained in that file or given along with
+					other command-line options such as --plugins.
 					</description>
 				</option>
 
@@ -749,8 +749,8 @@
 					<description>
 					Enable/disable self-shutdown because a master module shutdown.
 					This only works when messaging is enabled and the master
-					module sends a shutdown message (enabled with --start-stop-msg
-					for the master module).
+					module sends a shutdown message (enabled with
+					--start-stop-msg for the master module).
 					</description>
 				</option>
 
@@ -782,7 +782,7 @@
 
 				<option flag="v" long-flag="v" argument="" publicID="verbosity#v">
 					<description>
-					Increase verbosity level (may be repeated, eg. -vv).
+					Increase verbosity level (may be repeated, e.g., -vv).
 					</description>
 				</option>
 
