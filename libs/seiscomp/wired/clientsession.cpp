@@ -25,7 +25,6 @@
 #include <seiscomp/wired/reactor.h>
 
 #include <cerrno>
-#include <iostream>
 
 
 #define SEISCOMP_TRACE(...) \

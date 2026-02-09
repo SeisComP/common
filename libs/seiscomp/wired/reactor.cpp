@@ -21,10 +21,11 @@
 #define SEISCOMP_COMPONENT Wire
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/baseobject.h>
-#include <cstdio>
 
 #include <seiscomp/wired/session.h>
 #include <seiscomp/wired/reactor.h>
+
+#include <cstdio>
 
 
 using namespace std;
