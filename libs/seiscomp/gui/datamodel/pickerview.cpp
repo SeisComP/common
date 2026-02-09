@@ -7439,6 +7439,7 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	if ( lastItem ) {
 		smin = lastItem->widget()->smin();
 		smax = lastItem->widget()->smax();
+		lastItem->widget()->setActive(false);
 		lastItem->widget()->setSelected(0,0);
 		lastItem->widget()->setShadowWidget(nullptr, false);
 		lastItem->widget()->setCurrentMarker(nullptr);
@@ -7459,6 +7460,7 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 
 	//SC_D.centerSelection = true;
 
+	item->widget()->setActive(true);
 
 	Core::Time cursorPos;
 	RecordMarker* m = item->widget()->enabledMarker(item->widget()->cursorText());
