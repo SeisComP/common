@@ -138,9 +138,13 @@ optional(bool);
 %template(StructureVector) std::vector<Seiscomp::System::StructurePtr>;
 
 %template(optionInt) Seiscomp::System::CommandLine::option<int>;
+%template(optionInts) Seiscomp::System::CommandLine::option<std::vector<int>>;
 %template(optionBool) Seiscomp::System::CommandLine::option<bool>;
+%template(optionBools) Seiscomp::System::CommandLine::option<std::vector<bool>>;
 %template(optionDouble) Seiscomp::System::CommandLine::option<double>;
+%template(optionDoubles) Seiscomp::System::CommandLine::option<std::vector<double>>;
 %template(optionString) Seiscomp::System::CommandLine::option<std::string>;
+%template(optionStrings) Seiscomp::System::CommandLine::option<std::vector<std::string>>;
 
 %extend Seiscomp::System::CommandLine {
 	void addIntOption(const char* group, const char* option,
@@ -153,6 +157,11 @@ optional(bool);
 		self->addOption(group, option, description, (int*)NULL, defaultValue);
 	}
 
+	void addIntsOption(const char* group, const char* option,
+	                   const char* description) {
+		self->addOption(group, option, description, (std::vector<int>*)NULL);
+	}
+
 	void addDoubleOption(const char* group, const char* option,
 	                     const char* description) {
 		self->addOption(group, option, description, (double*)NULL);
@@ -161,6 +170,11 @@ optional(bool);
 	void addDoubleOption(const char* group, const char* option,
 	                     const char* description, double defaultValue) {
 		self->addOption(group, option, description, (double*)NULL, defaultValue);
+	}
+
+	void addDoublesOption(const char* group, const char* option,
+	                      const char* description) {
+		self->addOption(group, option, description, (std::vector<double>*)NULL);
 	}
 
 	void addBoolOption(const char* group, const char* option,
@@ -173,6 +187,11 @@ optional(bool);
 		self->addOption(group, option, description, (bool*)NULL, defaultValue);
 	}
 
+	void addBoolsOption(const char* group, const char* option,
+	                    const char* description) {
+		self->addOption(group, option, description, (std::vector<bool>*)NULL);
+	}
+
 	void addStringOption(const char* group, const char* option, const char* description) {
 		self->addOption(group, option, description, (std::string*)NULL);
 	}
@@ -181,4 +200,9 @@ optional(bool);
 	                     const char* description, const std::string& defaultValue) {
 		self->addOption(group, option, description, (std::string*)NULL, defaultValue);
 	}
+
+	void addStringsOption(const char* group, const char* option, const char* description) {
+		self->addOption(group, option, description, (std::vector<std::string>*)NULL);
+	}
+
 };
