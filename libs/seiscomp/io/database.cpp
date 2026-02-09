@@ -113,7 +113,7 @@ bool DatabaseInterface::connect(const char* con) {
 
 	Util::Url url(con);
 	auto path = url.path();
-	if ( !path.empty() ) {
+	if ( !path.empty() && (path != "/") ) {
 		if ( path[0] == '/' ) {
 			path = path.substr(1);
 		}
