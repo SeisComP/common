@@ -96,7 +96,7 @@ bool PostgreSQLDatabase::open() {
 		ss << _port;
 	}
 
-	const char* options = _options.empty() ? nullptr : _options.c_str();
+	auto options = _options.empty() ? nullptr : _options.c_str();
 	_handle = PQsetdbLogin(_host.c_str(), ss.str().c_str(),
 	                       options,
 	                       nullptr,
@@ -104,18 +104,27 @@ bool PostgreSQLDatabase::open() {
 	                       _user.c_str(),
 	                       _password.c_str());
 
-	/* Check to see that the backend connection was successfully made */
+	// Check to see that the backend connection was successfully made
 	if ( PQstatus(_handle) != CONNECTION_OK ) {
-		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
-		               _host.c_str(), _port, _database.c_str(),
-		               PQerrorMessage(_handle));
+		if ( _port ) {
+			SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s",
+			               _user, _host, _port, _database, PQerrorMessage(_handle));
+		}
+		else {
+			SEISCOMP_ERROR("Connect to %s:******@%s/%s failed: %s",
+			               _user, _host, _database, PQerrorMessage(_handle));
+		}
 
 		disconnect();
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s", _user.c_str(),
-	               _host.c_str(), _port, _database.c_str());
+	if ( _port ) {
+		SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s", _user, _host, _port, _database);
+	}
+	else {
+		SEISCOMP_DEBUG("Connected to %s:******@%s/%s", _user, _host, _database);
+	}
 
 	return true;
 }
