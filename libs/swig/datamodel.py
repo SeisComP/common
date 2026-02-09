@@ -526,6 +526,11 @@ class PublicObject(Object):
         return _datamodel.PublicObject_SetIdPattern(pattern)
 
     @staticmethod
+    def GetIdPattern():
+        r"""GetIdPattern() -> std::string const &"""
+        return _datamodel.PublicObject_GetIdPattern()
+
+    @staticmethod
     def GenerateId(*args):
         r"""
         GenerateId(PublicObject object) -> PublicObject
@@ -553,6 +558,23 @@ class PublicObject(Object):
 
 # Register PublicObject in _datamodel:
 _datamodel.PublicObject_swigregister(PublicObject)
+class PublicIDPatternResolver(object):
+    r"""Proxy of C++ Seiscomp::DataModel::PublicIDPatternResolver class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, po):
+        r"""__init__(PublicIDPatternResolver self, PublicObject po) -> PublicIDPatternResolver"""
+        _datamodel.PublicIDPatternResolver_swiginit(self, _datamodel.new_PublicIDPatternResolver(po))
+
+    def resolve(self, variable):
+        r"""resolve(PublicIDPatternResolver self, std::string & variable) -> bool"""
+        return _datamodel.PublicIDPatternResolver_resolve(self, variable)
+    __swig_destroy__ = _datamodel.delete_PublicIDPatternResolver
+
+# Register PublicIDPatternResolver in _datamodel:
+_datamodel.PublicIDPatternResolver_swigregister(PublicIDPatternResolver)
 class DatabaseIterator(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::DataModel::DatabaseIterator class."""
 

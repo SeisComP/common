@@ -5839,12 +5839,6 @@ SWIGINTERNINLINE PyObject*
 }
 
 
-  #define SWIG_From_double   PyFloat_FromDouble 
-
-SWIGINTERN void Seiscomp_System_CommandLine_addIntOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
-		self->addOption(group, option, description, (int*)NULL);
-	}
-
 SWIGINTERN int
 SWIG_AsVal_int (PyObject * obj, int *val)
 {
@@ -5860,18 +5854,36 @@ SWIG_AsVal_int (PyObject * obj, int *val)
   return res;
 }
 
-SWIGINTERN void Seiscomp_System_CommandLine_addIntOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,int defaultValue){
-		self->addOption(group, option, description, (int*)NULL, defaultValue);
-	}
-SWIGINTERN void Seiscomp_System_CommandLine_addDoubleOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
-		self->addOption(group, option, description, (double*)NULL);
-	}
-SWIGINTERN void Seiscomp_System_CommandLine_addDoubleOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,double defaultValue){
-		self->addOption(group, option, description, (double*)NULL, defaultValue);
-	}
-SWIGINTERN void Seiscomp_System_CommandLine_addBoolOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
-		self->addOption(group, option, description, (bool*)NULL);
-	}
+
+namespace swig {
+  template <> struct traits< int > {
+    typedef value_category category;
+    static const char* type_name() { return"int"; }
+  };
+  template <>  struct traits_asval< int > {
+    typedef int value_type;
+    static int asval(PyObject *obj, value_type *val) {
+      return SWIG_AsVal_int (obj, val);
+    }
+  };
+  template <>  struct traits_from< int > {
+    typedef int value_type;
+    static PyObject *from(const value_type& val) {
+      return SWIG_From_int  (val);
+    }
+  };
+}
+
+
+      namespace swig {
+	template <>  struct traits<std::vector< int, std::allocator< int > > > {
+	  typedef pointer_category category;
+	  static const char* type_name() {
+	    return "std::vector<" "int" "," "std::allocator< int >" " >";
+	  }
+	};
+      }
+    
 
 SWIGINTERN int
 SWIG_AsVal_bool (PyObject *obj, bool *val)
@@ -5884,22 +5896,6 @@ SWIG_AsVal_bool (PyObject *obj, bool *val)
     return SWIG_ERROR;
   if (val) *val = r ? true : false;
   return SWIG_OK;
-}
-
-SWIGINTERN void Seiscomp_System_CommandLine_addBoolOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,bool defaultValue){
-		self->addOption(group, option, description, (bool*)NULL, defaultValue);
-	}
-SWIGINTERN void Seiscomp_System_CommandLine_addStringOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
-		self->addOption(group, option, description, (std::string*)NULL);
-	}
-SWIGINTERN void Seiscomp_System_CommandLine_addStringOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,std::string const &defaultValue){
-		self->addOption(group, option, description, (std::string*)NULL, defaultValue);
-	}
-
-SWIGINTERNINLINE PyObject * 
-SWIG_FromCharPtr(const char *cptr)
-{ 
-  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
 
@@ -5933,35 +5929,8 @@ namespace swig {
       }
     
 
-namespace swig {
-  template <> struct traits< int > {
-    typedef value_category category;
-    static const char* type_name() { return"int"; }
-  };
-  template <>  struct traits_asval< int > {
-    typedef int value_type;
-    static int asval(PyObject *obj, value_type *val) {
-      return SWIG_AsVal_int (obj, val);
-    }
-  };
-  template <>  struct traits_from< int > {
-    typedef int value_type;
-    static PyObject *from(const value_type& val) {
-      return SWIG_From_int  (val);
-    }
-  };
-}
+  #define SWIG_From_double   PyFloat_FromDouble 
 
-
-      namespace swig {
-	template <>  struct traits<std::vector< int, std::allocator< int > > > {
-	  typedef pointer_category category;
-	  static const char* type_name() {
-	    return "std::vector<" "int" "," "std::allocator< int >" " >";
-	  }
-	};
-      }
-    
 
 namespace swig {
   template <> struct traits< double > {
@@ -5992,6 +5961,49 @@ namespace swig {
 	};
       }
     
+SWIGINTERN void Seiscomp_System_CommandLine_addIntOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (int*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addIntOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,int defaultValue){
+		self->addOption(group, option, description, (int*)NULL, defaultValue);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addIntsOption(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (std::vector<int>*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addDoubleOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (double*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addDoubleOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,double defaultValue){
+		self->addOption(group, option, description, (double*)NULL, defaultValue);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addDoublesOption(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (std::vector<double>*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addBoolOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (bool*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addBoolOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,bool defaultValue){
+		self->addOption(group, option, description, (bool*)NULL, defaultValue);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addBoolsOption(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (std::vector<bool>*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addStringOption__SWIG_0(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (std::string*)NULL);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addStringOption__SWIG_1(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description,std::string const &defaultValue){
+		self->addOption(group, option, description, (std::string*)NULL, defaultValue);
+	}
+SWIGINTERN void Seiscomp_System_CommandLine_addStringsOption(Seiscomp::System::CommandLine *self,char const *group,char const *option,char const *description){
+		self->addOption(group, option, description, (std::vector<std::string>*)NULL);
+	}
+
+SWIGINTERNINLINE PyObject * 
+SWIG_FromCharPtr(const char *cptr)
+{ 
+  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
+}
+
 
 SWIGINTERNINLINE PyObject* 
 SWIG_From_unsigned_SS_long  (unsigned long value)
@@ -9341,6 +9353,60 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_CommandLine_optionInts(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::vector< int,std::allocator< int > > result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_optionInts", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_optionInts" "', argument " "1"" of type '" "Seiscomp::System::CommandLine const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_optionInts" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CommandLine_optionInts" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::System::CommandLine const *)arg1)->SWIGTEMPLATEDISAMBIGUATOR option< std::vector< int > >((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< int,std::allocator< int > > >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_CommandLine_optionBool(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::CommandLine *arg1 = 0 ;
@@ -9387,6 +9453,60 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionBool(PyObject *self, PyObject *args
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_CommandLine_optionBools(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::vector< bool,std::allocator< bool > > result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_optionBools", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_optionBools" "', argument " "1"" of type '" "Seiscomp::System::CommandLine const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_optionBools" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CommandLine_optionBools" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::System::CommandLine const *)arg1)->SWIGTEMPLATEDISAMBIGUATOR option< std::vector< bool > >((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector<bool,std::allocator< bool > > >(result));
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -9449,6 +9569,60 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_CommandLine_optionDoubles(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::vector< double,std::allocator< double > > result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_optionDoubles", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_optionDoubles" "', argument " "1"" of type '" "Seiscomp::System::CommandLine const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_optionDoubles" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CommandLine_optionDoubles" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::System::CommandLine const *)arg1)->SWIGTEMPLATEDISAMBIGUATOR option< std::vector< double > >((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_CommandLine_optionString(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::System::CommandLine *arg1 = 0 ;
@@ -9495,6 +9669,60 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionString(PyObject *self, PyObject *ar
     }
   }
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_CommandLine_optionStrings(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  std::vector< std::string,std::allocator< std::string > > result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_optionStrings", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_optionStrings" "', argument " "1"" of type '" "Seiscomp::System::CommandLine const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_optionStrings" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "CommandLine_optionStrings" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = ((Seiscomp::System::CommandLine const *)arg1)->SWIGTEMPLATEDISAMBIGUATOR option< std::vector< std::string > >((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = swig::from(static_cast< std::vector< std::string,std::allocator< std::string > > >(result));
   if (SWIG_IsNewObj(res2)) delete arg2;
   return resultobj;
 fail:
@@ -9717,6 +9945,77 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_CommandLine_addIntsOption(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  char *arg2 = 0 ;
+  char *arg3 = 0 ;
+  char *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  int res4 ;
+  char *buf4 = 0 ;
+  int alloc4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_addIntsOption", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_addIntsOption" "', argument " "1"" of type '" "Seiscomp::System::CommandLine *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_addIntsOption" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CommandLine_addIntsOption" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  res4 = SWIG_AsCharPtrAndSize(swig_obj[3], &buf4, NULL, &alloc4);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CommandLine_addIntsOption" "', argument " "4"" of type '" "char const *""'");
+  }
+  arg4 = reinterpret_cast< char * >(buf4);
+  {
+    try {
+      Seiscomp_System_CommandLine_addIntsOption(arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_CommandLine_addDoubleOption__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::System::CommandLine *arg1 = 0 ;
@@ -9931,6 +10230,77 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_CommandLine_addDoublesOption(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  char *arg2 = 0 ;
+  char *arg3 = 0 ;
+  char *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  int res4 ;
+  char *buf4 = 0 ;
+  int alloc4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_addDoublesOption", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_addDoublesOption" "', argument " "1"" of type '" "Seiscomp::System::CommandLine *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_addDoublesOption" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CommandLine_addDoublesOption" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  res4 = SWIG_AsCharPtrAndSize(swig_obj[3], &buf4, NULL, &alloc4);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CommandLine_addDoublesOption" "', argument " "4"" of type '" "char const *""'");
+  }
+  arg4 = reinterpret_cast< char * >(buf4);
+  {
+    try {
+      Seiscomp_System_CommandLine_addDoublesOption(arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_CommandLine_addBoolOption__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   Seiscomp::System::CommandLine *arg1 = 0 ;
@@ -10142,6 +10512,77 @@ fail:
     "    Seiscomp::System::CommandLine::addBoolOption(char const *,char const *,char const *)\n"
     "    Seiscomp::System::CommandLine::addBoolOption(char const *,char const *,char const *,bool)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_CommandLine_addBoolsOption(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  char *arg2 = 0 ;
+  char *arg3 = 0 ;
+  char *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  int res4 ;
+  char *buf4 = 0 ;
+  int alloc4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_addBoolsOption", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_addBoolsOption" "', argument " "1"" of type '" "Seiscomp::System::CommandLine *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_addBoolsOption" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CommandLine_addBoolsOption" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  res4 = SWIG_AsCharPtrAndSize(swig_obj[3], &buf4, NULL, &alloc4);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CommandLine_addBoolsOption" "', argument " "4"" of type '" "char const *""'");
+  }
+  arg4 = reinterpret_cast< char * >(buf4);
+  {
+    try {
+      Seiscomp_System_CommandLine_addBoolsOption(arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return NULL;
 }
 
 
@@ -10361,6 +10802,77 @@ fail:
     "    Seiscomp::System::CommandLine::addStringOption(char const *,char const *,char const *)\n"
     "    Seiscomp::System::CommandLine::addStringOption(char const *,char const *,char const *,std::string const &)\n");
   return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_CommandLine_addStringsOption(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::System::CommandLine *arg1 = 0 ;
+  char *arg2 = 0 ;
+  char *arg3 = 0 ;
+  char *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  int res4 ;
+  char *buf4 = 0 ;
+  int alloc4 = 0 ;
+  PyObject *swig_obj[4] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "CommandLine_addStringsOption", 4, 4, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__System__CommandLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CommandLine_addStringsOption" "', argument " "1"" of type '" "Seiscomp::System::CommandLine *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::System::CommandLine * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CommandLine_addStringsOption" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CommandLine_addStringsOption" "', argument " "3"" of type '" "char const *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  res4 = SWIG_AsCharPtrAndSize(swig_obj[3], &buf4, NULL, &alloc4);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "CommandLine_addStringsOption" "', argument " "4"" of type '" "char const *""'");
+  }
+  arg4 = reinterpret_cast< char * >(buf4);
+  {
+    try {
+      Seiscomp_System_CommandLine_addStringsOption(arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  if (alloc4 == SWIG_NEWOBJ) delete[] buf4;
+  return NULL;
 }
 
 
@@ -50834,13 +51346,21 @@ static PyMethodDef SwigMethods[] = {
 	 { "CommandLine_hasOption", _wrap_CommandLine_hasOption, METH_VARARGS, NULL},
 	 { "CommandLine_unrecognizedOptions", _wrap_CommandLine_unrecognizedOptions, METH_O, NULL},
 	 { "CommandLine_optionInt", _wrap_CommandLine_optionInt, METH_VARARGS, NULL},
+	 { "CommandLine_optionInts", _wrap_CommandLine_optionInts, METH_VARARGS, NULL},
 	 { "CommandLine_optionBool", _wrap_CommandLine_optionBool, METH_VARARGS, NULL},
+	 { "CommandLine_optionBools", _wrap_CommandLine_optionBools, METH_VARARGS, NULL},
 	 { "CommandLine_optionDouble", _wrap_CommandLine_optionDouble, METH_VARARGS, NULL},
+	 { "CommandLine_optionDoubles", _wrap_CommandLine_optionDoubles, METH_VARARGS, NULL},
 	 { "CommandLine_optionString", _wrap_CommandLine_optionString, METH_VARARGS, NULL},
+	 { "CommandLine_optionStrings", _wrap_CommandLine_optionStrings, METH_VARARGS, NULL},
 	 { "CommandLine_addIntOption", _wrap_CommandLine_addIntOption, METH_VARARGS, NULL},
+	 { "CommandLine_addIntsOption", _wrap_CommandLine_addIntsOption, METH_VARARGS, NULL},
 	 { "CommandLine_addDoubleOption", _wrap_CommandLine_addDoubleOption, METH_VARARGS, NULL},
+	 { "CommandLine_addDoublesOption", _wrap_CommandLine_addDoublesOption, METH_VARARGS, NULL},
 	 { "CommandLine_addBoolOption", _wrap_CommandLine_addBoolOption, METH_VARARGS, NULL},
+	 { "CommandLine_addBoolsOption", _wrap_CommandLine_addBoolsOption, METH_VARARGS, NULL},
 	 { "CommandLine_addStringOption", _wrap_CommandLine_addStringOption, METH_VARARGS, NULL},
+	 { "CommandLine_addStringsOption", _wrap_CommandLine_addStringsOption, METH_VARARGS, NULL},
 	 { "delete_CommandLine", _wrap_delete_CommandLine, METH_O, NULL},
 	 { "CommandLine_swigregister", CommandLine_swigregister, METH_O, NULL},
 	 { "CommandLine_swiginit", CommandLine_swiginit, METH_VARARGS, NULL},
