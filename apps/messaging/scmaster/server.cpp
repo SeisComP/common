@@ -71,6 +71,20 @@ void QueueWorker::unlock() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool QueueWorker::addSession(Wired::Session *session) {
+	if ( !Wired::Reactor::addSession(session) ) {
+		return false;
+	}
+
+	static_cast<Protocols::WebsocketSession*>(session)->welcome();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Wired::Device *QueueWorker::wait() {
 	unlock();
 	Wired::Device *dev = Reactor::wait();

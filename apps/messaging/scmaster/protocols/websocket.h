@@ -44,6 +44,10 @@ class WebsocketHandler : public Seiscomp::Core::BaseObject {
 		WebsocketHandler(WebsocketSession *session) : _session(session) {}
 
 	public:
+		//! When the session has been added to the new worker and starts
+		//! its activity.
+		virtual void welcome() {}
+
 		//! When the HTTP session upgrades the connection to a websocket
 		//! connection then this method is called and can be used to inject
 		//! additional HTTP headers into the upgrade response.
@@ -87,6 +91,10 @@ class WebsocketSession : public HttpSession {
 	//  Public HTTPSession interface
 	// ----------------------------------------------------------------------
 	public:
+		//! Called when the session has been added to its actual worker,
+		//! either the queue or the database pool.
+		void welcome() { _handler->welcome(); }
+
 		void update() override;
 
 		void handleHeader(const char *name, size_t nlen,
