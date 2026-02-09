@@ -236,6 +236,33 @@ BrokerHandler::~BrokerHandler() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BrokerHandler::welcome() {
+	if ( !_initialSubscriptions.empty() ) {
+		const char *input = _initialSubscriptions.c_str();
+		size_t nInput = _initialSubscriptions.size();
+		size_t nGroup;
+		const char *group;
+		while ( (group = tokenize2(input, ",", nInput, nGroup)) ) {
+			group = trim(group, nGroup);
+			if ( !nGroup ) {
+				continue;
+			}
+
+			Broker::Queue::Result r = _queue->subscribe(this, string(group, nGroup));
+			if ( r) {
+				replyWithError(str(ERR_QUEUE_ERRORS + r));
+				return;
+			}
+		}
+		_initialSubscriptions = {};
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BrokerHandler::start() {
 	_bytesSent = 0;
 }
@@ -648,8 +675,6 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 	int inParamCount = 0;
 	Broker::Queue *queue = nullptr;
 	OPT(Broker::SequenceNumber) seqNo;
-	const char *groupList = nullptr;
-	size_t groupListLen = 0;
 	Broker::SequenceNumber ackWindow = 20;
 	Broker::Queue::KeyValues outParams;
 
@@ -730,8 +755,7 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 		}
 		else if ( headers.nameEquals(SCMP_PROTO_CMD_CONNECT_HEADER_SUBSCRIPTIONS) ) {
 			// Handle subscription requests
-			groupList = headers.val_start;
-			groupListLen = headers.val_len;
+			_initialSubscriptions = string(headers.val_start, headers.val_len);
 		}
 		else if ( inParamCount < Broker::Queue::MaxAdditionalParams ) {
 			// Populate additional parameters interpreted by plugins
@@ -798,6 +822,7 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 	_bytesSent += welcomeBuffer->data.size();
 
 	if ( _queue ) {
+		/*
 		if ( groupList ) {
 			size_t group_len;
 			const char *group;
@@ -812,9 +837,11 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 				}
 			}
 		}
+		*/
 
-		if ( seqNo )
-			_continueWithSeqNo = *seqNo+1;
+		if ( seqNo ) {
+			_continueWithSeqNo = *seqNo + 1;
+		}
 
 		_session->setTag(true);
 	}
@@ -1161,8 +1188,9 @@ void BrokerHandler::commandSTATE(char *frame, size_t len, bool service) {
 
 	size_t headerLength = static_cast<size_t>(headers.getptr() - frame);
 	size_t payloadLength = static_cast<size_t>(len) - headerLength;
-	if ( contentLength < 0 )
+	if ( contentLength < 0 ) {
 		contentLength = static_cast<int>(payloadLength);
+	}
 	else if ( contentLength != static_cast<int>(payloadLength) ) {
 		replyWithError(str(ERR_LENGTH_MISMATCH));
 		delete msg;

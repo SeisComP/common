@@ -36,8 +36,6 @@
 #include "handler/broker.h"
 #include "handler/db.h"
 
-#include "../settings.h"
-
 
 using namespace std;
 using namespace Seiscomp::Core;
@@ -55,6 +53,16 @@ namespace Protocols {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 WebsocketSession::WebsocketSession(Socket *sock, Broker::Server *server)
 : HttpSession(sock, server) {
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool WebsocketSession::reset() {
+	_handler = nullptr;
+	return HttpSession::reset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -185,16 +193,6 @@ bool WebsocketSession::handleDatabaseUpgrade(const string &dbURL) {
 	                   DBHandler::DEFAULT_MAX_PAYLOAD_SIZE);
 
 	return true;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void WebsocketSession::close() {
-	_handler = nullptr;
-	HttpSession::close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

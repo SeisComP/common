@@ -70,17 +70,18 @@ class QueueWorker : public Wired::Reactor, public MessageDispatcher {
 	//  Reactor interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual Wired::Device *wait();
-		virtual void idle();
-		virtual bool run();
+		bool addSession(Wired::Session *session) override;
+		Wired::Device *wait() override;
+		void idle() override;
+		bool run() override;
 
 
 	// ----------------------------------------------------------------------
 	//  MessageDispatcher interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual void sendMessage(Client *sender, Message *message);
-		virtual void messageAvailable(Queue *);
+		void sendMessage(Client *sender, Message *message) override;
+		void messageAvailable(Queue *) override;
 
 
 	// ----------------------------------------------------------------------
@@ -143,11 +144,11 @@ class Server : public Wired::Server {
 	//  Reactor interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool init();
-		virtual void shutdown();
-		virtual void clear();
+		bool init() override;
+		void shutdown() override;
+		void clear() override;
 
-		virtual void sessionTagged(Wired::Session *session);
+		void sessionTagged(Wired::Session *session) override;
 
 
 	// ----------------------------------------------------------------------
@@ -179,7 +180,7 @@ class WebsocketEndpoint : public Wired::AccessControlledEndpoint {
 	//  Acceptor interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual Wired::Session *createSession(Wired::Socket *socket);
+		Wired::Session *createSession(Wired::Socket *socket) override;
 
 
 	protected:
@@ -201,7 +202,7 @@ class SSLVerifyWebsocketEndpoint : public WebsocketEndpoint {
 	//  Acceptor interface
 	// ----------------------------------------------------------------------
 	protected:
-		virtual Wired::Session *createSession(Wired::Socket *socket);
+		Wired::Session *createSession(Wired::Socket *socket) override;
 
 
 };
