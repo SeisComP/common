@@ -1759,10 +1759,15 @@
 						<parameter name="gradient" type="gradient" unit="s:color">
 							<description>
 							Mapping of time values in seconds to colors used as
-							cell backgroud color. E.g., a mapping from green
-							over yellow (5min), red (10min) to
-							transparent (30min) can be expressed as
-							"0:40FF40FF,300:FFFF40FF,600:FF4040FF,1800:FF4040FF,1801:00000000".
+							cell background color. E.g., a mapping from green
+							over yellow (5 min), red (10 min) to
+							transparent (30 min) can be expressed as (time:color):
+
+							0:40FF40FF,300:FFFF40FF,600:FF4040FF,1800:FF4040FF,1801:00000000
+
+							or using color-name codes without any transparency:
+
+							0:green,300:yellow,1800:red,1801:white
 							</description>
 						</parameter>
 						<parameter name="discrete" type="boolean" default="true">
