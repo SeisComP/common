@@ -440,10 +440,6 @@ Url::Status Url::parseAuthority(std::string_view url) {
 			return STATUS_ERROR;
 		}
 
-		if ( _host.empty() ) {
-			return STATUS_INVALID_HOST;
-		}
-
 		++end;
 		auto portStr = _authority.substr(end, _authority.size() - end);
 		if ( !portStr.empty() ) {
