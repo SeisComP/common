@@ -24,7 +24,6 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/datamodel/publicobject.h>
-#include <seiscomp/utils/replace.h>
 #include <mutex>
 
 
@@ -35,41 +34,44 @@ std::mutex cacheMutex;
 }
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace DataModel {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-namespace _private {
 
-struct Resolver : public Util::VariableResolver {
-	Resolver(PublicObject* po) : _po(po) {}
 
-	bool resolve(std::string& variable) const override {
-		if ( Util::VariableResolver::resolve(variable) )
-			return true;
 
-		if ( variable == "classname" )
-			variable = _po->className();
-		else if ( variable == "id" )
-			variable = Core::toString(PublicObject::_publicObjectId);
-		else if ( variable == "globalid" )
-			variable = Core::toString(Core::BaseObject::ObjectCount());
-		else if ( !variable.compare(0, 4, "time", 4) ) {
-			std::string::size_type seperator;
-			seperator = variable.find('/');
-			if ( seperator != std::string::npos )
-				variable = Core::Time::UTC().toString(variable.substr(seperator+1).c_str());
-			else
-				variable = Core::toString(Core::Time::UTC());
-		}
-		else
-			return false;
-
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool PublicIDPatternResolver::resolve(std::string &variable) const {
+	if ( Util::VariableResolver::resolve(variable) ) {
 		return true;
 	}
 
-	PublicObject* _po;
-};
+	if ( variable == "classname" ) {
+		variable = _po->className();
+	}
+	else if ( variable == "id" ) {
+		variable = Core::toString(PublicObject::_publicObjectId);
+	}
+	else if ( variable == "globalid" ) {
+		variable = Core::toString(Core::BaseObject::ObjectCount());
+	}
+	else if ( !variable.compare(0, 4, "time", 4) ) {
+		std::string::size_type seperator;
+		seperator = variable.find('/');
+		if ( seperator != std::string::npos ) {
+			variable = Core::Time::UTC().toString(variable.substr(seperator+1).c_str());
+		}
+		else {
+			variable = Core::toString(Core::Time::UTC());
+		}
+	}
+	else {
+		return false;
+	}
 
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -368,7 +370,7 @@ bool PublicObject::IsRegistrationEnabled() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PublicObject::generateId(const std::string &pattern) {
-	_publicID = Util::replace(pattern, _private::Resolver(this));
+	_publicID = Util::replace(pattern, PublicIDPatternResolver(this));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -403,3 +405,4 @@ void PublicObject::serialize(Archive& ar) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
