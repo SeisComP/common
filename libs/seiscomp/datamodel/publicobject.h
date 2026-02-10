@@ -194,6 +194,8 @@ class SC_SYSTEM_CORE_API PublicObject : public Object {
 		 */
 		static void SetIdPattern(const std::string& pattern);
 
+		static const std::string &GetIdPattern();
+
 		/**
 		 * Generates a publicID for an object.
 		 * @param object The object thats publicID is going to be

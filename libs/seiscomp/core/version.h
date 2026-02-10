@@ -48,6 +48,7 @@ namespace Core {
  ******************************************************************************
  "17.1.0"   0x110100
    - Added Seiscomp::DataModel::PublicIDPatternResolver
+   - Added Seiscomp::DataModel::PublicObject::GetIDPattern()
    - Added Seiscomp::Gui::LogManager
    - Added Seiscomp::System::Application::logVerbosity()
    - Added Seiscomp::System::Application::logContext()

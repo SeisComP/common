@@ -314,6 +314,15 @@ void PublicObject::SetIdPattern(const std::string& pattern) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const std::string &PublicObject::GetIdPattern() {
+	return _idPattern;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject* PublicObject::GenerateId(PublicObject* object) {
 	if ( object == nullptr ) return nullptr;
 	object->deregisterMe();
