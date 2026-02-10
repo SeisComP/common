@@ -24,6 +24,7 @@
 
 
 #include <seiscomp/datamodel/object.h>
+#include <seiscomp/utils/replace.h>
 #include <boost/thread/tss.hpp>
 #include <string>
 #include <map>
@@ -34,8 +35,6 @@ namespace DataModel {
 
 
 DEFINE_SMARTPOINTER(PublicObject);
-
-namespace _private { struct Resolver; }
 
 
 class SC_SYSTEM_CORE_API PublicObject : public Object {
@@ -251,7 +250,19 @@ class SC_SYSTEM_CORE_API PublicObject : public Object {
 		static boost::thread_specific_ptr<bool> _registerObjects;
 
 	friend class Object;
-	friend struct _private::Resolver;
+	friend class PublicIDPatternResolver;
+};
+
+
+class SC_SYSTEM_CORE_API PublicIDPatternResolver : public Util::VariableResolver {
+	public:
+		PublicIDPatternResolver(PublicObject *po) : _po(po) {}
+
+	public:
+		bool resolve(std::string& variable) const override;
+
+	protected:
+		PublicObject* _po;
 };
 
 
