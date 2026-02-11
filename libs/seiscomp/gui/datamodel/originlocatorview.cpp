@@ -65,6 +65,7 @@
 #include <seiscomp/math/conversions.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/processing/magnitudeprocessor.h>
+#include <seiscomp/seismology/firstmotion.h>
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/utils/misc.h>
 
@@ -1285,7 +1286,7 @@ class PlotWidget : public OriginLocatorPlot {
 
 	public:
 		PlotWidget(QWidget *parent = 0, ArrivalModel *model = 0)
-		: OriginLocatorPlot(parent), _model(model), _commitButton(this) {
+		: OriginLocatorPlot(parent), _model(model), _commitButton(this), _autoButton(this) {
 			//_renderer.setTColor(QColor(224,224,224));
 			//_renderer.setShadingEnabled(true);
 			_dragStarted = false;
@@ -1307,12 +1308,18 @@ class PlotWidget : public OriginLocatorPlot {
 			_commitButton.setMenu(new QMenu(this));
 			QAction *commitWithMTAction = _commitButton.menu()->addAction("With MT solution...");
 
+			_autoButton.setVisible(_customDraw);
+			_autoButton.setText("A");
+			_autoButton.setToolTip("Auto-invert focal mechanism from first motion polarities.");
+
 			connect(_npLabel, SIGNAL(linkActivated(const QString &)),
 			        this, SLOT(linkClicked()));
 			connect(&_commitButton, SIGNAL(clicked(bool)),
 			        this, SLOT(commitButtonClicked(bool)));
 			connect(commitWithMTAction, SIGNAL(triggered(bool)),
 			        this, SLOT(commitWithMTTriggered(bool)));
+			connect(&_autoButton, SIGNAL(clicked(bool)),
+			        this, SLOT(autoButtonClicked(bool)));
 
 			set(90,90,0);
 
@@ -1375,6 +1382,7 @@ class PlotWidget : public OriginLocatorPlot {
 			_preferredTensorDirty = false;
 			_npLabel->setVisible(_customDraw);
 			_commitButton.setVisible(_customDraw);
+			_autoButton.setVisible(_customDraw);
 		}
 
 
@@ -1462,6 +1470,10 @@ class PlotWidget : public OriginLocatorPlot {
 			act = menu.addAction("Show preferred solution (if available)");
 			act->setCheckable(true);
 			act->setChecked(_showPreferredFM);
+
+			menu.addSeparator();
+			act = menu.addAction("Auto-invert polarities");
+			act->setData(2000);
 		}
 
 		void handleContextMenuAction(QAction *action) {
@@ -1489,6 +1501,9 @@ class PlotWidget : public OriginLocatorPlot {
 				_showPreferredFM = action->isChecked();
 				update();
 			}
+			else if ( action->data().toInt() == 2000 ) {
+				emit autoInversionRequested();
+			}
 		}
 
 		void linkClicked() {
@@ -1507,6 +1522,10 @@ class PlotWidget : public OriginLocatorPlot {
 		void commitWithMTTriggered(bool) {
 			QMenu *m = _commitButton.menu();
 			emit focalMechanismCommitted(true, m->mapToGlobal(QPoint()));
+		}
+
+		void autoButtonClicked(bool) {
+			emit autoInversionRequested();
 		}
 
 		void mousePressEvent(QMouseEvent *event) {
@@ -1566,6 +1585,7 @@ class PlotWidget : public OriginLocatorPlot {
 			_preferredTensorDirty = true;
 			_npLabel->setGeometry(0,0,width(),diagramRect().top());
 			_commitButton.move(width()-_commitButton.width(),_npLabel->height()+4);
+			_autoButton.move(width()-_autoButton.width()-_commitButton.width()-4,_npLabel->height()+4);
 		}
 
 
@@ -1688,6 +1708,7 @@ class PlotWidget : public OriginLocatorPlot {
 		Shape             _shapeAxis[2];
 		ArrivalModel     *_model;
 		QToolButton       _commitButton;
+		QPushButton       _autoButton;
 		QLabel           *_npLabel;
 		QImage            _buffer;
 		QImage            _preferredFMBuffer;
@@ -2987,6 +3008,7 @@ OriginLocatorPlot::OriginLocatorPlot(QWidget *parent) : DiagramWidget(parent) {}
 void OriginLocatorPlot::linkClicked() {}
 void OriginLocatorPlot::commitButtonClicked(bool) {}
 void OriginLocatorPlot::commitWithMTTriggered(bool) {}
+void OriginLocatorPlot::autoButtonClicked(bool) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -3245,6 +3267,8 @@ void OriginLocatorView::init() {
 	connect(SC_D.residuals, SIGNAL(clicked(int)), this, SLOT(selectArrival(int)));
 	connect(SC_D.residuals, SIGNAL(focalMechanismCommitted(bool, QPoint)),
 	        this, SLOT(commitFocalMechanism(bool)));
+	connect(SC_D.residuals, SIGNAL(autoInversionRequested()),
+	        this, SLOT(autoInvertFocalMechanism()));
 
 	connect(SC_D.map, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
 	connect(SC_D.map, SIGNAL(hoverArrival(int)), this, SLOT(hoverArrival(int)));
@@ -7327,6 +7351,20 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	fm->setEvaluationMode(EvaluationMode(MANUAL));
 	fm->setEvaluationStatus(EvaluationStatus(CONFIRMED));
 
+	// Populate quality metrics from auto-inversion if available
+	if ( SC_D.hasAutoFMSolution ) {
+		const Seismology::FMSolution &sol = SC_D.lastFMSolution;
+		fm->setStationPolarityCount(sol.stationCount);
+		fm->setMisfit(sol.misfit);
+		fm->setStationDistributionRatio(sol.stdr);
+		fm->setAzimuthalGap(sol.azimuthalGap);
+		SEISCOMP_INFO("FM commit: populated quality fields from auto-inversion "
+		              "(polarities=%d, misfit=%.2f, STDR=%.2f, gap=%.1f, grade=%s)",
+		              sol.stationCount, sol.misfit, sol.stdr, sol.azimuthalGap,
+		              Seismology::qualityGradeString(sol.grade));
+		SC_D.hasAutoFMSolution = false;
+	}
+
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
@@ -7337,6 +7375,140 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
 		                             derived?derived.get():nullptr);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::autoInvertFocalMechanism() {
+	if ( !SC_D.currentOrigin ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     "No origin loaded.");
+		return;
+	}
+
+	// Collect polarity observations from the residuals widget
+	std::vector<Seismology::PolarityObservation> observations;
+
+	int count = SC_D.residuals->count();
+	for ( int i = 0; i < count; ++i ) {
+		if ( !SC_D.residuals->isValueValid(i, PC_POLARITY) )
+			continue;
+		if ( !SC_D.residuals->isValueValid(i, PC_FMDIST) )
+			continue;
+		if ( !SC_D.residuals->isValueValid(i, PC_FMAZI) )
+			continue;
+		if ( !SC_D.residuals->isValueShown(i) )
+			continue;
+
+		PlotWidget::PolarityType polType =
+			static_cast<PlotWidget::PolarityType>(
+				static_cast<int>(SC_D.residuals->value(i, PC_POLARITY))
+			);
+
+		int polarity = 0;
+		if ( polType == PlotWidget::POL_POSITIVE )
+			polarity = 1;
+		else if ( polType == PlotWidget::POL_NEGATIVE )
+			polarity = -1;
+		else
+			continue;  // skip undecidable and unset
+
+		double fmDist = SC_D.residuals->value(i, PC_FMDIST);
+		double fmAzi = SC_D.residuals->value(i, PC_FMAZI);
+
+		// Reverse the stereographic projection to get takeoff angle
+		// Forward: fmDist = sqrt(2) * sin(takeoff/2)
+		// Inverse: takeoff = 2 * asin(fmDist / sqrt(2))
+		double sinHalf = fmDist / sqrt(2.0);
+		if ( sinHalf > 1.0 ) sinHalf = 1.0;
+		if ( sinHalf < 0.0 ) sinHalf = 0.0;
+		double takeoff = rad2deg(2.0 * asin(sinHalf));
+
+		SEISCOMP_DEBUG("Auto FM: station %d polarity=%s azi=%.1f takeoff=%.1f fmDist=%.3f",
+		               i, polarity > 0 ? "UP" : "DOWN", fmAzi, takeoff, fmDist);
+
+		observations.push_back(
+			Seismology::PolarityObservation(fmAzi, takeoff, polarity, i)
+		);
+	}
+
+	SEISCOMP_DEBUG("Auto FM: collected %zu polarity observations from %d arrivals",
+	               observations.size(), count);
+
+	if ( static_cast<int>(observations.size()) < Seismology::FirstMotionInversion::MIN_OBSERVATIONS ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     QString("Insufficient polarity observations.\n"
+		                             "Found %1, need at least %2 with valid "
+		                             "takeoff angles.")
+		                     .arg(observations.size())
+		                     .arg(Seismology::FirstMotionInversion::MIN_OBSERVATIONS));
+		return;
+	}
+
+	// Check azimuthal gap before running inversion
+	double azGap = Seismology::computeAzimuthalGap(observations);
+	SEISCOMP_DEBUG("Auto FM: azimuthal gap = %.1f degrees", azGap);
+	if ( azGap > 180.0 ) {
+		QMessageBox::StandardButton reply = QMessageBox::warning(
+			this, "Auto-Invert",
+			QString("Azimuthal gap is %1 degrees (> 180).\n"
+			        "The solution is likely poorly constrained.\n\n"
+			        "Proceed anyway?")
+			.arg(azGap, 0, 'f', 1),
+			QMessageBox::Yes | QMessageBox::No,
+			QMessageBox::No
+		);
+		if ( reply != QMessageBox::Yes )
+			return;
+	}
+
+	// Run the inversion
+	Seismology::FirstMotionInversion inversion;
+	std::vector<Seismology::FMSolution> solutions = inversion.compute(observations);
+
+	if ( solutions.empty() ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     "No focal mechanism solution found.");
+		return;
+	}
+
+	// Apply the best solution to the FM plot
+	const Seismology::FMSolution &best = solutions[0];
+	static_cast<PlotWidget*>(SC_D.residuals)->set(
+		best.np1.str, best.np1.dip, best.np1.rake
+	);
+
+	// Store the solution for populating FM fields on commit
+	SC_D.hasAutoFMSolution = true;
+	SC_D.lastFMSolution = best;
+
+	SEISCOMP_INFO("Auto FM inversion: NP1=%.1f/%.1f/%.1f NP2=%.1f/%.1f/%.1f "
+	              "misfit=%.2f (%d/%d) STDR=%.2f gap=%.1f quality=%.2f grade=%s",
+	              best.np1.str, best.np1.dip, best.np1.rake,
+	              best.np2.str, best.np2.dip, best.np2.rake,
+	              best.misfit, best.misfitCount, best.stationCount,
+	              best.stdr, best.azimuthalGap, best.quality,
+	              Seismology::qualityGradeString(best.grade));
+
+	// Log misfitting stations by arrival row index
+	if ( !best.misfittingStations.empty() ) {
+		std::string misfitList;
+		for ( size_t j = 0; j < best.misfittingStations.size(); ++j ) {
+			if ( j > 0 ) misfitList += ", ";
+			misfitList += std::to_string(best.misfittingStations[j]);
+		}
+		SEISCOMP_INFO("Auto FM: %d misfitting arrival rows: %s",
+		              (int)best.misfittingStations.size(), misfitList.c_str());
+	}
+
+	// Warn if quality is low
+	if ( best.grade == Seismology::FM_QUALITY_D ) {
+		SEISCOMP_WARNING("Auto FM quality grade D (unreliable). Consider "
+		                 "reviewing manually.");
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
