@@ -27,8 +27,7 @@
 #include <vector>
 
 
-namespace Seiscomp {
-namespace Seismology {
+namespace Seiscomp::Seismology {
 
 
 struct PolarityObservation {
@@ -46,12 +45,19 @@ struct PolarityObservation {
 
 
 /**
- * @brief HASH-style quality grade (Hardebeck & Shearer 2002).
+ * @brief HASH quality grade.
  *
- * A: Well-constrained. Misfit <= 0.15, STDR >= 0.5, gap <= 90, stations >= 8
- * B: Fairly well-constrained. Misfit <= 0.2, STDR >= 0.4, gap <= 120, stations >= 8
- * C: Poorly constrained. Misfit <= 0.3, STDR >= 0.3, gap <= 150, stations >= 6
- * D: Unreliable. Anything worse than C.
+ * Quality grades following Hardebeck & Shearer (2002) and the HASH
+ * reference implementation (hashpy). Grades are determined from four
+ * criteria: weighted polarity misfit (mfrac), station distribution
+ * ratio (STDR), RMS angular difference of acceptable mechanisms from
+ * the preferred solution (var_avg), and fraction of acceptable
+ * mechanisms within 30 degrees of the preferred solution (prob).
+ *
+ * A: prob > 0.8, var_avg < 25, mfrac <= 0.15, STDR >= 0.5
+ * B: prob > 0.6, var_avg <= 35, mfrac <= 0.20, STDR >= 0.4
+ * C: prob > 0.5, var_avg <= 45, mfrac <= 0.30, STDR >= 0.3
+ * D: Anything worse than C.
  */
 enum FMQualityGrade {
 	FM_QUALITY_A,
@@ -66,11 +72,13 @@ const char *qualityGradeString(FMQualityGrade grade);
 struct FMSolution {
 	Math::NODAL_PLANE np1;
 	Math::NODAL_PLANE np2;
-	double            misfit;        // fraction of misfitting polarities [0,1]
+	double            misfit;        // weighted polarity misfit fraction [0,1]
 	double            stdr;          // station distribution ratio [0,1]
 	double            azimuthalGap;  // largest azimuthal gap in degrees
 	int               stationCount;  // number of polarities used
 	int               misfitCount;   // number of misfitting stations
+	double            rmsDiff;       // RMS angular diff of acceptable mechanisms (degrees)
+	double            prob;          // fraction of acceptable mechanisms within 30 degrees
 	double            quality;       // composite quality metric [0,1], higher is better
 	FMQualityGrade    grade;         // HASH quality letter grade
 
@@ -92,9 +100,13 @@ double computeAzimuthalGap(
 
 /**
  * @brief Determine HASH quality grade from solution metrics.
+ *
+ * Uses the four criteria from Hardebeck & Shearer (2002) as implemented
+ * in HASH/hashpy: probability (fraction within 30 degrees), RMS angular
+ * difference, weighted misfit fraction, and STDR.
  */
 FMQualityGrade computeQualityGrade(
-	double misfit, double stdr, double azimuthalGap, int stationCount
+	double prob, double rmsDiff, double misfit, double stdr
 );
 
 
@@ -116,10 +128,21 @@ int predictPolarity(
 /**
  * @brief HASH-style first motion polarity inversion.
  *
- * Performs a grid search over strike/dip/rake space to find focal
- * mechanisms that best fit observed P-wave first motion polarities.
- * Uses perturbation trials to assess solution stability (HASH method,
- * Hardebeck & Shearer 2002).
+ * Performs a grid search over strike/dip/rake space to find the set
+ * of acceptable focal mechanisms that fit observed P-wave first motion
+ * polarities, following the HASH method (Hardebeck & Shearer, 2002,
+ * Bull. Seismol. Soc. Am. 92, 2264-2276).
+ *
+ * Perturbation of takeoff angles and azimuths follows the approach of
+ * SKHASH (Skoumal, Hardebeck & Shearer, 2024, Seismol. Res. Lett. 95,
+ * 2519-2526) for the case where pre-computed takeoff angles are used
+ * as input rather than velocity models and hypocentral locations.
+ *
+ * The preferred solution is computed by averaging the set of acceptable
+ * mechanisms with iterative outlier removal, following the MECH_PROB
+ * algorithm from HASH. Quality grades are assigned using the four
+ * HASH criteria: probability (fraction within 30 degrees), RMS angular
+ * difference, weighted misfit fraction, and STDR.
  */
 class SC_SYSTEM_CORE_API FirstMotionInversion {
 	public:
@@ -129,49 +152,48 @@ class SC_SYSTEM_CORE_API FirstMotionInversion {
 		void setGridSpacing(double degrees);
 		double gridSpacing() const { return _gridSpacing; }
 
-		//! Set number of perturbation trials for stability (default: 100)
+		//! Set number of perturbation trials (default: 50)
 		void setNumTrials(int n);
 		int numTrials() const { return _numTrials; }
 
-		//! Set angular uncertainty for perturbation in degrees (default: 10)
-		void setAngleUncertainty(double degrees);
-		double angleUncertainty() const { return _angleUncertainty; }
+		//! Set takeoff angle uncertainty in degrees (default: 10)
+		void setTakeoffUncertainty(double degrees);
+		double takeoffUncertainty() const { return _takeoffUncertainty; }
+
+		//! Set azimuth uncertainty in degrees (default: 5)
+		void setAzimuthUncertainty(double degrees);
+		double azimuthUncertainty() const { return _azimuthUncertainty; }
+
+		//! Set fraction of picks presumed bad (default: 0.1)
+		void setBadFraction(double frac);
+		double badFraction() const { return _badFrac; }
 
 		/**
 		 * @brief Run the inversion.
 		 * @param observations Vector of polarity observations (azimuth, takeoff, polarity)
-		 * @return Sorted vector of solutions (best first). Empty if fewer than
-		 *         MIN_OBSERVATIONS valid observations.
+		 * @return The preferred (averaged) solution. Empty vector if fewer
+		 *         than MIN_OBSERVATIONS valid observations or no acceptable
+		 *         mechanisms found.
+		 *
+		 * Returns a single FMSolution representing the preferred mechanism
+		 * computed by averaging the set of acceptable mechanisms with
+		 * iterative outlier removal (HASH MECH_PROB algorithm).
 		 */
 		std::vector<FMSolution> compute(
 			const std::vector<PolarityObservation> &observations
 		) const;
 
-		static const int MIN_OBSERVATIONS = 6;
+		static constexpr size_t MIN_OBSERVATIONS = 6;
 
 	private:
-		static double computeMisfit(
-			const Math::NODAL_PLANE &np,
-			const std::vector<PolarityObservation> &observations
-		);
-
-		static double computeSTDR(
-			const Math::NODAL_PLANE &np,
-			const std::vector<PolarityObservation> &observations
-		);
-
-		static std::vector<int> findMisfittingStations(
-			const Math::NODAL_PLANE &np,
-			const std::vector<PolarityObservation> &observations
-		);
-
 		double _gridSpacing;
 		int    _numTrials;
-		double _angleUncertainty;
+		double _takeoffUncertainty;
+		double _azimuthUncertainty;
+		double _badFrac;
 };
 
 
-}
 }
 
 

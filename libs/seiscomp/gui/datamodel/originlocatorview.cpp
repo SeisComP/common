@@ -7359,8 +7359,10 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		fm->setStationDistributionRatio(sol.stdr);
 		fm->setAzimuthalGap(sol.azimuthalGap);
 		SEISCOMP_INFO("FM commit: populated quality fields from auto-inversion "
-		              "(polarities=%d, misfit=%.2f, STDR=%.2f, gap=%.1f, grade=%s)",
-		              sol.stationCount, sol.misfit, sol.stdr, sol.azimuthalGap,
+		              "(polarities=%d, misfit=%.2f, STDR=%.2f, rmsDiff=%.1f, "
+		              "prob=%.2f, gap=%.1f, grade=%s)",
+		              sol.stationCount, sol.misfit, sol.stdr, sol.rmsDiff,
+		              sol.prob, sol.azimuthalGap,
 		              Seismology::qualityGradeString(sol.grade));
 		SC_D.hasAutoFMSolution = false;
 	}
@@ -7394,27 +7396,34 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 
 	int count = SC_D.residuals->count();
 	for ( int i = 0; i < count; ++i ) {
-		if ( !SC_D.residuals->isValueValid(i, PC_POLARITY) )
+		if ( !SC_D.residuals->isValueValid(i, PC_POLARITY) ) {
 			continue;
-		if ( !SC_D.residuals->isValueValid(i, PC_FMDIST) )
+		}
+		if ( !SC_D.residuals->isValueValid(i, PC_FMDIST) ) {
 			continue;
-		if ( !SC_D.residuals->isValueValid(i, PC_FMAZI) )
+		}
+		if ( !SC_D.residuals->isValueValid(i, PC_FMAZI) ) {
 			continue;
-		if ( !SC_D.residuals->isValueShown(i) )
+		}
+		if ( !SC_D.residuals->isValueShown(i) ) {
 			continue;
+		}
 
-		PlotWidget::PolarityType polType =
+		auto polType =
 			static_cast<PlotWidget::PolarityType>(
 				static_cast<int>(SC_D.residuals->value(i, PC_POLARITY))
 			);
 
 		int polarity = 0;
-		if ( polType == PlotWidget::POL_POSITIVE )
+		if ( polType == PlotWidget::POL_POSITIVE ) {
 			polarity = 1;
-		else if ( polType == PlotWidget::POL_NEGATIVE )
+		}
+		else if ( polType == PlotWidget::POL_NEGATIVE ) {
 			polarity = -1;
-		else
+		}
+		else {
 			continue;  // skip undecidable and unset
+		}
 
 		double fmDist = SC_D.residuals->value(i, PC_FMDIST);
 		double fmAzi = SC_D.residuals->value(i, PC_FMAZI);
@@ -7423,22 +7432,24 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 		// Forward: fmDist = sqrt(2) * sin(takeoff/2)
 		// Inverse: takeoff = 2 * asin(fmDist / sqrt(2))
 		double sinHalf = fmDist / sqrt(2.0);
-		if ( sinHalf > 1.0 ) sinHalf = 1.0;
-		if ( sinHalf < 0.0 ) sinHalf = 0.0;
+		if ( sinHalf > 1.0 ) {
+			sinHalf = 1.0;
+		}
+		if ( sinHalf < 0.0 ) {
+			sinHalf = 0.0;
+		}
 		double takeoff = rad2deg(2.0 * asin(sinHalf));
 
 		SEISCOMP_DEBUG("Auto FM: station %d polarity=%s azi=%.1f takeoff=%.1f fmDist=%.3f",
 		               i, polarity > 0 ? "UP" : "DOWN", fmAzi, takeoff, fmDist);
 
-		observations.push_back(
-			Seismology::PolarityObservation(fmAzi, takeoff, polarity, i)
-		);
+		observations.emplace_back(fmAzi, takeoff, polarity, i);
 	}
 
 	SEISCOMP_DEBUG("Auto FM: collected %zu polarity observations from %d arrivals",
 	               observations.size(), count);
 
-	if ( static_cast<int>(observations.size()) < Seismology::FirstMotionInversion::MIN_OBSERVATIONS ) {
+	if ( observations.size() < Seismology::FirstMotionInversion::MIN_OBSERVATIONS ) {
 		QMessageBox::warning(this, "Auto-Invert",
 		                     QString("Insufficient polarity observations.\n"
 		                             "Found %1, need at least %2 with valid "
@@ -7461,8 +7472,9 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 			QMessageBox::Yes | QMessageBox::No,
 			QMessageBox::No
 		);
-		if ( reply != QMessageBox::Yes )
+		if ( reply != QMessageBox::Yes ) {
 			return;
+		}
 	}
 
 	// Run the inversion
@@ -7486,11 +7498,13 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 	SC_D.lastFMSolution = best;
 
 	SEISCOMP_INFO("Auto FM inversion: NP1=%.1f/%.1f/%.1f NP2=%.1f/%.1f/%.1f "
-	              "misfit=%.2f (%d/%d) STDR=%.2f gap=%.1f quality=%.2f grade=%s",
+	              "misfit=%.2f (%d/%d) STDR=%.2f rmsDiff=%.1f prob=%.2f "
+	              "gap=%.1f grade=%s",
 	              best.np1.str, best.np1.dip, best.np1.rake,
 	              best.np2.str, best.np2.dip, best.np2.rake,
 	              best.misfit, best.misfitCount, best.stationCount,
-	              best.stdr, best.azimuthalGap, best.quality,
+	              best.stdr, best.rmsDiff, best.prob,
+	              best.azimuthalGap,
 	              Seismology::qualityGradeString(best.grade));
 
 	// Log misfitting stations by arrival row index
@@ -7500,8 +7514,8 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 			if ( j > 0 ) misfitList += ", ";
 			misfitList += std::to_string(best.misfittingStations[j]);
 		}
-		SEISCOMP_INFO("Auto FM: %d misfitting arrival rows: %s",
-		              (int)best.misfittingStations.size(), misfitList.c_str());
+		SEISCOMP_INFO("Auto FM: %zu misfitting arrival rows: %s",
+		              best.misfittingStations.size(), misfitList.c_str());
 	}
 
 	// Warn if quality is low
