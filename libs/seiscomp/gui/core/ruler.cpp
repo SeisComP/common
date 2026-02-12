@@ -258,6 +258,38 @@ bool Ruler::setSelectionHandle(int handle, double pos) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Ruler::setSelectionHandleColor(int handle, QColor color) {
+	if ( (handle < 0) || (handle >= _selectionHandles.count()) ) {
+		return false;
+	}
+
+	_selectionHandles[handle].color = color;
+
+	update();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Ruler::setSelectionHandleTitle(int handle, QString title) {
+	if ( (handle < 0) || (handle >= _selectionHandles.count()) ) {
+		return false;
+	}
+
+	_selectionHandles[handle].title = title;
+
+	update();
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Ruler::setSelectionHandleEnabled(int handle, bool enable) {
 	if ( handle < 0 || handle >= _selectionHandles.count() ) {
 		return false;
@@ -391,13 +423,29 @@ void Ruler::drawSelection(QPainter &p) {
 	int selHeight = _tickLong * 1.5;
 	int selHalfWidth = selHeight * 0.5;
 	int maxPaintWidth = rulerWidth() + selHalfWidth;
+	bool hasDefaultBrush = true;
 
 	p.setBrush(palette().color(QPalette::WindowText));
+
 	for ( int i = 0; i < _selectionHandles.count(); ++i ) {
 		if ( ( _hover || _dragMode > 0 ) && _enableSelection &&
-		     i == _currentSelectionHandle ) continue;
-		int iPos = int((_selectionHandles[i].pos-_min)*_scl);
-		if ( iPos < -selHalfWidth || iPos > maxPaintWidth ) continue;
+			 i == _currentSelectionHandle ) {
+			continue;
+		}
+		int iPos = int((_selectionHandles[i].pos - _min) * _scl);
+		if ( iPos < -selHalfWidth || iPos > maxPaintWidth ) {
+			continue;
+		}
+
+		if ( _selectionHandles[i].color.isValid() ) {
+			p.setBrush(_selectionHandles[i].color);
+			hasDefaultBrush = false;
+		}
+		else if ( !hasDefaultBrush ) {
+			p.setBrush(palette().color(QPalette::WindowText));
+			hasDefaultBrush = true;
+		}
+
 		marker[0] = r2wPos(iPos-selHalfWidth, selHeight);
 		marker[1] = r2wPos(iPos+selHalfWidth, selHeight);
 		marker[2] = r2wPos(iPos,0);
@@ -914,6 +962,12 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 
 			if ( index != _currentSelectionHandle ) {
 				_currentSelectionHandle = index;
+				if ( _currentSelectionHandle >= 0 ) {
+					setToolTip(_selectionHandles[_currentSelectionHandle].title);
+				}
+				else {
+					setToolTip({});
+				}
 				update();
 			}
 		}

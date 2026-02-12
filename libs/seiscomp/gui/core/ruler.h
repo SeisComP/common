@@ -47,6 +47,8 @@ class SC_GUI_API Ruler : public QFrame {
 		void setScale(double);
 		bool setSelected(double, double);
 		bool setSelectionHandle(int handle, double pos);
+		bool setSelectionHandleColor(int handle, QColor color);
+		bool setSelectionHandleTitle(int handle, QString title);
 		bool setSelectionHandleEnabled(int handle, bool enable);
 		void setAnnot(double = -1); // -1 is "auto", 0 is none
 		void setTicks(double = -1); // -1 is "auto", 0 is none
@@ -166,9 +168,10 @@ class SC_GUI_API Ruler : public QFrame {
 
 	protected:
 		struct Handle {
-			Handle() : enabled(true) {}
-			double pos;
-			bool   enabled;
+			double  pos{0.0};
+			QColor  color;
+			QString title;
+			bool    enabled{true};
 
 			bool operator<(const Handle &other) const {
 				return pos < other.pos;
