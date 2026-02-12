@@ -1907,6 +1907,10 @@ void AmplitudeView::init() {
 	//SC_D.recordView->setDefaultActions();
 
 	SC_D.recordView->timeWidget()->setSelectionHandleCount(4);
+	SC_D.recordView->timeWidget()->setSelectionHandleTitle(0, tr("Noise Begin"));
+	SC_D.recordView->timeWidget()->setSelectionHandleTitle(1, tr("Noise End"));
+	SC_D.recordView->timeWidget()->setSelectionHandleTitle(2, tr("Signal Begin"));
+	SC_D.recordView->timeWidget()->setSelectionHandleTitle(3, tr("Signal End"));
 	SC_D.recordView->timeWidget()->setSelectionHandleEnabled(2, false);
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
@@ -1981,6 +1985,10 @@ void AmplitudeView::init() {
 	SC_D.timeScale->setRangeSelectionEnabled(true);
 	SC_D.timeScale->setAbsoluteTimeEnabled(true);
 	SC_D.timeScale->setSelectionHandleCount(4);
+	SC_D.timeScale->setSelectionHandleTitle(0, tr("Noise Begin"));
+	SC_D.timeScale->setSelectionHandleTitle(1, tr("Noise End"));
+	SC_D.timeScale->setSelectionHandleTitle(2, tr("Signal Begin"));
+	SC_D.timeScale->setSelectionHandleTitle(3, tr("Signal End"));
 	SC_D.timeScale->setSelectionHandleEnabled(2, false);
 
 	layout = new QVBoxLayout(SC_D.ui.frameTimeScale);
