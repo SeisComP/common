@@ -29,8 +29,7 @@
 namespace Seiscomp {
 namespace Gui {
 
-class SC_GUI_API Ruler : public QFrame
-{
+class SC_GUI_API Ruler : public QFrame {
 	Q_OBJECT
 
 	public:
@@ -39,6 +38,8 @@ class SC_GUI_API Ruler : public QFrame
 		Ruler(QWidget* = 0, Qt::WindowFlags f = Qt::WindowFlags(), Position pos = Bottom);
 		~Ruler() {}
 
+
+	public:
 		void setPosition(Position, bool allowLabelTextRotation = false);
 		void setReverseDirection(bool reverse);
 		void setRange(double, double);
@@ -71,7 +72,7 @@ class SC_GUI_API Ruler : public QFrame
 		double dT() const { return _drx[1]; }
 		double dOfs() const { return _ofs; }
 
-		virtual QSize sizeHint() const;
+		QSize sizeHint() const override;
 
 		//! Functions for position independent drawing
 		int rulerWidth() const { return isHorizontal() ? width() : height(); }
@@ -113,12 +114,12 @@ class SC_GUI_API Ruler : public QFrame
 
 
 	protected:
-		void paintEvent(QPaintEvent*);
-		void mousePressEvent(QMouseEvent*);
-		void mouseReleaseEvent(QMouseEvent*);
-		void mouseMoveEvent(QMouseEvent*);
-		void wheelEvent(QWheelEvent*);
-		void resizeEvent(QResizeEvent*);
+		void paintEvent(QPaintEvent*) override;
+		void mousePressEvent(QMouseEvent*) override;
+		void mouseReleaseEvent(QMouseEvent*) override;
+		void mouseMoveEvent(QMouseEvent*) override;
+		void wheelEvent(QWheelEvent*) override;
+		void resizeEvent(QResizeEvent*) override;
 
 		//! Should be reimplemented in derived classes to
 		//! customize the displayed string. str holds the string
@@ -128,8 +129,12 @@ class SC_GUI_API Ruler : public QFrame
 		                         int line, QString &str) const;
 		virtual void updateIntervals();
 
-		void enterEvent(QEvent *e);
-		void leaveEvent(QEvent *e);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+		void enterEvent(QEvent *e) override;
+#else
+		void enterEvent(QEnterEvent *) override;
+#endif
+		void leaveEvent(QEvent *e) override;
 
 		void setLineCount(int lines, int spacing = 4);
 		virtual void drawSelection(QPainter &p);
@@ -158,6 +163,7 @@ class SC_GUI_API Ruler : public QFrame
 		void checkLimit(double &tmin, double &tmax);
 		void changeRange(double tmin, double tmax);
 
+
 	protected:
 		struct Handle {
 			Handle() : enabled(true) {}
@@ -169,41 +175,42 @@ class SC_GUI_API Ruler : public QFrame
 			}
 		};
 
-		Position _position;
+		Position        _position;
 
-		double  _ofs{0};
-		double  _scl{1.0},
-		        _min{0}, _max{0},       // ruler range
-		        _da{-1},              // annotation interval
-		        _dt{-1},              // tick mark interval
-		        _limitLeft, _limitRight,
-		        _limitMinRange, _limitMaxRange;
-		int     _pos{0}, _tickLong, _tickShort, _lc, _lineSpacing;
+		double          _ofs{0};
+		double          _scl{1.0},
+		                _min{0}, _max{0},       // ruler range
+		                _da{-1},              // annotation interval
+		                _dt{-1},              // tick mark interval
+		                _limitLeft, _limitRight,
+		                _limitMinRange, _limitMaxRange;
+		int             _pos{0}, _tickLong, _tickShort, _lc, _lineSpacing;
 		QVector<Handle> _selectionHandles;
-		int     _currentSelectionHandle{-1};
+		int             _currentSelectionHandle{-1};
 
-		double  _drx[2];   // current intervals
+		double          _drx[2];   // current intervals
 
-		int     _dragMode{0};
-		double  _dragStart;
-		int     _iDragStart;
+		int             _dragMode{0};
+		double          _dragStart;
+		int             _iDragStart;
 
-		int     _rangemin{0}, _rangemax{0};
-		bool    _rangeValid;
+		int             _rangemin{0}, _rangemax{0};
+		bool            _rangeValid;
 
-		bool    _enableSelection;
-		bool    _enableRangeSelection{false};
-		bool    _enableLabelRotation{false};
-		bool    _leftToRight{true}; // Or bottomToTop
-		bool    _emitRangeChangeWhileDragging{false};
-		bool    _hover{false};
-		bool    _wheelScale{true};
-		bool    _wheelTranslate{true};
-		bool    _autoScale{false};
+		bool            _enableSelection;
+		bool            _enableRangeSelection{false};
+		bool            _enableLabelRotation{false};
+		bool            _leftToRight{true}; // Or bottomToTop
+		bool            _emitRangeChangeWhileDragging{false};
+		bool            _hover{false};
+		bool            _wheelScale{true};
+		bool            _wheelTranslate{true};
+		bool            _autoScale{false};
 };
 
 
 } // ns Gui
 } // ns Seiscomp
+
 
 # endif // _RULER_H_
