@@ -275,7 +275,7 @@ EventLayer::EventLayer(QObject* parent) : Map::Layer(parent) {
 EventLayer::~EventLayer() {
 	// Delete all symbols
 	for ( auto &symbol : _eventSymbols ) {
-		delete symbol;
+		symbol.free();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -286,10 +286,15 @@ EventLayer::~EventLayer() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventLayer::draw(const Map::Canvas *canvas, QPainter &p) {
 	for ( auto &symbol : _eventSymbols ) {
-		if ( symbol->isClipped() || !symbol->isVisible() ) {
-			continue;
+		if ( !symbol.origin->isClipped() && symbol.origin->isVisible() ) {
+			symbol.origin->draw(canvas, p);
 		}
-		symbol->draw(canvas, p);
+
+		if ( symbol.tensor ) {
+			if ( !symbol.tensor->isClipped() && symbol.tensor->isVisible() ) {
+				symbol.tensor->draw(canvas, p);
+			}
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -301,7 +306,10 @@ void EventLayer::draw(const Map::Canvas *canvas, QPainter &p) {
 void EventLayer::calculateMapPosition(const Map::Canvas *canvas) {
 	// Update position of all symbols
 	for ( auto &symbol : _eventSymbols ) {
-		symbol->calculateMapPosition(canvas);
+		symbol.origin->calculateMapPosition(canvas);
+		if ( symbol.tensor ) {
+			symbol.tensor->calculateMapPosition(canvas);
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -317,10 +325,10 @@ bool EventLayer::isInside(const QMouseEvent *event, const QPointF &geoPos) {
 
 	while ( it != _eventSymbols.begin() ) {
 		--it;
-		if ( it.value()->isClipped() || !it.value()->isVisible() ) {
+		if ( it.value().origin->isClipped() || !it.value().origin->isVisible() ) {
 			continue;
 		}
-		if ( it.value()->isInside(x, y) ) {
+		if ( it.value().origin->isInside(x, y) ) {
 			_hoverChanged = _hoverId != it.key();
 			if ( _hoverChanged ) {
 				_hoverId = it.key();
@@ -391,7 +399,7 @@ bool EventLayer::filterMouseDoubleClickEvent(QMouseEvent *event, const QPointF &
 void EventLayer::clear() {
 	// Delete all symbols
 	for ( auto &symbol : _eventSymbols ) {
-		delete symbol;
+		symbol.free();
 	}
 
 	_eventSymbols.clear();
@@ -409,16 +417,18 @@ void EventLayer::addEvent(Seiscomp::DataModel::Event *e, bool) {
 	auto it = _eventSymbols.find(e->publicID());
 
 	DataModel::Origin *org = DataModel::Origin::Find(e->preferredOriginID());
-	if ( org != nullptr ) {
+	if ( org ) {
 		OriginSymbol *symbol;
 
-		if ( it == _eventSymbols.end() )
+		if ( it == _eventSymbols.end() ) {
 			symbol = new OriginSymbol();
-		else
-			symbol = it.value();
+		}
+		else {
+			symbol = it.value().origin;
+		}
 
 		updateSymbol(canvas(), symbol, e, org);
-		_eventSymbols[e->publicID()] = symbol;
+		_eventSymbols[e->publicID()].origin = symbol;
 
 		// Create origin symbol and register it
 		emit updateRequested();
@@ -437,8 +447,8 @@ void EventLayer::updateEvent(Seiscomp::DataModel::Event *e) {
 	}
 
 	DataModel::Origin *org = DataModel::Origin::Find(e->preferredOriginID());
-	if ( org != nullptr ) {
-		updateSymbol(canvas(), it.value(), e, org);
+	if ( org ) {
+		updateSymbol(canvas(), it.value().origin, e, org);
 		emit updateRequested();
 	}
 }
@@ -453,7 +463,7 @@ void EventLayer::removeEvent(Seiscomp::DataModel::Event *e) {
 	if ( it == _eventSymbols.end() ) {
 		return;
 	}
-	delete it.value();
+	it.value().free();
 	_eventSymbols.erase(it);
 	emit updateRequested();
 }

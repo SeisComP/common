@@ -47,6 +47,7 @@ namespace Core {
  API Changelog
  ******************************************************************************
  "18.0.0"   0x120000
+   - Changed Seiscomp::Gui::EventLayer::SymbolMap
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
 
