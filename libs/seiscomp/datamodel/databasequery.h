@@ -172,6 +172,14 @@ class SC_SYSTEM_CORE_API DatabaseQuery : public DatabaseReader {
 		DatabaseIterator getPicks(const std::string& originID);
 
 		/**
+		 * Returns all Comments for picks that are references by the
+		 * Arrivals of an Origin.
+		 * @param originID The publicID of the Origin
+		 * @return An iterator to iterate over the result set
+		 */
+		DatabaseIterator getPickComments(const std::string& originID);
+
+		/**
 		 * Returns all Picks in a given timewindow
 		 * @param startTime The starttime of the timewindow
 		 * @param endTime The endtime of the timewindow
@@ -179,6 +187,15 @@ class SC_SYSTEM_CORE_API DatabaseQuery : public DatabaseReader {
 		 */
 		DatabaseIterator getPicks(Seiscomp::Core::Time startTime,
 		                          Seiscomp::Core::Time endTime);
+
+		/**
+		 * Returns all Comments for picks in a given timewindow
+		 * @param startTime The starttime of the timewindow
+		 * @param endTime The endtime of the timewindow
+		 * @return An iterator to iterate over the comments
+		 */
+		DatabaseIterator getPickComments(Seiscomp::Core::Time startTime,
+		                                 Seiscomp::Core::Time endTime);
 
 		/**
 		 * Returns all Picks in a given timewindow for a given stream
@@ -190,6 +207,18 @@ class SC_SYSTEM_CORE_API DatabaseQuery : public DatabaseReader {
 		DatabaseIterator getPicks(Seiscomp::Core::Time startTime,
 		                          Seiscomp::Core::Time endTime,
 		                          const WaveformStreamID& waveformID);
+
+		/**
+		 * Returns all Comments for picks in a given timewindow for a
+		 * given stream
+		 * @param startTime The starttime of the timewindow
+		 * @param endTime The endtime of the timewindow
+		 * @param The waveformStreamID
+		 * @return An iterator to iterate over the picks
+		 */
+		DatabaseIterator getPickComments(Seiscomp::Core::Time startTime,
+		                                 Seiscomp::Core::Time endTime,
+		                                 const WaveformStreamID& waveformID);
 
 		/**
 		 * Returns current waveform quality reports or alerts
