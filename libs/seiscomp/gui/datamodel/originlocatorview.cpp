@@ -7477,8 +7477,13 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 		}
 	}
 
-	// Run the inversion
+	// Run the inversion with configured parameters
 	Seismology::FirstMotionInversion inversion;
+	inversion.setGridSpacing(SC_D.config.fmGridSpacing);
+	inversion.setNumTrials(SC_D.config.fmNumTrials);
+	inversion.setTakeoffUncertainty(SC_D.config.fmTakeoffUncertainty);
+	inversion.setAzimuthUncertainty(SC_D.config.fmAzimuthUncertainty);
+	inversion.setBadFraction(SC_D.config.fmMaxBadFraction);
 	std::vector<Seismology::FMSolution> solutions = inversion.compute(observations);
 
 	if ( solutions.empty() ) {

@@ -230,6 +230,13 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 			bool   computeMissingTakeOffAngles;
 			double defaultEventRadius;
 
+			// FM inversion parameters (HASH method)
+			double fmGridSpacing{5.0};
+			int    fmNumTrials{50};
+			double fmTakeoffUncertainty{10.0};
+			double fmAzimuthUncertainty{5.0};
+			double fmMaxBadFraction{0.1};
+
 			Config();
 		};
 

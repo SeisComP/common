@@ -83,14 +83,17 @@ int predictPolarity(
 	Math::Vector3d d;
 	Math::np2nd(np, n, d);
 
-	// Ray direction in Cartesian: x=North, y=East, z=Down
-	// Takeoff angle measured from downward vertical
+	// Ray direction in NED Cartesian (x=North, y=East, z=Down).
+	// Takeoff angle measured from downward vertical (SeisComP/HASH
+	// convention: 0=downgoing, 180=upgoing).
+	// HASH TO_CAR uses z-UP with z=-cos(ih); converted to NED z-DOWN
+	// by negating: rz=cos(ih).
 	double ih = deg2rad(takeoff);
 	double phi = deg2rad(azimuth);
 
 	double rx = sin(ih) * cos(phi);
 	double ry = sin(ih) * sin(phi);
-	double rz = -cos(ih);
+	double rz = cos(ih);
 
 	// P-wave radiation pattern: amplitude proportional to (n . r)(d . r)
 	double nr = n.x * rx + n.y * ry + n.z * rz;
@@ -230,7 +233,7 @@ double computeWeightedMisfit(
 
 		double rx = sin(ih) * cos(phi);
 		double ry = sin(ih) * sin(phi);
-		double rz = -cos(ih);
+		double rz = cos(ih);
 
 		double nr = n.x * rx + n.y * ry + n.z * rz;
 		double dr = d.x * rx + d.y * ry + d.z * rz;
@@ -284,7 +287,7 @@ double computeSTDR(
 
 		double rx = sin(ih) * cos(phi);
 		double ry = sin(ih) * sin(phi);
-		double rz = -cos(ih);
+		double rz = cos(ih);
 
 		double nr = n.x * rx + n.y * ry + n.z * rz;
 		double dr = d.x * rx + d.y * ry + d.z * rz;
@@ -326,22 +329,37 @@ std::vector<int> findMisfittingStations(
 
 
 
+}  // anonymous namespace
+
+
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double mechanismRotation(
 	const Math::Vector3d &n1, const Math::Vector3d &d1,
 	const Math::Vector3d &n2, const Math::Vector3d &d2
 ) {
 	// Minimum rotation angle between two double-couple mechanisms.
-	// Following HASH MECH_ROT (uncert_subs.f): test four combinations
-	// that account for the ambiguity between fault plane and auxiliary
-	// plane (normal and slip vectors are interchangeable):
-	//   (1) n1,d1 <=> n2,d2
-	//   (2) n1,d1 <=> -n2,-d2
-	//   (3) n1,d1 <=> d2,n2    (swap)
-	//   (4) n1,d1 <=> -d2,-n2  (swap and negate)
-	double minAngle = 180.0;
+	// Full implementation of HASH MECH_ROT (uncert_subs.f, Hardebeck &
+	// Shearer 2002). Tests four combinations that account for the
+	// ambiguity between fault plane and auxiliary plane:
+	//   (1) n2, d2          (as-is)
+	//   (2) -n2, -d2        (negate)
+	//   (3) d2, n2          (swap)
+	//   (4) -d2, -n2        (swap and negate)
+	//
+	// For each combination, compute the B-axes (null axes) as cross
+	// products, then find the single rotation axis and angle that maps
+	// one mechanism to the other.
 
-	// Test pairs: (n2,d2), (-n2,-d2), (d2,n2), (-d2,-n2)
+	const double degrad = 180.0 / M_PI;
+
+	// B-axis of mechanism 1
+	Math::Vector3d B1;
+	B1.x = n1.y * d1.z - n1.z * d1.y;
+	B1.y = n1.z * d1.x - n1.x * d1.z;
+	B1.z = n1.x * d1.y - n1.y * d1.x;
+
 	struct Combo {
 		Math::Vector3d na;
 		Math::Vector3d da;
@@ -354,32 +372,158 @@ double mechanismRotation(
 		{ {-d2.x, -d2.y, -d2.z}, {-n2.x, -n2.y, -n2.z} }
 	};
 
+	double rotemp[4];
+
 	for ( int c = 0; c < 4; ++c ) {
-		double dot_n = n1.x * combos[c].na.x + n1.y * combos[c].na.y
-		             + n1.z * combos[c].na.z;
-		double dot_d = d1.x * combos[c].da.x + d1.y * combos[c].da.y
-		             + d1.z * combos[c].da.z;
+		const auto &nc = combos[c].na;
+		const auto &dc = combos[c].da;
 
-		// Clamp to [-1, 1]
-		if ( dot_n > 1.0 ) {
-			dot_n = 1.0;
-		}
-		if ( dot_n < -1.0 ) {
-			dot_n = -1.0;
-		}
-		if ( dot_d > 1.0 ) {
-			dot_d = 1.0;
-		}
-		if ( dot_d < -1.0 ) {
-			dot_d = -1.0;
-		}
+		// B-axis of this combination
+		Math::Vector3d B2;
+		B2.x = nc.y * dc.z - nc.z * dc.y;
+		B2.y = nc.z * dc.x - nc.x * dc.z;
+		B2.z = nc.x * dc.y - nc.y * dc.x;
 
-		double angle_n = rad2deg(acos(dot_n));
-		double angle_d = rad2deg(acos(dot_d));
-		double avg = (angle_n + angle_d) / 2.0;
+		// Angles between corresponding axes
+		double dot_n = n1.x * nc.x + n1.y * nc.y + n1.z * nc.z;
+		double dot_d = d1.x * dc.x + d1.y * dc.y + d1.z * dc.z;
+		double dot_b = B1.x * B2.x + B1.y * B2.y + B1.z * B2.z;
 
-		if ( avg < minAngle ) {
-			minAngle = avg;
+		// Clamp for numerical safety
+		dot_n = std::max(-1.0, std::min(1.0, dot_n));
+		dot_d = std::max(-1.0, std::min(1.0, dot_d));
+		dot_b = std::max(-1.0, std::min(1.0, dot_b));
+
+		double phi[3] = { acos(dot_n), acos(dot_d), acos(dot_b) };
+
+		// If mechanisms are nearly identical
+		if ( phi[0] < 1e-4 && phi[1] < 1e-4 && phi[2] < 1e-4 ) {
+			rotemp[c] = 0.0;
+		}
+		// If one vector is the same, it is the rotation axis
+		else if ( phi[0] < 1e-4 ) {
+			rotemp[c] = degrad * phi[1];
+		}
+		else if ( phi[1] < 1e-4 ) {
+			rotemp[c] = degrad * phi[2];
+		}
+		else if ( phi[2] < 1e-4 ) {
+			rotemp[c] = degrad * phi[0];
+		}
+		else {
+			// General case: find rotation axis from difference vectors.
+			// The rotation axis is orthogonal to all three difference
+			// vectors. We use the cross product of the two largest.
+
+			// Vectors: v1 = n1, v2 = d1, v3 = B1
+			double v1[3] = { n1.x, n1.y, n1.z };
+			double v2[3] = { d1.x, d1.y, d1.z };
+			double v3[3] = { B1.x, B1.y, B1.z };
+			double w1[3] = { nc.x, nc.y, nc.z };
+			double w2[3] = { dc.x, dc.y, dc.z };
+			double w3[3] = { B2.x, B2.y, B2.z };
+
+			// Difference vectors
+			double dn[3][3];
+			double scale[3];
+			for ( int j = 0; j < 3; ++j ) {
+				double *src1, *src2;
+				if ( j == 0 ) { src1 = v1; src2 = w1; }
+				else if ( j == 1 ) { src1 = v2; src2 = w2; }
+				else { src1 = v3; src2 = w3; }
+
+				double s = 0;
+				for ( int i = 0; i < 3; ++i ) {
+					dn[i][j] = src1[i] - src2[i];
+					s += dn[i][j] * dn[i][j];
+				}
+				scale[j] = sqrt(s);
+				if ( scale[j] > 1e-10 ) {
+					for ( int i = 0; i < 3; ++i ) {
+						dn[i][j] /= scale[j];
+					}
+				}
+			}
+
+			// Dot products between normalized difference vectors
+			double qdot[3];
+			qdot[2] = dn[0][0] * dn[0][1] + dn[1][0] * dn[1][1] + dn[2][0] * dn[2][1];
+			qdot[1] = dn[0][0] * dn[0][2] + dn[1][0] * dn[1][2] + dn[2][0] * dn[2][2];
+			qdot[0] = dn[0][1] * dn[0][2] + dn[1][1] * dn[1][2] + dn[2][1] * dn[2][2];
+
+			// Find which difference vector to exclude: either nearly
+			// parallel to another (qdot > 0.9999) or the smallest
+			int iout = -1;
+			for ( int i = 0; i < 3; ++i ) {
+				if ( qdot[i] > 0.9999 ) { iout = i; break; }
+			}
+			if ( iout < 0 ) {
+				double qmins = 1e10;
+				for ( int i = 0; i < 3; ++i ) {
+					if ( scale[i] < qmins ) {
+						qmins = scale[i];
+						iout = i;
+					}
+				}
+			}
+
+			// Select two difference vectors (excluding iout)
+			double dv1[3], dv2[3];
+			int k = 0;
+			for ( int j = 0; j < 3; ++j ) {
+				if ( j != iout ) {
+					double *dst = (k == 0) ? dv1 : dv2;
+					for ( int i = 0; i < 3; ++i ) { dst[i] = dn[i][j]; }
+					++k;
+				}
+			}
+
+			// Rotation axis = cross product of two difference vectors
+			double R[3];
+			R[0] = dv1[1] * dv2[2] - dv1[2] * dv2[1];
+			R[1] = dv1[2] * dv2[0] - dv1[0] * dv2[2];
+			R[2] = dv1[0] * dv2[1] - dv1[1] * dv2[0];
+			double scaleR = sqrt(R[0] * R[0] + R[1] * R[1] + R[2] * R[2]);
+			if ( scaleR > 1e-10 ) {
+				R[0] /= scaleR; R[1] /= scaleR; R[2] /= scaleR;
+			}
+
+			// Find angle of each axis from the rotation axis
+			double theta[3];
+			theta[0] = acos(std::max(-1.0, std::min(1.0,
+				v1[0] * R[0] + v1[1] * R[1] + v1[2] * R[2])));
+			theta[1] = acos(std::max(-1.0, std::min(1.0,
+				v2[0] * R[0] + v2[1] * R[1] + v2[2] * R[2])));
+			theta[2] = acos(std::max(-1.0, std::min(1.0,
+				v3[0] * R[0] + v3[1] * R[1] + v3[2] * R[2])));
+
+			// Use the axis most perpendicular to the rotation axis
+			// (closest to pi/2)
+			double qmindif = 1000.0;
+			int iuse = 0;
+			for ( int i = 0; i < 3; ++i ) {
+				double diff = fabs(theta[i] - M_PI / 2.0);
+				if ( diff < qmindif ) {
+					qmindif = diff;
+					iuse = i;
+				}
+			}
+
+			// Compute rotation angle using the spherical geometry
+			// formula from HASH
+			double sinT = sin(theta[iuse]);
+			double cosT = cos(theta[iuse]);
+			double val = (cos(phi[iuse]) - cosT * cosT) / (sinT * sinT);
+			val = std::max(-1.0, std::min(1.0, val));
+			rotemp[c] = degrad * acos(val);
+		}
+	}
+
+	// Return minimum rotation angle across all 4 combinations
+	double minAngle = 180.0;
+	for ( int c = 0; c < 4; ++c ) {
+		if ( fabs(rotemp[c]) < minAngle ) {
+			minAngle = fabs(rotemp[c]);
 		}
 	}
 
@@ -387,8 +531,6 @@ double mechanismRotation(
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
-}  // anonymous namespace
 
 
 

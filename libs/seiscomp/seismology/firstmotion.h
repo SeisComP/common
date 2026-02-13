@@ -111,6 +111,23 @@ FMQualityGrade computeQualityGrade(
 
 
 /**
+ * @brief Minimum rotation angle between two double-couple mechanisms.
+ *
+ * Full implementation of HASH MECH_ROT (Hardebeck & Shearer, 2002).
+ * Tests four combinations accounting for the fault/auxiliary plane
+ * ambiguity and returns the minimum 3D rotation angle in degrees.
+ *
+ * @param n1, d1 Normal and slip vectors of mechanism 1
+ * @param n2, d2 Normal and slip vectors of mechanism 2
+ * @return Rotation angle in degrees [0, 180]
+ */
+double mechanismRotation(
+	const Math::Vector3d &n1, const Math::Vector3d &d1,
+	const Math::Vector3d &n2, const Math::Vector3d &d2
+);
+
+
+/**
  * @brief Predict first motion polarity for a given mechanism and ray.
  * @param np Nodal plane (strike/dip/rake in degrees)
  * @param azimuth Ray azimuth in degrees
