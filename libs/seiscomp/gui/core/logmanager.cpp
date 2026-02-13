@@ -972,8 +972,10 @@ void LogManager::saveSettings() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void LogManager::showEvent(QShowEvent *event) {
-	QWidget::showEvent(event);
+QMenu *LogManager::createPopupMenu() {
+	// Prevent QMainWindow from showing the option to hide the toolbars.
+	// Otherwise it won't be possible to restore them again without a menu.
+	return nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -253,7 +253,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Log level and settings</string>
    </property>
    <property name="iconSize">
     <size>
