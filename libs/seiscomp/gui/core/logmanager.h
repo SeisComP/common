@@ -67,6 +67,14 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 
 
 	// ------------------------------------------------------------------
+	// Qt overrides
+	// ------------------------------------------------------------------
+	public:
+		QMenu *createPopupMenu() override;
+		bool eventFilter(QObject *obj, QEvent *ev) override;
+
+
+	// ------------------------------------------------------------------
 	//  Logging::Output interface
 	// ------------------------------------------------------------------
 	public:
@@ -95,16 +103,7 @@ class SC_GUI_API LogManager : public QMainWindow, public Seiscomp::Logging::Outp
 		 */
 		void saveSettings();
 
-		/**
-		 * @brief This method is called when the widget is shown. If
-		 *        the widget is shown the first time we resize the columns
-		 *        of the view to the available content
-		 * @param event The show event
-		 */
-		void showEvent(QShowEvent *event) override;
-
 		void setLevel(int level = Logging::LogLevel::LL_QUANTITY);
-		bool eventFilter(QObject *obj, QEvent *ev) override;
 		void subscribe();
 
 
