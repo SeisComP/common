@@ -46,6 +46,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "17.2.0"   0x110200
+   - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
+
  "17.1.2"   0x110102
    - Fixed Seiscomp::Core::Date timezone handling
 
