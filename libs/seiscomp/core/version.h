@@ -51,6 +51,9 @@ namespace Core {
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
 
+ "17.2.0"   0x110200
+   - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
+
  "17.1.0"   0x110100
    - Added Seiscomp::DataModel::PublicIDPatternResolver
    - Added Seiscomp::DataModel::PublicObject::GetIDPattern()
