@@ -251,6 +251,22 @@ DatabaseIterator DatabaseQuery::getPicks(const std::string& originID) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator DatabaseQuery::getPickComments(const std::string& originID) {
+	if ( !validInterface() ) return DatabaseIterator();
+
+	std::string query;
+	query += "select Comment.* from Origin,PublicObject as POrigin,Arrival,Pick,PublicObject as PPick,Comment where Arrival." + _T("pickID") + "=PPick." + _T("publicID") + " and Arrival._parent_oid=Origin._oid and Comment._parent_oid=Pick._oid and Origin._oid=POrigin._oid and Pick._oid=PPick._oid and POrigin." + _T("publicID") + "='";
+	query += toString(originID);
+	query += "'";
+
+	return getObjectIterator(query, Comment::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseIterator DatabaseQuery::getPicks(Seiscomp::Core::Time startTime,
                                          Seiscomp::Core::Time endTime) {
 	if ( !validInterface() ) return DatabaseIterator();
@@ -263,6 +279,25 @@ DatabaseIterator DatabaseQuery::getPicks(Seiscomp::Core::Time startTime,
 	query += "'";
 
 	return getObjectIterator(query, Pick::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator DatabaseQuery::getPickComments(Seiscomp::Core::Time startTime,
+                                                Seiscomp::Core::Time endTime) {
+	if ( !validInterface() ) return DatabaseIterator();
+
+	std::string query;
+	query += "select Comment.* from Pick,Comment where Comment._parent_oid=Pick._oid and Pick." + _T("time_value") + ">='";
+	query += toString(startTime);
+	query += "' and Pick." + _T("time_value") + "<='";
+	query += toString(endTime);
+	query += "'";
+
+	return getObjectIterator(query, Comment::TypeInfo());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -293,6 +328,36 @@ DatabaseIterator DatabaseQuery::getPicks(Seiscomp::Core::Time startTime,
 	query += "')";
 
 	return getObjectIterator(query, Pick::TypeInfo());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DatabaseIterator DatabaseQuery::getPickComments(Seiscomp::Core::Time startTime,
+                                                Seiscomp::Core::Time endTime,
+                                                const WaveformStreamID& waveformID) {
+	if ( !validInterface() ) return DatabaseIterator();
+
+	std::string query;
+	query += "select Comment.* from Pick,Comment where Comment._parent_oid=Pick._oid and Pick." + _T("time_value") + ">='";
+	query += toString(startTime);
+	query += "' and Pick." + _T("time_value") + "<='";
+	query += toString(endTime);
+	query += "' and (Pick." + _T("waveformID_networkCode") + "='";
+	query += toString(waveformID.networkCode());
+	query += "' and Pick." + _T("waveformID_stationCode") + "='";
+	query += toString(waveformID.stationCode());
+	query += "' and Pick." + _T("waveformID_locationCode") + "='";
+	query += toString(waveformID.locationCode());
+	query += "' and Pick." + _T("waveformID_channelCode") + "='";
+	query += toString(waveformID.channelCode());
+	query += "' and Pick." + _T("waveformID_resourceURI") + "='";
+	query += toString(waveformID.resourceURI());
+	query += "')";
+
+	return getObjectIterator(query, Comment::TypeInfo());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
