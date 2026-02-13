@@ -163,14 +163,66 @@ BOOST_AUTO_TEST_CASE(strike_slip_quadrants) {
 	BOOST_CHECK_EQUAL(predictPolarity(np, 135, 60), -1);
 }
 
-BOOST_AUTO_TEST_CASE(thrust_fault) {
+BOOST_AUTO_TEST_CASE(thrust_fault_steep_downgoing) {
 	// Pure thrust: strike=0, dip=45, rake=90
-	// Should produce compression at most azimuths for steep takeoff
+	// For a steep downgoing ray (takeoff=20, azimuth=0), the ray goes
+	// nearly straight down. A thrust fault with these parameters has the
+	// hanging wall on the east side. A downgoing ray to the north should
+	// be compressional because it's on the compressional side of the
+	// P-axis (which points roughly NE-down for this mechanism).
+	//
+	// Reference: verified against HASH TO_CAR + radiation pattern.
+	// np2nd gives n=(0, 0.707, -0.707), d=(0, -0.707, -0.707)
+	// Ray at azi=0, toff=20: r=(0.342, 0, -0.940) in z-UP
+	// n.r = 0.664, d.r = 0.664, amplitude = 0.441 > 0 -> compressional
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 45; np.rake = 90;
+	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 20), 1);
+}
 
-	int pol = predictPolarity(np, 0, 30);
-	BOOST_CHECK(pol == 1 || pol == -1);  // just verify it's not nodal
+BOOST_AUTO_TEST_CASE(oblique_fault_z_sensitive) {
+	// This test specifically catches coordinate system mismatches
+	// between np2nd (z-UP) and the ray direction computation.
+	// Strike=45, Dip=60, Rake=30 is an oblique mechanism where
+	// polarities differ between rz=-cos(ih) (correct) and
+	// rz=+cos(ih) (wrong).
+	//
+	// Reference: verified against HASH TO_CAR radiation pattern.
+	// np2nd gives n=(-0.612, 0.612, -0.500), d=(0.789, 0.436, -0.433)
+	NODAL_PLANE np;
+	np.str = 45; np.dip = 60; np.rake = 30;
+
+	// Azimuth=0, takeoff=30: amplitude > 0 with correct z-UP ray
+	// but amplitude < 0 with incorrect z-DOWN ray.
+	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 30), 1);
+
+	// Azimuth=210, takeoff=40: amplitude < 0 with correct z-UP ray
+	// but amplitude > 0 with incorrect z-DOWN ray.
+	BOOST_CHECK_EQUAL(predictPolarity(np, 210, 40), -1);
+
+	// Azimuth=45, takeoff=70: amplitude > 0 with correct z-UP ray
+	// but amplitude < 0 with incorrect z-DOWN ray.
+	BOOST_CHECK_EQUAL(predictPolarity(np, 45, 70), 1);
+}
+
+BOOST_AUTO_TEST_CASE(normal_fault_z_sensitive) {
+	// Normal fault: strike=0, dip=45, rake=-90
+	// np2nd gives n=(0, 0.707, -0.707), d=(0, 0.707, 0.707)
+	//
+	// A steep downgoing ray (small takeoff) to the east should be
+	// dilatational for a normal fault with this geometry.
+	// Ray at azi=90, toff=20: r=(0, 0.342, -0.940) in z-UP
+	// n.r = 0.707*0.342 + (-0.707)*(-0.940) = 0.242 + 0.665 = 0.907
+	// d.r = 0.707*0.342 + 0.707*(-0.940) = 0.242 - 0.665 = -0.423
+	// amplitude = 0.907 * (-0.423) < 0 -> dilatational
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 45; np.rake = -90;
+	BOOST_CHECK_EQUAL(predictPolarity(np, 90, 20), -1);
+
+	// Same mechanism, horizontal ray to the east should be compressional
+	// Ray at azi=90, toff=90: r=(0, 1, 0) in z-UP
+	// n.r = 0.707, d.r = 0.707, amplitude > 0 -> compressional
+	BOOST_CHECK_EQUAL(predictPolarity(np, 90, 90), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

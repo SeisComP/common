@@ -83,17 +83,17 @@ int predictPolarity(
 	Math::Vector3d d;
 	Math::np2nd(np, n, d);
 
-	// Ray direction in NED Cartesian (x=North, y=East, z=Down).
-	// Takeoff angle measured from downward vertical (SeisComP/HASH
-	// convention: 0=downgoing, 180=upgoing).
-	// HASH TO_CAR uses z-UP with z=-cos(ih); converted to NED z-DOWN
-	// by negating: rz=cos(ih).
+	// Ray direction in Aki & Richards convention (x=North, y=East, z=Up).
+	// np2nd() returns n,d in this same coordinate system, so the ray
+	// must also be z-Up for the dot products to be correct.
+	// Takeoff angle measured from downward vertical (0=downgoing,
+	// 180=upgoing), matching HASH TO_CAR: rz = -cos(ih).
 	double ih = deg2rad(takeoff);
 	double phi = deg2rad(azimuth);
 
 	double rx = sin(ih) * cos(phi);
 	double ry = sin(ih) * sin(phi);
-	double rz = cos(ih);
+	double rz = -cos(ih);
 
 	// P-wave radiation pattern: amplitude proportional to (n . r)(d . r)
 	double nr = n.x * rx + n.y * ry + n.z * rz;
@@ -233,7 +233,7 @@ double computeWeightedMisfit(
 
 		double rx = sin(ih) * cos(phi);
 		double ry = sin(ih) * sin(phi);
-		double rz = cos(ih);
+		double rz = -cos(ih);
 
 		double nr = n.x * rx + n.y * ry + n.z * rz;
 		double dr = d.x * rx + d.y * ry + d.z * rz;
@@ -287,7 +287,7 @@ double computeSTDR(
 
 		double rx = sin(ih) * cos(phi);
 		double ry = sin(ih) * sin(phi);
-		double rz = cos(ih);
+		double rz = -cos(ih);
 
 		double nr = n.x * rx + n.y * ry + n.z * rz;
 		double dr = d.x * rx + d.y * ry + d.z * rz;
