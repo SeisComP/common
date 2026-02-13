@@ -132,7 +132,9 @@ bool DatabaseInterface::connect(const char* con) {
 		_port = *url.port();
 	}
 
-	if ( !url.isValid() ) {
+	if ( (url.status() != Util::Url::STATUS_EMPTY) && !url.isValid() ) {
+		// Only empty URLs are accepted if invalid as they are populated with
+		// default values.
 		SEISCOMP_ERROR("Invalid database URL: %s", url.errorMessage());
 		return false;
 	}
