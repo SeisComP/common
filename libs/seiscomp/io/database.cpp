@@ -89,9 +89,14 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 	}
 
 	if ( !db->connect(source.c_str()) ) {
-		SEISCOMP_ERROR("Connection failed to %s://%s:******@%s/%s",
-		               service.c_str(), db->_user.c_str(),
-		               db->_host.c_str(), db->_database.c_str());
+		if ( db->_user.empty() ) {
+			SEISCOMP_ERROR("Connection failed to %s://%s/%s",
+			               service, db->_host, db->_database);
+		}
+		else {
+			SEISCOMP_ERROR("Connection failed to %s://%s:******@%s/%s",
+			               service, db->_user, db->_host, db->_database);
+		}
 		delete db;
 		return nullptr;
 	}
