@@ -204,12 +204,14 @@ class SC_GUI_API OriginLocatorPlot : public DiagramWidget {
 	signals:
 		void focalMechanismCommitted(bool withMT = false,
 		                             QPoint pos = QPoint(0, 0));
+		void autoInversionRequested();
 
 
 	protected slots:
 		virtual void linkClicked();
 		virtual void commitButtonClicked(bool);
 		virtual void commitWithMTTriggered(bool);
+		virtual void autoButtonClicked(bool);
 };
 
 
@@ -227,6 +229,10 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 			bool   drawGridLines;
 			bool   computeMissingTakeOffAngles;
 			double defaultEventRadius;
+
+			// FM polarity inversion parameters
+			double fmGridSpacing{5.0};
+			double fmMaxBadFraction{0.2};
 
 			Config();
 		};
@@ -371,6 +377,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void commit(bool associate = true, bool ignoreDefaultEventType = false);
 		void customCommit();
 		void commitFocalMechanism(bool withMT = false, QPoint pos = QPoint(0, 0));
+		void autoInvertFocalMechanism();
 		void commitWithOptions();
 
 		void tableArrivalsContextMenuRequested(const QPoint &pos);
