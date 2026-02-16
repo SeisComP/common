@@ -35,12 +35,16 @@ struct PolarityObservation {
 	double takeoff;   // degrees, takeoff angle at source (0=down, 180=up)
 	int    polarity;  // +1 = compressional (up), -1 = dilatational (down)
 	int    index;     // original arrival index (-1 if not set)
+	double weight;    // observation weight [0,1], from residual/locator weight
+	double rayParam;  // ray parameter p (sec/deg) from TravelTime::dtdd, -1=unset
 
 	PolarityObservation()
-	: azimuth(0), takeoff(0), polarity(0), index(-1) {}
+	: azimuth(0), takeoff(0), polarity(0), index(-1), weight(1.0), rayParam(-1) {}
 
-	PolarityObservation(double azi, double toff, int pol, int idx = -1)
-	: azimuth(azi), takeoff(toff), polarity(pol), index(idx) {}
+	PolarityObservation(double azi, double toff, int pol, int idx = -1,
+	                    double w = 1.0, double rp = -1)
+	: azimuth(azi), takeoff(toff), polarity(pol), index(idx),
+	  weight(w), rayParam(rp) {}
 };
 
 
@@ -66,6 +70,12 @@ struct FMSolution {
 
 	//! Indices of misfitting observations (from PolarityObservation::index)
 	std::vector<int>  misfittingStations;
+
+	//! Continuous reliability: max angular distance (units of pi) from
+	//! best axis to uncertainty boundary on focal sphere (Nakamura 2002).
+	//! -1 if not computed.
+	double            pAxisReliability{-1};
+	double            tAxisReliability{-1};
 };
 
 
@@ -81,6 +91,11 @@ struct FMInversionResult {
 	FMSolution              best;
 	std::vector<FMSolution> accepted;
 	bool                    valid{false};
+
+	//! P-axis reliability of the best solution (units of pi). -1 if not computed.
+	double                  pAxisReliability{-1};
+	//! T-axis reliability of the best solution (units of pi). -1 if not computed.
+	double                  tAxisReliability{-1};
 };
 
 
@@ -102,6 +117,61 @@ struct FMInversionResult {
 SC_SYSTEM_CORE_API int predictPolarity(
 	const Math::NODAL_PLANE &np,
 	double azimuth, double takeoff
+);
+
+
+/**
+ * @brief Predict P-wave polarity with free-surface correction.
+ *
+ * Applies Zoeppritz free-surface reflection coefficients (Nakamura 2002
+ * Eq. 3-4) to account for the free surface effect on observed P-wave
+ * vertical motion at the station.
+ *
+ * Falls back to the uncorrected radiation pattern when rayParam < 0.
+ *
+ * @param np Nodal plane (strike/dip/rake in degrees)
+ * @param azimuth Station azimuth from source in degrees
+ * @param takeoff Takeoff angle at source in degrees (0=down, 180=up)
+ * @param rayParam Ray parameter p in sec/deg (from TravelTime::dtdd)
+ * @param surfaceVp P-wave velocity at the surface in km/s
+ * @param surfaceVpVs Vp/Vs ratio at the surface
+ * @return +1 for compressional, -1 for dilatational, 0 for nodal
+ */
+SC_SYSTEM_CORE_API int predictPolarity(
+	const Math::NODAL_PLANE &np,
+	double azimuth, double takeoff,
+	double rayParam, double surfaceVp, double surfaceVpVs
+);
+
+
+/**
+ * @brief Compute P-wave radiation amplitude with optional free-surface
+ *        correction (Nakamura 2002 Eq. 3-4).
+ *
+ * Returns the amplitude value whose sign determines the predicted polarity.
+ * When rayParam < 0, returns the uncorrected radiation pattern amplitude.
+ *
+ * @return Radiation amplitude (sign determines polarity)
+ */
+SC_SYSTEM_CORE_API double computeRadiationAmplitude(
+	const Math::NODAL_PLANE &np,
+	double azimuth, double takeoff,
+	double rayParam, double surfaceVp, double surfaceVpVs
+);
+
+
+/**
+ * @brief Compute observation weight from arrival properties.
+ *
+ * Wi = locatorWeight * exp(-|timeResidual| / residualDecay)
+ *
+ * @param locatorWeight  Arrival weight from the locator [0,1]
+ * @param timeResidual   Arrival time residual in seconds
+ * @param residualDecay  Decay constant sigma in seconds (>0)
+ * @return Weight in [0, 1]
+ */
+SC_SYSTEM_CORE_API double computeObservationWeight(
+	double locatorWeight, double timeResidual, double residualDecay
 );
 
 
@@ -139,6 +209,18 @@ struct FMInversionConfig {
 	double gridSpacing{5.0};        // degrees for strike/dip/rake grid
 	double maxMisfitFraction{0.2};  // max fraction of wrong polarities to accept
 
+	// Free-surface correction (Nakamura 2002 Eq. 3-4)
+	bool   freeSurfaceCorrection{false}; // disabled by default
+	double surfaceVp{5.8};               // km/s, P-wave velocity at surface
+	double surfaceVpVs{1.73};            // Vp/Vs ratio at surface
+
+	// Residual-based weighting decay constant (seconds)
+	double residualDecay{1.0};           // sigma for exp(-|res|/sigma)
+
+	// Continuous reliability metric (Nakamura 2002 Fig. 4)
+	bool   computeReliability{false};    // disabled by default
+	double reliabilityEpsilon{1.5};      // Q_min + epsilon threshold
+
 	static constexpr size_t MIN_OBSERVATIONS = 6;
 
 	/**
@@ -156,8 +238,12 @@ struct FMInversionConfig {
  * that best fit the observed P-wave first motion polarities.
  *
  * For each grid node, predicts polarities using the radiation pattern
- * and counts misfits. Mechanisms with misfit fraction <= maxMisfitFraction
+ * and counts misfits (weighted by PolarityObservation::weight).
+ * Mechanisms with weighted misfit fraction <= maxMisfitFraction
  * are accepted.
+ *
+ * When freeSurfaceCorrection is enabled, uses Zoeppritz free-surface
+ * reflection coefficients (Nakamura 2002) for polarity prediction.
  *
  * Returns an FMInversionResult containing the best solution and all
  * accepted solutions (for rendering the "cloud" of possible nodal lines).

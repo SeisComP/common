@@ -7436,6 +7436,7 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 		// Get takeoff angle directly from the arrival (computed by locator)
 		// or compute it from the travel time table
 		double takeoff;
+		double obsRayParam = -1;
 		bool hasTakeOff = false;
 
 		try {
@@ -7463,7 +7464,35 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 					lat, lon
 				);
 				takeoff = ttt.takeoff;
+				obsRayParam = ttt.dtdd;
 				hasTakeOff = true;
+			}
+			catch ( ... ) {}
+		}
+
+		// If we have a takeoff but need dtdd for free-surface correction,
+		// query the TTT to get the ray parameter
+		if ( hasTakeOff && obsRayParam < 0
+		     && SC_D.config.fmFreeSurfaceCorrection
+		     && SC_D.config.computeMissingTakeOffAngles ) {
+			double lat;
+			double lon;
+
+			try {
+				Math::Geo::delandaz2coord(
+					arrival->distance(), azimuth,
+					SC_D.currentOrigin->latitude(),
+					SC_D.currentOrigin->longitude(),
+					&lat, &lon
+				);
+
+				TravelTime ttt = SC_D.ttTable.computeFirst(
+					SC_D.currentOrigin->latitude(),
+					SC_D.currentOrigin->longitude(),
+					SC_D.currentOrigin->depth(),
+					lat, lon
+				);
+				obsRayParam = ttt.dtdd;
 			}
 			catch ( ... ) {}
 		}
@@ -7472,11 +7501,34 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 			continue;
 		}
 
-		SEISCOMP_DEBUG("Auto FM: arrival %zu polarity=%s azi=%.1f takeoff=%.1f",
-		               i, polarity > 0 ? "UP" : "DOWN", azimuth, takeoff);
+		// Compute observation weight from locator weight and time residual
+		double obsWeight = 1.0;
+		try {
+			double locWeight = 1.0;
+			try {
+				double w = arrival->weight();
+				// Only use positive locator weights. A weight of 0
+				// means excluded from location, not bad polarity.
+				if ( w > 0 ) locWeight = w;
+			}
+			catch ( ... ) {}
+
+			double residual = 0;
+			try { residual = arrival->timeResidual(); }
+			catch ( ... ) {}
+
+			obsWeight = Seismology::computeObservationWeight(
+				locWeight, residual, SC_D.config.fmResidualDecay);
+		}
+		catch ( ... ) {}
+
+		SEISCOMP_DEBUG("Auto FM: arrival %zu polarity=%s azi=%.1f takeoff=%.1f "
+		               "weight=%.3f rayParam=%.4f",
+		               i, polarity > 0 ? "UP" : "DOWN", azimuth, takeoff,
+		               obsWeight, obsRayParam);
 
 		observations.emplace_back(azimuth, takeoff, polarity,
-		                          static_cast<int>(i));
+		                          static_cast<int>(i), obsWeight, obsRayParam);
 	}
 
 	SEISCOMP_DEBUG("Auto FM: collected %zu polarity observations from %zu arrivals",
@@ -7496,6 +7548,12 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 	Seismology::FMInversionConfig config;
 	config.gridSpacing = SC_D.config.fmGridSpacing;
 	config.maxMisfitFraction = SC_D.config.fmMaxBadFraction;
+	config.freeSurfaceCorrection = SC_D.config.fmFreeSurfaceCorrection;
+	config.surfaceVp = SC_D.config.fmSurfaceVp;
+	config.surfaceVpVs = SC_D.config.fmSurfaceVpVs;
+	config.residualDecay = SC_D.config.fmResidualDecay;
+	config.computeReliability = SC_D.config.fmComputeReliability;
+	config.reliabilityEpsilon = SC_D.config.fmReliabilityEpsilon;
 	config.validate();
 
 	Seismology::FMInversionResult invResult =
@@ -7526,6 +7584,11 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 	              best.azimuthalGap,
 	              Seismology::qualityLabel(best.quality),
 	              invResult.accepted.size());
+
+	if ( invResult.pAxisReliability >= 0 ) {
+		SEISCOMP_INFO("Auto FM reliability: P-axis=%.3f*pi T-axis=%.3f*pi",
+		              invResult.pAxisReliability, invResult.tAxisReliability);
+	}
 
 	// Log misfitting stations by arrival index
 	if ( !best.misfittingStations.empty() ) {
