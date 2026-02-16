@@ -233,6 +233,12 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 			// FM polarity inversion parameters
 			double fmGridSpacing{5.0};
 			double fmMaxBadFraction{0.2};
+			bool   fmFreeSurfaceCorrection{false};
+			double fmSurfaceVp{5.8};
+			double fmSurfaceVpVs{1.73};
+			double fmResidualDecay{1.0};
+			bool   fmComputeReliability{false};
+			double fmReliabilityEpsilon{1.5};
 
 			Config();
 		};

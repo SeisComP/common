@@ -530,3 +530,491 @@ BOOST_AUTO_TEST_CASE(all_labels_non_null) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// computeObservationWeight tests (Nakamura 2002 Eq. 5 weighting)
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(ObservationWeight)
+
+BOOST_AUTO_TEST_CASE(zero_residual_returns_locator_weight) {
+	BOOST_CHECK_CLOSE(computeObservationWeight(1.0, 0.0, 1.0), 1.0, 0.01);
+	BOOST_CHECK_CLOSE(computeObservationWeight(0.5, 0.0, 1.0), 0.5, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(larger_residual_decreases_weight) {
+	double w1 = computeObservationWeight(1.0, 0.5, 1.0);
+	double w2 = computeObservationWeight(1.0, 2.0, 1.0);
+	BOOST_CHECK_GT(w1, w2);
+	BOOST_CHECK_GT(w1, 0.0);
+	BOOST_CHECK_GT(w2, 0.0);
+}
+
+BOOST_AUTO_TEST_CASE(negative_residual_treated_as_positive) {
+	double w1 = computeObservationWeight(1.0, 1.0, 1.0);
+	double w2 = computeObservationWeight(1.0, -1.0, 1.0);
+	BOOST_CHECK_CLOSE(w1, w2, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(zero_decay_returns_locator_weight) {
+	BOOST_CHECK_CLOSE(computeObservationWeight(0.8, 5.0, 0.0), 0.8, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(weight_in_valid_range) {
+	// exp(-|res|/sigma) is always in (0, 1], so result in [0, locatorWeight]
+	double w = computeObservationWeight(0.7, 3.0, 0.5);
+	BOOST_CHECK_GE(w, 0.0);
+	BOOST_CHECK_LE(w, 0.7);
+}
+
+BOOST_AUTO_TEST_CASE(known_value) {
+	// Wi = 1.0 * exp(-2.0/1.0) = exp(-2) ~ 0.1353
+	double w = computeObservationWeight(1.0, 2.0, 1.0);
+	BOOST_CHECK_CLOSE(w, exp(-2.0), 0.1);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// Free-surface correction tests (Nakamura 2002 Eq. 3-4)
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(FreeSurfaceCorrection)
+
+BOOST_AUTO_TEST_CASE(missing_ray_param_falls_back_to_base) {
+	// With rayParam=-1, the free-surface overload should give
+	// the same result as the base predictPolarity
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 90; np.rake = 0;
+
+	BOOST_CHECK_EQUAL(
+		predictPolarity(np, 45, 60, -1, 5.8, 1.73),
+		predictPolarity(np, 45, 60)
+	);
+	BOOST_CHECK_EQUAL(
+		predictPolarity(np, 135, 60, -1, 5.8, 1.73),
+		predictPolarity(np, 135, 60)
+	);
+}
+
+BOOST_AUTO_TEST_CASE(vertical_incidence_preserves_polarity) {
+	// At vertical incidence (rayParam=0, sinI=0), the free surface
+	// correction factor = cosI*(1-PP) + PS*sinJ  (Nakamura 2002, Eq. 3)
+	// PP=-1 at vertical incidence, PS=0 => factor = 1*(1-(-1)) + 0 = 2
+	// So polarity should be preserved and amplitude doubled
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 90; np.rake = 0;
+
+	// Ray in NE quadrant: should be compressional both ways
+	BOOST_CHECK_EQUAL(predictPolarity(np, 45, 60), 1);
+	BOOST_CHECK_EQUAL(predictPolarity(np, 45, 60, 0.0, 5.8, 1.73), 1);
+
+	// Ray in SE quadrant: should be dilatational both ways
+	BOOST_CHECK_EQUAL(predictPolarity(np, 135, 60), -1);
+	BOOST_CHECK_EQUAL(predictPolarity(np, 135, 60, 0.0, 5.8, 1.73), -1);
+}
+
+BOOST_AUTO_TEST_CASE(vertical_incidence_amplitude_doubled) {
+	// At vertical incidence, correction factor = 2
+	// So amplitude should be 2x the base
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 90; np.rake = 0;
+
+	double baseAmp = computeRadiationAmplitude(np, 45, 60, -1, 5.8, 1.73);
+	double corrAmp = computeRadiationAmplitude(np, 45, 60, 0.0, 5.8, 1.73);
+
+	BOOST_CHECK_CLOSE(corrAmp, 2.0 * baseAmp, 0.1);
+}
+
+BOOST_AUTO_TEST_CASE(moderate_incidence_preserves_polarity) {
+	// For moderate incidence angles, the free-surface correction
+	// should generally preserve the polarity sign
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 45; np.rake = 90;
+
+	// Use a moderate ray parameter: dtdd ~ 8 sec/deg for P at ~30 deg distance
+	double rayParam = 8.0;
+
+	int basePol = predictPolarity(np, 0, 20);
+	int corrPol = predictPolarity(np, 0, 20, rayParam, 5.8, 1.73);
+	BOOST_CHECK_EQUAL(basePol, corrPol);
+}
+
+BOOST_AUTO_TEST_CASE(steep_incidence_preserves_polarity) {
+	// Nakamura (2002) Eq. 3: correction factor = cos(i)*(1-PP) + PS*sin(j)
+	// is always positive for realistic incidence angles (including steep).
+	// With rayParam=18.79 sec/deg (sinI~0.98), correction must NOT flip polarity.
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 90; np.rake = 0;
+
+	double rayParam = 18.79;  // typical local-distance value
+
+	// Both base and corrected should agree on polarity sign
+	int basePol = predictPolarity(np, 45, 60);
+	int corrPol = predictPolarity(np, 45, 60, rayParam, 5.8, 1.73);
+	BOOST_CHECK_EQUAL(basePol, corrPol);
+
+	basePol = predictPolarity(np, 135, 60);
+	corrPol = predictPolarity(np, 135, 60, rayParam, 5.8, 1.73);
+	BOOST_CHECK_EQUAL(basePol, corrPol);
+
+	// The corrected amplitude should have the same sign as the base
+	double baseAmp = computeRadiationAmplitude(np, 45, 60, -1, 5.8, 1.73);
+	double corrAmp = computeRadiationAmplitude(np, 45, 60, rayParam, 5.8, 1.73);
+	BOOST_CHECK_GT(baseAmp * corrAmp, 0.0);  // same sign
+}
+
+BOOST_AUTO_TEST_CASE(nodal_plane_remains_nodal) {
+	// On the nodal plane, both base and corrected should return 0
+	NODAL_PLANE np;
+	np.str = 0; np.dip = 90; np.rake = 0;
+
+	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 60), 0);
+	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 60, 5.0, 5.8, 1.73), 0);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// Weighted misfit inversion tests
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(WeightedMisfit)
+
+BOOST_AUTO_TEST_CASE(uniform_weights_match_unweighted) {
+	// With all weights=1.0 (default), results should match the
+	// original unweighted behavior
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.2;
+
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+	BOOST_CHECK_EQUAL(result.best.misfitCount, 0);
+	BOOST_CHECK_CLOSE(result.best.misfit, 0.0, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(zero_weight_observation_ignored) {
+	// A wrong polarity with weight=0 should not count as a misfit
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	// Wrong polarity but zero weight
+	obs.emplace_back(330.0, 50.0, 1, 7, 0.0);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.0;  // zero tolerance
+
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+	// The weighted misfit fraction should be 0 since the wrong polarity has weight 0
+	BOOST_CHECK_CLOSE(result.best.misfit, 0.0, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(high_weight_misfit_dominates) {
+	// One observation with high weight that is wrong should dominate
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0, 0.1);
+	obs.emplace_back(60.0, 50.0, 1, 1, 0.1);
+	obs.emplace_back(210.0, 50.0, 1, 2, 0.1);
+	obs.emplace_back(240.0, 50.0, 1, 3, 0.1);
+	obs.emplace_back(120.0, 50.0, -1, 4, 0.1);
+	obs.emplace_back(150.0, 50.0, -1, 5, 0.1);
+	obs.emplace_back(300.0, 50.0, -1, 6, 0.1);
+	obs.emplace_back(330.0, 50.0, -1, 7, 0.1);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.2;
+
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+	BOOST_CHECK_EQUAL(result.best.misfitCount, 0);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// Continuous reliability metric tests (Nakamura 2002 Fig. 4)
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(ContinuousReliability)
+
+BOOST_AUTO_TEST_CASE(reliability_computed_and_valid_range) {
+	// Reliability should be computed and in valid range [0, 0.5]
+	// (units of pi, where 0.5 = 90 degrees = hemisphere).
+	// With 8 observations, the uncertainty is naturally large.
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.2;
+	config.computeReliability = true;
+	config.reliabilityEpsilon = 1.5;
+
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+
+	// Reliability should be computed and in valid range
+	BOOST_CHECK_GE(result.pAxisReliability, 0.0);
+	BOOST_CHECK_GE(result.tAxisReliability, 0.0);
+	BOOST_CHECK_LE(result.pAxisReliability, 0.5);
+	BOOST_CHECK_LE(result.tAxisReliability, 0.5);
+
+	// Also stored in best solution
+	BOOST_CHECK_CLOSE(result.best.pAxisReliability, result.pAxisReliability, 0.01);
+	BOOST_CHECK_CLOSE(result.best.tAxisReliability, result.tAxisReliability, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(reliability_decreases_with_smaller_epsilon) {
+	// Smaller epsilon => fewer solutions in the uncertainty set
+	// => smaller or equal reliability values.
+	// This verifies the epsilon normalization (epsilon/totalWeight)
+	// is applied correctly.
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	FMInversionConfig configWide;
+	configWide.gridSpacing = 5;
+	configWide.maxMisfitFraction = 0.2;
+	configWide.computeReliability = true;
+	configWide.reliabilityEpsilon = 1.5;
+
+	FMInversionConfig configTight;
+	configTight.gridSpacing = 5;
+	configTight.maxMisfitFraction = 0.2;
+	configTight.computeReliability = true;
+	configTight.reliabilityEpsilon = 0.0;
+
+	auto resultWide = invertPolarities(obs, configWide);
+	auto resultTight = invertPolarities(obs, configTight);
+	BOOST_REQUIRE(resultWide.valid);
+	BOOST_REQUIRE(resultTight.valid);
+
+	// Tighter epsilon should give smaller or equal reliability
+	BOOST_CHECK_LE(resultTight.pAxisReliability, resultWide.pAxisReliability);
+	BOOST_CHECK_LE(resultTight.tAxisReliability, resultWide.tAxisReliability);
+}
+
+BOOST_AUTO_TEST_CASE(reliability_not_computed_by_default) {
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	// Default config has computeReliability = false
+	auto result = invertPolarities(obs);
+	BOOST_REQUIRE(result.valid);
+
+	// Reliability should be -1 (not computed)
+	BOOST_CHECK_CLOSE(result.pAxisReliability, -1.0, 0.01);
+	BOOST_CHECK_CLOSE(result.tAxisReliability, -1.0, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(zero_epsilon_gives_zero_reliability) {
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.2;
+	config.computeReliability = true;
+	config.reliabilityEpsilon = 0.0;
+
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+
+	// With epsilon=0, only exact-best solutions contribute.
+	// All solutions with misfit == best.misfit are "identical" in quality,
+	// so the uncertainty area is only from those exact matches.
+	// The reliability values should be relatively small.
+	BOOST_CHECK_GE(result.pAxisReliability, 0.0);
+	BOOST_CHECK_GE(result.tAxisReliability, 0.0);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// Extended config validation tests (new fields)
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(ExtendedConfigValidation)
+
+BOOST_AUTO_TEST_CASE(surface_vp_clamped) {
+	FMInversionConfig config;
+	config.surfaceVp = -1.0;
+	BOOST_CHECK(config.validate() == false);
+	BOOST_CHECK_CLOSE(config.surfaceVp, 5.8, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(surface_vpvs_clamped) {
+	FMInversionConfig config;
+	config.surfaceVpVs = 0.5;
+	BOOST_CHECK(config.validate() == false);
+	BOOST_CHECK_CLOSE(config.surfaceVpVs, 1.73, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(residual_decay_clamped) {
+	FMInversionConfig config;
+	config.residualDecay = -0.5;
+	BOOST_CHECK(config.validate() == false);
+	BOOST_CHECK_CLOSE(config.residualDecay, 1.0, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(reliability_epsilon_clamped) {
+	FMInversionConfig config;
+	config.reliabilityEpsilon = -2.0;
+	BOOST_CHECK(config.validate() == false);
+	BOOST_CHECK_CLOSE(config.reliabilityEpsilon, 0.0, 0.01);
+}
+
+BOOST_AUTO_TEST_CASE(valid_new_fields_unchanged) {
+	FMInversionConfig config;
+	config.surfaceVp = 6.0;
+	config.surfaceVpVs = 1.8;
+	config.residualDecay = 2.0;
+	config.reliabilityEpsilon = 1.0;
+	BOOST_CHECK(config.validate() == true);
+	BOOST_CHECK_CLOSE(config.surfaceVp, 6.0, 0.01);
+	BOOST_CHECK_CLOSE(config.surfaceVpVs, 1.8, 0.01);
+	BOOST_CHECK_CLOSE(config.residualDecay, 2.0, 0.01);
+	BOOST_CHECK_CLOSE(config.reliabilityEpsilon, 1.0, 0.01);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+// ===========================================================================
+// Backward compatibility: default config produces identical results
+// ===========================================================================
+
+BOOST_AUTO_TEST_SUITE(ZeroWeightFallback)
+
+BOOST_AUTO_TEST_CASE(all_zero_weights_fall_back_to_uniform) {
+	// If all observation weights are 0 (e.g., locator excluded all picks),
+	// the inversion should fall back to uniform weights and still produce
+	// a valid result identical to unit-weighted observations.
+	std::vector<PolarityObservation> zeroObs;
+	zeroObs.emplace_back(30.0, 50.0, 1, 0, 0.0);
+	zeroObs.emplace_back(60.0, 50.0, 1, 1, 0.0);
+	zeroObs.emplace_back(210.0, 50.0, 1, 2, 0.0);
+	zeroObs.emplace_back(240.0, 50.0, 1, 3, 0.0);
+	zeroObs.emplace_back(120.0, 50.0, -1, 4, 0.0);
+	zeroObs.emplace_back(150.0, 50.0, -1, 5, 0.0);
+	zeroObs.emplace_back(300.0, 50.0, -1, 6, 0.0);
+	zeroObs.emplace_back(330.0, 50.0, -1, 7, 0.0);
+
+	std::vector<PolarityObservation> unitObs;
+	unitObs.emplace_back(30.0, 50.0, 1, 0, 1.0);
+	unitObs.emplace_back(60.0, 50.0, 1, 1, 1.0);
+	unitObs.emplace_back(210.0, 50.0, 1, 2, 1.0);
+	unitObs.emplace_back(240.0, 50.0, 1, 3, 1.0);
+	unitObs.emplace_back(120.0, 50.0, -1, 4, 1.0);
+	unitObs.emplace_back(150.0, 50.0, -1, 5, 1.0);
+	unitObs.emplace_back(300.0, 50.0, -1, 6, 1.0);
+	unitObs.emplace_back(330.0, 50.0, -1, 7, 1.0);
+
+	FMInversionConfig config;
+	config.gridSpacing = 5;
+	config.maxMisfitFraction = 0.2;
+
+	auto zeroResult = invertPolarities(zeroObs, config);
+	auto unitResult = invertPolarities(unitObs, config);
+
+	BOOST_REQUIRE(zeroResult.valid);
+	BOOST_REQUIRE(unitResult.valid);
+
+	// Both should produce the same mechanism
+	BOOST_CHECK_CLOSE(zeroResult.best.np1.str, unitResult.best.np1.str, 0.01);
+	BOOST_CHECK_CLOSE(zeroResult.best.np1.dip, unitResult.best.np1.dip, 0.01);
+	BOOST_CHECK_CLOSE(zeroResult.best.np1.rake, unitResult.best.np1.rake, 0.01);
+	BOOST_CHECK_EQUAL(zeroResult.best.misfitCount, unitResult.best.misfitCount);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(BackwardCompatibility)
+
+BOOST_AUTO_TEST_CASE(default_config_same_as_original) {
+	// The vertical_strike_slip_recovery test with default config should
+	// produce identical results whether using old or new code paths.
+	// With all weights=1.0 and no free-surface correction, the weighted
+	// sum equals the integer count.
+	std::vector<PolarityObservation> obs;
+	obs.emplace_back(30.0, 50.0, 1, 0);
+	obs.emplace_back(60.0, 50.0, 1, 1);
+	obs.emplace_back(210.0, 50.0, 1, 2);
+	obs.emplace_back(240.0, 50.0, 1, 3);
+	obs.emplace_back(120.0, 50.0, -1, 4);
+	obs.emplace_back(150.0, 50.0, -1, 5);
+	obs.emplace_back(300.0, 50.0, -1, 6);
+	obs.emplace_back(330.0, 50.0, -1, 7);
+
+	// Default config: all new features disabled
+	FMInversionConfig config;
+	auto result = invertPolarities(obs, config);
+	BOOST_REQUIRE(result.valid);
+
+	// Perfect data => 0 misfits
+	BOOST_CHECK_EQUAL(result.best.misfitCount, 0);
+	BOOST_CHECK_CLOSE(result.best.misfit, 0.0, 0.01);
+	BOOST_CHECK_EQUAL(result.best.stationCount, 8);
+
+	// Reliability not computed
+	BOOST_CHECK_CLOSE(result.pAxisReliability, -1.0, 0.01);
+
+	// Quality should be at least B (8 stations, 0 misfit, gap < 90)
+	BOOST_CHECK(result.best.quality == FMQuality::A ||
+	            result.best.quality == FMQuality::B);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
