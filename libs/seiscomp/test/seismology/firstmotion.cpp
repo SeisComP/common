@@ -39,8 +39,8 @@ using namespace Seiscomp::Math;
 // These tests verify polarity predictions against hand-computed values
 // using the textbook P-wave radiation pattern formula:
 //
-//   np2nd(strike, dip, rake) -> n, d   (Aki & Richards z-UP convention)
-//   r = (sin(ih)*cos(phi), sin(ih)*sin(phi), -cos(ih))
+//   np2nd(strike, dip, rake) -> n, d   (Aki & Richards z-DOWN convention)
+//   r = (sin(ih)*cos(phi), sin(ih)*sin(phi), cos(ih))
 //   amplitude = (n . r)(d . r)
 //   polarity = sign(amplitude)
 //
@@ -55,10 +55,10 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_ne_quadrant) {
 	// np2nd: n=(0, 1, 0), d=(1, 0, 0)
 	//
 	// Ray at azi=45, takeoff=60 (downgoing):
-	//   r = (sin(60)*cos(45), sin(60)*sin(45), -cos(60))
-	//     = (0.612, 0.612, -0.5)
-	//   n.r = 0*0.612 + 1*0.612 + 0*(-0.5) = 0.612
-	//   d.r = 1*0.612 + 0*0.612 + 0*(-0.5) = 0.612
+	//   r = (sin(60)*cos(45), sin(60)*sin(45), cos(60))
+	//     = (0.612, 0.612, 0.5)
+	//   n.r = 0*0.612 + 1*0.612 + 0*0.5 = 0.612
+	//   d.r = 1*0.612 + 0*0.612 + 0*0.5 = 0.612
 	//   amplitude = 0.612 * 0.612 = 0.375 > 0 -> compressional
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 90; np.rake = 0;
@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_se_quadrant) {
 	// np2nd: n=(0, 1, 0), d=(1, 0, 0)
 	//
 	// Ray at azi=135, takeoff=60:
-	//   r = (sin(60)*cos(135), sin(60)*sin(135), -cos(60))
-	//     = (-0.612, 0.612, -0.5)
+	//   r = (sin(60)*cos(135), sin(60)*sin(135), cos(60))
+	//     = (-0.612, 0.612, 0.5)
 	//   n.r = 0.612
 	//   d.r = -0.612
 	//   amplitude = 0.612 * (-0.612) = -0.375 < 0 -> dilatational
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_sw_quadrant) {
 	// np2nd: n=(0, 1, 0), d=(1, 0, 0)
 	//
 	// Ray at azi=225, takeoff=60:
-	//   r = (-0.612, -0.612, -0.5)
+	//   r = (-0.612, -0.612, 0.5)
 	//   n.r = -0.612
 	//   d.r = -0.612
 	//   amplitude = (-0.612) * (-0.612) = 0.375 > 0 -> compressional
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_nw_quadrant) {
 	// np2nd: n=(0, 1, 0), d=(1, 0, 0)
 	//
 	// Ray at azi=315, takeoff=60:
-	//   r = (0.612, -0.612, -0.5)
+	//   r = (0.612, -0.612, 0.5)
 	//   n.r = -0.612
 	//   d.r = 0.612
 	//   amplitude = -0.375 < 0 -> dilatational
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_nw_quadrant) {
 BOOST_AUTO_TEST_CASE(vertical_strike_slip_on_nodal_plane) {
 	// Same mechanism: Strike=0, Dip=90, Rake=0
 	// Ray at azi=0, takeoff=60 (on the N-S fault plane -> nodal):
-	//   r = (0.866, 0, -0.5)
+	//   r = (0.866, 0, 0.5)
 	//   n.r = 0  -> nodal
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 90; np.rake = 0;
@@ -129,11 +129,11 @@ BOOST_AUTO_TEST_CASE(thrust_fault_downgoing) {
 	//   d.z = -sin(45)*sin(90) = -0.707
 	//
 	// Ray at azi=0, takeoff=20 (steep downgoing to north):
-	//   r = (sin(20)*cos(0), sin(20)*sin(0), -cos(20))
-	//     = (0.342, 0, -0.940)
-	//   n.r = 0 + 0 + (-0.707)*(-0.940) = 0.664
-	//   d.r = 0 + 0 + (-0.707)*(-0.940) = 0.664
-	//   amplitude = 0.664 * 0.664 = 0.441 > 0 -> compressional
+	//   r = (sin(20)*cos(0), sin(20)*sin(0), cos(20))
+	//     = (0.342, 0, 0.940)
+	//   n.r = 0 + 0 + (-0.707)*(0.940) = -0.664
+	//   d.r = 0 + 0 + (-0.707)*(0.940) = -0.664
+	//   amplitude = (-0.664) * (-0.664) = 0.441 > 0 -> compressional
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 45; np.rake = 90;
 	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 20), 1);
@@ -150,11 +150,11 @@ BOOST_AUTO_TEST_CASE(normal_fault_steep_downgoing_east) {
 	//   d.z = -sin(45)*sin(-90) = 0.707
 	//
 	// Ray at azi=90, takeoff=20 (steep downgoing to east):
-	//   r = (sin(20)*cos(90), sin(20)*sin(90), -cos(20))
-	//     = (0, 0.342, -0.940)
-	//   n.r = 0.707*0.342 + (-0.707)*(-0.940) = 0.242 + 0.664 = 0.906
-	//   d.r = 0.707*0.342 + 0.707*(-0.940) = 0.242 - 0.664 = -0.422
-	//   amplitude = 0.906 * (-0.422) = -0.382 < 0 -> dilatational
+	//   r = (sin(20)*cos(90), sin(20)*sin(90), cos(20))
+	//     = (0, 0.342, 0.940)
+	//   n.r = 0.707*0.342 + (-0.707)*(0.940) = 0.242 - 0.664 = -0.422
+	//   d.r = 0.707*0.342 + 0.707*(0.940) = 0.242 + 0.664 = 0.906
+	//   amplitude = (-0.422) * 0.906 = -0.382 < 0 -> dilatational
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 45; np.rake = -90;
 	BOOST_CHECK_EQUAL(predictPolarity(np, 90, 20), -1);
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(normal_fault_horizontal_east) {
 	// n=(0, 0.707, -0.707), d=(0, 0.707, 0.707)
 	//
 	// Ray at azi=90, takeoff=90 (horizontal to east):
-	//   r = (0, 1, 0)
+	//   r = (0, 1, 0)   (cos(90)=0, so rz=0 regardless of convention)
 	//   n.r = 0.707
 	//   d.r = 0.707
 	//   amplitude = 0.500 > 0 -> compressional
@@ -177,9 +177,9 @@ BOOST_AUTO_TEST_CASE(normal_fault_horizontal_east) {
 BOOST_AUTO_TEST_CASE(oblique_fault_z_sensitive) {
 	// Strike=45, Dip=60, Rake=30
 	// This mechanism produces different polarities depending on whether
-	// rz = -cos(ih) (correct, z-UP) or rz = +cos(ih) (wrong, z-DOWN).
+	// rz = cos(ih) (correct, z-DOWN) or rz = -cos(ih) (wrong, z-UP).
 	//
-	// np2nd:
+	// np2nd (z-DOWN: x1=N, x2=E, x3=Down):
 	//   n.x = -sin(60)*sin(45) = -0.612
 	//   n.y = sin(60)*cos(45) = 0.612
 	//   n.z = -cos(60) = -0.500
@@ -187,36 +187,37 @@ BOOST_AUTO_TEST_CASE(oblique_fault_z_sensitive) {
 	//   d.y = cos(30)*sin(45) - cos(60)*sin(30)*cos(45) = 0.436
 	//   d.z = -sin(60)*sin(30) = -0.433
 	//
-	// Ray at azi=0, takeoff=30:
-	//   r = (sin(30)*cos(0), sin(30)*sin(0), -cos(30))
-	//     = (0.500, 0, -0.866)
-	//   n.r = (-0.612)*0.500 + 0.612*0 + (-0.500)*(-0.866) = -0.306 + 0.433 = 0.127
-	//   d.r = 0.789*0.500 + 0.436*0 + (-0.433)*(-0.866) = 0.395 + 0.375 = 0.770
-	//   amplitude = 0.127 * 0.770 = 0.098 > 0 -> compressional
+	// Ray at azi=0, takeoff=30 (z-DOWN: rz = cos(30)):
+	//   r = (sin(30)*cos(0), sin(30)*sin(0), cos(30))
+	//     = (0.500, 0, 0.866)
+	//   n.r = (-0.612)*0.500 + 0.612*0 + (-0.500)*(0.866) = -0.306 - 0.433 = -0.739
+	//   d.r = 0.789*0.500 + 0.436*0 + (-0.433)*(0.866) = 0.395 - 0.375 = 0.020
+	//   amplitude = (-0.739) * 0.020 = -0.015 < 0 -> dilatational
 	//
-	// With WRONG rz = +cos(30) = 0.866:
-	//   n.r = -0.306 + (-0.500)*0.866 = -0.306 - 0.433 = -0.739
-	//   d.r = 0.395 + (-0.433)*0.866 = 0.395 - 0.375 = 0.020
-	//   amplitude = -0.739 * 0.020 = -0.015 < 0 -> dilatational (WRONG)
+	// Verified with Aki & Richards (2002) Eq. 4.88-4.91 expanded formula:
+	//   R_P = -0.029 -> dilatational (same sign) ✓
 	NODAL_PLANE np;
 	np.str = 45; np.dip = 60; np.rake = 30;
-	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 30), 1);
+	BOOST_CHECK_EQUAL(predictPolarity(np, 0, 30), -1);
 }
 
 BOOST_AUTO_TEST_CASE(oblique_fault_z_sensitive_2) {
 	// Same mechanism: Strike=45, Dip=60, Rake=30
 	//
-	// Ray at azi=210, takeoff=40:
-	//   r = (sin(40)*cos(210), sin(40)*sin(210), -cos(40))
-	//     = (-0.557, -0.321, -0.766)
-	//   n.r = (-0.612)*(-0.557) + 0.612*(-0.321) + (-0.500)*(-0.766)
-	//       = 0.341 - 0.196 + 0.383 = 0.528
-	//   d.r = 0.789*(-0.557) + 0.436*(-0.321) + (-0.433)*(-0.766)
-	//       = -0.440 - 0.140 + 0.332 = -0.248
-	//   amplitude = 0.528 * (-0.248) = -0.131 < 0 -> dilatational
+	// Ray at azi=210, takeoff=40 (z-DOWN: rz = cos(40)):
+	//   r = (sin(40)*cos(210), sin(40)*sin(210), cos(40))
+	//     = (-0.557, -0.321, 0.766)
+	//   n.r = (-0.612)*(-0.557) + 0.612*(-0.321) + (-0.500)*(0.766)
+	//       = 0.341 - 0.196 - 0.383 = -0.238
+	//   d.r = 0.789*(-0.557) + 0.436*(-0.321) + (-0.433)*(0.766)
+	//       = -0.440 - 0.140 - 0.332 = -0.912
+	//   amplitude = (-0.238) * (-0.912) = 0.217 > 0 -> compressional
+	//
+	// Verified with Aki & Richards (2002) Eq. 4.88-4.91:
+	//   R_P = +0.435 -> compressional ✓
 	NODAL_PLANE np;
 	np.str = 45; np.dip = 60; np.rake = 30;
-	BOOST_CHECK_EQUAL(predictPolarity(np, 210, 40), -1);
+	BOOST_CHECK_EQUAL(predictPolarity(np, 210, 40), 1);
 }
 
 BOOST_AUTO_TEST_CASE(upgoing_ray) {
@@ -225,12 +226,12 @@ BOOST_AUTO_TEST_CASE(upgoing_ray) {
 	// n=(0, 1, 0), d=(1, 0, 0)
 	//
 	// Ray at azi=45, takeoff=150 (upgoing):
-	//   r = (sin(150)*cos(45), sin(150)*sin(45), -cos(150))
-	//     = (0.354, 0.354, 0.866)
+	//   r = (sin(150)*cos(45), sin(150)*sin(45), cos(150))
+	//     = (0.354, 0.354, -0.866)
 	//   n.r = 0.354
 	//   d.r = 0.354
 	//   amplitude = 0.125 > 0 -> compressional
-	// (Same as downgoing NE quadrant — the radiation pattern is symmetric)
+	// (Same as downgoing NE quadrant — n.z=d.z=0 for vertical fault)
 	NODAL_PLANE np;
 	np.str = 0; np.dip = 90; np.rake = 0;
 	BOOST_CHECK_EQUAL(predictPolarity(np, 45, 150), 1);

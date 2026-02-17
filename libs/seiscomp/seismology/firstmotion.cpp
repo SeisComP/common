@@ -43,23 +43,25 @@ int predictPolarity(
 	Vector3d d;
 	np2nd(np, n, d);
 
-	// Ray direction in Aki & Richards convention (x=North, y=East, z=Up).
-	// np2nd() returns n,d in this same coordinate system.
+	// Ray direction in Aki & Richards convention (x1=North, x2=East, x3=Down).
+	// np2nd() returns n,d in this same z-DOWN coordinate system:
+	//   n.z = -cos(dip)   -> points upward for non-vertical faults
+	//   d.z = -sin(dip)*sin(rake)
 	//
 	// Takeoff angle: 0 = downgoing (straight down), 90 = horizontal,
 	// 180 = upgoing. This matches SeisComP's TravelTimeTableInterface
 	// (libtau, LOCSAT, homogeneous).
 	//
-	// In z-UP coordinates a downgoing ray has rz < 0:
-	//   rz = -cos(takeoff)  =>  takeoff=0 -> rz=-1 (down)
-	//                           takeoff=90 -> rz=0  (horizontal)
-	//                           takeoff=180 -> rz=+1 (up)
+	// In z-DOWN coordinates a downgoing ray has rz > 0:
+	//   rz = cos(takeoff)  =>  takeoff=0 -> rz=+1 (down)
+	//                          takeoff=90 -> rz=0  (horizontal)
+	//                          takeoff=180 -> rz=-1 (up)
 	double ih = deg2rad(takeoff);
 	double phi = deg2rad(azimuth);
 
 	double rx = sin(ih) * cos(phi);
 	double ry = sin(ih) * sin(phi);
-	double rz = -cos(ih);
+	double rz = cos(ih);
 
 	// P-wave radiation pattern: amplitude proportional to (n . r)(d . r)
 	double nr = n.x * rx + n.y * ry + n.z * rz;
@@ -144,7 +146,7 @@ double computeRadiationAmplitude(
 
 	double rx = sin(ih) * cos(phi);
 	double ry = sin(ih) * sin(phi);
-	double rz = -cos(ih);
+	double rz = cos(ih);
 
 	double nr = n.x * rx + n.y * ry + n.z * rz;
 	double dr = d.x * rx + d.y * ry + d.z * rz;
