@@ -490,8 +490,19 @@ bool Time::fromString(std::string_view sv, const char *format) {
 		}
 	}
 	else {
-		static const date::time_zone *zone_utc = date::locate_zone("UTC");
-		_repr = make_zoned(zone_utc, lt - offset).get_sys_time();
+		static const date::time_zone *zone_utc = nullptr;
+		if ( !zone_utc ) {
+			try {
+				zone_utc = date::locate_zone("UTC");
+			}
+			catch ( ... ) {}
+		}
+		if ( zone_utc ) {
+			_repr = make_zoned(zone_utc, lt - offset).get_sys_time();
+		}
+		else {
+			_repr = TimePoint(lt.time_since_epoch() - offset);
+		}
 	}
 
 	return true;
@@ -585,7 +596,15 @@ TimeSpan Time::localTimeZoneOffset() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TimeSpan Time::timeZoneOffset(const std::string &tzName) const {
-	const date::time_zone *zone = date::locate_zone(tzName);
+	const date::time_zone *zone;
+
+	try {
+		zone = date::locate_zone(tzName);
+	}
+	catch ( ... ) {
+		zone = nullptr;
+	}
+
 	if ( !zone ) {
 		if ( tzName == "UTC" ) {
 			return TimeSpan(0, 0);
