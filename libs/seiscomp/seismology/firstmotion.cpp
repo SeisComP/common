@@ -428,7 +428,11 @@ WeightedMisfitResult computeWeightedMisfits(
 			predicted = predictPolarity(np, obs.azimuth, obs.takeoff);
 		}
 
-		if ( predicted != 0 && predicted != obs.polarity ) {
+		// A misfit occurs when:
+		// - predicted polarity disagrees with observed, OR
+		// - predicted is exactly nodal (0) but observation has a clear
+		//   polarity — the model cannot explain the observation
+		if ( predicted != obs.polarity ) {
 			result.weightedMisfit += obs.weight;
 			++result.count;
 			result.indices.push_back(obs.index);
@@ -458,7 +462,7 @@ double countWeightedMisfits(
 			predicted = predictPolarity(np, obs.azimuth, obs.takeoff);
 		}
 
-		if ( predicted != 0 && predicted != obs.polarity ) {
+		if ( predicted != obs.polarity ) {
 			misfits += obs.weight;
 		}
 	}
