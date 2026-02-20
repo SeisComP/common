@@ -7393,6 +7393,11 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 
 	size_t arrivalCount = SC_D.currentOrigin->arrivalCount();
 	for ( size_t i = 0; i < arrivalCount; ++i ) {
+		// Only consider arrivals that are used in the location
+		if ( !SC_D.modelArrivals.useArrival(i) ) {
+			continue;
+		}
+
 		DataModel::Arrival *arrival = SC_D.currentOrigin->arrival(i);
 
 		// Only use P phases
@@ -7603,7 +7608,13 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 		              best.misfittingStations.size(), misfitList.c_str());
 	}
 
-	// Show quality summary to the user
+	// Show quality summary to the user.
+	// Use NP1/NP2 from the PlotWidget (after tensor round-trip) so the
+	// popup matches the nodal plane labels shown in the scolv header.
+	auto *plotWidget = static_cast<PlotWidget*>(SC_D.residuals);
+	const NODAL_PLANE &dispNP1 = plotWidget->np1();
+	const NODAL_PLANE &dispNP2 = plotWidget->np2();
+
 	QString qualityMsg = QString(
 		"Quality: %1\n\n"
 		"NP1: %2/%3/%4\n"
@@ -7613,12 +7624,12 @@ void OriginLocatorView::autoInvertFocalMechanism() {
 		"Accepted solutions: %12"
 	)
 	.arg(Seismology::qualityLabel(best.quality))
-	.arg(best.np1.str, 0, 'f', 1)
-	.arg(best.np1.dip, 0, 'f', 1)
-	.arg(best.np1.rake, 0, 'f', 1)
-	.arg(best.np2.str, 0, 'f', 1)
-	.arg(best.np2.dip, 0, 'f', 1)
-	.arg(best.np2.rake, 0, 'f', 1)
+	.arg(dispNP1.str, 0, 'f', 1)
+	.arg(dispNP1.dip, 0, 'f', 1)
+	.arg(dispNP1.rake, 0, 'f', 1)
+	.arg(dispNP2.str, 0, 'f', 1)
+	.arg(dispNP2.dip, 0, 'f', 1)
+	.arg(dispNP2.rake, 0, 'f', 1)
 	.arg(best.misfitCount)
 	.arg(best.stationCount)
 	.arg(best.misfit * 100.0, 0, 'f', 1)
