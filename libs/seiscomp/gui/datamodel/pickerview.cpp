@@ -1013,6 +1013,10 @@ class PickerMarker : public RecordMarker {
 			if ( !_referencedPick->methodID().empty() )
 				text += QString("\nmethod: %1").arg(_referencedPick->methodID().c_str());
 			try {
+				text += QString("\nevaluation status: %1").arg(_referencedPick->evaluationStatus().toString());
+			}
+			catch ( ... ) {}
+			try {
 				double confidence = _referencedPick->time().confidenceLevel();
 				text += QString("\nconfidence: %1").arg(confidence);
 			}
