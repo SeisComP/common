@@ -5334,8 +5334,23 @@ const Seiscomp::Core::Time& RecordWidget::cursorPos() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const double *RecordWidget::value(const Seiscomp::Core::Time& t) const {
+const double *RecordWidget::value(const Seiscomp::Core::Time &t) const {
 	return _drawMode == Single ? value(_currentSlot, t) : nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(double) RecordWidget::traceValue(const Seiscomp::Core::Time &t, int slot) const {
+	auto v = slot < 0 ? value(_currentSlot, t) : value(slot, t);
+	if ( v ) {
+		return *v;
+	}
+	else {
+		return Core::None;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

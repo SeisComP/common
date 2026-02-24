@@ -511,6 +511,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		const Seiscomp::Core::Time& cursorPos() const;
 
 		const double *value(const Seiscomp::Core::Time&) const;
+		OPT(double) traceValue(const Seiscomp::Core::Time&, int slot = -1) const;
 
 		//! Returns the time on the left visible side of the widget
 		Seiscomp::Core::Time leftTime() const;
