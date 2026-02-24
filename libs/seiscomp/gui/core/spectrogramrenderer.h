@@ -132,6 +132,15 @@ class SC_GUI_API SpectrogramRenderer {
 		                int paddingOuter = 6, int paddingInner = 0,
 		                bool stretch = false);
 
+		/**
+		 * @brief Returns the power spectra amplitude at given time and frequency.
+		 * @param t The time at at which the value should be returned.
+		 * @param f The frequency at which the value should be returned.
+		 * @return The optional amplitude. The the input values are out of bounds
+		 *         then None will be returned.
+		 */
+		OPT(double) amplitude(const Seiscomp::Core::Time &t, double f) const;
+
 		QPair<double,double> amplitudeRange() const;
 		QPair<double,double> frequencyRange() const;
 
