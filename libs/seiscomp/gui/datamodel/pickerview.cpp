@@ -4910,17 +4910,14 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget* widget,
 	if ( !pick ) return;
 
 	if ( !arrival->phase().code().empty() ) {
-		//NOTE: Because autoloc's associates e.g. PP phases automatically
-		//      it is important to insert all arrivals here otherwise the
-		//      trace wont be shown (unused)
-		//if ( !SC_D.phases.contains(arrival->phase().code().c_str()) )
-		//	return;
+		auto marker = new PickerMarker(widget,
+		                               pick->time(),
+		                               arrival->phase().code().c_str(),
+		                               PickerMarker::Arrival, false);
 
-		PickerMarker *marker = new PickerMarker(widget,
-		                                        pick->time(),
-		                                        arrival->phase().code().c_str(),
-		                                        PickerMarker::Arrival, false);
-
+		if ( !pick->commentCount() && SC_D.reader ) {
+			SC_D.reader->loadComments(pick);
+		}
 		marker->setPick(pick);
 		marker->setId(id);
 
@@ -5144,12 +5141,28 @@ int PickerView::loadPicks() {
 		if ( SC_D.reader ) {
 			qApp->setOverrideCursor(Qt::WaitCursor);
 
-			DatabaseIterator it = SC_D.reader->getPicks(SC_D.timeWindowOfInterest.startTime(),
-			                                        SC_D.timeWindowOfInterest.endTime());
+			auto it = SC_D.reader->getPicks(SC_D.timeWindowOfInterest.startTime(),
+			                                SC_D.timeWindowOfInterest.endTime());
+
+			map<IO::DatabaseInterface::OID, Pick*> picks;
 			for ( ; *it; ++it ) {
-				Pick* pick = Pick::Cast(*it);
-				if ( pick )
+				auto pick = Pick::Cast(*it);
+				if ( pick ) {
 					SC_D.picksInTime.push_back(pick);
+					picks[it.oid()] = pick;
+				}
+			}
+
+			it = SC_D.reader->getPickComments(SC_D.timeWindowOfInterest.startTime(),
+			                                  SC_D.timeWindowOfInterest.endTime());
+			for ( ; *it; ++it ) {
+				auto pit = picks.find(it.parentOid());
+				if ( pit != picks.end() ) {
+					auto comment = Comment::Cast(*it);
+					if ( comment ) {
+						pit->second->add(comment);
+					}
+				}
 			}
 
 			//std::cout << "read " << SC_D.picksInTime.size() << " picks in time" << std::endl;
