@@ -22,6 +22,7 @@
 #include <seiscomp/gui/core/application.h>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1054,5 +1055,36 @@ void SpectrogramRenderer::renderAxis(QPainter &p, const QRect &rect,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(double) SpectrogramRenderer::amplitude(const Seiscomp::Core::Time &t, double f) const {
+	for ( auto &spec : _spectra ) {
+		if ( t < spec->startTime ) {
+			// Before subsequent series => do not check further
+			break;
+		}
+
+		if ( t < spec->endTime ) {
+			// Within the spectrum
+			auto fi = (f - spec->minimumFrequency()) / (spec->maximumFrequency() - spec->minimumFrequency());
+			int i = fi * spec->data->size();
+			if ( i < 0 ) {
+				break;
+			}
+			if ( i >= spec->data->size() ) {
+				break;
+			}
+			auto norm = _scale * 0.5 / spec->frequency;
+			return log10(spec->data->get(i) * norm * norm);
+		}
+	}
+
+	return Core::None;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
