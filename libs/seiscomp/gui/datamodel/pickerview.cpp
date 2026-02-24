@@ -142,11 +142,11 @@ PickerView::Config::UnitType fromGainUnit(const std::string &gainUnit) {
 class ZoomRecordWidget : public RecordWidget {
 	public:
 		ZoomRecordWidget() {
-			maxLower = maxUpper = 0;
-			currentIndex = -1;
-			crossHair = false;
-			showSpectrogram = false;
-			traces = nullptr;
+			_maxLower = _maxUpper = 0;
+			_currentIndex = -1;
+			_crossHair = false;
+			_showSpectrogram = false;
+			_traces = nullptr;
 
 			Gradient gradient;
 			gradient.setColorAt(0.0, QColor(255,   0, 255,   0));
@@ -157,12 +157,12 @@ class ZoomRecordWidget : public RecordWidget {
 			gradient.setColorAt(1.0, QColor(255,   0,   0, 255));
 
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setOptions(spectrogram[i].options());
-				spectrogram[i].setGradient(gradient);
+				_spectrogram[i].setOptions(_spectrogram[i].options());
+				_spectrogram[i].setGradient(gradient);
 			}
 
-			spectrogramAxis.setLabel(tr("f [1/T] in Hz"));
-			spectrogramAxis.setPosition(Seiscomp::Gui::Axis::Right);
+			_spectrogramAxis.setLabel(tr("f [1/T] in Hz"));
+			_spectrogramAxis.setPosition(Seiscomp::Gui::Axis::Right);
 
 			if ( SCScheme.colors.records.background.isValid() ) {
 				QPalette p = palette();
@@ -170,73 +170,122 @@ class ZoomRecordWidget : public RecordWidget {
 				setPalette(p);
 				setAutoFillBackground(true);
 			}
+
+			connect(this, &Gui::RecordWidget::cursorUpdated, this, &ZoomRecordWidget::updateCursorValues);
 		}
 
+
+	private:
+		void updateCursorValues() {
+			if ( !_showAmplitudes || !isActive() ) {
+				_traceValue = _specValue = Core::None;
+				return;
+			}
+
+			auto t = cursorPos();
+			_traceValue = traceValue(t, currentRecords());
+
+			if ( _showSpectrogram ) {
+				double y = static_cast<double>(_currentCursorYPos - streamYPos(currentRecords())) / streamHeight(currentRecords());
+				if ( y < 0.0 ) {
+					y = 0.0;
+				}
+				else if ( y > 1.0 ) {
+					y = 1.0;
+				}
+				const auto range = _spectrogram[currentRecords()].frequencyRange();
+				const auto f = range.second - y * (range.second - range.first);
+				_specValue = _spectrogram[currentRecords()].amplitude(t, f);
+			}
+			else {
+				_specValue = Core::None;
+			}
+		}
+
+
 	public:
+		void setActive(bool a) {
+			RecordWidget::setActive(a);
+			updateCursorValues();
+		}
+
 		void setUncertainties(const PickerView::Config::UncertaintyList &list) {
 			uncertainties = list;
-			maxLower = maxUpper = 0;
-			currentIndex = -1;
+			_maxLower = _maxUpper = 0;
+			_currentIndex = -1;
 
 			for ( int i = 0; i < uncertainties.count(); ++i ) {
 				if ( i == 0 ) {
-					maxLower = uncertainties[i].first;
-					maxUpper = uncertainties[i].second;
+					_maxLower = uncertainties[i].first;
+					_maxUpper = uncertainties[i].second;
 				}
 				else {
-					maxLower = std::max(maxLower, (double)uncertainties[i].first);
-					maxUpper = std::max(maxUpper, (double)uncertainties[i].second);
+					_maxLower = std::max(_maxLower, (double)uncertainties[i].first);
+					_maxUpper = std::max(_maxUpper, (double)uncertainties[i].second);
 				}
 			}
 		}
 
 		void setCurrentUncertaintyIndex(int idx) {
-			currentIndex = idx;
+			_currentIndex = idx;
 			update();
 		}
 
 		int currentUncertaintyIndex() const {
-			return currentIndex;
+			return _currentIndex;
 		}
 
 		void setSpectrogramAxisWidth(int width) {
-			spectrogramAxisWidth = width;
+			_spectrogramAxisWidth = width;
 		}
 
 		void setCrossHairEnabled(bool enable) {
-			crossHair = enable;
+			_crossHair = enable;
+			update();
+		}
+
+		void setShowAmplitudes(bool enable) {
+			if ( _showAmplitudes == enable ) {
+				return;
+			}
+
+			_showAmplitudes = enable;
+			updateCursorValues();
 			update();
 		}
 
 		void setShowSpectrogram(bool enable) {
-			if ( showSpectrogram == enable ) return;
+			if ( _showSpectrogram == enable ) {
+				return;
+			}
 
-			showSpectrogram = enable;
+			_showSpectrogram = enable;
 			updateTraceColor();
+			updateCursorValues();
 			resetSpectrogram();
 			update();
 		}
 
 		void specSetLogScale(bool enable) {
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setLogScale(enable);
+				_spectrogram[i].setLogScale(enable);
 			}
-			spectrogramAxis.setLogScale(enable);
+			_spectrogramAxis.setLogScale(enable);
 			update();
 		}
 
 		void specSetSmoothTransform(bool enable) {
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setSmoothTransform(enable);
+				_spectrogram[i].setSmoothTransform(enable);
 			}
 			update();
 		}
 
 		void specSetNormalizationMode(SpectrogramRenderer::NormalizationMode mode) {
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setNormalizationMode(mode);
+				_spectrogram[i].setNormalizationMode(mode);
 			}
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				resetSpectrogram();
 				update();
 			}
@@ -244,60 +293,60 @@ class ZoomRecordWidget : public RecordWidget {
 
 		void specSetGradientRange(double from, double to) {
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setGradientRange(from, to);
+				_spectrogram[i].setGradientRange(from, to);
 			}
 			update();
 		}
 
 		void specSetFrequencyRange(OPT(double) from, OPT(double) to) {
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setFrequencyRange(from, to);
+				_spectrogram[i].setFrequencyRange(from, to);
 			}
 			update();
 		}
 
 		void specSetTimeWindow(double tw, double overlap) {
 			for ( int i = 0; i < 3; ++i ) {
-				IO::Spectralizer::Options opts = spectrogram[i].options();
+				IO::Spectralizer::Options opts = _spectrogram[i].options();
 				opts.windowLength = tw;
 				opts.windowOverlap = overlap;
-				spectrogram[i].setOptions(opts);
+				_spectrogram[i].setOptions(opts);
 			}
 
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				resetSpectrogram();
 				update();
 			}
 		}
 
 		void specSetShowAxis(bool show) {
-			showSpectrogramAxis = show;
+			_showSpectrogramAxis = show;
 			update();
 		}
 
 		void setTraces(ThreeComponentTrace::Component *t) {
-			traces = t;
+			_traces = t;
 			resetSpectrogram();
 			updateTraceColor();
 		}
 
 		void feedRaw(int slot, const Seiscomp::Record *rec) {
-			if ( showSpectrogram && (slot >= 0) && (slot < 3))
-				spectrogram[slot].feed(rec);
+			if ( _showSpectrogram && (slot >= 0) && (slot < 3))
+				_spectrogram[slot].feed(rec);
 		}
 
 	private:
 		void resetSpectrogram() {
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				qApp->setOverrideCursor(Qt::WaitCursor);
 				for ( int i = 0; i < 3; ++i ) {
 					const double *scale = recordScale(i);
 					// Scale is is nm and needs to be converted to m
 					if ( scale ) {
-						spectrogram[i].setScale(*scale);
+						_spectrogram[i].setScale(*scale);
 					}
-					spectrogram[i].setRecords(traces ? traces[i].raw : nullptr);
-					spectrogram[i].renderSpectrogram();
+					_spectrogram[i].setRecords(_traces ? _traces[i].raw : nullptr);
+					_spectrogram[i].renderSpectrogram();
 				}
 				qApp->restoreOverrideCursor();
 			}
@@ -307,11 +356,11 @@ class ZoomRecordWidget : public RecordWidget {
 			QRect r(0, 0, canvasRect().width(), canvasRect().height());
 			r.setHeight(streamHeight(slot));
 			r.moveTop(streamYPos(slot));
-			spectrogram[slot].setAlignment(alignment());
-			spectrogram[slot].setTimeRange(tmin(), tmin() + canvasRect().width() / timeScale());
+			_spectrogram[slot].setAlignment(alignment());
+			_spectrogram[slot].setTimeRange(tmin(), tmin() + canvasRect().width() / timeScale());
 			painter.save();
 			painter.setClipRect(r);
-			spectrogram[slot].render(painter, r, false, false);
+			_spectrogram[slot].render(painter, r, false, false);
 			painter.restore();
 		}
 
@@ -322,13 +371,13 @@ class ZoomRecordWidget : public RecordWidget {
 
 			painter.save();
 
-			QPair<double, double> range = spectrogram[slot].frequencyRange();
-			spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
+			QPair<double, double> range = _spectrogram[slot].frequencyRange();
+			_spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
 
-			r.setLeft(r.right() - spectrogramAxisWidth);
-			spectrogramAxis.updateLayout(painter, r);
+			r.setLeft(r.right() - _spectrogramAxisWidth);
+			_spectrogramAxis.updateLayout(painter, r);
 			painter.fillRect(r.adjusted(-axisSpacing(),0,0,0), palette().color(backgroundRole()));
-			spectrogramAxis.draw(painter, r, true);
+			_spectrogramAxis.draw(painter, r, true);
 
 			painter.restore();
 
@@ -336,7 +385,7 @@ class ZoomRecordWidget : public RecordWidget {
 		}
 
 		void updateTraceColor() {
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				for ( int i = 0; i < slotCount(); ++i ) {
 					setRecordPen(i, QPen(SCScheme.colors.records.spectrogram, SCScheme.records.lineWidth));
 				}
@@ -349,10 +398,15 @@ class ZoomRecordWidget : public RecordWidget {
 		}
 
 	protected:
+		void leaveEvent(QEvent *) override {
+			_traceValue = _specValue = Core::None;
+			update();
+		}
+
 		void paintEvent(QPaintEvent *p) override {
-			if ( showSpectrogram && showSpectrogramAxis ) {
+			if ( _showSpectrogram && _showSpectrogramAxis ) {
 				auto tmp = _canvasRect;
-				_canvasRect.setWidth(_canvasRect.width() - spectrogramAxisWidth);
+				_canvasRect.setWidth(_canvasRect.width() - _spectrogramAxisWidth);
 				RecordWidget::paintEvent(p);
 				_canvasRect = tmp;
 
@@ -379,10 +433,49 @@ class ZoomRecordWidget : public RecordWidget {
 			else {
 				RecordWidget::paintEvent(p);
 			}
+
+			if ( _traceValue || _specValue ) {
+				QPainter painter(this);
+				auto x = mapTime(cursorPos());
+				constexpr int padding = 4;
+				auto backgroundColor = palette().color(QPalette::Text);
+				backgroundColor.setAlpha(192);
+				auto foregroundColor = palette().color(QPalette::Base);
+				if ( _traceValue ) {
+					QString t = QString::number(*_traceValue);
+					auto r = painter.fontMetrics().boundingRect(t).adjusted(0, 0, padding * 2, padding * 2);
+					r.moveLeft(x + padding);
+					r.moveTop(streamYPos(currentRecords()));
+					painter.setPen(Qt::NoPen);
+					painter.setBrush(backgroundColor);
+					painter.drawRoundedRect(r, padding, padding);
+					painter.setPen(foregroundColor);
+					painter.drawText(r, Qt::AlignCenter, t);
+				}
+
+				if ( _specValue ) {
+					QString t = QString::number(*_specValue, 'f', 1);
+					auto r = painter.fontMetrics().boundingRect(t).adjusted(0, 0, padding * 2, padding * 2);
+					r.moveRight(x - padding);
+					r.moveTop(_currentCursorYPos);
+					// Adjust vertical position to avoid overflow
+					if ( r.top() < 0 ) {
+						r.moveTop(0);
+					}
+					if ( r.bottom() > height() ) {
+						r.moveBottom(height());
+					}
+					painter.setPen(Qt::NoPen);
+					painter.setBrush(backgroundColor);
+					painter.drawRoundedRect(r, padding, padding);
+					painter.setPen(foregroundColor);
+					painter.drawText(r, Qt::AlignCenter, t);
+				}
+			}
 		}
 
 		void drawCustomBackground(QPainter &painter) override {
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				painter.setBrush(palette().brush(QPalette::Base));
 
 				switch ( drawMode() ) {
@@ -401,9 +494,9 @@ class ZoomRecordWidget : public RecordWidget {
 				}
 
 				if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
-					if ( spectrogram[currentRecords()].isAmplitudeRangeDirty()
+					if ( _spectrogram[currentRecords()].isAmplitudeRangeDirty()
 					  && spectrogramAmplitudesChanged ) {
-						auto range = spectrogram[currentRecords()].amplitudeRange();
+						auto range = _spectrogram[currentRecords()].amplitudeRange();
 						spectrogramAmplitudesChanged(range.first, range.second);
 					}
 				}
@@ -413,11 +506,16 @@ class ZoomRecordWidget : public RecordWidget {
 		void drawActiveCursor(QPainter &painter, int x, int y) override {
 			RecordWidget::drawActiveCursor(painter, x, y);
 
-			if ( !crossHair ) return;
-			if ( maxLower <= 0 && maxUpper <= 0 ) return;
+			if ( !_crossHair ) {
+				return;
+			}
 
-			int xl = (int)(maxLower*timeScale());
-			int xu = (int)(maxUpper*timeScale());
+			if ( _maxLower <= 0 && _maxUpper <= 0 ) {
+				return;
+			}
+
+			int xl = (int)(_maxLower * timeScale());
+			int xu = (int)(_maxUpper * timeScale());
 			painter.drawLine(x-xl+1,y,x+xu,y);
 
 			painter.setPen(palette().color(QPalette::WindowText));
@@ -438,10 +536,10 @@ class ZoomRecordWidget : public RecordWidget {
 				}
 			}
 
-			if ( currentIndex >= 0 ) {
+			if ( _currentIndex >= 0 ) {
 				painter.setPen(QPen(palette().color(QPalette::Highlight), 2));
-				double lower = uncertainties[currentIndex].first;
-				double upper = uncertainties[currentIndex].second;
+				double lower = uncertainties[_currentIndex].first;
+				double upper = uncertainties[_currentIndex].second;
 
 				if ( lower > 0 && xl > 0 ) {
 					int x0 = (int)(lower*timeScale());
@@ -462,15 +560,18 @@ class ZoomRecordWidget : public RecordWidget {
 		std::function<void (double, double)>  spectrogramAmplitudesChanged;
 
 	private:
-		bool                                  crossHair;
-		double                                maxLower, maxUpper;
-		int                                   currentIndex;
-		SpectrogramRenderer                   spectrogram[3];
-		bool                                  showSpectrogram;
-		bool                                  showSpectrogramAxis{true};
-		Seiscomp::Gui::Axis                   spectrogramAxis;
-		int                                   spectrogramAxisWidth{90};
-		ThreeComponentTrace::Component       *traces;
+		bool                                  _crossHair;
+		bool                                  _showAmplitudes{false};
+		double                                _maxLower, _maxUpper;
+		int                                   _currentIndex;
+		SpectrogramRenderer                   _spectrogram[3];
+		bool                                  _showSpectrogram;
+		bool                                  _showSpectrogramAxis{true};
+		Seiscomp::Gui::Axis                   _spectrogramAxis;
+		int                                   _spectrogramAxisWidth{90};
+		ThreeComponentTrace::Component       *_traces;
+		OPT(double)                           _traceValue;
+		OPT(double)                           _specValue;
 };
 
 
@@ -960,13 +1061,14 @@ class PickerMarker : public RecordMarker {
 			if ( _type != Pick && _type != Arrival )
 				return RecordMarker::toolTip();
 
-			if ( _referencedPick == nullptr )
+			if ( !_referencedPick ) {
 				return QString("manual %1 pick (local)\n"
 				               "filter: %2\n"
 				               "arrival: %3")
 				       .arg(text(),
 				            _filter.isEmpty() ? "None" : _filter,
 				            isArrival() ? "yes" : "no");
+			}
 
 			QString text;
 
@@ -1018,7 +1120,7 @@ class PickerMarker : public RecordMarker {
 			catch ( ... ) {}
 			try {
 				double confidence = _referencedPick->time().confidenceLevel();
-				text += QString("\nconfidence: %1").arg(confidence);
+				text += QString("\ntime confidence: %1").arg(confidence);
 			}
 			catch ( ... ) {}
 			if ( !_referencedPick->filterID().empty() )
@@ -1033,6 +1135,12 @@ class PickerMarker : public RecordMarker {
 				text += QString("\nhoriz. slowness: %1 deg/s").arg(hs);
 			}
 			catch ( ... ) {}
+			for ( size_t i = 0; i < _referencedPick->commentCount(); ++i ) {
+				auto comment = _referencedPick->comment(i);
+				if ( comment ) {
+					text += QString("\ncomment %1: %2").arg(comment->id().c_str(), comment->text().c_str());
+				}
+			}
 
 			text += QString("\narrival: %1").arg(isArrival()?"yes":"no");
 
@@ -2700,6 +2808,7 @@ void PickerView::init() {
 	SC_D.currentRecord->setDrawAxis(true);
 	SC_D.currentRecord->setDrawSPS(true);
 	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowAmplitudes(SC_D.ui.actionShowAmplitudeValuesAtCursor->isChecked());
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->spectrogramAmplitudesChanged = bind(
 		&PickerView::specAmplitudesChanged,
 		this, placeholders::_1, placeholders::_2
@@ -2818,6 +2927,7 @@ void PickerView::init() {
 	addAction(SC_D.ui.actionDecreaseAmplitudeScale);
 	addAction(SC_D.ui.actionTimeScaleUp);
 	addAction(SC_D.ui.actionTimeScaleDown);
+	addAction(SC_D.ui.actionShowAmplitudeValuesAtCursor);
 	addAction(SC_D.ui.actionClipComponentsToViewport);
 
 	addAction(SC_D.ui.actionIncreaseRowHeight);
@@ -3070,6 +3180,10 @@ void PickerView::init() {
 	        this, SLOT(scaleReset()));
 	connect(SC_D.ui.actionClipComponentsToViewport, SIGNAL(triggered(bool)),
 	        SC_D.currentRecord, SLOT(setClippingEnabled(bool)));
+	connect(SC_D.ui.actionShowAmplitudeValuesAtCursor, &QAction::triggered,
+	        this, [this](bool e) {
+		static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowAmplitudes(e);
+	});
 	connect(SC_D.ui.actionScrollLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollLeft()));
 	connect(SC_D.ui.actionScrollFineLeft, SIGNAL(triggered(bool)),
@@ -4142,7 +4256,7 @@ void PickerView::setCursorText(const QString &text) {
 
 	SC_D.recordView->setCursorText(text);
 	SC_D.currentRecord->setCursorText(text);
-	SC_D.currentRecord->setActive(text != "");
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setActive(text != "");
 	SC_D.ui.progressAmpLevel->setEnabled(!text.isEmpty());
 	auto d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
 	if ( d ) {
@@ -4904,10 +5018,12 @@ void PickerView::showAuxiliaryStationProfile(const AuxiliaryChannelProfile &prof
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::addArrival(Seiscomp::Gui::RecordWidget* widget,
-                            Seiscomp::DataModel::Arrival* arrival, int id) {
-	Pick* pick = Pick::Find(arrival->pickID());
-	if ( !pick ) return;
+void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
+                            Seiscomp::DataModel::Arrival *arrival, int id) {
+	auto pick = Pick::Find(arrival->pickID());
+	if ( !pick ) {
+		return;
+	}
 
 	if ( !arrival->phase().code().empty() ) {
 		auto marker = new PickerMarker(widget,
@@ -5132,8 +5248,8 @@ int PickerView::loadPicks() {
 	if ( !SC_D.timeWindowOfInterest ) return -1;
 
 	SEISCOMP_DEBUG("Loading picks in time window: %s ~ %s",
-	               SC_D.timeWindowOfInterest.startTime().iso().c_str(),
-	               SC_D.timeWindowOfInterest.endTime().iso().c_str());
+	               SC_D.timeWindowOfInterest.startTime().iso(),
+	               SC_D.timeWindowOfInterest.endTime().iso());
 
 	std::vector<Seiscomp::DataModel::PickPtr> savePicks = SC_D.picksInTime;
 
@@ -5178,8 +5294,9 @@ int PickerView::loadPicks() {
 		if ( ep ) {
 			for ( size_t i = 0; i < ep->pickCount(); ++i ) {
 				Pick* pick = ep->pick(i);
-				if ( pick && SC_D.timeWindowOfInterest.contains(pick->time().value()) )
+				if ( pick && SC_D.timeWindowOfInterest.contains(pick->time().value()) ) {
 					SC_D.picksInTime.push_back(pick);
+				}
 			}
 		}
 
@@ -5189,7 +5306,7 @@ int PickerView::loadPicks() {
 		qApp->restoreOverrideCursor();
 	}
 
-	return (int)SC_D.picksInTime.size();
+	return static_cast<int>(SC_D.picksInTime.size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6172,8 +6289,9 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 				connect(menuUncertainty, SIGNAL(hovered(QAction*)),
 				        this, SLOT(previewUncertainty(QAction*)));
 
-				foreach ( QAction *action, SC_D.actionsUncertainty->actions() )
+				foreach ( QAction *action, SC_D.actionsUncertainty->actions() ) {
 					menuUncertainty->addAction(action);
+				}
 				menuUncertainty->addSeparator();
 			}
 
