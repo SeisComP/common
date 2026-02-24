@@ -80,6 +80,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <map>
 #include <set>
 
 #ifdef WIN32
@@ -4430,13 +4431,28 @@ void OriginLocatorView::readPicks(Origin* o) {
 			progress.setLabelText(tr("Loading picks..."));
 			progress.setCancelButton(nullptr);
 			DatabaseIterator it = SC_D.reader->getPicks(o->publicID());
+			std::map<IO::DatabaseInterface::OID, Pick*> picks;
 
-			while ( *it ) {
+			for ( ; *it; ++it ) {
 				if ( !it.cached() ) {
 					tmpPicks.push_back(Pick::Cast(*it));
+					picks[it.oid()] = tmpPicks.back().get();
 				}
-				++it;
 				progress.setValue(progress.value()+1);
+			}
+
+			if ( !picks.empty() ) {
+				// Load pick comments
+				it = SC_D.reader->getPickComments(o->publicID());
+				for ( ; *it; ++it ) {
+					auto pit = picks.find(it.parentOid());
+					if ( pit != picks.end() ) {
+						auto comment = Comment::Cast(*it);
+						if ( comment ) {
+							pit->second->add(comment);
+						}
+					}
+				}
 			}
 		}
 
