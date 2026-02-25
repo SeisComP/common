@@ -38,6 +38,7 @@ class SC_GUI_API ConnectionStateLabel : public QLabel {
 	public:
 		ConnectionStateLabel(QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
+		void setDefaultPixmaps();
 		void setPixmaps(const QPixmap &connected, const QPixmap &disconnected);
 
 	public slots:
