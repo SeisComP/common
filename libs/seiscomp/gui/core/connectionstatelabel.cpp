@@ -36,10 +36,19 @@ namespace Seiscomp::Gui {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ConnectionStateLabel::ConnectionStateLabel(QWidget *parent, Qt::WindowFlags f)
  : QLabel(parent, f) {
-	_connected = Gui::pixmap(this, "connection_on");
-	_disconnected = Gui::pixmap(this, "connection_off");
-	setPixmap(_disconnected);
 	setFrameStyle(QFrame::NoFrame);
+	setDefaultPixmaps();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ConnectionStateLabel::setDefaultPixmaps() {
+	_connected = Gui::pixmap(this, "connection_on", palette().color(QPalette::Text));
+	_disconnected = Gui::pixmap(this, "connection_off", palette().color(QPalette::Text));
+	setPixmap(_isConnected ? _connected : _disconnected);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -51,7 +60,6 @@ void ConnectionStateLabel::setPixmaps(const QPixmap &connected,
                                       const QPixmap &disconnected) {
 	_connected = connected;
 	_disconnected = disconnected;
-
 	setPixmap(_isConnected ? _connected : _disconnected);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
