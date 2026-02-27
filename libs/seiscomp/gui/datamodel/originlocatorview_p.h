@@ -37,6 +37,7 @@
 #include "originlocatorview.h"
 
 #include <seiscomp/gui/datamodel/ui_originlocatorview.h>
+#include <seiscomp/seismology/firstmotion.h>
 
 
 namespace Seiscomp::Gui {
@@ -125,6 +126,9 @@ class OriginLocatorViewPrivate {
 		DiagramFilterSettingsDialog::Filter  *plotFilter{nullptr};
 
 		QPushButton                          *btnCommandMenu{nullptr};
+
+		// Last auto-inversion result (used to populate FM fields on commit)
+		Seismology::FMInversionResult         lastFMResult;
 
 	friend class OriginLocatorView;
 };
