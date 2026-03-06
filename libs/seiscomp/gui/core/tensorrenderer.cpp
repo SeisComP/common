@@ -403,7 +403,7 @@ void TensorRenderer::renderBorder(QImage& img) {
 #define STEREO_PROJECTION
 #ifdef STEREO_PROJECTION
 			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = M_SQRT2 * div_z;
+			float div_xy = 2 * div_z;
 
 			v[0] = yf * div_xy;
 			v[1] = -xf * div_xy;
@@ -526,7 +526,7 @@ void TensorRenderer::render(QImage& img, const Math::Matrix3f &m) {
 #define STEREO_PROJECTION
 #ifdef STEREO_PROJECTION
 			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = M_SQRT2 * div_z;
+			float div_xy = 2 * div_z;
 
 			v[0] = yf * div_xy;
 			v[1] = -xf * div_xy;
@@ -721,7 +721,7 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 			}
 
 			div_z = 1.0f / (1.0f + dist);
-			div_xy = M_SQRT2 * div_z;
+			div_xy = 2 * div_z;
 
 			v[0] = yf * div_xy;
 			v[1] = -xf * div_xy;
@@ -904,7 +904,7 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 			}
 
 			div_z = 1.0f / (1.0f + dist);
-			div_xy = M_SQRT2 * div_z;
+			div_xy = 2 * div_z;
 
 			v[0] = yf * div_xy;
 			v[1] = -xf * div_xy;
@@ -1008,7 +1008,7 @@ void TensorRenderer::renderNP(QImage& img, double strike, double dip, double sli
 #define STEREO_PROJECTION
 #ifdef STEREO_PROJECTION
 			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = M_SQRT2 * div_z;
+			float div_xy = 2 * div_z;
 
 			v[0] = yf * div_xy;
 			v[1] = -xf * div_xy;
@@ -1095,7 +1095,7 @@ bool TensorRenderer::unproject(Math::Vector3d &v, const QPointF &p) const {
 	}
 	else {
 		double div_z = 1.0 / (1.0f + dist);
-		double div_xy = M_SQRT2 * div_z;
+		double div_xy = 2 * div_z;
 		v[0] = yf * div_xy;
 		v[1] = -xf * div_xy;
 		v[2] = -(1.0f - dist) * div_z;
