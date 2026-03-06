@@ -406,7 +406,7 @@ class ZoomRecordWidget : public RecordWidget {
 		void paintEvent(QPaintEvent *p) override {
 			if ( _showSpectrogram && _showSpectrogramAxis ) {
 				auto tmp = _canvasRect;
-				_canvasRect.setWidth(_canvasRect.width() - _spectrogramAxisWidth);
+				_canvasRect.setWidth(_canvasRect.width() - _spectrogramAxisWidth - axisSpacing());
 				RecordWidget::paintEvent(p);
 				_canvasRect = tmp;
 
