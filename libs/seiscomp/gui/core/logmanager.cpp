@@ -715,6 +715,7 @@ LogManager::LogManager(QWidget *parent)
 	setObjectName("LogManager");
 
 	SC_D.ui.settings->setIcon(icon("settings"));
+	SC_D.ui.actionPause->setIcon(icon("process_pause"));
 
 	SC_D.ui.toolBar->addAction(SC_D.ui.clear);
 	SC_D.ui.toolBar->addSeparator();
@@ -726,6 +727,8 @@ LogManager::LogManager(QWidget *parent)
 	SC_D.ui.toolBar->addAction(SC_D.ui.notice);
 	SC_D.ui.toolBar->addAction(SC_D.ui.info);
 	SC_D.ui.toolBar->addAction(SC_D.ui.debug);
+	SC_D.ui.toolBar->addSeparator();
+	SC_D.ui.toolBar->addAction(SC_D.ui.actionPause);
 
 	SC_D.model->setColumnCount(Columns::Quantity);
 
@@ -1008,6 +1011,10 @@ bool LogManager::eventFilter(QObject *obj, QEvent *ev) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LogManager::log(const char *channelName, Seiscomp::Logging::LogLevel level,
                      const char *msg, time_t time, uint32_t microseconds) {
+	if ( SC_D.ui.actionPause->isChecked() ) {
+		return;
+	}
+
 	LogEntry entry;
 	entry.time = time;
 	entry.microseconds = microseconds;

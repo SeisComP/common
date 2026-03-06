@@ -287,6 +287,17 @@
     <string>Ctrl+F</string>
    </property>
   </action>
+  <action name="actionPause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+   <property name="toolTip">
+    <string>Pauses feeding log messages into this view</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>tableView</tabstop>
