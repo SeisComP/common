@@ -3896,7 +3896,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( _drawSPS && stream->records[frontIndex] ) {
 						painter.drawText(
-							0, stream->posY, _canvasRect.width()-4, stream->height,
+							0, stream->posY, _canvasRect.width() - 4, stream->height,
 							Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
 							QString("%1 sps")
 							.arg(stream->records[frontIndex]->front()->samplingFrequency())
@@ -4005,7 +4005,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 				if ( _drawSPS && stream->records[frontIndex] ) {
 					painter.drawText(
-						0, 0, _canvasRect.width()-4, stream->height,
+						0, 0, _canvasRect.width() - 4, stream->height,
 						Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
 						QString("%1 sps")
 						.arg(stream->records[frontIndex]->front()->samplingFrequency())
