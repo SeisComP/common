@@ -56,7 +56,9 @@ DatabaseInterface::~DatabaseInterface() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseInterface* DatabaseInterface::Create(const char* service) {
-	if ( service == nullptr ) return nullptr;
+	if ( !service ) {
+		return nullptr;
+	}
 
 	return DatabaseInterfaceFactory::Create(service);
 }
@@ -77,8 +79,9 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 		std::copy(uri, tmp, std::back_inserter(service));
 		uri = tmp + 3;
 	}
-	else
+	else {
 		service = "mysql";
+	}
 
 	source = uri;
 
