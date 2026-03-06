@@ -1079,15 +1079,24 @@ class NodalPlaneDialog : public QDialog {
 };
 
 
-QPointF equalarea(double azi, double dip) {
-	dip = 90-dip;
-	if ( dip > 90 ) {
-		dip = 180 - dip;
+double spherical2polar(double &azi, double &beta) {
+	if ( beta > 90 ) {
+		beta = 180 - beta;
 		azi -= 180;
+		if ( azi < 0 ) azi += 360;
 	}
 
-	double z = sqrt(2)*sin(0.5*deg2rad(dip));
-	return QPointF(z, azi);
+	// In seismology beta/dip/takeoffangle is measured against negative Z
+	// stereographic projection requires agains positive Z
+	double tmpbeta = deg2rad(180-beta);
+	return sin(tmpbeta) / (1 - cos(tmpbeta));
+}
+
+
+QPointF equalarea(double azi, double dip) {
+	dip = 90-dip;
+	auto R = spherical2polar(azi, dip);
+	return QPointF(R, azi);
 }
 
 
@@ -1334,6 +1343,8 @@ class PlotWidget : public OriginLocatorPlot {
 			_shapeAxis[0].init("olv.fmplot.shape.t-axis");
 			_shapeAxis[1] = Shape(ST_TRIANGLE, 14, Qt::NoBrush, QPen(Qt::red));
 			_shapeAxis[1].init("olv.fmplot.shape.p-axis");
+			_shapeAxis[2] = Shape(ST_CIRCLE, 6, Qt::NoBrush, QPen(Qt::black));
+			_shapeAxis[2].init("olv.fmplot.shape.n-axis");
 		}
 
 
@@ -1403,6 +1414,7 @@ class PlotWidget : public OriginLocatorPlot {
 
 			_tAxis = equalarea(t.str, t.dip);
 			_pAxis = equalarea(p.str, p.dip);
+			_nAxis = equalarea(n.str, n.dip);
 
 			_npLabel->setText(QString("NP1: <a href=\"np1\">%1/%2/%3</a> "
 			                          "NP2: <a href=\"np2\">%4/%5/%6</a>")
@@ -1630,6 +1642,12 @@ class PlotWidget : public OriginLocatorPlot {
 			_shapeAxis[1].draw(painter);
 			painter.translate(-p);
 
+			// Draw N Axis
+			p = (this->*project)(_nAxis);
+			painter.translate(p);
+			_shapeAxis[2].draw(painter);
+			painter.translate(-p);
+
 			_displayRect = tmp;
 
 			painter.setRenderHint(QPainter::Antialiasing, false);
@@ -1686,13 +1704,13 @@ class PlotWidget : public OriginLocatorPlot {
 
 	private:
 		Shape             _shapes[POL_QUANTITY];
-		Shape             _shapeAxis[2];
+		Shape             _shapeAxis[3];
 		ArrivalModel     *_model;
 		QToolButton       _commitButton;
 		QLabel           *_npLabel;
 		QImage            _buffer;
 		QImage            _preferredFMBuffer;
-		QPointF           _tAxis, _pAxis;
+		QPointF           _tAxis, _pAxis, _nAxis;
 		TensorRenderer    _renderer;
 		bool              _customDraw;
 		StationNameMode   _drawStationNames;
@@ -4650,16 +4668,10 @@ void OriginLocatorView::setConfig(const Config &c) {
 					 static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).shown ) {
 					double azi = SC_D.residuals->value(i, PC_AZIMUTH);
 
-					if ( beta > 90 ) {
-						beta = 180-beta;
-						azi = azi-180;
-						if ( azi < 0 ) azi += 360;
-					}
-
-					beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
+					auto R = spherical2polar(azi, beta);
 
 					SC_D.residuals->setValue(i, PC_FMAZI, azi);
-					SC_D.residuals->setValue(i, PC_FMDIST, beta);
+					SC_D.residuals->setValue(i, PC_FMDIST, R);
 					SC_D.residuals->setValueValid(i, PC_FMDIST, true);
 					SC_D.residuals->setValueValid(i, PC_FMAZI, true);
 				}
@@ -5704,19 +5716,13 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 			double azi;
 			azi = SC_D.residuals->value(id, PC_AZIMUTH);
 
-			if ( beta > 90 ) {
-				beta = 180-beta;
-				azi = azi-180;
-				if ( azi < 0 ) azi += 360;
-			}
-
-			beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
+			auto R = spherical2polar(azi, beta);
 
 			//if ( static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).colorUsed )
 			//	SC_D.residuals->setValueColor(id, PC_FMAZI, static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).color);
 
 			SC_D.residuals->setValue(id, PC_FMAZI, azi);
-			SC_D.residuals->setValue(id, PC_FMDIST, beta);
+			SC_D.residuals->setValue(id, PC_FMDIST, R);
 		}
 		else {
 			SC_D.residuals->setValue(id, PC_FMDIST, 0.0);
