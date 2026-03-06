@@ -1938,16 +1938,26 @@ void WebsocketConnection::closeSocket(const char *errorMessage,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketConnection::closeSocketWithoutLock(const char *errorMessage,
                                                  int errorMessageLen) {
-	if ( !_socket->isValid() ) return;
-	if ( !errorMessage )
+	if ( !_socket->isValid() ) {
+		return;
+	}
+
+	if ( !errorMessage ) {
 		_errorMessage = std::string();
-	else if ( errorMessageLen < 0 )
+	}
+	else if ( errorMessageLen < 0 ) {
 		_errorMessage = errorMessage;
-	else
+	}
+	else {
 		_errorMessage.assign(errorMessage, (size_t)errorMessageLen);
+	}
 	_socket->close();
-	for ( auto &&msg : _outbox ) _backlog.push_back(msg);
-	SEISCOMP_INFO("Keep %d messages in the backlog", int(_backlog.size()));
+
+	for ( auto &&msg : _outbox ) {
+		_backlog.push_back(msg);
+	}
+
+	SEISCOMP_INFO("Keep %d messages in the backlog", static_cast<int>(_backlog.size()));
 	_outbox.clear();
 	_registeredClientName = string();
 }
