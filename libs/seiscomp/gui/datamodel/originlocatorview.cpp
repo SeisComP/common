@@ -5067,11 +5067,38 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 			if ( !SC_D.localOrigin ) {
 				// Do not change the profile if the origin has been relocated
 				// locally.
-				int idx = SC_D.ui.cbLocator->findText(SC_D.currentOrigin->methodID().c_str());
+				QString method, model;
+				method = SC_D.currentOrigin->methodID().c_str();
+				auto pos = method.indexOf(':');
+				if ( pos < 0 ) {
+					pos = method.indexOf('/');
+				}
+
+				if ( pos > 0 ) {
+					method = method.mid(0, pos).trimmed();
+				}
+
+				auto idx = SC_D.ui.cbLocator->findText(method);
+				if ( idx < 0 ) {
+					QString earthModelID = SC_D.currentOrigin->earthModelID().c_str();
+					pos = earthModelID.indexOf(':');
+					if ( pos < 0 ) {
+						pos = earthModelID.indexOf('/');
+					}
+
+					if ( pos > 0 ) {
+						idx = SC_D.ui.cbLocator->findText(earthModelID.mid(0, pos).trimmed());
+						model = earthModelID.mid(pos + 1).trimmed();
+					}
+				}
+				else {
+					model = SC_D.currentOrigin->earthModelID().c_str();
+				}
+
 				if ( idx >= 0 ) {
 					SC_D.ui.cbLocator->setCurrentIndex(idx);
 
-					idx = SC_D.ui.cbLocatorProfile->findText(SC_D.currentOrigin->earthModelID().c_str());
+					idx = SC_D.ui.cbLocatorProfile->findText(model);
 					if ( idx >= 0 ) {
 						SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
 					}

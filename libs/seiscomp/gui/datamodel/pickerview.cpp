@@ -5059,13 +5059,50 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::figureOutTravelTimeTable() {
-	if ( !SC_D.origin ) return;
+	if ( !SC_D.origin ) {
+		return;
+	}
 
 	int idx = SC_D.comboTTT->findText(SC_D.origin->methodID().c_str());
-	if ( idx < 0 ) return;
+	if ( idx < 0 ) {
+		QString earthModelID = SC_D.origin->earthModelID().c_str();
+		auto pos = earthModelID.indexOf(':');
+		if ( pos < 0 ) {
+			pos = earthModelID.indexOf('/');
+		}
 
-	SC_D.ttTableName = SC_D.origin->earthModelID();
-	SC_D.comboTTT->setCurrentIndex(idx);
+		if ( pos > 0 ) {
+			idx = SC_D.comboTTT->findText(earthModelID.mid(0, pos).trimmed());
+			if ( idx >= 0 ) {
+				SC_D.ttTableName = earthModelID.mid(pos + 1).trimmed().toStdString();
+			}
+		}
+	}
+	else {
+		SC_D.ttTableName = SC_D.origin->earthModelID();
+	}
+
+	if ( idx < 0 ) {
+		std::string defaultLocator = "LOCSAT";
+		try {
+			defaultLocator = SCApp->configGetString("olv.locator.interface");
+		}
+		catch ( ... ) {
+			try {
+				defaultLocator = SCApp->configGetString("olv.locator");
+			}
+			catch ( ... ) {}
+		}
+
+		idx = SC_D.comboTTT->findText(defaultLocator.c_str());
+		if ( idx < 0 ) {
+			idx = SC_D.comboTTT->findText("LOCSAT");
+		}
+	}
+
+	if ( idx >= 0 ) {
+		SC_D.comboTTT->setCurrentIndex(idx);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
