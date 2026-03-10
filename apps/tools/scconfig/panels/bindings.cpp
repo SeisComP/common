@@ -202,7 +202,7 @@ class StationTreeView : public QTreeView {
 
 		[[nodiscard]]
 		Qt::DropActions supportedDropActions() const {
-			return Qt::LinkAction;
+			return Qt::LinkAction | Qt::CopyAction;
 		}
 
 		void dragEnterEvent(QDragEnterEvent *event) override {
@@ -290,7 +290,7 @@ class StationsFolderView : public QListView {
 
 		[[nodiscard]]
 		Qt::DropActions supportedDropActions() const {
-			return Qt::LinkAction;
+			return Qt::LinkAction | Qt::CopyAction;
 		}
 
 		void dragEnterEvent(QDragEnterEvent *event) override {
@@ -416,7 +416,7 @@ class ProfilesModel : public QStandardItemModel {
 		}
 
 		Qt::DropActions supportedDragActions() const override {
-			return Qt::LinkAction;
+			return Qt::LinkAction | Qt::CopyAction;
 		}
 };
 
