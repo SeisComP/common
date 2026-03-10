@@ -128,14 +128,21 @@ void CitiesLayer::draw(const Seiscomp::Gui::Map::Canvas* canvas,
 
 	size_t citiesRendered = 0;
 
-	foreach ( const Math::Geo::CityD& city, SCCoreApp->cities() ) {
-		if ( citiesRendered >= maxRenderedCitites ) break;
-		if ( city.population() < radius ) break;
-		if ( &city == _selectedCity ) continue;
+	for ( const auto &city : SCCoreApp->cities() ) {
+		if ( citiesRendered >= maxRenderedCitites ) {
+			break;
+		}
+		if ( city.population() < radius ) {
+			break;
+		}
+		if ( &city == _selectedCity ) {
+			continue;
+		}
 
 		if ( drawCity(painter, grid, font, lastUnderline, lastBold, projection,
-		         city, fontMetrics, width, fontHeight) )
+		         city, fontMetrics, width, fontHeight) ) {
 			++citiesRendered;
+		}
 	}
 
 	painter.restore();
