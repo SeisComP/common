@@ -234,7 +234,7 @@ void ImportFDSNWSDialog::clearTable() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ImportFDSNWSDialog::fetch() {
 	ostringstream oss;
-	oss << _uiSideBar.editServerURL->text().toStdString() << "/station/1/query?";
+	oss << _uiSideBar.comboServerURL->currentText().toStdString() << "/station/1/query?";
 
 	if ( _uiSideBar.dtStart->dateTime() > _uiSideBar.dtStart->minimumDateTime() ) {
 		oss << "starttime=" << qPrintable(_uiSideBar.dtStart->dateTime().toString("yyyy-MM-ddTHH:mm:00")) << "&";
