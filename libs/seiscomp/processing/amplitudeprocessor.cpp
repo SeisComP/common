@@ -1623,6 +1623,24 @@ void AmplitudeProcessor::computeTimeWindow() {
 		return;
 	}
 
+	// Check for valid time windows
+	if ( (double)_config.noiseBegin >= (double)_config.noiseEnd ) {
+		SEISCOMP_ERROR("Invalid time window: noiseBegin (%f) "
+		               "after noiseEnd (%f)",
+		               (double)_config.noiseBegin, (double)_config.noiseEnd);
+		setStatus(Error, 541);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+	if ( (double)_config.signalBegin >= (double)_config.signalEnd ) {
+		SEISCOMP_ERROR("Invalid time window: signalBegin (%f) "
+		               "after signalEnd (%f)",
+		               (double)_config.signalBegin, (double)_config.signalEnd);
+		setStatus(Error, 542);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
 	Core::Time startTime = *_trigger + Core::TimeSpan(_config.noiseBegin);
 	Core::Time   endTime = *_trigger + Core::TimeSpan(_config.signalEnd);
 
