@@ -19925,6 +19925,14 @@ class DatabaseQuery(DatabaseReader):
         """
         return _datamodel.DatabaseQuery_getPicks(self, *args)
 
+    def getPickComments(self, *args):
+        r"""
+        getPickComments(DatabaseQuery self, std::string const & originID) -> DatabaseIterator
+        getPickComments(DatabaseQuery self, Time startTime, Time endTime) -> DatabaseIterator
+        getPickComments(DatabaseQuery self, Time startTime, Time endTime, WaveformStreamID waveformID) -> DatabaseIterator
+        """
+        return _datamodel.DatabaseQuery_getPickComments(self, *args)
+
     def getWaveformQuality(self, *args):
         r"""
         getWaveformQuality(DatabaseQuery self, std::string const & type) -> DatabaseIterator
