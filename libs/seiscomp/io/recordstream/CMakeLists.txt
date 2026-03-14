@@ -3,6 +3,7 @@ SET(RECORDSTREAM_SOURCES
 	memory.cpp
 	sdsarchive.cpp
 	slconnection.cpp
+	sl4connection.cpp
 	combined.cpp
 	concurrent.cpp
 	balanced.cpp
