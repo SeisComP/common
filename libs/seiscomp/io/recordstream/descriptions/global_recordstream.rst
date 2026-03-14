@@ -45,7 +45,7 @@ Implementations
 SeedLink
 --------
 
-This RecordStream fetches data from a SeedLink server.
+This RecordStream fetches data from a SeedLink 3.x server.
 
 
 Definition
@@ -67,6 +67,42 @@ Examples
 - ``slink://``
 - ``slink://geofon.gfz.de?timeout=60&retries=5``
 - ``slink://localhost:18000``
+
+
+.. _rs-slink4:
+
+
+SeedLink4
+---------
+
+This RecordStream fetches data from a SeedLink 4.x server.
+
+
+Definition
+^^^^^^^^^^
+
+URL: ``slink4[s]://[host][:port][?parameter]``
+
+The default host is set to `localhost`, the default port depends on the URL
+scheme used:
+
+- `slink4`: `18000`
+- `slink4s`: `18500` (TLS)
+
+Optional URL encoded parameters are:
+
+- `timeout` - connection timeout in seconds, default: 300
+- `retries` - number of connection retry attempts, default: -1
+- `format` - miniSEED format to request (2,3), default: any
+
+Authentication is currently not supported.
+
+
+Examples
+^^^^^^^^
+
+- ``slink4://``
+- ``slink4://localhost:18000``
 
 
 .. _rs-fdsnws:
