@@ -496,18 +496,21 @@ string Socket::readline() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-string Socket::sendRequest(const string& request, bool waitResponse) {
+string Socket::sendRequest(const string &request, bool waitResponse) {
 	write(request + _eol);
 
-	if ( !waitResponse )
-	return string();
+	if ( !waitResponse ) {
+		return string();
+	}
 
 	string resp = readline();
 	if ( resp == "ERROR" ) {
 		SEISCOMP_ERROR("Command failed: %s", request);
 		throw SocketCommandException(request);
-	} else
+	}
+	else {
 		return resp;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
