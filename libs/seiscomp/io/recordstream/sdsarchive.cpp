@@ -33,6 +33,7 @@
 #include <seiscomp/system/environment.h>
 #include <seiscomp/io/records/mseedrecord.h>
 #include <seiscomp/utils/files.h>
+#include <seiscomp/utils/url.h>
 
 #include "sdsarchive.h"
 
@@ -188,7 +189,8 @@ bool SDSArchive::Index::operator==(const Index &other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SDSArchive::SDSArchive() {}
+SDSArchive::SDSArchive() {
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -212,11 +214,23 @@ SDSArchive::~SDSArchive() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::setSource(const string &src) {
-	if ( src.empty() ) {
+	Util::Url url(src);
+
+	if ( url.hasQueryItem("format") ) {
+		if ( !Core::fromString(_format, url.queryItemValue("format")) ||
+				_format < 2 || _format > 3 ) {
+			SEISCOMP_ERROR("Invalid 'format' (must be '2' or '3')");
+			return false;
+		}
+	}
+
+	string arcroots = url.path();
+
+	if ( arcroots.empty() ) {
 		_arcroots.push_back(Environment::Instance()->installDir() + "/var/lib/archive");
 	}
 	else {
-		Core::split(_arcroots, src.c_str(), ",");
+		Core::split(_arcroots, arcroots.c_str(), ",");
 	}
 
 	for ( string &root : _arcroots ) {
@@ -392,7 +406,17 @@ bool SDSArchive::resolveSta(string &pathStr,
                      int doy, int year, bool first) {
 	if ( !isWildcard(sta) ) {
 		pathStr += sta + "/";
-		return resolveCha(pathStr, net, sta, loc, cha, requestStartTime, doy, year, first);
+		bool res = true;
+
+		if ( _format == 0 || _format == 2 ) {
+			res = resolveCha(pathStr, net, sta, loc, cha, "D", requestStartTime, doy, year, first);
+		}
+
+		if ( res && (_format == 0 || _format == 3) ) {
+			res &= resolveCha(pathStr, net, sta, loc, cha, "3", requestStartTime, doy, year, first);
+		}
+
+		return res;
 	}
 
 	try {
@@ -407,7 +431,13 @@ bool SDSArchive::resolveSta(string &pathStr,
 			string staPath = pathStr + leaf + "/";
 
 			// Got a station here
-			resolveCha(staPath, net, leaf, loc, cha, requestStartTime, doy, year, first);
+			if ( _format == 0 || _format == 2 ) {
+				resolveCha(staPath, net, leaf, loc, cha, "D", requestStartTime, doy, year, first);
+			}
+
+			if ( _format == 0 || _format == 3 ) {
+				resolveCha(staPath, net, leaf, loc, cha, "3", requestStartTime, doy, year, first);
+			}
 		}
 	}
 	catch ( ... ) {
@@ -425,17 +455,18 @@ bool SDSArchive::resolveSta(string &pathStr,
 bool SDSArchive::resolveCha(string &pathStr,
                      const string &net, const string &sta,
                      const string &loc, const string &cha,
+                     const string &ext,
                      const Time &requestStartTime,
                      int doy, int year, bool first) {
 	if ( !isWildcard(cha) ) {
-		pathStr += cha + ".D/";
-		return resolveLoc(pathStr, net, sta, loc, cha, requestStartTime, doy, year, first);
+		string chaPath = pathStr + cha + "." + ext + "/";
+		return resolveLoc(chaPath, net, sta, loc, cha, ext, requestStartTime, doy, year, first);
 	}
 
 	try {
 		SC_FS_DECLARE_PATH(path, pathStr)
 		fs::directory_iterator it(path);
-		string chaSel = cha + ".D";
+		string chaSel = cha + "." + ext;
 		for ( ; it != fsDirEnd; ++it ) {
 			if ( !fs::is_directory(*it) ) continue;
 
@@ -443,10 +474,10 @@ bool SDSArchive::resolveCha(string &pathStr,
 			if ( !wildcmp(chaSel, leaf) ) continue;
 
 			string chaPath = pathStr + leaf + "/";
-			leaf.erase(leaf.rfind(".D"));
+			leaf.erase(leaf.rfind("." + ext));
 
 			// Got a channel here
-			resolveLoc(chaPath, net, sta, loc, leaf, requestStartTime, doy, year, first);
+			resolveLoc(chaPath, net, sta, loc, leaf, ext, requestStartTime, doy, year, first);
 		}
 	}
 	catch ( ... ) {
@@ -464,12 +495,13 @@ bool SDSArchive::resolveCha(string &pathStr,
 bool SDSArchive::resolveLoc(string &pathStr,
                      const string &net, const string &sta,
                      const string &loc, const string &cha,
+                     const string &ext,
                      const Time &requestStartTime,
                      int doy, int year, bool first) {
 	char buf[10];
 	string filename;
 	snprintf(buf, 9, "%d", year);
-	filename = net + "." + sta + "." + loc + "." + cha + ".D." + buf + ".";
+	filename = net + "." + sta + "." + loc + "." + cha + "." + ext + "." + buf + ".";
 	snprintf(buf, 9, "%03d", doy);
 	filename += buf;
 
@@ -482,7 +514,7 @@ bool SDSArchive::resolveLoc(string &pathStr,
 
 			if ( first && getStartTime(fpath) > requestStartTime ) {
 				(Time::FromYearDay(year, doy) - TimeSpan(86400,0)).get2(&year, &doy);
-				resolveLoc(pathStr, net, sta, loc, cha, requestStartTime, doy+1, year, true);
+				resolveLoc(pathStr, net, sta, loc, cha, ext, requestStartTime, doy+1, year, true);
 				first = false;
 			}
 
@@ -514,7 +546,7 @@ bool SDSArchive::resolveLoc(string &pathStr,
 
 				if ( first && getStartTime(fpath) > requestStartTime ) {
 					(Time::FromYearDay(year, doy) - TimeSpan(86400,0)).get2(&year, &doy);
-					resolveLoc(pathStr, net, sta, loc, cha, requestStartTime, doy+1, year, first);
+					resolveLoc(pathStr, net, sta, loc, cha, ext, requestStartTime, doy+1, year, first);
 				}
 
 				SEISCOMP_DEBUG("+ %s", fpath);
