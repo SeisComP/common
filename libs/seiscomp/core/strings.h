@@ -219,6 +219,9 @@ SC_SYSTEM_CORE_API int compareNoCase(std::string_view a, std::string_view b);
 template <typename T>
 void toHex(std::string &target, T source);
 
+template <typename T>
+std::string &bin2Hex(std::string &target, T source, bool uppercase = true);
+
 /** Checks if given character is whitespace */
 bool isWhitespace(const char c);
 

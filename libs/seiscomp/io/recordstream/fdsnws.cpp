@@ -39,6 +39,13 @@
 #include <seiscomp/utils/base64.h>
 #include <seiscomp/utils/url.h>
 
+#include <openssl/opensslv.h>
+#if OPENSSL_VERSION_NUMBER < 0x30000000
+#include <openssl/md5.h>
+#else
+#include <openssl/evp.h>
+#endif
+
 #include "fdsnws.h"
 
 
@@ -57,6 +64,43 @@ using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 using namespace Seiscomp::RecordStream;
+
+
+namespace {
+
+
+string md5(const string &content) {
+#if OPENSSL_VERSION_NUMBER < 0x30000000
+	unsigned char arMD[MD5_DIGEST_LENGTH];
+	unsigned int nMD = MD5_DIGEST_LENGTH;
+
+	MD5_CTX md5;
+	MD5_Init(&md5);
+	MD5_Update(&md5, content.c_str(), content.length());
+	MD5_Final(arMD, &md5);
+#else
+	EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+	const EVP_MD *md = EVP_md5();
+	unsigned char arMD[EVP_MAX_MD_SIZE];
+	unsigned int nMD;
+
+	EVP_DigestInit_ex2(ctx, md, NULL);
+	EVP_DigestUpdate(ctx, content.c_str(), content.length());
+	EVP_DigestFinal_ex(ctx, arMD, &nMD);
+	EVP_MD_CTX_free(ctx);
+#endif
+
+	string res;
+	res.resize(nMD * 2);
+	for ( unsigned int i = 0 ; i < nMD ; ++i ) {
+		sprintf(&res[i * 2], "%02x", arMD[i]);
+	}
+
+	return res;
+}
+
+
+}
 
 
 REGISTER_RECORDSTREAM(FDSNWSConnection, "fdsnws");
@@ -82,14 +126,19 @@ FDSNWSConnectionBase::FDSNWSConnectionBase(const char *protocol, IO::Socket *soc
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool FDSNWSConnectionBase::setSource(const std::string &source) {
-	size_t pos = source.find('/');
-	if ( pos != string::npos ) {
-		_url = source.substr(pos);
-		_host = source.substr(0, pos);
+	_url.setUrl(source);
+	if ( !_url.isValid() ) {
+		SEISCOMP_ERROR("Invalid FDSNWS URL: %s", _url.status().toString());
+		return false;
 	}
-	else {
-		_url = "/fdsnws/dataselect/1/query";
-		_host = source;
+
+	if ( _url.path().empty() ) {
+		if ( !_url.username().empty() ) {
+			_url.setPath("/fdsnws/dataselect/1/queryauth");
+		}
+		else {
+			_url.setPath("/fdsnws/dataselect/1/query");
+		}
 	}
 
 	return true;
@@ -175,7 +224,7 @@ bool FDSNWSConnectionBase::setTimeout(int seconds) {
 bool FDSNWSConnectionBase::clear() {
 	this->~FDSNWSConnectionBase();
 	new(this) FDSNWSConnectionBase(_protocol, _socket.get(), _defaultPort);
-	setSource(_host + _url);
+	setSource(_url.toString());
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -221,7 +270,7 @@ const char *FDSNWSConnectionBase::getProxy() const {
 			return nullptr;
 		}
 
-		string remoteHostname = _host;
+		string remoteHostname = _url.host();
 		size_t pos = remoteHostname.rfind(':');
 		if ( pos != string::npos ) {
 			remoteHostname.erase(remoteHostname.begin() + pos, remoteHostname.end());
@@ -283,15 +332,15 @@ const char *FDSNWSConnectionBase::getProxy() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FDSNWSConnectionBase::openConnection(const std::string &host) {
+void FDSNWSConnectionBase::openConnection() {
 	const char *proxyHost = getProxy();
 
 	if ( !proxyHost ) {
-		if ( host.find(':') == string::npos ) {
-			_socket->open(host + ":" + Core::toString(_defaultPort));
+		if ( !_url.port() ) {
+			_socket->open(_url.host() + ":" + Core::toString(_defaultPort));
 		}
 		else {
-			_socket->open(host);
+			_socket->open(_url.host() + ":" + Core::toString(*_url.port()));
 		}
 
 		return;
@@ -330,13 +379,13 @@ void FDSNWSConnectionBase::openConnection(const std::string &host) {
 
 	if ( !strcmp(_protocol, "https") ) {
 		// Issue connect
-		_socket->sendRequest("CONNECT " + _host + " HTTP/1.1", false);
+		_socket->sendRequest("CONNECT " + _url.host() + " HTTP/1.1", false);
 		if ( !url.username().empty() && !url.password().empty() ) {
 			string authHeader = "Proxy-Authorization: Basic ";
 			Util::encodeBase64(authHeader, url.username() + ":" + url.password());
 			_socket->sendRequest(authHeader, false);
 		}
-		_socket->sendRequest("Host: " + _host, false);
+		_socket->sendRequest("Host: " + _url.host(), false);
 		_socket->sendRequest("", false);
 
 		string line;
@@ -454,28 +503,37 @@ string FDSNWSConnectionBase::createPostData() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCount) {
-	SEISCOMP_DEBUG("POST %s://%s%s\n%s", _protocol, _host, _url, postData);
+void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCount, string authHeader) {
+	SEISCOMP_DEBUG("POST %s://%s%s\n%s", _protocol, _url.host(), _url.path(), postData);
 
 	const char *proxyServer = getProxy();
 	if ( proxyServer && !strcmp(_protocol, "http") ) {
 		Util::Url url(proxyServer);
-		_socket->sendRequest(string("POST ") + _protocol + "://" + _host + _url + " HTTP/1.1", false);
+		_socket->sendRequest(string("POST ") + _protocol + "://" + _url.host() + _url.path() + " HTTP/1.1", false);
 		// Only http protocol need authorization here. Otherwise it has been
 		// handled already in openConnection()
 		if ( !url.username().empty() && !url.password().empty() ) {
-			string authHeader = "Proxy-Authorization: Basic ";
-			Util::encodeBase64(authHeader, url.username() + ":" + url.password());
-			_socket->sendRequest(authHeader, false);
+			string proxyAuthHeader = "Proxy-Authorization: Basic ";
+			Util::encodeBase64(proxyAuthHeader, url.username() + ":" + url.password());
+			_socket->sendRequest(proxyAuthHeader, false);
 		}
 	}
 	else {
-		_socket->sendRequest("POST " + _url + " HTTP/1.1", false);
+		_socket->sendRequest("POST " + _url.path() + " HTTP/1.1", false);
 	}
-	_socket->sendRequest("Host: " + _host, false);
+	_socket->sendRequest("Host: " + _url.host(), false);
 	_socket->sendRequest("User-Agent: Mosaic/1.0", false);
 	_socket->sendRequest("Content-Type: text/plain", false);
 	_socket->sendRequest("Content-Length: " + toString(postData.size()), false);
+	_socket->sendRequest("Connection: keep-alive", false);
+	if ( !authHeader.empty() ) {
+		_socket->sendRequest(authHeader, false);
+	}
+	else if ( !_url.username().empty() && !strcmp(_protocol, "https") ) {
+		string basicAuthHeader = "Authorization: Basic ";
+		Util::encodeBase64(basicAuthHeader, _url.username() + ":" + _url.password());
+		_socket->sendRequest(basicAuthHeader, false);
+	}
 	_socket->sendRequest("", false);
 	_socket->write(postData);
 
@@ -486,13 +544,19 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 		throw GeneralException("server sent invalid response: " + line);
 	}
 
+	bool keepAlive = false;
+
+	if ( line.compare(0, 9, "HTTP/1.1 ") == 0 ) {
+		keepAlive = true;
+	}
+
 	size_t pos;
 	pos = line.find(' ');
 	if ( pos == string::npos ) {
 		throw GeneralException("server sent invalid response: " + line);
 	}
 
-	line.erase(0, pos+1);
+	line.erase(0, pos + 1);
 
 	pos = line.find(' ');
 	if ( pos == string::npos ) {
@@ -503,6 +567,8 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 	if ( !fromString(code, line.substr(0, pos)) ) {
 		throw GeneralException("server sent invalid status code: " + line.substr(0, pos));
 	}
+
+	bool authRequired = false;
 
 	if ( code == 200 ) {
 		// Keep on reading body
@@ -518,6 +584,13 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 			throw GeneralException("redirect limit of 5 exceeded");
 		}
 	}
+	else if ( code == 401 ) {
+		// Authentication requested
+		authRequired = true;
+	}
+	else if ( code == 403 ) {
+		throw GeneralException("access forbidden: " + line);
+	}
 	else {
 		throw GeneralException("server request error: " + line);
 	}
@@ -526,7 +599,6 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 
 	int lc = 0;
 	string redirectLocation;
-	bool keepAlive = false;
 
 	while ( !_socket->isInterrupted() ) {
 		++lc;
@@ -540,36 +612,131 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 		// Remove whitespaces
 		trim(line);
 
+		string_view headerName, headerValue;
+
 		pos = line.find(':');
 		if ( pos != string::npos ) {
 			// Transform header values to upper case
-			transform(line.begin(), line.begin()+pos, line.begin(), ::toupper);
+			transform(line.begin(), line.begin() + pos, line.begin(), ::toupper);
+			headerName = string_view(line).substr(0, pos);
+			headerName = trim(headerName);
+			headerValue = string_view(line).substr(pos + 1);
+			headerValue = trim(headerValue);
+		}
+		else {
+			throw GeneralException("invalid response header '" + string(line) + "'");
 		}
 
-		if ( line.compare(0, 18, "TRANSFER-ENCODING:") == 0 ) {
-			line.erase(line.begin(), line.begin()+18);
-			trim(line);
-			if ( line == "chunked" ) {
+		if ( authRequired && (headerName == "WWW-AUTHENTICATE") ) {
+			string_view token = tokenize(headerValue, " ");
+			if ( compareNoCase(token, "digest") ) {
+				if ( !compareNoCase(token, "basic") ) {
+					throw GeneralException("basic authentication is not sent via " + string(_protocol) + " because it is insecure");
+				}
+				else {
+					throw GeneralException("unknown authentication schema '" + string(token) + "'");
+				}
+			}
+
+			string_view nonce, qop, alg, realm, opaque;
+			string cnonce;
+
+			while ( (token = tokenize(headerValue, ",")).data() ) {
+				token = trim(token);
+				pos = token.find('=');
+				if ( pos != string::npos ) {
+					auto key = trim(token.substr(0, pos));
+					auto value = trim(token.substr(pos + 1));
+					if ( value.compare(0, 1, "\"") == 0 ) {
+						value = value.substr(1);
+					}
+					if ( value.compare(value.length() - 1, 1, "\"") == 0 ) {
+						value = value.substr(0, value.length() - 1);
+					}
+
+					if ( key == "nonce" ) {
+						nonce = value;
+					}
+					else if ( key == "opaque" ) {
+						opaque = value;
+					}
+					else if ( key == "qop" ) {
+						qop = value;
+					}
+					else if ( key == "realm" ) {
+						realm = value;
+					}
+					else if ( key == "algorithm" ) {
+						alg = value;
+					}
+				}
+			}
+
+			if ( !alg.empty() && (alg != "MD5") && (alg != "MD5-sess") ) {
+				throw GeneralException("unknown hash algorithm '" + string(alg) + "'");
+			}
+
+			if ( !qop.empty() && (qop != "auth") ) {
+				throw GeneralException("unknown qop algorithm '" + string(alg) + "'");
+			}
+
+			string HA1, HA2;
+
+			// Compute token
+			if ( alg.empty() || (alg == "MD5") ) {
+				HA1 = md5(_url.username() + ":" + string(realm) + ":" + _url.password());
+			}
+			else if ( alg == "MD5-sess" ) {
+				HA1 = md5(md5(_url.username() + ":" + string(realm) + ":" + _url.password()) + ":" + string(nonce) + ":" + string(cnonce));
+			}
+
+			if ( qop.empty() || (qop == "auth") ) {
+				HA2 = md5("POST:" + _url.path());
+			}
+
+			string authToken;
+
+			if ( qop == "auth" ) {
+				bin2Hex(cnonce, rand(), false);
+				authToken = md5(HA1 + ":" + string(nonce) + ":1:" + cnonce + ":" + string(qop) + ":" + HA2);
+			}
+			else if ( qop.empty() ) {
+				authToken = md5(HA1 + ":" + string(nonce) + ":" + HA2);
+			}
+
+			authHeader = "Authorization: digest username=\"" + _url.username() + "\"" +
+			             ", realm=\"" + string(realm) + "\""
+			             ", nonce=\"" + string(nonce) + "\""
+			             ", response=\"" + authToken + "\""
+			             ", uri=\"" + _url.path() + "\"";
+			if ( !opaque.empty() ) {
+				authHeader+= ", opaque=\"" + string(opaque) + "\"";
+			}
+			if ( qop == "auth" ) {
+				authHeader+= ", qop=\"auth\""
+				             ", nc=1"
+				             ", cnonce=\"" + cnonce + "\"";
+			}
+		}
+		else if ( headerName == "TRANSFER-ENCODING" ) {
+			if ( headerValue == "chunked" ) {
 				_chunkMode = true;
 				SEISCOMP_DEBUG(" -> enabled 'chunked' transfer");
 			}
 		}
-		else if ( line.compare(0, 15, "CONTENT-LENGTH:") == 0 ) {
-			if ( !fromString(_remainingBytes, trim(line.substr(15))) ) {
+		else if ( headerName == "CONTENT-LENGTH" ) {
+			if ( !fromString(_remainingBytes, headerValue) ) {
 				throw GeneralException("invalid Content-Length response");
 			}
 			if ( _remainingBytes < 0 ) {
 				throw GeneralException("Content-Length must be positive");
 			}
 		}
-		else if ( line.compare(0, 9, "LOCATION:") == 0 ) {
-			redirectLocation = line.substr(pos+1);
-			trim(redirectLocation);
+		else if ( headerName == "LOCATION" ) {
+			redirectLocation = headerValue;
 		}
-		else if ( line.compare(0, 11, "CONNECTION:") == 0 ) {
-			line.erase(line.begin(), line.begin()+11);
-			trim(line);
-			if ( line == "keep-alive" ) {
+		else if ( headerName == "CONNECTION" ) {
+			if ( headerValue == "keep-alive" ) {
 				keepAlive = true;
 				SEISCOMP_DEBUG(" -> enabled 'keep-alive'");
 			}
@@ -582,6 +749,24 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 			                       "content length given");
 		}
 		_remainingBytes = 0;
+	}
+
+	if ( authRequired ) {
+		if ( !authHeader.empty() ) {
+			if ( !keepAlive ) {
+				_socket->close();
+				openConnection();
+			}
+			else if ( _remainingBytes > 0 ) {
+				auto response = readBinary(_remainingBytes, false);
+				SEISCOMP_DEBUG("%s", response);
+			}
+			handshake(postData, redirectCount, authHeader);
+			return;
+		}
+		else {
+			throw GeneralException("Missing authentication header");
+		}
 	}
 
 	// Handle redirect
@@ -602,11 +787,11 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 				                       redirectLocation);
 			}
 
-			_url = redirectLocation;
+			_url.setPath(redirectLocation);
 
 			if ( !keepAlive ) {
 				_socket->close();
-				openConnection(_host);
+				openConnection();
 			}
 
 			handshake(postData, ++redirectCount);
@@ -631,8 +816,15 @@ void FDSNWSConnectionBase::handshake(const string &postData, size_t redirectCoun
 
 		redirectLocation.erase(0, pos+3);
 
+		auto username = _url.username();
+		auto pwd = _url.password();
+
 		setSource(redirectLocation);
-		openConnection(_host);
+
+		_url.setUsername(username);
+		_url.setPassword(pwd);
+
+		openConnection();
 		handshake(postData, ++redirectCount);
 	}
 }
@@ -651,7 +843,7 @@ Record *FDSNWSConnectionBase::next() {
 
 	if ( !_readingData ) {
 		try {
-			openConnection(_host);
+			openConnection();
 			handshake(createPostData());
 		}
 		catch ( const GeneralException &e ) {
@@ -725,7 +917,7 @@ Record *FDSNWSConnectionBase::next() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-std::string FDSNWSConnectionBase::readBinary(int size) {
+std::string FDSNWSConnectionBase::readBinary(int size, bool close) {
 	if ( size <= 0 ) {
 		return "";
 	}
@@ -749,7 +941,9 @@ std::string FDSNWSConnectionBase::readBinary(int size) {
 				if ( !_error.empty() ) {
 					throw GeneralException(_error);
 				}
-				_socket->close();
+				if ( close ) {
+					_socket->close();
+				}
 				break;
 			}
 		}
@@ -775,7 +969,7 @@ std::string FDSNWSConnectionBase::readBinary(int size) {
 				// Read trailing new line
 				_socket->readline();
 			}
-			else {
+			else if ( close ) {
 				_socket->close();
 			}
 		}

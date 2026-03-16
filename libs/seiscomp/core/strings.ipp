@@ -279,6 +279,27 @@ inline void toHex(std::string &target, T source) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename T>
+inline std::string &bin2Hex(std::string &target, T source, bool uppercase) {
+	static const char *HEX = "0123456789ABCDEF";
+	static const char *hex = "0123456789abcdef";
+
+	auto base = uppercase ? HEX : hex;
+
+	unsigned char *bytes = reinterpret_cast<unsigned char*>(&source);
+	for ( size_t i = 0; i < sizeof(T); ++i ) {
+		target += base[bytes[i] & 0x0F];
+		target += base[(bytes[i] >> 4) & 0x0F];
+	}
+
+	return target;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename T>
 inline T *tokenize(T *&str, const char *delim, size_t &len_source, size_t &len_tok) {
 	len_tok = 0;
 	for ( ; len_source; --len_source, ++str ) {
