@@ -1655,10 +1655,10 @@ class PlotWidget : public OriginLocatorPlot {
 			painter.translate(-p);
 
 			// Draw N Axis
-			p = (this->*project)(_nAxis);
-			painter.translate(p);
-			_shapeAxis[2].draw(painter);
-			painter.translate(-p);
+			//p = (this->*project)(_nAxis);
+			//painter.translate(p);
+			//_shapeAxis[2].draw(painter);
+			//painter.translate(-p);
 
 			_displayRect = tmp;
 
