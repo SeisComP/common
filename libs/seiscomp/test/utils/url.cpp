@@ -203,6 +203,9 @@ BOOST_AUTO_TEST_CASE(urls) {
 	BOOST_CHECK_EQUAL(url.port(), 3306);
 	BOOST_CHECK_EQUAL(url.path(), "/database");
 
+	BOOST_REQUIRE(url.setUrl("sdsarchive:///path/to/first-archive,/path/to/second-archive"));
+	BOOST_CHECK_EQUAL(url.path(), "/path/to/first-archive,/path/to/second-archive");
+
 	BOOST_REQUIRE(url.setUrl("https://example.com/search?Hello%20World%21%26lang%3Den"));
 	BOOST_REQUIRE(url.setUrl("ftp://ftp.is.co.za/rfc/rfc1808.txt"));
 	BOOST_REQUIRE(url.setUrl("http://www.ietf.org/rfc/rfc2396.txt"));
