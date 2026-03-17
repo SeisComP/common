@@ -108,6 +108,9 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		//! Returns the end time of data samples
 		const Seiscomp::Core::Time& endTime() const { return _endTime; }
 
+		//! Returns the format version
+		Format format() const { return _format; }
+
 		//! Returns the length of a Mini SEED record
 		int recordLength() const { return _recordLength; }
 
