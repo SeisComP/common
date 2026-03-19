@@ -25,7 +25,7 @@
 
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
-#include <boost/function.hpp>
+#include <functional>
 
 
 
@@ -64,20 +64,16 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 		};
 
 		struct Trigger {
-			Trigger()
-			: onsetLowerUncertainty(-1), onsetUpperUncertainty(-1), snr(-1) {}
-
 			Core::Time    onset;
-			double        onsetLowerUncertainty;
-			double        onsetUpperUncertainty;
+			double        onsetLowerUncertainty{-1};
+			double        onsetUpperUncertainty{-1};
 			OPT(double)   slowness;
 			OPT(double)   backAzimuth;
-			double        snr;
+			double        snr{-1};
 		};
 
 
-		typedef boost::function<void (const SecondaryPicker*,
-		                              const Result &)> PublishFunc;
+		using PublishFunc = std::function<void (const SecondaryPicker*, const Result &)>;
 
 
 	// ----------------------------------------------------------------------
@@ -149,9 +145,9 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 		 */
 		Core::TimeWindow signalWindow() const;
 
-		void setPublishFunction(const PublishFunc& func);
+		void setPublishFunction(const PublishFunc &func);
 
-		void setReferencingPickID(const std::string&);
+		void setReferencingPickID(const std::string &);
 		const std::string& referencingPickID() const;
 
 
@@ -185,7 +181,7 @@ class SC_SYSTEM_CLIENT_API SecondaryPicker : public TimeWindowProcessor {
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
-		PublishFunc _func;
+		PublishFunc _fnPublish;
 		std::string _pickID;
 };
 

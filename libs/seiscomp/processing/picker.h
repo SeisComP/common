@@ -25,7 +25,7 @@
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
 #include <seiscomp/client.h>
-#include <boost/function.hpp>
+#include <functional>
 
 
 namespace Seiscomp {
@@ -70,8 +70,7 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 			OPT(Polarity) polarity;
 		};
 
-		typedef boost::function<void (const Picker*,
-		                              const Result &)> PublishFunc;
+		using PublishFunc = std::function<void (const Picker*, const Result &)>;
 
 	// ----------------------------------------------------------------------
 	//  X'truction
@@ -155,7 +154,7 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		 */
 		virtual void finalizePick(DataModel::Pick *pick) const;
 
-		void setPublishFunction(const PublishFunc& func);
+		void setPublishFunction(const PublishFunc &func);
 
 		//! Dumps the record data into an ASCII file
 		void writeData();
@@ -202,7 +201,7 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
-		PublishFunc _func;
+		PublishFunc _fnPublish;
 };
 
 
