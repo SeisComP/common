@@ -2491,6 +2491,8 @@ void FancyView::optionTextChanged(const QString &txt) {
 	model()->setData(item.index.sibling(item.index.row(), 2), item.input->value());
 	item.updated();
 	_blockPopulate = nullptr;
+
+	updateToolTip(w, param);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
