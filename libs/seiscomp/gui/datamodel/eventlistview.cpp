@@ -5379,8 +5379,11 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	}
 
 	bool wasEnabled = Notifier::IsEnabled();
+	NotifierMessagePtr msg;
 
 	Notifier::Enable();
+
+	auto currentGroup = SCApp->messageGroups().pick;
 
 	// Send picks
 	for ( const auto &pickItem : changedPicks ) {
@@ -5390,19 +5393,29 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 		// TODO: handle updates
 	}
 
-	NotifierMessagePtr msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance ) {
-		//SCApp->sendMessage("LOGGING", msg.get());
-		SCApp->sendMessage(SCApp->messageGroups().pick.c_str(), msg.get());
+	if ( SCApp->messageGroups().amplitude != currentGroup ) {
+		msg = Notifier::GetMessage();
+		if ( msg && !SC_D._updateLocalEPInstance ) {
+			//SCApp->sendMessage("LOGGING", msg.get());
+			SCApp->sendMessage(currentGroup.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
+		}
+
+		currentGroup = SCApp->messageGroups().amplitude;
 	}
 
 	for ( const auto &newAmplitude : newAmplitudes ) {
 		ep->add(newAmplitude.get());
 	}
 
-	msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance ) {
-		SCApp->sendMessage(SCApp->messageGroups().amplitude.c_str(), msg.get());
+	if ( SCApp->messageGroups().location != currentGroup ) {
+		msg = Notifier::GetMessage();
+		if ( msg && !SC_D._updateLocalEPInstance ) {
+			SCApp->sendMessage(currentGroup.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
+		}
+
+		currentGroup = SCApp->messageGroups().location;
 	}
 
 	// Insert origin to Eventparameters
@@ -5424,12 +5437,13 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 		baseEvent->add(ref.get());
 	}
 
-	// Send new origin and maybe the manual event assoziation
+	// Send new origin and maybe the manual event association
 	msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
 		if ( !SC_D._updateLocalEPInstance ) {
 			SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
 		}
 		if ( ref && baseEvent ) {
 			emit originReferenceAdded(baseEvent->publicID(), ref.get());
