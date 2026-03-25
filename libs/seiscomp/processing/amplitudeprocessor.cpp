@@ -1624,19 +1624,35 @@ void AmplitudeProcessor::computeTimeWindow() {
 	}
 
 	// Check for valid time windows
-	if ( (double)_config.noiseBegin >= (double)_config.noiseEnd ) {
-		SEISCOMP_ERROR("Invalid time window: noiseBegin (%f) "
-		               "after noiseEnd (%f)",
-		               (double)_config.noiseBegin, (double)_config.noiseEnd);
+	if ( static_cast<double>(_config.noiseBegin) > static_cast<double>(_config.noiseEnd) ) {
+		SEISCOMP_ERROR("Invalid time window: noiseBegin (%f) after noiseEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.noiseEnd));
 		setStatus(Error, 541);
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
-	if ( (double)_config.signalBegin >= (double)_config.signalEnd ) {
-		SEISCOMP_ERROR("Invalid time window: signalBegin (%f) "
-		               "after signalEnd (%f)",
-		               (double)_config.signalBegin, (double)_config.signalEnd);
+	if ( static_cast<double>(_config.signalBegin) > static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Invalid time window: signalBegin (%f) after signalEnd (%f)",
+		               static_cast<double>(_config.signalBegin),
+		               static_cast<double>(_config.signalEnd));
 		setStatus(Error, 542);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+	if ( static_cast<double>(_config.noiseBegin) >=static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Zero overall time window: noiseBegin (%f) equals signalEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.signalEnd));
+			setStatus(Error, 543);
+			setTimeWindow(Core::TimeWindow());
+			return;
+	}
+	if ( static_cast<double>(_config.noiseBegin) > static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Invalid overall time window: noiseBegin (%f) after signalEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.signalEnd));
+		setStatus(Error, 544);
 		setTimeWindow(Core::TimeWindow());
 		return;
 	}
