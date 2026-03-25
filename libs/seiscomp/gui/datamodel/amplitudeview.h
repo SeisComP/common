@@ -205,6 +205,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 			QString recordURL;
 			FilterList filters;
+			AuxiliaryChannelProfiles auxiliaryChannelProfiles;
 
 			bool   showAllComponents;
 			bool   loadStrongMotionData;
@@ -245,9 +246,6 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		bool setConfig(const Config &c, QString *error = nullptr);
 
 		void setDatabase(Seiscomp::DataModel::DatabaseQuery*);
-
-		void setAuxiliaryChannels(const std::vector<std::string> &patterns,
-		                          double minimumDistance, double maximumDistance);
 
 		//! Sets an origin and inserts the traces for each arrival
 		//! in the view.
@@ -400,11 +398,13 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 	protected:
 		void showEvent(QShowEvent* event);
+		void changeEvent(QEvent *e) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 
 
 	private:
+		void applyThemeColors();
 		void figureOutTravelTimeTable();
 
 		void init();

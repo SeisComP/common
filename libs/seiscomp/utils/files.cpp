@@ -23,6 +23,7 @@
 #include <seiscomp/system/environment.h>
 
 #include <fstream>
+#include <sstream>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>

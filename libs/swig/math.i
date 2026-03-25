@@ -53,8 +53,9 @@
 %include "seiscomp/core.h"
 
 namespace std {
-   %template(vectorf) vector<float>;
-   %template(vectord) vector<double>;
+   %template(FloatVector) vector<float>;
+   %template(DoubleVector) vector<double>;
+   %template(ComplexDoubleVector) vector<complex<double>>;
 };
 
 %exception {
@@ -198,5 +199,3 @@ namespace std {
 %include "seiscomp/math/restitution/types.h"
 %include "seiscomp/math/restitution/transferfunction.h"
 %include "seiscomp/math/fft.h"
-
-%template(vectorc) std::vector<Seiscomp::Math::Complex>;

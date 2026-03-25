@@ -20,7 +20,7 @@
 
 #include<algorithm>
 #include<vector>
-#include<stdexcept> 
+#include<stdexcept>
 using namespace std;
 
 #include<seiscomp/math/math.h>
@@ -41,14 +41,14 @@ double median(const DoubleArray &v)
 
 double median(const std::vector<double> &v)
 {
-	return median(v.size(), &v[0]);
+	return median(v.size(), v.data());
 }
 
 double median(int n, const double *f)
 {
 	if (n==0)
 		throw std::out_of_range("attempted computation of median for zero-length array");
-	vector<double> v(&f[0], &f[n]);
+	vector<double> v(f, &f[n]);
 	sort(v.begin(), v.end());
 	int mid = n/2;
 
@@ -62,12 +62,12 @@ double fractile(const DoubleArray &v, double x)
 
 double fractile(const std::vector<double> &v, double x)
 {
-	return fractile(v.size(), &v[0], x);
+	return fractile(v.size(), v.data(), x);
 }
 
 double fractile(int n, const double *f, double x)
 {
-	vector<double> v(&f[0], &f[n]);
+	vector<double> v(f, f + n);
 	sort(v.begin(), v.end());
 
 	double i = double(v.size()-1)*x;
@@ -82,19 +82,19 @@ double fractile(int n, const double *f, double x)
 
 double mean(const DoubleArray &v)
 {
-	return mean(v.size(), (const double*)v.data());	
+	return mean(v.size(), (const double*)v.data());
 }
 
 double mean(const std::vector<double> &v)
 {
-	return mean(v.size(), &v[0]);	
+	return mean(v.size(), v.data());
 }
 
 double mean(int n, const double *f)
 {
 	double m=0;
 
-	for (int i=0; i<n; i++) 
+	for (int i=0; i<n; i++)
 		m += f[i];
 
 	return m/n;
@@ -197,16 +197,16 @@ computeTrimmedMean(const std::vector<double> &v, double percent,
 {
 	if ( weights ) {
 		weights->resize(v.size());
-		return computeTrimmedMean(v.size(), &v[0], percent, value, stdev, &(*weights)[0]);
+		return computeTrimmedMean(v.size(), v.data(), percent, value, stdev, weights->data());
 	}
 
-	return computeTrimmedMean(v.size(), &v[0], percent, value, stdev, nullptr);
+	return computeTrimmedMean(v.size(), v.data(), percent, value, stdev, nullptr);
 }
 
 bool
 computeMean(const std::vector<double> &v, double &value, double &stdev)
 {
-	return computeTrimmedMean(v.size(), &v[0], 0., value, stdev);
+	return computeTrimmedMean(v.size(), v.data(), 0., value, stdev);
 }
 
 bool
@@ -251,10 +251,10 @@ computeMedianTrimmedMean(const std::vector<double> &v, double distance, double &
 {
 	if ( weights ) {
 		weights->resize(v.size());
-		return computeMedianTrimmedMean(v.size(), &v[0], distance, value, stdev, &(*weights)[0]);
+		return computeMedianTrimmedMean(v.size(), v.data(), distance, value, stdev, weights->data());
 	}
 
-	return computeMedianTrimmedMean(v.size(), &v[0], distance, value, stdev, nullptr);
+	return computeMedianTrimmedMean(v.size(), v.data(), distance, value, stdev, nullptr);
 }
 
 
@@ -289,7 +289,7 @@ average(const std::vector<double> &values, const std::vector<double> &weights, d
 	if ( values.size() != weights.size() )
 		return false;
 
-	return average((int)values.size(), &values[0], &weights[0], value, stdev);
+	return average((int)values.size(), values.data(), weights.data(), value, stdev);
 }
 
 double
@@ -306,14 +306,14 @@ double
 trimmedMean(const std::vector<double> &v, double percent)
 {
 // XXX deprecated XXX
-	return trimmedMean(v.size(), &v[0], percent);
+	return trimmedMean(v.size(), v.data(), percent);
 }
 
 double
 trimmedMean(const DoubleArray &v, double percent)
 {
 // XXX deprecated XXX
-	return trimmedMean(v.size(), (const double*)v.data(), percent);	
+	return trimmedMean(v.size(), (const double*)v.data(), percent);
 }
 
 
@@ -368,21 +368,21 @@ void detrend(int cnt, double *data, double m, double n) {
 
 
 void detrend(std::vector<float> &data, double m, double n) {
-	detrend((int)data.size(), &data[0], m, n);
+	detrend((int)data.size(), data.data(), m, n);
 }
 
 
 void detrend(std::vector<double> &data, double m, double n) {
-	detrend((int)data.size(), &data[0], m, n);
+	detrend((int)data.size(), data.data(), m, n);
 }
 
 void computeLinearTrend(const std::vector<float> &data, double &m, double &n) {
-	_computeLinearTrend((int)data.size(), &data[0], m, n);
+	_computeLinearTrend((int)data.size(), data.data(), m, n);
 }
 
 
 void computeLinearTrend(const std::vector<double> &data, double &m, double &n) {
-	_computeLinearTrend((int)data.size(), &data[0], m, n);
+	_computeLinearTrend((int)data.size(), data.data(), m, n);
 }
 
 

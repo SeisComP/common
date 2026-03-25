@@ -34,7 +34,6 @@
 #include "seiscomp/datamodel/timequantity.h"
 #include "seiscomp/datamodel/creationinfo.h"
 #include "seiscomp/datamodel/phase.h"
-#include "seiscomp/datamodel/comment.h"
 #include "seiscomp/datamodel/complexarray.h"
 #include "seiscomp/datamodel/realpdf1d.h"
 #include "seiscomp/datamodel/realquantity.h"
@@ -131,7 +130,6 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 %include "seiscomp/datamodel/timequantity.h"
 %include "seiscomp/datamodel/creationinfo.h"
 %include "seiscomp/datamodel/phase.h"
-%include "seiscomp/datamodel/comment.h"
 %include "seiscomp/datamodel/complexarray.h"
 %include "seiscomp/datamodel/realpdf1d.h"
 %include "seiscomp/datamodel/realquantity.h"
@@ -152,6 +150,7 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 
 // package EventParameters
 %include "seiscomp/datamodel/eventdescription.h"
+%include "seiscomp/datamodel/comment.h"
 %include "seiscomp/datamodel/dataused.h"
 %include "seiscomp/datamodel/compositetime.h"
 %include "seiscomp/datamodel/pickreference.h"
@@ -170,6 +169,7 @@ optional_enum(Seiscomp::DataModel::StationGroupType);
 %include "seiscomp/datamodel/originreference.h"
 %include "seiscomp/datamodel/focalmechanismreference.h"
 %include "seiscomp/datamodel/event.h"
+%include "seiscomp/datamodel/catalog.h"
 %include "seiscomp/datamodel/arrival.h"
 %include "seiscomp/datamodel/origin.h"
 %include "seiscomp/datamodel/eventparameters.h"

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/datamodel/pickersettings.h>
 #include <QHeaderView>
 
@@ -159,6 +159,16 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_amplitudeFilterModel = new FilterModel(_amplitudeConfig.filters, this);
 	_ui.tableAFilter->setModel(_amplitudeFilterModel);
 	_ui.tableAFilter->horizontalHeader()->setStretchLastSection(true);
+
+	_ui.btnAddPickFilter->setIcon(icon("add"));
+	_ui.btnRemovePickFilter->setIcon(icon("remove"));
+	_ui.btnMovePickFilterUp->setIcon(icon("up"));
+	_ui.btnMovePickFilterDown->setIcon(icon("down"));
+
+	_ui.btnAddAmplitudeFilter->setIcon(icon("add"));
+	_ui.btnRemoveAmplitudeFilter->setIcon(icon("remove"));
+	_ui.btnMoveAmplitudeFilterUp->setIcon(icon("up"));
+	_ui.btnMoveAmplitudeFilterDown->setIcon(icon("down"));
 
 	connect(_ui.slPreOffset, SIGNAL(sliderMoved(int)),
 	        this, SLOT(adjustPreTime(int)));

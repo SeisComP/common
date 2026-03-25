@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 0, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(18, 0, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x110000
+#define SC_API_VERSION 0x120000
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,29 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "18.0.0"   0x120000
+   - Changed Seiscomp::Gui::EventLayer::SymbolMap
+   - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
+   - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
+
+ "17.2.0"   0x110200
+   - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
+   - Added Seiscomp::DataModel::NotifierStateGuard<T>
+
+ "17.1.2"   0x110102
+   - Fixed Seiscomp::Core::Date timezone handling
+
+ "17.1.0"   0x110100
+   - Added Seiscomp::DataModel::PublicIDPatternResolver
+   - Added Seiscomp::DataModel::PublicObject::GetIDPattern()
+   - Added Seiscomp::Gui::LogManager
+   - Added Seiscomp::System::Application::logVerbosity()
+   - Added Seiscomp::System::Application::logContext()
+   - Added Seiscomp::System::Application::logComponent()
+   - Added Seiscomp::Util::Url::errorMessage()
+   - Added Seiscomp::Gui::RecordWidget::setRecordAxisTickIntervals
+   - Added Seiscomp::Gui::RecordWidget::unsetRecordAxisTickIntervals
+
  "17.0.0"   0x110000
    - Added Seiscomp::Gui::Scheme::records.showEngineeringValues
    - Added Seiscomp::Gui::RecordView::showEngineeringValues(bool)
@@ -94,16 +117,24 @@ namespace Core {
    - Removed Seiscomp::DataModel::DatabaseQuery::getStation
    - Added Seiscomp::Geo::readFEP
    - Added Seiscomp::Geo::writeGeoJSON
+   - Added Seiscomp::Math::Matrix3<T> ostream output operator
+   - Added Seiscomp::Math::Vector3<T> ostream output operator
+   - Added Seiscomp::Math::Matrix3<T>::operator*
+   - Added Seiscomp::Math::Matrix3<T>::operator=
+   - Added static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
+   - Added unary Seiscomp::Math::Vector3<T>::operator+
+   - Added unary Seiscomp::Math::Vector3<T>::operator-
+   - Added Seiscomp::Math::Vector3<T>::normalized
+   - Renamed Seiscomp::Processing::WaveformProcessor::StreamComponent to
+     Seiscomp::Processing::WaveformProcessor::StreamComponents
+   - Removed Seiscomp::Processing::WaveformProcessor::_usedComponent member
+   - Added Seiscomp::Processing::WaveformProcessor::setDataComponents
+   - Added Seiscomp::Processing::WaveformProcessor::setTargetComponent
+   - Removed Seiscomp::IO::BSONArchive
+   - Removed Seiscomp::IO::HMBConnection
 
  "16.4.0"   0x100400
-   - Add Seiscomp::Math::Matrix3<T> ostream output operator
-   - Add Seiscomp::Math::Vector3<T> ostream output operator
-   - Add Seiscomp::Math::Matrix3<T>::operator*
-   - Add Seiscomp::Math::Matrix3<T>::operator=
-   - Add static Seiscomp::Math::Matrix3<T>::Rotate[X|Y|Z]
-   - Add unary Seiscomp::Math::Vector3<T>::operator+
-   - Add unary Seiscomp::Math::Vector3<T>::operator-
-   - Add Seiscomp::Math::Vector3<T>::normalized
+   - Added Seiscomp::Math::double2frac
 
  "16.3.0"   0x100300
    - Added Seiscomp::Gui::Application::createCSV(view, header)
@@ -763,11 +794,14 @@ class SC_SYSTEM_CORE_API FrameworkVersion {
 	public:
 		FrameworkVersion();
 
+	public:
 		//! Returns the version string
 		std::string toString() const;
 
 		//! Returns additional system build information
 		std::string systemInfo() const;
+
+		std::string release() const;
 
 		const Version &version() const;
 		const Version &api() const;

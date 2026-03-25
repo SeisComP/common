@@ -188,7 +188,7 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 		d[0] = d[n - 1] = 0;
 
 		// Find the max. amplitude in the *derivative*
-		imax = find_absmax(n, &d[0], si1, si2, offset);
+		imax = find_absmax(n, d.data(), si1, si2, offset);
 		pmax = -1; // dominant period around maximum
 		double pstd =  0; // standard error of period
 
@@ -224,8 +224,9 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 
 	amplitude->value = amax;
 
-	if ( _streamConfig[_usedComponent].gain != 0.0 )
-		amplitude->value /= _streamConfig[_usedComponent].gain;
+	if ( _streamConfig[targetComponent()].gain != 0.0 ) {
+		amplitude->value /= _streamConfig[targetComponent()].gain;
+	}
 	else {
 		setStatus(MissingGain, 0.0);
 		return false;

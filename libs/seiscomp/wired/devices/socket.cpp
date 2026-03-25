@@ -27,6 +27,7 @@
 #include <arpa/inet.h>
 #ifndef WIN32
 #include <sys/socket.h>
+#include <net/if.h>
 #ifdef BSD
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -590,7 +591,8 @@ Socket::Status Socket::setResolveHostnames(bool rh) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Socket::Status Socket::connect(const std::string &hostname, port_t port) {
+Socket::Status Socket::connect(const std::string &hostname, port_t port,
+                               const char *nic) {
 	if ( _fd != -1 ) {
 		SEISCOMP_WARNING("closing stale socket");
 		this->close();
@@ -624,6 +626,22 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 		SEISCOMP_DEBUG("Socket::connect(%s:%d): %s",
 		               hostname.c_str(), port, strerror(errno));
 		return AllocationError;
+	}
+
+	if ( nic ) {
+		auto nNic = strnlen(nic, IFNAMSIZ);
+		if ( nNic == IFNAMSIZ ) {
+			this->close();
+			SEISCOMP_DEBUG("Socket::connect(%s:%d:%s): nic name exceeds " STR(IFNAMSIZ) " characters",
+			               hostname.c_str(), port, nic);
+			return Error;
+		}
+		if ( setsockopt(_fd, SOL_SOCKET, SO_BINDTODEVICE, nic, nNic) ) {
+			this->close();
+			SEISCOMP_ERROR("Socket::connect(%s:%d): bind to nic %s: %s",
+			               hostname.c_str(), port, nic, strerror(errno));
+			return Error;
+		}
 	}
 
 	if ( _flags & NoDelay ) {
@@ -669,7 +687,8 @@ Socket::Status Socket::connect(const std::string &hostname, port_t port) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
+Socket::Status Socket::connectV6(const std::string &hostname, port_t port,
+                                 const char *nic) {
 	if ( _fd != -1 ) {
 		SEISCOMP_WARNING("closing stale socket");
 		this->close();
@@ -705,6 +724,24 @@ Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
 		return AllocationError;
 	}
 
+	if ( nic ) {
+		auto nNic = strnlen(nic, IFNAMSIZ);
+		if ( nNic == IFNAMSIZ ) {
+			this->close();
+			SEISCOMP_DEBUG("Socket::connect(%s:%d): %s",
+			               hostname.c_str(), port, strerror(errno));
+			return Error;
+		}
+		setsockopt(_fd, SOL_SOCKET, SO_BINDTODEVICE, nic, nNic);
+	}
+
+	if ( _flags & NoDelay ) {
+		int flag = 1;
+		setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int));
+	}
+
+	setNonBlocking(_flags & NonBlocking ? true : false);
+
 	if ( _timeOutSecs >= 0 ) {
 		if ( applySocketTimeout(_timeOutSecs, _timeOutUsecs) != Success ) {
 			this->close();
@@ -718,7 +755,7 @@ Socket::Status Socket::connectV6(const std::string &hostname, port_t port) {
 			SEISCOMP_DEBUG("Socket::connect(%s:%d): %s",
 			               hostname.c_str(), port, strerror(errno));
 			this->close();
-			return errno == ETIMEDOUT?Timeout:ConnectError;
+			return errno == ETIMEDOUT ? Timeout : ConnectError;
 		}
 	}
 #else
@@ -1382,7 +1419,8 @@ ssize_t SSLSocket::read(char *data, size_t len) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
+Socket::Status SSLSocket::connect(const std::string &hostname, port_t port,
+                                  const char *nic) {
 	close();
 	cleanUp();
 	setMode(Idle);
@@ -1395,9 +1433,10 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 
 	SSL_CTX_set_mode(_ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
 
-	Status s = Socket::connect(hostname, port);
-	if ( s != Success )
+	Status s = Socket::connect(hostname, port, nic);
+	if ( s != Success ) {
 		return s;
+	}
 
 	_ssl = SSL_new(_ctx);
 	if ( _ssl == nullptr ) {
@@ -1424,20 +1463,25 @@ Socket::Status SSLSocket::connect(const std::string &hostname, port_t port) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port) {
+Socket::Status SSLSocket::connectV6(const std::string &hostname, port_t port,
+                                    const char *nic) {
 	close();
 	cleanUp();
 	setMode(Idle);
 
-	if ( !_ctx ) _ctx = SSL_CTX_new(SSLv23_client_method());
+	if ( !_ctx ) {
+		_ctx = SSL_CTX_new(SSLv23_client_method());
+	}
+
 	if ( !_ctx ) {
 		SEISCOMP_DEBUG("Invalid SSL context");
 		return ConnectError;
 	}
 
-	Status s = Socket::connectV6(hostname, port);
-	if ( s != Success )
+	Status s = Socket::connectV6(hostname, port, nic);
+	if ( s != Success ) {
 		return s;
+	}
 
 	_ssl = SSL_new(_ctx);
 	if ( _ssl == nullptr ) {

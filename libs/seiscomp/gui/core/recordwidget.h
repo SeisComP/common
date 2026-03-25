@@ -225,7 +225,8 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 		enum AxisPosition {
 			Left,
-			Right
+			Right,
+			Both
 		};
 
 		enum RecordBorderDrawMode {
@@ -294,6 +295,9 @@ class SC_GUI_API RecordWidget : public QWidget {
 		bool setRecordLabel(int slot, const QString &label);
 		bool setRecordColor(int slot, QColor c);
 		bool setRecordPen(int slot, const QPen &pen);
+		bool setRecordAxisPen(int slot, const QPen &p);
+		bool setRecordAxisTickIntervals(int slot, double large, double small);
+		bool unsetRecordAxisTickIntervals(int slot);
 		bool setRecordAntialiasing(int slot, bool antialiasing);
 		bool setRecordOptimization(int slot, bool enable);
 		bool setRecordStepFunction(int slot, bool enable);
@@ -422,7 +426,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 		//! Causes the widget to rebuild its internal data
 		//! according its size and parameters
-		void setDirty();
+		void setDirty(bool includingData = false);
 
 		//! Whether to show the current selected recordstream or
 		//! both recordstreams
@@ -507,6 +511,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 		const Seiscomp::Core::Time& cursorPos() const;
 
 		const double *value(const Seiscomp::Core::Time&) const;
+		OPT(double) traceValue(const Seiscomp::Core::Time&, int slot = -1) const;
 
 		//! Returns the time on the left visible side of the widget
 		Seiscomp::Core::Time leftTime() const;
@@ -647,19 +652,23 @@ class SC_GUI_API RecordWidget : public QWidget {
 	protected:
 		void init();
 
-		bool event(QEvent *);
+		bool event(QEvent *) override;
 
-		void paintEvent(QPaintEvent*);
+		void paintEvent(QPaintEvent*) override;
 
-		void mousePressEvent(QMouseEvent*);
-		void mouseReleaseEvent(QMouseEvent*);
-		void mouseDoubleClickEvent(QMouseEvent*);
-		void mouseMoveEvent(QMouseEvent*);
+		void mousePressEvent(QMouseEvent*) override;
+		void mouseReleaseEvent(QMouseEvent*) override;
+		void mouseDoubleClickEvent(QMouseEvent*) override;
+		void mouseMoveEvent(QMouseEvent*) override;
 
-		void resizeEvent(QResizeEvent*);
+		void resizeEvent(QResizeEvent*) override;
 
-		void enterEvent(QEvent*);
-		void leaveEvent(QEvent*);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+		void enterEvent(QEvent *) override;
+#else
+		void enterEvent(QEnterEvent *) override;
+#endif
+		void leaveEvent(QEvent*) override;
 
 		void enabledChange(bool) { update(); }
 
@@ -684,7 +693,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 			Stream(bool owner);
 			~Stream();
 
-			void setDirty();
+			void setDirty(bool includingData = false);
 			void free();
 
 			RecordSequence *records[2];
@@ -705,6 +714,7 @@ class SC_GUI_API RecordWidget : public QWidget {
 
 			// The value range axis, if enabled
 			QString         axisLabel;
+			QPen            axisPen{Qt::NoPen};
 			double          axisSpacing[2];
 			bool            axisDirty;
 
@@ -744,7 +754,6 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int canvasWidth() const;
 		int canvasHeight() const;
 
-	private:
 		void alignTrace(Trace &trace);
 		void prepareRecords(Stream *s);
 		void createPolyline(Stream *s, AbstractRecordPolylinePtr &polyline,
@@ -753,7 +762,8 @@ class SC_GUI_API RecordWidget : public QWidget {
 		                    int height);
 		void render(Stream *s);
 
-	private:
+
+	protected:
 		typedef QVector<Stream*> StreamMap;
 
 		QVariant             _data;
@@ -835,6 +845,10 @@ class SC_GUI_API RecordWidget : public QWidget {
 		int                  _shadowWidgetFlags;
 };
 
+
+inline int RecordWidget::currentRecords() const {
+	return _currentSlot;
+}
 
 inline const QRect &RecordWidget::canvasRect() const {
 	return _canvasRect;

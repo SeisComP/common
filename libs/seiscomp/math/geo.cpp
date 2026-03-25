@@ -156,8 +156,12 @@ void delazi_wgs84(double elat, double elon, double slat, double slon,
 	as = fabs(slat-elat) + fabs(slon-elon);
 	if ( as < 1.0e-5 ) {
 		*distance = 0.0;
-		*azim = 0.0;
-		*bazim = 0.0;
+		if ( azim ) {
+			*azim = 0.0;
+		}
+		if ( bazim ) {
+			*bazim = 0.0;
+		}
 		return;
 	}
 
@@ -188,11 +192,15 @@ void delazi_wgs84(double elat, double elon, double slat, double slon,
 	xk = as*be - ae*bs;
 	cosz = (xi*sbls + xj*cbls)/sindt;
 	sinz = xk/(ds*sindt);
-	*bazim = mb_azm(cosz, sinz);
+	if ( bazim ) {
+		*bazim = mb_azm(cosz, sinz);
+	}
 	ble = deg2rad(elon);
 	cosz = -(xi*sin(ble) + xj*cos(ble))/sindt;
 	sinz = -xk/(de*sindt);
-	*azim = mb_azm(cosz, sinz);
+	if ( azim ) {
+		*azim = mb_azm(cosz, sinz);
+	}
 }
 
 
@@ -434,7 +442,7 @@ const NamedCoordD* nearestHotspot(double lat, double lon, double maxDist,
                                   double *dist, double *azi) {
 	if ( cities.empty() ) return nullptr;
 	return nearestHotspot(lat, lon, maxDist, cities.size(),
-	                      &cities[0], dist, azi);
+	                      cities.data(), dist, azi);
 }
 
 
@@ -475,7 +483,7 @@ const CityD* nearestCity(double lat, double lon,
                          double *dist, double *azi) {
 	if ( cities.empty() ) return nullptr;
 	return nearestCity(lat, lon, maxDist, minPopulation,
-	                   (int)cities.size(), &cities[0], dist, azi);
+	                   (int)cities.size(), cities.data(), dist, azi);
 }
 
 /**

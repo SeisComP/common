@@ -28,6 +28,7 @@
 #include <seiscomp/math/math.h>
 #include <seiscomp/math/filter/butterworth.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/utils.h>
 
 using namespace std;
@@ -73,7 +74,7 @@ bool minmax(const ::RecordSequence *seq, const Core::TimeWindow &tw,
 	if ( globalOffset ) {
 		// Compute pre time window offset if required
 		for ( auto oit = seq->begin(); oit != it; ++oit ) {
-			RecordCPtr rec = (*it);
+			RecordCPtr rec = (*oit);
 			int ns = rec->sampleCount();
 			if ( !ns || !rec->data() ) {
 				continue;
@@ -291,8 +292,8 @@ void updateVerticalAxis(double spacing[2], double rangeLower, double rangeUpper,
 
 
 void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
-                      double spacing[2], const QRect &rect, int tickLength,
-                      const QString &label, bool leftAligned,
+                      const double spacing[2], const QRect &rect, int tickLength,
+                      const QString &label, bool labelAfterValues, bool leftAligned,
                       const QPen &fg, const QPen &grid,
                       int gridLeft, int gridRight, bool showEngineeringValues) {
 	double direction = 1;
@@ -326,7 +327,7 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 	p.setPen(fg);
 	p.drawLine(baseLine, rect.top(), baseLine, rect.bottom());
 
-	if ( !label.isEmpty() ) {
+	if ( !label.isEmpty() && !labelAfterValues ) {
 		QRect labelRect = p.fontMetrics().boundingRect(label);
 		if ( labelRect.width() < h ) {
 			p.save();
@@ -370,6 +371,10 @@ void drawVerticalAxis(QPainter &p, double rangeLower, double rangeUpper,
 
 			if ( k == 0 ) {
 				str = valueToString(showEngineeringValues, cpos);
+				if ( !label.isEmpty() && labelAfterValues ) {
+					str += label;
+				}
+
 				QRect labelRect = p.fontMetrics().boundingRect(str);
 				// Safety margin to not cut text
 				labelRect.adjust(0, 0, labelRect.width(), 0);
@@ -934,12 +939,16 @@ RecordWidget::Stream::~Stream() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::Stream::setDirty() {
+void RecordWidget::Stream::setDirty(bool includingData) {
 	traces[Stream::Raw].reset();
 	traces[Stream::Filtered].reset();
 
 	traces[Stream::Raw].dirty = true;
 	traces[Stream::Filtered].dirty = true;
+	if ( includingData ) {
+		traces[Stream::Raw].dirtyData = true;
+		traces[Stream::Filtered].dirtyData = true;
+	}
 
 	axisDirty = true;
 }
@@ -1436,7 +1445,9 @@ bool RecordWidget::setRecordColor(int slot, QColor c) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 	Stream *stream = getStream(slot);
-	if ( stream == nullptr ) return false;
+	if ( !stream ) {
+		return false;
+	}
 
 	stream->pen = pen;
 	stream->setDirty();
@@ -1444,6 +1455,79 @@ bool RecordWidget::setRecordPen(int slot, const QPen &pen) {
 
 	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
 		_shadowWidget->setRecordPen(slot, pen);
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::setRecordAxisPen(int slot, const QPen &pen) {
+	Stream *stream = getStream(slot);
+	if ( !stream ) {
+		return false;
+	}
+
+	stream->axisPen = pen;
+	stream->setDirty();
+	update();
+
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
+		_shadowWidget->setRecordAxisPen(slot, pen);
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::setRecordAxisTickIntervals(int slot, double large, double small) {
+	Stream *stream = getStream(slot);
+	if ( !stream ) {
+		return false;
+	}
+
+	stream->axisSpacing[0] = -large;
+	stream->axisSpacing[1] = -small;
+	stream->axisDirty = true;
+	if ( _drawAxis ) {
+		stream->setDirty();
+		update();
+	}
+
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
+		_shadowWidget->setRecordAxisTickIntervals(slot, large, small);
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool RecordWidget::unsetRecordAxisTickIntervals(int slot) {
+	Stream *stream = getStream(slot);
+	if ( !stream ) {
+		return false;
+	}
+
+	stream->axisSpacing[0] = stream->axisSpacing[1] = 0;
+	stream->axisDirty = true;
+	if ( _drawAxis ) {
+		stream->setDirty();
+		update();
+	}
+
+	if ( _shadowWidget && ((_shadowWidget->_shadowWidgetFlags & (Raw | Style)) == (Raw | Style)) ) {
+		_shadowWidget->unsetRecordAxisTickIntervals(slot);
 	}
 
 	return true;
@@ -1760,15 +1844,6 @@ int RecordWidget::setCurrentRecords(int slot) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int RecordWidget::currentRecords() const {
-	return _currentSlot;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setDrawMode(DrawMode mode) {
 	if ( mode == _drawMode ) return;
 
@@ -1845,6 +1920,10 @@ void RecordWidget::setDrawAxis(bool f) {
 				_margins[2] = _axisWidth;
 				_margins[0] = 0;
 				break;
+			case Both:
+				_margins[0] = _axisWidth;
+				_margins[2] = _axisWidth;
+				break;
 			default:
 				_margins[0] = 0;
 				_margins[2] = 0;
@@ -1880,6 +1959,10 @@ void RecordWidget::setAxisWidth(int width) {
 		case Right:
 			marginRight = width;
 			marginLeft = 0;
+			break;
+		case Both:
+			marginLeft = width;
+			marginRight = width;
 			break;
 	}
 
@@ -2019,7 +2102,7 @@ void RecordWidget::setShadowWidget(RecordWidget *shadow, bool copyMarker, int fl
 	}
 
 	if ( copyMarker ) {
-		for ( auto *m : qAsConst(_marker) ) {
+		for ( auto *m : as_const(_marker) ) {
 			_shadowWidget->addMarker(m->copy());
 		}
 	}
@@ -2508,38 +2591,77 @@ void RecordWidget::createPolyline(Stream *s, AbstractRecordPolylinePtr &polyline
 const double *RecordWidget::value(int slot, const Seiscomp::Core::Time& t) const {
 	static double value;
 
-	if ( slot < 0 || slot >= _streams.size() ) return nullptr;
+	if ( (slot < 0) || (slot >= _streams.size()) ) {
+		return nullptr;
+	}
 
 	Stream *s = _streams[slot];
 
 	RecordSequence *rs = s->filtering?s->records[Stream::Filtered]:s->records[Stream::Raw];
-	if ( !rs )
+	if ( !rs ) {
 		return nullptr;
+	}
 
-	for ( RecordSequence::const_iterator it = rs->begin();
-	      it != rs->end(); ++it ) {
-		const Seiscomp::Record *rec = (*it).get();
+	for ( auto &rec : *rs ) {
 		if ( t >= rec->startTime() && t <= rec->endTime() ) {
 			if ( !rec->data() ) {
 				return nullptr;
 			}
 
-			int pos = int(double(t - rec->startTime()) * rec->samplingFrequency());
-			FloatArrayPtr tmp;
-			const FloatArray *ar = FloatArray::ConstCast(rec->data());
-			if ( !ar ) {
-				tmp = (FloatArray*)rec->data()->copy(Array::FLOAT);
-				ar = tmp.get();
+			double pos = static_cast<double>(t - rec->startTime()) * rec->samplingFrequency();
+			auto data = rec->data();
+			if ( !data ) {
+				return nullptr;
 			}
 
-			if ( !ar ) return nullptr;
-
-			if ( ar->size() <= (int)pos )
+			if ( pos >= data->size() ) {
 				return nullptr;
+			}
 
-			value = (*ar)[pos];
-			if ( _showScaledValues )
+			int p0 = static_cast<int>(pos);
+			int p1 = static_cast<int>(ceil(pos));
+
+			const DoubleArray *ar = DoubleArray::ConstCast(rec->data());
+			if ( ar ) {
+				value = (*ar)[p0];
+				if ( (p1 != p0) && (p1 < ar->size()) ) {
+					value += ((*ar)[p1] - value) * (pos - p0);
+				}
+			}
+			else {
+				const FloatArray *ar = FloatArray::ConstCast(rec->data());
+				if ( ar ) {
+					value = (*ar)[p0];
+					if ( (p1 != p0) && (p1 < ar->size()) ) {
+						value += ((*ar)[p1] - value) * (pos - p0);
+					}
+				}
+				else {
+					const IntArray *ar = IntArray::ConstCast(rec->data());
+					if ( ar ) {
+						value = (*ar)[p0];
+						if ( (p1 != p0) && (p1 < ar->size()) ) {
+							value += (static_cast<double>((*ar)[p1]) - value) * (pos - p0);
+						}
+					}
+					else {
+						const CharArray *ar = CharArray::ConstCast(rec->data());
+						if ( ar ) {
+							value = (*ar)[p0];
+							if ( (p1 != p0) && (p1 < ar->size()) ) {
+								value += (static_cast<double>((*ar)[p1]) - value) * (pos - p0);
+							}
+						}
+						else {
+							return nullptr;
+						}
+					}
+				}
+			}
+
+			if ( _showScaledValues ) {
 				value *= s->scale < 0 ? -s->scale : s->scale;
+			}
 
 			return &value;
 		}
@@ -2556,8 +2678,6 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 	int fontHeight = fontMetrics().height();
 	int tickLength = fontHeight/2+1;
 
-	QRect rect;
-
 	switch ( _drawMode ) {
 		case Single:
 		case SameOffset:
@@ -2572,7 +2692,7 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				}
 			}
 			else {
-				for ( auto *s : qAsConst(_streams) ) {
+				for ( auto *s : as_const(_streams) ) {
 					int frontIndex = s->filtering ? Stream::Filtered : Stream::Raw;
 					if ( s->visible && s->traces[frontIndex].visible ) {
 						stream = s;
@@ -2615,32 +2735,44 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 					}
 				}
 
-				if ( _axisPosition == Right ) {
-					rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-				}
-				else {
-					rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
-				}
-
 				// double axisRange = axisUpper - axisLower;
 				if ( stream->height > 1 ) {
-					if ( stream->axisDirty ) {
+					if ( stream->axisDirty && (stream->axisSpacing[0] >= 0)) {
 						updateVerticalAxis(stream->axisSpacing, axisLower, axisUpper,
 						                   stream->height - 1, fontHeight * 2);
 						stream->axisDirty = false;
 					}
 
-					if ( _axisPosition == Right ) {
-						rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-					}
-					else {
-						rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+					double axisSpacing[2];
+					axisSpacing[0] = stream->axisSpacing[0];
+					axisSpacing[1] = stream->axisSpacing[1];
+
+					if ( axisSpacing[0] < 0 ) {
+						axisSpacing[0] = -axisSpacing[0];
+						axisSpacing[1] = -axisSpacing[1];
 					}
 
-					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
-					                 rect, tickLength, stream->axisLabel,
-					                 _axisPosition == Left, fg, SCScheme.colors.records.gridPen,
-					                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					if ( (_axisPosition == Left) || (_axisPosition == Both) ) {
+						auto rect = _axisWidth == 0 ?
+						            QRect(0, stream->posY, width(), stream->height) :
+						            QRect(0, stream->posY, _margins[0] - _axisSpacing, stream->height);
+						drawVerticalAxis(painter, axisLower, axisUpper, axisSpacing,
+						                 rect, tickLength, stream->axisLabel, _axisWidth == 0,
+						                 _axisWidth != 0, stream->axisPen == Qt::NoPen ? fg : stream->axisPen,
+						                 SCScheme.colors.records.gridPen,
+						                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					}
+
+					if ( (_axisPosition == Right) || (_axisPosition == Both) ) {
+						auto rect = _axisWidth == 0 ?
+						            QRect(0, stream->posY, width(), stream->height) :
+						            QRect(width() - _margins[2] + _axisSpacing, stream->posY, _margins[2] - _axisSpacing, stream->height);
+						drawVerticalAxis(painter, axisLower, axisUpper, axisSpacing,
+						                 rect, tickLength, stream->axisLabel, _axisWidth == 0,
+						                 _axisWidth == 0, stream->axisPen == Qt::NoPen ? fg : stream->axisPen,
+						                 _axisPosition == Both ? Qt::NoPen : SCScheme.colors.records.gridPen,
+						                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					}
 				}
 			}
 
@@ -2648,10 +2780,10 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 		}
 
 		case InRows:
-			for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-				Stream *stream = *it;
-				if ( stream == nullptr ) continue;
-				if ( stream->height == 0 ) continue;
+			for ( auto *stream : _streams ) {
+				if ( !stream || !stream->height ) {
+					continue;
+				}
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				double axisLower = stream->traces[frontIndex].fyMin,
@@ -2682,22 +2814,43 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 				}
 
 				double axisRange = axisUpper - axisLower;
-				if ( stream->height > 1 && axisRange > 0 ) {
-					if ( stream->axisDirty ) {
+				if ( (stream->height > 1) && (axisRange > 0) ) {
+					if ( stream->axisDirty && (stream->axisSpacing[0] >= 0) ) {
 						updateVerticalAxis(stream->axisSpacing, axisLower, axisUpper,
-						                   stream->height-1, fontMetrics().height()*2);
+						                   stream->height - 1, fontHeight * 2);
 						stream->axisDirty = false;
 					}
 
-					if ( _axisPosition == Right )
-						rect = QRect(width()-_margins[2]+_axisSpacing, stream->posY, _margins[2]-_axisSpacing, stream->height);
-					else
-						rect = QRect(0, stream->posY, _margins[0]-_axisSpacing, stream->height);
+					double axisSpacing[2];
+					axisSpacing[0] = stream->axisSpacing[0];
+					axisSpacing[1] = stream->axisSpacing[1];
 
-					drawVerticalAxis(painter, axisLower, axisUpper, stream->axisSpacing,
-					                 rect, tickLength, stream->axisLabel,
-					                 _axisPosition == Left, fg, SCScheme.colors.records.gridPen,
-					                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					if ( axisSpacing[0] < 0 ) {
+						axisSpacing[0] = -axisSpacing[0];
+						axisSpacing[1] = -axisSpacing[1];
+					}
+
+					if ( (_axisPosition == Left) || (_axisPosition == Both) ) {
+						auto rect = _axisWidth == 0 ?
+						            QRect(0, stream->posY, width(), stream->height) :
+						            QRect(0, stream->posY, _margins[0] - _axisSpacing, stream->height);
+						drawVerticalAxis(painter, axisLower, axisUpper, axisSpacing,
+						                 rect, tickLength, stream->axisLabel, _axisWidth == 0,
+						                 _axisWidth != 0, stream->axisPen == Qt::NoPen ? fg : stream->axisPen,
+						                 SCScheme.colors.records.gridPen,
+						                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					}
+
+					if ( (_axisPosition == Right) || (_axisPosition == Both) ) {
+						auto rect = _axisWidth == 0 ?
+						            QRect(0, stream->posY, width(), stream->height) :
+						            QRect(width() - _margins[2] + _axisSpacing, stream->posY, _margins[2] - _axisSpacing, stream->height);
+						drawVerticalAxis(painter, axisLower, axisUpper, axisSpacing,
+						                 rect, tickLength, stream->axisLabel, _axisWidth == 0,
+						                 _axisWidth == 0, stream->axisPen == Qt::NoPen ? fg : stream->axisPen,
+						                 _axisPosition == Both ? Qt::NoPen : SCScheme.colors.records.gridPen,
+						                 _canvasRect.left(), _canvasRect.right(), _showEngineeringValues);
+					}
 				}
 			}
 			break;
@@ -2713,11 +2866,15 @@ void RecordWidget::drawAxis(QPainter &painter, const QPen &fg) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::showAllRecords(bool enable) {
-	if ( _showAllRecords == enable ) return;
+	if ( _showAllRecords == enable ) {
+		return;
+	}
+
 	_showAllRecords = enable;
 
-	if ( _showAllRecords )
+	if ( _showAllRecords ) {
 		createFilter();
+	}
 
 	setDirty();
 	update();
@@ -2781,11 +2938,11 @@ void RecordWidget::showEngineeringValues(bool enable) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void RecordWidget::setDirty() {
+void RecordWidget::setDirty(bool includingData) {
 	_drawRecords = true;
-	for ( Stream *s : qAsConst(_streams) ) {
+	for ( Stream *s : as_const(_streams) ) {
 		if ( s ) {
-			s->setDirty();
+			s->setDirty(includingData);
 		}
 	}
 }
@@ -2870,7 +3027,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 	*/
 
 	if ( !_enabled ) {
-		fg = QColor(160,160,160);
+		fg = palette().color(QPalette::Disabled, foregroundRole());
 		alignColor = fg;
 	}
 	else {
@@ -2992,7 +3149,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -3037,7 +3194,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 			// Second pass draws all records
 			slot = 0;
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					continue;
 				}
@@ -3064,7 +3221,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 			QColor customBackgroundColor;
 
 			// Two passes: First pass fetches the amplitude range and so on and scales all records appropriate
-			for ( auto *stream : qAsConst(_streams) ) {
+			for ( auto *stream : as_const(_streams) ) {
 				if ( !stream->visible ) {
 					stream->posY = 0;
 					stream->height = 0;
@@ -3261,12 +3418,6 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 		}
 	}
 
-	if ( _drawAxis ) {
-		painter.translate(-_canvasRect.left(), -_canvasRect.top());
-		drawAxis(painter, fg);
-		painter.translate(_canvasRect.left(), _canvasRect.top());
-	}
-
 	painter.setClipRect(0, 0, _canvasRect.width(), _canvasRect.height());
 
 	// Draw marker background
@@ -3329,17 +3480,31 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				double offset[2] = {0,0};
 				int x_tmin[2];
 
-				if ( stream->records[Stream::Raw] )
+				if ( stream->records[Stream::Raw] ) {
 					offset[0] = -_tmin;
-				if ( stream->records[Stream::Filtered] )
+				}
+				if ( stream->records[Stream::Filtered] ) {
 					offset[1] = -_tmin;
+				}
 
 				x_tmin[0] = int(-(offset[0] + _tmin)*_pixelPerSecond);
 				x_tmin[1] = int(-(offset[1] + _tmin)*_pixelPerSecond);
 
 				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
 				if ( stream->traces[1-frontIndex].validTrace() && _showAllRecords ) {
-					painter.setPen(SCScheme.colors.records.offset);
+					if ( stream->antialiasing != isAntialiasing ) {
+						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
+					}
+
+					if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+						auto p = SCScheme.colors.records.offset;
+						p.setWidthF(p.widthF() / painter.device()->devicePixelRatioF());
+						painter.setPen(p);
+					}
+					else {
+						painter.setPen(SCScheme.colors.records.offset);
+					}
+
 					painter.translate(QPoint(x_tmin[1-frontIndex], _tracePaintOffset));
 					//_trace[1-frontIndex].poly.translate(x_tmin[1-frontIndex], _tracePaintOffset);
 					stream->traces[1-frontIndex].poly->draw(painter);
@@ -3354,8 +3519,9 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 							penOffset.setColor(offsetColor);
 							painter.setPen(penOffset);
 						}
-						else
+						else {
 							painter.setPen(offsetColor);
+						}
 
 						painter.drawLine(
 							0,
@@ -3365,11 +3531,14 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						);
 					}
 
-					if ( stream->antialiasing != isAntialiasing )
+					if ( stream->antialiasing != isAntialiasing ) {
 						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
+					}
 
-					int hMargin = stream->pen.width()-1;
-					if ( hMargin < 0 ) hMargin = 0;
+					int hMargin = stream->pen.width() - 1;
+					if ( hMargin < 0 ) {
+						hMargin = 0;
+					}
 
 					drawTrace(painter, &trace,
 					          stream->records[frontIndex],
@@ -3382,26 +3551,32 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 		case InRows:
 			for ( int i = 0; i < _streams.size(); ++i ) {
-				Stream *stream = _streams[i]->visible?_streams[i]:nullptr;
-				if ( stream == nullptr ) continue;
+				Stream *stream = _streams[i]->visible?_streams[i] : nullptr;
+				if ( !stream ) {
+					continue;
+				}
 
 				double offset[2] = {0,0};
 				int x_tmin[2];
 
-				if ( stream->records[Stream::Raw] )
+				if ( stream->records[Stream::Raw] ) {
 					offset[0] = -_tmin;
-				if ( stream->records[Stream::Filtered] )
+				}
+				if ( stream->records[Stream::Filtered] ) {
 					offset[1] = -_tmin;
+				}
 
 				x_tmin[0] = int(-(offset[0] + _tmin)*_pixelPerSecond);
 				x_tmin[1] = int(-(offset[1] + _tmin)*_pixelPerSecond);
 
 				if ( stream->height > 0 ) {
 					// Enable clipping to rows if enabled
-					if ( _clipRows )
+					if ( _clipRows ) {
 						painter.setClipRect(QRect(0, stream->posY, w, stream->height));
-					else
+					}
+					else {
 						painter.setClipRect(QRect(0, 0, w, h));
+					}
 
 					if ( i == _currentSlot && _streams.size() > 1 ) {
 						painter.setRenderHint(QPainter::Antialiasing, false);
@@ -3412,9 +3587,21 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 					}
 				}
 
-				int frontIndex = stream->filtering?Stream::Filtered:Stream::Raw;
-				if ( stream->traces[1-frontIndex].validTrace() && _showAllRecords ) {
-					painter.setPen(SCScheme.colors.records.offset);
+				int frontIndex = stream->filtering ? Stream::Filtered : Stream::Raw;
+				if ( stream->traces[1 - frontIndex].validTrace() && _showAllRecords ) {
+					if ( stream->antialiasing != isAntialiasing ) {
+						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
+					}
+
+					if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+						auto p = SCScheme.colors.records.offset;
+						p.setWidthF(p.widthF() / painter.device()->devicePixelRatioF());
+						painter.setPen(p);
+					}
+					else {
+						painter.setPen(SCScheme.colors.records.offset);
+					}
+
 					painter.translate(QPoint(x_tmin[1-frontIndex], _tracePaintOffset + stream->posY));
 					//_trace[1-frontIndex].poly.translate(x_tmin[1-frontIndex], _tracePaintOffset);
 					stream->traces[1-frontIndex].poly->draw(painter);
@@ -3424,10 +3611,12 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 				auto &trace = stream->traces[frontIndex];
 				if ( trace.validTrace() ) {
 					if ( _drawOffset ) {
-						if ( _drawAxis )
+						if ( _drawAxis ) {
 							painter.setPen(QPen(offsetColor, 1, Qt::DashLine));
-						else
+						}
+						else {
 							painter.setPen(offsetColor);
+						}
 						painter.drawLine(
 							0, _tracePaintOffset + trace.poly->baseline() + stream->posY,
 							_canvasRect.width(),
@@ -3435,11 +3624,14 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 						);
 					}
 
-					if ( stream->antialiasing != isAntialiasing )
+					if ( stream->antialiasing != isAntialiasing ) {
 						painter.setRenderHint(QPainter::Antialiasing, isAntialiasing = stream->antialiasing);
+					}
 
 					int hMargin = stream->pen.width()-1;
-					if ( hMargin < 0 ) hMargin = 0;
+					if ( hMargin < 0 ) {
+						hMargin = 0;
+					}
 
 					drawTrace(painter, &trace,
 					          stream->records[frontIndex],
@@ -3495,7 +3687,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					int frontIndex = stream->filtering ? Stream::Filtered : Stream::Raw;
 					if ( stream->traces[1-frontIndex].validTrace() ) {
-						painter.setPen(SCScheme.colors.records.offset);
+						if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+							auto p = SCScheme.colors.records.offset;
+							p.setWidthF(p.widthF() / painter.device()->devicePixelRatioF());
+							painter.setPen(p);
+						}
+						else {
+							painter.setPen(SCScheme.colors.records.offset);
+						}
+
 						painter.translate(QPoint(x_tmin[1-frontIndex], _tracePaintOffset));
 						stream->traces[1-frontIndex].poly->draw(painter);
 						painter.translate(QPoint(-x_tmin[1-frontIndex], -_tracePaintOffset));
@@ -3696,7 +3896,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 					if ( _drawSPS && stream->records[frontIndex] ) {
 						painter.drawText(
-							0, stream->posY, _canvasRect.width()-4, stream->height,
+							0, stream->posY, _canvasRect.width() - 4, stream->height,
 							Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
 							QString("%1 sps")
 							.arg(stream->records[frontIndex]->front()->samplingFrequency())
@@ -3805,7 +4005,7 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 				if ( _drawSPS && stream->records[frontIndex] ) {
 					painter.drawText(
-						0, 0, _canvasRect.width()-4, stream->height,
+						0, 0, _canvasRect.width() - 4, stream->height,
 						Qt::TextSingleLine | Qt::AlignRight | Qt::AlignBottom,
 						QString("%1 sps")
 						.arg(stream->records[frontIndex]->front()->samplingFrequency())
@@ -3817,6 +4017,15 @@ void RecordWidget::paintEvent(QPaintEvent *event) {
 
 	painter.translate(-_canvasRect.left(), -_canvasRect.top());
 	painter.setClipping(false);
+
+	if ( _drawAxis ) {
+		if ( font.bold() ) {
+			font.setBold(false);
+			painter.setFont(font);
+		}
+
+		drawAxis(painter, fg);
+	}
 
 	if ( _decorator ) {
 		if ( font.bold() ) {
@@ -3859,7 +4068,7 @@ void RecordWidget::drawActiveCursor(QPainter &painter, int x, int y) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::mousePressEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::MiddleButton ) {
-		emit clickedOnTime(unmapTime(event->x()));
+		emit clickedOnTime(unmapTime(QT_EVENT_POS(event).x()));
 		return;
 	}
 
@@ -3883,7 +4092,7 @@ void RecordWidget::mousePressEvent(QMouseEvent *event) {
 		return;
 	}
 	else if ( event->button() == Qt::RightButton ) {
-		RecordMarker* m = nearestMarker(unmapTime(event->x()));
+		RecordMarker* m = nearestMarker(unmapTime(QT_EVENT_POS(event).x()));
 		if ( m )
 			setCursorPos(m->correctedTime());
 
@@ -3926,11 +4135,11 @@ void RecordWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 	}
 
 	if ( event->button() == Qt::LeftButton ) {
-		emit selectedTime(unmapTime(event->x()));
+		emit selectedTime(unmapTime(QT_EVENT_POS(event).x()));
 		return;
 	}
 	else if ( event->button() == Qt::RightButton ) {
-		RecordMarker* m = nearestMarker(unmapTime(event->x()));
+		RecordMarker* m = nearestMarker(unmapTime(QT_EVENT_POS(event).x()));
 		if ( m )
 			emit selectedTime(m->correctedTime());
 		return;
@@ -3951,7 +4160,7 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 		if ( _hoveredMarker != hovered ) {
 			_hoveredMarker = hovered;
 			setToolTip(_hoveredMarker?_hoveredMarker->toolTip():QString());
-			QToolTip::showText(event->globalPos(), toolTip());
+			QToolTip::showText(QT_EVENT_GLOBALPOS(event), toolTip());
 			update();
 		}
 
@@ -4019,7 +4228,11 @@ void RecordWidget::mouseMoveEvent(QMouseEvent *event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void RecordWidget::enterEvent(QEvent *) {
+#else
+void RecordWidget::enterEvent(QEnterEvent *) {
+#endif
 	_hoveredMarker = nullptr;
 	emit mouseOver(true);
 }
@@ -4142,20 +4355,21 @@ void RecordWidget::alignOnMarker(const QString& text) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::enableFiltering(bool enable) {
-	if ( enable == _filtering ) return;
+	if ( enable == _filtering ) {
+		return;
+	}
 
 	_filtering = enable;
 
-	if ( _filtering )
+	if ( _filtering ) {
 		createFilter();
+	}
 
-	// Erase already prepared and unused data
-	if ( !_showAllRecords ) {
-		for ( StreamMap::iterator it = _streams.begin(); it != _streams.end(); ++it ) {
-			Stream* stream = *it;
-			if ( stream->filtering != enable )
-				stream->filtering = enable;
-			stream->traces[_filtering?Stream::Raw:Stream::Filtered].poly = nullptr;
+	for ( auto *stream : _streams ) {
+		stream->filtering = _filtering;
+		if ( !_showAllRecords ) {
+			// Erase already prepared and unused data
+			stream->traces[_filtering ? Stream::Raw : Stream::Filtered].poly = nullptr;
 		}
 	}
 
@@ -4171,7 +4385,6 @@ void RecordWidget::enableFiltering(bool enable) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::enableGlobalOffset(bool enable) {
 	_useGlobalOffset = enable;
-
 	setDirty();
 	update();
 }
@@ -4251,6 +4464,10 @@ void RecordWidget::setGridVScale(double scale) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setActive(bool a) {
+	if ( _active == a ) {
+		return;
+	}
+
 	_active = a;
 
 	/*
@@ -4279,7 +4496,7 @@ void RecordWidget::setAutoMaxScale(bool e) {
 		setNormalizationWindow(visibleTimeWindow());
 	}
 	else {
-		for ( Stream *s : qAsConst(_streams) ) {
+		for ( Stream *s : as_const(_streams) ) {
 			if ( s ) {
 				s->traces[Stream::Raw].dirtyData = true;
 				s->traces[Stream::Filtered].dirtyData = true;
@@ -4296,7 +4513,7 @@ void RecordWidget::setAutoMaxScale(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) {
 	_normalizationWindow = tw;
-	setDirty();
+	setDirty(!_normalizationWindow || _useGlobalOffset);
 	update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4306,12 +4523,14 @@ void RecordWidget::setNormalizationWindow(const Seiscomp::Core::TimeWindow &tw) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::createFilter() {
-	if ( _shadowWidgetFlags & Filtered ) return true;
+	if ( _shadowWidgetFlags & Filtered ) {
+		return true;
+	}
 
 	int slot = 0;
-	for ( StreamMap::iterator it = _streams.begin();
-	      it != _streams.end(); ++it, ++slot )
+	for ( auto it = _streams.begin(); it != _streams.end(); ++it, ++slot ) {
 		createFilter(slot);
+	}
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4321,7 +4540,7 @@ bool RecordWidget::createFilter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool RecordWidget::createFilter(int slot) {
-	Stream* s = getStream(slot);
+	auto s = getStream(slot);
 
 	if ( !s ) {
 		return false;
@@ -5115,8 +5334,23 @@ const Seiscomp::Core::Time& RecordWidget::cursorPos() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const double *RecordWidget::value(const Seiscomp::Core::Time& t) const {
+const double *RecordWidget::value(const Seiscomp::Core::Time &t) const {
 	return _drawMode == Single ? value(_currentSlot, t) : nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(double) RecordWidget::traceValue(const Seiscomp::Core::Time &t, int slot) const {
+	auto v = slot < 0 ? value(_currentSlot, t) : value(slot, t);
+	if ( v ) {
+		return *v;
+	}
+	else {
+		return Core::None;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5238,7 +5472,14 @@ void RecordWidget::drawTrace(QPainter &painter,
                              const Trace *trace,
                              const RecordSequence *seq, const QPen &pen,
                              const QPoint &paintOffset) const {
-	painter.setPen(pen);
+	if ( painter.device()->devicePixelRatioF() > 1.0 ) {
+		auto p = pen;
+		p.setWidthF(p.widthF() / painter.device()->devicePixelRatioF());
+		painter.setPen(p);
+	}
+	else {
+		painter.setPen(pen);
+	}
 	painter.translate(paintOffset);
 	trace->poly->draw(painter);
 	drawRecordBorders(painter, seq);
@@ -5251,7 +5492,9 @@ void RecordWidget::drawTrace(QPainter &painter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordWidget::drawRecordBorders(QPainter &painter, const RecordSequence *seq) const {
-	if ( !_showRecordBorders ) return;
+	if ( !_showRecordBorders ) {
+		return;
+	}
 
 	painter.setRenderHint(QPainter::Antialiasing, false);
 
@@ -5259,20 +5502,25 @@ void RecordWidget::drawRecordBorders(QPainter &painter, const RecordSequence *se
 	Core::Time start = leftTime(),
 	           end = rightTime();
 
-	for ( RecordSequence::const_iterator it = seq->begin();
-	      it != seq->end(); ++it ) {
-		const Record *rec = it->get();
-
+	for ( const auto &rec : *seq ) {
 		// Skip records that are out of time window [start:end]
 		try {
-			if ( rec->endTime() <= start ) continue;
+			if ( rec->endTime() <= start ) {
+				continue;
+			}
 		}
-		catch ( ... ) { continue; }
+		catch ( ... ) {
+			continue;
+		}
 
-		if ( rec->startTime() >= end ) break;
+		if ( rec->startTime() >= end ) {
+			break;
+		}
 
 		int nsamp = rec->sampleCount();
-		if ( nsamp == 0 ) continue;
+		if ( nsamp == 0 ) {
+			continue;
+		}
 
 		int xMin = int(-(_tmin + static_cast<double>((_alignment - rec->startTime()))) *_pixelPerSecond);
 		int xMax = int(-(_tmin + static_cast<double>((_alignment - rec->endTime()))) *_pixelPerSecond);

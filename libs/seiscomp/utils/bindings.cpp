@@ -57,18 +57,20 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
                     bool allowGlobal) {
 	_bindings.clear();
 
-	if ( cfg == nullptr )
+	if ( !cfg || !cfg->enabled() ) {
 		return false;
+	}
 
 	for ( size_t i = 0; i < cfg->configStationCount(); ++i ) {
-		DataModel::ConfigStation *sta_cfg = cfg->configStation(i);
-		if ( !cfg->enabled() ) continue;
+		auto sta_cfg = cfg->configStation(i);
 
-		DataModel::Setup *setup = DataModel::findSetup(sta_cfg, setupName, allowGlobal);
-		if ( (setup == nullptr) || !setup->enabled() ) continue;
+		auto setup = DataModel::findSetup(sta_cfg, setupName, allowGlobal);
+		if ( !setup || !setup->enabled() ) {
+			continue;
+		}
 
-		DataModel::ParameterSet* ps = DataModel::ParameterSet::Find(setup->parameterSetID());
-		if ( ps == nullptr ) {
+		auto ps = DataModel::ParameterSet::Find(setup->parameterSetID());
+		if ( !ps ) {
 			/*
 			SEISCOMP_WARNING("%s.%s: parameter set '%s' not found",
 			                 sta_cfg->networkCode().c_str(),
@@ -78,7 +80,7 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
 			continue;
 		}
 
-		KeyValuesPtr params = new KeyValues;
+		KeyValuesPtr params = new KeyValues(sta_cfg->enabled());
 		params->init(ps);
 
 		_bindings[sta_cfg->networkCode()][sta_cfg->stationCode()].keys = params;
@@ -94,13 +96,15 @@ bool Bindings::init(const DataModel::ConfigModule *cfg, const std::string &setup
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const KeyValues *Bindings::getKeys(const std::string &networkCode,
                                    const std::string &stationCode) const {
-	NetworkMap::const_iterator it = _bindings.find(networkCode);
-	if ( it == _bindings.end() )
+	auto it = _bindings.find(networkCode);
+	if ( it == _bindings.end() ) {
 		return nullptr;
+	}
 
-	StationMap::const_iterator it2 = it->second.find(stationCode);
-	if ( it2 == it->second.end() )
+	auto it2 = it->second.find(stationCode);
+	if ( it2 == it->second.end() ) {
 		return nullptr;
+	}
 
 	return it2->second.keys.get();
 }
@@ -111,8 +115,9 @@ const KeyValues *Bindings::getKeys(const std::string &networkCode,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const KeyValues *Bindings::getKeys(const DataModel::Station *station) const {
-	if ( station->network() == nullptr )
+	if ( !station->network() ) {
 		return nullptr;
+	}
 
 	return getKeys(station->network()->code(), station->code());
 }

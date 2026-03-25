@@ -419,7 +419,7 @@ void FixedHypocenter::setProfile(const string &name) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int FixedHypocenter::capabilities() const {
-	return InitialLocation;
+	return NoCapability;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

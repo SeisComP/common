@@ -116,6 +116,7 @@ class SC_GUI_API SpectrogramRenderer {
 		void setTransferFunction(Math::Restitution::FFT::TransferFunction *tf);
 
 		bool isDirty() const { return _dirty; }
+		bool isAmplitudeRangeDirty() const { return _updatedAmplitudeRange; }
 
 		//! Creates the spectrogram. This is usually done in render if the
 		//! spectrogram is dirty but can called from outside.
@@ -131,7 +132,17 @@ class SC_GUI_API SpectrogramRenderer {
 		                int paddingOuter = 6, int paddingInner = 0,
 		                bool stretch = false);
 
-		QPair<double,double> range() const;
+		/**
+		 * @brief Returns the power spectra amplitude at given time and frequency.
+		 * @param t The time at at which the value should be returned.
+		 * @param f The frequency at which the value should be returned.
+		 * @return The optional amplitude. The the input values are out of bounds
+		 *         then None will be returned.
+		 */
+		OPT(double) amplitude(const Seiscomp::Core::Time &t, double f) const;
+
+		QPair<double,double> amplitudeRange() const;
+		QPair<double,double> frequencyRange() const;
 
 
 	// ----------------------------------------------------------------------
@@ -227,13 +238,18 @@ class SC_GUI_API SpectrogramRenderer {
 		bool                      _logarithmic;
 		bool                      _smoothTransform;
 		bool                      _dirty;
+		bool                      _updatedAmplitudeRange;
 		double                    _renderedFmin;
 		double                    _renderedFmax;
 };
 
 
-inline QPair<double,double> SpectrogramRenderer::range() const {
-	return QPair<double,double>(_renderedFmin, _renderedFmax);
+inline QPair<double,double> SpectrogramRenderer::amplitudeRange() const {
+	return { _normalizationAmpRange[0], _normalizationAmpRange[1] };
+}
+
+inline QPair<double,double> SpectrogramRenderer::frequencyRange() const {
+	return { _renderedFmin, _renderedFmax };
 }
 
 

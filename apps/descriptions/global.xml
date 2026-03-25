@@ -3,7 +3,7 @@
 	<module name="global" category="System">
 		<description>Global parameters for all trunk applications.</description>
 		<configuration>
-			<parameter name="agencyID" type="string" default="GFZ">
+			<parameter name="agencyID" type="string" default="Unset">
 				<description>
 				Agency ID used to set creationInfo.agencyID in
 				data model objects. Should not contain spaces.
@@ -390,11 +390,15 @@
 				<parameter name="target" type="string">
 					<description>
 					A regular expression of all clients that should handle
-					a command message usually send to the GUI messaging group.
+					a command message usually sent to the GUI messaging group.
 					Currently this flag is only used by GUI applications to
 					set an artificial origin and to tell other clients to
 					show this origin. To let all connected clients handle the
 					command, ".*$" can be used.
+
+					You may add specific SeisComP connection usernames or
+					host names and system variables like $USER for more
+					detailed selection of clients.
 					</description>
 				</parameter>
 			</group>
@@ -453,9 +457,17 @@
 					e.g. &quot;signalBegin&quot;. This can be overridden per
 					station in its bindings.
 					</description>
-					<parameter name="interface" type="string" default="libtau">
+					<parameter name="interface" type="string" default="LOCSAT" values="libtau,LOCSAT,homogeneous">
+						<description>
+						The name of the travel-time interface to use. The list
+						can be extended by plugins.
+						</description>
 					</parameter>
 					<parameter name="model" type="string" default="iasp91">
+						<description>
+						The name of the travel-time interface (velocity) model
+						to use.
+						</description>
 					</parameter>
 				</group>
 				<group name="WoodAnderson">
@@ -483,6 +495,21 @@
 					</parameter>
 				</group>
 				<struct type="GlobalAmplitudeProfile" title="Amplitude-type profile" aliases="config:amplitudes.aliases">
+					<parameter name="regionalize" type="boolean" default="true">
+						<description>
+						Control if the amplitude calculation should be
+						regionalized or not. The regions and their configuration
+						are taken from the corresponding magnitude profiles. If
+						regionalization is activate, then e.g. modules without
+						origin information will not be able to compute an
+						amplitude as the origin is required to determine the
+						effective settings.
+
+						If amplitudes for this particular type shall be computed
+						regardless of any defined regions, set this parameter to
+						false.
+						</description>
+					</parameter>
 					<parameter name="considerUnusedArrivals" type="boolean" default="false">
 						<description>
 						If enabled, then also stations with unused (disabled)
@@ -571,7 +598,15 @@
 								magnitude. This settings has no effect with e.g.
 								scautopick as there is no information about the
 								source of the event to compute the distance.
-								The default value is implementation specific.
+								The default value depends on magnitude type.
+
+								Although the default unit is 'deg', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								minDist = 500km
 								</description>
 							</parameter>
 							<parameter name="maxDist" type="string" unit="deg">
@@ -580,7 +615,15 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to compute the distance. The default
-								value is implementation specific.
+								value depends on magnitude type.
+
+								Although the default unit is 'deg', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								maxDist = 500km
 								</description>
 							</parameter>
 							<parameter name="minDepth" type="string" unit="km">
@@ -589,7 +632,15 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to retrieve the depth. The default
-								value is implementation specific.
+								value depends on magnitude type.
+
+								Although the default unit is 'km', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								minDepth = 500km
 								</description>
 							</parameter>
 							<parameter name="maxDepth" type="string" unit="km">
@@ -598,10 +649,18 @@
 								This settings has no effect with e.g. scautopick
 								as there is no information about the source of
 								the event to retrieve the depth. The default
-								value is implementation specific.
+								value depends on magnitude type.
+
+								Although the default unit is 'km', values can be
+								given in any SI distance unit such km, m or cm
+								by simply appending the unit to the value.
+
+								Example:
+
+								maxDepth = 500km
 								</description>
 							</parameter>
-							<parameter name="check" type="string" default="source">
+							<parameter name="check" type="string" default="source" values="raypath,source,source-receiver">
 								<description>
 								Define how the region check is performed to accept
 								a source receiver pair for further processing.
@@ -664,14 +723,14 @@
 					<description>Show version information.</description>
 				</option>
 
-				<option flag="" long-flag="config-file" argument="arg" publicID="generic#config-file">
+				<option flag="" long-flag="config-file" argument="file" publicID="generic#config-file">
 					<description>
-					Use alternative configuration file. When this option is
-					used the loading of all stages is disabled. Only the
-					given configuration file is parsed and used. To use
-					another name for the configuration create a symbolic
-					link of the application or copy it. Example:
-					scautopick -> scautopick2.
+					The alternative module configuration file. When this option
+					is used, the module configuration is only read from the
+					given file and no other configuration stage is considered.
+					Therefore, all configuration including the definition of
+					plugins must be contained in that file or given along with
+					other command-line options such as --plugins.
 					</description>
 				</option>
 
@@ -690,8 +749,8 @@
 					<description>
 					Enable/disable self-shutdown because a master module shutdown.
 					This only works when messaging is enabled and the master
-					module sends a shutdown message (enabled with --start-stop-msg
-					for the master module).
+					module sends a shutdown message (enabled with
+					--start-stop-msg for the master module).
 					</description>
 				</option>
 
@@ -723,7 +782,7 @@
 
 				<option flag="v" long-flag="v" argument="" publicID="verbosity#v">
 					<description>
-					Increase verbosity level (may be repeated, eg. -vv).
+					Increase verbosity level (may be repeated, e.g., -vv).
 					</description>
 				</option>
 
@@ -937,7 +996,7 @@
 				minimum signal-to-noise ratio, amplitude thresholds and
 				restitution for measuring amplitudes of a certain type.
 
-				Standard amplitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
+				Standard amplitude types supported in SeisComP: AMN,Md,Mjma,ML,MLc,MLh,MLv,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<parameter name="saturationThreshold" type="string" default="false" unit="counts; %">
 					<description>
@@ -979,14 +1038,14 @@
 					The parameters of this group will be overridden by type
 					specific settings if given (see GlobalAmplitudeProfile).
 					</description>
-					<parameter name="taper" default="5" unit="s">
+					<parameter name="taper" default="5" unit="s" type="double">
 						<description>
 						Define the length of the taper at either side of the
 						waveform. The length will be added to the data
 						request: start - taper and end + taper.
 						</description>
 					</parameter>
-					<parameter name="minFreq" default="0.00833333" unit="Hz">
+					<parameter name="minFreq" default="0.00833333" unit="Hz" type="double">
 						<description>
 						The minimum frequency of the considered spectrum.
 
@@ -997,7 +1056,7 @@
 						that taper.
 						</description>
 					</parameter>
-					<parameter name="maxFreq" default="0" unit="Hz">
+					<parameter name="maxFreq" default="0" unit="Hz" type="double">
 						<description>
 						The maximum frequency of the considered spectrum.
 
@@ -1016,9 +1075,17 @@
 					noise time window specifications,
 					e.g. &quot;signalBegin&quot;.
 					</description>
-					<parameter name="interface" type="string" default="libtau">
+					<parameter name="interface" type="string" default="LOCSAT" values="libtau,LOCSAT,homogeneous">
+						<description>
+						The name of the travel-time interface to use. The list
+						can be extended by plugins.
+						</description>
 					</parameter>
 					<parameter name="model" type="string" default="iasp91">
+						<description>
+						The name of the travel-time interface (velocity) model
+						to use.
+						</description>
 					</parameter>
 				</group>
 				<group name="WoodAnderson">
@@ -1101,7 +1168,7 @@
 						this check.
 
 						Caution: If a value is set but the amplitude does not
-						provide the period, no amplitude is send.
+						provide the period, no amplitude is sent.
 						</description>
 					</parameter>
 					<parameter name="maxPeriod" type="double" unit="s">
@@ -1113,10 +1180,10 @@
 						this check.
 
 						Caution: If a value is set but the amplitude does not
-						provide the period, no amplitude is send.
+						provide the period, no amplitude is sent.
 						</description>
 					</parameter>
-					<parameter name="noiseBegin" type="string" unit="time grammar" default="-35">
+					<parameter name="noiseBegin" type="string" unit="s" default="-35">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the noise window used to compute
@@ -1125,7 +1192,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="noiseEnd" type="string" unit="time grammar" default="-5">
+					<parameter name="noiseEnd" type="string" unit="s" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the noise window used to compute
@@ -1134,7 +1201,7 @@
 						should only be changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalBegin" type="string" unit="time grammar" default="-5">
+					<parameter name="signalBegin" type="string" unit="s" default="-5">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the begin of the signal window used to compute
@@ -1143,7 +1210,7 @@
 						changed if you know what you are doing.
 						</description>
 					</parameter>
-					<parameter name="signalEnd" type="string" unit="time grammar" default="30">
+					<parameter name="signalEnd" type="string" unit="s" default="30">
 						<description>
 						Override the default time (relative to the trigger
 						time) of the end of the signal window used to compute
@@ -1157,8 +1224,16 @@
 						The minimum distance required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to compute
-						the distance. The default value is implementation
-						specific.
+						the distance. The default value depends on
+						amplitude type.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDist = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDist" type="string" unit="deg" default="180">
@@ -1166,8 +1241,16 @@
 						The maximum distance allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to compute
-						the distance. The default value is implementation
-						specific.
+						the distance. The default value depends on
+						amplitude type.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDist = 500km
 						</description>
 					</parameter>
 					<parameter name="minDepth" type="string" unit="km" default="-1000000">
@@ -1175,8 +1258,16 @@
 						The minimum depth required to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to
-						retrieve the depth. The default value is implementation
-						specific.
+						retrieve the depth. The default value depends on
+						amplitude type.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDepth" type="string" unit="km" default="1000000">
@@ -1184,37 +1275,30 @@
 						The maximum depth allowed to compute an amplitude.
 						This settings has no effect with e.g. scautopick as there
 						is no information about the source of the event to
-						retrieve the depth. The default value is implementation
-						specific.
-						</description>
-					</parameter>
-					<parameter name="regionalize" type="boolean" default="true">
-						<description>
-						Control if the amplitude calculation should be
-						regionalized or not. The regions and their configuration
-						are taken from the corresponding magnitude profiles. If
-						regionalization is activate, then e.g. modules without
-						origin information will not be able to compute an
-						amplitude as the origin is required to determine the
-						effective settings.
+						retrieve the depth. The default value depends on
+						amplitude type.
 
-						If amplitudes for this particular type shall be computed
-						regardless of any defined regions, set this parameter to
-						false.
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDepth = 500km
 						</description>
 					</parameter>
 					<group name="resp">
 						<description>
 						Several parameters if usage of full responses is enabled.
 						</description>
-						<parameter name="taper" default="5" unit="s">
+						<parameter name="taper" default="5" unit="s" type="double">
 							<description>
 							Define the length of the taper at either side of the
 							waveform. The length will be added to the data
 							request: start - taper and end + taper.
 							</description>
 						</parameter>
-						<parameter name="minFreq" default="0.00833333" unit="Hz">
+						<parameter name="minFreq" default="0.00833333" unit="Hz" type="double">
 							<description>
 							After data are converted in to the frequency domain
 							that minimum frequency defines the end of the left-side
@@ -1223,7 +1307,7 @@
 							A value of 0 or lower disables that taper.
 							</description>
 						</parameter>
-						<parameter name="maxFreq" default="0" unit="Hz">
+						<parameter name="maxFreq" default="0" unit="Hz" type="double">
 							<description>
 							After data are converted in to the frequency domain
 							that maximum frequency defines the start of the right-side
@@ -1241,7 +1325,7 @@
 				magnitudes from measured amplitudes including static corrections.
 				The parameters are independent of amplitude-type profiles.
 
-				Standard magnitude types supported in SeisComP: Md,Mjma,ML,MLc,MLh,MLr,MLv,MN,mb,mB,Mwp,Ms_20,Ms(BB).
+				Standard magnitude types supported in SeisComP: MN,Md,Mjma,ML,MLc,MLh,MLv,mb,mB,Mwp,Ms_20,Ms(BB).
 				</description>
 				<struct type="GlobalBindingsMagnitudeProfile" title="Magnitude type profile: Use name of magnitude type" aliases="config:magnitudes.aliases">
 					<description>
@@ -1277,7 +1361,15 @@
 						magnitude. This settings has no effect with e.g.
 						scautopick as there is no information about the
 						source of the event to compute the distance.
-						The default value is implementation specific.
+						The default value depends on magnitude type.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDist = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDist" type="string" unit="deg">
@@ -1286,7 +1378,11 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to compute the distance. The default
-						value is implementation specific.
+						value depends on magnitude type.
+
+						Although the default unit is 'deg', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
 						</description>
 					</parameter>
 					<parameter name="minDepth" type="string" unit="km">
@@ -1295,7 +1391,15 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to retrieve the depth. The default
-						value is implementation specific.
+						value depends on magnitude type.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						minDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="maxDepth" type="string" unit="km">
@@ -1304,7 +1408,15 @@
 						This settings has no effect with e.g. scautopick
 						as there is no information about the source of
 						the event to retrieve the depth. The default
-						value is implementation specific.
+						value depends on magnitude type.
+
+						Although the default unit is 'km', values can be
+						given in any SI distance unit such km, m or cm
+						by simply appending the unit to the value.
+
+						Example:
+
+						maxDepth = 500km
 						</description>
 					</parameter>
 					<parameter name="minSNR" type="double">
@@ -1388,7 +1500,7 @@
 					</parameter>
 					<parameter name="minSNR" type="double" default="3">
 						<description>
-						Mininum SNR as returned from AIC for accepting picks.
+						Minimum SNR as returned from AIC for accepting picks.
 						</description>
 					</parameter>
 				</group>
@@ -1583,7 +1695,7 @@
 					</parameter>
 					<parameter name="minSNR" type="double" default="15">
 						<description>
-						Define the mininum SNR as returned from AIC.
+						Define the minimum SNR as returned from AIC.
 						</description>
 					</parameter>
 				</group>

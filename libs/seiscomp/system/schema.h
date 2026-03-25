@@ -184,6 +184,7 @@ class SC_SYSTEM_CORE_API SchemaStructure : public SchemaParameters {
 	public:
 		std::string type;
 		std::string title;
+		std::string aliases;
 		std::string link;
 		std::string description;
 };

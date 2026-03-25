@@ -312,6 +312,27 @@ void AppendNotifier(T &store, Operation op, Object *o, const std::string parentI
 }
 
 
+template <bool WANT_ENABLE>
+class NotifierStateGuard {
+	public:
+		NotifierStateGuard() {
+			_initialState = Notifier::IsEnabled();
+			Notifier::SetEnabled(WANT_ENABLE);
+		}
+
+		~NotifierStateGuard() {
+			Notifier::SetEnabled(_initialState);
+		}
+
+	private:
+		bool _initialState;
+};
+
+
+using NotifierEnableGuard = NotifierStateGuard<true>;
+using NotifierDisableGuard = NotifierStateGuard<false>;
+
+
 } // of NS DataModel
 } // of NS Seiscomp
 

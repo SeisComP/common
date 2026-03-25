@@ -40,6 +40,17 @@ class QLabel;
 namespace Seiscomp::Gui {
 
 
+struct AuxiliaryChannelProfile {
+	QString                  name;
+	std::vector<std::string> patterns;
+	double                   minimumDistance{0};
+	double                   maximumDistance{1000};
+	bool                     visible{true};
+};
+
+using AuxiliaryChannelProfiles = std::vector<AuxiliaryChannelProfile>;
+
+
 SC_GUI_API extern QChar degrees;
 
 SC_GUI_API extern std::string colorConvertError;
@@ -58,6 +69,7 @@ SC_GUI_API Qt::BrushStyle readBrushStyle(const std::string &query,
                                          const std::string &str,
                                          Qt::BrushStyle base,
                                          bool *ok = nullptr);
+
 
 SC_GUI_API QString latitudeToString(double lat, bool withValue = true,
                                     bool withUnit = true, int precision = 2);
@@ -127,15 +139,10 @@ class SC_GUI_API EllipsisDrawer : public QObject {
 
 /**
  * @brief Constructs an icon from a file path, application resource file or
- * fontawsome identifier. Supported schemes:
- *  - qrc:  Application resource read from qrc file
+ * SeisComP icon identifier. Supported schemes:
  *  - file: File path
- *  - fa:   Fontawesome symbol, regular style
- *  - far:  Fontawesome symbol, regular style
- *  - fas:  Fontawesome symbol, solid style
- *  - fa6:  Fontawesome6 symbol, regular style
- *  - far6: Fontawesome6 symbol, regular style
- *  - fas6: Fontawesome6 symbol, solid style
+ *  - qrc:  Application resource read from qrc file
+ *  - sc:   SeisComP::Gui icon
  *
  *  If the URL contains no scheme the default QIcon(QString) constructor is
  *  used.
@@ -145,8 +152,7 @@ class SC_GUI_API EllipsisDrawer : public QObject {
  *   /path/to/file.png                  File path, same as above
  *   qrc:images/images/connect_no.png   Application resource read from qrc file
  *   :images/images/connect_no.png      Application resource, same as above
- *   fa:ballon                          Fontawesome ballon, regular
- *   fas:ballon                         Fontawesome ballon, solid
+ *   sc:check                           SeisComP check icon
  *
  * @param url Icon URL string.
  * @return QIcon instanance.
@@ -156,6 +162,51 @@ SC_GUI_API QIcon iconFromURL(const QString &url);
 
 template <typename T>
 using ObjectChangeList = std::vector<std::pair<Core::SmartPointer<T>, bool>>;
+
+
+class ColorTheme {
+	private:
+		/**
+		 * @brief Private constructor
+		 * This avoids static instances in custom code and maintains binary compatibility
+		 * if more attributes are added as the only interface is via pointers.
+		 */
+		ColorTheme() = default;
+
+		/**
+		 * @brief Private copy constructor
+		 * This avoids static instances in custom code and maintains binary compatibility
+		 * if more attributes are added as the only interface is via pointers.
+		 */
+		ColorTheme(const ColorTheme &) = default;
+
+	public:
+		/**
+		 * @brief Figure if Dark Mode has been set.
+		 * @return true if dark mode, false otherwise.
+		 */
+		static bool IsDarkMode();
+
+		/**
+		 * @brief Returns the current color theme based on mode (light or dark).
+		 * @return A constant pointer to the current instance.
+		 */
+		static const ColorTheme *Current();
+
+	public:
+		QColor backgroundConfirm;
+		QColor foregroundConfirm;
+		QColor green;
+		QColor orange;
+		QColor petrol;
+		QColor slateBlue;
+		QColor blue;
+		QColor red;
+		QColor lightRed;
+		QColor white;
+};
+
+
 
 
 } // ns Seiscomp::Gui

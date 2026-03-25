@@ -47,21 +47,31 @@ class SC_SYSTEM_CORE_API KeyValues : public Core::BaseObject {
 	//  Public types
 	// ----------------------------------------------------------------------
 	public:
-		typedef std::map<std::string, std::string> NameValueMap;
-		typedef NameValueMap::const_iterator       iterator;
+		using NameValueMap = std::map<std::string, std::string>;
+		using iterator     = NameValueMap::const_iterator;
 
 
 	// ----------------------------------------------------------------------
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		KeyValues();
+		KeyValues(bool enabled = true);
 
 
 	// ----------------------------------------------------------------------
 	//  Public interface
 	// ----------------------------------------------------------------------
 	public:
+		/**
+		 * @brief Sets the enabled state.
+		 */
+		void setEnabled(bool);
+
+		/**
+		 * @brief Returns whether the key value map is enabled or not.
+		 */
+		bool enabled() const;
+
 		/**
 		 * @brief Returns an iterator to the first element in the container.
 		 *        If the container is empty, the returned iterator will be
@@ -183,7 +193,17 @@ class SC_SYSTEM_CORE_API KeyValues : public Core::BaseObject {
 	// ----------------------------------------------------------------------
 	private:
 		NameValueMap _nameValueMap;
+		bool         _enabled{true};
 };
+
+
+inline void KeyValues::setEnabled(bool e) {
+	_enabled = e;
+}
+
+inline bool KeyValues::enabled() const {
+	return _enabled;
+}
 
 
 }

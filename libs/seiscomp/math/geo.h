@@ -63,7 +63,8 @@ void delazi(double lat1, double lon1, double lat2, double lon2,
  */
 SC_SYSTEM_CORE_API
 void delazi_wgs84(double lat1, double lon1, double lat2, double lon2,
-                  double *out_dist, double *out_azi1, double *out_azi2);
+                  double *out_dist, double *out_azi1 = nullptr,
+                  double *out_azi2 = nullptr);
 
 
 /**

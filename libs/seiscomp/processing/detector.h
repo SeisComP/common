@@ -23,8 +23,8 @@
 
 
 #include <seiscomp/processing/waveformprocessor.h>
-#include <boost/function.hpp>
 #include <seiscomp/client.h>
+#include <functional>
 
 
 namespace Seiscomp {
@@ -37,7 +37,7 @@ class SC_SYSTEM_CLIENT_API Detector : public WaveformProcessor {
 	DECLARE_SC_CLASS(Detector)
 
 	public:
-		typedef boost::function<void (const Detector*, const Record*, const Core::Time&)> PublishFunc;
+		using PublishFunc = std::function<void (const Detector*, const Record*, const Core::Time&)>;
 
 	public:
 		Detector(double initTime);

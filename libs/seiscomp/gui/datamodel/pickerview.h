@@ -137,9 +137,9 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 
 
 	protected:
-		void visibilityChanged(bool);
-		void resizeEvent(QResizeEvent *e);
-		void paintEvent(QPaintEvent *e);
+		void visibilityChanged(bool) override;
+		void resizeEvent(QResizeEvent *e) override;
+		void paintEvent(QPaintEvent *e) override;
 
 
 	public slots:
@@ -150,27 +150,28 @@ class SC_GUI_API PickerRecordLabel : public StandardRecordLabel {
 
 
 	private:
-		bool            _isLinkedItem;
-		bool            _isExpanded;
-		QPushButton    *_btnExpand;
-		RecordViewItem *_linkedItem;
-		bool            _hasLabelColor;
-		QColor          _labelColor;
+		bool                           _isLinkedItem;
+		bool                           _isExpanded;
+		QPushButton                   *_btnExpand;
+		RecordViewItem                *_linkedItem;
+		bool                           _hasLabelColor;
+		QColor                         _labelColor;
 
 	private:
-		double               latitude;
-		double               longitude;
-		double               elevation;
-		int                  unit;
-		QString              gainUnit[3];
-		double               gainToSI[3];
-		ThreeComponentTrace  data;
-		Math::Matrix3d       orientationZNE;
-		Math::Matrix3d       orientationZRT;
-		Math::Matrix3d       orientationLQT;
+		double                         latitude;
+		double                         longitude;
+		double                         elevation;
+		int                            unit;
+		QString                        gainUnit[3];
+		double                         gainToSI[3];
+		ThreeComponentTrace            data;
+		Math::Matrix3d                 orientationZNE;
+		Math::Matrix3d                 orientationZRT;
+		Math::Matrix3d                 orientationLQT;
 
-		bool                 hasGotData;
-		bool                 isEnabledByConfig;
+		bool                           hasGotData;
+		bool                           isEnabledByConfig;
+		const AuxiliaryChannelProfile *auxiliaryProfile{nullptr};
 
 	friend class Gui::PickerView;
 };
@@ -275,6 +276,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 			QString recordURL;
 			ChannelMap channelMap;
+			AuxiliaryChannelProfiles auxiliaryChannelProfiles;
 
 			FilterList filters;
 
@@ -371,9 +373,6 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void setBroadBandCodes(const std::vector<std::string> &codes);
 		void setStrongMotionCodes(const std::vector<std::string> &codes);
 
-		void setAuxiliaryChannels(const std::vector<std::string> &patterns,
-		                          double minimumDistance, double maximumDistance);
-
 		//! Sets an origin an inserts the traces for each arrival
 		//! in the view.
 		bool setOrigin(Seiscomp::DataModel::Origin*,
@@ -438,12 +437,8 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void updateRecordValue(Seiscomp::Core::Time);
 		void showTraceScaleToggled(bool);
 
-		void specLogToggled(bool);
-		void specSmoothToggled(bool);
-		void specMinValue(double);
-		void specMaxValue(double);
-		void specTimeWindow(double);
 		void specApply();
+		void specAmplitudesChanged(double, double);
 
 		void limitFilterToZoomTrace(bool);
 
@@ -510,7 +505,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void setCurrentRowDisabled(bool);
 
 		void loadNextStations();
+		void loadAuxiliaryStations(QAction *action);
 		void showUsedStations(bool);
+		void showAuxiliaryStations(QAction *action);
 
 		void moveTraces(double offset);
 		void move(double offset);
@@ -559,12 +556,17 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 
 	protected:
-		void showEvent(QShowEvent* event);
+		void showEvent(QShowEvent* event) override;
+		void changeEvent(QEvent *e) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 
 
 	private:
+<<<<<<< HEAD
+=======
+		void applyThemeColors();
+>>>>>>> e0ce74329ae8520ae62312544942fb745c885087
 		void announceAmplitude();
 		void figureOutTravelTimeTable();
 		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
@@ -612,6 +614,8 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void updateOriginInformation();
 
 		void loadNextStations(float distance);
+		void loadAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile);
+		void showAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile);
 
 		void setCursorText(const QString&);
 		void setCursorPos(const Seiscomp::Core::Time&, bool always = false);
@@ -629,6 +633,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		//! the time range will be left aligned.
 		void ensureVisibility(double &tmin, double &tmax);
 		void ensureVisibility(const Seiscomp::Core::Time &time, int pixelMargin);
+		bool getVisibilityState(RecordViewItem *item);
 
 		void updatePhaseMarker(Seiscomp::Gui::RecordWidget*, const Seiscomp::Core::Time&);
 		void declareArrival(Seiscomp::Gui::RecordMarker *m, const QString &phase, bool);

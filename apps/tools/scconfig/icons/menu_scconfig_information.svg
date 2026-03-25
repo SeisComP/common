@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,0,-50)">
+        <g id="menu_scconfig_information" transform="matrix(0.720689,0,0,1.05261,38.9914,150.602)">
+            <rect x="-54.103" y="-95.573" width="66.603" height="45.601" style="fill:none;"/>
+            <g transform="matrix(1.83004,0,0,1.53697,-509.097,-428.594)">
+                <ellipse cx="268.339" cy="233.363" rx="12.131" ry="9.89" style="fill-opacity:0.15;"/>
+            </g>
+            <g transform="matrix(1.94441,0,0,1.63303,-542.564,-453.861)">
+                <ellipse cx="268.339" cy="233.363" rx="10.704" ry="8.726" style="fill:white;"/>
+                <path d="M268.339,223.764C274.838,223.764 280.114,228.065 280.114,233.363C280.114,238.66 274.838,242.961 268.339,242.961C261.84,242.961 256.564,238.66 256.564,233.363C256.564,228.065 261.84,223.764 268.339,223.764ZM268.339,224.636C262.431,224.636 257.635,228.546 257.635,233.363C257.635,238.179 262.431,242.089 268.339,242.089C274.247,242.089 279.043,238.179 279.043,233.363C279.043,228.546 274.247,224.636 268.339,224.636Z"/>
+            </g>
+            <g transform="matrix(1.62034,0,0,1.36086,-455.603,-390.347)">
+                <ellipse cx="268.339" cy="233.363" rx="10.704" ry="8.726" style="fill:rgb(51,123,204);"/>
+            </g>
+            <g transform="matrix(2.61359,0,0,0.489161,-71.5024,-81.0821)">
+                <rect x="18.337" y="15.045" width="1.911" height="17.479" style="fill:white;"/>
+            </g>
+            <g transform="matrix(2.08134,0,0,1.42503,-50.9809,-120.617)">
+                <circle cx="14.5" cy="29.575" r="1.5" style="fill:white;"/>
+            </g>
+        </g>
+    </g>
+</svg>

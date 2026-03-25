@@ -29,16 +29,22 @@
 #include <openssl/err.h>
 #include <openssl/pem.h>
 
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <filesystem>
 
 using namespace std;
 using namespace Seiscomp::Core;
 
+namespace fs = std::filesystem;
+
 namespace {
 
 bool fromASN1Time(Time &time, const ASN1_TIME *asn1Time) {
+	if ( !asn1Time ) {
+		return false;
+	}
+
 	string str(reinterpret_cast<char*>(asn1Time->data),
 	           static_cast<size_t>(asn1Time->length));
 	if ( asn1Time->type ==  V_ASN1_UTCTIME ) {
@@ -52,6 +58,25 @@ bool fromASN1Time(Time &time, const ASN1_TIME *asn1Time) {
 		return false;
 	}
 }
+
+
+int verify(EVP_PKEY *pkey, const unsigned char *sig, size_t nSig,
+           const unsigned char *digest, size_t nDigest) {
+	auto ctx = EVP_PKEY_CTX_new(pkey, nullptr);
+	if ( !ctx ) {
+		return 0;
+	}
+
+	if ( EVP_PKEY_verify_init(ctx) <= 0 ) {
+		EVP_PKEY_CTX_free(ctx);
+		return 0;
+	}
+
+	auto r = EVP_PKEY_verify(ctx, sig, nSig, digest, nDigest);
+	EVP_PKEY_CTX_free(ctx);
+	return r;
+}
+
 
 }
 
@@ -177,7 +202,7 @@ const X509 *CertificateContext::findCertificate(const Core::Time &referenceTime)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const X509 *CertificateContext::findCertificate(const char *digest, size_t nDigest,
-                                                const ECDSA_SIG *signature) const {
+                                                const unsigned char *sig, unsigned int nSig) const {
 	SEISCOMP_DEBUG("Certificate EC signature lookup");
 
 	int verification_status;
@@ -186,30 +211,22 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 		// Check the last cached certificate
 		EVP_PKEY *pkey = X509_get_pubkey(_cert);
 		if ( pkey ) {
-			EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
-			if ( ec_key ) {
-				verification_status = ECDSA_do_verify(
-					reinterpret_cast<const unsigned char*>(digest), nDigest,
-					signature, ec_key
-				);
+			verification_status = verify(pkey, sig, nSig,
+		                                 reinterpret_cast<const unsigned char*>(digest), nDigest);
 
-				if ( verification_status == 1 ) {
-					SEISCOMP_DEBUG("  Reusing cached certifcate");
-					return _cert;
-				}
-
-				EC_KEY_free(ec_key);
+			if ( verification_status == 1 ) {
+				SEISCOMP_DEBUG("  Reusing cached certifcate");
+				return _cert;
 			}
 		}
 	}
 
 	// Iterate through available certificates
-	SEISCOMP_DEBUG("  Find matching certificate\n");
+	SEISCOMP_DEBUG("  Find matching certificate");
 
 	X509 *cert = 0;
 
-	for ( Certs::const_reverse_iterator it = _certs.rbegin();
-	      it != _certs.rend(); ++it ) {
+	for ( auto it = _certs.rbegin(); it != _certs.rend(); ++it ) {
 		X509 *x509 = it->second;
 		if ( !x509 ) {
 			continue;
@@ -227,18 +244,9 @@ const X509 *CertificateContext::findCertificate(const char *digest, size_t nDige
 			SEISCOMP_DEBUG("      No public key");
 			continue;
 		}
-		EC_KEY *ec_key = EVP_PKEY_get1_EC_KEY(pkey);
-		if ( !ec_key ) {
-			SEISCOMP_DEBUG("      No public EC key");
-			continue;
-		}
 
-		verification_status = ECDSA_do_verify(
-			reinterpret_cast<const unsigned char*>(digest), nDigest,
-			signature, ec_key
-		);
-
-		EC_KEY_free(ec_key);
+		verification_status = verify(pkey, sig, nSig,
+		                             reinterpret_cast<const unsigned char*>(digest), nDigest);
 
 		if ( verification_status != 1 ) {
 			SEISCOMP_DEBUG("      Verification failed");
@@ -366,10 +374,10 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 	string basename = hash + ".";
 
 	try {
-		boost::filesystem::recursive_directory_iterator it(baseDirectory);
-		boost::filesystem::recursive_directory_iterator end;
+		fs::recursive_directory_iterator it(baseDirectory);
+		fs::recursive_directory_iterator end;
 		for ( ; it != end; ++it ) {
-			if ( boost::filesystem::is_regular_file(*it) ) {
+			if ( fs::is_regular_file(*it) ) {
 				string absFilename = it->path().string();
 				string filename = SC_FS_FILE_PATH(SC_FS_PATH(absFilename)).string();
 				if ( !boost::starts_with(filename, basename) ) {
@@ -395,7 +403,7 @@ bool CertificateStore::loadCerts(CertificateContext::Certs &certs, const string 
 			}
 		}
 	}
-	catch ( boost::filesystem::filesystem_error &error ) {
+	catch ( fs::filesystem_error &error ) {
 		SEISCOMP_ERROR("%s: %s", hash.c_str(), error.what());
 		return false;
 	}
@@ -420,10 +428,10 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 	string basename = hash + ".r";
 
 	try {
-		boost::filesystem::recursive_directory_iterator it(baseDirectory);
-		boost::filesystem::recursive_directory_iterator end;
+		fs::recursive_directory_iterator it(baseDirectory);
+		fs::recursive_directory_iterator end;
 		for ( ; it != end; ++it ) {
-			if ( boost::filesystem::is_regular_file(*it) ) {
+			if ( fs::is_regular_file(*it) ) {
 				string absFilename = it->path().string();
 				string filename = SC_FS_FILE_PATH(SC_FS_PATH(absFilename)).string();
 				if ( !boost::starts_with(filename, basename) ) {
@@ -449,7 +457,7 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 			}
 		}
 	}
-	catch ( boost::filesystem::filesystem_error &error ) {
+	catch ( fs::filesystem_error &error ) {
 		SEISCOMP_ERROR("%s: %s", hash.c_str(), error.what());
 		return false;
 	}
@@ -462,17 +470,23 @@ bool CertificateStore::loadCRLs(CertificateContext::CRLs &crls,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CertificateStore::validate(const char *authority, size_t len,
+bool CertificateStore::validate(const char *authority, size_t nAuthority,
                                 const char *digest, size_t nDigest,
-                                const ECDSA_SIG *signature,
+                                const unsigned char *signature, unsigned int nSignature,
                                 const X509 **matchedCertificate) {
-	const CertificateContext *ctx = getContext(authority, len);
-	if ( !ctx ) return false;
+	const CertificateContext *ctx = getContext(authority, nAuthority);
+	if ( !ctx ) {
+		return false;
+	}
 
-	const X509 *cert = ctx->findCertificate(digest, nDigest, signature);
-	if ( !cert ) return false;
+	const X509 *cert = ctx->findCertificate(digest, nDigest, signature, nSignature);
+	if ( !cert ) {
+		return false;
+	}
 
-	if ( matchedCertificate ) *matchedCertificate = cert;
+	if ( matchedCertificate ) {
+		*matchedCertificate = cert;
+	}
 
 	return true;
 }
@@ -482,13 +496,28 @@ bool CertificateStore::validate(const char *authority, size_t len,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool CertificateStore::validate(const std::string &hash,
+bool CertificateStore::validate(const std::string &authority,
                                 const char *digest, size_t nDigest,
-                                const ECDSA_SIG *signature,
+                                const unsigned char *signature, unsigned int nSignature,
                                 const X509 **matchedCertificate) {
 	return validate(
-		&hash[0], hash.size(),
-		digest, nDigest, signature, matchedCertificate
+		authority.data(), authority.size(),
+		digest, nDigest, signature, nSignature, matchedCertificate
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool CertificateStore::validate(std::string_view authority,
+                                const char *digest, size_t nDigest,
+                                const unsigned char *signature, unsigned int nSignature,
+                                const X509 **matchedCertificate) {
+	return validate(
+		authority.data(), authority.size(),
+		digest, nDigest, signature, nSignature, matchedCertificate
 	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

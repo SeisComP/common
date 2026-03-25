@@ -27,10 +27,10 @@
 
 #include <seiscomp/datamodel/version.h>
 
-#include <seiscomp/logging/fd.h>
-#include <seiscomp/logging/filerotator.h>
+#include <seiscomp/logging/output/fd.h>
+#include <seiscomp/logging/output/filerotator.h>
 #ifndef WIN32
-#include <seiscomp/logging/syslog.h>
+#include <seiscomp/logging/output/syslog.h>
 #endif
 
 #include <seiscomp/utils/certstore.h>
@@ -40,8 +40,6 @@
 #include <seiscomp/system/application.h>
 #include <seiscomp/system/pluginregistry.h>
 #include <seiscomp/system/hostinfo.h>
-
-#include <sstream>
 
 #include <cerrno>
 #include <stdio.h>
@@ -366,17 +364,21 @@ void Application::BaseSettings::accept(SettingsLinker &linker) {
 	& cliAsPath(
 		alternativeConfigFile,
 		"Generic", "config-file",
-		"Use alternative configuration file"
+		"The alternative module configuration file. When this option is used, "
+		"the module configuration is only read from the given file and no other "
+		"configuration stage is considered. Therefore, all configuration "
+		"including the definition of plugins must be contained in that file or "
+		"given along with other command-line options such as --plugins."
 	)
 	& cli(
 		plugins,
 		"Generic", "plugins",
-		"Load given plugins"
+		"Load given plugins."
 	)
 	& cli(
 		lockfile,
 		"Verbose", "lockfile,l",
-		"Path to lock file"
+		"Path to lock file."
 	)
 	& cfg(certificateStoreDirectory, "certStore");
 }
@@ -429,14 +431,6 @@ Application::Application(int argc, char** argv) {
 		_name.erase(pos);
 
 	registerSignalHandler(_handleTermination, _handleCrash);
-
-	_baseSettings.enableDaemon = true;
-
-	_baseSettings.logging.verbosity = 2;
-	_baseSettings.logging.context = false;
-	_baseSettings.logging.component = -1; // -1=unset, 0=off, 1=on
-	_baseSettings.logging.toStdout = false;
-	_baseSettings.logging.UTC = false;
 
 	_returnCode = 0;
 	_exitRequested = false;
@@ -765,7 +759,7 @@ void Application::setLoggingContext(bool e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoggingComponent(bool e) {
-	_baseSettings.logging.component = e ? 1 : 0;
+	_baseSettings.logging.component = e;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1425,6 +1419,15 @@ void Application::createCommandLineDescription() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::validateParameters() {
+	if ( _baseSettings.logging.trace || _baseSettings.logging.debug ) {
+		_baseSettings.logging.verbosity = 4;
+		_baseSettings.logging.toStdout = true;
+		if ( _baseSettings.logging.trace ) {
+			_baseSettings.logging.context = true;
+			_baseSettings.logging.component = true;
+		}
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1519,79 +1522,79 @@ bool Application::initLogging() {
 		return true;
 	}
 
-	bool enableLogging = _baseSettings.logging.verbosity > 0;
-
-	if ( _baseSettings.logging.trace || _baseSettings.logging.debug ) {
-		enableLogging = true;
-		_baseSettings.logging.verbosity = 4;
-		_baseSettings.logging.toStdout = true;
-		if ( _baseSettings.logging.trace ) {
-			_baseSettings.logging.context = true;
-			_baseSettings.logging.component = 1;
-		}
-	}
-
-	if ( enableLogging ) {
+	if ( _baseSettings.logging.verbosity > 0 ) {
 		//cerr << "using loglevel " << _verbosity << endl;
-#ifndef WIN32
-		if ( _baseSettings.logging.syslog ) {
-			Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
-			const char *facility = nullptr;
-			string tmp_facility;
-
-			try {
-				tmp_facility = configGetString("logging.syslog.facility");
-				facility = tmp_facility.c_str();
-			}
-			catch ( ... ) {}
-
-			if ( syslogOutput->open(_name.c_str(), facility) ) {
-				cerr << "using syslog: " << _name << ", "
-				     << (facility?facility:"default") << "(code="
-				     << syslogOutput->facility() << ")" << endl;
-				_logger = syslogOutput;
-			}
-			else {
-				cerr << "failed to open syslog: " << _name << endl;
-				delete syslogOutput;
-				syslogOutput = nullptr;
-				return false;
-			}
-		}
-		else
-#endif
 		if ( !_baseSettings.logging.toStdout ) {
-			string logFile = _baseSettings.logging.alternativeLogFile;
-			if ( logFile.empty() )
-				logFile = Environment::Instance()->logFile(_name.c_str());
-
-			Logging::FileOutput* logger;
-			if ( _baseSettings.logging.file.rotator.enable )
-				logger = new Logging::FileRotatorOutput(
-					_baseSettings.logging.file.rotator.timeSpan,
-					_baseSettings.logging.file.rotator.archiveSize,
-					_baseSettings.logging.file.rotator.maxFileSize
-				);
-			else
-				logger = new Logging::FileOutput();
-
-			if ( logger->open(logFile.c_str()) ) {
-				//cerr << "using logfile: " << logFile << endl;
-				_logger = logger;
+			if ( !_baseSettings.logging.output.empty() ) {
+				_logger = Logging::Output::Open(_baseSettings.logging.output.data());
+				if ( !_logger ) {
+					cerr << "Failed to set logging output '" << _baseSettings.logging.output << "'" << endl;
+					return false;
+				}
 			}
+#ifndef WIN32
+			else if ( _baseSettings.logging.syslog ) {
+				Logging::SyslogOutput* syslogOutput = new Logging::SyslogOutput();
+				const char *facility = nullptr;
+				string tmp_facility;
+
+				try {
+					tmp_facility = configGetString("logging.syslog.facility");
+					facility = tmp_facility.c_str();
+				}
+				catch ( ... ) {}
+
+				if ( syslogOutput->open(_name.c_str(), facility) ) {
+					cerr << "using syslog: " << _name << ", "
+					     << (facility?facility:"default") << "(code="
+					     << syslogOutput->facility() << ")" << endl;
+					_logger = syslogOutput;
+				}
+				else {
+					cerr << "failed to open syslog: " << _name << endl;
+					delete syslogOutput;
+					syslogOutput = nullptr;
+					return false;
+				}
+			}
+#endif
 			else {
-				cerr << "failed to open logfile: " << logFile << endl;
-				delete logger;
-				logger = nullptr;
+				string logFile = _baseSettings.logging.alternativeLogFile;
+				if ( logFile.empty() ) {
+					logFile = Environment::Instance()->logFile(_name.c_str());
+				}
+
+				Logging::FileOutput* logger;
+				if ( _baseSettings.logging.file.rotator.enable ) {
+					logger = new Logging::FileRotatorOutput(
+						_baseSettings.logging.file.rotator.timeSpan,
+						_baseSettings.logging.file.rotator.archiveSize,
+						_baseSettings.logging.file.rotator.maxFileSize
+					);
+				}
+				else {
+					logger = new Logging::FileOutput();
+				}
+
+				if ( logger->open(logFile.data()) ) {
+					//cerr << "using logfile: " << logFile << endl;
+					_logger = logger;
+				}
+				else {
+					cerr << "failed to open logfile: " << logFile << endl;
+					delete logger;
+					logger = nullptr;
+				}
 			}
 		}
-		else
+		else {
 			_logger = new Logging::FdOutput(STDERR_FILENO);
+		}
 
 		if ( _logger ) {
 			_logger->setUTCEnabled(_baseSettings.logging.UTC);
-			_logger->logComponent(_baseSettings.logging.component < 0 ? !_baseSettings.logging.toStdout : _baseSettings.logging.component);
-			_logger->logContext(_baseSettings.logging.context);
+			_logger->logComponent(logComponent());
+			_logger->logContext(logContext());
 			if ( !_baseSettings.logging.components.empty() ) {
 				for ( ComponentList::iterator it = _baseSettings.logging.components.begin();
 				      it != _baseSettings.logging.components.end(); ++it ) {

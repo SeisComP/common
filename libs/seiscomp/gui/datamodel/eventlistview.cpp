@@ -26,10 +26,12 @@
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
 #include <seiscomp/gui/datamodel/ui_eventlistviewregionfilterdialog.h>
 
+#include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/connectiondialog.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/messages.h>
-#include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/gui/core/scheme.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
 #include <seiscomp/gui/datamodel/utils.h>
@@ -802,14 +804,16 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 using SortItem = QPair<QTreeWidgetItem*, int>;
 using LessThan = bool(*)(const SortItem&, const SortItem&);
 
+template <typename T>
 bool itemLessThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).toDouble() <
-	       right.first->data(right.second, Qt::UserRole).toDouble();
+	return left.first->data(left.second, Qt::UserRole).value<T>() <
+	       right.first->data(right.second, Qt::UserRole).value<T>();
 }
 
+template <typename T>
 bool itemGreaterThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).toDouble() >
-	       right.first->data(right.second, Qt::UserRole).toDouble();
+	return left.first->data(left.second, Qt::UserRole).value<T>() >
+	       right.first->data(right.second, Qt::UserRole).value<T>();
 }
 
 bool itemTextLessThan(const SortItem& left, const SortItem& right) {
@@ -911,7 +915,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_REGION], Qt::AlignLeft | Qt::AlignVCenter);
 
 			if ( config.customColumn != -1 ) {
-				setTextAlignment(config.customColumn, Qt::AlignCenter);
+				setTextAlignment(config.customColumn, Qt::AlignLeft);
 			}
 
 			for ( const auto &col : config.originScriptColumns ) {
@@ -1147,11 +1151,13 @@ class OriginTreeItem : public SchemeTreeItem {
 
 			if ( config.customColumn != -1 ) {
 				setText(config.customColumn, config.customDefaultText);
-				setData(config.customColumn, Qt::ForegroundRole, QVariant());
+				setToolTip(config.customColumn, config.customDefaultText);
+				setData(config.customColumn, Qt::ForegroundRole, {});
 				if ( !config.originCommentID.empty() ) {
 					for ( size_t i = 0; i < ori->commentCount(); ++i ) {
 						if ( ori->comment(i)->id() == config.originCommentID ) {
 							setText(config.customColumn, ori->comment(i)->text().c_str());
+							setToolTip(config.customColumn, ori->comment(i)->text().c_str());
 							QMap<std::string, QColor>::const_iterator it =
 								config.customColorMap.find(ori->comment(i)->text());
 							if ( it != config.customColorMap.end() ) {
@@ -1213,7 +1219,7 @@ class FocalMechanismTreeItem : public SchemeTreeItem {
 		                       const EventListViewPrivate::ItemConfig &config,
 		                       QTreeWidgetItem *parent = nullptr)
 		  : SchemeTreeItem(ST_FocalMechanism, origin, config, parent) {
-			update(nullptr);
+			FocalMechanismTreeItem::update(nullptr);
 		}
 
 		~FocalMechanismTreeItem() override = default;
@@ -1378,7 +1384,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 			}
 
-			update(nullptr);
+			EventTreeItem::update(nullptr);
 		}
 
 		~EventTreeItem() override = default;
@@ -1516,6 +1522,11 @@ class EventTreeItem : public SchemeTreeItem {
 
 		void resort() {
 			_resort = true;
+		}
+
+		void reset() {
+			_preferredOrigin = nullptr;
+			_preferredMagnitude = nullptr;
 		}
 
 		void updateHideState() {
@@ -1721,10 +1732,10 @@ class EventTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_EVENTTYPE_CERTAINTY], "");
 			}
 
-			if ( ev->preferredFocalMechanismID().empty() ) {
+			if ( ev->preferredFocalMechanismID().empty() && !ev->focalMechanismReferenceCount() ) {
 				setData(config.columnMap[COL_FM], Qt::DisplayRole, QVariant());
 				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QVariant());
-				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant());
+				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant());
 			}
 			else if ( treeWidget() && view ) {
 				if ( ev->focalMechanismReferenceCount() > 0 ) {
@@ -1733,16 +1744,33 @@ class EventTreeItem : public SchemeTreeItem {
 				else {
 					setText(config.columnMap[COL_FM], QObject::tr("Yes"));
 				}
+				if ( !ev->preferredFocalMechanismID().empty() ) {
+					QFont f = font(config.columnMap[COL_FM]);
+					f.setBold(true);
+					setData(config.columnMap[COL_FM], Qt::FontRole, f);
+				}
+				else {
+					setData(config.columnMap[COL_FM], Qt::FontRole, QVariant());
+				}
 				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
-				setData(config.columnMap[COL_FM], Qt::UserRole+1, QVariant::fromValue<void*>(ev));
+				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant::fromValue<void*>(ev));
 			}
 
-			auto *origin = Origin::Find(ev->preferredOriginID());
-			auto *nm = Magnitude::Find(ev->preferredMagnitudeID());
+			if ( !_preferredOrigin ) {
+				_preferredOrigin = Origin::Find(ev->preferredOriginID());
+			}
+
+			if ( !_preferredMagnitude ) {
+				_preferredMagnitude = Magnitude::Find(ev->preferredMagnitudeID());
+			}
+
+			auto *origin = _preferredOrigin.get();
+			auto *nm = _preferredMagnitude.get();
 
 			setText(config.columnMap[COL_ID], QString("%1").arg(ev->publicID().c_str()));
 			setText(config.columnMap[COL_REGION], QString("%1").arg(eventRegion(ev).c_str()));
 			setText(config.columnMap[COL_ORIGINS], QString("%1").arg(ev->originReferenceCount()));
+			setData(config.columnMap[COL_ORIGINS], Qt::UserRole, QVariant::fromValue<unsigned>(ev->originReferenceCount()));
 
 			if ( nm ) {
 				QFont f = font(config.columnMap[COL_M]);
@@ -1873,10 +1901,12 @@ class EventTreeItem : public SchemeTreeItem {
 				if ( config.customColumn != -1 ) {
 					setData(config.customColumn, Qt::ForegroundRole, QVariant());
 					setText(config.customColumn, config.customDefaultText);
+					setToolTip(config.customColumn, config.customDefaultText);
 					if ( !config.originCommentID.empty() ) {
 						for ( size_t i = 0; i < origin->commentCount(); ++i ) {
 							if ( origin->comment(i)->id() == config.originCommentID ) {
 								setText(config.customColumn, origin->comment(i)->text().c_str());
+								setToolTip(config.customColumn, origin->comment(i)->text().c_str());
 								auto it = config.customColorMap.find(origin->comment(i)->text());
 								if ( it != config.customColorMap.end() ) {
 									setData(config.customColumn, Qt::ForegroundRole, it.value());
@@ -1893,6 +1923,7 @@ class EventTreeItem : public SchemeTreeItem {
 								}
 
 								setText(config.customColumn, ev->comment(i)->text().c_str());
+								setToolTip(config.customColumn, ev->comment(i)->text().c_str());
 								auto it = config.customColorMap.find(ev->comment(i)->text());
 								if ( it != config.customColorMap.end() ) {
 									setData(config.customColumn, Qt::ForegroundRole, it.value());
@@ -1940,6 +1971,7 @@ class EventTreeItem : public SchemeTreeItem {
 
 				if ( config.customColumn != -1 ) {
 					setText(config.customColumn, config.customDefaultText);
+					setToolTip(config.customColumn, config.customDefaultText);
 					setData(config.customColumn, Qt::ForegroundRole, QVariant());
 				}
 			}
@@ -2009,6 +2041,8 @@ class EventTreeItem : public SchemeTreeItem {
 		TreeItem *_origins;
 		TreeItem *_focalMechanisms;
 
+		OriginPtr _preferredOrigin;
+		MagnitudePtr _preferredMagnitude;
 		std::string _lastPreferredOriginID;
 		bool _showOnlyOnePerAgency;
 		bool _resort;
@@ -2494,7 +2528,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	setSortingEnabled(true);
 
-	SC_D._ui->btnFilter->setIconSize(QSize(SC_D._ui->btnFilter->fontMetrics().height(),SC_D._ui->btnFilter->fontMetrics().height()));
+	SC_D._ui->btnFilter->setIcon(icon("filter"));
 
 	SC_D._unassociatedEventItem = nullptr;
 	SC_D._updateLocalEPInstance = false;
@@ -2523,7 +2557,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 				std::cerr << "WARNING: eventlist.visibleColumns: name 'TP' "
 				             "has changed to 'MType', please update your configuration" << std::endl;
 			}
-			configuredCols.push_back(v);
+			if ( std::find(configuredCols.begin(), configuredCols.end(), v) == configuredCols.end() ) {
+				configuredCols.push_back(v);
+			}
 		}
 
 		// register columns keeping default order of invisible columns while
@@ -3192,8 +3228,17 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._ui->btnReadDays->setEnabled(SC_D._reader != nullptr);
 	SC_D._ui->btnReadInterval->setEnabled(SC_D._reader != nullptr);
 
-	SC_D._ui->dateTimeEditStart->setDateTime(QDateTime::currentDateTimeUtc());
-	SC_D._ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTimeUtc());
+	QT_DTE_SET(SC_D._ui->dateTimeEditStart, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
+	QT_DTE_SET(SC_D._ui->dateTimeEditEnd, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
+
+	if ( SCScheme.dateTime.useLocalTime ) {
+		SC_D._ui->dateTimeEditStart->setDisplayFormat(SC_D._ui->dateTimeEditStart->displayFormat() + " " + Core::Time::LocalTimeZone().c_str());
+		SC_D._ui->dateTimeEditEnd->setDisplayFormat(SC_D._ui->dateTimeEditEnd->displayFormat() + " " + Core::Time::LocalTimeZone().c_str());
+	}
+	else {
+		SC_D._ui->dateTimeEditStart->setDisplayFormat(SC_D._ui->dateTimeEditStart->displayFormat() + " UTC");
+		SC_D._ui->dateTimeEditEnd->setDisplayFormat(SC_D._ui->dateTimeEditEnd->displayFormat() + " UTC");
+	}
 
 	initTree();
 
@@ -3238,7 +3283,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	//_withComments = true;
 
 	SC_D._busyIndicator = new QMovie(this);
-	SC_D._busyIndicator->setFileName(":/images/images/loader.mng");
+	SC_D._busyIndicator->setFileName(":/sc/assets/loader.mng");
 	SC_D._busyIndicator->setCacheMode(QMovie::CacheAll);
 
 	SC_D._busyIndicatorLabel = new QLabel(SC_D._treeWidget->viewport());
@@ -3869,8 +3914,13 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 	QDateTime end;
 
 	if ( !SCScheme.dateTime.useLocalTime ) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+		start.setTimeZone(QTimeZone::UTC);
+		end.setTimeZone(QTimeZone::UTC);
+#else
 		start.setTimeZone(QTimeZone(Qt::UTC));
 		end.setTimeZone(QTimeZone(Qt::UTC));
+#endif
 		start.setSecsSinceEpoch(tw.startTime().epochSeconds());
 		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
@@ -3879,8 +3929,8 @@ void EventListView::setInterval(const Seiscomp::Core::TimeWindow &tw) {
 		end.setSecsSinceEpoch(tw.endTime().epochSeconds());
 	}
 
-	SC_D._ui->dateTimeEditStart->setDateTime(start);
-	SC_D._ui->dateTimeEditEnd->setDateTime(end);
+	QT_DTE_SET(SC_D._ui->dateTimeEditStart, start, SCScheme.dateTime.useLocalTime);
+	QT_DTE_SET(SC_D._ui->dateTimeEditEnd, end, SCScheme.dateTime.useLocalTime);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4177,29 +4227,31 @@ void EventListView::readFromDatabase(const Filter &filter) {
 		it.close();
 	}
 
-	if ( SC_D._withFocalMechanisms ) {
-		progress.setLabelText(tr("Reading focal mechanisms..."));
+	progress.setLabelText(tr("Reading focal mechanisms references..."));
 
-		it = getEventFocalMechanismReferences(SC_D._reader, filter);
+	it = getEventFocalMechanismReferences(SC_D._reader, filter);
 
-		FocalMechanismReferencePtr fmref;
+	FocalMechanismReferencePtr fmref;
 
-		for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
-			if ( progress.wasCanceled() ) {
-				break;
-			}
-
-			QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
-			if ( mit == eventIDs.end() ) {
-				continue;
-			}
-
-			const EventPtr &ev = mit.value();
-
-			ev->add(fmref.get());
+	for ( ; (fmref = static_cast<FocalMechanismReference*>(*it)); ++it ) {
+		if ( progress.wasCanceled() ) {
+			break;
 		}
 
-		it.close();
+		QMap<int, EventPtr>::iterator mit = eventIDs.find(it.parentOid());
+		if ( mit == eventIDs.end() ) {
+			continue;
+		}
+
+		const EventPtr &ev = mit.value();
+
+		ev->add(fmref.get());
+	}
+
+	it.close();
+
+	if ( SC_D._withFocalMechanisms ) {
+		progress.setLabelText(tr("Reading focal mechanisms..."));
 
 		it = getEventFocalMechanisms(SC_D._reader, filter);
 
@@ -4938,6 +4990,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 						}
 					}
 
+					item->reset();
 					updateEventProcessColumns(item, true);
 					item->update(this);
 
@@ -5326,8 +5379,11 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 	}
 
 	bool wasEnabled = Notifier::IsEnabled();
+	NotifierMessagePtr msg;
 
 	Notifier::Enable();
+
+	auto currentGroup = SCApp->messageGroups().pick;
 
 	// Send picks
 	for ( const auto &pickItem : changedPicks ) {
@@ -5337,19 +5393,29 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 		// TODO: handle updates
 	}
 
-	NotifierMessagePtr msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance ) {
-		//SCApp->sendMessage("LOGGING", msg.get());
-		SCApp->sendMessage(SCApp->messageGroups().pick.c_str(), msg.get());
+	if ( SCApp->messageGroups().amplitude != currentGroup ) {
+		msg = Notifier::GetMessage();
+		if ( msg && !SC_D._updateLocalEPInstance ) {
+			//SCApp->sendMessage("LOGGING", msg.get());
+			SCApp->sendMessage(currentGroup.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
+		}
+
+		currentGroup = SCApp->messageGroups().amplitude;
 	}
 
 	for ( const auto &newAmplitude : newAmplitudes ) {
 		ep->add(newAmplitude.get());
 	}
 
-	msg = Notifier::GetMessage();
-	if ( msg && !SC_D._updateLocalEPInstance ) {
-		SCApp->sendMessage(SCApp->messageGroups().amplitude.c_str(), msg.get());
+	if ( SCApp->messageGroups().location != currentGroup ) {
+		msg = Notifier::GetMessage();
+		if ( msg && !SC_D._updateLocalEPInstance ) {
+			SCApp->sendMessage(currentGroup.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
+		}
+
+		currentGroup = SCApp->messageGroups().location;
 	}
 
 	// Insert origin to Eventparameters
@@ -5371,12 +5437,13 @@ void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
 		baseEvent->add(ref.get());
 	}
 
-	// Send new origin and maybe the manual event assoziation
+	// Send new origin and maybe the manual event association
 	msg = Notifier::GetMessage();
 	if ( msg ) {
 		//SCApp->sendMessage("LOGGING", msg.get());
 		if ( !SC_D._updateLocalEPInstance ) {
 			SCApp->sendMessage(SCApp->messageGroups().location.c_str(), msg.get());
+			SEISCOMP_DEBUG("Sending %d notifiers to %s", msg->size(), currentGroup);
 		}
 		if ( ref && baseEvent ) {
 			emit originReferenceAdded(baseEvent->publicID(), ref.get());
@@ -5678,7 +5745,7 @@ void EventListView::itemSelected(QTreeWidgetItem* item, int column) {
 	}
 
 	if ( column == SC_D._itemConfig.columnMap[COL_FM] ) {
-		auto *ev = static_cast<Event*>(item->data(column, Qt::UserRole+1).value<void*>());
+		auto *ev = static_cast<Event*>(item->data(column, Qt::UserRole + 1).value<void*>());
 		if ( ev ) {
 			emit eventFMSelected(ev);
 			return;
@@ -5705,6 +5772,7 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	auto *actionCopyRow = popup.addAction(tr("Copy row to clipboard"));
 	auto *actionCopyRows = popup.addAction(tr("Copy selected rows to clipboard"));
 	auto *actionExportEventIDs = popup.addAction(tr("Export eventIDs of selected rows"));
+	actionExportEventIDs->setIcon(icon("publish_event"));
 	actionExportEventIDs->setToolTip(tr("Export all selected event ids and run a script configured with 'eventlist.scripts.export'."));
 
 	QAction *actionNewEvent = nullptr;
@@ -5776,32 +5844,42 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		}
 
 		if ( !list.isEmpty() ) {
-			SEISCOMP_DEBUG("Executing script %s", SC_D._exportScript.toStdString());
-			QProcess script;
-			#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
-			script.start(SC_D._exportScript, QStringList(), QProcess::WriteOnly);
-			#else
-			script.start(SC_D._exportScript, QProcess::WriteOnly);
-			#endif
-			if ( !script.waitForStarted() ) {
-				SEISCOMP_ERROR("Failed executing script %s", SC_D._exportScript.toStdString());
-				QMessageBox::warning(this, tr("Export"), tr("Can't execute script %1\n%2")
-				                     .arg(SC_D._exportScript, script.errorString()));
+			auto *manager = SCApp->processManager();
+			auto *process = manager->createProcess(
+			    actionExportEventIDs->text(),
+			    "External script processing selected event ID",
+			    icon("publish-event")
+			);
+			SEISCOMP_DEBUG("Starting event ID processing script: %s",
+			               SC_D._exportScript.toStdString());
+			QT_PROCESS_START(process, SC_D._exportScript);
+
+			// check if process could be started
+			if ( !manager->waitForStarted(process, 30000) ) {
+				return;
 			}
-			else {
-				script.write(list.toUtf8());
-				script.closeWriteChannel();
-				QProgressDialog dlgProgress;
-				dlgProgress.setRange(0, 0);
-				dlgProgress.setLabelText(SC_D._exportScript);
-				dlgProgress.setCancelButtonText("Stop");
-				connect(&script, SIGNAL(finished(int)), &dlgProgress, SLOT(accept()));
-				if ( dlgProgress.exec() != QDialog::Accepted ) {
-					script.kill();
-					dlgProgress.setLabelText(tr("Wait for script to finish"));
-					dlgProgress.setCancelButtonText(QString());
-					dlgProgress.exec();
-				}
+
+			auto msg = QString("Writing event IDs to stdin of process");
+			SEISCOMP_DEBUG(msg.toStdString());
+			manager->log(process, msg);
+
+			if ( process->write(list.toUtf8()) < 0 ) {
+				auto error = QString("Could not write event ids to stdin of process");
+				manager->log(process, error);
+				QMessageBox::critical(this, "Error", error, QMessageBox::Ok);
+				return;
+			}
+
+			process->closeWriteChannel();
+
+			if ( manager->isHidden() ) {
+				manager->show();
+			}
+			if ( manager->isMinimized() ) {
+				manager->showNormal();
+			}
+			if ( !manager->isActiveWindow() ) {
+				manager->activateWindow();
 			}
 		}
 	}
@@ -6012,7 +6090,10 @@ void EventListView::sortItems(int col) {
 	     col == SC_D._itemConfig.columnMap[COL_LAT] ||
 	     col == SC_D._itemConfig.columnMap[COL_LON] ||
 	     col == SC_D._itemConfig.columnMap[COL_DEPTH] ) {
-		compare = (order == Qt::AscendingOrder ? &itemLessThan : &itemGreaterThan);
+		compare = (order == Qt::AscendingOrder ? &itemLessThan<double> : &itemGreaterThan<double>);
+	}
+	else if ( col == SC_D._itemConfig.columnMap[COL_ORIGINS] ) {
+		compare = (order == Qt::AscendingOrder ? &itemLessThan<unsigned> : &itemGreaterThan<unsigned>);
 	}
 	else {
 		compare = (order == Qt::AscendingOrder ? &itemTextLessThan : &itemTextGreaterThan);

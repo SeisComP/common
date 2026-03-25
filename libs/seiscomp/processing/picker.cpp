@@ -141,8 +141,8 @@ void Picker::finalizePick(DataModel::Pick *pick) const {}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void Picker::setPublishFunction(const PublishFunc& func) {
-	_func = func;
+void Picker::setPublishFunction(const PublishFunc &func) {
+	_fnPublish = func;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -151,8 +151,9 @@ void Picker::setPublishFunction(const PublishFunc& func) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Picker::emitPick(const Result &result) {
-	if ( isEnabled() && _func )
-		_func(this, result);
+	if ( isEnabled() && _fnPublish ) {
+		_fnPublish(this, result);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -168,11 +169,15 @@ void Picker::process(const Record *record, const DoubleArray &) {
 	}
 
 	// Error occured while feeding a record or already finished?
-	if ( isFinished() ) return;
+	if ( isFinished() ) {
+		return;
+	}
 
 	// Process unless the available time window does not include the
 	// requested time window
-	if ( !dataTimeWindow().contains(timeWindow())) return;
+	if ( !dataTimeWindow().contains(timeWindow()) ) {
+		return;
+	}
 
 	// data window relative to continuous()->startTime()
 	double relTriggerTime = (_trigger - dataTimeWindow().startTime()).length();
@@ -217,8 +222,9 @@ void Picker::process(const Record *record, const DoubleArray &) {
 		res.polarity = polarity;
 		emitPick(res);
 	}
-	else
+	else {
 		setStatus(LowSNR, snr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -534,6 +534,30 @@ below *faults* (:file:`global.cfg`):
    map.layers.faults.strike-slip.pen.color = blue
    map.layers.faults.strike-slip.label = "strike-slip"
 
+* Draw order control: Use the :confval:`index` property to control the order
+  in which layer categories are drawn on the map. Categories with a lower index
+  are rendered first (behind), while categories with a higher index are rendered
+  on top. Without an explicit index, all categories default to ``0`` and their
+  draw order is indeterminate. Example in :file:`global.cfg`:
+
+  .. code-block:: properties
+
+     # draw region_background behind region_overlay
+     map.layers.region_background.index = 1
+     map.layers.region_overlay.index = 2
+
+  Or equivalently in the respective :file:`map.cfg` files:
+
+  .. code-block:: properties
+
+     # in @DATADIR@/spatial/vector/region_background/map.cfg
+     index = 1
+
+  .. code-block:: properties
+
+     # in @DATADIR@/spatial/vector/region_overlay/map.cfg
+     index = 2
+
 
 Parameters
 ~~~~~~~~~~
@@ -565,8 +589,10 @@ Available map layer configuration parameters for each category are:
 
    Type: *int*
 
-   The index of the label in the legend. All labels will be
-   sorted by their index in ascending order.
+   The index of the layer category. Categories are sorted by their
+   index in ascending order. This controls both the draw order on the
+   map (lower index is rendered behind higher index) and the order of
+   labels in the legend.
 
    Default is ``0``.
 

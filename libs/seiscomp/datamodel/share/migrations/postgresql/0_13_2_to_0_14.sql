@@ -1,5 +1,5 @@
 \echo Drop foreign key contraints of all model tables
-ALTER TABLE EventDescription DROP CONSTRAINT IF EXISTS IF EXISTS EventDescription__oid_fkey;
+ALTER TABLE EventDescription DROP CONSTRAINT IF EXISTS EventDescription__oid_fkey;
 ALTER TABLE Comment DROP CONSTRAINT IF EXISTS Comment__oid_fkey;
 ALTER TABLE DataUsed DROP CONSTRAINT IF EXISTS DataUsed__oid_fkey;
 ALTER TABLE CompositeTime DROP CONSTRAINT IF EXISTS CompositeTime__oid_fkey;

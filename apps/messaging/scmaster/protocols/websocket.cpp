@@ -36,8 +36,6 @@
 #include "handler/broker.h"
 #include "handler/db.h"
 
-#include "../settings.h"
-
 
 using namespace std;
 using namespace Seiscomp::Core;

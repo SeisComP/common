@@ -21,10 +21,11 @@
 #ifndef SC_LOGGING_NODE_H
 #define SC_LOGGING_NODE_H
 
+
+#include <cstdint>
 #include <list>
 #include <set>
 #include <time.h>
-#include <string>
 #include <mutex>
 
 #include <seiscomp/core.h>
@@ -53,6 +54,8 @@ struct SC_SYSTEM_CORE_API Data {
 	struct PublishLoc *publisher;
 	//! time of publication
 	time_t time;
+	uint32_t microseconds;
+
 	//! formatted msg - gets destroyed when publish() call returns.
 	const char *msg;
 

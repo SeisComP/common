@@ -22,8 +22,8 @@
 #define SEISCOMP_CORE_FACTORY_H
 
 
+#include <list>
 #include <map>
-#include <vector>
 #include <string>
 
 #include "metaobject.h"

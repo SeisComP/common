@@ -30,14 +30,16 @@
 #include <seiscomp/gui/qt.h>
 
 #include <QAbstractTableModel>
-#include <QDialog>
+#include <QIcon>
 #include <QLabel>
+#include <QMainWindow>
 #include <QMap>
 #include <QProcess>
 #include <QSet>
 #include <QSortFilterProxyModel>
 #include <QTextEdit>
 #include <QVariantAnimation>
+#include <QVector>
 
 
 namespace Seiscomp::Gui {
@@ -45,7 +47,7 @@ namespace Seiscomp::Gui {
 class ProcessStateLabel;
 
 
-class SC_GUI_API ProcessManager : public QDialog {
+class SC_GUI_API ProcessManager : public QMainWindow {
 	Q_OBJECT
 
 	// ------------------------------------------------------------------
@@ -65,10 +67,11 @@ class SC_GUI_API ProcessManager : public QDialog {
 		 * @param name Name of the process
 		 * @param description Description of the process shown as tool tip
 		 * @param icon Icon to be shown next to the name
+		 * @param userData User data to be associcated to the created process
 		 * @return QProcess instance mananged by this instance
 		 */
 		QProcess *createProcess(QString name, QString description={},
-		                        QIcon icon={});
+		                        QIcon icon={}, QVariant userData={});
 
 		/**
 		 * @brief Wait for the process to start. If the start up fails logging
@@ -79,6 +82,21 @@ class SC_GUI_API ProcessManager : public QDialog {
 		 * @return True if the process could be launched
 		 */
 		bool waitForStarted(QProcess *process, int timeout = 5000);
+
+		/**
+		 * @brief Limits the data written to the console tabs visible in the
+		 * process manager.
+		 * @param process The process to implement limits for
+		 * @param charsOut Maximum number of characters shown in the stdout tab.
+		 * Use a negative number to remove any limit. Use 0 to disable any
+		 * output to the stdout tab.
+		 * @param charsErr Maximum number of characters shown in the stderr tab.
+		 * Use a negative number to remove any limit. Use 0 to disable any
+		 * output to the stderr tab.
+		 * @return True if the process is managed by the process manager
+		 */
+		bool setConsoleLimits(QProcess *process, int charsOut,
+		                      int charsErr = -1);
 
 		/**
 		 * @brief Create a log entry for the process.
@@ -108,6 +126,22 @@ class SC_GUI_API ProcessManager : public QDialog {
 		int erroneousCount();
 
 		/**
+		 * @brief Stop execution of the process by sending the SIGSTOP (19)
+ 		 * signal. The process may be resumed via SIGCONT (18) later on.
+		 * @param process Process to terminate
+		 * @return True if the SIGSTOP signal could be sent
+		 */
+		bool stop(QProcess *process);
+
+		/**
+		 * @brief Continue execution of the process by sending the SIGCONT (18)
+		 * signal. The process must have been stopped via SIGSTOP (19) before.
+		 * @param process Process to continue
+		 * @return True if the SIGCONT signal could be sent
+		 */
+		bool continue_(QProcess *process);
+
+		/**
 		 * @brief Terminate the process gracefully by sending the SIGTERM (9)
 		 * signal.
 		 * @param process Process to terminate
@@ -123,21 +157,57 @@ class SC_GUI_API ProcessManager : public QDialog {
 		 */
 		bool kill(QProcess *process);
 
-		// friend class ProcessStateLabel;
-
+		/**
+		 * @brief Returns a list of processes managed by this instance.
+		 * @return Copy of the process list
+		 */
+		QList<QProcess*> processes();
 
 	// ------------------------------------------------------------------
 	// Signals
 	// ------------------------------------------------------------------
 	signals:
-		// emitted if a process was added/removed or any of the managed
-		// processes changed state
+		/**
+		 * @brief This signal is emitted when data has been read from
+		 * process standard out.
+		 * @param data The data read from standard out
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void readStandardOutput(const QByteArray &data, QProcess *process,
+		                        const QVariant &userData);
+
+		/**
+		 * @brief This signal is emitted when data has been read from
+		 * process standard error.
+		 * @param data The data read from standard error
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void readStandardError(const QByteArray &data, QProcess *process,
+		                       const QVariant &userData);
+
+		/**
+		 * @brief This signal is emitted when a log entry has been added.
+		 * @param entry The log entry added
+		 * @param process Pointer to process
+		 * @param userData Process user data
+		 */
+		void logEntryAdded(const QString &entry, QProcess *process,
+		                   const QVariant &userData);
+
+		/**
+		 * @brief This signal is emitted if a process was added/removed
+		 * or any of the managed processes changed its state.
+		 */
 		void stateChanged();
 
+	// ------------------------------------------------------------------
+	// Slots
+	// ------------------------------------------------------------------
+	public slots:
+		void activate();
 
-	// ------------------------------------------------------------------
-	// Protected Slots
-	// ------------------------------------------------------------------
 	protected slots:
 		void onDataChanged(const QModelIndex &topLeft,
 		                   const QModelIndex &bottomRight,
@@ -150,6 +220,8 @@ class SC_GUI_API ProcessManager : public QDialog {
 		void onProcessReadyReadStandardError();
 		void onProcessStateChanged();
 		void onStopClicked();
+		void onContinueClicked();
+		void onTerminateClicked();
 		void onKillClicked();
 		void onRemoveClicked();
 		void onClearClicked();
@@ -167,9 +239,11 @@ class SC_GUI_API ProcessManager : public QDialog {
 
 		void init();
 		void updateControls();
+		void updateItemState(Item *item);
 
-		static void addConsoleOutput(QTextEdit *textEdit, const QString &text);
-		static void addLog(const Item *item, const Core::Time &time,
+		static void addConsoleOutput(QTextEdit *textEdit, const QString &text,
+		                             int maxChars = -1);
+		void addLog(const Item *item, const Core::Time &time,
 		            const QString &message);
 
 

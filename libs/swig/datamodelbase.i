@@ -62,7 +62,6 @@
 #include <seiscomp/datamodel/diff.h>
 #include <seiscomp/io/recordstream/file.h>
 #include <seiscomp/io/recordstream/slconnection.h>
-#include <seiscomp/io/recordstream/arclink.h>
 #include <seiscomp/io/recordstream/combined.h>
 %}
 
@@ -92,11 +91,6 @@
 
 optional(Seiscomp::DataModel::Operation);
 enum(Seiscomp::DataModel::Operation);
-
-namespace std {
-   %template(vectord) vector<double>;
-   %template(vectorc) vector< std::complex<double> >;
-};
 
 %ignore Seiscomp::DataModel::PublicObjectCache::const_iterator;
 %ignore Seiscomp::DataModel::PublicObjectCache::begin;

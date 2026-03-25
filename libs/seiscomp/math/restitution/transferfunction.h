@@ -61,7 +61,7 @@ class TransferFunction : public Core::BaseObject {
 
 		void evaluate(std::vector<Complex> &out, const std::vector<double> &x) const {
 			out.resize(x.size());
-			evaluate_(&out[0], (int)x.size(), &x[0]);
+			evaluate_(out.data(), (int)x.size(), x.data());
 		}
 
 		//! Devides the spectra by the evaluated nodes of the transfer function
@@ -72,7 +72,7 @@ class TransferFunction : public Core::BaseObject {
 
 		//! Convenience wrapper using a vector as output
 		void deconvolve(std::vector<Complex> &spec, double startFreq, double df) const {
-			deconvolve_((int)spec.size(), &spec[0], startFreq, df);
+			deconvolve_((int)spec.size(), spec.data(), startFreq, df);
 		}
 
 		//! Multiplies the spectra by the evaluated nodes of the transfer function
@@ -83,7 +83,7 @@ class TransferFunction : public Core::BaseObject {
 
 		//! Convenience wrapper using a vector as output
 		void convolve(std::vector<Complex> &spec, double startFreq, double df) const {
-			convolve_((int)spec.size(), &spec[0], startFreq, df);
+			convolve_((int)spec.size(), spec.data(), startFreq, df);
 		}
 
 

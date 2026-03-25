@@ -1,0 +1,18 @@
+SET(LOG_OUTPUT_SOURCES
+	fd.cpp
+	file.cpp
+	filerotator.cpp
+)
+
+SET(LOG_OUTPUT_HEADERS
+	fd.h
+	file.h
+	filerotator.h
+)
+
+IF(NOT WIN32)
+	SET(LOG_OUTPUT_SOURCES ${LOG_OUTPUT_SOURCES} syslog.cpp)
+	SET(LOG_OUTPUT_HEADERS ${LOG_OUTPUT_HEADERS} syslog.h)
+ENDIF(NOT WIN32)
+
+SC_SETUP_LIB_SUBDIR(LOG_OUTPUT)

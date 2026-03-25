@@ -23,7 +23,7 @@
 
 
 #include <seiscomp/processing/timewindowprocessor.h>
-#include <boost/function.hpp>
+#include <functional>
 
 
 namespace Seiscomp {
@@ -65,13 +65,12 @@ class SC_SYSTEM_CLIENT_API FX : public TimeWindowProcessor {
 		};
 
 		struct Result {
-			StreamComponent component;
-			const Record   *record;
-			double          snr;
+			StreamComponents component;
+			const Record    *record;
+			double           snr;
 		};
 
-		typedef boost::function<void (const FX*,
-		                              const Result &)> PublishFunc;
+		using PublishFunc = std::function<void (const FX*, const Result &)>;
 
 
 	// ----------------------------------------------------------------------

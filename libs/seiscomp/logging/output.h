@@ -21,12 +21,17 @@
 #ifndef SC_LOGGING_OUTPUT_H
 #define SC_LOGGING_OUTPUT_H
 
+
+#include <seiscomp/core/interfacefactory.h>
+#include <seiscomp/utils/url.h>
 #include <seiscomp/logging/node.h>
 #include <seiscomp/logging/log.h>
 
+#include <cstdint>
 
-namespace Seiscomp {
-namespace Logging {
+
+namespace Seiscomp::Logging {
+
 
 /**
  * \brief Logging output class
@@ -42,10 +47,44 @@ namespace Logging {
  */
 class SC_SYSTEM_CORE_API Output : public Node {
 	protected:
-		Output();
+		Output() = default;
 
 	public:
-		virtual ~Output() {}
+		virtual ~Output() = default;
+
+	public:
+		/**
+		 * @brief Returns an logging output for the given service.
+		 * @return A pointer to the output.
+		 * @note The returned pointer has to be deleted by the caller!
+		 */
+		static Output *Create(const char* service);
+
+		/**
+		 * @brief Creates and opens an output.
+		 * @param url An URL of the output target, e.g. file://app.log.
+		 * @return A pointer to the output.
+		 * @note The returned pointer has to be deleted by the caller!
+		 */
+		static Output *Open(const char* uri);
+
+		/**
+		 * @brief Creates and opens an output from a URL.
+		 * @param url An URL of the output target.
+		 * @return A pointer to the output.
+		 * @note The returned pointer has to be deleted by the caller!
+		 */
+		static Output *Open(const Util::Url &url);
+
+		/**
+		 * @brief Set up an output and return the success flag.
+		 * Set up an output involves parsing the URL, settings internal
+		 * parameters and open the output. After a successful setup call,
+		 * the output must be in the state to receive and process log messages.
+		 * @param url The url to open.
+		 * @return Success flag
+		 */
+		virtual bool setup(const Util::Url &url) = 0;
 
 	public:
 		/** Subscribe to a particular channel */
@@ -60,7 +99,7 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		virtual void log(const char* channelName,
 		                 LogLevel level,
 		                 const char* msg,
-		                 time_t time) = 0;
+		                 time_t time, uint32_t microseconds) = 0;
 
 		/** The following methods calls are only valid inside the
 		    log(...) method */
@@ -78,15 +117,22 @@ class SC_SYSTEM_CORE_API Output : public Node {
 		void publish(const Data &data) override;
 
 	protected:
-		bool _logComponent;
-		bool _logContext;
-		bool _useUTC;
+		bool _logComponent{true};
+		bool _logContext{false};
+		bool _useUTC{false};
 
 	private:
 		PublishLoc *_publisher;
 };
 
+
+DEFINE_INTERFACE_FACTORY(Output);
+
+#define REGISTER_LOGGING_OUTPUT_INTERFACE(Class, Service) \
+Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::Logging::Output, Class> __##Class##InterfaceFactory__(Service)
+
+
 }
-}
+
 
 #endif

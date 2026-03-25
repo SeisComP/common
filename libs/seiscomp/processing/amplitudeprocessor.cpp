@@ -39,7 +39,6 @@
 #include <cmath>
 #include <functional>
 #include <fstream>
-#include <limits>
 #include <vector>
 #include <mutex>
 
@@ -123,14 +122,14 @@ class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
 			auto sourceFactory = AmplitudeProcessorFactory::Find(sourceType);
 			if ( !sourceFactory ) {
 				SEISCOMP_ERROR("alias: amplitude source factory '%s' does not exist",
-				               sourceType.c_str());
+				               sourceType);
 				return false;
 			}
 
 			auto factory = AmplitudeProcessorFactory::Find(aliasType);
 			if ( factory ) {
 				SEISCOMP_ERROR("alias: amplitude alias type '%s' is already registered",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -147,7 +146,7 @@ class AliasFactories : public std::vector<AmplitudeProcessorAliasFactory*> {
 			auto factory = AmplitudeProcessorFactory::Find(aliasType);
 			if ( !factory ) {
 				SEISCOMP_ERROR("alias: amplitude alias type '%s' does not exist",
-				               aliasType.c_str());
+				               aliasType);
 				return false;
 			}
 
@@ -220,7 +219,7 @@ class Context {
 
 			if ( !_ttt ) {
 				if ( _proc->config().ttInterface.empty() ) {
-					_ttt = TravelTimeTableInterfaceFactory::Create("libtau");
+					_ttt = TravelTimeTableInterfaceFactory::Create("LOCSAT");
 				}
 				else {
 					_ttt = TravelTimeTableInterfaceFactory::Create(_proc->config().ttInterface);
@@ -321,10 +320,8 @@ class Context {
 						if ( pick->evaluationMode() != DataModel::MANUAL ) {
 							// We do not accept automatic picks
 							SEISCOMP_DEBUG("%s.%s.%s: arrival '%s' no accepted, origin evaluation  mode != manual",
-							               env.networkCode.c_str(),
-							               env.stationCode.c_str(),
-							               env.locationCode.c_str(),
-							               arr->phase().code().c_str());
+							               env.networkCode, env.stationCode,
+							               env.locationCode, arr->phase().code());
 							continue;
 						}
 					}
@@ -1296,9 +1293,7 @@ void AmplitudeProcessor::SignalTime::evaluate(const AmplitudeProcessor *proc, bo
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-AmplitudeProcessor::AmplitudeProcessor() {
-	init();
-}
+AmplitudeProcessor::AmplitudeProcessor() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1306,21 +1301,7 @@ AmplitudeProcessor::AmplitudeProcessor() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 AmplitudeProcessor::AmplitudeProcessor(const std::string& type)
-: _type(type) {
-	init();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor::init() {
-	_enableUpdates = false;
-	_enableResponses = false;
-	_responseApplied = false;
-	_config = Config();
-}
+: _type(type) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -1352,9 +1333,19 @@ void AmplitudeProcessor::setEnvironment(const DataModel::Origin *hypocenter,
 	}
 
 	TypeSpecificRegionalization *tsr = it->second.get();
-	if ( !tsr or tsr->regionalization.empty() ) {
+	if ( !tsr ) {
 		// No type specific regionalization, check given distance and depth
 		checkEnvironmentalLimits();
+		return;
+	}
+
+	if ( tsr->regionalization.empty() ) {
+		if ( tsr->regions ) {
+			setStatus(EpicenterOutOfRegions, 0);
+		}
+		else {
+			checkEnvironmentalLimits();
+		}
 		return;
 	}
 
@@ -1632,6 +1623,40 @@ void AmplitudeProcessor::computeTimeWindow() {
 		return;
 	}
 
+	// Check for valid time windows
+	if ( static_cast<double>(_config.noiseBegin) > static_cast<double>(_config.noiseEnd) ) {
+		SEISCOMP_ERROR("Invalid time window: noiseBegin (%f) after noiseEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.noiseEnd));
+		setStatus(Error, 541);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+	if ( static_cast<double>(_config.signalBegin) > static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Invalid time window: signalBegin (%f) after signalEnd (%f)",
+		               static_cast<double>(_config.signalBegin),
+		               static_cast<double>(_config.signalEnd));
+		setStatus(Error, 542);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+	if ( static_cast<double>(_config.noiseBegin) >=static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Zero overall time window: noiseBegin (%f) equals signalEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.signalEnd));
+			setStatus(Error, 543);
+			setTimeWindow(Core::TimeWindow());
+			return;
+	}
+	if ( static_cast<double>(_config.noiseBegin) > static_cast<double>(_config.signalEnd) ) {
+		SEISCOMP_ERROR("Invalid overall time window: noiseBegin (%f) after signalEnd (%f)",
+		               static_cast<double>(_config.noiseBegin),
+		               static_cast<double>(_config.signalEnd));
+		setStatus(Error, 544);
+		setTimeWindow(Core::TimeWindow());
+		return;
+	}
+
 	Core::Time startTime = *_trigger + Core::TimeSpan(_config.noiseBegin);
 	Core::Time   endTime = *_trigger + Core::TimeSpan(_config.signalEnd);
 
@@ -1731,7 +1756,7 @@ void AmplitudeProcessor::reset() {
 	_trigger = Core::None;
 	_noiseAmplitude = Core::None;
 	_noiseOffset = Core::None;
-	_responseApplied = false;
+	clear(State::ResponseApplied);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1805,7 +1830,7 @@ void AmplitudeProcessor::process(const Record *record) {
 	bool unlockCalculation = ((_enableUpdates && !_enableResponses) && progress > 0) || progress >= 100;
 
 	if ( unlockCalculation ) {
-		if ( _streamConfig[_usedComponent].gain == 0.0 ) {
+		if ( _streamConfig[targetComponent()].gain == 0.0 ) {
 			setStatus(MissingGain, 0);
 			return;
 		}
@@ -1834,7 +1859,7 @@ void AmplitudeProcessor::process(const Record *record) {
 
 		AmplitudeIndex index;
 		Result res;
-		res.component = _usedComponent;
+		res.component = dataComponents();
 		res.record = record;
 		res.period = -1;
 		res.snr = -1;
@@ -1876,10 +1901,10 @@ void AmplitudeProcessor::process(const Record *record) {
 			if ( progress >= 100 ) {
 				if ( status() == LowSNR )
 					SEISCOMP_DEBUG("Amplitude %s computation for stream %s failed because of low SNR (%.2f < %.2f)",
-					              _type.c_str(), record->streamID().c_str(), res.snr, _config.snrMin);
+					              _type, record->streamID(), res.snr, _config.snrMin);
 				else if ( status() < Terminated ) {
 					SEISCOMP_DEBUG("Amplitude %s computation for stream %s failed -> abort",
-					              _type.c_str(), record->streamID().c_str());
+					              _type, record->streamID());
 					setStatus(Error, 3);
 				}
 
@@ -1911,15 +1936,21 @@ void AmplitudeProcessor::process(const Record *record) {
 		}
 
 		if ( res.period > 0 ) {
-			if ( _config.minimumPeriod > 0 && res.period < _config.minimumPeriod ) {
+			// Only valid periods can be checked against configured limits
+			if ( (_config.minimumPeriod > 0) && (res.period < _config.minimumPeriod) ) {
 				setStatus(PeriodOutOfRange, res.period);
 				return;
 			}
 
-			if ( _config.maximumPeriod > 0 && res.period > _config.maximumPeriod ) {
+			if ( (_config.maximumPeriod > 0) && (res.period > _config.maximumPeriod) ) {
 				setStatus(PeriodOutOfRange, res.period);
 				return;
 			}
+		}
+		else if ( (_config.minimumPeriod > 0) || (_config.maximumPeriod > 0) ) {
+			// Invalid periods will never meet a configured limit.
+			setStatus(PeriodOutOfRange, 0.0);
+			return;
 		}
 
 		if ( index.begin > index.end ) {
@@ -1948,45 +1979,68 @@ void AmplitudeProcessor::process(const Record *record) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::initFilter(double fsamp) {
-	if ( _enableResponses ) {
+	if ( _enableResponses || check(State::FilterCreated) ) {
 		TimeWindowProcessor::initFilter(fsamp);
 		return;
 	}
 
 	SignalUnit unit;
 	// Valid value already checked in setup()
-	unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str());
+	unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str());
 
 	Filter *filter{nullptr};
 	Math::Filtering::ChainFilter<double> *chain{nullptr};
 
-	if ( unit == Meter ) {
-		SEISCOMP_DEBUG("Add derivation of data for amplitude computation");
-		filter = new Math::Filtering::IIRDifferentiate<double>;
-	}
-	else if ( unit == MeterPerSecondSquared ) {
-		SEISCOMP_DEBUG("Add integration of data for amplitude computation");
-		if ( _config.respMinFreq > 0 ) {
-			chain = new Math::Filtering::ChainFilter<double>;
-			chain->add(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+	auto addFilter = [&chain, &filter](Filter *f) {
+		if ( !filter ) {
+			filter = f;
+			return;
 		}
-		filter = new Math::Filtering::IIRIntegrate<double>;
-	}
 
-	if ( filter ) {
-		if ( _stream.filter || chain ) {
-			if ( !chain ) {
-				chain = new Math::Filtering::ChainFilter<double>;
-			}
+		// There is already a filter, add a chain
+		if ( !chain ) {
+			chain = new Math::Filtering::ChainFilter<double>;
 			chain->add(filter);
-			if ( _stream.filter ) {
-				chain->add(_stream.filter);
-			}
 			filter = chain;
+		}
+
+		chain->add(f);
+	};
+
+	// Negative distance: derive data
+	// Positive distance: integrate data
+	int distance = unit.toInt() - _config.unit.toInt();
+
+	if ( distance ) {
+		int absDistance = abs(distance);
+		SEISCOMP_DEBUG("%s.%s.%s.%s: %s: %dx %s from %s to %s",
+		               _environment.networkCode, _environment.stationCode,
+		               _environment.locationCode, _environment.channelCode,
+		               _type,
+		               absDistance, distance < 0 ? "derivation" : "integration",
+		               unit.toString(), _config.unit.toString());
+		for ( int i = 0; i < absDistance; ++i ) {
+			if ( distance < 0 ) {
+				addFilter(new Math::Filtering::IIRDifferentiate<double>);
+			}
+			else {
+				if ( _config.respMinFreq > 0 ) {
+					addFilter(new Math::Filtering::RunningMeanHighPass<double>(1.0 / _config.respMinFreq));
+				}
+				addFilter(new Math::Filtering::IIRIntegrate<double>);
+			}
+		}
+
+		if ( _stream.filter ) {
+			addFilter(_stream.filter);
 		}
 
 		_stream.filter = filter;
 	}
+
+	// Flag it as done to avoid creating another chain including the current filter
+	// again when reset() is called.
+	set(State::FilterCreated);
 
 	TimeWindowProcessor::initFilter(fsamp);
 }
@@ -2017,11 +2071,11 @@ bool AmplitudeProcessor::handleGap(Filter *, const Core::TimeSpan &span,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::prepareData(DoubleArray &data) {
-	Sensor *sensor = _streamConfig[_usedComponent].sensor();
+	Sensor *sensor = _streamConfig[targetComponent()].sensor();
 
 	// When using full responses then all information needs to be set up
 	// correctly otherwise an error is set
-	if ( _enableResponses ) {
+	if ( _enableResponses && !check(State::ResponseApplied) ) {
 		if ( !sensor ) {
 			setStatus(MissingResponse, 1);
 			return;
@@ -2037,32 +2091,19 @@ void AmplitudeProcessor::prepareData(DoubleArray &data) {
 		// cannot be correctly. We do not want to assume a unit here
 		// to prevent computation errors in case of bad configuration.
 		SignalUnit unit;
-		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+		if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
 			// Invalid unit string
 			setStatus(IncompatibleUnit, 2);
 			return;
 		}
 
-		int intSteps = 0;
-		switch ( unit ) {
-			case Meter:
-				intSteps = -1;
-				break;
-			case MeterPerSecond:
-				break;
-			case MeterPerSecondSquared:
-				intSteps = 1;
-				break;
-			default:
-				setStatus(IncompatibleUnit, 1);
-				return;
-		}
+		// Negative distance: derive data
+		// Positive distance: integrate data
+		int distance = unit.toInt() - _config.unit.toInt();
 
-		if ( _responseApplied ) return;
+		set(State::ResponseApplied);
 
-		_responseApplied = true;
-
-		if ( !deconvolveData(sensor->response(), _data, intSteps) ) {
+		if ( !deconvolveData(sensor->response(), _data, distance) ) {
 			setStatus(DeconvolutionFailed, 0);
 			return;
 		}
@@ -2085,8 +2126,9 @@ bool AmplitudeProcessor::deconvolveData(Response *resp, DoubleArray &data,
 	                               _config.respMinFreq, _config.respMaxFreq,
 	                               numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( !ret )
+	if ( !ret ) {
 		return false;
+	}
 
 	// If number of integrations are negative, derive data
 	while ( numberOfIntegrations < 0 ) {
@@ -2150,11 +2192,9 @@ bool AmplitudeProcessor::computeNoise(const DoubleArray &data, int i1, int i2, d
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("%s.%s.%s.%s - %s amplitude configuration:",
-	               settings.networkCode.c_str(),
-	               settings.stationCode.c_str(),
-	               settings.locationCode.c_str(),
-	               settings.channelCode.c_str(),
-	               _type.c_str());
+	               settings.networkCode, settings.stationCode,
+	               settings.locationCode, settings.channelCode,
+	               _type);
 
 	_environment.networkCode = settings.networkCode;
 	_environment.stationCode = settings.stationCode;
@@ -2233,11 +2273,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".noiseBegin");
 		if ( !_config.noiseBegin.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise begin '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2247,11 +2285,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".noiseEnd");
 		if ( !_config.noiseEnd.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s noise end '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2261,11 +2297,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".signalBegin");
 		if ( !_config.signalBegin.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal begin '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2275,11 +2309,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		expr = settings.getString("amplitudes." + _type + ".signalEnd");
 		if ( !_config.signalEnd.set(expr, &error) ) {
 			SEISCOMP_ERROR("%s.%s.%s.%s - %s signal end '%s': %s",
-			               settings.networkCode.c_str(),
-			               settings.stationCode.c_str(),
-			               settings.locationCode.c_str(),
-			               settings.channelCode.c_str(),
-			               _type.c_str(), expr.c_str(), error.c_str());
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+			               _type, expr, error);
 			return false;
 		}
 	}
@@ -2312,10 +2344,10 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	SEISCOMP_DEBUG("  + maximum distance = %.5f deg", _config.maximumDistance);
 	SEISCOMP_DEBUG("  + minimum depth = %.3f km", _config.minimumDepth);
 	SEISCOMP_DEBUG("  + maximum depth = %.3f km", _config.maximumDepth);
-	SEISCOMP_DEBUG("  + noise begin = %s", _config.noiseBegin.toString().c_str());
-	SEISCOMP_DEBUG("  + noise end = %s", _config.noiseEnd.toString().c_str());
-	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString().c_str());
-	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString().c_str());
+	SEISCOMP_DEBUG("  + noise begin = %s", _config.noiseBegin.toString());
+	SEISCOMP_DEBUG("  + noise end = %s", _config.noiseEnd.toString());
+	SEISCOMP_DEBUG("  + signal begin = %s", _config.signalBegin.toString());
+	SEISCOMP_DEBUG("  + signal end = %s", _config.signalEnd.toString());
 	SEISCOMP_DEBUG("  + minimum SNR = %.3f", _config.snrMin);
 	SEISCOMP_DEBUG("  + minimum period = %.3f", _config.minimumPeriod);
 	SEISCOMP_DEBUG("  + maximum period = %.3f", _config.maximumPeriod);
@@ -2347,9 +2379,9 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 
 	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.iaspeiAmplitudes);
 
-	if ( _usedComponent >= Vertical && _usedComponent <= SecondHorizontal ) {
+	if ( targetComponent() >= VerticalComponent && targetComponent() <= SecondHorizontalComponent ) {
 		SignalUnit unit;
-		if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+		if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
 			// Invalid unit string
 			setStatus(IncompatibleUnit, 0);
 			return false;
@@ -2406,8 +2438,8 @@ bool AmplitudeProcessor::readLocale(Locale *locale,
 			locale->check = Locale::SourceReceiverPath;
 		}
 		else {
-			SEISCOMP_ERROR("%scheck: invalid region check: %s",
-			               cfgPrefix.c_str(), check.c_str());
+			SEISCOMP_ERROR("%: Invalid configuration of region check: %s",
+			               cfgPrefix, check);
 			return false;
 		}
 	}
@@ -2447,7 +2479,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 					if ( !cfg->getString("magnitudes." + type() + ".regions").empty() ) {
 						SEISCOMP_WARNING("%s magnitude: ignoring obsolete "
 						                 "configuration parameter: magnitudes.%s.regions",
-						                 type().c_str(), type().c_str());
+						                 type(), type());
 					}
 				}
 				catch ( ... ) {}
@@ -2459,7 +2491,7 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 
 					if ( !regionalizedSettings->regions ) {
 						SEISCOMP_ERROR("Failed to read/parse %s regions file: %s",
-						               type().c_str(), filename.c_str());
+						               type(), filename);
 						return false;
 					}
 
@@ -2478,13 +2510,13 @@ bool AmplitudeProcessor::initRegionalization(const Settings &settings) {
 						try {
 							if ( !cfg->getBool(cfgPrefix + "enable") ) {
 								SEISCOMP_DEBUG("%s: - region %s (disabled)",
-								               _type.c_str(), feature->name().c_str());
+								               _type, feature->name());
 								continue;
 							}
 						}
 						catch ( ... ) {
 							SEISCOMP_DEBUG("%s: - region %s (disabled)",
-							               _type.c_str(), feature->name().c_str());
+							               _type, feature->name());
 							continue;
 						}
 
@@ -2591,10 +2623,13 @@ void AmplitudeProcessor::finalizeAmplitude(DataModel::Amplitude *) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const AmplitudeProcessor *
 AmplitudeProcessor::componentProcessor(Component comp) const {
-	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
+	if ( comp < VerticalComponent || comp > SecondHorizontalComponent ) {
 		return nullptr;
+	}
 
-	if ( comp != (Component)_usedComponent ) return nullptr;
+	if ( comp != targetComponent() ) {
+		return nullptr;
+	}
 
 	return this;
 }
@@ -2605,10 +2640,13 @@ AmplitudeProcessor::componentProcessor(Component comp) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor::processedData(Component comp) const {
-	if ( comp < VerticalComponent || comp > SecondHorizontalComponent )
+	if ( comp < VerticalComponent || comp > SecondHorizontalComponent ) {
 		return nullptr;
+	}
 
-	if ( comp != (Component)_usedComponent ) return nullptr;
+	if ( comp != targetComponent() ) {
+		return nullptr;
+	}
 
 	return &continuousData();
 }
@@ -2619,10 +2657,14 @@ const DoubleArray *AmplitudeProcessor::processedData(Component comp) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeProcessor::writeData() const {
-	if ( !_stream.lastRecord ) return;
+	if ( !_stream.lastRecord ) {
+		return;
+	}
 
-	const DoubleArray *data = processedData((Component)_usedComponent);
-	if ( data == nullptr ) return;
+	const DoubleArray *data = processedData(targetComponent());
+	if ( !data ) {
+		return;
+	}
 
  	std::ofstream of((_stream.lastRecord->streamID() + "-" + type() + ".data").c_str());
 

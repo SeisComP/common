@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100%"
+   height="100%"
+   viewBox="0 0 24 24"
+   version="1.1"
+   xml:space="preserve"
+   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+   id="svg3"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs3">
+        
+    
+            
+            
+            
+        </defs>
+    <g
+   transform="matrix(0.72491187,0,0,0.87126711,-1.3534001,-5.4350059)"
+   id="g1"
+   style="fill:#000000;fill-opacity:1">
+                <path
+   d="m 20.812,10.773 11.036,14.921 c 0.524,0.708 0.546,1.597 0.059,2.323 -0.488,0.726 -1.409,1.176 -2.409,1.176 H 7.427 c -1,0 -1.921,-0.45 -2.409,-1.176 C 4.531,27.291 4.553,26.402 5.077,25.694 L 16.113,10.773 c 0.502,-0.679 1.392,-1.092 2.35,-1.092 0.958,0 1.847,0.413 2.349,1.092 z"
+   id="path1"
+   style="fill:#000000;fill-opacity:1" />
+            </g><g
+   transform="matrix(0.72491187,0,0,0.87126711,-1.3534001,-5.4350059)"
+   id="g2">
+                <path
+   d="M 18.463,11.976 7.427,26.897 h 22.071 z"
+   style="fill:#ffc618"
+   id="path2" />
+            </g>
+</svg>

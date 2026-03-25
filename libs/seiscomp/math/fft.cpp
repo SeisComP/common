@@ -179,7 +179,7 @@ void transform(T *data, int n, FFTDirection dir) {
 template <typename T>
 void ifft(int n, T *out, ComplexArray &coeff) {
 	int tn = coeff.size()*2;
-	double *inout = reinterpret_cast<double*>(&coeff[0]);
+	double *inout = reinterpret_cast<double*>(coeff.data());
 
 #ifdef MATH_USE_FFTW3
 	fftw_plan backward = fftw_plan_dft_c2r_1d(tn, (fftw_complex *)inout, inout,
@@ -221,7 +221,7 @@ void fft(ComplexArray &out, int n, const T *data) {
 	out.resize(fftn/2);
 #endif
 
-	double *inout = reinterpret_cast<double*>(&out[0]);
+	double *inout = reinterpret_cast<double*>(out.data());
 
 	for ( int i = 0; i < n; ++i )
 		inout[i] = data[i];

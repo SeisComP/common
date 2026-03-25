@@ -46,7 +46,7 @@ def addEntry(cfg, param, item):
         if len(items) == 1 and items[0] == "":
             items.clear()
     except ValueError:
-        items = config.VectorStr()
+        items = config.StringVector()
 
     if item not in items:
         items.push_back(item)
@@ -249,7 +249,7 @@ class Module(kernel.CoreModule):
                 dbBackend = "mysql"
                 try:
                     rootpwd = setup_config.getString(
-                        self.name + ".database.enable.backend.create.rootpw"
+                        self.name + ".database.enable.backend.create.runAsSuperUser.rootpw"
                     )
                 except ValueError:
                     rootpwd = ""
@@ -294,7 +294,7 @@ class Module(kernel.CoreModule):
                         params.rouser,
                         params.ropwd,
                         params.rwhost,
-                        rootpwd,
+                        rootpwd or "-",
                         str(params.drop),
                         schemapath,
                     ]
@@ -307,8 +307,12 @@ class Module(kernel.CoreModule):
                         file=sys.stderr,
                     )
                     if runAsSuperUser:
-                        cmd = "{} seiscomp-python {} {}".format(
-                            binary, dbScript, " ".join(shlex.quote(o) for o in options)
+                        script = os.path.join(
+                            self.env.SEISCOMP_ROOT, "bin", "seiscomp-python"
+                        )
+
+                        cmd = "{} - {} {} {}".format(
+                            binary, script, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
                     else:
                         cmd = "{} {}".format(dbScript, " ".join(shlex.quote(o) for o in options))
@@ -373,7 +377,7 @@ class Module(kernel.CoreModule):
                             ),
                             file=sys.stderr,
                         )
-                        cmd = '{} su postgres -c "{}/seiscomp-python {} {}"'.format(
+                        cmd = '{} postgres "{}/seiscomp-python {} {}"'.format(
                             binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
 

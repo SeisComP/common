@@ -26,6 +26,7 @@
 
 #include <seiscomp/io/database.h>
 #include <libpq-fe.h>
+#include <string>
 
 
 namespace Seiscomp {
@@ -94,14 +95,15 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
-		PGconn   *_handle{nullptr};
-		PGresult *_result{nullptr};
-		bool      _debug{false};
-		int       _row;
-		int       _nRows;
-		int       _fieldCount;
-		void     *_unescapeBuffer{nullptr};
-		size_t    _unescapeBufferSize{0};
+		PGconn      *_handle{nullptr};
+		PGresult    *_result{nullptr};
+		bool        _debug{false};
+		int         _row;
+		int         _nRows;
+		int         _fieldCount;
+		void        *_unescapeBuffer{nullptr};
+		size_t      _unescapeBufferSize{0};
+		std::string _options;
 };
 
 

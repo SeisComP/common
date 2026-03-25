@@ -659,10 +659,6 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 			std::string          customPublicIDPattern;
 			std::string          configModuleName{"trunk"};
 
-			bool                 enableFetchDatabase{true};
-			bool                 enableLoadStations{false};
-			bool                 enableLoadInventory{false};
-			bool                 enableLoadConfigModule{false};
 			bool                 enableAutoApplyNotifier{true};
 			bool                 enableInterpretNotifier{true};
 
@@ -680,6 +676,13 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 			struct Database {
 				void accept(SettingsLinker &linker);
 
+				// State variables
+				bool        enableFetch{true};
+				bool        enableStations{false};
+				bool        enableInventory{false};
+				bool        enableConfigModule{false};
+
+				// Configuration variables
 				bool        enable{true};
 				bool        showDrivers{false};
 

@@ -27,6 +27,7 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/inspector.h>
+#include <seiscomp/gui/core/logmanager.h>
 #include <seiscomp/gui/core/processmanager.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/database.h>
@@ -44,6 +45,7 @@
 #include <QImage>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcess>
 #include <QStatusBar>
 #include <QtSvg/QSvgRenderer>
 
@@ -83,7 +85,7 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	_actionShowSettings->setEnabled(SCApp->isMessagingEnabled() || SCApp->isDatabaseEnabled());
 
 	connect(_actionToggleFullScreen, SIGNAL(triggered(bool)), this, SLOT(toggleFullScreen()));
-	connect(_actionShowSettings, SIGNAL(triggered(bool)), SCApp, SLOT(showSettings()));	
+	connect(_actionShowSettings, SIGNAL(triggered(bool)), SCApp, SLOT(showSettings()));
 
 	addAction(_actionToggleFullScreen);
 	addAction(_actionShowSettings);
@@ -101,40 +103,31 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags)
 	addAction(inspectConfig);
 	addAction(inspectInventory);
 
-	connect(inspectConfig, &QAction::triggered,
-	        this, &MainWindow::inspectConfig);
+	if ( SCApp->logManager() ) {
+		auto *inspectLog = new QAction(this);
+		inspectLog->setObjectName(QString::fromUtf8("inspectLog"));
+		inspectLog->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+L", nullptr));
+		inspectLog->setText(QApplication::translate("MainWindow", "Inspect &log...", nullptr));
+		addAction(inspectLog);
+		connect(inspectLog, &QAction::triggered, SCApp->logManager(), &LogManager::activate);
+	}
 
-	connect(inspectInventory, &QAction::triggered,
-	        this, &MainWindow::inspectInventory);
+	if ( SCApp->processManager() ) {
+		auto *inspectProcesses = new QAction(this);
+		inspectProcesses->setObjectName(QString::fromUtf8("inspectProcesses"));
+		inspectProcesses->setShortcut(QApplication::translate("MainWindow", "Alt+Ctrl+P", nullptr));
+		inspectProcesses->setText(QApplication::translate("MainWindow", "Inspect &processes...", nullptr));
+		addAction(inspectProcesses);
+		connect(inspectProcesses, &QAction::triggered, SCApp->processManager(), &ProcessManager::activate);
+	}
 
-	connect(SCApp, &Application::connectionEstablished,
-	        this, &MainWindow::connectionEstablished);
-
-	connect(SCApp, &Application::connectionLost,
-	        this, &MainWindow::connectionLost);
-
-	connect(SCApp, &Application::showNotification,
-	        this, &MainWindow::showNotification);
+	connect(inspectConfig, &QAction::triggered, this, &MainWindow::inspectConfig);
+	connect(inspectInventory, &QAction::triggered, this, &MainWindow::inspectInventory);
+	connect(SCApp, &Application::connectionEstablished, this, &MainWindow::connectionEstablished);
+	connect(SCApp, &Application::connectionLost, this, &MainWindow::connectionLost);
+	connect(SCApp, &Application::showNotification, this, &MainWindow::showNotification);
 
 	setAcceptDrops(true);
-
-	QSvgRenderer svg(QString(":/images/images/seiscomp-logo.svg"));
-	long dim = Math::Filtering::next_power_of_2(fontMetrics().height() * 2);
-	if ( dim < 64 ) {
-		dim = 64;
-	}
-	QImage img(dim, dim, QImage::Format_ARGB32);
-	QPainter paint(&img);
-	svg.render(&paint);
-	setWindowIcon(QIcon(QPixmap::fromImage(img)));
-
-	// create process state toolbar widget once process manager is created
-	connect(SCApp, &Gui::Application::processManagerCreated, [this]() {
-		if ( !_processState && statusBar() ) {
-			_processState = new ProcessStateLabel(SCApp->processManager(), this);
-			statusBar()->addPermanentWidget(_processState);
-		}
-	});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -229,6 +222,16 @@ void MainWindow::showEvent(QShowEvent *e) {
 		return;
 	}
 
+	if ( SCApp->logManager() ) {
+		_logState = new LogStateLabel(SCApp->logManager(), statusBar());
+		statusBar()->addPermanentWidget(_logState);
+	}
+
+	if ( SCApp->processManager() ) {
+		_processState = new ProcessStateLabel(SCApp->processManager(), this);
+		statusBar()->addPermanentWidget(_processState);
+	}
+
 	_connectionState = new ConnectionStateLabel(statusBar());
 	connect(_connectionState, &ConnectionStateLabel::customInfoWidgetRequested,
 	        [](const QPoint &pos) { SCApp->showSettings(); } );
@@ -237,8 +240,54 @@ void MainWindow::showEvent(QShowEvent *e) {
 
 	onChangedConnection();
 
-	connect(SCApp, SIGNAL(changedConnection()),
-	        this, SLOT(onChangedConnection()));
+	connect(SCApp, SIGNAL(changedConnection()), this, SLOT(onChangedConnection()));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MainWindow::closeEvent(QCloseEvent *e) {
+	if ( !statusBar() || _processState ) {
+		auto *pm = SCApp->processManager();
+		int runningCount = pm->runningCount();
+		if ( runningCount > 0 ) {
+			pm->showNormal();
+			pm->activateWindow();
+
+			QMessageBox mb;
+			mb.setWindowTitle("Close aborted");
+			if ( runningCount == 1 ) {
+				mb.setText(QString("Found running process.").arg(runningCount));
+				mb.setInformativeText("Do you want to terminate it?");
+			}
+			else {
+				mb.setText(QString("Found %1 running processes.").arg(runningCount));
+				mb.setInformativeText("Do you want to terminate them?");
+			}
+			mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+			int ret = mb.exec();
+			if ( ret == QMessageBox::Yes ) {
+				auto procs = pm->processes();
+				for ( auto *p : std::as_const(procs) ) {
+					pm->terminate(p);
+				}
+			}
+
+			e->ignore();
+			return;
+		}
+
+		pm->close();
+	}
+
+	auto *lm = SCApp->logManager();
+	if ( lm ) {
+		lm->close();
+	}
+
+	QMainWindow::closeEvent(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

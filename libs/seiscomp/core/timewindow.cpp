@@ -22,8 +22,7 @@
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace Core {
+namespace Seiscomp::Core {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -145,6 +144,110 @@ bool TimeWindow::equals(const TimeWindow &tw, TimeSpan tolerance) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(TimeSpan) OpenTimeWindow::length() const {
+	if ( _startTime && _endTime ) {
+		return *_endTime - *_startTime;
+	}
+
+	return Core::None;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OpenTimeWindow::set(const OPT(Time) &t1, const OPT(Time) &t2) {
+	_startTime = t1;
+	_endTime = t2;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OpenTimeWindow::setStartTime(const OPT(Time) &t) {
+	_startTime = t;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OpenTimeWindow::setEndTime(const OPT(Time) &t) {
+	_endTime = t;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool OpenTimeWindow::contains(const Time &t) const {
+	if ( _startTime && (t < *_startTime) ) {
+		return false;
+	}
+
+	if ( _endTime && (t >= _endTime) ) {
+		return false;
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool OpenTimeWindow::contains(const OpenTimeWindow &tw) const {
+	if ( _startTime ) {
+		if ( tw._startTime && (_startTime > tw._startTime) ) {
+			return false;
+		}
+
+		if ( !tw._startTime ) {
+			return false;
+		}
+	}
+
+	if ( _endTime ) {
+		if ( tw._endTime && (_endTime < tw._endTime) ) {
+			return false;
+		}
+
+		if ( !tw._endTime ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool OpenTimeWindow::overlaps(const OpenTimeWindow &tw) const {
+	if ( _startTime && tw._endTime && (_startTime >= tw._endTime) ) {
+		return false;
+	}
+
+	if ( _endTime && tw._startTime && (_endTime <= tw._startTime) ) {
+		return false;
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 std::ostream &operator<<(std::ostream &os, const TimeWindow &timeWindow) {
 	return os << timeWindow.startTime() << "~" << timeWindow.endTime();
 }
@@ -154,6 +257,27 @@ std::ostream &operator<<(std::ostream &os, const TimeWindow &timeWindow) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::ostream &operator<<(std::ostream &os, const OpenTimeWindow &timeWindow) {
+	if ( timeWindow.startTime() ) {
+		os << *timeWindow.startTime();
+	}
+	else {
+		os << ">";
+	}
+	os << "~";
+	if ( timeWindow.endTime() ) {
+		os << *timeWindow.endTime();
+	}
+	else {
+		os << "<";
+	}
+	return os;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

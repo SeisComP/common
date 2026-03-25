@@ -1,4 +1,5 @@
 SET(SEISMOLOGY_SOURCES
+	firstmotion.cpp
 	locatorinterface.cpp
 	mb.cpp
 	ML.cpp
@@ -8,6 +9,7 @@ SET(SEISMOLOGY_SOURCES
 )
 
 SET(SEISMOLOGY_HEADERS
+	firstmotion.h
 	ttt.h
 	regions.h
 	magnitudes.h

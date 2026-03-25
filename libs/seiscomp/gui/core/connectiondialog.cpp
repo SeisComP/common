@@ -26,6 +26,7 @@
 #include <seiscomp/io/database.h>
 #include <seiscomp/messaging/messages/database.h>
 #include <seiscomp/utils/timer.h>
+#include <seiscomp/gui/core/icon.h>
 
 #include <QDir>
 #include <QFileDialog>
@@ -78,10 +79,7 @@ ConnectionDialog::ConnectionDialog(ConnectionPtr* con, DatabaseInterfacePtr* db,
 	            tr("<html>Enter one group defined in the master config file. "
 	               "This group is used for sending messages only.</html>"));
 
-	int iconHeight = _ui.editPeerCertificate->height();
-	_ui.btnPeerCertificateOpen->setIconSize(QSize(iconHeight, iconHeight));
-	_ui.btnPeerCertificateOpen->setIcon(
-	            qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
+	_ui.btnPeerCertificateOpen->setIcon(icon("file_certificate"));
 	_ui.editPeerCertificate->setToolTip(
 	            tr("<html>The OpenSSL peer certificate to be used. Path to "
 	               "OpenSSL certificate in PKCS 12 format or the prefix \"data:\" "

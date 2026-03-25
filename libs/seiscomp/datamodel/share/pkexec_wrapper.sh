@@ -4,21 +4,34 @@ pid=-1
 
 # the cleanup function will be the exit point
 cleanup () {
-	if [ $pid -ne -1 ]
-	then
+	if [ $pid -ne -1 ]; then
 		kill $pid &>/dev/null
 	fi
 
 }
 
 if [ $# -eq 0 ]; then
-    echo "Usage: pkexec_wrapper.sh <cmd>"
+    echo -e "Usage: pkexec_wrapper.sh <user> <cmd>\n"
+    echo "Use '-' to execute the program as the administrative super user, root."
 	exit 0
 fi
 
 trap cleanup EXIT ERR INT TERM
 
-cmd=$1
+user="$1"
+shift
+
+which pkexec &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "Error: pkexec command not found"
+    exit 1
+fi
+
+which pkttyagent &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "Error: pkttyagent command not found"
+    exit 1
+fi
 
 # The fallback agent can only be started when the device /dev/tty
 # is available and usable. If this script is started from the
@@ -28,4 +41,9 @@ if  !(test "$(ps -p "$$" -o tty=)" = "?"); then
     pid=`echo $!`
 fi
 
-pkexec "$@"
+if [ $user = "-" ]; then
+    pkexec $@
+else
+    pkexec -u $user $@
+fi
+

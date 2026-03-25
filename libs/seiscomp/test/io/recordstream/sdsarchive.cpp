@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_TIMEWINDOW) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-BOOST_AUTO_TEST_CASE(READ_FR_SALF_MULTIPLE) {
+BOOST_AUTO_TEST_CASE(READ_GE_MORC_MULTIPLE) {
 	SDSArchive sds(
 		"archive-day2/BHE,"
 		"archive-day1/BHE,"
@@ -148,12 +148,15 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF_MULTIPLE) {
 	RecordPtr rec;
 
 	while ( (rec = sds.next()) ) {
-		if ( rec->channelCode() == "BHE" )
+		if ( rec->channelCode() == "BHE" ) {
 			buffer1.push_back(rec);
-		else if ( rec->channelCode() == "BHN" )
+		}
+		else if ( rec->channelCode() == "BHN" ) {
 			buffer2.push_back(rec);
-		else if ( rec->channelCode() == "BHZ" )
+		}
+		else if ( rec->channelCode() == "BHZ" ) {
 			buffer3.push_back(rec);
+		}
 	}
 
 	RecordPtr crec = buffer1.contiguousRecord<double>();
@@ -290,13 +293,40 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY3) {
 	RingBuffer buffer(0);
 	RecordPtr rec;
 
-	while ( (rec = sds.next()) )
+	while ( (rec = sds.next()) ) {
 		buffer.push_back(rec);
+	}
 
 	RecordPtr crec = buffer.contiguousRecord<double>();
 	BOOST_REQUIRE(crec);
 	SEISCOMP_DEBUG("%s ~ %s", crec->startTime().iso().c_str(), crec->endTime().iso().c_str());
 	BOOST_CHECK(crec->startTime() > startTime && crec->endTime() < endTime);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(READ_ARCHIVE2) {
+	SDSArchive sds("archive2");
+	sds.setDataHint(Record::SAVE_RAW);
+
+	Time startTime(2019,8,02,18,00,30);
+	Time endTime(2019,8,02,18,00,40);
+	sds.addStream("AM", "R187C", "00", "EHZ", startTime, endTime);
+
+	RingBuffer buffer(0);
+	RecordPtr rec;
+	size_t bytes = 0;
+
+	while ( (rec = sds.next()) ) {
+		buffer.push_back(rec);
+		bytes += rec->raw()->size();
+	}
+
+	BOOST_CHECK_EQUAL(buffer.size(), 6);
+	BOOST_CHECK_EQUAL(bytes, 3072);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

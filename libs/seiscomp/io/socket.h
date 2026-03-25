@@ -21,10 +21,8 @@
 #ifndef SEISCOMP_IO_SOCKET_H
 #define SEISCOMP_IO_SOCKET_H
 
+
 #include <string>
-#include <set>
-#include <iostream>
-#include <sstream>
 
 #include <openssl/ssl.h>
 
@@ -37,8 +35,8 @@
 #define BUFSIZE 4096
 #define RECSIZE 512
 
-namespace Seiscomp {
-namespace IO {
+
+namespace Seiscomp::IO {
 
 
 class SC_SYSTEM_CORE_API SocketException: public Seiscomp::IO::RecordStreamException {
@@ -144,8 +142,8 @@ class SC_SYSTEM_CORE_API SSLSocket: public Socket {
 };
 
 
-} // namespace IO
-} // namespace Seiscomp
+}
+
 
 #endif
 

@@ -29,11 +29,14 @@
 #include <seiscomp/gui/datamodel/origindialog.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/gui/core/uncertainties.h>
 #include <seiscomp/gui/core/spectrogramrenderer.h>
+#include <seiscomp/gui/core/spectrogramsettings.h>
 #include <seiscomp/gui/core/spectrumwidget.h>
+#include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/plot/axis.h>
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/client/configdb.h>
@@ -59,14 +62,13 @@
 #include <seiscomp/utils/units.h>
 #include <seiscomp/logging/log.h>
 
+#include <QDockWidget>
 #include <QMessageBox>
 #include <QToolButton>
 
 #include <algorithm>
 #include <cmath>
 #include <functional>
-#include <numeric>
-#include <fstream>
 #include <limits>
 #include <set>
 
@@ -140,11 +142,11 @@ PickerView::Config::UnitType fromGainUnit(const std::string &gainUnit) {
 class ZoomRecordWidget : public RecordWidget {
 	public:
 		ZoomRecordWidget() {
-			maxLower = maxUpper = 0;
-			currentIndex = -1;
-			crossHair = false;
-			showSpectrogram = false;
-			traces = nullptr;
+			_maxLower = _maxUpper = 0;
+			_currentIndex = -1;
+			_crossHair = false;
+			_showSpectrogram = false;
+			_traces = nullptr;
 
 			Gradient gradient;
 			gradient.setColorAt(0.0, QColor(255,   0, 255,   0));
@@ -155,12 +157,12 @@ class ZoomRecordWidget : public RecordWidget {
 			gradient.setColorAt(1.0, QColor(255,   0,   0, 255));
 
 			for ( int i = 0; i < 3; ++i ) {
-				spectrogram[i].setOptions(spectrogram[i].options());
-				spectrogram[i].setGradient(gradient);
+				_spectrogram[i].setOptions(_spectrogram[i].options());
+				_spectrogram[i].setGradient(gradient);
 			}
 
-			spectrogramAxis.setLabel(tr("f [1/T] in Hz"));
-			spectrogramAxis.setPosition(Seiscomp::Gui::Axis::Right);
+			_spectrogramAxis.setLabel(tr("f [1/T] in Hz"));
+			_spectrogramAxis.setPosition(Seiscomp::Gui::Axis::Right);
 
 			if ( SCScheme.colors.records.background.isValid() ) {
 				QPalette p = palette();
@@ -168,110 +170,183 @@ class ZoomRecordWidget : public RecordWidget {
 				setPalette(p);
 				setAutoFillBackground(true);
 			}
+
+			connect(this, &Gui::RecordWidget::cursorUpdated, this, &ZoomRecordWidget::updateCursorValues);
+		}
+
+
+	private:
+		void updateCursorValues() {
+			if ( !_showAmplitudes || !isActive() ) {
+				_traceValue = _specValue = Core::None;
+				return;
+			}
+
+			auto t = cursorPos();
+			_traceValue = traceValue(t, currentRecords());
+
+			if ( _showSpectrogram ) {
+				double y = static_cast<double>(_currentCursorYPos - streamYPos(currentRecords())) / streamHeight(currentRecords());
+				if ( y < 0.0 ) {
+					y = 0.0;
+				}
+				else if ( y > 1.0 ) {
+					y = 1.0;
+				}
+				const auto range = _spectrogram[currentRecords()].frequencyRange();
+				const auto f = range.second - y * (range.second - range.first);
+				_specValue = _spectrogram[currentRecords()].amplitude(t, f);
+			}
+			else {
+				_specValue = Core::None;
+			}
+		}
+
+
+	public:
+		void setActive(bool a) {
+			RecordWidget::setActive(a);
+			updateCursorValues();
 		}
 
 		void setUncertainties(const PickerView::Config::UncertaintyList &list) {
 			uncertainties = list;
-			maxLower = maxUpper = 0;
-			currentIndex = -1;
+			_maxLower = _maxUpper = 0;
+			_currentIndex = -1;
 
 			for ( int i = 0; i < uncertainties.count(); ++i ) {
 				if ( i == 0 ) {
-					maxLower = uncertainties[i].first;
-					maxUpper = uncertainties[i].second;
+					_maxLower = uncertainties[i].first;
+					_maxUpper = uncertainties[i].second;
 				}
 				else {
-					maxLower = std::max(maxLower, (double)uncertainties[i].first);
-					maxUpper = std::max(maxUpper, (double)uncertainties[i].second);
+					_maxLower = std::max(_maxLower, (double)uncertainties[i].first);
+					_maxUpper = std::max(_maxUpper, (double)uncertainties[i].second);
 				}
 			}
 		}
 
 		void setCurrentUncertaintyIndex(int idx) {
-			currentIndex = idx;
+			_currentIndex = idx;
 			update();
 		}
 
 		int currentUncertaintyIndex() const {
-			return currentIndex;
+			return _currentIndex;
+		}
+
+		void setSpectrogramAxisWidth(int width) {
+			_spectrogramAxisWidth = width;
 		}
 
 		void setCrossHairEnabled(bool enable) {
-			crossHair = enable;
+			_crossHair = enable;
+			update();
+		}
+
+		void setShowAmplitudes(bool enable) {
+			if ( _showAmplitudes == enable ) {
+				return;
+			}
+
+			_showAmplitudes = enable;
+			updateCursorValues();
 			update();
 		}
 
 		void setShowSpectrogram(bool enable) {
-			if ( showSpectrogram == enable ) return;
+			if ( _showSpectrogram == enable ) {
+				return;
+			}
 
-			showSpectrogram = enable;
+			_showSpectrogram = enable;
 			updateTraceColor();
-
+			updateCursorValues();
 			resetSpectrogram();
 			update();
 		}
 
-		void setLogSpectrogram(bool enable) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setLogScale(enable);
-			spectrogramAxis.setLogScale(enable);
-			update();
-		}
-
-		void setSmoothSpectrogram(bool enable) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setSmoothTransform(enable);
-			update();
-		}
-
-		void setMinSpectrogramRange(double v) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setGradientRange(v, spectrogram[i].gradientUpperBound());
-			update();
-		}
-
-		void setMaxSpectrogramRange(double v) {
-			for ( int i = 0; i < 3; ++i )
-				spectrogram[i].setGradientRange(spectrogram[i].gradientLowerBound(), v);
-			update();
-		}
-
-		void setSpectrogramTimeWindow(double tw) {
+		void specSetLogScale(bool enable) {
 			for ( int i = 0; i < 3; ++i ) {
-				IO::Spectralizer::Options opts = spectrogram[i].options();
-				opts.windowLength = tw;
-				spectrogram[i].setOptions(opts);
+				_spectrogram[i].setLogScale(enable);
 			}
+			_spectrogramAxis.setLogScale(enable);
+			update();
+		}
 
-			if ( showSpectrogram ) {
+		void specSetSmoothTransform(bool enable) {
+			for ( int i = 0; i < 3; ++i ) {
+				_spectrogram[i].setSmoothTransform(enable);
+			}
+			update();
+		}
+
+		void specSetNormalizationMode(SpectrogramRenderer::NormalizationMode mode) {
+			for ( int i = 0; i < 3; ++i ) {
+				_spectrogram[i].setNormalizationMode(mode);
+			}
+			if ( _showSpectrogram ) {
 				resetSpectrogram();
 				update();
 			}
 		}
 
+		void specSetGradientRange(double from, double to) {
+			for ( int i = 0; i < 3; ++i ) {
+				_spectrogram[i].setGradientRange(from, to);
+			}
+			update();
+		}
+
+		void specSetFrequencyRange(OPT(double) from, OPT(double) to) {
+			for ( int i = 0; i < 3; ++i ) {
+				_spectrogram[i].setFrequencyRange(from, to);
+			}
+			update();
+		}
+
+		void specSetTimeWindow(double tw, double overlap) {
+			for ( int i = 0; i < 3; ++i ) {
+				IO::Spectralizer::Options opts = _spectrogram[i].options();
+				opts.windowLength = tw;
+				opts.windowOverlap = overlap;
+				_spectrogram[i].setOptions(opts);
+			}
+
+			if ( _showSpectrogram ) {
+				resetSpectrogram();
+				update();
+			}
+		}
+
+		void specSetShowAxis(bool show) {
+			_showSpectrogramAxis = show;
+			update();
+		}
+
 		void setTraces(ThreeComponentTrace::Component *t) {
-			traces = t;
+			_traces = t;
 			resetSpectrogram();
 			updateTraceColor();
 		}
 
 		void feedRaw(int slot, const Seiscomp::Record *rec) {
-			if ( showSpectrogram && (slot >= 0) && (slot < 3))
-				spectrogram[slot].feed(rec);
+			if ( _showSpectrogram && (slot >= 0) && (slot < 3))
+				_spectrogram[slot].feed(rec);
 		}
 
 	private:
 		void resetSpectrogram() {
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				qApp->setOverrideCursor(Qt::WaitCursor);
 				for ( int i = 0; i < 3; ++i ) {
 					const double *scale = recordScale(i);
 					// Scale is is nm and needs to be converted to m
 					if ( scale ) {
-						spectrogram[i].setScale(*scale);
+						_spectrogram[i].setScale(*scale);
 					}
-					spectrogram[i].setRecords(traces ? traces[i].raw : nullptr);
-					spectrogram[i].renderSpectrogram();
+					_spectrogram[i].setRecords(_traces ? _traces[i].raw : nullptr);
+					_spectrogram[i].renderSpectrogram();
 				}
 				qApp->restoreOverrideCursor();
 			}
@@ -281,83 +356,149 @@ class ZoomRecordWidget : public RecordWidget {
 			QRect r(0, 0, canvasRect().width(), canvasRect().height());
 			r.setHeight(streamHeight(slot));
 			r.moveTop(streamYPos(slot));
-			spectrogram[slot].setAlignment(alignment());
-			spectrogram[slot].setTimeRange(tmin(), tmax());
+			_spectrogram[slot].setAlignment(alignment());
+			_spectrogram[slot].setTimeRange(tmin(), tmin() + canvasRect().width() / timeScale());
 			painter.save();
 			painter.setClipRect(r);
-			spectrogram[slot].render(painter, r, false, false);
+			_spectrogram[slot].render(painter, r, false, false);
 			painter.restore();
 		}
 
-		void drawSpectrogramAxis(QPainter &painter, int slot) {
+		int drawSpectrogramAxis(QPainter &painter, int slot) {
 			QRect r(canvasRect());
 			r.setHeight(streamHeight(slot));
 			r.moveTop(streamYPos(slot));
 
 			painter.save();
 
-			QPair<double, double> range = spectrogram[slot].range();
-			spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
+			QPair<double, double> range = _spectrogram[slot].frequencyRange();
+			_spectrogramAxis.setRange(Seiscomp::Gui::Range(range.first, range.second));
 
-			r.setLeft(r.right());
-			r.setWidth(0);
-			spectrogramAxis.updateLayout(painter, r);
-			r.setRight(canvasRect().right());
+			r.setLeft(r.right() - _spectrogramAxisWidth);
+			_spectrogramAxis.updateLayout(painter, r);
 			painter.fillRect(r.adjusted(-axisSpacing(),0,0,0), palette().color(backgroundRole()));
-			spectrogramAxis.draw(painter, r, true);
+			_spectrogramAxis.draw(painter, r, true);
 
 			painter.restore();
+
+			return r.width();
 		}
 
 		void updateTraceColor() {
-			if ( showSpectrogram ) {
-				for ( int i = 0; i < slotCount(); ++i )
+			if ( _showSpectrogram ) {
+				for ( int i = 0; i < slotCount(); ++i ) {
 					setRecordPen(i, QPen(SCScheme.colors.records.spectrogram, SCScheme.records.lineWidth));
+				}
 			}
 			else {
-				for ( int i = 0; i < slotCount(); ++i )
+				for ( int i = 0; i < slotCount(); ++i ) {
 					setRecordPen(i, QPen(SCScheme.colors.records.foreground, SCScheme.records.lineWidth));
+				}
 			}
 		}
 
 	protected:
+		void leaveEvent(QEvent *) override {
+			_traceValue = _specValue = Core::None;
+			update();
+		}
+
 		void paintEvent(QPaintEvent *p) override {
-			RecordWidget::paintEvent(p);
+			if ( _showSpectrogram && _showSpectrogramAxis ) {
+				auto tmp = _canvasRect;
+				_canvasRect.setWidth(_canvasRect.width() - _spectrogramAxisWidth - axisSpacing());
+				RecordWidget::paintEvent(p);
+				_canvasRect = tmp;
 
-			if ( showSpectrogram ) {
+				{
+					QPainter painter(this);
+					painter.setBrush(palette().brush(QPalette::Base));
+
+					switch ( drawMode() ) {
+						case InRows:
+							for ( int i = 0; i < 3; ++i ) {
+								drawSpectrogramAxis(painter, i);
+							}
+							break;
+						case Single:
+							if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
+								drawSpectrogramAxis(painter, currentRecords());
+							}
+							break;
+						default:
+							break;
+					}
+				}
+			}
+			else {
+				RecordWidget::paintEvent(p);
+			}
+
+			if ( _traceValue || _specValue ) {
 				QPainter painter(this);
-				painter.setBrush(palette().brush(QPalette::Base));
+				auto x = mapTime(cursorPos());
+				constexpr int padding = 4;
+				auto backgroundColor = palette().color(QPalette::Text);
+				backgroundColor.setAlpha(192);
+				auto foregroundColor = palette().color(QPalette::Base);
+				if ( _traceValue ) {
+					QString t = QString::number(*_traceValue);
+					auto r = painter.fontMetrics().boundingRect(t).adjusted(0, 0, padding * 2, padding * 2);
+					r.moveLeft(x + padding);
+					r.moveTop(streamYPos(currentRecords()));
+					painter.setPen(Qt::NoPen);
+					painter.setBrush(backgroundColor);
+					painter.drawRoundedRect(r, padding, padding);
+					painter.setPen(foregroundColor);
+					painter.drawText(r, Qt::AlignCenter, t);
+				}
 
-				switch ( drawMode() ) {
-					case InRows:
-						for ( int i = 0; i < 3; ++i )
-							drawSpectrogramAxis(painter, i);
-						break;
-					case Single:
-						if ( (currentRecords() >= 0) && (currentRecords() < 3) )
-							drawSpectrogramAxis(painter, currentRecords());
-						break;
-					default:
-						break;
+				if ( _specValue ) {
+					QString t = QString::number(*_specValue, 'f', 1);
+					auto r = painter.fontMetrics().boundingRect(t).adjusted(0, 0, padding * 2, padding * 2);
+					r.moveRight(x - padding);
+					r.moveTop(_currentCursorYPos);
+					// Adjust vertical position to avoid overflow
+					if ( r.top() < 0 ) {
+						r.moveTop(0);
+					}
+					if ( r.bottom() > height() ) {
+						r.moveBottom(height());
+					}
+					painter.setPen(Qt::NoPen);
+					painter.setBrush(backgroundColor);
+					painter.drawRoundedRect(r, padding, padding);
+					painter.setPen(foregroundColor);
+					painter.drawText(r, Qt::AlignCenter, t);
 				}
 			}
 		}
 
 		void drawCustomBackground(QPainter &painter) override {
-			if ( showSpectrogram ) {
+			if ( _showSpectrogram ) {
 				painter.setBrush(palette().brush(QPalette::Base));
 
 				switch ( drawMode() ) {
 					case InRows:
-						for ( int i = 0; i < 3; ++i )
+						for ( int i = 0; i < 3; ++i ) {
 							drawSpectrogram(painter, i);
+						}
 						break;
 					case Single:
-						if ( (currentRecords() >= 0) && (currentRecords() < 3) )
+						if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
 							drawSpectrogram(painter, currentRecords());
+						}
 						break;
 					default:
 						break;
+				}
+
+				if ( (currentRecords() >= 0) && (currentRecords() < 3) ) {
+					if ( _spectrogram[currentRecords()].isAmplitudeRangeDirty()
+					  && spectrogramAmplitudesChanged ) {
+						auto range = _spectrogram[currentRecords()].amplitudeRange();
+						spectrogramAmplitudesChanged(range.first, range.second);
+					}
 				}
 			}
 		}
@@ -365,11 +506,16 @@ class ZoomRecordWidget : public RecordWidget {
 		void drawActiveCursor(QPainter &painter, int x, int y) override {
 			RecordWidget::drawActiveCursor(painter, x, y);
 
-			if ( !crossHair ) return;
-			if ( maxLower <= 0 && maxUpper <= 0 ) return;
+			if ( !_crossHair ) {
+				return;
+			}
 
-			int xl = (int)(maxLower*timeScale());
-			int xu = (int)(maxUpper*timeScale());
+			if ( _maxLower <= 0 && _maxUpper <= 0 ) {
+				return;
+			}
+
+			int xl = (int)(_maxLower * timeScale());
+			int xu = (int)(_maxUpper * timeScale());
 			painter.drawLine(x-xl+1,y,x+xu,y);
 
 			painter.setPen(palette().color(QPalette::WindowText));
@@ -390,10 +536,10 @@ class ZoomRecordWidget : public RecordWidget {
 				}
 			}
 
-			if ( currentIndex >= 0 ) {
+			if ( _currentIndex >= 0 ) {
 				painter.setPen(QPen(palette().color(QPalette::Highlight), 2));
-				double lower = uncertainties[currentIndex].first;
-				double upper = uncertainties[currentIndex].second;
+				double lower = uncertainties[_currentIndex].first;
+				double upper = uncertainties[_currentIndex].second;
 
 				if ( lower > 0 && xl > 0 ) {
 					int x0 = (int)(lower*timeScale());
@@ -410,16 +556,22 @@ class ZoomRecordWidget : public RecordWidget {
 		}
 
 	public:
-		PickerView::Config::UncertaintyList uncertainties;
+		PickerView::Config::UncertaintyList   uncertainties;
+		std::function<void (double, double)>  spectrogramAmplitudesChanged;
 
 	private:
-		bool                            crossHair;
-		double                          maxLower, maxUpper;
-		int                             currentIndex;
-		SpectrogramRenderer             spectrogram[3];
-		bool                            showSpectrogram;
-		Seiscomp::Gui::Axis             spectrogramAxis;
-		ThreeComponentTrace::Component *traces;
+		bool                                  _crossHair;
+		bool                                  _showAmplitudes{false};
+		double                                _maxLower, _maxUpper;
+		int                                   _currentIndex;
+		SpectrogramRenderer                   _spectrogram[3];
+		bool                                  _showSpectrogram;
+		bool                                  _showSpectrogramAxis{true};
+		Seiscomp::Gui::Axis                   _spectrogramAxis;
+		int                                   _spectrogramAxisWidth{90};
+		ThreeComponentTrace::Component       *_traces;
+		OPT(double)                           _traceValue;
+		OPT(double)                           _specValue;
 };
 
 
@@ -474,10 +626,10 @@ class PickerMarker : public RecordMarker {
 	public:
 		PickerMarker(RecordWidget *parent,
 		             const Seiscomp::Core::Time& pos,
-		             Type type, bool newPick)
+		             Type type, bool newPick, bool isIncorrect = false)
 		: RecordMarker(parent, pos)
 		, _type(type)
-		, _slot(-1), _rot(PickerView::Config::RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123), _isIncorrect(isIncorrect) {
 			setMovable(newPick);
 			init();
 		}
@@ -485,10 +637,10 @@ class PickerMarker : public RecordMarker {
 		PickerMarker(RecordWidget *parent,
 		             const Seiscomp::Core::Time& pos,
 		             const QString& text,
-		             Type type, bool newPick)
+		             Type type, bool newPick, bool isIncorrect = false)
 		: RecordMarker(parent, pos, text)
 		, _type(type)
-		, _slot(-1), _rot(PickerView::Config::RT_123) {
+		, _slot(-1), _rot(PickerView::Config::RT_123), _isIncorrect(isIncorrect) {
 			setMovable(newPick);
 			init();
 		}
@@ -810,7 +962,12 @@ class PickerMarker : public RecordMarker {
 			static QPoint poly[3];
 			int em = painter.fontMetrics().height();
 
-			painter.setPen(QPen(color, lineWidth));
+			if ( _isIncorrect ) {
+				painter.setPen(QPen(color, lineWidth, Qt::DashLine));
+			}
+			else {
+				painter.setPen(QPen(color, lineWidth));
+			}
 			painter.drawLine(x, y1, x, y2);
 
 			int onsetOffset = -2;
@@ -904,13 +1061,14 @@ class PickerMarker : public RecordMarker {
 			if ( _type != Pick && _type != Arrival )
 				return RecordMarker::toolTip();
 
-			if ( _referencedPick == nullptr )
+			if ( !_referencedPick ) {
 				return QString("manual %1 pick (local)\n"
 				               "filter: %2\n"
 				               "arrival: %3")
 				       .arg(text(),
 				            _filter.isEmpty() ? "None" : _filter,
 				            isArrival() ? "yes" : "no");
+			}
 
 			QString text;
 
@@ -957,8 +1115,12 @@ class PickerMarker : public RecordMarker {
 			if ( !_referencedPick->methodID().empty() )
 				text += QString("\nmethod: %1").arg(_referencedPick->methodID().c_str());
 			try {
+				text += QString("\nevaluation status: %1").arg(_referencedPick->evaluationStatus().toString());
+			}
+			catch ( ... ) {}
+			try {
 				double confidence = _referencedPick->time().confidenceLevel();
-				text += QString("\nconfidence: %1").arg(confidence);
+				text += QString("\ntime confidence: %1").arg(confidence);
 			}
 			catch ( ... ) {}
 			if ( !_referencedPick->filterID().empty() )
@@ -973,6 +1135,12 @@ class PickerMarker : public RecordMarker {
 				text += QString("\nhoriz. slowness: %1 deg/s").arg(hs);
 			}
 			catch ( ... ) {}
+			for ( size_t i = 0; i < _referencedPick->commentCount(); ++i ) {
+				auto comment = _referencedPick->comment(i);
+				if ( comment ) {
+					text += QString("\ncomment %1: %2").arg(comment->id().c_str(), comment->text().c_str());
+				}
+			}
 
 			text += QString("\narrival: %1").arg(isArrival()?"yes":"no");
 
@@ -1056,6 +1224,7 @@ class PickerMarker : public RecordMarker {
 		int               _slot;
 		int               _rot;
 		bool              _drawUncertaintyValues;
+		bool              _isIncorrect{false};
 		std::string       _channelCode;
 };
 
@@ -1365,6 +1534,17 @@ class PickerTimeWindowDecorator : public RecordWidgetDecorator {
 		bool             _visible{false};
 		Core::TimeWindow _timeWindow;
 		double           _snr{-1};
+};
+
+
+class WidgetMenu : public QMenu {
+	public:
+		WidgetMenu(QWidget *parent = 0) : QMenu(parent) {}
+
+	public:
+		QSize sizeHint() const {
+			return QWidget::sizeHint();
+		}
 };
 
 
@@ -2228,7 +2408,7 @@ void PickerRecordLabel::enabledExpandButton(RecordViewItem *controlledItem) {
 	_btnExpand = new QPushButton(this);
 	_btnExpand->resize(16,16);
 	_btnExpand->move(width() - _btnExpand->width(), height() - _btnExpand->height());
-	_btnExpand->setIcon(QIcon(QString::fromUtf8(":/icons/icons/arrow_down.png")));
+	_btnExpand->setIcon(icon("down"));
 	_btnExpand->setFlat(true);
 	_btnExpand->show();
 
@@ -2268,10 +2448,12 @@ bool PickerRecordLabel::isExpanded() const {
 
 void PickerRecordLabel::visibilityChanged(bool v) {
 	if ( _linkedItem && !_isLinkedItem ) {
-		if ( !v )
+		if ( !v ) {
 			_linkedItem->setVisible(false);
-		else if ( _isExpanded )
+		}
+		else if ( _isExpanded ) {
 			_linkedItem->setVisible(true);
+		}
 	}
 }
 
@@ -2364,7 +2546,7 @@ void PickerRecordLabel::enableExpandable(const Seiscomp::Record *rec) {
 
 void PickerRecordLabel::extentButtonPressed() {
 	_isExpanded = !_isExpanded;
-	_btnExpand->setIcon(QIcon(QString::fromUtf8(_isExpanded?":/icons/icons/arrow_up.png":":/icons/icons/arrow_down.png")));
+	_btnExpand->setIcon(icon(_isExpanded ? "up" : "down"));
 	if ( _linkedItem ) {
 		if ( !_isExpanded ) {
 			recordViewItem()->recordView()->setCurrentItem(recordViewItem());
@@ -2547,6 +2729,10 @@ void PickerView::init() {
 	SC_D.recordView->setSelectionEnabled(false);
 	SC_D.recordView->setRecordUpdateInterval(1000);
 
+	SC_D.ui.progressAmpLevel->setVisible(false);
+	SC_D.ui.progressAmpLevel->setEnabled(false);
+	SC_D.ui.progressAmpLevel->setTextVisible(false);
+
 	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*,RecordViewItem*)),
 	        this, SLOT(itemSelected(RecordViewItem*,RecordViewItem*)));
 
@@ -2574,6 +2760,7 @@ void PickerView::init() {
 	//SC_D.recordView->setDefaultActions();
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
+	SC_D.connectionState->setPixmaps(Gui::pixmap(this, "connection_loading"), Gui::pixmap(this, "connection_finished"));
 	connect(SC_D.connectionState, SIGNAL(customInfoWidgetRequested(QPoint)),
 	        this, SLOT(openConnectionInfo(QPoint)));
 
@@ -2621,6 +2808,11 @@ void PickerView::init() {
 	SC_D.currentRecord->setDrawAxis(true);
 	SC_D.currentRecord->setDrawSPS(true);
 	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowAmplitudes(SC_D.ui.actionShowAmplitudeValuesAtCursor->isChecked());
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->spectrogramAmplitudesChanged = bind(
+		&PickerView::specAmplitudesChanged,
+		this, placeholders::_1, placeholders::_2
+	);
 
 	//SC_D.currentRecord->setFocusPolicy(Qt::StrongFocus);
 
@@ -2672,11 +2864,70 @@ void PickerView::init() {
 	connect(SC_D.recordView, SIGNAL(updatedRecords()),
 	        SC_D.currentRecord, SLOT(updateRecords()));
 
+	// Style actions
+	{
+		SC_D.btnApply = new QPushButton("Apply all");
+		SC_D.btnApply->setIcon(icon("apply_changes"));
+		SC_D.btnApply->setToolTip(SC_D.ui.actionRelocate->toolTip());
+		SC_D.btnApply->setStatusTip(SC_D.ui.actionRelocate->statusTip());
+		connect(SC_D.btnApply, &QPushButton::clicked, this, &PickerView::relocate);
+		SC_D.ui.toolBarRelocate->addWidget(SC_D.btnApply);
+	}
+
+	QActionGroup *actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::ExclusiveOptional);
+	actionGroup->addAction(SC_D.ui.actionAlignOnOriginTime);
+	actionGroup->addAction(SC_D.ui.actionAlignOnPArrival);
+	actionGroup->addAction(SC_D.ui.actionAlignOnSArrival);
+
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+	actionGroup->addAction(SC_D.ui.actionShowZComponent);
+	actionGroup->addAction(SC_D.ui.actionShowNComponent);
+	actionGroup->addAction(SC_D.ui.actionShowEComponent);
+
+	actionGroup = new QActionGroup(this);
+	actionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+	actionGroup->addAction(SC_D.ui.actionSortAlphabetically);
+	actionGroup->addAction(SC_D.ui.actionSortByDistance);
+	actionGroup->addAction(SC_D.ui.actionSortByAzimuth);
+	actionGroup->addAction(SC_D.ui.actionSortByResidual);
+
+	SC_D.ui.actionSortAlphabetically->setIcon(icon("trace_sort_name"));
+	SC_D.ui.actionSortByDistance->setIcon(icon("trace_sort_dist"));
+	SC_D.ui.actionSortByAzimuth->setIcon(icon("trace_sort_azimuth"));
+	SC_D.ui.actionSortByResidual->setIcon(icon("trace_sort_resi"));
+	SC_D.ui.actionShowZComponent->setIcon(icon("component_1"));
+	SC_D.ui.actionShowNComponent->setIcon(icon("component_2"));
+	SC_D.ui.actionShowEComponent->setIcon(icon("component_3"));
+	SC_D.ui.actionAlignOnOriginTime->setIcon(icon("trace_align_OT"));
+	SC_D.ui.actionAlignOnPArrival->setIcon(icon("trace_align_P"));
+	SC_D.ui.actionAlignOnSArrival->setIcon(icon("trace_align_S"));
+	SC_D.ui.actionPickP->setIcon(icon("trace_pick_P"));
+	SC_D.ui.actionPickS->setIcon(icon("trace_pick_S"));
+	SC_D.ui.actionIncreaseAmplitudeScale->setIcon(icon("trace_row_zoom+"));
+	SC_D.ui.actionDecreaseAmplitudeScale->setIcon(icon("trace_row_zoom-"));
+	SC_D.ui.actionTimeScaleUp->setIcon(icon("trace_time_zoom+"));
+	SC_D.ui.actionTimeScaleDown->setIcon(icon("trace_time_zoom-"));
+	SC_D.ui.actionIncreaseRowHeight->setIcon(icon("trace_row_zoom+"));
+	SC_D.ui.actionDecreaseRowHeight->setIcon(icon("trace_row_zoom-"));
+	SC_D.ui.actionIncreaseRowTimescale->setIcon(icon("trace_time_zoom+"));
+	SC_D.ui.actionDecreaseRowTimescale->setIcon(icon("trace_time_zoom-"));
+	SC_D.ui.actionResetScale->setIcon(icon("trace_view_reset"));
+	SC_D.ui.actionDefaultView->setIcon(icon("trace_view_reset"));
+	SC_D.ui.actionToggleFilter->setIcon(icon("filter"));
+	SC_D.ui.actionMaximizeAmplitudes->setIcon(icon("trace_ampl_max"));
+	SC_D.ui.actionAddStationsInDistanceRange->setIcon(icon("add"));
+	SC_D.ui.actionShowUsedStations->setIcon(icon("visibility_off_active|visibility_off"));
+	SC_D.ui.actionRelocate->setIcon(icon("apply_changes"));
+	applyThemeColors();
+
 	// add actions
 	addAction(SC_D.ui.actionIncreaseAmplitudeScale);
 	addAction(SC_D.ui.actionDecreaseAmplitudeScale);
 	addAction(SC_D.ui.actionTimeScaleUp);
 	addAction(SC_D.ui.actionTimeScaleDown);
+	addAction(SC_D.ui.actionShowAmplitudeValuesAtCursor);
 	addAction(SC_D.ui.actionClipComponentsToViewport);
 
 	addAction(SC_D.ui.actionIncreaseRowHeight);
@@ -2766,6 +3017,7 @@ void PickerView::init() {
 		SC_D.comboRotation->addItem(PickerView::Config::ERotationTypeNames::name(i));
 	}
 	SC_D.comboRotation->setCurrentIndex(SC_D.currentRotationMode);
+	changeRotation(SC_D.comboRotation->currentIndex());
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboRotation);
 
@@ -2777,6 +3029,24 @@ void PickerView::init() {
 	SC_D.comboUnit->setCurrentIndex(SC_D.currentUnitMode);
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboUnit);
+
+	{
+		SC_D.spectrogramSettings = new SpectrogramSettings(this);
+		SC_D.spectrogramSettings->ui.cbShowAxis->setChecked(true);
+		connect(SC_D.spectrogramSettings, SIGNAL(apply()), this, SLOT(specApply()));
+		SC_D.spectrogramSettings->init(SCApp, "picker.spectrogram.");
+
+		auto dockSpec = new QDockWidget(tr("Spectrogram settings"), this);
+		dockSpec->setObjectName("Dock" + SC_D.spectrogramSettings->objectName());
+		dockSpec->setWidget(SC_D.spectrogramSettings);
+		dockSpec->setAllowedAreas(Qt::AllDockWidgetAreas);
+		dockSpec->setVisible(false);
+		addDockWidget(Qt::LeftDockWidgetArea, dockSpec);
+		dockSpec->toggleViewAction()->setShortcut(QKeySequence("ctrl+shift+s"));
+		SC_D.ui.menuWindow->addAction(dockSpec->toggleViewAction());
+
+		specApply();
+	}
 
 	// TTT selection
 	SC_D.comboTTT = new QComboBox;
@@ -2863,73 +3133,12 @@ void PickerView::init() {
 		SC_D.spinDistance->setSuffix(degrees);
 	}
 
-	SC_D.ui.toolBarStations->insertWidget(SC_D.ui.actionShowAllStations, SC_D.spinDistance);
+	SC_D.ui.toolBarStations->insertWidget(SC_D.ui.actionAddStationsInDistanceRange, SC_D.spinDistance);
 
 	/*
 	connect(SC_D.spinDistance, SIGNAL(editingFinished()),
 	        this, SLOT(loadNextStations()));
 	*/
-
-	QCheckBox *cb = new QCheckBox;
-	cb->setObjectName("spec.log");
-	cb->setText(tr("Logscale"));
-	cb->setChecked(false);
-	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specLogToggled(bool)));
-	specLogToggled(cb->isChecked());
-
-	SC_D.ui.toolBarSpectrogram->addWidget(cb);
-
-	cb = new QCheckBox;
-	cb->setObjectName("spec.smooth");
-	cb->setText(tr("Smoothing"));
-	cb->setChecked(true);
-	connect(cb, SIGNAL(toggled(bool)), this, SLOT(specSmoothToggled(bool)));
-	specSmoothToggled(cb->isChecked());
-
-	SC_D.ui.toolBarSpectrogram->addWidget(cb);
-
-	SC_D.specOpts.minRange = -15;
-	SC_D.specOpts.maxRange = -5;
-	SC_D.specOpts.tw = 5;
-
-	QDoubleSpinBox *spinLower = new QDoubleSpinBox;
-	spinLower->setMinimum(-100);
-	spinLower->setMaximum(100);
-	spinLower->setValue(SC_D.specOpts.minRange);
-	connect(spinLower, SIGNAL(valueChanged(double)), this, SLOT(specMinValue(double)));
-	specMinValue(spinLower->value());
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinLower);
-
-	QDoubleSpinBox *spinUpper = new QDoubleSpinBox;
-	spinUpper->setMinimum(-100);
-	spinUpper->setMaximum(100);
-	spinUpper->setValue(SC_D.specOpts.maxRange);
-	connect(spinUpper, SIGNAL(valueChanged(double)), this, SLOT(specMaxValue(double)));
-	specMaxValue(spinUpper->value());
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinUpper);
-
-	QDoubleSpinBox *spinTW = new QDoubleSpinBox;
-	spinTW->setMinimum(0.1);
-	spinTW->setMaximum(600);
-	spinTW->setValue(SC_D.specOpts.tw);
-	spinTW->setSuffix("s");
-	spinTW->setToolTip(tr("Sets the time window length of raw data to be used to compute a column of the spectrogram."));
-	connect(spinTW, SIGNAL(valueChanged(double)), this, SLOT(specTimeWindow(double)));
-	specTimeWindow(spinTW->value());
-	specApply();
-
-	SC_D.ui.toolBarSpectrogram->addSeparator();
-	SC_D.ui.toolBarSpectrogram->addWidget(spinTW);
-
-	QToolButton *btnSpecUpdate = new QToolButton;
-	btnSpecUpdate->setToolTip(tr("Applies the time window changes to the current spectrogram (if active)."));
-	btnSpecUpdate->setText(tr("Apply"));
-	connect(btnSpecUpdate, SIGNAL(clicked()), this, SLOT(specApply()));
-	SC_D.ui.toolBarSpectrogram->addWidget(btnSpecUpdate);
 
 	// connect actions
 	connect(SC_D.ui.actionDefaultView, SIGNAL(triggered(bool)),
@@ -2971,6 +3180,10 @@ void PickerView::init() {
 	        this, SLOT(scaleReset()));
 	connect(SC_D.ui.actionClipComponentsToViewport, SIGNAL(triggered(bool)),
 	        SC_D.currentRecord, SLOT(setClippingEnabled(bool)));
+	connect(SC_D.ui.actionShowAmplitudeValuesAtCursor, &QAction::triggered,
+	        this, [this](bool e) {
+		static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowAmplitudes(e);
+	});
 	connect(SC_D.ui.actionScrollLeft, SIGNAL(triggered(bool)),
 	        this, SLOT(scrollLeft()));
 	connect(SC_D.ui.actionScrollFineLeft, SIGNAL(triggered(bool)),
@@ -3038,27 +3251,20 @@ void PickerView::init() {
 	connect(SC_D.ui.actionModifyOrigin, SIGNAL(triggered(bool)),
 	        this, SLOT(modifyOrigin()));
 
-	connect(SC_D.ui.actionShowAllStations, SIGNAL(triggered(bool)),
+	connect(SC_D.ui.actionAddStationsInDistanceRange, SIGNAL(triggered(bool)),
 	        this, SLOT(loadNextStations()));
 
 	connect(SC_D.ui.actionShowUsedStations, SIGNAL(triggered(bool)),
 	        this, SLOT(showUsedStations(bool)));
 
-	/* TODO: Remove me
-	connect(SC_D.ui.btnScaleReset, SIGNAL(clicked()),
-	        this, SLOT(scaleReset()));
-	*/
-
-	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()),
-	        this, SLOT(confirmPick()));
-	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
-	        this, SLOT(setCurrentRowDisabled(bool)));
-	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)),
-	        SC_D.recordView, SLOT(selectNextRow()));
-	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
-	        this, SLOT(resetPick()));
-	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)),
-	        SC_D.recordView, SLOT(selectNextRow()));
+	SC_D.ui.btnRowAccept->setIcon(icon("pick_accept"));
+	connect(SC_D.ui.btnRowAccept, SIGNAL(clicked()), this, SLOT(confirmPick()));
+	SC_D.ui.btnRowRemove->setIcon(icon("pick_deactivate"));
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)), this, SLOT(setCurrentRowDisabled(bool)));
+	connect(SC_D.ui.btnRowRemove, SIGNAL(clicked(bool)), SC_D.recordView, SLOT(selectNextRow()));
+	SC_D.ui.btnRowReset->setIcon(icon("pick_reset"));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)), this, SLOT(resetPick()));
+	connect(SC_D.ui.btnRowReset, SIGNAL(clicked(bool)), SC_D.recordView, SLOT(selectNextRow()));
 
 	connect(SC_D.currentRecord, SIGNAL(cursorUpdated(RecordWidget*,int)),
 	        this, SLOT(updateSubCursor(RecordWidget*,int)));
@@ -3224,6 +3430,11 @@ void PickerView::init() {
 
 	try {
 		SC_D.componentFollowsMouse = SCApp->configGetBool("picker.componentFollowsMouse");
+	}
+	catch ( ... ) {}
+
+	try {
+		SC_D.ui.progressAmpLevel->setVisible(SCApp->configGetBool("picker.showAmpLevel"));
 	}
 	catch ( ... ) {}
 }
@@ -3582,6 +3793,43 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 		}
 	}
 
+	if ( SC_D.auxiliaryProfileMenu ) {
+		delete SC_D.auxiliaryProfileMenu;
+		SC_D.auxiliaryProfileMenu = nullptr;
+	}
+
+	if ( SC_D.auxiliaryProfileVisibilityMenu ) {
+		delete SC_D.auxiliaryProfileVisibilityMenu;
+		SC_D.auxiliaryProfileVisibilityMenu = nullptr;
+	}
+
+	if ( !SC_D.config.auxiliaryChannelProfiles.empty() ) {
+		SC_D.auxiliaryProfileMenu = new QMenu(this);
+		SC_D.auxiliaryProfileVisibilityMenu = new QMenu(this);
+
+		for ( const auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+			auto action = SC_D.auxiliaryProfileMenu->addAction(p.name.isEmpty() ? "AUX" : p.name);
+			action->setData(p.name);
+
+			action = SC_D.auxiliaryProfileVisibilityMenu->addAction(p.name.isEmpty() ? "AUX" : p.name);
+			action->setData(p.name);
+			action->setCheckable(true);
+			action->setChecked(true);
+		}
+
+		SC_D.ui.actionAddStationsInDistanceRange->setMenu(SC_D.auxiliaryProfileMenu);
+		SC_D.ui.actionShowUsedStations->setMenu(SC_D.auxiliaryProfileVisibilityMenu);
+
+		connect(SC_D.auxiliaryProfileMenu, &QMenu::triggered,
+		        this, &PickerView::loadAuxiliaryStations);
+		connect(SC_D.auxiliaryProfileVisibilityMenu, &QMenu::triggered,
+		        this, &PickerView::showAuxiliaryStations);
+	}
+	else {
+		SC_D.ui.actionAddStationsInDistanceRange->setMenu(nullptr);
+		SC_D.ui.actionShowUsedStations->setMenu(nullptr);
+	}
+
 	bool reselectCurrentItem = false;
 
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
@@ -3655,18 +3903,6 @@ void PickerView::setStrongMotionCodes(const std::vector<std::string> &codes) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::setAuxiliaryChannels(const std::vector<std::string> &patterns,
-                                      double minimumDistance, double maximumDistance) {
-	SC_D.auxiliaryStreamIDPatterns = patterns;
-	SC_D.auxiliaryMinDistance = minimumDistance;
-	SC_D.auxiliaryMaxDistance = maximumDistance;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::showEvent(QShowEvent *e) {
 	// avoid truncated distance labels
 	int w1 = SC_D.ui.frameZoomControls->sizeHint().width();
@@ -3724,8 +3960,22 @@ void PickerView::showEvent(QShowEvent *e) {
 	SC_D.ui.frameZoomControls->setFixedWidth(w2);
 	SC_D.recordView->setLabelWidth(w2);
 	SC_D.currentRecord->setAxisWidth(w2 + SC_D.currentRecord->axisSpacing());
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSpectrogramAxisWidth(
+		fm.boundingRect("1E-03 WW").width()
+	);
 
 	QWidget::showEvent(e);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::changeEvent(QEvent *e) {
+	if ( e->type() == QEvent::ThemeChange ) {
+		applyThemeColors();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3991,9 +4241,23 @@ void PickerView::alignOnPhase(QAction *action) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setCursorText(const QString &text) {
+	if ( text == "P" ) {
+		SC_D.ui.actionPickP->setChecked(true);
+		SC_D.ui.actionPickS->setChecked(false);
+	}
+	else if ( text == "S" ) {
+		SC_D.ui.actionPickP->setChecked(false);
+		SC_D.ui.actionPickS->setChecked(true);
+	}
+	else {
+		SC_D.ui.actionPickP->setChecked(false);
+		SC_D.ui.actionPickS->setChecked(false);
+	}
+
 	SC_D.recordView->setCursorText(text);
 	SC_D.currentRecord->setCursorText(text);
-	SC_D.currentRecord->setActive(text != "");
+	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setActive(text != "");
+	SC_D.ui.progressAmpLevel->setEnabled(!text.isEmpty());
 	auto d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
 	if ( d ) {
 		d->setVisible(false);
@@ -4026,10 +4290,25 @@ void PickerView::setCursorText(const QString &text) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
+void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 	int used = 0;
 
-	SC_D.alignedOnOT = false;
+	if ( (phase == "P") && !theoretical ) {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(true);
+		SC_D.ui.actionAlignOnSArrival->setChecked(false);
+	}
+	else if ( (phase == "S") && !theoretical ) {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(false);
+		SC_D.ui.actionAlignOnSArrival->setChecked(true);
+	}
+	else {
+		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
+		SC_D.ui.actionAlignOnPArrival->setChecked(false);
+		SC_D.ui.actionAlignOnSArrival->setChecked(false);
+	}
+
 	QString phaseId = phase;
 	//QString shortPhaseId = QString("%1").arg(getShortPhaseName(phase.toStdString()));
 
@@ -4044,7 +4323,9 @@ void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
 
 		// Is the item an linked (controlled) item, ignore it
 		// The alignment is done by the controller item
-		if ( l->isLinkedItem() ) continue;
+		if ( l->isLinkedItem() ) {
+			continue;
+		}
 
 		RecordViewItem *controlledItem = l->controlledItem();
 
@@ -4115,17 +4396,16 @@ void PickerView::alignOnPhase(const QString& phase, bool theoretical) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::loadNextStations() {
-	float distance = SC_D.spinDistance->value();
+	auto distance = SC_D.spinDistance->value();
 
-	if ( SCScheme.unit.distanceInKM )
+	if ( SCScheme.unit.distanceInKM ) {
 		distance = Math::Geo::km2deg(distance);
-
-	std::vector<Seiscomp::DataModel::WaveformStreamID>::iterator it;
+	}
 
 	SC_D.recordView->setUpdatesEnabled(false);
 
 	/*
-	for ( it = SC_D.nextStations.begin(); it != SC_D.nextStations.end(); ++it ) {
+	for ( auto it = SC_D.nextStations.begin(); it != SC_D.nextStations.end(); ++it ) {
 		RecordViewItem* item = SC_D.recordView->item(waveformIDToString(*it));
 		if ( item ) {
 			item->setVisible(item->value(0) <= distance);
@@ -4140,15 +4420,15 @@ void PickerView::loadNextStations() {
 		bool show = false;
 
 		if ( !isLinkedItem(item) ) {
-			if ( isArrivalTrace(item->widget()) )
-			//if ( item->widget()->hasMovableMarkers() )
+			if ( isArrivalTrace(item->widget()) ) {
+			//if ( item->widget()->hasMovableMarkers() ) {
 				show = true;
-			else
+			}
+			else {
 				show = item->value(ITEM_DISTANCE_INDEX) <= distance;
+			}
 
-			if ( SC_D.ui.actionShowUsedStations->isChecked() )
-				show = show && isTraceUsed(item->widget());
-
+			show = show && getVisibilityState(item);
 			item->setVisible(show);
 		}
 	}
@@ -4195,8 +4475,19 @@ void PickerView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignByState() {
-	if ( SC_D.alignedOnOT && SC_D.origin )
-		SC_D.recordView->setAlignment(SC_D.origin->time());
+	if ( !SC_D.origin ) {
+		return;
+	}
+
+	if ( SC_D.ui.actionAlignOnOriginTime->isChecked() ) {
+		alignOnOriginTime();
+	}
+	else if ( SC_D.ui.actionAlignOnPArrival->isChecked() ) {
+		alignOnPhase("P", false);
+	}
+	else if ( SC_D.ui.actionAlignOnSArrival->isChecked() ) {
+		alignOnPhase("S", false);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4231,7 +4522,7 @@ void PickerView::resetState() {
 	pickNone(true);
 	sortByDistance();
 	SC_D.ui.actionShowUsedStations->setChecked(false);
-	showUsedStations(false);
+	showUsedStations(SC_D.ui.actionShowUsedStations->isChecked());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4390,16 +4681,27 @@ void PickerView::showComponent(char componentCode) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::showUsedStations(bool usedOnly) {
-	//float distance = SC_D.spinDistance->value();
-
+void PickerView::showUsedStations(bool) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( !isLinkedItem(item) ) {
-			if ( usedOnly )
-				item->setVisible(isTraceUsed(item->widget()));
-			else
-				item->setVisible(true);
+			item->setVisible(getVisibilityState(item));
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showAuxiliaryStations(QAction *action) {
+	QString name = action->data().toString();
+	for ( auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+		if ( p.name == name ) {
+			p.visible = action->isChecked();
+			showAuxiliaryStationProfile(p);
+			break;
 		}
 	}
 }
@@ -4410,10 +4712,9 @@ void PickerView::showUsedStations(bool usedOnly) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::loadNextStations(float distance) {
-	DataModel::Inventory* inv = Client::Inventory::Instance()->inventory();
+	auto inv = Client::Inventory::Instance()->inventory();
 
-	if ( inv != nullptr ) {
-
+	if ( inv ) {
 		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
 			Network *n = inv->network(i);
 			for ( size_t j = 0; j < n->stationCount(); ++j ) {
@@ -4462,13 +4763,15 @@ void PickerView::loadNextStations(float distance) {
 					// Preferred channel code is BH. If not available use either SH or skip.
 					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
 						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
-						if ( stream ) break;
+						if ( stream ) {
+							break;
+						}
 					}
 				}
 
 				if ( !stream && !SC_D.config.ignoreUnconfiguredStations ) {
 					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
-					if ( stream != nullptr ) {
+					if ( stream ) {
 						SEISCOMP_DEBUG("Adding velocity stream %s.%s.%s.%s",
 						               stream->sensorLocation()->station()->network()->code().c_str(),
 						               stream->sensorLocation()->station()->code().c_str(),
@@ -4492,26 +4795,28 @@ void PickerView::loadNextStations(float distance) {
 
 					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
 					auto sid = waveformIDToStdString(streamID);
-					bool isAuxiliary = false;
-					for ( const auto &pattern : SC_D.auxiliaryStreamIDPatterns ) {
-						if ( Core::wildcmp(pattern, sid) ) {
-							isAuxiliary = true;
-							break;
+					const AuxiliaryChannelProfile *isAuxiliary{nullptr};
+					for ( const auto &profile : SC_D.config.auxiliaryChannelProfiles ) {
+						for ( const auto &pattern : profile.patterns ) {
+							if ( Core::wildcmp(pattern, sid) ) {
+								isAuxiliary = &profile;
+								break;
+							}
 						}
 					}
 
 					if ( isAuxiliary ) {
 						// Auxiliary station will only be added (unless associated)
 						// if they are within a configured distance range.
-						if ( delta < SC_D.auxiliaryMinDistance ) {
+						if ( delta < isAuxiliary->minimumDistance ) {
 							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too close (%f < %f)",
-							               sid.c_str(), delta, SC_D.auxiliaryMinDistance);
+							               sid.c_str(), delta, isAuxiliary->minimumDistance);
 							continue;
 						}
 
-						if ( delta > SC_D.auxiliaryMaxDistance ) {
+						if ( delta > isAuxiliary->maximumDistance ) {
 							SEISCOMP_DEBUG("Auxiliary channel %s rejected, too far away (%f > %f)",
-							               sid.c_str(), delta, SC_D.auxiliaryMaxDistance);
+							               sid.c_str(), delta, isAuxiliary->maximumDistance);
 							continue;
 						}
 					}
@@ -4519,9 +4824,10 @@ void PickerView::loadNextStations(float distance) {
 					RecordViewItem* item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
 					if ( item ) {
 						SC_D.stations.insert(code);
-						item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
-						if ( SC_D.config.hideStationsWithoutData )
+						item->setVisible(getVisibilityState(item));
+						if ( SC_D.config.hideStationsWithoutData ) {
 							item->forceInvisibilty(true);
+						}
 					}
 				}
 			}
@@ -4534,23 +4840,200 @@ void PickerView::loadNextStations(float distance) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::addArrival(Seiscomp::Gui::RecordWidget* widget,
-                            Seiscomp::DataModel::Arrival* arrival, int id) {
-	Pick* pick = Pick::Find(arrival->pickID());
-	if ( !pick ) return;
+void PickerView::loadAuxiliaryStations(QAction *action) {
+	const AuxiliaryChannelProfile *profile{};
+	QString name = action->data().toString();
+	for ( const auto &p : SC_D.config.auxiliaryChannelProfiles ) {
+		if ( p.name == name ) {
+			profile = &p;
+			break;
+		}
+	}
+
+	if ( !profile ) {
+		QMessageBox::critical(this, tr("Error"),
+		                      tr("Unexpected state: auxiliary profile %1 not found")
+		                      .arg(action->text()));
+		return;
+	}
+
+	SC_D.recordView->setUpdatesEnabled(false);
+
+	loadAuxiliaryStationProfile(*profile);
+
+	fillRawPicks();
+
+	sortByState();
+	alignByState();
+	componentByState();
+
+	if ( !SC_D.recordView->currentItem() ) {
+		selectFirstVisibleItem(SC_D.recordView);
+	}
+	setCursorText(SC_D.currentRecord->cursorText());
+
+	SC_D.recordView->setUpdatesEnabled(true);
+	SC_D.recordView->setFocus();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::loadAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile) {
+	auto inv = Client::Inventory::Instance()->inventory();
+
+	if ( inv ) {
+		for ( size_t i = 0; i < inv->networkCount(); ++i ) {
+			Network *n = inv->network(i);
+			for ( size_t j = 0; j < n->stationCount(); ++j ) {
+				Station *s = n->station(j);
+
+				QString code = (n->code() + "." + s->code()).c_str();
+
+				if ( SC_D.stations.contains(code) ) {
+					continue;
+				}
+
+				try {
+					if ( s->end() <= SC_D.origin->time() ) {
+						continue;
+					}
+				}
+				catch ( Core::ValueException & ) {}
+
+				double delta;
+
+				try {
+					delta = computeDistance(SC_D.origin.get(), s, SC_D.config.defaultDepth);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_WARNING("Distance to %s.%s: %s",
+					                 n->code(), s->code(), e.what());
+					continue;
+				}
+
+				if ( (delta >= profile.minimumDistance) && (delta <= profile.maximumDistance) ) {
+					// Only the invalid distance range is considered.
+					continue;
+				}
+
+				// try to get the configured location and stream code
+				Stream *stream = findConfiguredStream(s, SC_D.origin->time());
+				if ( stream ) {
+					SEISCOMP_DEBUG("Adding configured stream %s.%s.%s.%s",
+					               stream->sensorLocation()->station()->network()->code().c_str(),
+					               stream->sensorLocation()->station()->code().c_str(),
+					               stream->sensorLocation()->code().c_str(),
+					               stream->code().c_str());
+				}
+
+				// Try to get a default stream
+				if ( !stream ) {
+					// Preferred channel code is BH. If not available use either SH or skip.
+					for ( size_t c = 0; c < SC_D.broadBandCodes.size(); ++c ) {
+						stream = findStream(s, SC_D.broadBandCodes[c], SC_D.origin->time());
+						if ( stream ) {
+							break;
+						}
+					}
+				}
+
+				if ( !stream && !SC_D.config.ignoreUnconfiguredStations ) {
+					stream = findStream(s, SC_D.origin->time(), Processing::WaveformProcessor::MeterPerSecond);
+					if ( stream ) {
+						SEISCOMP_DEBUG("Adding velocity stream %s.%s.%s.%s",
+						               stream->sensorLocation()->station()->network()->code().c_str(),
+						               stream->sensorLocation()->station()->code().c_str(),
+						               stream->sensorLocation()->code().c_str(),
+						               stream->code().c_str());
+					}
+				}
+
+				if ( stream ) {
+					try {
+						stream->sensorLocation()->latitude();
+						stream->sensorLocation()->longitude();
+					}
+					catch ( ... ) {
+						SEISCOMP_WARNING("SensorLocation %s.%s.%s has no valid coordinates",
+						                 stream->sensorLocation()->station()->network()->code().c_str(),
+						                 stream->sensorLocation()->station()->code().c_str(),
+						                 stream->sensorLocation()->code().c_str());
+						continue;
+					}
+
+					WaveformStreamID streamID(n->code(), s->code(), stream->sensorLocation()->code(), stream->code().substr(0,stream->code().size()-1) + '?', "");
+					auto sid = waveformIDToStdString(streamID);
+					bool matchesProfile = false;
+					for ( const auto &pattern : profile.patterns ) {
+						if ( Core::wildcmp(pattern, sid) ) {
+							matchesProfile = true;
+							break;
+						}
+					}
+
+					if ( !matchesProfile ) {
+						continue;
+					}
+
+					RecordViewItem *item = addStream(stream->sensorLocation(), streamID, delta, streamID.stationCode().c_str(), false, true, stream);
+					if ( item ) {
+						SC_D.stations.insert(code);
+						item->setVisible(getVisibilityState(item));
+						if ( SC_D.config.hideStationsWithoutData ) {
+							item->forceInvisibilty(true);
+						}
+						static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile = &profile;
+					}
+				}
+			}
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showAuxiliaryStationProfile(const AuxiliaryChannelProfile &profile) {
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		auto item = SC_D.recordView->itemAt(r);
+		if ( isLinkedItem(item) ) {
+			continue;
+		}
+
+		if ( static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile != &profile ) {
+			continue;
+		}
+
+		item->setVisible(getVisibilityState(item));
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
+                            Seiscomp::DataModel::Arrival *arrival, int id) {
+	auto pick = Pick::Find(arrival->pickID());
+	if ( !pick ) {
+		return;
+	}
 
 	if ( !arrival->phase().code().empty() ) {
-		//NOTE: Because autoloc's associates e.g. PP phases automatically
-		//      it is important to insert all arrivals here otherwise the
-		//      trace wont be shown (unused)
-		//if ( !SC_D.phases.contains(arrival->phase().code().c_str()) )
-		//	return;
+		auto marker = new PickerMarker(widget,
+		                               pick->time(),
+		                               arrival->phase().code().c_str(),
+		                               PickerMarker::Arrival, false);
 
-		PickerMarker *marker = new PickerMarker(widget,
-		                                        pick->time(),
-		                                        arrival->phase().code().c_str(),
-		                                        PickerMarker::Arrival, false);
-
+		if ( !pick->commentCount() && SC_D.reader ) {
+			SC_D.reader->loadComments(pick);
+		}
 		marker->setPick(pick);
 		marker->setId(id);
 
@@ -4576,13 +5059,50 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget* widget,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::figureOutTravelTimeTable() {
-	if ( !SC_D.origin ) return;
+	if ( !SC_D.origin ) {
+		return;
+	}
 
 	int idx = SC_D.comboTTT->findText(SC_D.origin->methodID().c_str());
-	if ( idx < 0 ) return;
+	if ( idx < 0 ) {
+		QString earthModelID = SC_D.origin->earthModelID().c_str();
+		auto pos = earthModelID.indexOf(':');
+		if ( pos < 0 ) {
+			pos = earthModelID.indexOf('/');
+		}
 
-	SC_D.ttTableName = SC_D.origin->earthModelID();
-	SC_D.comboTTT->setCurrentIndex(idx);
+		if ( pos > 0 ) {
+			idx = SC_D.comboTTT->findText(earthModelID.mid(0, pos).trimmed());
+			if ( idx >= 0 ) {
+				SC_D.ttTableName = earthModelID.mid(pos + 1).trimmed().toStdString();
+			}
+		}
+	}
+	else {
+		SC_D.ttTableName = SC_D.origin->earthModelID();
+	}
+
+	if ( idx < 0 ) {
+		std::string defaultLocator = "LOCSAT";
+		try {
+			defaultLocator = SCApp->configGetString("olv.locator.interface");
+		}
+		catch ( ... ) {
+			try {
+				defaultLocator = SCApp->configGetString("olv.locator");
+			}
+			catch ( ... ) {}
+		}
+
+		idx = SC_D.comboTTT->findText(defaultLocator.c_str());
+		if ( idx < 0 ) {
+			idx = SC_D.comboTTT->findText("LOCSAT");
+		}
+	}
+
+	if ( idx >= 0 ) {
+		SC_D.comboTTT->setCurrentIndex(idx);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4711,15 +5231,17 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 				// If the stream is a strong motion stream, we need to unlink
 				// it from its broadband stream (disconnect the "expand button" feature)
-				if ( isLinkedItem(item) )
+				if ( isLinkedItem(item) ) {
 					unlinkItem(item);
+				}
 			}
 
 			addArrival(item->widget(), arrival, i);
 		}
 	}
-	else
+	else {
 		loadNextStations();
+	}
 
 	SC_D.timeWindowOfInterest.setStartTime(originTime + Core::TimeSpan(relTimeWindowStart));
 	SC_D.timeWindowOfInterest.setEndTime(originTime + Core::TimeSpan(relTimeWindowStart + timeWindowLength));
@@ -4763,8 +5285,8 @@ int PickerView::loadPicks() {
 	if ( !SC_D.timeWindowOfInterest ) return -1;
 
 	SEISCOMP_DEBUG("Loading picks in time window: %s ~ %s",
-	               SC_D.timeWindowOfInterest.startTime().iso().c_str(),
-	               SC_D.timeWindowOfInterest.endTime().iso().c_str());
+	               SC_D.timeWindowOfInterest.startTime().iso(),
+	               SC_D.timeWindowOfInterest.endTime().iso());
 
 	std::vector<Seiscomp::DataModel::PickPtr> savePicks = SC_D.picksInTime;
 
@@ -4772,12 +5294,28 @@ int PickerView::loadPicks() {
 		if ( SC_D.reader ) {
 			qApp->setOverrideCursor(Qt::WaitCursor);
 
-			DatabaseIterator it = SC_D.reader->getPicks(SC_D.timeWindowOfInterest.startTime(),
-			                                        SC_D.timeWindowOfInterest.endTime());
+			auto it = SC_D.reader->getPicks(SC_D.timeWindowOfInterest.startTime(),
+			                                SC_D.timeWindowOfInterest.endTime());
+
+			map<IO::DatabaseInterface::OID, Pick*> picks;
 			for ( ; *it; ++it ) {
-				Pick* pick = Pick::Cast(*it);
-				if ( pick )
+				auto pick = Pick::Cast(*it);
+				if ( pick ) {
 					SC_D.picksInTime.push_back(pick);
+					picks[it.oid()] = pick;
+				}
+			}
+
+			it = SC_D.reader->getPickComments(SC_D.timeWindowOfInterest.startTime(),
+			                                  SC_D.timeWindowOfInterest.endTime());
+			for ( ; *it; ++it ) {
+				auto pit = picks.find(it.parentOid());
+				if ( pit != picks.end() ) {
+					auto comment = Comment::Cast(*it);
+					if ( comment ) {
+						pit->second->add(comment);
+					}
+				}
 			}
 
 			//std::cout << "read " << SC_D.picksInTime.size() << " picks in time" << std::endl;
@@ -4793,8 +5331,9 @@ int PickerView::loadPicks() {
 		if ( ep ) {
 			for ( size_t i = 0; i < ep->pickCount(); ++i ) {
 				Pick* pick = ep->pick(i);
-				if ( pick && SC_D.timeWindowOfInterest.contains(pick->time().value()) )
+				if ( pick && SC_D.timeWindowOfInterest.contains(pick->time().value()) ) {
 					SC_D.picksInTime.push_back(pick);
+				}
 			}
 		}
 
@@ -4804,7 +5343,7 @@ int PickerView::loadPicks() {
 		qApp->restoreOverrideCursor();
 	}
 
-	return (int)SC_D.picksInTime.size();
+	return static_cast<int>(SC_D.picksInTime.size());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5122,7 +5661,26 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		item->label()->setAlignment(Qt::AlignRight, 2);
 		item->label()->setColor(palette().color(QPalette::Disabled, QPalette::WindowText), 2);
 
-		auto ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
+		TravelTimeList *ttt = nullptr;
+		bool fallback = false;
+
+		try {
+			ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
+		}
+		catch ( std::exception &e ) {
+			SEISCOMP_ERROR("%s", e.what());
+			if ( edep < 0.001 ) {
+				// Fallback to compute with depth 1m.
+				SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
+				try {
+					ttt = SC_D.ttTable->compute(elat, elon, 0.001, slat, slon, salt);
+					fallback = true;
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_ERROR("Fallback: %s", e.what());
+				}
+			}
+		}
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;
@@ -5140,12 +5698,12 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					continue;
 				}
 
-				PickerMarker* marker = new PickerMarker(
+				auto marker = new PickerMarker(
 					item->widget(),
 					(Core::Time)SC_D.origin->time() + Core::TimeSpan(tt->time),
 					phase + THEORETICAL_POSTFIX,
 					PickerMarker::Theoretical,
-					false
+					false, fallback
 				);
 
 				marker->setVisible(SC_D.ui.actionShowTheoreticalArrivals->isChecked());
@@ -5175,7 +5733,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 					(Core::Time)SC_D.origin->time() + Core::TimeSpan(tt->time),
 					phase + THEORETICAL_POSTFIX,
 					PickerMarker::Theoretical,
-					false
+					false, fallback
 				);
 
 				marker->setVisible(SC_D.ui.actionShowTheoreticalArrivals->isChecked());
@@ -5341,7 +5899,7 @@ void PickerView::queueStream(double dist, const DataModel::WaveformStreamID& str
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-RecordViewItem* PickerView::addStream(const DataModel::SensorLocation *sloc,
+RecordViewItem *PickerView::addStream(const DataModel::SensorLocation *sloc,
                                       const WaveformStreamID& streamID,
                                       double distance,
                                       const std::string& text,
@@ -5768,8 +6326,9 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 				connect(menuUncertainty, SIGNAL(hovered(QAction*)),
 				        this, SLOT(previewUncertainty(QAction*)));
 
-				foreach ( QAction *action, SC_D.actionsUncertainty->actions() )
+				foreach ( QAction *action, SC_D.actionsUncertainty->actions() ) {
 					menuUncertainty->addAction(action);
+				}
 				menuUncertainty->addSeparator();
 			}
 
@@ -5799,13 +6358,14 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		}
 
 		if ( m->isArrival() ) {
-			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			if ( needSeparator ) { menu.addSeparator(); }
 			deleteArrival = menu.addAction(tr("Delete arrival"));
-			if ( SC_D.loadedPicks )
+			if ( SC_D.loadedPicks ) {
 				deleteArrivalWithRemove = menu.addAction(tr("Delete arrival and remove pick"));
+			}
 		}
 		else if ( m->isPick() ) {
-			if ( needSeparator ) { menu.addSeparator(); needSeparator = false; }
+			if ( needSeparator ) { menu.addSeparator(); }
 			removePick = menu.addAction(tr("Remove pick"));
 		}
 
@@ -5850,14 +6410,19 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 					delete m;
 					m = nullptr;
 				}
-				else
+				else {
 					m->setType(PickerMarker::Pick);
+				}
 			}
 
-			if ( m && res == deleteArrivalWithRemove ) delete m;
+			if ( m && res == deleteArrivalWithRemove ) {
+				delete m;
+			}
 
 			SC_D.currentRecord->update();
-			if ( SC_D.recordView->currentItem() ) SC_D.recordView->currentItem()->widget()->update();
+			if ( SC_D.recordView->currentItem() ) {
+				SC_D.recordView->currentItem()->widget()->update();
+			}
 		}
 
 		return;
@@ -6579,8 +7144,50 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
 	SC_D.recordView->currentItem()->widget()->blockSignals(false);
 
+<<<<<<< HEAD
 	if ( true ) {
 		announceAmplitude();
+=======
+	announceAmplitude();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+template <typename CONTROL>
+void setIconColor(CONTROL *control, const QColor &color) {
+	control->setIcon(icon(control->icon().name(), color));
+}
+
+}
+
+void PickerView::applyThemeColors() {
+	auto colorTheme = ColorTheme::Current();
+	setIconColor(SC_D.ui.actionSortAlphabetically, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByDistance, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByAzimuth, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionSortByResidual, colorTheme->slateBlue);
+	setIconColor(SC_D.ui.actionShowZComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowNComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionShowEComponent, colorTheme->orange);
+	setIconColor(SC_D.ui.actionAlignOnOriginTime, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnPArrival, colorTheme->blue);
+	setIconColor(SC_D.ui.actionAlignOnSArrival, colorTheme->blue);
+	setIconColor(SC_D.ui.actionPickP, colorTheme->green);
+	setIconColor(SC_D.ui.actionPickS, colorTheme->green);
+
+	{
+		QPalette pal = SC_D.btnApply->palette();
+		pal.setColor(QPalette::ButtonText, colorTheme->foregroundConfirm);
+		pal.setColor(QPalette::Button, colorTheme->backgroundConfirm);
+		SC_D.btnApply->setPalette(pal);
+		SC_D.btnApply->setIcon(SC_D.btnApply->icon());
+		setIconColor(SC_D.btnApply, colorTheme->foregroundConfirm);
+>>>>>>> e0ce74329ae8520ae62312544942fb745c885087
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6633,13 +7240,19 @@ void PickerView::announceAmplitude() {
 	}
 
 	if ( !gotAmplitude ) {
+<<<<<<< HEAD
 		// TODO: Stop playback
 		qDebug() << "-1";
+=======
+		SC_D.ui.progressAmpLevel->setEnabled(false);
+		SC_D.ui.progressAmpLevel->setValue(0);
+>>>>>>> e0ce74329ae8520ae62312544942fb745c885087
 	}
 	else {
 		auto range = SC_D.currentRecord->amplitudeDataRange(SC_D.currentSlot);
 		auto width = range.second - range.first;
 		auto level = width != 0.0 ? (amplitude - range.first) / width : 0.5;
+<<<<<<< HEAD
 		// Level is from 0 to 1 where 0 is the lower end of the amplitude range
 		// and 1 is the upper end. 0.5 is the center of the view but not
 		// necessarily the data offset.
@@ -6657,6 +7270,10 @@ void PickerView::announceAmplitude() {
 		SC_D.ui.ampProgress->setRange(0, 100);
 		SC_D.ui.ampProgress->setFormat(format);
 		SC_D.ui.ampProgress->setValue(static_cast<int>(percent));
+=======
+		SC_D.ui.progressAmpLevel->setEnabled(true);
+		SC_D.ui.progressAmpLevel->setValue(static_cast<int>(100.0 * level));
+>>>>>>> e0ce74329ae8520ae62312544942fb745c885087
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6812,8 +7429,9 @@ void PickerView::setTimeRange(double tmin, double tmax) {
 	auto amplScale = SC_D.currentRecord->amplScale();
 	SC_D.currentRecord->setTimeRange(tmin, tmax);
 
-	if ( SC_D.autoScaleZoomTrace )
+	if ( SC_D.autoScaleZoomTrace ) {
 		SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
+	}
 
 	/*
 	std::cout << "ScaleWindow: " << Core::toString(SC_D.currentRecord->visibleTimeWindow().startTime()) << ", "
@@ -6930,6 +7548,28 @@ void PickerView::ensureVisibility(const Seiscomp::Core::Time &time, int pixelMar
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool PickerView::getVisibilityState(RecordViewItem *item) {
+	if ( isTraceUsed(item->widget()) ) {
+		return true;
+	}
+
+	if ( SC_D.ui.actionShowUsedStations->isChecked() ) {
+		// Hide unused stations if enabled
+		return false;
+	}
+
+	return static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile ?
+		static_cast<PickerRecordLabel*>(item->label())->auxiliaryProfile->visible
+		:
+		true
+	;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::moveTraces(double offset) {
 	if ( fabs(offset) < 0.001 ) return;
 
@@ -7001,6 +7641,7 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	if ( lastItem ) {
 		smin = lastItem->widget()->smin();
 		smax = lastItem->widget()->smax();
+		lastItem->widget()->setActive(false);
 		lastItem->widget()->setSelected(0,0);
 		lastItem->widget()->setShadowWidget(nullptr, false);
 		lastItem->widget()->setCurrentMarker(nullptr);
@@ -7021,6 +7662,7 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 
 	//SC_D.centerSelection = true;
 
+	item->widget()->setActive(true);
 
 	Core::Time cursorPos;
 	RecordMarker* m = item->widget()->enabledMarker(item->widget()->cursorText());
@@ -7587,7 +8229,9 @@ void PickerView::alignOnOriginTime() {
 
 	SC_D.recordView->setAlignment(SC_D.origin->time());
 
-	SC_D.alignedOnOT = true;
+	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
+	SC_D.ui.actionAlignOnPArrival->setChecked(false);
+	SC_D.ui.actionAlignOnSArrival->setChecked(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8284,9 +8928,11 @@ void PickerView::getChangedPicks(ObjectChangeList<DataModel::Pick> &list) const 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setDefaultDisplay() {
+	SC_D.recordView->setDefaultDisplay();
 	//alignByState();
 	alignOnOriginTime();
 	selectFirstVisibleItem(SC_D.recordView);
+	scaleReset();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8415,9 +9061,11 @@ void PickerView::acquisitionFinished() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::acquireStreams() {
-	if ( SC_D.nextStreams.empty() ) return;
+	if ( SC_D.nextStreams.empty() ) {
+		return;
+	}
 
-	RecordStreamThread *t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
+	auto t = new RecordStreamThread(SC_D.config.recordURL.toStdString());
 
 	if ( !t->connect() ) {
 		if ( SC_D.config.recordURL != SC_D.lastRecordURL ) {
@@ -8430,29 +9078,25 @@ void PickerView::acquireStreams() {
 		return;
 	}
 
-	connect(t, SIGNAL(handleError(QString)),
-	        this, SLOT(handleAcquisitionError(QString)));
-
-	connect(t, SIGNAL(receivedRecord(Seiscomp::Record*)),
-	        this, SLOT(receivedRecord(Seiscomp::Record*)));
-
-	connect(t, SIGNAL(finished()),
-	        this, SLOT(acquisitionFinished()));
-
+	connect(t, SIGNAL(handleError(QString)), this, SLOT(handleAcquisitionError(QString)));
+	connect(t, SIGNAL(receivedRecord(Seiscomp::Record*)), this, SLOT(receivedRecord(Seiscomp::Record*)));
+	connect(t, SIGNAL(finished()), this, SLOT(acquisitionFinished()));
 
 	t->setTimeWindow(SC_D.timeWindow);
 
 	for ( auto it = SC_D.nextStreams.begin(); it != SC_D.nextStreams.end(); ++it ) {
 		if ( it->timeWindow ) {
 			if ( !t->addStream(it->streamID.networkCode(),
-				               it->streamID.stationCode(),
-				               it->streamID.locationCode(),
-				               it->streamID.channelCode(),
-				               it->timeWindow.startTime(), it->timeWindow.endTime()) )
+			                   it->streamID.stationCode(),
+			                   it->streamID.locationCode(),
+			                   it->streamID.channelCode(),
+			                   it->timeWindow.startTime(),
+			                   it->timeWindow.endTime()) ) {
 				t->addStream(it->streamID.networkCode(),
 				             it->streamID.stationCode(),
 				             it->streamID.locationCode(),
 				             it->streamID.channelCode());
+			}
 		}
 		else {
 			t->addStream(it->streamID.networkCode(),
@@ -8536,8 +9180,9 @@ void PickerView::receivedRecord(Seiscomp::Record *rec) {
 
 		// If this item is linked to another item, enable the expand button of
 		// the controller
-		if ( label->isLinkedItem() && label->_linkedItem != nullptr )
+		if ( label->isLinkedItem() && label->_linkedItem ) {
 			static_cast<PickerRecordLabel*>(label->_linkedItem->label())->enabledExpandButton(item);
+		}
 	}
 	else {
 		// Tell the widget to rebuild its traces
@@ -8801,7 +9446,7 @@ void PickerView::addStations() {
 			                                 false, true, stream);
 			if ( item ) {
 				SC_D.stations.insert(code);
-				item->setVisible(!SC_D.ui.actionShowUsedStations->isChecked());
+				item->setVisible(getVisibilityState(item));
 				if ( SC_D.config.hideStationsWithoutData )
 					item->forceInvisibilty(true);
 			}
@@ -9141,55 +9786,48 @@ void PickerView::activateFilter(int index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specLogToggled(bool e) {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setLogSpectrogram(e);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specSmoothToggled(bool e) {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSmoothSpectrogram(e);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specMinValue(double v) {
-	SC_D.specOpts.minRange = v;
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setMinSpectrogramRange(SC_D.specOpts.minRange);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specMaxValue(double v) {
-	SC_D.specOpts.maxRange = v;
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setMaxSpectrogramRange(SC_D.specOpts.maxRange);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::specTimeWindow(double tw) {
-	SC_D.specOpts.tw = tw;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::specApply() {
-	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setSpectrogramTimeWindow(SC_D.specOpts.tw);
+	auto traceWidget = static_cast<ZoomRecordWidget*>(SC_D.currentRecord);
+	traceWidget->specSetSmoothTransform(SC_D.spectrogramSettings->ui.cbSmoothing->isChecked());
+	switch ( SC_D.spectrogramSettings->ui.cbNormalization->currentIndex() ) {
+		default:
+		case 0:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Fixed);
+			break;
+		case 1:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Frequency);
+			break;
+		case 2:
+			traceWidget->specSetNormalizationMode(SpectrogramRenderer::NormalizationMode::Time);
+			break;
+	}
+
+	traceWidget->specSetLogScale(SC_D.spectrogramSettings->ui.cbLogScale->isChecked());
+	traceWidget->specSetGradientRange(
+		SC_D.spectrogramSettings->ui.spinMinAmp->value(),
+		SC_D.spectrogramSettings->ui.spinMaxAmp->value()
+	);
+	traceWidget->specSetFrequencyRange(
+		SC_D.spectrogramSettings->ui.spinMinFrequency->value() == 0
+		? Core::None
+		: OPT(double)(SC_D.spectrogramSettings->ui.spinMinFrequency->value()),
+		SC_D.spectrogramSettings->ui.spinMaxFrequency->value() == 0
+		? Core::None
+		: OPT(double)(SC_D.spectrogramSettings->ui.spinMaxFrequency->value())
+	);
+	traceWidget->specSetTimeWindow(SC_D.spectrogramSettings->ui.spinTimeWindow->value(),
+	                               SC_D.spectrogramSettings->ui.spinOverlap->value() * 0.01);
+	traceWidget->specSetShowAxis(SC_D.spectrogramSettings->ui.cbShowAxis->isChecked());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::specAmplitudesChanged(double minAmp, double maxAmp) {
+	SC_D.spectrogramSettings->ui.spinMinAmp->setValue(minAmp);
+	SC_D.spectrogramSettings->ui.spinMaxAmp->setValue(maxAmp);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9369,30 +10007,70 @@ void PickerView::changeRotation(int index) {
 
 	SC_D.currentRotationMode = index;
 
+	auto colorTheme = ColorTheme::Current();
+
+	// Change icons depending on the current rotation mode
+	if ( index == PickerView::Config::RT_ZNE ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_N", colorTheme->orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("North"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_E", colorTheme->orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("East"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_ZRT ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_R", colorTheme->orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme->orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_LQT ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_L", colorTheme->orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Longitudinal"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Longitudinal Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_Q", colorTheme->orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Quasi-Vertical"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Quasi-Vertical Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_T", colorTheme->orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
+	}
+	else if ( index == PickerView::Config::RT_ZH ) {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_Z", colorTheme->orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("Vertical"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show Vertical Component (Z)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_L2", colorTheme->orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("L2"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Combined Horizontal Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_0", colorTheme->orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Zero"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Zero Component (E)"));
+	}
+	else {
+		SC_D.ui.actionShowZComponent->setIcon(icon("component_1", colorTheme->orange));
+		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("First"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show First Component (N)"));
+		SC_D.ui.actionShowNComponent->setIcon(icon("component_2", colorTheme->orange));
+		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Second"));
+		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Second Component (N)"));
+		SC_D.ui.actionShowEComponent->setIcon(icon("component_3", colorTheme->orange));
+		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Third"));
+		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Third Component (E)"));
+	}
+
 	for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
 		RecordViewItem* rvi = SC_D.recordView->itemAt(i);
 		applyRotation(rvi, index);
 		updateTraceInfo(rvi, nullptr);
 	}
-
-	// Change icons depending on the current rotation mode
-	if ( index == PickerView::Config::RT_ZRT ) {
-		SC_D.ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelR.png")));
-		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Radial"));
-		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Radial Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelT.png")));
-		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("Transversal"));
-		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show Transversal Component (E)"));
-	}
-	else {
-		SC_D.ui.actionShowNComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelN.png")));
-		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("North"));
-		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show North Component (N)"));
-		SC_D.ui.actionShowEComponent->setIcon(QIcon(QString::fromUtf8(":/icons/icons/channelE.png")));
-		SC_D.ui.actionShowEComponent->setText(QString::fromUtf8("East"));
-		SC_D.ui.actionShowEComponent->setToolTip(QString::fromUtf8("Show East Component (E)"));
-	}
-
 
 	if ( index == PickerView::Config::RT_ZNE
 	  || index == PickerView::Config::RT_ZRT
@@ -9514,8 +10192,9 @@ void PickerView::updateRecordAxisLabel(RecordViewItem *item) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PickerView::applyFilter(RecordViewItem *item) {
 	if ( item == nullptr ) {
-		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i )
+		for ( int i = 0; i < SC_D.recordView->rowCount(); ++i ) {
 			applyFilter(SC_D.recordView->itemAt(i));
+		}
 	}
 	else {
 		PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
@@ -9760,10 +10439,10 @@ void PickerView::setArrivalState(int arrivalId, bool state) {
 	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
 		RecordViewItem* item = SC_D.recordView->itemAt(r);
 		if ( setArrivalState(item->widget(), arrivalId, state) ) {
-			item->setVisible(!(SC_D.ui.actionShowUsedStations->isChecked() &&
-			                   item->widget()->hasMovableMarkers()));
-			if ( state )
+			item->setVisible(getVisibilityState(item));
+			if ( state ) {
 				item->label()->setEnabled(true);
+			}
 			break;
 		}
 	}

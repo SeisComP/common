@@ -348,6 +348,8 @@ Result WebsocketConnection::connect(const char *address,
 			authorization = "Authorization: Basic " + auth + "\r\n";
 		}
 
+		const char *nic = nullptr;
+
 		for ( auto it = url.queryItems().begin(); it != url.queryItems().end(); ++it ) {
 			const string &param = it->first;
 			const string &value = it->second;
@@ -363,11 +365,14 @@ Result WebsocketConnection::connect(const char *address,
 				setAckWindow(static_cast<uint32_t>(ackWindow));
 				SEISCOMP_DEBUG("Set acknowledge window to %d", ackWindow);
 			}
+			else if ( param == "nic" ) {
+				nic = value.data();
+			}
 		}
 
 		_socket->setSocketTimeout(timeoutMs / 1000, (timeoutMs % 1000) * 1000);
 
-		int ret = _socket->connect(host, port);
+		int ret = _socket->connect(host, port, nic);
 		if ( ret != Wired::Socket::Success ) {
 			_errorMessage = "Failed to connect";
 			_socket = nullptr;
@@ -1938,16 +1943,26 @@ void WebsocketConnection::closeSocket(const char *errorMessage,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void WebsocketConnection::closeSocketWithoutLock(const char *errorMessage,
                                                  int errorMessageLen) {
-	if ( !_socket->isValid() ) return;
-	if ( !errorMessage )
+	if ( !_socket->isValid() ) {
+		return;
+	}
+
+	if ( !errorMessage ) {
 		_errorMessage = std::string();
-	else if ( errorMessageLen < 0 )
+	}
+	else if ( errorMessageLen < 0 ) {
 		_errorMessage = errorMessage;
-	else
+	}
+	else {
 		_errorMessage.assign(errorMessage, (size_t)errorMessageLen);
+	}
 	_socket->close();
-	for ( auto &&msg : _outbox ) _backlog.push_back(msg);
-	SEISCOMP_INFO("Keep %d messages in the backlog", int(_backlog.size()));
+
+	for ( auto &&msg : _outbox ) {
+		_backlog.push_back(msg);
+	}
+
+	SEISCOMP_INFO("Keep %d messages in the backlog", static_cast<int>(_backlog.size()));
 	_outbox.clear();
 	_registeredClientName = string();
 }

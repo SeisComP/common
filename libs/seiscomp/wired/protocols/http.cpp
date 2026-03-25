@@ -440,7 +440,7 @@ void HttpSession::sendResponse(const std::string &content,
                                HttpStatus status,
                                const char *contentType,
                                const char *cookie) {
-	sendResponse(&content[0], content.size(), status, contentType, cookie);
+	sendResponse(content.data(), content.size(), status, contentType, cookie);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -959,7 +959,7 @@ void HttpSession::handlePostData(const char *data, size_t len) {
 void HttpSession::handleInboxError(Error error) {
 	if ( error == TooManyCharactersPerLine ) {
 		SEISCOMP_ERROR("too many characters (>= %zu) on request\n%.*s",
-		               _inbox.size(), int(_inbox.size()), &_inbox[0]);
+		               _inbox.size(), int(_inbox.size()), _inbox.data());
 		sendStatus(HTTP_413);
 	}
 	else {

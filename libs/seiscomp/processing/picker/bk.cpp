@@ -315,7 +315,7 @@ bool BKPicker::calculatePick(int ndata, const double *data,
 	}
 
 	int onset = onsetIndex-signalStartIndex;
-	bk_wrapper(n, &tmp[0], onset, snr, _stream.fsamp);
+	bk_wrapper(n, tmp.data(), onset, snr, _stream.fsamp);
 
 	if ( onset == -1 ) {
 		return false;

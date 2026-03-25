@@ -45,6 +45,9 @@ class BrokerHandler : public WebsocketHandler, Broker::Client {
 		~BrokerHandler();
 
 	public:
+		//! This is called when the handler has been added to the new thread and
+		//! started its activity. Is is used to subscribe to the initial groups.
+		void welcome() override;
 		void start() override;
 		void handleFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
 		void buffersFlushed() override;
@@ -85,6 +88,7 @@ class BrokerHandler : public WebsocketHandler, Broker::Client {
 		int                         _bytesSent{0};
 		int                         _messageBacklog{0};
 		std::string                 _requestQueue;
+		std::string                 _initialSubscriptions;
 };
 
 

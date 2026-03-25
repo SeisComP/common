@@ -790,7 +790,6 @@ void RecordViewItem::handleLayoutRequest() {
 void RecordViewItem::setSelected(bool s) {
 	if ( _selected == s ) return;
 	_selected = s;
-	_widget->setActive(_selected);
 	setColor();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

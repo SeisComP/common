@@ -88,6 +88,7 @@ namespace Gui {
 
 class ConnectionDialog;
 class ProcessManager;
+class LogManager;
 
 
 struct MessageGroups {
@@ -222,6 +223,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		void setPalette(const QPalette &pal);
 
 		ProcessManager *processManager();
+		LogManager *logManager();
 
 
 	protected:
@@ -310,6 +312,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		struct _GUI_Core_Settings : System::Application::AbstractSettings {
 			bool        fullScreen{false};
 			bool        interactive{true};
+			std::string styleSheet;
 			std::string guiGroup{"GUI"};
 			std::string commandTargetClient;
 
@@ -348,6 +351,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 		int                 _signalSocketFd[2];
 
 		ProcessManager     *_processManager{nullptr};
+		LogManager         *_logManager{nullptr};
 };
 
 
@@ -375,10 +379,12 @@ class Kicker : public Application {
 			setupUi(w);
 			setMainWidget(w);
 
-			if ( startFullScreen() )
+			if ( startFullScreen() ) {
 				w->showFullScreen();
-			else
+			}
+			else {
 				w->showNormal();
+			}
 
 			return Application::run();
 		}

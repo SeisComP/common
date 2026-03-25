@@ -191,8 +191,9 @@ bool AmplitudeProcessor_Mwp::computeAmplitude(const DoubleArray &data,
 
 	_processedData.resize(n);
 
-	for ( int i = 0; i < n; ++i )
-		_processedData[i] = (data[i] - offset) / _streamConfig[_usedComponent].gain;
+	for ( int i = 0; i < n; ++i ) {
+		_processedData[i] = (data[i] - offset) / _streamConfig[targetComponent()].gain;
+	}
 
 	// Apply mild highpass to take care of long-period noise.
 	// This is required unless the stations are exceptionally good.
@@ -231,8 +232,7 @@ bool AmplitudeProcessor_Mwp::computeAmplitude(const DoubleArray &data,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const DoubleArray *AmplitudeProcessor_Mwp::processedData(Component comp) const {
-	if ( comp != (Component)_usedComponent ) return nullptr;
-	return &_processedData;
+	return comp == targetComponent() ? &_processedData : nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

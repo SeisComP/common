@@ -35,9 +35,9 @@
 						found, relocate of the actual locator configured in the
 						region file is invoked.
 					</description>
-					<parameter name="locator" type="string">
+					<parameter name="locator" type="string" values="FixedHypocenter,Hypo71,iLoc,LOCSAT,NonLinLoc">
 						<description>
-						Name of the initial locator interface, e.g., LOCSAT.
+						Name of the initial locator interface.
 						</description>
 					</parameter>
 					<parameter name="profile" type="string">

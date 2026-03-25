@@ -22,6 +22,7 @@
 #include <seiscomp/gui/core/application.h>
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Gui {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -129,6 +130,7 @@ void SpectrogramRenderer::reset() {
 	_spectralizer->setOptions(_options);
 
 	_renderedFmin = _renderedFmax = -1;
+	_normalizationAmpRange[0] = _normalizationAmpRange[1] = -1;
 
 	setDirty();
 }
@@ -215,6 +217,10 @@ void SpectrogramRenderer::setRecords(const RecordSequence *seq) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::setAlignment(const Core::Time &align) {
 	_alignment = align;
+
+	if ( _normalizationMode == NormalizationMode::Time ) {
+		_dirty = true;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -226,8 +232,13 @@ void SpectrogramRenderer::setTimeRange(double tmin, double tmax) {
 	_tmin = tmin;
 	_tmax = tmax;
 
-	if ( _tmin > _tmax )
+	if ( _tmin > _tmax ) {
 		std::swap(_tmin, _tmax);
+	}
+
+	if ( _normalizationMode == NormalizationMode::Time ) {
+		_dirty = true;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -388,6 +399,7 @@ void SpectrogramRenderer::renderSpectrogram() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::addSpectrum(const PowerSpectrum *spec) {
 	if ( _normalizationMode == NormalizationMode::Time ) {
+		_normalizationAmpRange[0] = _normalizationAmpRange[1] = -1;
 		_dirty = true;
 		return;
 	}
@@ -617,12 +629,12 @@ void SpectrogramRenderer::fillRow(SpecImage &img, DoubleArray *spec,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
                                  bool labelLeftAlign, bool renderLabels) {
-	SpecImageList::iterator it;
 	double fmin = -1, lfmin = 0;
 	double fmax = -1, lfmax = 0;
 
 	double frange;
 
+	_updatedAmplitudeRange = false;
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
 
@@ -636,7 +648,7 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 	Core::Time t0 = _alignment + Core::TimeSpan(_tmin);
 	Core::Time t1 = _alignment + Core::TimeSpan(_tmax);
 
-	if ( _normalizationMode == NormalizationMode::Time ) {
+	if ( _dirty && (_normalizationMode == NormalizationMode::Time) ) {
 		double minAmp = -1;
 		double maxAmp = -1;
 		bool first = true;
@@ -669,9 +681,12 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			maxAmp = ceil(maxAmp);
 		}
 
-		if ( _dirty || (minAmp != _normalizationAmpRange[0]) || (maxAmp != _normalizationAmpRange[1]) ) {
+		if ( (minAmp != _normalizationAmpRange[0])
+		  || (maxAmp != _normalizationAmpRange[1]) ) {
 			_normalizationAmpRange[0] = minAmp;
 			_normalizationAmpRange[1] = maxAmp;
+
+			_updatedAmplitudeRange = true;
 
 			minAmp = _ampMin;
 			maxAmp = _ampMax;
@@ -685,8 +700,9 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			_ampMax = maxAmp;
 
 			_gradient.setRange(_ampMin, _ampMax);
-			_dirty = false;
 		}
+
+		_dirty = false;
 	}
 
 	if ( _dirty ) {
@@ -699,41 +715,48 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 
 	if ( !_fmax ) {
 		bool first = true;
-		for ( it = _images.begin(); it != _images.end(); ++ it ) {
+		for ( auto &img : _images ) {
 			if ( first ) {
-				fmax = it->maximumFrequency;
+				fmax = img.maximumFrequency;
 				first = false;
 			}
-			else if ( it->maximumFrequency > fmax )
-				fmax = it->maximumFrequency;
+			else if ( img.maximumFrequency > fmax ) {
+				fmax = img.maximumFrequency;
+			}
 		}
 	}
-	else
+	else {
 		fmax = *_fmax;
+	}
 
 	if ( !_fmin ) {
 		bool first = true;
-		for ( it = _images.begin(); it != _images.end(); ++ it ) {
+		for ( auto &img : _images ) {
 			if ( first ) {
-				fmin = it->minimumFrequency;
+				fmin = img.minimumFrequency;
 				first = false;
 			}
-			else if ( it->minimumFrequency < fmin )
-				fmin = it->minimumFrequency;
+			else if ( img.minimumFrequency < fmin ) {
+				fmin = img.minimumFrequency;
+			}
 		}
 	}
-	else
+	else {
 		fmin = *_fmin;
+	}
 
-	if ( fmin > fmax ) std::swap(fmin, fmax);
+	if ( fmin > fmax ) {
+		std::swap(fmin, fmax);
+	}
 
 	if ( _logarithmic ) {
 		lfmin = log10(fmin);
 		lfmax = log10(fmax);
 		frange = lfmax - lfmin;
 	}
-	else
+	else {
 		frange = fmax - fmin;
+	}
 
 	_renderedFmin = fmin;
 	_renderedFmax = fmax;
@@ -741,7 +764,9 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 	double xlen = static_cast<double>(t1 - t0);
 
 	// Nothing to draw
-	if ( xlen <= 0 ) return;
+	if ( xlen <= 0 ) {
+		return;
+	}
 
 	double dx = 1.0/xlen;
 
@@ -750,23 +775,29 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 		p.setRenderHint(QPainter::SmoothPixmapTransform);
 
 	// Draw images
-	for ( it = _images.begin(); it != _images.end(); ++ it ) {
-		SpecImage &img = *it;
-
+	for ( auto &img : _images ) {
 		// Clip by min frequency
-		if ( img.minimumFrequency >= fmax ) continue;
+		if ( img.minimumFrequency >= fmax ) {
+			continue;
+		}
 
 		// Clip by max frequency
-		if ( img.maximumFrequency <= fmin ) continue;
+		if ( img.maximumFrequency <= fmin ) {
+			continue;
+		}
 
 		Core::Time startTime = img.startTime - Core::TimeSpan((double)img.dt*0.5);
 		Core::Time endTime   = startTime + Core::TimeSpan((double)img.dt * img.width);
 
 		// Clip by start time
-		if ( startTime >= t1 ) continue;
+		if ( startTime >= t1 ) {
+			continue;
+		}
 
 		// Clip by end time
-		if ( endTime <= t0 ) continue;
+		if ( endTime <= t0 ) {
+			continue;
+		}
 
 		double x0 = static_cast<double>(startTime - t0);
 		double x1 = static_cast<double>(endTime - t0);
@@ -802,15 +833,19 @@ void SpectrogramRenderer::render(QPainter &p, const QRect &rect,
 			}
 		}
 		else {
-			if ( img.minimumFrequency > fmin )
+			if ( img.minimumFrequency > fmin ) {
 				ty0 = (img.minimumFrequency - fmin) / frange * h;
-			else /* fmin >= img.minimumFrequency */
+			}
+			else /* fmin >= img.minimumFrequency */ {
 				sy0 = (fmin - img.minimumFrequency) / (img.maximumFrequency - img.minimumFrequency) * img.data.height();
+			}
 
-			if ( img.maximumFrequency < fmax )
+			if ( img.maximumFrequency < fmax ) {
 				ty1 = (img.maximumFrequency - fmin) / frange * h;
-			else /* fmax <= img.maximumFrequency */
+			}
+			else /* fmax <= img.maximumFrequency */ {
 				sy1 = (fmax - img.minimumFrequency) / (img.maximumFrequency - img.minimumFrequency) * img.data.height();
+			}
 		}
 
 		QRect sourceRect(0,img.data.height()-sy1,img.width,sy1-sy0),
@@ -1020,5 +1055,36 @@ void SpectrogramRenderer::renderAxis(QPainter &p, const QRect &rect,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+OPT(double) SpectrogramRenderer::amplitude(const Seiscomp::Core::Time &t, double f) const {
+	for ( auto &spec : _spectra ) {
+		if ( t < spec->startTime ) {
+			// Before subsequent series => do not check further
+			break;
+		}
+
+		if ( t < spec->endTime ) {
+			// Within the spectrum
+			auto fi = (f - spec->minimumFrequency()) / (spec->maximumFrequency() - spec->minimumFrequency());
+			int i = fi * spec->data->size();
+			if ( i < 0 ) {
+				break;
+			}
+			if ( i >= spec->data->size() ) {
+				break;
+			}
+			auto norm = _scale * 0.5 / spec->frequency;
+			return log10(spec->data->get(i) * norm * norm);
+		}
+	}
+
+	return Core::None;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

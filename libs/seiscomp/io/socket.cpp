@@ -152,7 +152,7 @@ void Socket::open(const string& serverLocation) {
 
 	string::size_type sep = serverLocation.find(':');
 	if ( sep == string::npos ) {
-		SEISCOMP_ERROR("Invalid Server address: %s", serverLocation.c_str());
+		SEISCOMP_ERROR("Invalid Server address: %s", serverLocation);
 		throw SocketException("invalid server address");
 	}
 
@@ -174,9 +174,9 @@ void Socket::open(const string& serverLocation) {
 		free(cportstr);
 		/*
 		if (err < 0)
-			SEISCOMP_ERROR("Cannot resolve %s", hostname.c_str());
+			SEISCOMP_ERROR("Cannot resolve %s", hostname);
 		else
-			SEISCOMP_ERROR("Cannot resolve %s -> %s", hostname.c_str(),strerror(err));
+			SEISCOMP_ERROR("Cannot resolve %s -> %s", hostname, strerror(err));
 		*/
 		throw SocketResolveError(string("Cannot resolve ") + hostname);
 	}
@@ -185,12 +185,12 @@ void Socket::open(const string& serverLocation) {
 	free(cportstr);
 
 	if ( (_sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0 ) {
-		SEISCOMP_ERROR("socket: %s",strerror(errno));
+		SEISCOMP_ERROR("socket: %s", strerror(errno));
 		throw SocketException("Socket error");
 	}
 
 	if ( nonblockSocket() < 0 ) {
-		SEISCOMP_ERROR("Error setting socket to non-blocking (%s)",strerror(errno));
+		SEISCOMP_ERROR("Error setting socket to non-blocking (%s)", strerror(errno));
 		throw SocketException("Error setting socket to non-blocking");
 	}
 
@@ -199,7 +199,7 @@ void Socket::open(const string& serverLocation) {
 		throw SocketException("Socket connect error");
 	}
 
-	SEISCOMP_DEBUG("%s connected", serverLocation.c_str());
+	SEISCOMP_DEBUG("%s connected", serverLocation);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -496,18 +496,21 @@ string Socket::readline() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-string Socket::sendRequest(const string& request, bool waitResponse) {
+string Socket::sendRequest(const string &request, bool waitResponse) {
 	write(request + _eol);
 
-	if ( !waitResponse )
-	return string();
+	if ( !waitResponse ) {
+		return string();
+	}
 
 	string resp = readline();
 	if ( resp == "ERROR" ) {
-		SEISCOMP_ERROR("Command failed: %s",request.c_str());
+		SEISCOMP_ERROR("Command failed: %s", request);
 		throw SocketCommandException(request);
-	} else
+	}
+	else {
 		return resp;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -726,7 +729,7 @@ void SSLSocket::open(const std::string &serverLocation) {
 	cleanUp();
 
 	vector<string> toks;
-	if ( Core::split(toks, serverLocation.c_str(), ":") != 2 )
+	if ( Core::split(toks, serverLocation, ":") != 2 )
 		throw SocketException("invalid server address");
 
 	string &host = toks[0];
@@ -750,6 +753,7 @@ void SSLSocket::open(const std::string &serverLocation) {
 	snprintf(buf, 6, "%d", port);
 	BIO_set_conn_hostname(_bio, host.c_str());
 	BIO_set_conn_port(_bio, buf);
+	SSL_set_tlsext_host_name(_ssl, host.c_str());
 
 	if ( BIO_do_connect(_bio) <= 0 ) {
 		throw SocketException(string("error establishing secure socket "
@@ -768,6 +772,8 @@ void SSLSocket::open(const std::string &serverLocation) {
 		SEISCOMP_ERROR("Error setting socket to non-blocking (%s)",strerror(errno));
 		throw SocketException("Error setting socket to non-blocking");
 	}
+
+	SEISCOMP_DEBUG("%s connected", serverLocation);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

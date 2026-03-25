@@ -533,7 +533,8 @@ void RecordView::setupUi() {
 
 	setFilter(nullptr);
 
-	_rowHeight = _minRowHeight = _defaultRowHeight;
+	_rowHeight = _defaultRowHeight;
+	_minRowHeight = QFontMetrics(font()).height() * 15 / 10;
 
 	_scrollArea = new RecordScrollArea;
 	_scrollArea->setWidgetResizable(true);
@@ -1213,15 +1214,18 @@ RecordViewItem* RecordView::addItem(const DataModel::WaveformStreamID& streamID,
 	          << std::endl;
 	*/
 
-	RecordWidget *widget = createRecordWidget(streamID);
-	if ( widget == nullptr ) widget = new RecordWidget(streamID);
+	auto widget = createRecordWidget(streamID);
+	if ( !widget ) {
+		widget = new RecordWidget(streamID);
+	}
 
-	RecordViewItem *item = new RecordViewItem(this, widget, seq, _frames, _frameMargin, _horizontalSpacing);
+	auto item = new RecordViewItem(this, widget, seq, _frames, _frameMargin, _horizontalSpacing);
 	item->widget()->setSlotCount(slotCount);
 
 	RecordLabel* label = createLabel(item);
-	if ( label == nullptr )
+	if ( !label ) {
 		label = new StandardRecordLabel(_labelColumns);
+	}
 
 	item->setLabel(label);
 
@@ -2524,8 +2528,9 @@ void RecordView::scaleAmplitudesDown() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scaleVisibleAmplitudes() {
-	foreach (RecordViewItem* item, _items)
+	foreach (RecordViewItem* item, _items) {
 		item->widget()->setNormalizationWindow(item->widget()->visibleTimeWindow());
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2534,10 +2539,9 @@ void RecordView::scaleVisibleAmplitudes() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::scaleAllRecords() {
-	Core::TimeWindow tw;
-
-	foreach (RecordViewItem* item, _items)
-		item->widget()->setNormalizationWindow(tw);
+	foreach (RecordViewItem* item, _items) {
+		item->widget()->setNormalizationWindow({});
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2964,15 +2968,18 @@ void RecordView::restoreSelectionMode() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setDefaultDisplay() {
-	if ( rowCount() == 0 ) return;
+	if ( rowCount() == 0 ) {
+		return;
+	}
 
 	int w = _scrollArea->viewport()->width();
 	int h = _scrollArea->viewport()->height();
 
 	double pos = 0;
 
-	if ( _scrollArea->widget()->height() > 0 )
+	if ( _scrollArea->widget()->height() > 0 ) {
 		pos = double(_scrollArea->verticalScrollBar()->sliderPosition() + h/2) / (double)_scrollArea->widget()->height();
+	}
 
 	_minRowHeight = _defaultRowHeight;
 	_maxRowHeight = -1;
@@ -3073,10 +3080,12 @@ RecordWidget::Filter *RecordView::filter() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordView::setAbsoluteTimeEnabled(bool enable) {
-	if ( _absTimeAction )
+	if ( _absTimeAction ) {
 		_absTimeAction->setChecked(enable);
-	else
+	}
+	else {
 		_timeScaleWidget->setAbsoluteTimeEnabled(enable);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3087,8 +3096,9 @@ void RecordView::setAbsoluteTimeEnabled(bool enable) {
 bool RecordView::event(QEvent* event) {
 	if ( event->type() == QEvent::LayoutRequest ) {
 		layoutRows();
-		if ( _autoScale )
+		if ( _autoScale ) {
 			scaleContent();
+		}
 	}
 
 	return QWidget::event(event);
@@ -3181,7 +3191,7 @@ void RecordView::setDefaultActions() {
 
 	QAction* smartLeft = new QAction(this);
 	smartLeft->setText("Scroll left (slowly)");
-	smartLeft->setShortcut(Qt::Key_Left + Qt::SHIFT);
+	smartLeft->setShortcut(Qt::Key_Left | Qt::SHIFT);
 	addAction(smartLeft);
 	connect(smartLeft, SIGNAL(triggered()), this, SLOT(scrollLeftSlowly()));
 
@@ -3193,7 +3203,7 @@ void RecordView::setDefaultActions() {
 
 	QAction* smartRight = new QAction(this);
 	smartRight->setText("Scroll right (slowly)");
-	smartRight->setShortcut(Qt::Key_Right + Qt::SHIFT);
+	smartRight->setShortcut(Qt::Key_Right | Qt::SHIFT);
 	addAction(smartRight);
 	connect(smartRight, SIGNAL(triggered()), this, SLOT(scrollRightSlowly()));
 
@@ -3251,7 +3261,7 @@ void RecordView::setDefaultActions() {
 
 	QAction* vZoomIn = new QAction(this);
 	vZoomIn->setText("Vertical zoom in");
-	vZoomIn->setShortcut(Qt::Key_Y + Qt::SHIFT);
+	vZoomIn->setShortcut(Qt::Key_Y | Qt::SHIFT);
 	addAction(vZoomIn);
 	connect(vZoomIn, SIGNAL(triggered()), this, SLOT(verticalZoomIn()));
 
@@ -3263,13 +3273,13 @@ void RecordView::setDefaultActions() {
 
 	QAction* amplScaleUp = new QAction(this);
 	amplScaleUp->setText("Scale amplitudes up");
-	amplScaleUp->setShortcut(Qt::Key_Up + Qt::SHIFT);
+	amplScaleUp->setShortcut(Qt::Key_Up | Qt::SHIFT);
 	addAction(amplScaleUp);
 	connect(amplScaleUp, SIGNAL(triggered()), this, SLOT(scaleAmplitudesUp()));
 
 	QAction* amplScaleDown = new QAction(this);
 	amplScaleDown->setText("Scale amplitudes down");
-	amplScaleDown->setShortcut(Qt::Key_Down + Qt::SHIFT);
+	amplScaleDown->setShortcut(Qt::Key_Down | Qt::SHIFT);
 	addAction(amplScaleDown);
 	connect(amplScaleDown, SIGNAL(triggered()), this, SLOT(scaleAmplitudesDown()));
 

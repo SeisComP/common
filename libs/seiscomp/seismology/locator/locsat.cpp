@@ -635,7 +635,7 @@ dm::Origin *LOCSAT::relocate(const dm::Origin *origin) {
 double LOCSAT::stationCorrection(const std::string &staid,
                                  const std::string &stacode,
                                  const std::string &phase) const {
-	StationCorrectionMap::const_iterator it = _stationCorrection.find(staid);
+	auto it = _stationCorrection.find(staid);
 	if ( it != _stationCorrection.end() ) {
 		PhaseCorrectionMap::const_iterator pit = it->second.find(phase);
 		if ( pit != it->second.end() ) {
@@ -869,11 +869,13 @@ void LOCSAT::setProfile(const std::string &prefix) {
 	}
 
 	std::ifstream ifs;
-	ifs.open((Environment::Instance()->shareDir() + "/locsat/tables/" + _tablePrefix + ".stacor").c_str());
+	ifs.open((std::string(P(prefix)) + ".stacor").c_str());
 	if ( !ifs.is_open() ) {
 		SEISCOMP_DEBUG("LOCSAT: no station corrections used for profile %s", _tablePrefix.c_str());
 	}
 	else {
+		SEISCOMP_DEBUG("LOCSAT: loading station corrections for profile %s from file %s.stacor",
+		               _tablePrefix, P(prefix));
 		std::string line;
 		int lc = 1;
 		int cnt = 0;

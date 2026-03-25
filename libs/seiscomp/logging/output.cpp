@@ -21,6 +21,10 @@
 #define SEISCOMP_COMPONENT log
 #include <seiscomp/logging/output.h>
 #include <seiscomp/logging/channel.h>
+#include <seiscomp/core/interfacefactory.ipp>
+
+
+IMPLEMENT_INTERFACE_FACTORY(Seiscomp::Logging::Output, SC_SYSTEM_CORE_API);
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -32,7 +36,37 @@ namespace Logging {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Output::Output() : _logComponent(true), _logContext(false), _useUTC(false) {
+Output *Output::Create(const char* service) {
+	return service ? OutputFactory::Create(service) : nullptr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Output *Output::Open(const char *uri) {
+	Util::Url url;
+	if ( !url.setUrl(uri) ) {
+		return nullptr;
+	}
+
+	return Open(url);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Output *Output::Open(const Util::Url &url) {
+	auto output = url.scheme().empty() ? Create("file") : Create(url.scheme().data());
+	if ( output && !output->setup(url)) {
+		delete output;
+		output = nullptr;
+	}
+
+	return output;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -41,7 +75,9 @@ Output::Output() : _logComponent(true), _logContext(false), _useUTC(false) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Output::subscribe(Channel* ch) {
-	if ( !ch ) return false;
+	if ( !ch ) {
+		return false;
+	}
 
 	addPublisher(ch);
 	ch->isInterested(this, true);
@@ -55,7 +91,9 @@ bool Output::subscribe(Channel* ch) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Output::unsubscribe(Channel* ch) {
-	if ( !ch ) return false;
+	if ( !ch ) {
+		return false;
+	}
 
 	dropPublisher(ch);
 	ch->isInterested(this, false);
@@ -72,10 +110,8 @@ void Output::publish(const Data &data) {
 	LogLevel level = data.publisher->channel->logLevel();
 
 	_publisher = data.publisher;
-	log(_publisher->channel->name().c_str(),
-	    level,
-	    data.msg,
-	    data.time);
+	log(_publisher->channel->name().c_str(), level, data.msg,
+	    data.time, data.microseconds);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

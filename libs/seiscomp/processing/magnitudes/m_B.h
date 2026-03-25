@@ -36,6 +36,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_mB : public MagnitudeProcessor {
 
 	public:
 		void setDefaults() override;
+		bool setup(const Settings &settings) override;
 
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,

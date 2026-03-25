@@ -36,6 +36,10 @@
 #include <QScrollBar>
 #include <QTextEdit>
 
+#include <cerrno>
+
+#include <csignal>
+#include <unistd.h>
 
 namespace Seiscomp::Gui {
 
@@ -78,17 +82,22 @@ struct ProcessManager::Item {
 	QString name;
 	QString description;
 	QIcon icon;
+	QVariant userData;
 	Core::Time created;
 	OPT(Core::Time) started;
 	OPT(Core::Time) running;
+	OPT(Core::Time) stopped;
+	Core::TimeSpan stopDuration;
 	OPT(Core::Time) terminated;
 	OPT(Core::Time) killed;
 	OPT(Core::Time) finished;
 	QProcess *process;
 
-	QTextEdit *stdOut;
-	QTextEdit *stdErr;
-	QTextEdit *processLog;
+	QTextEdit *stdOut{nullptr};
+	QTextEdit *stdErr{nullptr};
+	QTextEdit *processLog{nullptr};
+	int maxStdOutChars{-1};
+	int maxStdErrChars{-1};
 
 	~Item() {
 		delete process;
@@ -110,8 +119,9 @@ struct ProcessManager::Item {
 		Running,
 		Crashed,
 		FailedToStart,
-		Killed,
+		Stopped,
 		Terminated,
+		Killed,
 		ExitOnError,
 		Success
 	};
@@ -123,7 +133,7 @@ struct ProcessManager::Item {
 		}
 
 		if ( process->state() == QProcess::Running ) {
-			return Running;
+			return stopped ? Stopped : Running;
 		}
 
 		// QProcess::NotRunning
@@ -132,12 +142,12 @@ struct ProcessManager::Item {
 			return NotYetRunning;
 		}
 
-		if ( killed ) {
-			return Killed;
-		}
-
 		if ( terminated ) {
 			return Terminated;
+		}
+
+		if ( killed ) {
+			return Killed;
 		}
 
 		if ( process->exitStatus() == QProcess::CrashExit ) {
@@ -173,18 +183,16 @@ class ProcessManager::Model : public QAbstractTableModel {
 		};
 
 		Model(QWidget *parent) : QAbstractTableModel(parent) {
-			static QColor red(192, 0, 0);
-			static QColor yellow(192, 192, 0);
-
-			_statePixmaps[Item::NotYetRunning] = pixmap(parent, "asterisk");
-			_statePixmaps[Item::Starting] = pixmap(parent, "play");
-			_statePixmaps[Item::Running] = pixmap(parent, "progress-activity");
-			_statePixmaps[Item::Crashed] = pixmap(parent, "bug-report", red);
-			_statePixmaps[Item::FailedToStart] = pixmap(parent, "error", red);
-			_statePixmaps[Item::Killed] = pixmap(parent, "cancel", red);
-			_statePixmaps[Item::Terminated] = pixmap(parent, "stop", yellow);
-			_statePixmaps[Item::ExitOnError] = pixmap(parent, "warning", yellow);
-			_statePixmaps[Item::Success] = pixmap(parent, "check-circle");
+			_statePixmaps[Item::NotYetRunning] = pixmap(parent, "process_asterisk");
+			_statePixmaps[Item::Starting] = pixmap(parent, "process_continue");
+			_statePixmaps[Item::Running] = pixmap(parent, "process_progress");
+			_statePixmaps[Item::Crashed] = pixmap(parent, "process_bug");
+			_statePixmaps[Item::FailedToStart] = pixmap(parent, "process_warning");
+			_statePixmaps[Item::Stopped] = pixmap(parent, "process_pause");
+			_statePixmaps[Item::Terminated] = pixmap(parent, "process_terminate");
+			_statePixmaps[Item::Killed] = pixmap(parent, "process_kill");
+			_statePixmaps[Item::ExitOnError] = pixmap(parent, "process_attention");
+			_statePixmaps[Item::Success] = pixmap(parent, "process_done");
 		}
 
 		[[nodiscard]]
@@ -234,23 +242,28 @@ class ProcessManager::Model : public QAbstractTableModel {
 			endRemoveRows();
 		}
 
-		void emitDataChanged(const QModelIndex &topLeft,
+		bool emitDataChanged(const QModelIndex &topLeft,
 		                     const QModelIndex &bottomRight,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(topLeft, bottomRight, roles);
+			if ( topLeft.isValid() && bottomRight.isValid() ) {
+				emit dataChanged(topLeft, bottomRight, roles);
+				return true;
+			}
+
+			return false;
 		}
 
-		void emitDataChanged(int row,
+		bool emitDataChanged(int row,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(createIndex(row, 0),
-			                 createIndex(row, columnCount()),
-			                 roles);
+			return emitDataChanged(createIndex(row, 0),
+			                       createIndex(row, columnCount() - 1),
+			                       roles);
 		}
 
-		void emitDataChanged(int row, int col,
+		bool emitDataChanged(int row, int col,
 		                     const QVector<int> &roles = QVector<int>() ) {
-			emit dataChanged(createIndex(row, col), createIndex(row, col),
-			                 roles);
+			return emitDataChanged(createIndex(row, col), createIndex(row, col),
+			                       roles);
 		}
 
 		[[nodiscard]]
@@ -319,10 +332,12 @@ class ProcessManager::Model : public QAbstractTableModel {
 									return QString("Crashed");
 								case Item::FailedToStart:
 									return QString("Failed to start");
-								case Item::Killed:
-									return QString("Killed");
+								case Item::Stopped:
+									return QString("Stopped");
 								case Item::Terminated:
 									return QString("Terminated");
+								case Item::Killed:
+									return QString("Killed");
 								case Item::ExitOnError:
 									return QString("Exit on error");
 								case Item::Success:
@@ -344,10 +359,14 @@ class ProcessManager::Model : public QAbstractTableModel {
 							}
 
 							if ( item->finished ) {
-								return runtime(*item->finished - *item->running);
+								return runtime(*item->finished - *item->running - item->stopDuration);
 							}
 
-							return runtime(Core::Time::UTC() - *item->running);
+							if ( item->stopped ) {
+								return runtime(*item->stopped - *item->running - item->stopDuration);
+							}
+
+							return runtime(Core::Time::UTC() - *item->running - item->stopDuration);
 
 						case ColExitCode:
 							if ( item->process->exitStatus() == QProcess::NormalExit ) {
@@ -362,16 +381,19 @@ class ProcessManager::Model : public QAbstractTableModel {
 					switch ( index.column() ) {
 						case ColState:
 							// progress activity
-							if ( item->state() == Item::Running ) {
-								auto size = _statePixmaps[Item::Running].size();
-								QPixmap rotatedPixmap(size);
+							if ( item->state() == Item::Running && !item->stopped ) {
+								const auto &pm = _statePixmaps[Item::Running];
+								auto pmSize = pm.size();
+								auto pmLayoutSize = pmSize / pm.devicePixelRatioF();
+								QPixmap rotatedPixmap(pmSize);
+								rotatedPixmap.setDevicePixelRatio(pm.devicePixelRatioF());
 								rotatedPixmap.fill(Qt::transparent);
 								QPainter p(&rotatedPixmap);
 								p.setRenderHint(QPainter::SmoothPixmapTransform);
-								p.translate(0.5 * size.width(), 0.5 * size.height());
+								p.translate(0.5 * pmLayoutSize.width(), 0.5 * pmLayoutSize.height());
 								p.rotate(_progressAngle);
-								p.translate(-0.5 * size.width(), -0.5 * size.height());
-								p.drawPixmap(0, 0, _statePixmaps[Item::Running]);
+								p.translate(-0.5 * pmLayoutSize.width(), -0.5 * pmLayoutSize.height());
+								p.drawPixmap(0, 0, pm);
 								p.end();
 								return rotatedPixmap;
 							}
@@ -395,10 +417,25 @@ class ProcessManager::Model : public QAbstractTableModel {
 							break;
 
 						case ColRuntime:
-							if ( item->running && item->finished ) {
-								return QString("%1 - %2")
-								       .arg(QString::fromStdString(item->running->iso()),
-								            QString::fromStdString(item->finished->iso()));
+							if ( item->running ) {
+								if ( item->finished ) {
+									QString toolTip = QString("%1 - %2").arg(
+									    QString::fromStdString(item->running->iso()),
+									    QString::fromStdString(item->finished->iso()));
+									if ( item->stopDuration.length() > 0 ) {
+										toolTip += QString(" (stopped for %1s)")
+										               .arg(item->stopDuration.length());
+									}
+									return toolTip;
+								}
+
+								if ( item->stopped ) {
+									return QString("%1 - %2 (stopped for %3s)")
+									    .arg(QString::fromStdString(item->running->iso()),
+									         QString::fromStdString(item->stopped->iso()))
+									    .arg((Core::Time::UTC() - *item->stopped +
+									         item->stopDuration).length());
+								}
 							}
 							break;
 
@@ -441,7 +478,7 @@ class ProcessManager::Model : public QAbstractTableModel {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessManager::ProcessManager(QWidget *parent, Qt::WindowFlags f)
- : QDialog(parent, f) {
+: QMainWindow(parent, f) {
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -451,7 +488,7 @@ ProcessManager::ProcessManager(QWidget *parent, Qt::WindowFlags f)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QProcess *ProcessManager::createProcess(QString name, QString description,
-                                        QIcon icon) {
+                                        QIcon icon, QVariant userData) {
 	auto *process = new QProcess(this);
 	process->setEnvironment(QProcess::systemEnvironment());
 	process->setProcessChannelMode(QProcess::SeparateChannels);
@@ -474,6 +511,7 @@ QProcess *ProcessManager::createProcess(QString name, QString description,
 	item->name = std::move(name);
 	item->description = std::move(description);
 	item->icon = std::move(icon);
+	item->userData = std::move(userData);
 	item->process = process;
 	item->created = Core::Time::UTC();
 	item->stdOut = new QTextEdit;
@@ -501,6 +539,15 @@ QProcess *ProcessManager::createProcess(QString name, QString description,
 
 	_items[process] = item;
 	_model->addItem(item);
+
+	// if the process manager is not the active window and no process is running select
+	// the process just created
+	if ( !isActiveWindow() && _running.empty() ) {
+		auto index = proxyIndexForItem(item);
+		if ( index.isValid() ) {
+			_ui.table->selectRow(index.row());
+		}
+	}
 
 	updateControls();
 
@@ -545,10 +592,10 @@ bool ProcessManager::waitForStarted(QProcess *process, int timeout) {
 			         "process. For example, the process may not be running.";
 			break;
 		default:
-			detail = "An unknown errror occurred.";
+			detail = "An unknown error occurred.";
 	}
 
-	auto msg = QString("Failed to start comand %1: %2")
+	auto msg = QString("Failed to start command %1: %2")
 	           .arg(process->program(), detail);
 	SEISCOMP_ERROR(msg.toStdString());
 
@@ -565,6 +612,51 @@ bool ProcessManager::waitForStarted(QProcess *process, int timeout) {
 	// process not managed, show message box instead
 	else {
 		QMessageBox::warning(this, "Failed to start", msg);
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ProcessManager::setConsoleLimits(QProcess *process, int charsOut,
+                                      int charsErr) {
+	auto *item = _items[process];
+	if ( item ) {
+		item->maxStdOutChars = charsOut;
+		item->maxStdErrChars = charsErr;
+
+		QString tt;
+
+		if ( charsOut ) {
+			tt = "Standard output of current process";
+			if ( charsOut > 0 ) {
+				tt = QString("%1 limited to %2 characters").arg(tt, charsOut);
+			}
+		}
+		else {
+			tt = "Capture of standard output disabled";
+		}
+		item->stdOut->setToolTip(tt);
+
+		if ( charsErr ) {
+			tt = "Error ouput of current process";
+			if ( charsErr > 0 ) {
+				tt = QString("%1 limited to %2 characters").arg(tt, charsErr);
+			}
+		}
+		else {
+			tt = "Capture of error output disabled";
+		}
+		item->stdErr->setToolTip(tt);
+
+		addConsoleOutput(item->stdOut, "", charsOut);
+		addConsoleOutput(item->stdErr, "", charsErr);
+
+		return true;
 	}
 
 	return false;
@@ -611,12 +703,73 @@ int ProcessManager::erroneousCount() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ProcessManager::stop(QProcess *process) {
+	auto *item = _items[process];
+	if ( item && item->process->state() == QProcess::Running ) {
+		if ( ::kill(item->process->processId(), SIGSTOP) == 0 ) {
+			auto now = Core::Time::UTC();
+			addLog(item, now, QString("Stop requested (SIGSTOP)"));
+			if ( !item->stopped ) {
+				item->stopped = now;
+			}
+			updateItemState(item);
+
+			return true;
+		}
+
+		addLog(item, Core::Time::UTC(),
+		       QString("Could not send stop signal (SIGSTOP): %1").arg(strerror(errno)));
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ProcessManager::continue_(QProcess *process) {
+	auto *item = _items[process];
+	if ( item && item->process->state() == QProcess::Running ) {
+		if ( ::kill(item->process->processId(), SIGCONT) == 0 ) {
+			auto now = Core::Time::UTC();
+			if ( item->stopped ) {
+				item->stopDuration += (now - *item->stopped);
+				item->stopped.reset();
+			}
+			addLog(item, now, QString("Continue requested (SIGCONT)"));
+			updateItemState(item);
+
+			return true;
+		}
+
+		addLog(item, Core::Time::UTC(),
+		       QString("Could not send continue signal (SIGCONT): %1")
+		       .arg(strerror(errno)));
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool ProcessManager::terminate(QProcess *process) {
 	auto *item = _items[process];
 	if ( item && item->process->state() != QProcess::NotRunning ) {
 		item->process->terminate();
 		item->terminated = Core::Time::UTC();
-		addLog(item, *item->terminated, QString("Terminate requested"));
+		if ( item->stopped ) {
+			addLog(item, *item->terminated,
+			       QString("Terminate requested on stopped process. Signal will not be "
+			               "processed until process execution is continued."));
+		}
+		else {
+			addLog(item, *item->terminated, QString("Terminate requested"));
+		}
 		return true;
 	}
 
@@ -638,6 +791,37 @@ bool ProcessManager::kill(QProcess *process) {
 	}
 
 	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QList<QProcess*> ProcessManager::processes() {
+	QList<QProcess*> processes;
+	for ( auto *item : std::as_const(_items) ) {
+		processes << item->process;
+	}
+
+	return processes;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ProcessManager::activate() {
+	if ( isHidden() ) {
+		show();
+	}
+	if ( isMinimized() ) {
+		showNormal();
+	}
+	if ( !isActiveWindow() ) {
+		activateWindow();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -703,8 +887,10 @@ void ProcessManager::onSelectionChanged(const QItemSelection &selected,
 void ProcessManager::onProcessReadyReadStandardOutput() {
 	auto *item = itemForProcessSender();
 	if ( item ) {
-		addConsoleOutput(item->stdOut,
-		                 QString(item->process->readAllStandardOutput()));
+		auto bytes = item->process->readAllStandardOutput();
+		addConsoleOutput(item->stdOut, QString(bytes), item->maxStdOutChars);
+
+		emit readStandardOutput(bytes, item->process, item->userData);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -716,8 +902,10 @@ void ProcessManager::onProcessReadyReadStandardOutput() {
 void ProcessManager::onProcessReadyReadStandardError() {
 	auto *item = itemForProcessSender();
 	if ( item ) {
-		addConsoleOutput(item->stdErr,
-		                 QString(item->process->readAllStandardError()));
+		auto bytes = item->process->readAllStandardError();
+		addConsoleOutput(item->stdErr, QString(bytes), item->maxStdErrChars);
+
+		emit readStandardError(bytes, item->process, item->userData);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -732,109 +920,9 @@ void ProcessManager::onProcessStateChanged() {
 		return;
 	}
 
-	auto processCommand = [](const QProcess *process) {
-		QString program = process->program();
-		QStringList formattedArgs;
-		auto args = process->arguments();
-		for ( QString arg : std::as_const(args) ) {
-			arg.replace("\"", "\\\"");
-			if ( arg.contains(" ") || arg.contains("\"") ) {
-				arg = "\"" + arg + "\"";
-			}
-
-			formattedArgs << arg;
-		}
-
-		if ( formattedArgs.empty() ) {
-			return program;
-		}
-
-		return QString("%1 %2").arg(program, formattedArgs.join(" "));
-	};
-
-	bool erroneous = false;
-	switch ( item->process->state() ) {
-		case QProcess::Starting:
-			item->started = Core::Time::UTC();
-			addLog(item, *item->started,
-			       QString("Starting: %1").arg(processCommand(item->process)));
-			break;
-
-		case QProcess::Running:
-			item->running = Core::Time::UTC();
-			addLog(item, *item->running, QString("Running"));
-			break;
-
-		case QProcess::NotRunning:
-			// not yet started
-			if ( !item->started ) {
-				break;
-			}
-
-			item->finished = Core::Time::UTC();
-			erroneous = true;
-			QString msg;
-			switch ( item->state() ) {
-				case Item::Crashed:
-					msg = QString("Crashed");
-					break;
-				case Item::FailedToStart:
-					msg = QString("Failed to start");
-					break;
-				case Item::Killed:
-					msg = QString("Finished on exit code %1 after receiving "
-					              "kill signal")
-					      .arg(item->process->exitCode());
-					break;
-				case Item::Terminated:
-					msg = QString("Finished on exit code %1 after receiving "
-					              "terminate signal")
-					      .arg(item->process->exitCode());
-					break;
-				case Item::ExitOnError:
-					msg = QString("Exited on error code %1")
-					      .arg(item->process->exitCode());
-					break;
-				case Item::Success:
-					msg = QString("Finished successfully");
-					erroneous = false;
-					break;
-				default:
-					msg = QString("Unknown state: %1").arg(item->state());
-			}
-
-			addLog(item, *item->finished, msg);
-	}
-
-	// update set of running processes
-	if ( item->process->state() == QProcess::Running ) {
-		_running.insert(item->process);
-	}
-	else {
-		_running.remove(item->process);
-	}
-
-	// update set of erroneous processes
-	if ( erroneous ) {
-		_erroneous.insert(item->process);
-	}
-	else {
-		_erroneous.remove(item->process);
-	}
-
-	// start/stop animation depending on running process set
-	if ( _running.isEmpty() ) {
-		_progressAnimation.stop();
-	}
-	else if ( _progressAnimation.state() != QAbstractAnimation::Running ) {
-		_progressAnimation.start();
-	}
-
-	_model->emitDataChanged(_model->row(item));
-	updateControls();
-
-	emit stateChanged();
+	updateItemState(item);
 }
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -842,6 +930,40 @@ void ProcessManager::onProcessStateChanged() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessManager::onStopClicked() {
+	auto *selectionModel = _ui.table->selectionModel();
+	if ( selectionModel ) {
+		for ( auto &index : selectionModel->selectedRows() ) {
+			const auto *item = itemForProxyIndex(index);
+			if ( item ) {
+				stop(item->process);
+			}
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ProcessManager::onContinueClicked() {
+	auto *selectionModel = _ui.table->selectionModel();
+	if ( selectionModel ) {
+		for ( auto &index : selectionModel->selectedRows() ) {
+			const auto *item = itemForProxyIndex(index);
+			if ( item ) {
+				continue_(item->process);
+			}
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ProcessManager::onTerminateClicked() {
 	auto *selectionModel = _ui.table->selectionModel();
 	if ( selectionModel ) {
 		for ( auto &index : selectionModel->selectedRows() ) {
@@ -971,8 +1093,6 @@ void ProcessManager::onProgressAnimationChanged(const QVariant &value) {
 void ProcessManager::onTableContextMenuRequested(const QPoint &pos) {
 	QMenu menu;
 
-	//bool hasSelection = _ui.table->selectionModel()->hasSelection();
-
 	QAction *actionCopyCellClipboard = menu.addAction("Copy cell to clipboard");
 	QAction *actionCopyToClipboard = menu.addAction("Copy selected rows to clipboard");
 
@@ -1004,6 +1124,8 @@ void ProcessManager::init() {
 
 	_proxyModel = new QSortFilterProxyModel(_ui.table);
 	_proxyModel->setSourceModel(_model);
+	_proxyModel->setDynamicSortFilter(true);
+	_proxyModel->sort(Model::ColStarted, Qt::DescendingOrder);
 
 	// table
 	_ui.table->setModel(_proxyModel);
@@ -1013,17 +1135,14 @@ void ProcessManager::init() {
 	_ui.table->setMouseTracking(true);
 	_ui.table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	_ui.table->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_ui.table->resizeColumnToContents(0);
+	_ui.table->resizeColumnToContents(Model::ColState);
 
 	_ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	_ui.table->horizontalHeader()->setSectionsMovable(true);
 	_ui.table->horizontalHeader()->setSortIndicatorShown(true);
 	_ui.table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	_ui.table->horizontalHeader()->setSortIndicator(1, Qt::DescendingOrder);
+	_ui.table->horizontalHeader()->setSortIndicator(Model::ColStarted, Qt::DescendingOrder);
 	_ui.table->verticalHeader()->hide();
-
-	// _ui.table->hideColumn(1);
-	// _ui.table->hideColumn(2);
 
 	connect(_ui.table->horizontalHeader(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)),
 	        _ui.table, SLOT(sortByColumn(int,Qt::SortOrder)));
@@ -1037,13 +1156,19 @@ void ProcessManager::init() {
 	        this, &ProcessManager::onTableContextMenuRequested);
 
 	// buttons
-	_ui.btnStop->setIcon(icon("stop"));
-	_ui.btnKill->setIcon(icon("cancel"));
-	_ui.btnRemove->setIcon(icon("delete"));
-	_ui.btnClear->setIcon(icon("clear-all"));
+	_ui.btnStop->setIcon(icon("process_pause"));
+	_ui.btnContinue->setIcon(icon("process_continue"));
+	_ui.btnTerminate->setIcon(icon("process_terminate"));
+	_ui.btnKill->setIcon(icon("process_kill"));
+	_ui.btnRemove->setIcon(icon("process_remove"));
+	_ui.btnClear->setIcon(icon("process_clean"));
 
 	connect(_ui.btnStop, &QPushButton::clicked,
 	        this, &ProcessManager::onStopClicked);
+	connect(_ui.btnContinue, &QPushButton::clicked,
+	        this, &ProcessManager::onContinueClicked);
+	connect(_ui.btnTerminate, &QPushButton::clicked,
+	        this, &ProcessManager::onTerminateClicked);
 	connect(_ui.btnKill, &QPushButton::clicked,
 	        this, &ProcessManager::onKillClicked);
 	connect(_ui.btnRemove, &QPushButton::clicked,
@@ -1067,17 +1192,25 @@ void ProcessManager::init() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessManager::updateControls() {
 	_ui.btnStop->setEnabled(false);
+	_ui.btnContinue->setEnabled(false);
+	_ui.btnTerminate->setEnabled(false);
 	_ui.btnKill->setEnabled(false);
 	_ui.btnRemove->setEnabled(false);
 	_ui.btnClear->setEnabled(_running.size() < _items.size());
 
 	auto *selectionModel = _ui.table->selectionModel();
 	if ( selectionModel ) {
-		// stop/kill buttons enabled if running process is found
+		// stop/continue/terminate/kill buttons enabled if running process is found
+		// Note: stop and continue buttons are not tested separately against
+		// item->stopped since SIGSTOP and SIGCONT could have been sent
+		// directly to the process outside the control of the process manager and the
+		// user should get the option send the signals in this case.
 		for ( auto &index : selectionModel->selectedRows() ) {
 			const auto *item = itemForProxyIndex(index);
 			if ( item && item->process->state() == QProcess::Running ) {
 				_ui.btnStop->setEnabled(true);
+				_ui.btnContinue->setEnabled(true);
+				_ui.btnTerminate->setEnabled(true);
 				_ui.btnKill->setEnabled(true);
 				break;
 			}
@@ -1099,14 +1232,154 @@ void ProcessManager::updateControls() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void ProcessManager::addConsoleOutput(QTextEdit *textEdit, const QString &text) {
+void ProcessManager::updateItemState(Item *item) {
+	auto processCommand = [](const QProcess *process) {
+		QString program = process->program();
+		QStringList formattedArgs;
+		auto args = process->arguments();
+		for ( QString arg : std::as_const(args) ) {
+			arg.replace("\"", "\\\"");
+			if ( arg.contains(" ") || arg.contains("\"") ) {
+				arg = "\"" + arg + "\"";
+			}
+
+			formattedArgs << arg;
+		}
+
+		if ( formattedArgs.empty() ) {
+			return program;
+		}
+
+		return QString("%1 %2").arg(program, formattedArgs.join(" "));
+	};
+
+	bool erroneous = false;
+	switch ( item->process->state() ) {
+		case QProcess::Starting:
+			item->started = Core::Time::UTC();
+			addLog(item, *item->started,
+			       QString("Starting: %1").arg(processCommand(item->process)));
+			break;
+
+		case QProcess::Running:
+			if ( !item->running ) {
+				item->running = Core::Time::UTC();
+				addLog(item, *item->running,
+				       QString("Started (PID: %1)").arg(item->process->processId()));
+			}
+			break;
+
+		case QProcess::NotRunning:
+			// not yet started
+			if ( !item->started ) {
+				break;
+			}
+
+			item->finished = Core::Time::UTC();
+			erroneous = true;
+			QString msg;
+			switch ( item->state() ) {
+				case Item::Crashed:
+					msg = QString("Crashed");
+					break;
+				case Item::FailedToStart:
+					msg = QString("Failed to start");
+					break;
+				case Item::Killed:
+					msg = QString("Finished on exit code %1 after receiving "
+					              "kill signal")
+					      .arg(item->process->exitCode());
+					break;
+				case Item::Terminated:
+					msg = QString("Finished on exit code %1 after receiving "
+					              "terminate signal")
+					      .arg(item->process->exitCode());
+					break;
+				case Item::ExitOnError:
+					msg = QString("Exited on error code %1")
+					      .arg(item->process->exitCode());
+					break;
+				case Item::Success:
+					msg = QString("Finished successfully");
+					erroneous = false;
+					break;
+				default:
+					msg = QString("Unknown state: %1").arg(item->state());
+			}
+
+			addLog(item, *item->finished, msg);
+	}
+
+	// update set of running processes
+	qsizetype stopped = 0;
+	if ( item->process->state() == QProcess::Running ) {
+		_running.insert(item->process);
+		if ( item->stopped ) {
+			++stopped;
+		}
+	}
+	else {
+		_running.remove(item->process);
+	}
+
+	// update set of erroneous processes
+	if ( erroneous ) {
+		_erroneous.insert(item->process);
+	}
+	else {
+		_erroneous.remove(item->process);
+	}
+
+	// start/stop animation depending on running process set
+	if ( _running.isEmpty() || _running.size() == stopped ) {
+		_progressAnimation.stop();
+	}
+	else if ( _progressAnimation.state() != QAbstractAnimation::Running ) {
+		_progressAnimation.start();
+	}
+
+	_model->emitDataChanged(_model->row(item));
+	updateControls();
+
+	emit stateChanged();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ProcessManager::addConsoleOutput(QTextEdit *textEdit, const QString &text,
+                                      int maxChars) {
+	if ( !maxChars ) {
+		textEdit->clear();
+		return;
+	}
+
 	auto *scrollBar = textEdit->verticalScrollBar();
-	bool isMax = scrollBar->value() == scrollBar->maximum();
+	bool isScrollMax = scrollBar->value() == scrollBar->maximum();
 
-	//_textEdit->insertHtml(text);
-	textEdit->insertPlainText(text);
+	// no char limits, just append
+	if ( maxChars < 0 ) {
+		textEdit->insertPlainText(text);
+	}
+	else {
+		// new text exceeds limits, truncate new text
+		if ( text.length() >= maxChars ) {
+			textEdit->setPlainText(text.mid(text.length() - maxChars));
+		}
+		else {
+			auto currentText = textEdit->toPlainText();
+			int excessLength = currentText.length() + text.length() - maxChars;
+			// new and current text exceed limits, truncate current text
+			if ( excessLength > 0 ) {
+				textEdit->setPlainText(currentText.mid(excessLength));
+			}
+			textEdit->insertPlainText(text);
+		}
+	}
 
-	if ( isMax ) {
+	if ( isScrollMax ) {
 		scrollBar->setValue(scrollBar->maximum());
 	}
 }
@@ -1124,6 +1397,8 @@ void ProcessManager::addLog(const Item *item, const Core::Time &time,
 	                 QString::fromStdString(time.toString("%T")),
 	                 message.toHtmlEscaped());
 	item->processLog->insertHtml(html);
+
+	emit logEntryAdded(message, item->process, item->userData);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1183,7 +1458,6 @@ QModelIndex ProcessManager::proxyIndexForItem(const Item *item) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessStateLabel::ProcessStateLabel(ProcessManager *manager, QWidget *parent)
 : SpinningLabel(parent), _manager(manager) {
-
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1194,7 +1468,15 @@ ProcessStateLabel::ProcessStateLabel(ProcessManager *manager, QWidget *parent)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessStateLabel::mousePressEvent(QMouseEvent *event) {
 	if ( event->button() == Qt::LeftButton ) {
-		_manager->show();
+		if ( _manager->isHidden() ) {
+			_manager->show();
+		}
+		if ( _manager->isMinimized() ) {
+			_manager->showNormal();
+		}
+		if ( !_manager->isActiveWindow() ) {
+			_manager->activateWindow();
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1254,9 +1536,9 @@ void ProcessStateLabel::onProcessStateChanged() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ProcessStateLabel::init() {
-	_defaultPixmap = Gui::pixmap(this, "manufacturing");
-	_progressPixmap = Gui::pixmap(this, "progress-activity");
-	_erroneousPixmap = Gui::pixmap(this, "warning", {192, 0, 0});
+	_defaultPixmap = Gui::pixmap(this, "process_manager");
+	_progressPixmap = Gui::pixmap(this, "process_progress");
+	_erroneousPixmap = Gui::pixmap(this, "process_attention");
 
 	connect(_manager, &ProcessManager::stateChanged,
 	        this, &ProcessStateLabel::onProcessStateChanged);

@@ -80,6 +80,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <map>
 #include <set>
 
 #ifdef WIN32
@@ -977,6 +978,13 @@ class CommentEdit : public QDialog {
 		CommentEdit(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags())
 		: QDialog(parent, f) {
 			ui.setupUi(this);
+			ui.labelHeadline->setPixmap(icon("comment").pixmap(QFontMetrics(font()).height() * 2));
+			ui.labelHeadline->setFont(SCScheme.fonts.highlight);
+			ui.labelAuthor->setText("-");
+			ui.labelDate->setText("-");
+
+			setItalic(ui.labelAuthor);
+			setItalic(ui.labelDate);
 		}
 
 	public:
@@ -1071,15 +1079,24 @@ class NodalPlaneDialog : public QDialog {
 };
 
 
-QPointF equalarea(double azi, double dip) {
-	dip = 90-dip;
-	if ( dip > 90 ) {
-		dip = 180 - dip;
+double spherical2polar(double &azi, double &beta) {
+	if ( beta > 90 ) {
+		beta = 180 - beta;
 		azi -= 180;
+		if ( azi < 0 ) azi += 360;
 	}
 
-	double z = sqrt(2)*sin(0.5*deg2rad(dip));
-	return QPointF(z, azi);
+	// In seismology beta/dip/takeoffangle is measured against negative Z
+	// stereographic projection requires agains positive Z
+	double tmpbeta = deg2rad(180-beta);
+	return sin(tmpbeta) / (1 - cos(tmpbeta));
+}
+
+
+QPointF equalarea(double azi, double dip) {
+	dip = 90-dip;
+	auto R = spherical2polar(azi, dip);
+	return QPointF(R, azi);
 }
 
 
@@ -1278,7 +1295,7 @@ class PlotWidget : public OriginLocatorPlot {
 
 	public:
 		PlotWidget(QWidget *parent = 0, ArrivalModel *model = 0)
-		: OriginLocatorPlot(parent), _model(model), _commitButton(this) {
+		: OriginLocatorPlot(parent), _model(model), _commitButton(this), _autoButton(this) {
 			//_renderer.setTColor(QColor(224,224,224));
 			//_renderer.setShadingEnabled(true);
 			_dragStarted = false;
@@ -1307,6 +1324,12 @@ class PlotWidget : public OriginLocatorPlot {
 			connect(commitWithMTAction, SIGNAL(triggered(bool)),
 			        this, SLOT(commitWithMTTriggered(bool)));
 
+			_autoButton.setVisible(_customDraw);
+			_autoButton.setText("A");
+			_autoButton.setToolTip("Auto-invert first motion polarities (grid search).");
+			connect(&_autoButton, SIGNAL(clicked(bool)),
+			        this, SLOT(autoButtonClicked(bool)));
+
 			set(90,90,0);
 
 			_renderer.setShadingEnabled(true);
@@ -1326,6 +1349,8 @@ class PlotWidget : public OriginLocatorPlot {
 			_shapeAxis[0].init("olv.fmplot.shape.t-axis");
 			_shapeAxis[1] = Shape(ST_TRIANGLE, 14, Qt::NoBrush, QPen(Qt::red));
 			_shapeAxis[1].init("olv.fmplot.shape.p-axis");
+			_shapeAxis[2] = Shape(ST_CIRCLE, 6, Qt::NoBrush, QPen(Qt::black));
+			_shapeAxis[2].init("olv.fmplot.shape.n-axis");
 		}
 
 
@@ -1368,6 +1393,7 @@ class PlotWidget : public OriginLocatorPlot {
 			_preferredTensorDirty = false;
 			_npLabel->setVisible(_customDraw);
 			_commitButton.setVisible(_customDraw);
+			_autoButton.setVisible(_customDraw);
 		}
 
 
@@ -1395,6 +1421,7 @@ class PlotWidget : public OriginLocatorPlot {
 
 			_tAxis = equalarea(t.str, t.dip);
 			_pAxis = equalarea(p.str, p.dip);
+			_nAxis = equalarea(n.str, n.dip);
 
 			_npLabel->setText(QString("NP1: <a href=\"np1\">%1/%2/%3</a> "
 			                          "NP2: <a href=\"np2\">%4/%5/%6</a>")
@@ -1502,6 +1529,10 @@ class PlotWidget : public OriginLocatorPlot {
 			emit focalMechanismCommitted(true, m->mapToGlobal(QPoint()));
 		}
 
+		void autoButtonClicked(bool) {
+			emit autoInversionRequested();
+		}
+
 		void mousePressEvent(QMouseEvent *event) {
 			if ( !_customDraw ) {
 				DiagramWidget::mousePressEvent(event);
@@ -1559,6 +1590,7 @@ class PlotWidget : public OriginLocatorPlot {
 			_preferredTensorDirty = true;
 			_npLabel->setGeometry(0,0,width(),diagramRect().top());
 			_commitButton.move(width()-_commitButton.width(),_npLabel->height()+4);
+			_autoButton.move(width()-_autoButton.width(),_npLabel->height()+4+_commitButton.height()+2);
 		}
 
 
@@ -1622,6 +1654,12 @@ class PlotWidget : public OriginLocatorPlot {
 			_shapeAxis[1].draw(painter);
 			painter.translate(-p);
 
+			// Draw N Axis
+			//p = (this->*project)(_nAxis);
+			//painter.translate(p);
+			//_shapeAxis[2].draw(painter);
+			//painter.translate(-p);
+
 			_displayRect = tmp;
 
 			painter.setRenderHint(QPainter::Antialiasing, false);
@@ -1678,13 +1716,14 @@ class PlotWidget : public OriginLocatorPlot {
 
 	private:
 		Shape             _shapes[POL_QUANTITY];
-		Shape             _shapeAxis[2];
+		Shape             _shapeAxis[3];
 		ArrivalModel     *_model;
 		QToolButton       _commitButton;
+		QToolButton       _autoButton;
 		QLabel           *_npLabel;
 		QImage            _buffer;
 		QImage            _preferredFMBuffer;
-		QPointF           _tAxis, _pAxis;
+		QPointF           _tAxis, _pAxis, _nAxis;
 		TensorRenderer    _renderer;
 		bool              _customDraw;
 		StationNameMode   _drawStationNames;
@@ -2026,6 +2065,10 @@ void ArrivalModel::setOrigin(DataModel::Origin* origin) {
 	_pickTimeFormat = "%T.%";
 	_pickTimeFormat += Core::toString(SCScheme.precision.pickTime);
 	_pickTimeFormat += "f";
+
+	_pickCTimeFormat = "%F %T.%";
+	_pickCTimeFormat += Core::toString(SCScheme.precision.pickTime);
+	_pickCTimeFormat += "f";
 
 	_origin = origin;
 	if ( _origin ) {
@@ -2466,8 +2509,8 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		summary += 's';
 		*/
 
-		// Filter
 		if ( pick ) {
+			// Filter
 			if ( !pick->filterID().empty() ) {
 				if (l++) summary += '\n';
 				summary += "Filter: ";
@@ -2475,6 +2518,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			}
 
 			if ( !pick->methodID().empty() ) {
+				// method
 				if (l++) summary += '\n';
 				summary += "Method: ";
 				summary += pick->methodID().c_str();
@@ -2482,11 +2526,24 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 
 			try {
 				const CreationInfo &ci = pick->creationInfo();
+				// creation time
+				if ( l++ ) {
+					summary += '\n';
+				}
+				summary += "Created: ";
+				try {
+					summary += timeToString(pick->time().value(), _pickCTimeFormat.c_str());
+				}
+				catch ( ... ) {
+					summary += '-';
+				}
+				// author
 				if ( !ci.author().empty() ) {
 					if (l++) summary += '\n';
 					summary += "Author: ";
 					summary += ci.author().c_str();
 				}
+				// agency
 				if ( !ci.agencyID().empty() ) {
 					if (l++) summary += '\n';
 					summary += "Agency: ";
@@ -2962,6 +3019,7 @@ OriginLocatorPlot::OriginLocatorPlot(QWidget *parent) : DiagramWidget(parent) {}
 void OriginLocatorPlot::linkClicked() {}
 void OriginLocatorPlot::commitButtonClicked(bool) {}
 void OriginLocatorPlot::commitWithMTTriggered(bool) {}
+void OriginLocatorPlot::autoButtonClicked(bool) {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -3220,6 +3278,8 @@ void OriginLocatorView::init() {
 	connect(SC_D.residuals, SIGNAL(clicked(int)), this, SLOT(selectArrival(int)));
 	connect(SC_D.residuals, SIGNAL(focalMechanismCommitted(bool, QPoint)),
 	        this, SLOT(commitFocalMechanism(bool)));
+	connect(SC_D.residuals, SIGNAL(autoInversionRequested()),
+	        this, SLOT(autoInvertFocalMechanism()));
 
 	connect(SC_D.map, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
 	connect(SC_D.map, SIGNAL(hoverArrival(int)), this, SLOT(hoverArrival(int)));
@@ -3242,6 +3302,8 @@ void OriginLocatorView::init() {
 
 	connect(&SC_D.blinkTimer, SIGNAL(timeout()), this, SLOT(updateBlinkState()));
 
+	SC_D.ui.btnLocatorSettings->setIcon(icon("settings"));
+	SC_D.ui.buttonEditComment->setIcon(icon("comment"));
 	/*
 	QFontMetrics fm = fontMetrics();
 	int width = SC_D.ui.lbAgencyID->width() + 6 + fm.boundingRect("WWWWWWWWWW").width();
@@ -3367,6 +3429,57 @@ void OriginLocatorView::init() {
 		}
 		catch ( ... ) {}
 	}
+
+	try {
+		auto mode = SCApp->configGetString("olv.import.mode");
+		if ( mode == "latest" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::LatestOrigin);
+		}
+		else if ( mode == "latest-automatic" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::LatestAutomaticOrigin);
+		}
+		else if ( mode == "phases" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::MaxPhaseOrigin);
+		}
+		else if ( mode == "all" ) {
+			ImportPicksDialog::setDefaultSelection(ImportPicksDialog::AllOrigins);
+		}
+		else {
+			SEISCOMP_WARNING("Unknown olv.import.mode: %s: ignoring", mode);
+		}
+	}
+	catch ( ... ) {}
+
+	{
+		int options = ImportPicksDialog::CBImportAllPhases | ImportPicksDialog::CBPreferTargetPhases;
+		try {
+			if ( SCApp->configGetBool("olv.import.options.allAgencies") ) {
+				options |= ImportPicksDialog::CBImportAllPicks;
+			}
+		}
+		catch ( ... ) {}
+		try {
+			if ( !SCApp->configGetBool("olv.import.options.allPhases") ) {
+				options &= ~ImportPicksDialog::CBImportAllPhases;
+			}
+		}
+		catch ( ... ) {}
+		try {
+			if ( !SCApp->configGetBool("olv.import.options.preferTargetPhases") ) {
+				options &= ~ImportPicksDialog::CBPreferTargetPhases;
+			}
+		}
+		catch ( ... ) {}
+		ImportPicksDialog::setDefaultOptions(options);
+	}
+
+	try {
+		auto acceptedPhases = SCApp->configGetStrings("olv.import.acceptedPhases");
+		if ( !acceptedPhases.empty() ) {
+			ImportPicksDialog::setDefaultAcceptedPhases(Core::join(acceptedPhases, ", ").data());
+		}
+	}
+	catch ( ... ) {}
 
 	try {
 		SC_D.ui.btnCustom0->setText(SCApp->configGetString("button0").c_str());
@@ -3535,7 +3648,7 @@ void OriginLocatorView::init() {
 	// Add button next to the last custom button which opens a context menu
 	// with more command options
 	SC_D.btnCommandMenu = new QPushButton("Run...", this);
-	SC_D.btnCommandMenu->setIcon(icon("rocket-launch"));
+	SC_D.btnCommandMenu->setIcon(icon("process_run"));
 	SC_D.btnCommandMenu->setToolTip("Open custom command menu");
 	SC_D.btnCommandMenu->setEnabled(false);
 
@@ -3859,7 +3972,6 @@ void OriginLocatorView::commandStart() {
 
 	SEISCOMP_DEBUG("Starting command: %s", command.toStdString());
 	QT_PROCESS_START(process, command);
-	process->waitForStarted();
 
 	// check if process could be started
 	if ( !manager->waitForStarted(process) ) {
@@ -3884,7 +3996,7 @@ void OriginLocatorView::commandStart() {
 
 	process->closeWriteChannel();
 	if ( ca.showProcess ) {
-		SCApp->processManager()->show();
+		manager->show();
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4353,13 +4465,28 @@ void OriginLocatorView::readPicks(Origin* o) {
 			progress.setLabelText(tr("Loading picks..."));
 			progress.setCancelButton(nullptr);
 			DatabaseIterator it = SC_D.reader->getPicks(o->publicID());
+			std::map<IO::DatabaseInterface::OID, Pick*> picks;
 
-			while ( *it ) {
+			for ( ; *it; ++it ) {
 				if ( !it.cached() ) {
 					tmpPicks.push_back(Pick::Cast(*it));
+					picks[it.oid()] = tmpPicks.back().get();
 				}
-				++it;
 				progress.setValue(progress.value()+1);
+			}
+
+			if ( !picks.empty() ) {
+				// Load pick comments
+				it = SC_D.reader->getPickComments(o->publicID());
+				for ( ; *it; ++it ) {
+					auto pit = picks.find(it.parentOid());
+					if ( pit != picks.end() ) {
+						auto comment = Comment::Cast(*it);
+						if ( comment ) {
+							pit->second->add(comment);
+						}
+					}
+				}
 			}
 		}
 
@@ -4557,16 +4684,10 @@ void OriginLocatorView::setConfig(const Config &c) {
 					 static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).shown ) {
 					double azi = SC_D.residuals->value(i, PC_AZIMUTH);
 
-					if ( beta > 90 ) {
-						beta = 180-beta;
-						azi = azi-180;
-						if ( azi < 0 ) azi += 360;
-					}
-
-					beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
+					auto R = spherical2polar(azi, beta);
 
 					SC_D.residuals->setValue(i, PC_FMAZI, azi);
-					SC_D.residuals->setValue(i, PC_FMDIST, beta);
+					SC_D.residuals->setValue(i, PC_FMDIST, R);
 					SC_D.residuals->setValueValid(i, PC_FMDIST, true);
 					SC_D.residuals->setValueValid(i, PC_FMAZI, true);
 				}
@@ -4941,6 +5062,9 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 	SC_D.currentOrigin = o;
 	SC_D.modelArrivals.setOrigin(o);
 
+	// Invalidate stale auto-inversion result when origin changes
+	SC_D.lastFMResult.valid = false;
+
 	updateContent();
 
 	if ( SC_D.currentOrigin ) {
@@ -4962,11 +5086,38 @@ void OriginLocatorView::updateOrigin(Seiscomp::DataModel::Origin* o) {
 			if ( !SC_D.localOrigin ) {
 				// Do not change the profile if the origin has been relocated
 				// locally.
-				int idx = SC_D.ui.cbLocator->findText(SC_D.currentOrigin->methodID().c_str());
+				QString method, model;
+				method = SC_D.currentOrigin->methodID().c_str();
+				auto pos = method.indexOf(':');
+				if ( pos < 0 ) {
+					pos = method.indexOf('/');
+				}
+
+				if ( pos > 0 ) {
+					method = method.mid(0, pos).trimmed();
+				}
+
+				auto idx = SC_D.ui.cbLocator->findText(method);
+				if ( idx < 0 ) {
+					QString earthModelID = SC_D.currentOrigin->earthModelID().c_str();
+					pos = earthModelID.indexOf(':');
+					if ( pos < 0 ) {
+						pos = earthModelID.indexOf('/');
+					}
+
+					if ( pos > 0 ) {
+						idx = SC_D.ui.cbLocator->findText(earthModelID.mid(0, pos).trimmed());
+						model = earthModelID.mid(pos + 1).trimmed();
+					}
+				}
+				else {
+					model = SC_D.currentOrigin->earthModelID().c_str();
+				}
+
 				if ( idx >= 0 ) {
 					SC_D.ui.cbLocator->setCurrentIndex(idx);
 
-					idx = SC_D.ui.cbLocatorProfile->findText(SC_D.currentOrigin->earthModelID().c_str());
+					idx = SC_D.ui.cbLocatorProfile->findText(model);
 					if ( idx >= 0 ) {
 						SC_D.ui.cbLocatorProfile->setCurrentIndex(idx);
 					}
@@ -5463,20 +5614,21 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 
 	SC_D.residuals->setValueColor(id, PC_REDUCEDTRAVELTIME, c);
 
-	try {
+	if ( dist >= 0 ) {
 		if ( SCScheme.unit.distanceInKM ) {
 			SC_D.residuals->setValue(id, PC_DISTANCE, Math::Geo::deg2km(dist));
 		}
 		else {
 			SC_D.residuals->setValue(id, PC_DISTANCE, dist);
 		}
+
+		SC_D.modelArrivals.setDistance(id, SC_D.residuals->value(id, PC_DISTANCE));
 	}
-	catch ( ValueException& ) {
+	else {
 		SC_D.residuals->setValue(id, PC_DISTANCE, 0.0);
 		SC_D.residuals->setValueValid(id, PC_DISTANCE, false);
+		SC_D.modelArrivals.setDistance(id, QVariant());
 	}
-
-	SC_D.modelArrivals.setDistance(id, SC_D.residuals->value(id, PC_DISTANCE));
 
 	try {
 		double residual = arrival->timeResidual();
@@ -5610,19 +5762,13 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 			double azi;
 			azi = SC_D.residuals->value(id, PC_AZIMUTH);
 
-			if ( beta > 90 ) {
-				beta = 180-beta;
-				azi = azi-180;
-				if ( azi < 0 ) azi += 360;
-			}
-
-			beta = sqrt(2.0) * sin(0.5*deg2rad(beta));
+			auto R = spherical2polar(azi, beta);
 
 			//if ( static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).colorUsed )
 			//	SC_D.residuals->setValueColor(id, PC_FMAZI, static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).color);
 
 			SC_D.residuals->setValue(id, PC_FMAZI, azi);
-			SC_D.residuals->setValue(id, PC_FMDIST, beta);
+			SC_D.residuals->setValue(id, PC_FMDIST, R);
 		}
 		else {
 			SC_D.residuals->setValue(id, PC_FMDIST, 0.0);
@@ -5698,6 +5844,7 @@ void OriginLocatorView::importArrivals() {
 	bool importAllPicks = dlg->importAllPicks();
 	bool importAllPhases = dlg->importAllPhases();
 	bool preferTargetPhases = dlg->preferTargetPhases();
+	auto allowedPhases = dlg->allowedPhases();
 	delete dlg;
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
@@ -5706,8 +5853,8 @@ void OriginLocatorView::importArrivals() {
 	bool associateOnly = false;
 
 	DataModel::PublicObjectTimeSpanBuffer cache(SC_D.reader, Core::TimeSpan(3600,0));
-	typedef std::pair<std::string,int> PhaseWithFlags;
-	typedef std::map<std::string, PhaseWithFlags> PhasePicks;
+	using PhaseWithFlags = std::pair<std::string,int>;
+	using PhasePicks = std::map<std::string, PhaseWithFlags>;
 
 	PhasePicks sourcePhasePicks;
 
@@ -5880,28 +6027,37 @@ void OriginLocatorView::importArrivals() {
 	PickedPhases sourcePhases, targetPhases, *sourcePhasesPtr, *targetPhasesPtr;
 
 	// Collect source phases grouped by stream
-	for ( PhasePicks::iterator it = sourcePhasePicks.begin(); it != sourcePhasePicks.end(); ++it ) {
-		PickPtr pick = cache.get<Pick>(it->first);
+	for ( auto &[pickID, phaseWithFlags] : sourcePhasePicks ) {
+		if ( allowedPhases.isDenied(phaseWithFlags.first) ) {
+			SEISCOMP_DEBUG("Phase %s is blocked", phaseWithFlags.first);
+			continue;
+		}
+
+		PickPtr pick = cache.get<Pick>(pickID);
 		if ( !pick ) {
-			SEISCOMP_WARNING("Pick %s not found: ignoring", it->first.c_str());
+			SEISCOMP_WARNING("Pick %s not found: ignoring", pickID);
 			continue;
 		}
 
 		// Filter agency
-		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) )
+		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) ) {
 			continue;
+		}
 
 		char phaseCode[2] = {'\0', '\0'};
-		try { phaseCode[0] = Util::getShortPhaseName(it->second.first); }
+		try { phaseCode[0] = Util::getShortPhaseName(phaseWithFlags.first); }
 		catch ( ... ) {}
 
-		if ( phaseCode[0] == '\0' )
+		if ( phaseCode[0] == '\0' ) {
 			phaseCode[0] = 'P';
+		}
 
-		if ( !importAllPhases )
-			sourcePhases[PickPhase(pick->waveformID().networkCode() + "." + pick->waveformID().stationCode(), phaseCode)] = PickWithFlags(pick, it->second.second);
-		else
-			sourcePhases[PickPhase(wfid2str(pick->waveformID()), it->second.first)] = PickWithFlags(pick, it->second.second);
+		if ( !importAllPhases ) {
+			sourcePhases[PickPhase(pick->waveformID().networkCode() + "." + pick->waveformID().stationCode(), phaseCode)] = PickWithFlags(pick, phaseWithFlags.second);
+		}
+		else {
+			sourcePhases[PickPhase(wfid2str(pick->waveformID()), phaseWithFlags.first)] = PickWithFlags(pick, phaseWithFlags.second);
+		}
 	}
 
 	// Collect target phases grouped by stream
@@ -5939,7 +6095,7 @@ void OriginLocatorView::importArrivals() {
 	if ( !merge(sourcePhasesPtr, targetPhasesPtr, true, associateOnly, preferTargetPhases) ) {
 		SEISCOMP_DEBUG("No additional picks to merge");
 		QMessageBox::information(this, "ImportPicks", "There are no additional "
-								 "streams with picks to merge.");
+		                         "streams with picks to merge.");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6075,9 +6231,11 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 			catch ( ... ) {}
 
 			try {
-				double ttime = SC_D.ttTable.computeTime(arrival->phase().code().c_str(),
-									  org->latitude().value(), org->longitude().value(), depth,
-									  sloc->latitude(), sloc->longitude(), elev);
+				double ttime = SC_D.ttTable.computeTime(
+					arrival->phase().code().c_str(),
+					org->latitude().value(), org->longitude().value(), depth,
+					sloc->latitude(), sloc->longitude(), elev
+				);
 
 				double at = (double)(additionalPicks[i].pick->time().value()-org->time().value());
 				arrival->setTimeResidual(at-ttime);
@@ -6121,21 +6279,6 @@ void OriginLocatorView::showWaveforms() {
 
 	try {
 		SC_D.recordView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
-	}
-	catch ( ... ) {}
-
-	try {
-		auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
-		double minDist = 0, maxDist = 1000;
-		try {
-			minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
-		}
-		catch ( ... ) {}
-		try {
-			maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
-		}
-		catch ( ... ) {}
-		SC_D.recordView->setAuxiliaryChannels(patterns, minDist, maxDist);
 	}
 	catch ( ... ) {}
 
@@ -6577,7 +6720,7 @@ void OriginLocatorView::computeMagnitudes() {
 	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
 		emit magnitudesAdded(SC_D.currentOrigin.get(), SC_D.baseEvent.get());
 		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
-					   SC_D.localOrigin, false);
+		               SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6738,9 +6881,9 @@ void OriginLocatorView::createArtificialOrigin() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-											  const QPoint &dialogPos) {
+                                               const QPoint &dialogPos) {
 	createArtificialOrigin(epicenter, SC_D.pickerConfig.defaultDepth,
-						   Core::Time::UTC(), dialogPos);
+	                       Core::Time::UTC(), dialogPos);
 }
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -6749,9 +6892,9 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
-											   double depth,
-											   Seiscomp::Core::Time time,
-											   const QPoint &dialogPos) {
+                                               double depth,
+                                               Seiscomp::Core::Time time,
+                                               const QPoint &dialogPos) {
 	OriginDialog dialog(this);
 	try {
 		if ( SCApp->configGetBool("olv.artificialOriginAdvanced") ) {
@@ -6844,12 +6987,6 @@ void OriginLocatorView::editComment() {
 	if ( !SC_D.baseEvent ) return;
 
 	CommentEdit dlg;
-	dlg.ui.labelHeadline->setFont(SCScheme.fonts.highlight);
-	dlg.ui.labelAuthor->setText("-");
-	dlg.ui.labelDate->setText("-");
-
-	setItalic(dlg.ui.labelAuthor);
-	setItalic(dlg.ui.labelDate);
 
 	QString oldComment;
 
@@ -7150,7 +7287,7 @@ void OriginLocatorView::customCommit() {
 	}
 	else {
 		QMessageBox::critical(this, "Internal Error",
-							  tr("No options connected with commit button"));
+		                      tr("No options connected with commit button"));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -7162,10 +7299,10 @@ void OriginLocatorView::customCommit() {
 void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	if ( SC_D.localOrigin ) {
 		QMessageBox::critical(this, "Commit",
-							  "The origin this focal mechanism uses as "
-							  "trigger is not yet committed.\n"
-							  "Commit the origin before committing the "
-							  "focal mechanism.");
+		                      "The origin this focal mechanism uses as "
+		                      "trigger is not yet committed.\n"
+		                      "Commit the origin before committing the "
+		                      "focal mechanism.");
 		return;
 	}
 
@@ -7173,7 +7310,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	OriginPtr derived;
 	if ( withMT && SC_D.currentOrigin ) {
 		OriginDialog dialog(SC_D.currentOrigin->longitude().value(),
-							SC_D.currentOrigin->latitude().value(), this);
+		                    SC_D.currentOrigin->latitude().value(), this);
 		try { dialog.setDepth(SC_D.currentOrigin->depth().value()); }
 		catch ( ValueException &e ) {}
 		dialog.setTime(SC_D.currentOrigin->time().value());
@@ -7183,15 +7320,19 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		// search for preferred magnitude value
 		if ( SC_D.baseEvent ) {
 			Magnitude *m = Magnitude::Find(SC_D.baseEvent->preferredMagnitudeID());
-			if ( m )
+			if ( m ) {
 				dialog.setMagValue(m->magnitude().value());
+			}
 		}
 		dialog.setMagType("Mw");
 
-		if ( ! pos.isNull() )
+		if ( ! pos.isNull() ) {
 			dialog.move(pos.x(), pos.y());
+		}
 
-		if ( dialog.exec() != QDialog::Accepted ) return; // commit aborted
+		if ( dialog.exec() != QDialog::Accepted ) {
+			return; // commit aborted
+		}
 
 		CreationInfo ci;
 		ci.setAgencyID(SCApp->agencyID());
@@ -7254,6 +7395,21 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	fm->setEvaluationMode(EvaluationMode(MANUAL));
 	fm->setEvaluationStatus(EvaluationStatus(CONFIRMED));
 
+	// Populate quality metrics from auto-inversion if available
+	if ( SC_D.lastFMResult.valid ) {
+		const Seismology::FMSolution &sol = SC_D.lastFMResult.best;
+		fm->setStationPolarityCount(sol.stationCount);
+		fm->setMisfit(sol.misfit);
+		fm->setAzimuthalGap(sol.azimuthalGap);
+		SEISCOMP_INFO("FM commit: populated quality fields from auto-inversion "
+		              "(polarities=%d, misfit=%.2f, misfits=%d, gap=%.1f, "
+		              "quality=%s)",
+		              sol.stationCount, sol.misfit, sol.misfitCount,
+		              sol.azimuthalGap,
+		              Seismology::qualityLabel(sol.quality));
+		SC_D.lastFMResult.valid = false;
+	}
+
 	CreationInfo ci;
 	ci.setAgencyID(SCApp->agencyID());
 	ci.setAuthor(SCApp->author());
@@ -7263,7 +7419,279 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
-									 derived?derived.get():nullptr);
+		                             derived?derived.get():nullptr);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::autoInvertFocalMechanism() {
+	if ( !SC_D.currentOrigin ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     "No origin loaded.");
+		return;
+	}
+
+	// Collect polarity observations using direct takeoff angles from
+	// arrivals (computed by the locator or travel time table), NOT from
+	// the FM plot's stereographic projection.
+	std::vector<Seismology::PolarityObservation> observations;
+
+	size_t arrivalCount = SC_D.currentOrigin->arrivalCount();
+	for ( size_t i = 0; i < arrivalCount; ++i ) {
+		// Only consider arrivals that are used in the location
+		if ( !SC_D.modelArrivals.useArrival(i) ) {
+			continue;
+		}
+
+		DataModel::Arrival *arrival = SC_D.currentOrigin->arrival(i);
+
+		// Only use P phases
+		char phase = Util::getShortPhaseName(arrival->phase().code());
+		if ( phase != 'P' ) {
+			continue;
+		}
+
+		// Get polarity from the pick
+		DataModel::Pick *pick = DataModel::Pick::Find(arrival->pickID());
+		if ( !pick ) {
+			continue;
+		}
+
+		int polarity = 0;
+		try {
+			switch ( pick->polarity() ) {
+				case DataModel::POSITIVE:
+					polarity = 1;
+					break;
+				case DataModel::NEGATIVE:
+					polarity = -1;
+					break;
+				default:
+					continue;  // skip undecidable and unset
+			}
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		// Get azimuth directly from the arrival
+		double azimuth;
+		try {
+			azimuth = arrival->azimuth();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		// Get takeoff angle directly from the arrival (computed by locator)
+		// or compute it from the travel time table
+		double takeoff;
+		double obsRayParam = -1;
+		bool hasTakeOff = false;
+
+		try {
+			takeoff = arrival->takeOffAngle();
+			hasTakeOff = true;
+		}
+		catch ( ... ) {}
+
+		if ( !hasTakeOff && SC_D.config.computeMissingTakeOffAngles ) {
+			double lat;
+			double lon;
+
+			Math::Geo::delandaz2coord(
+				arrival->distance(), azimuth,
+				SC_D.currentOrigin->latitude(),
+				SC_D.currentOrigin->longitude(),
+				&lat, &lon
+			);
+
+			try {
+				TravelTime ttt = SC_D.ttTable.computeFirst(
+					SC_D.currentOrigin->latitude(),
+					SC_D.currentOrigin->longitude(),
+					SC_D.currentOrigin->depth(),
+					lat, lon
+				);
+				takeoff = ttt.takeoff;
+				obsRayParam = ttt.dtdd;
+				hasTakeOff = true;
+			}
+			catch ( ... ) {}
+		}
+
+		// If we have a takeoff but need dtdd for free-surface correction,
+		// query the TTT to get the ray parameter
+		if ( hasTakeOff && obsRayParam < 0
+		     && SC_D.config.fmFreeSurfaceCorrection
+		     && SC_D.config.computeMissingTakeOffAngles ) {
+			double lat;
+			double lon;
+
+			try {
+				Math::Geo::delandaz2coord(
+					arrival->distance(), azimuth,
+					SC_D.currentOrigin->latitude(),
+					SC_D.currentOrigin->longitude(),
+					&lat, &lon
+				);
+
+				TravelTime ttt = SC_D.ttTable.computeFirst(
+					SC_D.currentOrigin->latitude(),
+					SC_D.currentOrigin->longitude(),
+					SC_D.currentOrigin->depth(),
+					lat, lon
+				);
+				obsRayParam = ttt.dtdd;
+			}
+			catch ( ... ) {}
+		}
+
+		if ( !hasTakeOff ) {
+			continue;
+		}
+
+		// Compute observation weight from locator weight and time residual
+		double obsWeight = 1.0;
+		try {
+			double locWeight = 1.0;
+			try {
+				double w = arrival->weight();
+				// Only use positive locator weights. A weight of 0
+				// means excluded from location, not bad polarity.
+				if ( w > 0 ) locWeight = w;
+			}
+			catch ( ... ) {}
+
+			double residual = 0;
+			try { residual = arrival->timeResidual(); }
+			catch ( ... ) {}
+
+			obsWeight = Seismology::computeObservationWeight(
+				locWeight, residual, SC_D.config.fmResidualDecay);
+		}
+		catch ( ... ) {}
+
+		SEISCOMP_DEBUG("Auto FM: arrival %zu polarity=%s azi=%.1f takeoff=%.1f "
+		               "weight=%.3f rayParam=%.4f",
+		               i, polarity > 0 ? "UP" : "DOWN", azimuth, takeoff,
+		               obsWeight, obsRayParam);
+
+		observations.emplace_back(azimuth, takeoff, polarity,
+		                          static_cast<int>(i), obsWeight, obsRayParam);
+	}
+
+	SEISCOMP_DEBUG("Auto FM: collected %zu polarity observations from %zu arrivals",
+	               observations.size(), arrivalCount);
+
+	if ( observations.size() < Seismology::FMInversionConfig::MIN_OBSERVATIONS ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     QString("Insufficient polarity observations.\n"
+		                             "Found %1, need at least %2 with valid "
+		                             "takeoff angles.")
+		                     .arg(observations.size())
+		                     .arg(Seismology::FMInversionConfig::MIN_OBSERVATIONS));
+		return;
+	}
+
+	// Validate and run the inversion
+	Seismology::FMInversionConfig config;
+	config.gridSpacing = SC_D.config.fmGridSpacing;
+	config.maxMisfitFraction = SC_D.config.fmMaxBadFraction;
+	config.freeSurfaceCorrection = SC_D.config.fmFreeSurfaceCorrection;
+	config.surfaceVp = SC_D.config.fmSurfaceVp;
+	config.surfaceVpVs = SC_D.config.fmSurfaceVpVs;
+	config.residualDecay = SC_D.config.fmResidualDecay;
+	config.computeReliability = SC_D.config.fmComputeReliability;
+	config.reliabilityEpsilon = SC_D.config.fmReliabilityEpsilon;
+	config.validate();
+
+	Seismology::FMInversionResult invResult =
+		Seismology::invertPolarities(observations, config);
+
+	if ( !invResult.valid ) {
+		QMessageBox::warning(this, "Auto-Invert",
+		                     "No focal mechanism solution found.\n"
+		                     "No mechanism satisfies the misfit threshold.");
+		return;
+	}
+
+	const Seismology::FMSolution &best = invResult.best;
+
+	// Apply the best solution to the FM plot
+	static_cast<PlotWidget*>(SC_D.residuals)->set(
+		best.np1.str, best.np1.dip, best.np1.rake
+	);
+
+	// Store the full result for commit and cloud rendering
+	SC_D.lastFMResult = invResult;
+
+	SEISCOMP_INFO("Auto FM inversion: NP1=%.1f/%.1f/%.1f NP2=%.1f/%.1f/%.1f "
+	              "misfit=%.2f (%d/%d) gap=%.1f quality=%s accepted=%zu",
+	              best.np1.str, best.np1.dip, best.np1.rake,
+	              best.np2.str, best.np2.dip, best.np2.rake,
+	              best.misfit, best.misfitCount, best.stationCount,
+	              best.azimuthalGap,
+	              Seismology::qualityLabel(best.quality),
+	              invResult.accepted.size());
+
+	if ( invResult.pAxisReliability >= 0 ) {
+		SEISCOMP_INFO("Auto FM reliability: P-axis=%.3f*pi T-axis=%.3f*pi",
+		              invResult.pAxisReliability, invResult.tAxisReliability);
+	}
+
+	// Log misfitting stations by arrival index
+	if ( !best.misfittingStations.empty() ) {
+		std::string misfitList;
+		for ( size_t j = 0; j < best.misfittingStations.size(); ++j ) {
+			if ( j > 0 ) {
+				misfitList += ", ";
+			}
+			misfitList += std::to_string(best.misfittingStations[j]);
+		}
+		SEISCOMP_INFO("Auto FM: %zu misfitting arrivals: %s",
+		              best.misfittingStations.size(), misfitList.c_str());
+	}
+
+	// Show quality summary to the user.
+	// Use NP1/NP2 from the PlotWidget (after tensor round-trip) so the
+	// popup matches the nodal plane labels shown in the scolv header.
+	auto *plotWidget = static_cast<PlotWidget*>(SC_D.residuals);
+	const NODAL_PLANE &dispNP1 = plotWidget->np1();
+	const NODAL_PLANE &dispNP2 = plotWidget->np2();
+
+	QString qualityMsg = QString(
+		"Quality: %1\n\n"
+		"NP1: %2/%3/%4\n"
+		"NP2: %5/%6/%7\n\n"
+		"Misfit: %8/%9 stations (%10%)\n"
+		"Azimuthal gap: %11 deg\n"
+		"Accepted solutions: %12"
+	)
+	.arg(Seismology::qualityLabel(best.quality))
+	.arg(dispNP1.str, 0, 'f', 1)
+	.arg(dispNP1.dip, 0, 'f', 1)
+	.arg(dispNP1.rake, 0, 'f', 1)
+	.arg(dispNP2.str, 0, 'f', 1)
+	.arg(dispNP2.dip, 0, 'f', 1)
+	.arg(dispNP2.rake, 0, 'f', 1)
+	.arg(best.misfitCount)
+	.arg(best.stationCount)
+	.arg(best.misfit * 100.0, 0, 'f', 1)
+	.arg(best.azimuthalGap, 0, 'f', 1)
+	.arg(invResult.accepted.size());
+
+	if ( best.quality == Seismology::FMQuality::C ||
+	     best.quality == Seismology::FMQuality::D ) {
+		QMessageBox::warning(this, "Auto-Invert", qualityMsg);
+	}
+	else {
+		QMessageBox::information(this, "Auto-Invert", qualityMsg);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7403,9 +7831,9 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	if ( !SC_D.baseEvent || (!options.forceEventAssociation && isLocalOrigin) ) {
 		cerr << "Wait for association" << endl;
 		QProgressDialog progress("Origin has not been associated with an event yet.\n"
-								 "Waiting for event association ...\n"
-								 "Hint: scevent should run",
-								 "Cancel", 0, 0);
+		                         "Waiting for event association ...\n"
+		                         "Hint: scevent should run",
+		                         "Cancel", 0, 0);
 		progress.setAutoClose(true);
 		progress.setWindowModality(Qt::ApplicationModal);
 		connect(this, SIGNAL(baseEventSet()), &progress, SLOT(accept()));

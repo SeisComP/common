@@ -22,15 +22,12 @@
 #define SEISCOMP_IO_RECORDSTREAM_SDSARCHIVE_H
 
 
-#include <iostream>
-#include <sstream>
 #include <fstream>
 #include <queue>
 #include <list>
 #include <set>
 #include <mutex>
 
-#include <seiscomp/core/version.h>
 #include <seiscomp/io/recordstream.h>
 
 
@@ -110,7 +107,7 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 
 		using IndexSet = std::set<Index>;
 		using IndexList = std::list<Index>;
-		using File = std::pair<std::string,bool>;
+		using File = std::pair<std::string, bool>;
 		using FileQueue = std::queue<File>;
 
 		std::vector<std::string>  _arcroots;

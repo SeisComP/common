@@ -319,11 +319,15 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 		//! Enables the daemon mode to be selectable via commandline
 		void setDaemonEnabled(bool enable);
 
+		int logVerbosity() const;
+
 		//! Enables/disables logging of context (source file + line number)
 		void setLoggingContext(bool);
+		bool logContext() const;
 
 		//! Enables/disables logging of component
 		void setLoggingComponent(bool);
+		bool logComponent() const;
 
 		//! Enables/disables logging to stderr
 		void setLoggingToStdErr(bool);
@@ -1227,7 +1231,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 			BaseSettings();
 
 			std::string alternativeConfigFile;
-			bool        enableDaemon;
+			bool        enableDaemon{true};
 			std::string crashHandler;
 			std::string lockfile;
 			std::string plugins;
@@ -1241,8 +1245,9 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 #ifndef WIN32
 				bool          syslog{false};
 #endif
+				std::string   output;
 				bool          context{false};
-				int           component{-1};
+				OPT(bool)     component;
 				bool          toStdout{false};
 				bool          UTC{false};
 				std::string   alternativeLogFile;
@@ -1276,6 +1281,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					& cfg(context, "context")
 					& cfg(component, "component")
 					& cfg(components, "components")
+					& cfg(output, "output")
 					& cfg(syslog, "syslog")
 					& cfg(toStdout, "stderr")
 					& cfg(UTC, "utc")
@@ -1360,6 +1366,13 @@ inline CommandLine &Application::commandline() {
 inline const CommandLine &Application::commandline() const {
 	return *_commandline;
 }
+
+inline int Application::logVerbosity() const { return _baseSettings.logging.verbosity; }
+inline bool Application::logContext() const { return _baseSettings.logging.context; }
+inline bool Application::logComponent() const {
+	return _baseSettings.logging.component ? *_baseSettings.logging.component : !_baseSettings.logging.toStdout;
+}
+
 
 
 }

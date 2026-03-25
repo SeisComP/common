@@ -20,7 +20,7 @@
 
 #define SEISCOMP_COMPONENT log
 #include <mutex>
-#include <string.h>
+#include <cstring>
 
 #include <seiscomp/logging/channel.h>
 

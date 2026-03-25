@@ -15,8 +15,8 @@ except that
 * Measured amplitudes can be scaled accounting for expected units.
 * Measured amplitudes are combined by taking the maximum instead of the average.
 * A parametric :ref:`magnitude calibration <mlc_station_magnitude>` function
-  applies but a correction in the form log10(A0) can be configured for converting
-  measured amplitudes to station magnitudes.
+  applies but a correction in the form log10(A0) can be configured for
+  converting measured amplitudes to station magnitudes.
 * Hypocentral instead of epicentral distance is considered by default.
 
 
@@ -32,30 +32,24 @@ Some general conditions apply for measuring amplitudes:
   separately.
 
 The parameters for measuring MLc amplitudes can be adjusted by global
-binding parameters:
+binding parameters where you need to create an amplitude-type profile giving it
+the name of *MLc* (replace *$name* by *MLc*, for aliases read the section
+:ref:`concepts_magnitudes`):
 
 .. csv-table::
-   :widths: 20 25 15 30
+   :widths: 25 25 25 25
    :header: Topic, Parameter, Default, Comment
    :align: left
    :delim: ;
 
-   :ref:`Filtering <filter-grammar>`; :confval:`amplitudes.MLc.preFilter`; :ref:`BW(3,0.5,12) <filter-bw>`; Applied before instrument simulation
-   :term:`Wood-Anderson simulation <Wood-Anderson seismometer>`; :confval:`amplitudes.MLc.applyWoodAnderson`; true; When WA simulation is inactive, measured amplitudes take the units of the gain of the stream on which they were measured.
+   **MLc-specific parameters**;;;
+   :term:`Wood-Anderson simulation <Wood-Anderson seismometer>`; :confval:`amplitudes.$name.applyWoodAnderson`; true; When WA simulation is inactive, measured amplitudes take the units of the gain of the stream on which they were measured.
+   Amplitude scaling; :confval:`amplitudes.$name.amplitudeScale`; 1; Apply for scaling measured amplitudes to units required by the magnitude
+   Amplitude combination; :confval:`amplitudes.$name.combiner`;max; Method for combining amplitudes measured on both horizontal components
+
+   **general parameters**;;;
+   :ref:`Filtering <filter-grammar>`; :confval:`amplitudes.$name.preFilter`; :ref:`BW(3,0.5,12) <filter-bw>`; Applied before WA instrument simulation
    :term:`Wood-Anderson parameters <Wood-Anderson seismometer>`; :confval:`amplitudes.WoodAnderson.gain`, :confval:`amplitudes.WoodAnderson.T0`, :confval:`amplitudes.WoodAnderson.h`; 2080, 0.8, 0.7; Defaults: see :ref:`IASPEI recommendation <concepts_magnitudes-wa>`.
-   Amplitude scaling; :confval:`amplitudes.MLc.amplitudeScale`; 1; Apply for scaling measured amplitudes to units required by the magnitude
-   Amplitude combination; :confval:`amplitudes.MLc.combiner`;max; Method for combining amplitudes measured on both horizontal components
-
-Some additional parameters require you to create an amplitude-type profile for
-global binding parameters. Name the profile like the amplitude name, hence MLc
-replacing '$name' in the parameters below:
-
-.. csv-table::
-   :widths: 20 25 15 30
-   :header: Topic, Parameter, Default, Comment
-   :align: left
-   :delim: ;
-
    Minimum distance; :confval:`amplitudes.$name.minDist`; 0;
    Maximum distance; :confval:`amplitudes.$name.maxDist`; 8; Cannot be extended beyond default
    Minimum source depth; :confval:`amplitudes.$name.minDepth`; 0; Can be negative
@@ -64,8 +58,9 @@ replacing '$name' in the parameters below:
    Noise window end; :confval:`amplitudes.$name.noiseEnd`; -5;  (+++)
    Signal window begin; :confval:`amplitudes.$name.signalBegin`; -5;  (+++)
    Signal window end; :confval:`amplitudes.$name.signalEnd`; 150 (+) or distance/3+30 (++); (**+**) When measured by :ref:`scautopick`, (**++**) When measured by :ref:`scamp` or :ref:`scolv`  (+++)
-   Minimum :term:`SNR`; :confval:`amplitudes.$name.minSNR`;not applied; Compares the maximum amplitudes measured within the signal and noise windows
-   Period range; NA; NA; Period is not measured. A configuration will prevent any MLc amplitude from being measured
+   Minimum :term:`SNR`; :confval:`amplitudes.$name.minSNR`;0; Compares the
+   maximum amplitudes measured within the signal and noise windows.
+   Period range; :confval:`amplitudes.$name.minPeriod`, :confval:`amplitudes.$name.maxPeriod`; -1, **Do not set!**; Period is not measured. Configuration with values > 0 will prevent any MLc amplitude from being measured.
    Amplitude saturation; :confval:`amplitudes.$name.saturationThreshold`; false; Apply for avoiding measurements on clipped data
    Response correction; :confval:`amplitudes.$name.enableResponses`; false; Activate for input units other than nm/s and set :confval:`amplitudes.$name.resp.minFreq`, :confval:`amplitudes.$name.resp.maxFreq`
 
@@ -75,9 +70,9 @@ are relative to P arrival time, read :ref:`Time grammar <time-grammar>`.
 The default values are valid for SW-Germany (:cite:t:`stange-2006`).
 The Wood-Anderson simulation will convert input velocity data to ground
 displacement in mm. The input data may be of a different unit after applying
-:confval:`amplitudes.MLc.preFilter`, e.g. when integration is applied, and / or
-when Wood-Anderson simulation is disabled. Configure
-:confval:`amplitudes.MLc.amplitudeScale` for converting the unit of the
+:confval:`amplitudes.$name.preFilter`, e.g. when integration is applied, and /
+or when Wood-Anderson simulation is disabled. Configure
+:confval:`amplitudes.$name.amplitudeScale` for converting the unit of the
 processed data to the unit expected by the
 :ref:`station magnitude calibration <mlc_station_magnitude>` for the measured
 amplitude.
@@ -129,7 +124,8 @@ The calibration function is considered in one of the forms
     source depth > :confval:`magnitudes.MLc.parametric.H` but 0 otherwise.
 
   The default values are valid for SW-Germany (:cite:t:`stange-2006`). *c6*,
-  *H* have been added for supporting dependency on depth (:cite:t:`rhoades-2020`)
+  *H* have been added for supporting dependency on depth
+  :cite:t:`rhoades-2020`)
   and *c7*, *c8* for observations at short distances (:cite:t:`luckett2019`).
 
 * log10(A0)-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
@@ -145,45 +141,51 @@ The calibration function is considered in one of the forms
 
 .. note::
 
-   * The magnitude calibration function can be regionalized by adjusting global
+   * MLc magnitude calibration function can be regionalized by adjusting global
      module configuration parameters in MLc region profiles of
-     :confval:`magnitudes.MLc.region.*` and in a *MLc* Magnitude type profile
+     :confval:`magnitudes.$name.region.*` and in a *MLc* magnitude-type profile
      e.g., in :file:`global.cfg`.
 
-Configurable parameters:
+The parameters for computing MLc magnitudes from amplitudes can be adjusted by
+global binding parameters or :ref:`regionalization<concepts_magnitudes>` where
+you need to create a magnitude-type profile giving it the name of *MLc*
+(replace *$name* by *MLc*, for aliases read the section
+:ref:`concepts_magnitudes`):
 
 .. csv-table::
-   :widths: 20 25 15 30
+   :widths: 25 25 25 25
    :header: Topic, Parameter, Default, Comment
    :align: left
    :delim: ;
 
-   Distance type; :confval:`magnitudes.MLc.distMode`; hypocentral; epicentral or hyocentral can be selected
-   Minimum distance; :confval:`magnitudes.MLc.minDist`; -1;
-   Maximum distance; :confval:`magnitudes.MLc.maxDist`; 8; Measurements beyond 8 deg are strictly ignored
-   Minimum source depth; :confval:`magnitudes.MLc.minDepth`; -10;
-   Maximum source depth; :confval:`magnitudes.MLc.maxDepth`; 80; Can be extended beyond default
-   Period range; NA; NA; Period is not measured. A configuration will prevent any MLc magnitude from being computed
+   **MLc-specific parameters**;;;
+   Distance type; :confval:`magnitudes.$name.distMode`; hypocentral; epicentral
+   or hyocentral can be selected Magnitude calibration type;
+   :confval:`magnitudes.$name.calibrationType`; parametric; parametric and A0 (non-parametric) are available
+   **parametric** calibration;;; Parameters are used for :confval:`magnitudes.$name.calibrationType` = parametric
+   ;:confval:`magnitudes.$name.parametric.c0`;0.0;
+   ;:confval:`magnitudes.$name.parametric.c1`;0.69;
+   ;:confval:`magnitudes.$name.parametric.c2`;0.00095;
+   ;:confval:`magnitudes.$name.parametric.c3`;1.11;
+   ;:confval:`magnitudes.$name.parametric.c4`;0.0;
+   ;:confval:`magnitudes.$name.parametric.c5`;1.0;
+   ;:confval:`magnitudes.$name.parametric.c6`;0.0; see :cite:t:`rhoades-2020`
+   ;:confval:`magnitudes.$name.parametric.H`;40.0; see :cite:t:`rhoades-2020`
+   ;:confval:`magnitudes.$name.parametric.c7`;0.0; see :cite:t:`luckett2019`
+   ;:confval:`magnitudes.$name.parametric.c8`;0.0; see :cite:t:`luckett2019`
+   **non-parametric** calibration;;; Parameters are used for :confval:`magnitudes.$name.calibrationType` = A0
+   ;:confval:`magnitudes.$name.A0.logA0`;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85; from :ref:`ML magnitude <global_ml>`
+
+   **general parameters**;;;
+   Minimum distance; :confval:`magnitudes.$name.minDist`; -1;
+   Maximum distance; :confval:`magnitudes.$name.maxDist`; 8; Measurements beyond 8 deg are strictly ignored
+   Minimum source depth; :confval:`magnitudes.$name.minDepth`; -10;
+   Maximum source depth; :confval:`magnitudes.$name.maxDepth`; 80; Can be extended beyond default
+   Period range; :confval:`magnitudes.$name.minPeriod`, :confval:`amplitudes.$name.maxPeriod`; **Do not set at all!**; Configuration with any value will prevent any MLc magnitude from being computed if the amplitude contains no period value.
    Amplitude type;; MLc; Configurable by :ref:`amplitude and magnitude alias <concepts_magnitudes-aliases>`
-   Amplitude unit;; mm; other units can be assumed by amplitude scaling with :confval:`amplitudes.MLc.amplitudeScale`
-   Magnitude calibration type; :confval:`magnitudes.MLc.calibrationType`; parametric; parametric and A0 (non-parametric) are available
-   Linear magnitude correction;:confval:`magnitudes.$name.multiplier`; 1.0; Configure station corrections more conveniently configurable in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.multiplier`
-   Constant magnitude correction;:confval:`magnitudes.$name.offset`; 0.0; Configure station corrections more conveniently configurable in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.offset`
-   ;;;
-   **parametric** calibration;;; Parameters are used for :confval:`magnitudes.MLc.calibrationType` = parametric
-   ;:confval:`magnitudes.MLc.parametric.c0`;0.0;
-   ;:confval:`magnitudes.MLc.parametric.c1`;0.69;
-   ;:confval:`magnitudes.MLc.parametric.c2`;0.00095;
-   ;:confval:`magnitudes.MLc.parametric.c3`;1.11;
-   ;:confval:`magnitudes.MLc.parametric.c4`;0.0;
-   ;:confval:`magnitudes.MLc.parametric.c5`;1.0;
-   ;:confval:`magnitudes.MLc.parametric.c6`;0.0; see :cite:t:`rhoades-2020`
-   ;:confval:`magnitudes.MLc.parametric.H`;40.0; see :cite:t:`rhoades-2020`
-   ;:confval:`magnitudes.MLc.parametric.c7`;0.0; see :cite:t:`luckett2019`
-   ;:confval:`magnitudes.MLc.parametric.c8`;0.0; see :cite:t:`luckett2019`
-   ;;;
-   **non-parametric** calibration;;; Parameters are used for :confval:`magnitudes.MLc.calibrationType` = A0
-   ;:confval:`magnitudes.MLc.A0.logA0`;0:-1.3,60:-2.8,100:-3.0,400:-4.5,1000:-5.85; from :ref:`ML magnitude <global_ml>`
+   Amplitude unit;; mm; other units can be assumed by amplitude scaling with :confval:`amplitudes.$name.amplitudeScale`
+   Linear magnitude correction;:confval:`magnitudes.$name.multiplier`; 1.0; Configure station corrections more conveniently in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.multiplier`
+   Constant magnitude correction;:confval:`magnitudes.$name.offset`; 0.0; Configure station corrections more conveniently in global module configuration as :confval:`module.trunk.NET.STA.magnitudes.MLc.offset`
 
 
 Network magnitude

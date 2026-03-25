@@ -133,26 +133,28 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			// The noise and signal time window expressions. Those
 			// might depend on origin or travel time information
 			// and are only evaluated during setEnvironment.
-			SignalTime  noiseBegin{-35};
-			SignalTime  noiseEnd{-5};
-			SignalTime  signalBegin{-5};
-			SignalTime  signalEnd{30};
+			SignalTime  noiseBegin{-35};         //!< Unit: seconds
+			SignalTime  noiseEnd{-5};            //!< Unit: seconds
+			SignalTime  signalBegin{-5};         //!< Unit: seconds
+			SignalTime  signalEnd{30};           //!< Unit: seconds
+
+			SignalUnit  unit{MeterPerSecond};    //!< The requested data unit
 
 			std::string ttInterface;
 			std::string ttModel;
 
-			double      snrMin{3}; /* default: 3 */
-			double      minimumPeriod{-1}; /* default: -1 */
-			double      maximumPeriod{-1}; /* default: -1 */
+			double      snrMin{3};
+			double      minimumPeriod{-1};       //!< Unit: seconds
+			double      maximumPeriod{-1};       //!< Unit: seconds
 
-			double      minimumDistance{0}; /* default: 0 */
-			double      maximumDistance{180}; /* default: 180 */
-			double      minimumDepth{-1E6}; /* default: -1E6 */
-			double      maximumDepth{1E6}; /* default: 1E6 */
+			double      minimumDistance{0};      //!< Unit: degrees
+			double      maximumDistance{180};    //!< Unit: degrees
+			double      minimumDepth{-1E6};      //!< Unit: km
+			double      maximumDepth{1E6};       //!< Unit: km
 
-			double      respTaper{5.0};
-			double      respMinFreq{0.00833333};
-			double      respMaxFreq{0};
+			double      respTaper{5.0};          //!< Unit: seconds
+			double      respMinFreq{0.00833333}; //!< Unit: Hz
+			double      respMaxFreq{0};          //!< Unit: Hz
 
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
 
@@ -175,8 +177,6 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		};
 
 		struct Environment {
-			Environment();
-
 			std::string                     networkCode;
 			std::string                     stationCode;
 			std::string                     locationCode;
@@ -211,12 +211,12 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		};
 
 		struct Result {
-			StreamComponent component;
-			const Record   *record;
-			AmplitudeValue  amplitude;
-			AmplitudeTime   time;
-			double          period;
-			double          snr;
+			StreamComponents component;
+			const Record    *record;
+			AmplitudeValue   amplitude;
+			AmplitudeTime    time;
+			double           period;
+			double           snr;
 		};
 
 		using IDList = std::vector<std::string>;
@@ -252,6 +252,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		//! Set the end of the signal window relative to the trigger
 		void setSignalEnd(const SignalTime &end)  { _config.signalEnd = end; }
+
+		void setDataUnit(SignalUnit unit) { _config.unit = unit; }
 
 		void setMinSNR(double snr) { _config.snrMin = snr; }
 
@@ -509,8 +511,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		// pre-arrival offset and rms
 		OPT(double)     _noiseOffset, _noiseAmplitude, _lastAmplitude;
 
-		bool            _enableUpdates;
-		bool            _enableResponses;
+		bool            _enableUpdates{false};
+		bool            _enableResponses{false};
 
 		// config
 		Config          _config;
@@ -521,22 +523,36 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 		std::string     _pickID;
 
-		bool            _responseApplied;
+		enum class State {
+			Empty           = 0x00,
+			ResponseApplied = 0x01, // The data has been deconvolved
+			FilterCreated   = 0x02  // The unit conversion filter has been created
+		};
+
+		void set(State flag) {
+			_state |= static_cast<unsigned>(flag);
+		}
+
+		void clear(State flag) {
+			_state &= ~static_cast<unsigned>(flag);
+		}
+
+		bool check(State flag) const {
+			return _state & static_cast<unsigned>(flag);
+		}
 
 
 	// ----------------------------------------------------------------------
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
+		unsigned    _state{static_cast<unsigned>(State::Empty)};
 		PublishFunc _func;
 
 
 	friend class AmplitudeProcessorAliasFactory;
 };
 
-
-inline AmplitudeProcessor::Environment::Environment()
-: hypocenter(nullptr), receiver(nullptr), pick(nullptr) {}
 
 inline const DataModel::Pick *AmplitudeProcessor::pick() const {
 	return _environment.pick;

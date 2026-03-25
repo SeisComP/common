@@ -122,13 +122,16 @@ class SC_SYSTEM_CORE_API PluginRegistry {
 		//! Returns the end iterator over all registered plugins
 		iterator end() const;
 
+		//! Returns the list of errors after calling loadPlugins.
+		const std::vector<std::string> &errors() const;
+
 
 	// ----------------------------------------------------------------------
 	// Private members
 	// ----------------------------------------------------------------------
 	private:
 		std::string find(const std::string &name) const;
-		PluginEntry open(const std::string &file) const;
+		PluginEntry open(const std::string &file, std::string *errorMsg = nullptr) const;
 		bool findLibrary(void *handle) const;
 
 
@@ -139,12 +142,14 @@ class SC_SYSTEM_CORE_API PluginRegistry {
 		using PluginList = std::list<PluginEntry>;
 		using PathList = std::vector<std::string>;
 		using NameList = std::vector<std::string>;
+		using StringList = NameList;
 
 		static PluginRegistry *_instance;
 
 		PluginList             _plugins;
 		PathList               _paths;
 		NameList               _pluginNames;
+		StringList             _errors;
 };
 
 

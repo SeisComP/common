@@ -78,6 +78,7 @@ class AmplitudeViewPrivate {
 		QDoubleSpinBox                     *spinDistance;
 		QCheckBox                          *checkOverrideSNR;
 		QDoubleSpinBox                     *spinSNR;
+		QPushButton                        *btnApply;
 
 		QLineEdit                          *searchStation;
 		QLabel                             *searchLabel;
@@ -95,10 +96,6 @@ class AmplitudeViewPrivate {
 		double                              minTime, maxTime;
 		double                              minDist;
 		double                              maxDist;
-
-		std::vector<std::string>            auxiliaryStreamIDPatterns;
-		double                              auxiliaryMinDistance{0};
-		double                              auxiliaryMaxDistance{1000};
 
 		float                               zoom;
 		double                              currentAmplScale;
@@ -149,7 +146,7 @@ class AmplitudeViewPrivate {
 };
 
 
-std::string AmplitudeViewPrivate::ttInterface = "libtau";
+std::string AmplitudeViewPrivate::ttInterface = "LOCSAT";
 std::string AmplitudeViewPrivate::ttTableName = "iasp91";
 
 

@@ -504,7 +504,7 @@ struct StationLayer : Map::Layer {
 		refSymbol = symbol;
 	}
 
-	void setVisible(bool v) {
+	void setVisible(bool v) override {
 		Map::Layer::setVisible(v);
 		if ( !v ) {
 			for ( auto &entry : stations ) {
@@ -539,7 +539,7 @@ struct StationLayer : Map::Layer {
 				continue;
 			}
 
-			if ( stations[i]->isInside(event->x(), event->y()) ) {
+			if ( stations[i]->isInside(event->pos().x(), event->pos().y()) ) {
 				tmpHoverId = i;
 				break;
 			}
@@ -705,6 +705,7 @@ QSize FMDefaultSize = QSize(32, 32);
 QSize FMSelectedSize = QSize(40, 40);
 
 
+std::string TableCTimeFormat;
 std::string TableOTimeFormat;
 std::string PanelOTimeFormat;
 
@@ -777,7 +778,7 @@ void ExtTensorSymbol::customDraw(const Map::Canvas *c, QPainter &p) {
 
 	if ( size() != _lastSize ) {
 		_lastSize = size();
-		resize(_lastSize.width(), _lastSize.height());
+		resize(_lastSize.width(), _lastSize.height(), p.device()->devicePixelRatioF());
 	}
 
 	QPoint symbolPos;
@@ -1349,6 +1350,15 @@ EventEdit::EventEdit(DatabaseQuery* reader,
 		}
 	}
 
+	if ( TableCTimeFormat.empty() ) {
+		TableCTimeFormat = "%F %T";
+		if ( SCScheme.precision.originTime > 0 ) {
+			TableCTimeFormat += ".%";
+			TableCTimeFormat += Core::toString(SCScheme.precision.originTime);
+			TableCTimeFormat += "f";
+		}
+	}
+
 	init();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1629,7 +1639,7 @@ void EventEdit::init() {
 	}
 	catch ( ... ) {}
 
-	_ui.comboTypes->addItem("- unset -");
+	_ui.comboTypes->addItem(tr("- unset -"));
 
 	if ( _eventTypesWhitelist.isEmpty() ) {
 		QStringList types;
@@ -1698,7 +1708,7 @@ void EventEdit::init() {
 		}
 	}
 
-	_ui.comboTypeCertainties->addItem("- unset -");
+	_ui.comboTypeCertainties->addItem(tr("- unset -"));
 	for ( int i = (int)EventTypeCertainty::First; i < (int)EventTypeCertainty::Quantity; ++i )
 		_ui.comboTypeCertainties->addItem(EventTypeCertainty::NameDispatcher::name(i));
 
@@ -1857,9 +1867,9 @@ void EventEdit::init() {
 	connect(_originTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
 	        this, SLOT(originSelected(QTreeWidgetItem*,int)));
 
-	//_ui.comboFixOrigin->addItem("nothing");
-	for ( int i = (int)EvaluationMode::First; i < (int)EvaluationMode::Quantity; ++i )
-		_ui.comboFixOrigin->addItem(QString("%1 origins").arg(EvaluationMode::NameDispatcher::name(i)));
+	for ( int i = (int)EvaluationMode::First; i < (int)EvaluationMode::Quantity; ++i ) {
+		_ui.comboFixOrigin->addItem(tr("%1 origins").arg(EvaluationMode::NameDispatcher::name(i)));
+	}
 
 	_fixOriginDefaultActionCount = _ui.comboFixOrigin->count();
 
@@ -1885,14 +1895,12 @@ void EventEdit::init() {
 	connect(_ui.fmAutoButton, SIGNAL(clicked()), this, SLOT(releaseFM()));
 	connect(_ui.fmTriggerButton, SIGNAL(clicked()), this, SLOT(triggerMw()));
 
-	for ( int i = (int)EvaluationMode::First; i < (int)EvaluationMode::Quantity; ++i )
-		_ui.fmFixCombo->addItem(QString("%1 focal mechanisms").arg(EvaluationMode::NameDispatcher::name(i)));
+	_ui.fmFixCombo->addItem(tr("unset"));
+	for ( int i = (int)EvaluationMode::First; i < (int)EvaluationMode::Quantity; ++i ) {
+		_ui.fmFixCombo->addItem(tr("%1 focal mechanisms").arg(EvaluationMode::NameDispatcher::name(i)));
+	}
 
 	_fixFMDefaultActionCount = _ui.fmFixCombo->count();
-
-	 // TODO: remove if FMAutoMode is supported
-	_ui.fmFixCombo->setVisible(false);
-	_ui.fmAutoButton->hide();
 
 	_ui.fmTriggerButton->hide();
 
@@ -2162,12 +2170,14 @@ void EventEdit::updateObject(const QString &parentID, Object *obj) {
 
 			if ( _preferredFMIdx != -1 ) {
 				if ( _currentEvent->preferredFocalMechanismID() == (const char*)_ui.fmTree->topLevelItem(
-				         _preferredFMIdx)->data(0, Qt::UserRole).toString().toLatin1() )
+				         _preferredFMIdx)->data(0, Qt::UserRole).toString().toLatin1() ) {
 					changePreferredFM = false;
+				}
 			}
 
-			if ( changePreferredFM )
+			if ( changePreferredFM ) {
 				updatePreferredFMIndex();
+			}
 
 			updateEvent();
 
@@ -2272,6 +2282,7 @@ void EventEdit::updatePreferredOriginIndex() {
 		}
 	}
 
+	_preferredOriginIdx = -1;
 	for ( int i = 0; i < _originTree->topLevelItemCount(); ++i ) {
 		if ( _currentEvent->preferredOriginID() == (const char*)_originTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toLatin1() ) {
 			QTreeWidgetItem *item = _originTree->topLevelItem(i);
@@ -2285,8 +2296,9 @@ void EventEdit::updatePreferredOriginIndex() {
 		}
 	}
 
-	for ( int i = 0; i < _originTree->columnCount(); ++i )
+	for ( int i = 0; i < _originTree->columnCount(); ++i ) {
 		_originTree->resizeColumnToContents(i);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2304,6 +2316,7 @@ void EventEdit::updatePreferredMagnitudeIndex() {
 		}
 	}
 
+	_preferredMagnitudeIdx = -1;
 	for ( int i = 0; i < _ui.treeMagnitudes->topLevelItemCount(); ++i ) {
 		if ( _currentEvent->preferredMagnitudeID() ==
 		     (const char*)_ui.treeMagnitudes->topLevelItem(i)->data(0, Qt::UserRole).toString().toLatin1() ) {
@@ -2318,8 +2331,9 @@ void EventEdit::updatePreferredMagnitudeIndex() {
 		}
 	}
 
-	for (int i = 0; i < _ui.treeMagnitudes->columnCount(); i++)
+	for (int i = 0; i < _ui.treeMagnitudes->columnCount(); i++) {
 		_ui.treeMagnitudes->resizeColumnToContents(i);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2337,10 +2351,11 @@ void EventEdit::updatePreferredFMIndex() {
 		}
 	}
 
+	_preferredFMIdx = -1;
 	for ( int i = 0; i < _ui.fmTree->topLevelItemCount(); ++i ) {
+		QTreeWidgetItem *item = _ui.fmTree->topLevelItem(i);
 		if ( _currentEvent->preferredFocalMechanismID() ==
-		     (const char*)_ui.fmTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toLatin1() ) {
-			QTreeWidgetItem *item = _ui.fmTree->topLevelItem(i);
+		     (const char*)item->data(0, Qt::UserRole).toString().toLatin1() ) {
 			for ( int c = 0; c < _fmColumnMap.count(); ++c ) {
 				QFont f = item->font(_fmColumnMap[c]);
 				f.setBold(FMColBold[c]);
@@ -2351,8 +2366,9 @@ void EventEdit::updatePreferredFMIndex() {
 		}
 	}
 
-	for ( int i = 0; i < _ui.fmTree->columnCount(); ++i )
+	for ( int i = 0; i < _ui.fmTree->columnCount(); ++i ) {
 		_ui.fmTree->resizeColumnToContents(i);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2368,7 +2384,7 @@ void EventEdit::setFMActivity(bool e) {
 		if ( _fmActivityMovie != nullptr ) delete _fmActivityMovie;
 
 		_fmActivityMovie = new QMovie(this);
-		_fmActivityMovie->setFileName(":/icons/icons/mt.mng");
+		_fmActivityMovie->setFileName(":/sc/assets/mt.mng");
 
 		_fmActivity->show();
 		_fmActivity->setMovie(_fmActivityMovie);
@@ -2564,8 +2580,9 @@ void EventEdit::insertOriginRow(Origin *org) {
 
 	for ( int i = 0; i < OriginListColumns::Quantity; ++i )
 		item->setTextAlignment(_originColumnMap[i], OriginColAligns[i]);
-	if ( _customColumn >= 0 )
+	if ( _customColumn >= 0 ) {
 		item->setTextAlignment(_customColumn, Qt::AlignCenter);
+	}
 
 	// Register script calls
 	if ( !_scriptColumns.empty() ) {
@@ -2693,7 +2710,7 @@ void EventEdit::updateOriginRow(int row, Origin *org) {
 		item->setData(_originColumnMap[OL_AZGAP], Qt::UserRole, QVariant());
 	}
 	try {
-		item->setText(_originColumnMap[OL_CREATED], timeToString(org->creationInfo().creationTime(), "%F %T"));
+		item->setText(_originColumnMap[OL_CREATED], timeToString(org->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(_originColumnMap[OL_CREATED], "");
@@ -2734,7 +2751,7 @@ void EventEdit::updateMagnitudeRow(int row, Magnitude *mag) {
 	item->setData(0, Qt::UserRole, QString(mag->publicID().c_str()));
 
 	try {
-		item->setText(MLC_TIMESTAMP, timeToString(mag->creationInfo().creationTime(), "%F %T"));
+		item->setText(MLC_TIMESTAMP, timeToString(mag->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(MLC_TIMESTAMP, "");
@@ -2914,7 +2931,7 @@ void EventEdit::updateFMRow(int row, FocalMechanism *fm) {
 	}
 
 	try {
-		item->setText(_fmColumnMap[FML_CREATED], timeToString(fm->creationInfo().creationTime(), "%F %T"));
+		item->setText(_fmColumnMap[FML_CREATED], timeToString(fm->creationInfo().creationTime(), TableCTimeFormat.c_str()));
 	}
 	catch ( ... ) {
 		item->setText(_fmColumnMap[FML_CREATED], "");
@@ -2951,11 +2968,13 @@ void EventEdit::updateContent() {
 	_originTree->setHeaderLabels(_originTableHeader);
 	//_originTree->header()->setResizeMode(QHeaderView::Stretch);
 
-	for ( int i = 0; i < OriginListColumns::Quantity; ++i )
+	for ( int i = 0; i < OriginListColumns::Quantity; ++i ) {
 		_originTree->header()->setSectionHidden(_originColumnMap[i], !OriginColVisible[i]);
+	}
 
-	for ( OriginList::iterator it = _origins.begin(); it != _origins.end(); ++it )
+	for ( auto it = _origins.begin(); it != _origins.end(); ++it ) {
 		insertOriginRow(it->get());
+	}
 
 	updatePreferredOriginIndex();
 	_originTree->blockSignals(false);
@@ -3890,7 +3909,7 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 	_ui.comboFixOrigin->setEnabled(true);
 
 	if ( _ui.comboFixOrigin->count() == _fixOriginDefaultActionCount ) {
-		_ui.comboFixOrigin->addItem("selected origin");
+		_ui.comboFixOrigin->addItem(tr("selected origin"));
 		_ui.comboFixOrigin->setCurrentIndex(_ui.comboFixOrigin->count()-1);
 	}
 }
@@ -3901,7 +3920,7 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::currentFMChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
-	if ( item == nullptr ) {
+	if ( !item ) {
 		resetFM();
 		return;
 	}
@@ -3920,8 +3939,10 @@ void EventEdit::currentFMChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 	_ui.fmFixButton->setEnabled(true);
 	_ui.fmFixCombo->setEnabled(true);
 
-	if ( _ui.fmFixCombo->count() == _fixFMDefaultActionCount )
-		_ui.fmFixCombo->addItem("selected focal mechanism");
+	if ( _ui.fmFixCombo->count() == _fixFMDefaultActionCount ) {
+		_ui.fmFixCombo->addItem(tr("selected focal mechanism"));
+		_ui.fmFixCombo->setCurrentIndex(_ui.fmFixCombo->count() - 1);
+	}
 
 	if ( _currentFM->momentTensorCount() > 0 ) {
 		_currentMT = _currentFM->momentTensor(0);
@@ -4127,10 +4148,7 @@ void EventEdit::magnitudeTreeCustomContextMenu(const QPoint &pos) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::fixOrigin() {
-	if ( _ui.comboFixOrigin->currentText() == "nothing" ) {
-		sendJournal("EvPrefOrgAutomatic", "");
-	}
-	else if ( _ui.comboFixOrigin->currentText() == "selected origin" ) {
+	if ( _ui.comboFixOrigin->currentText() == "selected origin" ) {
 		if ( !_currentOrigin ) {
 			QMessageBox::critical(this, "Error", "No origin selected.");
 			return;
@@ -4139,11 +4157,13 @@ void EventEdit::fixOrigin() {
 		sendJournal("EvPrefOrgID", _currentOrigin->publicID());
 	}
 	else {
-		int sep = _ui.comboFixOrigin->currentText().lastIndexOf(' ');
-		if ( sep != -1 )
+		int sep = _ui.comboFixOrigin->currentText().indexOf(' ');
+		if ( sep != -1 ) {
 			sendJournal("EvPrefOrgEvalMode", _ui.comboFixOrigin->currentText().mid(0, sep).toStdString());
-		else
+		}
+		else {
 			QMessageBox::critical(this, "Error", "Internal error.");
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4152,31 +4172,27 @@ void EventEdit::fixOrigin() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::fixFM() {
-	if ( !_currentFM ) {
-		QMessageBox::critical(this, "Error", "No focal mechanism selected.");
-		return;
+	if ( _ui.fmFixCombo->currentText() == "unset" ) {
+		// Fix an unset ID -> preferred focal mechanism becomes unset
+		sendJournal("EvPrefFocMecID", "");
 	}
+	else if ( _ui.fmFixCombo->currentText() == "selected focal mechanism" ) {
+		if ( !_currentFM ) {
+			QMessageBox::critical(this, "Error", "No focal mechanism selected.");
+			return;
+		}
 
-	sendJournal("EvPrefFocMecID", _currentFM->publicID());
-
-//	if ( _ui.fmFixCombo->currentText() == "nothing" ) {
-//		sendJournal("EvPrefFocMecAutomatic", "");
-//	}
-//	else if ( _ui.fmFixCombo->currentText() == "selected focal mechanism" ) {
-//		if ( !_currentFM ) {
-//			QMessageBox::critical(this, "Error", "No focal mechanism selected.");
-//			return;
-//		}
-
-//		sendJournal("EvPrefFocMecID", _currentFM->publicID());
-//	}
-//	else {
-//		int sep = _ui.fmFixCombo->currentText().lastIndexOf(' ');
-//		if ( sep != -1 )
-//			sendJournal("EvPrefFocMecEvalMode", _ui.fmFixCombo->currentText().mid(0, sep).toStdString());
-//		else
-//			QMessageBox::critical(this, "Error", "Internal error.");
-//	}
+		sendJournal("EvPrefFocMecID", _currentFM->publicID());
+	}
+	else {
+		int sep = _ui.fmFixCombo->currentText().indexOf(' ');
+		if ( sep != -1 ) {
+			sendJournal("EvPrefFocEvalMode", _ui.fmFixCombo->currentText().mid(0, sep).toStdString());
+		}
+		else {
+			QMessageBox::critical(this, "Error", "Internal error.");
+		}
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4185,7 +4201,7 @@ void EventEdit::fixFM() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::releaseOrigin() {
-	sendJournal("EvPrefOrgID", "");
+	sendJournal("EvPrefOrgAutomatic", "");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4194,7 +4210,7 @@ void EventEdit::releaseOrigin() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::releaseFM() {
-	sendJournal("EvPrefFocMecID", "");
+	sendJournal("EvPrefFocAutomatic", "");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

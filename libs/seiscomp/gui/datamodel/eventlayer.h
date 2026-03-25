@@ -25,6 +25,7 @@
 #include <seiscomp/gui/map/layer.h>
 #include <seiscomp/gui/map/legend.h>
 #include <seiscomp/gui/datamodel/originsymbol.h>
+#include <seiscomp/gui/datamodel/tensorsymbol.h>
 #include <QMap>
 
 
@@ -79,11 +80,33 @@ class SC_GUI_API EventLayer : public Map::Layer {
 
 
 	// ----------------------------------------------------------------------
+	//  Internal types
+	// ----------------------------------------------------------------------
+	public:
+		struct EventSymbol {
+			OriginSymbol *origin{nullptr};
+			TensorSymbol *tensor{nullptr};
+
+			void free() {
+				if ( origin ) {
+					delete origin;
+					origin = nullptr;
+				}
+
+				if ( tensor ) {
+					delete tensor;
+					tensor = nullptr;
+				}
+			}
+		};
+
+		using SymbolMap = QMap<std::string, EventSymbol>;
+
+
+	// ----------------------------------------------------------------------
 	//  Protected members
 	// ----------------------------------------------------------------------
 	protected:
-		typedef QMap<std::string, OriginSymbol*> SymbolMap;
-
 		SymbolMap           _eventSymbols;
 		mutable std::string _hoverId;
 		mutable bool        _hoverChanged;

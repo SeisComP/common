@@ -28,6 +28,7 @@ SET(
 		msbb.h
 		Mwp.h
 		utils.h
+		utils.ipp
 )
 
 FILE(GLOB descs "${CMAKE_CURRENT_SOURCE_DIR}/descriptions/*.xml")

@@ -223,6 +223,13 @@ BOOST_AUTO_TEST_CASE(fromString) {
 	BOOST_CHECK(time.fromString("201712", "%4Y%m"));
 	BOOST_CHECK(time.fromString("20171207", "%4Y%m%d"));
 	BOOST_CHECK(time.fromString("20171207.142931.50", "%4Y%m%d.%H%M%S.%f"));
+	BOOST_CHECK(time.fromString("201712", "%4Y%m"));
+
+	BOOST_CHECK(time.fromString("2017-23"));
+	BOOST_CHECK_EQUAL(time.iso(), "2017-01-23T00:00:00.0000Z");
+
+	BOOST_CHECK(time.fromString("2017"));
+	BOOST_CHECK_EQUAL(time.iso(), "2017-01-01T00:00:00.0000Z");
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -479,11 +486,18 @@ BOOST_AUTO_TEST_CASE(timeZone) {
 
 	BOOST_CHECK_EQUAL(local.toString("%FT%T.%f"), utc.toLocalString("%FT%T.%f"));
 
-	auto offset = utc.timeZoneOffset("CET");
-	BOOST_CHECK_EQUAL(utc.toZonedString("%FT%T.%f", "CET"), (utc + offset).toString("%FT%T.%f"));
+	try {
+		auto offset = utc.timeZoneOffset("CET");
+		BOOST_CHECK_EQUAL(utc.toZonedString("%FT%T.%f", "CET"), (utc + offset).toString("%FT%T.%f"));
+	}
+	catch ( ... ) {
+		// Throwing an exception because of the missing time zone is fine here.
+	}
 
 	BOOST_CHECK_THROW(utc.timeZoneOffset("XXX"), std::runtime_error);
 	BOOST_CHECK_THROW(utc.toZonedString("%FT%T.%f", "XXX"), std::runtime_error);
+
+	BOOST_CHECK(!time.fromString("2026-02-19T10:00:00 ThisIsNotATimeZone", "%FT%T %Z"));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

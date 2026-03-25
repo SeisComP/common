@@ -35,6 +35,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ms20 : public AmplitudeProcessor {
 
 	public:
 		void initFilter(double fsamp) override;
+		bool setup(const Settings &settings) override;
 
 	protected:
 		bool computeAmplitude(const DoubleArray &data,

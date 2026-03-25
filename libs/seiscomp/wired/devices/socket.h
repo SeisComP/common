@@ -192,15 +192,18 @@ class SC_SYSTEM_CORE_API Socket : public Device {
 		//! down the server if enabled.
 		Status setResolveHostnames(bool rh);
 
-		virtual Status connect(const std::string &hostname, port_t port);
+		virtual Status connect(const std::string &hostname, port_t port,
+		                       const char *nic = nullptr);
 
 		/**
 		 * @brief Connects to an IPv6 host.
 		 * @param hostname The hostname or IP address
 		 * @param port The port number
+		 * @param nic The optional nic name use for transmission
 		 * @return The status of the connect operation
 		 */
-		virtual Status connectV6(const std::string &hostname, port_t port);
+		virtual Status connectV6(const std::string &hostname, port_t port,
+		                         const char *nic = nullptr);
 
 		virtual Status bind(IPAddress ip, port_t port);
 		virtual Status bindV6(IPAddress ip, port_t port);
@@ -276,8 +279,8 @@ class SSLSocket : public Socket {
 		ssize_t write(const char *data, size_t len) override;
 		ssize_t read(char *data, size_t len) override;
 
-		Status connect(const std::string &hostname, port_t port) override;
-		Status connectV6(const std::string &hostname, port_t port) override;
+		Status connect(const std::string &hostname, port_t port, const char *nic = nullptr) override;
+		Status connectV6(const std::string &hostname, port_t port, const char *nic = nullptr) override;
 
 		/**
 		 * @brief Takes the connection from a socket and renders the source

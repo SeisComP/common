@@ -27,9 +27,8 @@
 #include <seiscomp/seismology/regions.h>
 
 #include <QMenu>
-
 #include <functional>
-#include <iostream>
+
 
 using namespace std;
 
@@ -984,9 +983,23 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 
 		sort(items.begin(), items.end(), compareByIndex);
 
-		for ( const auto &item : std::as_const(items) ) {
+		LayerProperties *lastItem{};
+
+		for ( auto item : std::as_const(items) ) {
 			StandardLegendItem *li;
 			QString label = item->label.c_str();
+
+			if ( lastItem ) {
+				if ( (item->label == lastItem->label) &&
+				     (item->pen == lastItem->pen) &&
+				     (item->brush == lastItem->brush) &&
+				     (item->symbolIcon.data_ptr() == lastItem->symbolIcon.data_ptr()) &&
+				     (item->symbolPolygon == lastItem->symbolPolygon) &&
+				     (item->symbolShape == lastItem->symbolShape)) {
+					continue;
+				}
+			}
+
 			// Symbol
 			if ( !item->symbolIcon.isNull() ) {
 				li = new StandardLegendItem(item->symbolIcon, label);
@@ -1028,6 +1041,8 @@ void GeoFeatureLayer::buildLegends(CategoryNode *node) {
 				li = new StandardLegendItem(item->pen, label);
 			}
 			legend->addItem(li);
+
+			lastItem = item;
 		}
 
 		addLegend(legend);

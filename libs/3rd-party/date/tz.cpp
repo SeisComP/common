@@ -480,7 +480,7 @@ discover_tz_dir()
     else if(stat(tz_dir_default, &sb) == 0 && S_ISDIR(sb.st_mode))
         return tz_dir_default;
     else
-        throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
+        throw runtime_error("discover_tz_dir failed to find zoneinfo");
 #  else  // __APPLE__
 #      if TARGET_OS_IPHONE
 #          if TARGET_OS_SIMULATOR
@@ -491,7 +491,7 @@ discover_tz_dir()
 #      else
     CONSTDATA auto timezone = "/etc/localtime";
     if (!(lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0))
-        throw runtime_error("discover_tz_dir failed\n");
+        throw runtime_error("discover_tz_dir failed");
     string result;
     char rp[PATH_MAX+1] = {};
     if (readlink(timezone, rp, sizeof(rp)-1) > 0)
@@ -500,10 +500,10 @@ discover_tz_dir()
         throw system_error(errno, system_category(), "readlink() failed");
     auto i = result.find("zoneinfo");
     if (i == string::npos)
-        throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
+        throw runtime_error("discover_tz_dir failed to find zoneinfo");
     i = result.find('/', i);
     if (i == string::npos)
-        throw runtime_error("discover_tz_dir failed to find '/'\n");
+        throw runtime_error("discover_tz_dir failed to find '/'");
     return result.substr(0, i);
 #      endif
 #  endif  // __APPLE__

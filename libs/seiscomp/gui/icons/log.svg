@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100%"
+   height="100%"
+   viewBox="0 0 24 24"
+   version="1.1"
+   xml:space="preserve"
+   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs5">
+        
+    
+            
+            
+            
+            
+            
+        
+                
+            
+                
+            
+                
+            
+                
+            </defs>
+    <path
+   d="M 2.9953808,5.9996528 V 4.9996524 c 0,-0.5500002 0.1958259,-1.0208254 0.5875026,-1.4125006 C 3.9745601,3.1954767 4.4453872,2.9996516 4.9953896,2.9996516 H 18.995451 c 0.550003,0 1.02083,0.1958251 1.412506,0.5875002 0.391677,0.3916752 0.587503,0.8625004 0.587503,1.4125006 V 18.999658 c 0,0.55 -0.195826,1.020825 -0.587503,1.412501 -0.391676,0.391675 -0.862503,0.5875 -1.412506,0.5875 H 4.9953896 c -0.5500024,0 -1.0208295,-0.195825 -1.4125062,-0.5875 C 3.1912067,20.020483 2.9953808,19.549658 2.9953808,18.999658 v -1 H 1.9953764 V 15.999657 H 2.9953808 V 7.9996536 H 1.9953764 V 5.9996528 Z M 4.9953896,7.9996536 V 15.999657 H 5.995394 v 2.000001 H 4.9953896 v 1 H 6.9953984 V 4.9996524 H 4.9953896 V 5.9996528 H 5.995394 V 7.9996536 Z M 7.9954028,18.999658 H 18.995451 V 4.9996524 H 7.9954028 Z"
+   id="path1"
+   style="stroke-width:0.0250001;fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1" /><rect
+   x="9.9954014"
+   y="14.999657"
+   width="7.000001"
+   height="2.0000007"
+   id="rect2"
+   style="stroke-width:0.0270031;fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1" /><rect
+   x="9.9954014"
+   y="10.999655"
+   width="7.000001"
+   height="2.0000007"
+   id="rect3"
+   style="stroke-width:0.0270031;fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1" /><rect
+   x="9.9954014"
+   y="6.9996533"
+   width="7.000001"
+   height="2.0000007"
+   id="rect4"
+   style="stroke-width:0.0270031;fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1" />
+</svg>

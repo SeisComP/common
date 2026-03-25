@@ -402,7 +402,9 @@ bool XMLArchive::create(bool writeVersion, bool headerNode) {
 
 
 	std::stringstream versionString;
-	versionString << SEISCOMP_DATAMODEL_XMLNS_ROOT
+	static Core::Version v13(0, 13);
+	versionString << (version() > v13 ? SEISCOMP_DATAMODEL_XMLNS_ROOT
+	                                  : SEISCOMP_DATAMODEL_XMLNS_ROOT_0_13)
 	              << int(version().majorTag()) << "."
 	              << int(version().minorTag());
 	int patchTag = int(version().patchTag());

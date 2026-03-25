@@ -33,9 +33,6 @@
      <property name="text" >
       <string>...</string>
      </property>
-     <property name="icon" >
-      <iconset resource="../datamodel/icons.qrc" >:/icons/icons/undo.png</iconset>
-     </property>
      <property name="shortcut" >
       <string>Backspace</string>
      </property>

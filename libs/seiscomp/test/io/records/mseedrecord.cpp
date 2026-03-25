@@ -22,8 +22,6 @@
 
 
 #include <iostream>
-#include <stdexcept>
-#include <stdio.h>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -89,14 +87,96 @@ BOOST_AUTO_TEST_CASE(WRITE_READ) {
 	MSeedRecord rec;
 	rec.setHint(Record::DATA_ONLY);
 	rec.setDataType(Array::INT);
-	BOOST_CHECK_NO_THROW(rec.read(ios));
+	rec.read(ios);
 
 	BOOST_CHECK_EQUAL(rec.streamID(), filledRec.streamID());
-	BOOST_CHECK(rec.startTime() == filledRec.startTime());
+	BOOST_CHECK_EQUAL(rec.startTime().iso(), filledRec.startTime().iso());
 	BOOST_CHECK_EQUAL(rec.samplingFrequency(), filledRec.samplingFrequency());
 	BOOST_CHECK_EQUAL(rec.timingQuality(), filledRec.timingQuality());
 	BOOST_CHECK_EQUAL(rec.dataType(), filledRec.dataType());
 	BOOST_CHECK_EQUAL(rec.sampleCount(), filledRec.sampleCount());
+	BOOST_REQUIRE(rec.data());
+	BOOST_CHECK_EQUAL(rec.data()->size(), filledRec.data()->size());
+
+	auto data = IntArray::ConstCast(rec.data());
+	BOOST_REQUIRE(data);
+	auto refData = IntArray::ConstCast(filledRec.data());
+	BOOST_REQUIRE(refData);
+	BOOST_CHECK_EQUAL(data->size(), refData->size());
+	for ( int i = 0; i < refData->size(); ++i ) {
+		BOOST_CHECK_EQUAL(data->get(i), refData->get(i));
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(WRITE_READ2) {
+	MSeedRecord mseed(filledRec);
+	mseed.setLittleEndian(true);
+
+	stringbuf buf;
+	iostream ios(&buf);
+
+	BOOST_CHECK_NO_THROW(mseed.write(ios));
+	MSeedRecord rec;
+	rec.setHint(Record::DATA_ONLY);
+	rec.setDataType(Array::INT);
+	rec.read(ios);
+
+	BOOST_CHECK_EQUAL(rec.streamID(), filledRec.streamID());
+	BOOST_CHECK_EQUAL(rec.startTime().iso(), filledRec.startTime().iso());
+	BOOST_CHECK_EQUAL(rec.samplingFrequency(), filledRec.samplingFrequency());
+	BOOST_CHECK_EQUAL(rec.timingQuality(), filledRec.timingQuality());
+	BOOST_CHECK_EQUAL(rec.dataType(), filledRec.dataType());
+	BOOST_CHECK_EQUAL(rec.sampleCount(), filledRec.sampleCount());
+	BOOST_REQUIRE(rec.data());
+	BOOST_CHECK_EQUAL(rec.data()->size(), filledRec.data()->size());
+
+	auto data = IntArray::ConstCast(rec.data());
+	BOOST_REQUIRE(data);
+	auto refData = IntArray::ConstCast(filledRec.data());
+	BOOST_REQUIRE(refData);
+	BOOST_CHECK_EQUAL(data->size(), refData->size());
+	for ( int i = 0; i < refData->size(); ++i ) {
+		BOOST_CHECK_EQUAL(data->get(i), refData->get(i));
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(MODIFY) {
+	MSeedRecord mseed(filledRec);
+
+	stringbuf buf;
+	iostream ios(&buf);
+
+	BOOST_CHECK_NO_THROW(mseed.write(ios));
+	MSeedRecord rec;
+	rec.setHint(Record::SAVE_RAW);
+	rec.read(ios);
+
+	rec.setStartTime(Time(2025, 11, 9, 12, 34, 56, 789));
+	rec.setNetworkCode("XX");
+	rec.setStationCode("YYYYY");
+	rec.setLocationCode("ZZ");
+	rec.setChannelCode("123");
+	auto raw = CharArray::ConstCast(rec.raw());
+	BOOST_CHECK(raw);
+
+	InputStringViewStream is({ raw->typedData(), static_cast<size_t>(raw->size()) });
+	MSeedRecord mseed2;
+	mseed2.read(is);
+	BOOST_CHECK_EQUAL(mseed2.networkCode(), "XX");
+	BOOST_CHECK_EQUAL(mseed2.stationCode(), "YYYYY");
+	BOOST_CHECK_EQUAL(mseed2.locationCode(), "ZZ");
+	BOOST_CHECK_EQUAL(mseed2.channelCode(), "123");
+	BOOST_CHECK_EQUAL(mseed2.startTime(), Time(2025, 11, 9, 12, 34, 56, 789));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -23,6 +23,7 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/logging/log.h>
+#include <seiscomp/utils/url.h>
 
 #include <string.h>
 
@@ -55,7 +56,9 @@ DatabaseInterface::~DatabaseInterface() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseInterface* DatabaseInterface::Create(const char* service) {
-	if ( service == nullptr ) return nullptr;
+	if ( !service ) {
+		return nullptr;
+	}
 
 	return DatabaseInterfaceFactory::Create(service);
 }
@@ -76,8 +79,9 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 		std::copy(uri, tmp, std::back_inserter(service));
 		uri = tmp + 3;
 	}
-	else
+	else {
 		service = "mysql";
+	}
 
 	source = uri;
 
@@ -88,9 +92,14 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 	}
 
 	if ( !db->connect(source.c_str()) ) {
-		SEISCOMP_ERROR("Connection failed to %s://%s:******@%s/%s",
-		               service.c_str(), db->_user.c_str(),
-		               db->_host.c_str(), db->_database.c_str());
+		if ( db->_user.empty() ) {
+			SEISCOMP_ERROR("Connection failed to %s://%s/%s",
+			               service, db->_host, db->_database);
+		}
+		else {
+			SEISCOMP_ERROR("Connection failed to %s://%s:******@%s/%s",
+			               service, db->_user, db->_host, db->_database);
+		}
 		delete db;
 		return nullptr;
 	}
@@ -104,66 +113,43 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool DatabaseInterface::connect(const char* con) {
-	if ( isConnected() )
+	if ( isConnected() ) {
 		return false;
+	}
 
 	_timeout = 0;
-	string connection = con;
-	string params;
-	size_t pos = connection.find('?');
-	if ( pos != string::npos ) {
-		params = connection.substr(pos+1);
-		connection.erase(connection.begin() + pos, connection.end());
+
+	Util::Url url(con);
+	auto path = url.path();
+	if ( !path.empty() && (path != "/") ) {
+		if ( path[0] == '/' ) {
+			path = path.substr(1);
+		}
+		_database = path;
+	}
+	if ( !url.username().empty() ) {
+		_user = url.username();
+	}
+	if ( !url.password().empty() ) {
+		_password = url.password();
+	}
+	if ( !url.host().empty() ) {
+		_host = url.host();
+	}
+	if ( url.port().has_value() ) {
+		_port = *url.port();
 	}
 
-	vector<string> tokens;
-	string host;
-	if ( Core::split(tokens, connection.c_str(), "@") >= 2 ) {
-		string login = tokens[0];
-		host = tokens[1];
-
-		Seiscomp::Core::split(tokens, login.c_str(), ":");
-		if ( tokens.size() > 0 ) _user = tokens[0];
-		if ( tokens.size() > 1 ) _password = tokens[1];
-	}
-	else
-		host = tokens[0];
-
-	size_t splitter = host.find_first_of('/');
-	if ( splitter != string::npos ) {
-		tokens.resize(2);
-		tokens[0] = host.substr(0, splitter);
-		tokens[1] = host.substr(splitter+1);
-	}
-	else
-		tokens[0] = host;
-
-	if ( !tokens[0].empty() )
-		_host = tokens[0];
-
-	if ( tokens.size() >= 2 ) _database = tokens[1];
-
-	pos = _host.find(":");
-	if ( pos != string::npos ) {
-		Seiscomp::Core::fromString(_port, _host.substr(pos+1));
-		_host.erase(pos);
+	if ( (url.status() != Util::Url::STATUS_EMPTY) && !url.isValid() ) {
+		// Only empty URLs are accepted if invalid as they are populated with
+		// default values.
+		SEISCOMP_ERROR("Invalid database URL: %s", url.errorMessage());
+		return false;
 	}
 
-	Core::split(tokens, params.c_str(), "&");
-	if ( !tokens.empty() ) {
-		for ( size_t i = 0; i < tokens.size(); ++i ) {
-			vector<string> param;
-			Core::split(param, tokens[i].c_str(), "=");
-			if ( !param.empty() ) {
-				if ( param.size() == 1 ) {
-					if ( !handleURIParameter(param[0], "") )
-						return false;
-				}
-				else if ( param.size() == 2 ) {
-					if ( !handleURIParameter(param[0], param[1]) )
-						return false;
-				}
-			}
+	for ( auto [key, value] : url.queryItems() ) {
+		if ( !handleURIParameter(key, value) ) {
+			return false;
 		}
 	}
 
@@ -268,7 +254,7 @@ bool DatabaseInterface::escape(std::string &out, const std::string &in) const {
 	out.resize(in.size()*2+1);
 	size_t length = in.length();
 	const char *in_buf = in.c_str();
-	char *out_buf = &out[0];
+	char *out_buf = out.data();
 	size_t j = 0;
 
 	for ( size_t i = 0; i < length && *in_buf; ++length, ++in_buf ) {

@@ -82,9 +82,10 @@ void SecondaryPicker::reset() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SecondaryPicker::setTrigger(const Trigger& trigger) {
-	if ( _trigger.onset.valid() )
+void SecondaryPicker::setTrigger(const Trigger &trigger) {
+	if ( _trigger.onset.valid() ) {
 		throw Core::ValueException("The trigger has been set already");
+	}
 	_trigger = trigger;
 }
 
@@ -94,8 +95,8 @@ void SecondaryPicker::setTrigger(const Trigger& trigger) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SecondaryPicker::setPublishFunction(const PublishFunc& func) {
-	_func = func;
+void SecondaryPicker::setPublishFunction(const PublishFunc &func) {
+	_fnPublish = func;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -135,8 +136,9 @@ bool SecondaryPicker::handleGap(Filter *filter, const Core::TimeSpan& span,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SecondaryPicker::emitPick(const Result &result) {
-	if ( isEnabled() && _func )
-		_func(this, result);
+	if ( isEnabled() && _fnPublish ) {
+		_fnPublish(this, result);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

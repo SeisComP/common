@@ -18,14 +18,13 @@
  ***************************************************************************/
 
 
-
 #ifndef SEISCOMP_SEISMOLOGY_REGIONS_POLY_H
 #define SEISCOMP_SEISMOLOGY_REGIONS_POLY_H
+
 
 #include <seiscomp/core.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/geo/featureset.h>
-#include <vector>
 
 
 namespace Seiscomp {

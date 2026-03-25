@@ -85,7 +85,7 @@ class SC_SYSTEM_CORE_API InPlaceFilter : public Core::BaseObject {
 		virtual void apply(int n, TYPE *inout) = 0;
 
 		void apply(std::vector<TYPE> &f) {
-			apply(f.size(), &f[0]);
+			apply(f.size(), f.data());
 		}
 
 		void apply(TypedArray<TYPE> &arr) {

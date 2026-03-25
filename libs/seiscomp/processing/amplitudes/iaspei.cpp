@@ -174,7 +174,7 @@ double findZeroCrossing(
 	std::size_t istart,
 	std::size_t iend
 ) {
-	return findZeroCrossing(data.size(), &data[0], offset, istart, iend);
+	return findZeroCrossing(data.size(), data.data(), offset, istart, iend);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

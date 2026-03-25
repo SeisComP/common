@@ -579,14 +579,14 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
 					newRes.period = _results[0]->period;
-					newRes.component = _ampE.usedComponent();
+					newRes.component = _ampE.dataComponents();
 				}
 				else {
 					newRes.amplitude = _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
 					newRes.period = _results[1]->period;
-					newRes.component = _ampN.usedComponent();
+					newRes.component = _ampN.dataComponents();
 				}
 				break;
 			case TakeMax:
@@ -595,14 +595,14 @@ void AmplitudeProcessor_ML2h::newAmplitude(const AmplitudeProcessor *proc,
 					newRes.time = _results[0]->time;
 					newRes.snr = _results[0]->snr;
 					newRes.period = _results[0]->period;
-					newRes.component = _ampE.usedComponent();
+					newRes.component = _ampE.dataComponents();
 				}
 				else {
 					newRes.amplitude =  _results[1]->value;
 					newRes.time = _results[1]->time;
 					newRes.snr = _results[1]->snr;
 					newRes.period = _results[1]->period;
-					newRes.component = _ampN.usedComponent();
+					newRes.component = _ampN.dataComponents();
 				}
 				break;
 		};

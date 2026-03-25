@@ -51,8 +51,6 @@ namespace Map {
 
 class Layer;
 
-DEFINE_SMARTPOINTER(TextureCache);
-
 // For backward compatibility
 typedef SymbolLayer SymbolCollection;
 

@@ -33,9 +33,7 @@
 #include <QMutex>
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 
 DEFINE_SMARTPOINTER(TextureCache);
@@ -77,6 +75,12 @@ std::ostream &operator<<(std::ostream &os, const TileIndex &index);
 DEFINE_SMARTPOINTER(TileStore);
 class SC_GUI_API TileStore : public Core::BaseObject {
 	public:
+		enum Projection {
+			Unknown     = 0,
+			Mercator    = 1,
+			Rectangular = 2
+		};
+
 		enum LoadResult {
 			OK,
 			Deferred,
@@ -122,6 +126,8 @@ class SC_GUI_API TileStore : public Core::BaseObject {
 		//! Refresh the image store, e.g. invalidate its cache
 		virtual void refresh() = 0;
 
+		Projection projection() const { return _projection; }
+
 
 	protected:
 		//! Async notification that a tile has been loaded.
@@ -138,6 +144,7 @@ class SC_GUI_API TileStore : public Core::BaseObject {
 
 	protected:
 		ImageTree *_tree;
+		Projection _projection{Unknown};
 		QSize      _tilesize;
 
 };
@@ -160,6 +167,8 @@ class SC_GUI_API ImageTree : public QObject, public Core::BaseObject {
 
 	public:
 		bool valid() const { return _store.get(); }
+
+		TileStore::Projection projection() const;
 
 		//! This function was introduced in API 1.1
 		bool hasPendingRequests() const { return _store && _store->hasPendingRequests(); }
@@ -264,9 +273,11 @@ inline std::ostream &operator<<(std::ostream &os, const TileIndex &index) {
 	return os;
 }
 
+inline TileStore::Projection ImageTree::projection() const {
+	return _store ? _store->projection() : TileStore::Unknown;
+}
 
-}
-}
+
 }
 
 

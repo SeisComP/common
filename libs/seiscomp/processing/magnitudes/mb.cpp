@@ -26,6 +26,7 @@
 
 #include "iostream"
 
+
 namespace Seiscomp {
 namespace Processing {
 
@@ -70,6 +71,29 @@ void MagnitudeProcessor_mb::setDefaults() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_mb::setup(const Settings &settings) {
+	if ( !MagnitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	if ( (_minimumDepthKm < 0.) || (_minimumDepthKm > 700.) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum depth is out of allowed range [0, 700]km", type());
+		return false;
+	}
+
+	if ( (_minimumDistanceDeg < 5) || (_maximumDistanceDeg > 105) ) {
+		SEISCOMP_WARNING("%s: configured minimum/maximum distance is out of allowed range [5, 105]°", type());
+		return false;
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	double amplitude,
 	const std::string &unit,
@@ -89,7 +113,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_mb::computeMagnitude(
 	}
 
 	// amplitude is nanometers, whereas compute_mb wants micrometers
-	bool valid = Magnitudes::compute_mb(amplitude * 1.E-3, period, delta, depth + 1, &value);
+	bool valid = Magnitudes::compute_mb(amplitude * 1.E-3, period, delta, depth, &value);
 	return valid ? OK : Error;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -96,16 +96,9 @@ maeda_aic(int n, const TYPE *data, int &kmin, double &snr, int margin=10) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SAICPicker::State::State() : aicValid(false) {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SAICPicker::SAICPicker(const string& methodID, StreamComponent c)
-	         : _methodID(methodID) {
-	setUsedComponent(c);
+SAICPicker::SAICPicker(const string &methodID, StreamComponents c)
+: _methodID(methodID) {
+	setDataComponents(c);
 	// Use ten seconds as noise to initialize the filter
 	setNoiseStart(-10);
 	// Start checking at onset time
@@ -128,7 +121,9 @@ SAICPicker::SAICPicker(const string& methodID, StreamComponent c)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SAICPicker::~SAICPicker() {
-	if ( _compFilter ) delete _compFilter;
+	if ( _compFilter ) {
+		delete _compFilter;
+	}
 
 	/*
 	if ( lastRecord() ) {
@@ -220,8 +215,9 @@ bool SAICPicker::applyConfig() {
 
 		setFilter(filter);
 	}
-	else
+	else {
 		setFilter(nullptr);
+	}
 
 	WaveformOperatorPtr op( createFilterOperator(_compFilter) );
 	setOperator(op.get());
@@ -257,7 +253,9 @@ void SAICPicker::process(const Record *rec, const DoubleArray &filteredData) {
 	mseed.write(cout);
 	*/
 
-	if ( !_initialized ) return;
+	if ( !_initialized ) {
+		return;
+	}
 
 	// The result of the L2 norm operator is stored in the vertical component
 	// and already sensitivity corrected.

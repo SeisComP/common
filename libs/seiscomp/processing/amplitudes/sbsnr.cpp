@@ -273,7 +273,7 @@ bool AmplitudeSBSNR::computeAmplitude(const Seiscomp::DoubleArray &data,
 	size_t ltavRecursiveAverageState[ltavCount];
 
 	if ( !recursiveAverage(ltavData, ltavState, ltavCount,
-		                   ltavRecursionLookbackLength,
+	                       ltavRecursionLookbackLength,
 	                       ltavAverageWindowLength, ltavThreshold,
 	                       _ltavFunction, ltavRecursiveAverage,
 	                       ltavRecursiveAverageState) ) {
@@ -291,19 +291,19 @@ bool AmplitudeSBSNR::computeAmplitude(const Seiscomp::DoubleArray &data,
 	SEISCOMP_DEBUG("sbsnrAmplitude raw = %f", sbsnrAmplitude);
 
 	// Convert amplitude to nano units
-	sbsnrAmplitude *= 1E9 / _streamConfig[_usedComponent].gain;
+	sbsnrAmplitude *= 1E9 / _streamConfig[targetComponent()].gain;
 	sbsnrAmplitude = std::abs(sbsnrAmplitude);
 	SEISCOMP_DEBUG("sbsnrAmplitude nano units = %f", sbsnrAmplitude);
 
 	SignalUnit unit;
-	if ( !unit.fromString(_streamConfig[_usedComponent].gainUnit.c_str()) ) {
+	if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
 		// Invalid unit string
 		setStatus(IncompatibleUnit, 2);
 		return false;
 	}
 
-	double gainFrequency = _streamConfig[_usedComponent].gainFrequency
-		? *_streamConfig[_usedComponent].gainFrequency : 1.0;
+	double gainFrequency = _streamConfig[targetComponent()].gainFrequency
+		? *_streamConfig[targetComponent()].gainFrequency : 1.0;
 	SEISCOMP_DEBUG("gainFrequency = %f", gainFrequency);
 
 	switch ( unit ) {

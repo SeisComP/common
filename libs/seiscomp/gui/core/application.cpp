@@ -25,6 +25,8 @@
 #include <seiscomp/gui/core/connectiondialog.h>
 #include <seiscomp/gui/core/aboutwidget.h>
 #include <seiscomp/gui/core/processmanager.h>
+#include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/logmanager.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/messaging/connection.h>
@@ -60,9 +62,6 @@ using namespace std;
 using namespace Seiscomp::DataModel;
 
 
-#define BLUR_SPLASH_TEXT 0
-
-
 bool fromString(QString &qstring, const std::string &stdstring) {
 	qstring = stdstring.c_str();
 	return true;
@@ -74,9 +73,6 @@ std::string toString(const QString &qstring) {
 
 
 namespace {
-
-
-QString splashDefaultImage = ":/images/images/splash-default.png";
 
 
 // Don't catch signal on windows since that path hasn't tested.
@@ -127,101 +123,28 @@ class ShowPlugins : public QDialog {
 };
 
 
-void drawText(QPainter &p, const QPoint &hotspot, int align, const QString &s) {
-	QRect r(hotspot, hotspot);
-
-#if BLUR_SPLASH_TEXT
-	QRect tr = p.fontMetrics().boundingRect(s);
-	int radius = 2;
-	QImage blur(tr.width()+radius*2+2, tr.height()+radius*2+2, QImage::Format_ARGB32);
-	blur.fill(0);
-
-	QPoint blurpos = hotspot - QPoint(radius+1, radius+1);
-	QPainter pi(&blur);
-	pi.setFont(p.font());
-	QPen pen = p.pen();
-	QColor c = pen.color();
-	c.setAlpha(112);
-	pen.setColor(c);
-	pi.setPen(pen);
-	pi.drawText(pi.window().adjusted(radius+1,radius+1,-radius-1,-radius-1),
-	            align, s);
-	pi.end();
-	blurImage(blur, radius);
-#endif
-
-	if ( align & Qt::AlignLeft )
-		r.setRight(p.window().right());
-	else if ( align & Qt::AlignRight ) {
-		r.setLeft(p.window().left());
-#if BLUR_SPLASH_TEXT
-		blurpos.setX(blurpos.x()-tr.width());
-#endif
-	}
-	else if ( align & Qt::AlignHCenter ) {
-		r.setLeft(hotspot.x()-p.window().width());
-		r.setRight(hotspot.x()+p.window().width());
-#if BLUR_SPLASH_TEXT
-		blurpos.setX(blurpos.x()-tr.width()/2);
-#endif
-	}
-
-	if ( align & Qt::AlignTop )
-		r.setBottom(p.window().bottom());
-	else if ( align & Qt::AlignBottom ) {
-		r.setTop(p.window().top());
-#if BLUR_SPLASH_TEXT
-		blurpos.setY(blurpos.y()-tr.height());
-#endif
-	}
-	else if ( align & Qt::AlignVCenter ) {
-		r.setTop(hotspot.y()-p.window().height());
-		r.setBottom(hotspot.y()+p.window().height());
-#if BLUR_SPLASH_TEXT
-		blurpos.setY(blurpos.y()-tr.height()/2);
-#endif
-	}
-
-#if BLUR_SPLASH_TEXT
-	p.drawImage(blurpos+QPoint(radius, radius),blur);
-#endif
-	p.drawText(r, align, s);
-}
-
-
 class SplashScreen : public QSplashScreen {
 	public:
-		SplashScreen(const QPixmap & pixmap = QPixmap(), Qt::WindowFlags f = Qt::WindowFlags())
-		: QSplashScreen(pixmap, f), updated(false) {}
-
-		void setMessage(const QString &str, QApplication *app) {
-			updated = false;
-			message = str;
-			update();
-
-			int maxCount = 5;
-			while ( !updated && maxCount-- ) {
-				app->processEvents();
-			}
-		}
+		SplashScreen(const QPixmap & pixmap = QPixmap())
+		: QSplashScreen(pixmap) {}
 
 		void drawContents(QPainter *painter) {
 			painter->setPen(SCScheme.colors.splash.message);
-			drawText(*painter, SCScheme.splash.message.pos,
-			         SCScheme.splash.message.align, message);
-			updated = true;
+			painter->drawText(
+				SCScheme.splash.message.pos.x(),
+				SCScheme.splash.message.pos.y() + painter->fontMetrics().descent() - painter->fontMetrics().height(),
+				180, painter->fontMetrics().height(),
+				SCScheme.splash.message.align,
+				message()
+			);
 		}
-
-		QString message;
-		bool updated;
 };
 
 
 }
 
 
-namespace Seiscomp {
-namespace Gui {
+namespace Seiscomp::Gui {
 
 
 Application* Application::_instance = nullptr;
@@ -233,17 +156,23 @@ Application* Application::_instance = nullptr;
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::_GUI_Core_Settings::accept(SettingsLinker &linker) {
 	linker
+	& cli(
+		styleSheet,
+		"User interface",
+		"stylesheet",
+		"Apply the stylesheet (.qss) to the application"
+	)
 	& cliSwitch(
 		fullScreen,
 		"User interface",
 		"full-screen,F",
-		"starts the application in fullscreen"
+		"Starts the application in fullscreen"
 	)
 	& cliInverseSwitch(
 		interactive,
 		"User interface",
 		"non-interactive,N",
-		"use non interactive presentation mode"
+		"Use non interactive presentation mode"
 	)
 	& cfg(fullScreen, "mode.fullscreen")
 	& cfg(interactive, "mode.interactive")
@@ -281,7 +210,7 @@ void Application::_GUI_Core_Settings::_MapsDesc::accept(SettingsLinker &linker) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::Application(int& argc, char **argv, int flags, Type type)
-    : QObject(), Client::Application(argc, argv)
+: QObject(), Client::Application(argc, argv)
 , _qSettings(nullptr)
 , _readOnlyMessaging(false)
 , _mainWidget(nullptr)
@@ -291,14 +220,31 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 , _flags(flags) {
 	bindSettings(&_settings);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	// This is especially important for displays with a display pixel ratio
+	// greater than 1, e.g. 4k displays. Otherwise QIcon pixmaps will be scaled
+	// up to the native display resolution which looks blurry at best.
+	// In Qt6 this setting is default.
+	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
 	_type = type;
 	if ( type == Tty ) {
 		_flags &= ~SHOW_SPLASH;
 		setenv("QT_QPA_PLATFORM", "offscreen", 1);
 		_app = new QApplication(argc, argv);
 	}
-	else
+	else {
 		_app = new QApplication(argc, argv);
+	}
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+	_app->setDesktopFileName(("de.gempa.seiscomp." + name()).data());
+#endif
+
+	_app->setOrganizationName("gempa");
+	_app->setApplicationName(name().c_str());
 
 	setDaemonEnabled(false);
 
@@ -356,8 +302,9 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 	setConnectionRetries(0);
 
 #ifndef WIN32
-	if ( ::socketpair(AF_UNIX, SOCK_STREAM, 0, _signalSocketFd) )
+	if ( ::socketpair(AF_UNIX, SOCK_STREAM, 0, _signalSocketFd) ) {
 		qFatal("Couldn't create HUP socketpair");
+	}
 
 	_signalNotifier = new QSocketNotifier(_signalSocketFd[1], QSocketNotifier::Read, this);
 	connect(_signalNotifier, SIGNAL(activated(int)), this, SLOT(handleSignalNotification()));
@@ -372,10 +319,13 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Application::~Application() {
-	if ( _dlgConnection ) delete _dlgConnection;
-	if ( _qSettings ) delete _qSettings;
-	if ( _scheme ) delete _scheme;
-	if ( _app ) delete _app;
+	delete _processManager;
+	delete _logManager;
+	delete _dlgConnection;
+	delete _qSettings;
+	delete _scheme;
+	delete _app;
+
 #ifndef WIN32
 	close(_signalSocketFd[0]);
 	close(_signalSocketFd[1]);
@@ -480,9 +430,9 @@ void Application::copyToClipboard(const QAbstractItemView *view,
 void Application::setMainWidget(QWidget* w) {
 	_mainWidget = w;
 
-	QMainWindow *mw = dynamic_cast<QMainWindow*>(w);
+	auto *mw = dynamic_cast<QMainWindow*>(w);
 	if ( mw ) {
-		QMenu *helpMenu = mw->menuBar()->findChild<QMenu*>("menuHelp");
+		auto *helpMenu = mw->menuBar()->findChild<QMenu*>("menuHelp");
 		if ( helpMenu == nullptr ) {
 			helpMenu = new QMenu(mw->menuBar());
 			helpMenu->setObjectName("menuHelp");
@@ -490,7 +440,7 @@ void Application::setMainWidget(QWidget* w) {
 			mw->menuBar()->addAction(helpMenu->menuAction());
 		}
 
-		QAction *a = helpMenu->addAction("&About SeisComP");
+		auto *a = helpMenu->addAction("&About SeisComP");
 		connect(a, SIGNAL(triggered()), this, SLOT(showAbout()));
 
 		a = helpMenu->addAction("&Documentation index");
@@ -505,8 +455,9 @@ void Application::setMainWidget(QWidget* w) {
 		connect(a, SIGNAL(triggered()), this, SLOT(showPlugins()));
 	}
 
-	if ( _splash )
+	if ( _splash ) {
 		_splash->finish(w);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -886,8 +837,9 @@ void Application::configSetColorGradient(const std::string& query, const Gradien
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initConfiguration() {
-	if ( !Client::Application::initConfiguration() )
+	if ( !Client::Application::initConfiguration() ) {
 		return false;
+	}
 
 	QPalette pal;
 	_scheme->colors.background = pal.color(QPalette::Window);
@@ -931,9 +883,6 @@ bool Application::initConfiguration() {
 		_eventTimeAgo = double(24*60*60);
 	}
 
-	_app->setOrganizationName(agencyID().c_str());
-	_app->setApplicationName(name().c_str());
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -946,6 +895,8 @@ bool Application::validateParameters() {
 	if ( !Client::Application::validateParameters() ) {
 		return false;
 	}
+
+	_logManager = new LogManager();
 
 	if ( _settings.mapsDesc.format == "mercator" ) {
 		_settings.mapsDesc.isMercatorProjected = true;
@@ -963,50 +914,72 @@ bool Application::validateParameters() {
 	// and after the possible early exit because of the "--help" flag.
 	if ( _flags & SHOW_SPLASH ) {
 		QPixmap pmSplash;
-		const Seiscomp::Environment *env = Seiscomp::Environment::Instance();
 
-		try {
-			std::string splashFile = env->absolutePath(configGetString("scheme.splash.image"));
-			if ( Util::fileExists(splashFile) )
-				pmSplash = QPixmap(splashFile.c_str());
+		if ( splashImagePath().isEmpty() ) {
+			if ( _app->devicePixelRatio() >= 1.5 ) {
+				pmSplash = QPixmap(":/sc/assets/splash-default@x2.png");
+				pmSplash.setDevicePixelRatio(2);
+			}
+			else {
+				pmSplash = QPixmap(":/sc/assets/splash-default.png");
+			}
 		}
-		catch ( ... ) {}
-
-		if ( pmSplash.isNull() ) {
-			if ( env && Util::fileExists(env->shareDir() + "/splash.png") )
-				pmSplash = QPixmap((env->shareDir() + "/splash.png").c_str());
-			else
-				pmSplash = QPixmap(splashImagePath());
-
-			QPainter p(&pmSplash);
-
-			const char *appVersion = version();
-			if ( !appVersion )
-				appVersion = frameworkVersion();
-
-			p.setFont(SCScheme.fonts.splashVersion);
-			p.setPen(SCScheme.colors.splash.version);
-			drawText(p, SCScheme.splash.version.pos,
-			         SCScheme.splash.version.align, QString("Version %1").arg(appVersion));
+		else {
+			pmSplash = QPixmap(splashImagePath());
 		}
+
+		QRect bbox;
+		QPainter p(&pmSplash);
+
+		QFont f;
+		f.setFamilies({ "Noto Sans", "sans" });
+
+		f.setPointSize(14);
+		f.setBold(true);
+		p.setFont(f);
+		p.setPen(QColor(25, 25, 25));
+		p.drawText(35, 103 + f.pointSize(), Seiscomp::Core::CurrentVersion.version().toString().data());
+
+		f.setBold(false);
+		p.setFont(f);
+		p.drawText(35, 125 + f.pointSize(), Core::CurrentVersion.release().data());
+		p.drawText(35, 191 + f.pointSize(), name().data());
+
+		f.setPointSize(28);
+		f.setBold(true);
+		p.setFont(f);
+		p.setPen(QColor(255, 255, 255));
+		p.drawText(
+			0, 203, 695, p.window().height() - 203,
+			Qt::AlignRight | Qt::AlignTop,
+			QString(" / %1").arg(Core::CurrentVersion.version().majorTag()),
+			&bbox
+		);
+
+		f.setBold(false);
+		p.setFont(f);
+		p.setPen(QColor(128, 194, 209));
+		p.drawText(0, 203, 695 - bbox.width(), p.window().height() - 203, Qt::AlignRight | Qt::AlignTop, Core::CurrentVersion.release().data());
 
 		// Reset LC_ALL locale to "C" since it is overwritten during
 		// first usage of QPixmap
 		setlocale(LC_ALL, "C");
 
 		_splash = new SplashScreen(pmSplash);
-		_splash->setFont(SCScheme.fonts.splashMessage);
-		_splash->setContentsMargins(10,10,10,100);
+		f.setPointSize(10);
+		f.setBold(false);
+		_splash->setFont(f);
 
 		_splash->setAttribute(Qt::WA_DeleteOnClose);
 		connect(_splash, SIGNAL(destroyed(QObject*)),
 		        this, SLOT(objectDestroyed(QObject*)));
 
-		if ( _mainWidget )
+		if ( _mainWidget ) {
 			_splash->finish(_mainWidget);
+		}
 
 		_splash->show();
-		static_cast<SplashScreen*>(_splash)->setMessage(QString(), _app);
+		_splash->showMessage(QString());
 	}
 
 	return true;
@@ -1048,6 +1021,10 @@ bool Application::init() {
 			                         "please check the logs"));
 		}
 		return false;
+	}
+
+	if ( !_settings.styleSheet.empty() ) {
+		_app->setStyleSheet(("file:///" + _settings.styleSheet).data());
 	}
 
 	// Check author read-only
@@ -1092,6 +1069,10 @@ bool Application::init() {
 		_timerSOH.setInterval(Client::Application::_settings.soh.interval * 1000);
 	}
 
+	if ( _type == GuiClient ) {
+		_app->setWindowIcon(icon("seiscomp-logo"));
+	}
+
 	if ( isMessagingEnabled() && (_type != Tty) ) {
 		if ( !cdlg()->hasConnectionChanged() ) {
 			const set<string>& subscriptions = subscribedGroups();
@@ -1111,14 +1092,16 @@ bool Application::init() {
 	if ( isDatabaseEnabled() && (_type != Tty) ) {
 		cdlg()->setDefaultDatabaseParameters(databaseURI().c_str());
 
-		if ( !cdlg()->hasDatabaseChanged() )
+		if ( !cdlg()->hasDatabaseChanged() ) {
 			cdlg()->setDatabaseParameters(databaseURI().c_str());
+		}
 
 		cdlg()->connectToDatabase();
 	}
 
-	if ( !_settingsOpened && isMessagingEnabled() && (_type != Tty) )
+	if ( !_settingsOpened && isMessagingEnabled() && (_type != Tty) ) {
 		cdlg()->connectToMessaging();
+	}
 
 	/*
 	if ( _flags & OPEN_CONNECTION_DIALOG ) {
@@ -1146,7 +1129,7 @@ bool Application::init() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QString Application::splashImagePath() const {
-	return splashDefaultImage;
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1165,23 +1148,25 @@ ConnectionDialog *Application::cdlg() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::createSettingsDialog() {
-	if ( _dlgConnection ) return;
-
-	if ( _type == Tty )
+	if ( _dlgConnection ) {
 		return;
+	}
+
+	if ( _type == Tty ) {
+		return;
+	}
 
 	_dlgConnection = new ConnectionDialog(&_connection, &_database);
 	_dlgConnection->setMessagingEnabled(isMessagingEnabled());
 
-	connect(_dlgConnection, SIGNAL(aboutToConnect(QString, QString, QString,
-	                                              int, QString)),
-	        this, SLOT(createConnection(QString, QString, QString, int, QString)));
+	connect(_dlgConnection, &ConnectionDialog::aboutToConnect,
+	        this, &Application::createConnection);
 
-	connect(_dlgConnection, SIGNAL(aboutToDisconnect()),
-	        this, SLOT(destroyConnection()));
+	connect(_dlgConnection, &ConnectionDialog::aboutToDisconnect,
+	        this, &Application::destroyConnection);
 
-	connect(_dlgConnection, SIGNAL(databaseChanged()),
-	        this, SLOT(databaseChanged()));
+	connect(_dlgConnection, &ConnectionDialog::databaseChanged,
+	        this, &Application::databaseChanged);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1296,8 +1281,9 @@ void Application::done() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::showMessage(const char* msg) {
-	if ( _splash )
-		static_cast<SplashScreen*>(_splash)->setMessage(msg, _app);
+	if ( _splash ) {
+		_splash->showMessage(msg);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1306,8 +1292,9 @@ void Application::showMessage(const char* msg) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::showWarning(const char* msg) {
-	if ( _type != Tty )
+	if ( _type != Tty ) {
 		QMessageBox::warning(nullptr, "Warning", msg);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1431,10 +1418,12 @@ void Application::showSettings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::quit() {
-	if ( _app )
+	if ( _app ) {
 		_app->quit();
-	else
+	}
+	else {
 		Client::Application::quit();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1777,7 +1766,9 @@ void Application::objectDestroyed(QObject* o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::closedLastWindow() {
-	if ( _app ) _app->quit();
+	if ( _app ) {
+		_app->quit();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1789,7 +1780,9 @@ void Application::exit(int returnCode) {
 	if ( _thread )
 		_thread->setReconnectOnErrorEnabled(false);
 
-	if ( _app ) _app->exit(returnCode);
+	if ( _app ) {
+		_app->exit(returnCode);
+	}
 
 	Client::Application::exit(returnCode);
 
@@ -1888,7 +1881,7 @@ void Application::setPalette(const QPalette &pal) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ProcessManager *Application::processManager() {
 	if ( !_processManager ) {
-		_processManager = new ProcessManager(_mainWidget);
+		_processManager = new ProcessManager();
 		emit processManagerCreated();
 	}
 
@@ -1900,5 +1893,13 @@ ProcessManager *Application::processManager() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+LogManager *Application::logManager() {
+	return _logManager;
 }
-}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+} // ns Seiscomp::Gui

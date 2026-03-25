@@ -508,7 +508,7 @@ DatabaseArchive::DatabaseArchive(Seiscomp::IO::DatabaseInterface *i)
 	_allowDbClose = false;
 
 	if ( !fetchVersion() ) {
-		close();
+		DatabaseArchive::close();
 	}
 
 	if ( _db ) {
@@ -522,7 +522,7 @@ DatabaseArchive::DatabaseArchive(Seiscomp::IO::DatabaseInterface *i)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::~DatabaseArchive() {
-	close();
+	DatabaseArchive::close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -754,13 +754,13 @@ DatabaseIterator DatabaseArchive::getObjects(const std::string &parentID,
                                              bool ignorePublicObject) {
 	if ( !validInterface() ) {
 		SEISCOMP_ERROR("no valid database interface");
-		return DatabaseIterator();
+		throw Core::GeneralException("no valid database interface");
 	}
 
 	if ( !parentID.empty() ) {
 		OID parentID_ = publicObjectId(parentID);
 		if ( !parentID_ ) {
-			SEISCOMP_INFO("parent object with id '%s' not found in database", parentID.c_str());
+			SEISCOMP_INFO("parent object with id '%s' not found in database", parentID);
 			return DatabaseIterator();
 		}
 
@@ -780,7 +780,7 @@ DatabaseIterator DatabaseArchive::getObjects(const PublicObject *parent,
                                              bool ignorePublicObject) {
 	if ( !validInterface() ) {
 		SEISCOMP_ERROR("no valid database interface");
-		return DatabaseIterator();
+		throw Core::GeneralException("no valid database interface");
 	}
 
 	OID parentID = getCachedId(parent);
@@ -963,7 +963,7 @@ DatabaseIterator DatabaseArchive::getObjectIterator(OID parentID,
                                                     bool ignorePublicObject) {
 	if ( !validInterface() ) {
 		SEISCOMP_ERROR("no valid database interface");
-		return DatabaseIterator();
+		throw Core::GeneralException("no valid database interface");
 	}
 
 	std::string query;
@@ -1012,8 +1012,8 @@ DatabaseIterator DatabaseArchive::getObjectIterator(const std::string &query,
 DatabaseIterator DatabaseArchive::getObjectIterator(const std::string &query,
                                                     const Seiscomp::Core::RTTI *classType) {
 	if ( !_db->beginQuery(query.c_str()) ) {
-		SEISCOMP_ERROR("starting query '%s' failed", query.c_str());
-		return DatabaseIterator();
+		SEISCOMP_ERROR("starting query '%s' failed", query);
+		throw Core::GeneralException(Core::stringify("query failed: %s", query));
 	}
 
 	if ( !_db->fetchRow() ) {

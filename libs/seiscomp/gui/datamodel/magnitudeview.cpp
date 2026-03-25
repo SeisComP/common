@@ -33,6 +33,7 @@
 #include <seiscomp/seismology/regions.h>
 #include <seiscomp/utils/misc.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/utils.h>
 #include <seiscomp/gui/datamodel/amplitudeview.h>
 #include <seiscomp/gui/datamodel/utils.h>
@@ -1426,7 +1427,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	connect(_ui->btnWaveforms, SIGNAL(clicked()), this, SLOT(openWaveforms()));
 	connect(_ui->cbEvalStatus, SIGNAL(currentIndexChanged(int)), this, SLOT(evaluationStatusChanged(int)));
 
-	QMenu *selectMenu = new QMenu;
+	QMenu *selectMenu = new QMenu(_ui->btnSelect);
 	QAction *editSelectionFilter = new QAction(tr("Edit"), this);
 	editSelectionFilter->setShortcut(QKeySequence("shift+s"));
 	selectMenu->addAction(editSelectionFilter);
@@ -1584,7 +1585,7 @@ void MagnitudeView::setPreferredMagnitudeID(const string &id) {
 		TabData d = _tabMagnitudes->tabData(i).value<TabData>();
 		if ( d.publicID == _preferredMagnitudeID ) {
 			//_tabMagnitudes->setTabTextColor(i, Qt::green);
-			_tabMagnitudes->setTabIcon(i, QIcon(":icons/icons/ok.png"));
+			_tabMagnitudes->setTabIcon(i, icon("tab_ok"));
 			resetPreferredMagnitudeSelection();
 		}
 		else {
@@ -1601,9 +1602,9 @@ void MagnitudeView::setPreferredMagnitudeID(const string &id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeView::setDefaultAggregationType(const std::string &type) {
 	if ( type == "mean"
-	  || type == "trimmed mean"
+	  || type == "trimmedMean"
 	  || type == "median"
-	  || type == "median trimmed mean" ) {
+	  || type == "medianTrimmedMean" ) {
 		_defaultMagnitudeAggregation = type;
 		return true;
 	}
@@ -1649,7 +1650,7 @@ void MagnitudeView::recalculateMagnitude() {
 		}
 		else {
 			Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, stdev, &weights);
-			_netMag->setMethodID("trimmed mean");
+			_netMag->setMethodID("trimmed mean(25)");
 		}
 	}
 	else if ( _ui->btnMean->isChecked() ) {
@@ -1668,7 +1669,7 @@ void MagnitudeView::recalculateMagnitude() {
 			return;
 		}
 
-		_netMag->setMethodID("trimmed mean");
+		_netMag->setMethodID(Core::stringify("trimmed mean(%d)", _ui->spinTrimmedMeanValue->value()));
 	}
 	else if ( _ui->btnMedian->isChecked() ) {
 		netmag = Math::Statistics::median(mags);
@@ -1690,7 +1691,7 @@ void MagnitudeView::recalculateMagnitude() {
 			return;
 		}
 
-		_netMag->setMethodID("median trimmed mean");
+		_netMag->setMethodID(Core::stringify("median trimmed mean(%f)", _ui->spinTrimmedMedianValue->value()));
 	}
 	else {
 		QMessageBox::critical(this, "Error", "Please select a method to recalculate the magnitude.");
@@ -1910,22 +1911,6 @@ void MagnitudeView::openWaveforms() {
 		}
 		catch ( ... ) {}
 
-		try {
-			auto patterns = SCApp->configGetStrings("picker.auxiliary.channels");
-			double minDist = 0, maxDist = 1000;
-			try {
-				minDist = SCApp->configGetDouble("picker.auxiliary.minimumDistance");
-			}
-			catch ( ... ) {}
-			try {
-				maxDist = SCApp->configGetDouble("picker.auxiliary.maximumDistance");
-			}
-			catch ( ... ) {}
-
-			_amplitudeView->setAuxiliaryChannels(patterns, minDist, maxDist);
-		}
-		catch ( ... ) {}
-
 		connect(_amplitudeView, SIGNAL(magnitudeCreated(Seiscomp::DataModel::Magnitude*)),
 		        this, SLOT(magnitudeCreated(Seiscomp::DataModel::Magnitude*)));
 		connect(_amplitudeView, SIGNAL(amplitudesConfirmed(Seiscomp::DataModel::Origin*, QList<Seiscomp::DataModel::AmplitudePtr>)),
@@ -2012,8 +1997,8 @@ void MagnitudeView::computeMagnitudes() {
 		for ( size_t i = 0; i < _availableMagTypes->size(); ++i ) {
 			CheckBox *check = new CheckBox;
 			check->setChecked(std::find(_currentMagnitudeTypes.begin(), _currentMagnitudeTypes.end(), _availableMagTypes->at(i)) != _currentMagnitudeTypes.end());
-			connect(selectAll, SIGNAL(clicked()), check, SLOT(check()));
-			connect(deselectAll, SIGNAL(clicked()), check, SLOT(unCheck()));
+			connect(selectAll, &CheckBox::clicked, check, &CheckBox::check);
+			connect(deselectAll, &CheckBox::clicked, check, &CheckBox::unCheck);
 
 			QLabel *label = new QLabel;
 			label->setText(_availableMagTypes->at(i).c_str());
@@ -2055,29 +2040,38 @@ void MagnitudeView::computeMagnitudes() {
 
 		// Main buttons
 		hl = new QHBoxLayout;
+
 		QPushButton *ok = new QPushButton(tr("OK"));
-		connect(ok, SIGNAL(clicked()), &setupTypesDlg, SLOT(accept()));
+		connect(ok, &QPushButton::clicked, &setupTypesDlg, &QDialog::accept);
 		QPushButton *cancel = new QPushButton(tr("Cancel"));
-		connect(cancel, SIGNAL(clicked()), &setupTypesDlg, SLOT(reject()));
+		connect(cancel, &QPushButton::clicked, &setupTypesDlg, &QDialog::reject);
+
 		hl->addStretch();
 		hl->addWidget(ok);
 		hl->addWidget(cancel);
 
 		ml->addLayout(hl);
 
+		ok->setDefault(true);
+		ok->setAutoDefault(true);
+		ok->setFocus();
+
 		setupTypesDlg.setLayout(ml);
 
-		if ( setupTypesDlg.exec() != QDialog::Accepted )
+		if ( setupTypesDlg.exec() != QDialog::Accepted ) {
 			return;
+		}
 
 		for ( int i = 0; i < typeChecks.size(); ++i ) {
 			QCheckBox *check = typeChecks[i];
-			if ( check->isChecked() )
+			if ( check->isChecked() ) {
 				magnitudeTypes.push_back(_availableMagTypes->at(i));
+			}
 		}
 	}
-	else
+	else {
 		magnitudeTypes = _magnitudeTypes;
+	}
 
 	// Save the last choice
 	_currentMagnitudeTypes = magnitudeTypes;
@@ -2130,8 +2124,9 @@ void MagnitudeView::computeMagnitudes() {
 			}
 		}
 
-		if ( !found )
+		if ( !found ) {
 			_amplitudes.insert(PickAmplitudeMap::value_type(it->first, it->second));
+		}
 	}
 
 	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
@@ -2292,20 +2287,25 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 
 	if ( netMag->origin() != _origin ) return;
 
-	if ( _ui->btnMean->isChecked() )
+	if ( _ui->btnMean->isChecked() ) {
 		computeMagnitude(netMag, "mean");
-	else if ( _ui->btnTrimmedMean->isChecked() )
-		computeMagnitude(netMag, "trimmed mean");
-	else if ( _ui->btnMedian->isChecked() )
+	}
+	else if ( _ui->btnTrimmedMean->isChecked() ) {
+		computeMagnitude(netMag, "trimmedMean");
+	}
+	else if ( _ui->btnMedian->isChecked() ) {
 		computeMagnitude(netMag, "median");
-	else if ( _ui->btnTrimmedMedian->isChecked() )
-		computeMagnitude(netMag, "median trimmed mean");
-	else
+	}
+	else if ( _ui->btnTrimmedMedian->isChecked() ) {
+		computeMagnitude(netMag, "medianTrimmedMean");
+	}
+	else {
 		computeMagnitude(netMag, "");
+	}
 
-	ObjectChangeList<DataModel::Amplitude>::iterator it;
-	for ( it = changedAmps.begin(); it != changedAmps.end(); ++it )
+	for ( auto it = changedAmps.begin(); it != changedAmps.end(); ++it ) {
 		_amplitudes.insert(PickAmplitudeMap::value_type(it->first->pickID(), AmplitudeEntry(it->first, true)));
+	}
 
 	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
 
@@ -2799,9 +2799,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			magnitude->setMethodID("mean");
 			fallback = false;
 		}
-		else if ( aggType == "trimmed mean" ) {
+		else if ( aggType == "trimmedMean" ) {
 			Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, *stdev, &weights);
-			magnitude->setMethodID("trimmed mean");
+			magnitude->setMethodID("trimmed mean(25)");
 			fallback = false;
 		}
 		else if ( aggType == "median" ) {
@@ -2818,9 +2818,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			magnitude->setMethodID("median");
 			fallback = false;
 		}
-		else if ( aggType == "median trimmed mean" ) {
-			netmag = Math::Statistics::computeMedianTrimmedMean(mags, 0.5, netmag, *stdev, &weights);
-			magnitude->setMethodID("median trimmed mean");
+		else if ( aggType == "medianTrimmedMean" ) {
+			Math::Statistics::computeMedianTrimmedMean(mags, 0.5, netmag, *stdev, &weights);
+			magnitude->setMethodID("median trimmed mean(0.5)");
 			fallback = false;
 		}
 
@@ -2832,7 +2832,7 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 			}
 			else {
 				Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, *stdev, &weights);
-				magnitude->setMethodID("trimmed mean");
+				magnitude->setMethodID("trimmed mean(25)");
 			}
 		}
 
@@ -2845,8 +2845,9 @@ void MagnitudeView::computeMagnitude(DataModel::Magnitude *magnitude,
 				++staCount;
 		}
 	}
-	else
+	else {
 		magnitude->setEvaluationStatus(EvaluationStatus(REJECTED));
+	}
 
 	magnitude->setMagnitude(DataModel::RealQuantity(netmag, stdev, Core::None, Core::None, Core::None));
 	magnitude->setStationCount(staCount);
@@ -3412,7 +3413,7 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 				.arg(totalStationCount(netMag))
 			);
 			_tabMagnitudes->setTabTextColor(tabIndex, palette().color(QPalette::Disabled, QPalette::WindowText));
-			_tabMagnitudes->setTabIcon(tabIndex, QIcon(":icons/icons/disabled.png"));
+			_tabMagnitudes->setTabIcon(tabIndex, icon("tab_disabled"));
 			data.valid = false;
 		}
 	}
@@ -3524,17 +3525,22 @@ void MagnitudeView::setContent() {
 
 	// Set default aggregation type
 	if ( _defaultMagnitudeAggregation ) {
-		if ( *_defaultMagnitudeAggregation == "median" )
+		if ( *_defaultMagnitudeAggregation == "median" ) {
 			_ui->btnMedian->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "mean" ) {
 			_ui->btnMean->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "trimmed mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "trimmedMean" ) {
 			_ui->btnTrimmedMean->setChecked(true);
-		else if ( *_defaultMagnitudeAggregation == "median trimmed mean" )
+		}
+		else if ( *_defaultMagnitudeAggregation == "medianTrimmedMean" ) {
 			_ui->btnTrimmedMedian->setChecked(true);
+		}
 	}
-	else
+	else {
 		_ui->btnDefault->setChecked(true);
+	}
 
 	updateContent();
 }
@@ -3760,6 +3766,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 			snprintf(buf, 10, "%d", (int)netmagval);
 
 		_ui->labelMethod->setText(_netMag->methodID().c_str());
+		_ui->labelMethod->setToolTip(_netMag->methodID().c_str());
 		try {
 			_ui->labelAgencyID->setText(_netMag->creationInfo().agencyID().c_str());
 			_ui->labelAgencyID->setToolTip(_netMag->creationInfo().agencyID().c_str());
@@ -3856,6 +3863,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 		_ui->labelAuthor->setToolTip("");
 
 		_ui->labelMethod->setText("");
+		_ui->labelMethod->setToolTip("");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -120,7 +120,7 @@ bmagnz(double amplitude, double period, double delta, double depth, int *err)
 
 	*err = 0;
 
-	if (depth < 0. || depth > 700. || delta < 5 || delta > 105) {
+	if ( (depth < 0.) || (depth > 700.) || (delta < 5) || (delta > 105) ) {
 		*err = -1;
 		return 0.;
 	}

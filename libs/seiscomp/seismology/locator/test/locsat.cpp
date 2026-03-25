@@ -37,6 +37,13 @@ namespace sc = Seiscomp::Core;
 namespace sio = Seiscomp::IO;
 namespace sd = Seiscomp::DataModel;
 
+// The reference data for the locsat unit tests was generated on an x86_64
+// system with SSE2 support enabled. However, these tests fail on ARM64 and
+// systems with SSE3 support enabled (e.g., RHEL 10) due to differences
+// in the floating-point computation.
+
+#if defined(__SSE2__)  && !defined(__SSE3__)
+
 bool readEventParameters(Seiscomp::DataModel::EventParameters &ep,
                          const std::string &filename) {
 	Seiscomp::IO::XMLArchive ar;
@@ -491,3 +498,15 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_SUITE_END()
+
+#else
+
+BOOST_AUTO_TEST_CASE(Test) {
+	BOOST_TEST_MESSAGE("The reference data for the locsat unit tests was "
+	                   "generated on an x86_64 system with SSE2 support enabled. "
+	                   "However, these tests fail on ARM64 and systems with SSE3 "
+	                   "supported enabled (e.g., RHEL 10) due to differences in "
+	                   "the floating-point computation.");
+}
+
+#endif

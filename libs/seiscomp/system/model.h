@@ -92,13 +92,16 @@ struct SC_SYSTEM_CORE_API ConfigDelegate : Config::Logger {
 
 
 DEFINE_SMARTPOINTER(SymbolMapItem);
-struct SC_SYSTEM_CORE_API SymbolMapItem : public Core::BaseObject {
-	SymbolMapItem() : known(false) {}
-	SymbolMapItem(const Config::Symbol &s) : symbol(s), known(false) {}
+class SC_SYSTEM_CORE_API SymbolMapItem : public Core::BaseObject {
+	public:
+		SymbolMapItem() : known(false) {}
+		SymbolMapItem(const Config::Symbol &s) : symbol(s), known(false) {}
 
-	Config::Symbol symbol;
-	bool           known;
+	public:
+		Config::Symbol symbol;
+		bool           known;
 };
+
 
 class ModelVisitor;
 
@@ -106,6 +109,8 @@ DEFINE_SMARTPOINTER(Group);
 DEFINE_SMARTPOINTER(Structure);
 DEFINE_SMARTPOINTER(Parameter);
 class SC_SYSTEM_CORE_API Container : public Core::BaseObject {
+	DECLARE_CASTS(Container)
+
 	// ------------------------------------------------------------------
 	//  X'truction
 	// ------------------------------------------------------------------
@@ -202,12 +207,13 @@ class SC_SYSTEM_CORE_API Parameter : public Core::BaseObject {
 	//  Attributes
 	// ------------------------------------------------------------------
 	public:
-		Core::BaseObject  *parent;
-		const Parameter   *super;
-		SchemaParameter   *definition;
-		SymbolMapItemPtr   symbols[Environment::CS_QUANTITY];
-		Config::Symbol     symbol;
-		std::string        variableName;
+		Core::BaseObject         *parent;
+		const Parameter          *super;
+		SchemaParameter          *definition;
+		mutable SymbolMapItemPtr  initial[Environment::CS_QUANTITY];
+		SymbolMapItemPtr          symbols[Environment::CS_QUANTITY];
+		Config::Symbol            symbol;
+		std::string               variableName;
 };
 
 
@@ -418,6 +424,7 @@ class SC_SYSTEM_CORE_API BindingCategory : public Core::BaseObject {
 
 DEFINE_SMARTPOINTER(ModuleBinding);
 class SC_SYSTEM_CORE_API ModuleBinding : public Binding {
+	DECLARE_CASTS(ModuleBinding)
 	DECLARE_RTTI;
 
 	// ------------------------------------------------------------------
@@ -482,6 +489,7 @@ struct SC_SYSTEM_CORE_API StationID {
 
 
 class SC_SYSTEM_CORE_API Module : public Core::BaseObject {
+	DECLARE_CASTS(Module)
 	DECLARE_RTTI;
 
 	// ------------------------------------------------------------------

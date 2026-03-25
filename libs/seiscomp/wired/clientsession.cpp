@@ -25,7 +25,6 @@
 #include <seiscomp/wired/reactor.h>
 
 #include <cerrno>
-#include <iostream>
 
 
 #define SEISCOMP_TRACE(...) \
@@ -370,7 +369,7 @@ void ClientSession::handleReceive(const char *buf, size_t len) {
 
 			_inbox[_inboxPos] = '\0';
 
-			handleInbox(&_inbox[0], _inboxPos);
+			handleInbox(_inbox.data(), _inboxPos);
 			if ( erroneous() ) {
 				break;
 			}

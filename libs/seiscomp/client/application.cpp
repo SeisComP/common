@@ -20,16 +20,12 @@
 
 #define SEISCOMP_COMPONENT Application
 
+#include <seiscomp/logging/log.h>
+
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/core/system.h>
-
-#include <seiscomp/logging/fd.h>
-#include <seiscomp/logging/filerotator.h>
-#ifndef WIN32
-#include <seiscomp/logging/syslog.h>
-#endif
 
 #include <seiscomp/system/pluginregistry.h>
 
@@ -519,7 +515,7 @@ Application *Application::Instance() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setDatabaseEnabled(bool enable, bool tryToFetch) {
 	_settings.database.enable = enable;
-	_settings.enableFetchDatabase = tryToFetch;
+	_settings.database.enableFetch = tryToFetch;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -654,7 +650,7 @@ bool Application::isRecordStreamEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadStationsEnabled(bool enable) {
-	_settings.enableLoadStations = enable;
+	_settings.database.enableStations = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -663,7 +659,7 @@ void Application::setLoadStationsEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadStationsEnabled() const {
-	return _settings.enableLoadStations;
+	return _settings.database.enableStations;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -672,7 +668,7 @@ bool Application::isLoadStationsEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadInventoryEnabled(bool enable) {
-	_settings.enableLoadInventory = enable;
+	_settings.database.enableInventory = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -681,7 +677,7 @@ void Application::setLoadInventoryEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadInventoryEnabled() const {
-	return _settings.enableLoadInventory;
+	return _settings.database.enableInventory;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -690,7 +686,7 @@ bool Application::isLoadInventoryEnabled() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::setLoadConfigModuleEnabled(bool enable) {
-	_settings.enableLoadConfigModule = enable;
+	_settings.database.enableConfigModule = enable;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -699,7 +695,7 @@ void Application::setLoadConfigModuleEnabled(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::isLoadConfigModuleEnabled() const {
-	return _settings.enableLoadConfigModule;
+	return _settings.database.enableConfigModule;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1240,7 +1236,7 @@ void Application::handleEndAcquisition() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::reloadInventory() {
-	if ( _settings.enableLoadInventory ) {
+	if ( _settings.database.enableInventory ) {
 		if ( !_settings.database.inventoryDB.empty() ) {
 			if ( !loadInventory(_settings.database.inventoryDB) ) {
 				return false;
@@ -1264,7 +1260,7 @@ bool Application::reloadInventory() {
 		if ( filtered > 0 )
 			SEISCOMP_INFO("Filtered %d stations by type", filtered);
 	}
-	else if ( _settings.enableLoadStations ) {
+	else if ( _settings.database.enableStations ) {
 		if ( !_settings.database.inventoryDB.empty() ) {
 			if ( !loadInventory(_settings.database.inventoryDB) ) {
 				return false;
@@ -1301,20 +1297,26 @@ bool Application::reloadInventory() {
 bool Application::reloadBindings() {
 	_configModule = nullptr;
 
-	if ( _settings.enableLoadConfigModule ) {
+	if ( _settings.database.enableConfigModule ) {
 		std::set<std::string> params;
 
 		if ( !_settings.database.configDB.empty() ) {
-			if ( !loadConfig(_settings.database.configDB) ) return false;
+			if ( !loadConfig(_settings.database.configDB) ) {
+				SEISCOMP_ERROR("Failed to load configuration module from %s",
+				               _settings.database.configDB);
+				return false;
+			}
 		}
 		else if ( _database ) {
 			if ( _query ) {
 				SEISCOMP_INFO("Loading configuration module");
 				showMessage("Reading station config");
-				if ( !_settings.configModuleName.empty() )
+				if ( !_settings.configModuleName.empty() ) {
 					ConfigDB::Instance()->load(query(), _settings.configModuleName, Core::None, Core::None, Core::None, params);
-				else
+				}
+				else {
 					ConfigDB::Instance()->load(query(), Core::None, Core::None, Core::None, Core::None, params);
+				}
 				SEISCOMP_INFO("Finished loading configuration module");
 			}
 			else {
@@ -1327,8 +1329,10 @@ bool Application::reloadBindings() {
 			return false;
 		}
 
-		DataModel::Config* config = ConfigDB::Instance()->config();
+		auto config = ConfigDB::Instance()->config();
 		if ( !config ) {
+			SEISCOMP_ERROR("No configuration module found in %s",
+			               _settings.database.configDB.empty() ? "database" : _settings.database.configDB);
 			return false;
 		}
 
@@ -1870,7 +1874,7 @@ bool Application::initDatabase() {
 				return true;
 		}
 		else {
-			if ( _settings.enableFetchDatabase ) {
+			if ( _settings.database.enableFetch ) {
 				SEISCOMP_WARNING("Database connection failed, trying to fetch the service message");
 			}
 			else {

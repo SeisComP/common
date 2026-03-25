@@ -21,9 +21,6 @@
 #define SEISCOMP_COMPONENT SDS
 
 #include <sys/stat.h>
-#include <errno.h>
-#include <iomanip>
-#include <libmseed.h>
 
 #include <boost/version.hpp>
 #include <boost/filesystem/path.hpp>
@@ -41,6 +38,7 @@
 
 
 using namespace std;
+using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::RecordStream;
 
@@ -69,62 +67,27 @@ bool isWildcard(const string &s) {
 
 
 Time getStartTime(const string &file) {
-#if 0
-	fsdh_s head;
 	Time startTime;
 
 	ifstream ifs(file.c_str());
-	if ( !ifs )
-		return startTime;
-
-	if ( ifs.readsome((char*)&head, sizeof(head)) != sizeof(head) )
-		return startTime;
-
-	if ( !MS_ISVALIDHEADER(((char*)&head)) )
-		return startTime;
-
-	bool headerswapflag = false;
-	if ( !MS_ISVALIDYEARDAY(head.start_time.year, head.start_time.day) )
-		headerswapflag = true;
-
-	/* Swap byte order? */
-	if ( headerswapflag ) {
-		MS_SWAPBTIME(&head.start_time);
-		ms_gswap4a(&head.time_correct);
-	}
-
-	hptime_t hptime = ms_btime2hptime(&head.start_time);
-	if ( hptime == HPTERROR ) {
+	if ( !ifs ) {
 		return startTime;
 	}
 
-	if ( head.time_correct != 0 && !(head.act_flags & 0x02) )
-		hptime += (hptime_t)head.time_correct * (HPTMODULUS / 10000);
-
-	static_cast<TimeSpan&>(startTime).set(MS_HPTIME2EPOCH(hptime));
-	startTime.setUSecs(hptime-MS_EPOCH2HPTIME(startTime.seconds()));
-
-	/* Adjust for negative epoch times */
-	if ( startTime.seconds() < 0 && startTime.microseconds() != 0 ) {
-		static_cast<TimeSpan&>(startTime).set(startTime.seconds() - 1);
-		startTime.setUSecs(HPTMODULUS - (-startTime.microseconds()));
+	while ( ifs ) {
+		IO::MSeedRecord rec;
+		rec.setHint(Record::META_ONLY);
+		try {
+			rec.read(ifs);
+			if ( rec.sampleCount() > 0 ) {
+				return rec.startTime();
+			}
+		}
+		catch ( ... ) {}
 	}
+
 
 	return startTime;
-#else
-	MSRecord *prec = nullptr;
-	MSFileParam *pfp = nullptr;
-
-	int retcode = ms_readmsr_r(&pfp,&prec,const_cast<char*>(file.c_str()),0,nullptr,nullptr,1,0,0);
-	if ( retcode == MS_NOERROR ) {
-		Time start{Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS)};
-		ms_readmsr_r(&pfp,&prec,nullptr,-1,nullptr,nullptr,0,0,0);
-		return start;
-	}
-
-	ms_readmsr_r(&pfp,&prec,nullptr,-1,nullptr,nullptr,0,0,0);
-	return Time();
-#endif
 }
 
 
@@ -233,7 +196,7 @@ SDSArchive::SDSArchive() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SDSArchive::SDSArchive(const string arcroot) {
-	setSource(arcroot);
+	SDSArchive::setSource(arcroot);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -258,7 +221,7 @@ bool SDSArchive::setSource(const string &src) {
 
 	for ( string &root : _arcroots ) {
 		root = Environment::Instance()->absolutePath(root);
-		SEISCOMP_DEBUG("+ Archive root: %s", root.c_str());
+		SEISCOMP_DEBUG("+ Archive root: %s", root);
 	}
 
 	_closeRequested = false;
@@ -523,12 +486,12 @@ bool SDSArchive::resolveLoc(string &pathStr,
 				first = false;
 			}
 
-			SEISCOMP_DEBUG("+ %s", fpath.c_str());
+			SEISCOMP_DEBUG("+ %s", fpath);
 			_fnames.push(File(fpath,first));
 		}
 		/*
 		else
-			SEISCOMP_DEBUG("ignore duplicate read: %s", path.c_str());
+			SEISCOMP_DEBUG("ignore duplicate read: %s", path);
 		*/
 		return true;
 	}
@@ -554,7 +517,7 @@ bool SDSArchive::resolveLoc(string &pathStr,
 					resolveLoc(pathStr, net, sta, loc, cha, requestStartTime, doy+1, year, first);
 				}
 
-				SEISCOMP_DEBUG("+ %s", fpath.c_str());
+				SEISCOMP_DEBUG("+ %s", fpath);
 				_fnames.push(File(fpath,first));
 			}
 		}
@@ -622,126 +585,148 @@ void SDSArchive::resolveRequest() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool SDSArchive::setStart(const string &fname, bool bsearch) {
-	MSRecord *prec = nullptr;
-	MSFileParam *pfp = nullptr;
 	double samprate = 0.0;
 	Time physFirstStartTime, physFirstEndTime;
 	Time recstime, recetime;
 	Time stime = !_curidx->stime ? _stime.value_or(Time()) : *_curidx->stime;
-	off_t fpos;
-	int retcode;
 	long int offset = 0;
-	long int size;
 	bool result = true;
 
 	_file.seekg(0, ios::end);
-	size = (long int)_file.tellg();
-	if ( size <= 0 )
+	const auto size = (long int)_file.tellg();
+	_file.seekg(0, ios::beg);
+
+	if ( size <= 0 ) {
 		return false;
+	}
 
 	if ( bsearch ) {
 		//! binary search
-		retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, nullptr, nullptr, 1, 0, 0);
-		if ( retcode == MS_NOERROR ) {
-			samprate = prec->samprate;
-			physFirstStartTime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
-			if ( samprate > 0. )
-				physFirstEndTime = physFirstStartTime + TimeSpan((double)(prec->samplecnt / samprate));
-			else {
-				SEISCOMP_WARNING("SDS: [%s@0] Wrong sampling frequency %.2f!", fname.c_str(), samprate);
-				physFirstEndTime = physFirstStartTime + TimeSpan(1, 0);
-				result = false;
-			}
+		IO::MSeedRecord mseed;
+		mseed.setHint(Record::META_ONLY);
 
-			recstime = physFirstStartTime;
+		try {
+			mseed.read(_file);
+		}
+		catch ( exception &e ) {
+			return false;
+		}
 
-			long start = 0;
-			long half = 0;
-			long end = 0;
-			int reclen = prec->reclen;
+		samprate = mseed.samplingFrequency();
+		physFirstStartTime = mseed.startTime();
+		if ( samprate > 0. ) {
+			physFirstEndTime = mseed.endTime();
+		}
+		else {
+			SEISCOMP_WARNING("[%s@0] Wrong sampling frequency %.2f!", fname, samprate);
+			physFirstEndTime = physFirstStartTime + TimeSpan(1, 0);
+			result = false;
+		}
 
-			if ( recstime < stime )
-				end = (long)(size/reclen);
+		recstime = physFirstStartTime;
 
-			while ( (end - start) > 1 ) {
-				half = start + (end - start)/2;
-				fpos = -half*reclen;
-				//lmp_fseeko(pfp->fp, half*reclen, 0);
-				if ( (retcode = ms_readmsr_r(&pfp, &prec, const_cast<char *>(fname.c_str()), 0, &fpos, nullptr, 1, 0, 0)) == MS_NOERROR ) {
-					samprate = prec->samprate;
-					recstime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
-					if ( samprate > 0. )
-						recetime = recstime + TimeSpan((double)(prec->samplecnt / samprate));
-					else {
-						SEISCOMP_WARNING("SDS: [%s@%ld] Wrong sampling frequency %.2f!", fname.c_str(), half*reclen, samprate);
-						recetime = recstime + TimeSpan(1, 0);
-						result = false;
-					}
+		long start = 0;
+		long half = 0;
+		long end = 0;
+		const int reclen = mseed.recordLength();
+
+		if ( recstime < stime ) {
+			end = static_cast<long>(size / reclen);
+		}
+
+		while ( (end - start) > 1 ) {
+			half = start + (end - start) / 2;
+			_file.seekg(half * reclen, ios::beg);
+
+			try {
+				mseed.read(_file);
+				if ( mseed.recordLength() != reclen ) {
+					SEISCOMP_WARNING("[%s] Detected mixed record length (%d != %d), abort binary search",
+					                 fname, reclen, mseed.recordLength());
+					return false;
+				}
+				samprate = mseed.samplingFrequency();
+				recstime = mseed.startTime();
+				if ( samprate > 0. ) {
+					recetime = mseed.endTime();
 				}
 				else {
-					SEISCOMP_WARNING("SDS: [%s@%ld] Couldn't read mseed header!", fname.c_str(), half*reclen);
-					break;
-				}
-
-				if ( recetime < stime ) {
-					start = half;
-					if ((end - start) == 1)
-						++half;
-				}
-				else if ( recstime > stime )
-					end = half;
-				else if ( recstime <= stime && recetime >= stime ) {
-					if ( stime == recetime )
-						++half;
-					break;
+					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!",
+					                 fname, half*reclen, samprate);
+					recetime = recstime + TimeSpan(1, 0);
+					result = false;
 				}
 			}
-
-			if ( (half == 1) && (recstime > stime) ) {
-				if ( physFirstEndTime > stime )
-					half = 0;
+			catch ( ... ) {
+				SEISCOMP_WARNING("[%s@%d] Couldn't read mseed header", fname, half * reclen);
+				return false;
 			}
 
-			offset = half * reclen;
+			if ( recetime < stime ) {
+				start = half;
+				if ( (end - start) == 1 ) {
+					++half;
+				}
+			}
+			else if ( recstime > stime ) {
+				end = half;
+			}
+			else if ( (recstime <= stime) && (recetime >= stime) ) {
+				if ( stime == recetime ) {
+					++half;
+				}
+				break;
+			}
 		}
+
+		if ( (half == 1) && (recstime > stime) ) {
+			if ( physFirstEndTime > stime ) {
+				half = 0;
+			}
+		}
+
+		offset = half * reclen;
 	}
 	else {
-		while ( (retcode = ms_readmsr_r(&pfp,&prec,const_cast<char *>(fname.c_str()),0,nullptr,nullptr,1,0,0)) == MS_NOERROR ) {
-			samprate = prec->samprate;
-			recstime = Time::FromEpoch((hptime_t)prec->starttime/HPTMODULUS,(hptime_t)prec->starttime%HPTMODULUS);
+		while ( _file ) {
+			IO::MSeedRecord mseed;
+			mseed.setHint(Record::META_ONLY);
 
-			if ( recstime > stime )
+			offset = _file.tellg();
+
+			try {
+				mseed.read(_file);
+			}
+			catch ( exception &e ) {
+				continue;
+			}
+
+			samprate = mseed.samplingFrequency();
+			recstime = mseed.startTime();
+
+			if ( recstime > stime ) {
 				break;
+			}
 			else {
 				if ( samprate > 0. ) {
-					recetime = recstime + TimeSpan(prec->samplecnt / samprate);
+					recetime = mseed.endTime();
 					if ( recetime > stime ) {
 						break;
 					}
-					else {
-						offset += prec->reclen;
-					}
 				}
 				else {
-					SEISCOMP_WARNING("SDS: [%s@%ld] Wrong sampling frequency %.2f!", fname.c_str(), offset, samprate);
-					offset += prec->reclen;
+					SEISCOMP_WARNING("[%s@%ld] Wrong sampling frequency %.2f!",
+					                 fname, offset, samprate);
 					result = false;
 				}
 			}
 		}
 	}
 
-	if ( retcode != MS_ENDOFFILE && retcode != MS_NOERROR ) {
-		SEISCOMP_ERROR("SDS: Error reading input file %s: %s", fname.c_str(),ms_errorstr(retcode));
-		result = false;
-	}
-
-	/* Cleanup memory and close file */
-	ms_readmsr_r(&pfp, &prec, nullptr, -1, nullptr, nullptr, 0, 0, 0);
-
 	_file.seekg(offset, ios::beg);
-	if ( offset == size )
+	if ( offset == size ) {
 		_file.clear(ios::eofbit);
+	}
 
 	return result;
 }
@@ -756,7 +741,7 @@ Seiscomp::Record *SDSArchive::next() {
 
 	if ( _file.is_open() ) {
 		while ( !_closeRequested ) {
-			Seiscomp::IO::MSeedRecord *rec = new Seiscomp::IO::MSeedRecord(_dataType, _hint);
+			auto *rec = new Seiscomp::IO::MSeedRecord(_dataType, _hint);
 
 			try {
 				rec->read(_file);
@@ -790,8 +775,9 @@ Seiscomp::Record *SDSArchive::next() {
 
 	while ( !_fnames.empty() || _curiter != _orderedRequests.end() ) {
 		while ( _fnames.empty() && _curiter != _orderedRequests.end() ) {
-			if ( !_etime )
+			if ( !_etime ) {
 				_etime = Time::UTC();
+			}
 			if ( !_curiter->stime && !_stime ) {
 				SEISCOMP_WARNING("... has invalid time window -> ignore this request above");
 				++_curiter;
@@ -818,17 +804,18 @@ Seiscomp::Record *SDSArchive::next() {
 
 				_file.open(file.first.c_str(), ifstream::in | ifstream::binary);
 				if ( !_file.is_open() ) {
-					SEISCOMP_DEBUG("R %s (not found)",file.first.c_str());
+					SEISCOMP_DEBUG("R %s (not found)",file.first);
 					_file.clear();
 				}
 				else {
-					SEISCOMP_DEBUG("R %s (first: %d)",file.first.c_str(), file.second);
+					SEISCOMP_DEBUG("R %s (first: %d)", file.first, file.second);
 					// File part of start time
 					if ( file.second ) {
 						if ( !setStart(file.first, true) ) {
+							SEISCOMP_DEBUG("W %s (linear search)", file.first);
 							if ( !setStart(file.first, false) ) {
 								SEISCOMP_WARNING("Error reading file %s; start of time window maybe incorrect",
-								                 file.first.c_str());
+								                 file.first);
 								_file.close();
 								continue;
 							}
@@ -836,7 +823,7 @@ Seiscomp::Record *SDSArchive::next() {
 					}
 
 					while ( !_closeRequested ) {
-						Seiscomp::IO::MSeedRecord *rec = new Seiscomp::IO::MSeedRecord(_dataType, _hint);
+						auto *rec = new Seiscomp::IO::MSeedRecord(_dataType, _hint);
 						try {
 							rec->read(_file);
 							if ( rec->startTime() > _curidx->etime ) {

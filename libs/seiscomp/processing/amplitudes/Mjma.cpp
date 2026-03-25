@@ -59,8 +59,11 @@ void AmplitudeProcessor_Mjma::initFilter(double fsamp) {
 			new Filtering::IIR::Seismometer5secFilter<double>(Velocity)
 		);
 	}
-	else
+	else {
 		AmplitudeProcessor::setFilter(nullptr);
+	}
+
+	clear(State::FilterCreated);
 
 	AmplitudeProcessor::initFilter(fsamp);
 }
@@ -73,14 +76,16 @@ void AmplitudeProcessor_Mjma::initFilter(double fsamp) {
 bool AmplitudeProcessor_Mjma::deconvolveData(Response *resp,
                                              DoubleArray &data,
                                              int numberOfIntegrations) {
-	if ( numberOfIntegrations < -1 )
+	if ( numberOfIntegrations < -1 ) {
 		return false;
+	}
 
 	Math::Restitution::FFT::TransferFunctionPtr tf =
 		resp->getTransferFunction(numberOfIntegrations < 0 ? 0 : numberOfIntegrations);
 
-	if ( tf == nullptr )
+	if ( !tf ) {
 		return false;
+	}
 
 	Math::SeismometerResponse::Seismometer5sec paz(numberOfIntegrations < 0 ? Math::Displacement : Math::Velocity);
 	Math::Restitution::FFT::PolesAndZeros seis5sec(paz);
@@ -104,23 +109,25 @@ bool AmplitudeProcessor_Mjma::deconvolveData(Response *resp,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool AmplitudeProcessor_Mjma::computeAmplitude(
-		const DoubleArray &data,
-		size_t i1, size_t i2,
-		size_t si1, size_t si2,
-		double offset,AmplitudeIndex *dt,
-		AmplitudeValue *amplitude,
-		double *period, double *snr)
-{
+	const DoubleArray &data,
+	size_t i1, size_t i2,
+	size_t si1, size_t si2,
+	double offset,AmplitudeIndex *dt,
+	AmplitudeValue *amplitude,
+	double *period, double *snr
+) {
 	double amax;
 
 	size_t imax = find_absmax(data.size(), data.typedData(), si1, si2, offset);
 	amax = fabs(data[imax] - offset);
 	dt->index = imax;
 
-	if ( *_noiseAmplitude == 0. )
+	if ( *_noiseAmplitude == 0. ) {
 		*snr = 1000000.0;
-	else
+	}
+	else {
 		*snr = amax / *_noiseAmplitude;
+	}
 
 	if ( *snr < _config.snrMin ) {
 		setStatus(LowSNR, *snr);
@@ -131,8 +138,9 @@ bool AmplitudeProcessor_Mjma::computeAmplitude(
 
 	amplitude->value = amax;
 
-	if ( _streamConfig[_usedComponent].gain != 0.0 )
-		amplitude->value /= _streamConfig[_usedComponent].gain;
+	if ( _streamConfig[targetComponent()].gain != 0.0 ) {
+		amplitude->value /= _streamConfig[targetComponent()].gain;
+	}
 	else {
 		setStatus(MissingGain, 0.0);
 		return false;

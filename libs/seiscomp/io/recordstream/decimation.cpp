@@ -103,8 +103,9 @@ bool Decimation::setSource(const string &source) {
 	string service;
 
 	pos = name.find('?');
-	if ( pos == string::npos )
+	if ( pos == string::npos ) {
 		service = name;
+	}
 	else {
 		service = name.substr(0, pos);
 		name.erase(0, pos+1);
@@ -193,6 +194,8 @@ bool Decimation::setSource(const string &source) {
 			}
 		}
 	}
+
+	SEISCOMP_DEBUG("Set decimation proxy stream to %s://%s", service, addr);
 
 	_source = Create(service.c_str());
 	if ( !_source ) {
@@ -347,8 +350,9 @@ Record *Decimation::next() {
 				GenericRecord *rec = _nextRecord;
 				_nextRecord = nullptr;
 
-				if ( rec->data()->dataType() != _dataType )
+				if ( rec->data()->dataType() != _dataType ) {
 					rec->setData(rec->data()->copy(_dataType));
+				}
 
 				return rec;
 			}
@@ -448,7 +452,7 @@ bool Decimation::initCoefficients(ResampleStage *stage) {
 			double weights[2] = {1,1};
 			double desired[2] = {1,0};
 
-			if ( remez(&((*coeff)[0]), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
+			if ( remez(coeff->data(), Ncoeff, 2, bands, desired, weights, BANDPASS) ) {
 				SEISCOMP_WARNING("[dec] failed to build coefficients for N=%d, ignore stream", stage->N);
 				delete coeff;
 				_coefficients[stage->N] = nullptr;
@@ -557,7 +561,7 @@ GenericRecord *Decimation::convert(Record *rec) {
 			return nullptr;
 	}
 
-	ArrayPtr data = rec->data()->copy(_dataType);
+	ArrayPtr data = rec->data() ? rec->data()->copy(_dataType) : nullptr;
 	out->setData(data.get());
 
 	return out;
@@ -597,10 +601,16 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 
 	ArrayPtr tmp_ar;
 	const DoubleArray *ar = DoubleArray::ConstCast(rec->data());
-	if ( ar == nullptr ) {
-		tmp_ar = rec->data()->copy(Array::DOUBLE);
+	if ( !ar ) {
+		tmp_ar = rec->data() ? rec->data()->copy(Array::DOUBLE) : nullptr;
+		if ( !tmp_ar ) {
+			SEISCOMP_WARNING("[dec] %s: %s ~ %s: no data -> ignoring",
+			                 rec->streamID(), rec->startTime().iso(),
+			                 rec->endTime().iso());
+			return nullptr;
+		}
 		ar = DoubleArray::ConstCast(tmp_ar);
-		if ( ar == nullptr ) {
+		if ( !ar ) {
 			SEISCOMP_ERROR("[dec] internal error: doubles expected");
 			return nullptr;
 		}
@@ -608,7 +618,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 
 	size_t data_len = (size_t)ar->size();
 	const double *data = ar->typedData();
-	double *buffer = &stage->buffer[0];
+	double *buffer = stage->buffer.data();
 
 	if ( stage->missingSamples > 0 ) {
 		size_t toCopy = std::min(stage->missingSamples, data_len);
@@ -638,7 +648,7 @@ GenericRecord *Decimation::resample(ResampleStage *stage, Record *rec) {
 	do {
 		if ( stage->samplesToSkip == 0 ) {
 			// Calculate scalar product of coefficients and ring buffer
-			double *coeff = &((*stage->coefficients)[0]);
+			double *coeff = stage->coefficients->data();
 			double sample = 0;
 
 			for ( size_t i = stage->front; i < stage->buffer.size(); ++i ) {

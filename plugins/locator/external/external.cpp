@@ -196,10 +196,10 @@ DataModel::Origin *ExternalLocator::relocate(const DataModel::Origin *origin) {
 			args.push_back("--fixed-depth=" + Core::toString(_fixedDepth));
 		}
 
-		for ( string &s : args ) cargs.push_back(&s[0]);
+		for ( string &s : args ) cargs.push_back(s.data());
 		cargs.push_back(nullptr);
 
-		execvp(cargs[0], &cargs[0]);
+		execvp(cargs[0], cargs.data());
 		_exit(202); // ERROR_CHILD_EXEC
 	}
 

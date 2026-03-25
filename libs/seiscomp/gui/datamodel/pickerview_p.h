@@ -43,6 +43,9 @@ namespace Seiscomp {
 namespace Gui {
 
 
+class SpectrogramSettings;
+
+
 class PickerViewPrivate {
 	private:
 		struct WaveformRequest {
@@ -61,14 +64,8 @@ class PickerViewPrivate {
 			char                        component;
 		};
 
-		struct SpectrogramOptions {
-			double minRange;
-			double maxRange;
-			double tw;
-		};
-
-		typedef std::list<WaveformRequest> WaveformStreamList;
-		typedef std::map<std::string, PrivatePickerView::PickerRecordLabel*> RecordItemMap;
+		using WaveformStreamList = std::list<WaveformRequest>;
+		using RecordItemMap = std::map<std::string, PrivatePickerView::PickerRecordLabel*>;
 
 
 	private:
@@ -82,6 +79,7 @@ class PickerViewPrivate {
 		QComboBox                          *comboTTTables;
 		QDoubleSpinBox                     *spinDistance;
 		QComboBox                          *comboPicker;
+		QPushButton                        *btnApply;
 
 		QLineEdit                          *searchStation;
 		QLabel                             *searchLabel;
@@ -126,7 +124,6 @@ class PickerViewPrivate {
 		bool                                autoScaleZoomTrace;
 		bool                                loadedPicks;
 		int                                 currentSlot;
-		bool                                alignedOnOT;
 		RecordWidget::Filter               *currentFilter;
 		QString                             currentFilterID;
 
@@ -143,10 +140,6 @@ class PickerViewPrivate {
 		std::vector<std::string>            broadBandCodes;
 		std::vector<std::string>            strongMotionCodes;
 
-		std::vector<std::string>            auxiliaryStreamIDPatterns;
-		double                              auxiliaryMinDistance{0};
-		double                              auxiliaryMaxDistance{1000};
-
 		WaveformStreamList                  nextStreams;
 		WaveformStreamList                  allStreams;
 
@@ -159,9 +152,11 @@ class PickerViewPrivate {
 		QList<PickerMarkerActionPlugin*>    markerPlugins;
 
 		PickerView::Config                  config;
-		SpectrogramOptions                  specOpts;
+		SpectrogramSettings                *spectrogramSettings;
 
 		QWidget                            *spectrumView;
+		QMenu                              *auxiliaryProfileMenu{nullptr};
+		QMenu                              *auxiliaryProfileVisibilityMenu{nullptr};
 
 		::Ui::PickerView                    ui;
 		bool                                settingsRestored;
@@ -176,7 +171,7 @@ class PickerViewPrivate {
 QSize PickerViewPrivate::defaultSpectrumWidgetSize = QSize(500,400);
 QByteArray PickerViewPrivate::spectrumWidgetGeometry;
 
-std::string PickerViewPrivate::ttInterface = "libtau";
+std::string PickerViewPrivate::ttInterface = "LOCSAT";
 std::string PickerViewPrivate::ttTableName = "iasp91";
 
 

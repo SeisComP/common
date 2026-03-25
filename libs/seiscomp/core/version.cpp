@@ -20,7 +20,6 @@
 
 #include <seiscomp/core/version.h>
 #include <seiscomp/core/strings.h>
-#include <iostream>
 
 #include <seiscomp/core/build_version.h>
 #include <seiscomp/version.h>
@@ -83,6 +82,11 @@ std::string FrameworkVersion::systemInfo() const {
 #endif
 #endif
 	return s;
+}
+
+
+std::string FrameworkVersion::release() const {
+	return _release;
 }
 
 

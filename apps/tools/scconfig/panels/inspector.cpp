@@ -30,6 +30,7 @@ using namespace Seiscomp::Core;
 using namespace Seiscomp::DataModel;
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
 
@@ -56,8 +57,12 @@ std::string propToString(const MetaProperty *prop, BaseObject *obj) {
 
 
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
  : QDialog(parent, f) {
 	_ui.setupUi(this);
@@ -72,11 +77,19 @@ Inspector::Inspector(QWidget * parent, Qt::WindowFlags f)
 	connect(_ui.treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
 	        this, SLOT(selectionChanged()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Inspector::~Inspector() {}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::setObject(BaseObject *obj) {
 	_ui.treeWidget->clear();
 	_ui.tableWidget->clear();
@@ -96,8 +109,12 @@ void Inspector::setObject(BaseObject *obj) {
 
 	_ui.treeWidget->setCurrentItem(item);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::addObject(QTreeWidgetItem *p) {
 	TreeItem *parent = static_cast<TreeItem*>(p);
 	BaseObject *obj = parent->object();
@@ -181,8 +198,12 @@ void Inspector::addObject(QTreeWidgetItem *p) {
 		parent->setToolTip(0, QString(tr("Index is the tuple (%1)").arg(indexAttributes)));
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::selectionChanged() {
 	while ( _ui.tableWidget->rowCount() )
 		_ui.tableWidget->removeRow(0);
@@ -211,8 +232,12 @@ void Inspector::selectionChanged() {
 	_ui.tableWidget->resizeColumnsToContents();
 	_ui.tableWidget->horizontalHeader()->setStretchLastSection(true);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::addProperty(const std::string &name, const std::string &type,
                             const std::string &value, bool isIndex,
                             bool isOptional, bool isReference) {
@@ -268,8 +293,12 @@ void Inspector::addProperty(const std::string &name, const std::string &type,
 	if ( item2 != NULL ) _ui.tableWidget->setItem(row, 2, item2);
 	if ( link != NULL ) _ui.tableWidget->setCellWidget(row, 2, link);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Inspector::linkClicked(QString id) {
 	PublicObject *po = PublicObject::Find(id.toStdString());
 	if ( !po ) return;
@@ -279,3 +308,4 @@ void Inspector::linkClicked(QString id) {
 	w->setObject(po);
 	w->show();
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -21,10 +21,11 @@
 #define SEISCOMP_COMPONENT Wire
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/baseobject.h>
-#include <cstdio>
 
 #include <seiscomp/wired/session.h>
 #include <seiscomp/wired/reactor.h>
+
+#include <cstdio>
 
 
 using namespace std;
@@ -414,7 +415,7 @@ void Reactor::sessionTagged(Session *) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 size_t Reactor::getBuffer(char *&buf) {
-	buf = &_buffer[0];
+	buf = _buffer.data();
 	size_t len = _readQuota - _sessionBytesAllocated;
 	if ( len > _buffer.size() ) {
 		len = _buffer.size();

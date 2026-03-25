@@ -21,7 +21,6 @@
 #include <seiscomp/processing/amplitudes/mBc.h>
 
 #include <cmath>
-#include <limits>
 
 #include "mBc_measure.h"
 
@@ -79,8 +78,9 @@ bool AmplitudeProcessor_mBc::computeAmplitude(const DoubleArray &data,
 	dt->index = si1 + measurement.icum;
 	*period = pmax;
 	amplitude->value = measurement.vcum;
-	if ( _streamConfig[_usedComponent].gain != 0.0 )
-		amplitude->value /= _streamConfig[_usedComponent].gain;
+	if ( _streamConfig[targetComponent()].gain != 0.0 ) {
+		amplitude->value /= _streamConfig[targetComponent()].gain;
+	}
 	else {
 		setStatus(MissingGain, 0.0);
 		return false;

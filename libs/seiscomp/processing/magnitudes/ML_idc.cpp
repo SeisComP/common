@@ -28,9 +28,7 @@
 #include <mutex>
 
 #include <cmath> // log10
-#include <vector> // log10
 #include <cfloat>
-#include <fstream>
 
 
 #define AMP_TYPE "SBSNR"

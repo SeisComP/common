@@ -65,11 +65,6 @@ class SC_GUI_API RecordStreamThread : public QThread {
 		               const OPT(Seiscomp::Core::Time) &stime,
 		               const OPT(Seiscomp::Core::Time) &etime);
 
-		// Needs to be called after connect()
-		bool addStream(const std::string& network, const std::string& station,
-		               const std::string& location, const std::string& channel,
-		               double gain);
-
 		void stop(bool waitForTermination);
 
 		//! Returns the used stream URL
@@ -113,17 +108,15 @@ class SC_GUI_API RecordStreamThread : public QThread {
 
 
 	private:
-		typedef std::map<std::string, double> GainMap;
-		int                                   _id;
-		std::string                           _recordStreamURL;
-		bool                                  _requestedClose;
-		bool                                  _readingStreams;
-		Seiscomp::IO::RecordStreamPtr         _recordStream;
-		QMutex                                _mutex;
-		static int                            _numberOfThreads;
-		GainMap                               _gainMap;
-		Array::DataType                       _dataType;
-		Record::Hint                          _recordHint;
+		int                           _id;
+		std::string                   _recordStreamURL;
+		bool                          _requestedClose;
+		bool                          _readingStreams;
+		Seiscomp::IO::RecordStreamPtr _recordStream;
+		QMutex                        _mutex;
+		static int                    _numberOfThreads;
+		Array::DataType               _dataType;
+		Record::Hint                  _recordHint;
 };
 
 

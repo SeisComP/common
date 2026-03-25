@@ -28,7 +28,6 @@
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/io/archive/binarchive.h>
 #include <seiscomp/io/archive/jsonarchive.h>
-#include <seiscomp/io/archive/bsonarchive.h>
 #include <seiscomp/io/streams/filter/lz4.h>
 
 #include <boost/iostreams/stream.hpp>
@@ -259,9 +258,6 @@ Core::Message *Protocol::decode(const char *blob, size_t blob_length,
 			case JSON:
 				parse<IO::JSONArchive>(msg, blob, blob_length, encoding);
 				break;
-			case BSON:
-				parse<IO::BSONArchive>(msg, blob, blob_length, encoding);
-				break;
 			case XML:
 				parse<IO::XMLArchive>(msg, blob, blob_length, encoding);
 				break;
@@ -309,8 +305,6 @@ bool Protocol::encode(std::string &blob, const Core::Message *msg,
 			return write<IO::VBinaryArchive>(blob, msg, encoding, schemaVersion);
 		case JSON:
 			return write<IO::JSONArchive>(blob, msg, encoding, schemaVersion);
-		case BSON:
-			return write<IO::BSONArchive>(blob, msg, encoding, schemaVersion);
 		case XML:
 			return write<IO::XMLArchive>(blob, msg, encoding, schemaVersion);
 		case IMPORTED_XML:

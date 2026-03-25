@@ -319,22 +319,22 @@ bool Notifier::IsCheckEnabled() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Notifier::apply() const {
-	if ( _object == nullptr ) {
+	if ( !_object ) {
 		SEISCOMP_ERROR("cannot apply notifier without an object");
 		return false;
 	}
 
-	PublicObject* publicObject = PublicObject::Find(_parentID);
-	if ( publicObject == nullptr ) {
+	auto *parent = PublicObject::Find(_parentID);
+	if ( !parent ) {
 		if ( _operation == OP_UPDATE ) {
-			PublicObject *po = PublicObject::Cast(_object);
-			if ( po != nullptr ) {
-				publicObject = PublicObject::Find(po->publicID());
-				if ( publicObject && publicObject != po ) {
-					bool saveState = IsEnabled();
+			auto *po = PublicObject::Cast(_object);
+			if ( po ) {
+				parent = PublicObject::Find(po->publicID());
+				if ( parent && (parent != po) ) {
+					auto saveState = IsEnabled();
 					Disable();
-					publicObject->assign(po);
-					publicObject->update();
+					parent->assign(po);
+					parent->update();
 					SetEnabled(saveState);
 					return true;
 				}
@@ -359,14 +359,28 @@ bool Notifier::apply() const {
 
 	switch ( _operation ) {
 		case OP_ADD:
-			result = _object->attachTo(publicObject);
+			result = _object->attachTo(parent);
 			break;
 		case OP_REMOVE:
-			result = _object->detachFrom(publicObject);
+			result = _object->detachFrom(parent);
 			break;
 		case OP_UPDATE:
-			result = publicObject->updateChild(_object.get());
+		{
+			auto *po = PublicObject::Cast(_object);
+			if ( po ) {
+				auto *rpo = PublicObject::Find(po->publicID());
+				if ( rpo && (rpo != po) ) {
+					auto saveState = IsEnabled();
+					Disable();
+					rpo->assign(po);
+					rpo->update();
+					SetEnabled(saveState);
+					return true;
+				}
+			}
+			result = parent->updateChild(_object.get());
 			break;
+		}
 		default:
 			break;
 	}

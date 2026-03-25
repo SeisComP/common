@@ -27,7 +27,7 @@
 
 #include <map>
 #include <string>
-#include <cinttypes>
+#include <string_view>
 
 
 namespace Seiscomp {
@@ -57,23 +57,27 @@ class SC_SYSTEM_CORE_API Url {
 			Status,
 			EVALUES(
 				STATUS_OK,
+				STATUS_ERROR,
 				STATUS_EMPTY,
 				STATUS_SCHEME_ERROR,
 				STATUS_EMPTY_USER_INFO,
 				STATUS_EMPTY_USERNAME,
 				STATUS_INVALID_HOST,
 				STATUS_PORT_IS_NO_NUMBER,
-				STATUS_PORT_OUT_OF_RANGE
+				STATUS_PORT_OUT_OF_RANGE,
+				STATUS_INVALID_QUERY
 			),
 			ENAMES(
 				"OK",
+				"Error",
 				"URL is empty",
 				"Scheme is required",
 				"Empty user info not allowed",
 				"Empty username not allowed",
 				"Invalid host",
 				"Expected port as number",
-				"Port out of range"
+				"Port out of range",
+				"Invalid query"
 			)
 		);
 
@@ -81,7 +85,12 @@ class SC_SYSTEM_CORE_API Url {
 	//  X'truction
 	// ----------------------------------------------------------------------
 	public:
-		Url(const std::string &url = {});
+		Url(std::string_view url = {});
+		Url(std::string_view scheme,
+		    std::string_view username, std::string_view password,
+		    std::string_view host, OPT(uint16_t) port,
+		    std::string_view path, std::string_view fragment,
+		    QueryItems queryItems);
 
 
 	// ----------------------------------------------------------------------
@@ -95,7 +104,27 @@ class SC_SYSTEM_CORE_API Url {
 		 * @return true if the URL could be parsed, false in case of any
 		 *         invalid URL.
 		 */
-		bool setUrl(const std::string &url);
+		bool setUrl(std::string_view url);
+
+		/**
+		 * @brief Checks if the URL is valid
+		 * @return True is the URL is not empty and valid.
+		 */
+		bool isValid() const;
+
+		/**
+		 * @brief Returns the string representation of the URL.
+		 * @note After setting individual member, encode() must be called to update
+		 *       the internal string!
+		 * @return The URL as string
+		 */
+		const std::string &toString() const;
+
+		/**
+		 * @brief Sets the URL scheme.
+		 * @param The URL scheme
+		 */
+		Url &setScheme(std::string_view scheme);
 
 		/**
 		 * @brief Returns the URL scheme
@@ -104,10 +133,16 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &scheme() const;
 
 		/**
-		 * @brief Returns the authoriry part of the URL
+		 * @brief Returns the authority part of the URL
 		 * @return The authority
 		 */
 		const std::string &authority() const;
+
+		/**
+		 * @brief Sets the username
+		 * @param username The username
+		 */
+		Url &setUsername(std::string_view username);
 
 		/**
 		 * @brief Returns the username as extracted from the user info
@@ -116,10 +151,22 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &username() const;
 
 		/**
+		 * @brief Sets the password
+		 * @param password The password
+		 */
+		Url &setPassword(std::string_view password);
+
+		/**
 		 * @brief Returns the password as extracted from the user info
 		 * @return  The password
 		 */
 		const std::string &password() const;
+
+		/**
+		 * @brief Sets the host
+		 * @param host The host
+		 */
+		Url &setHost(std::string_view host);
 
 		/**
 		 * @brief Returns the host from the authority part
@@ -128,10 +175,22 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &host() const;
 
 		/**
+		 * @brief Sets the port.
+		 * @param port The optional port
+		 */
+		Url &setPort(OPT(uint16_t) port);
+
+		/**
 		 * @brief Returns the optional port from authority part.
 		 * @return Returns the port
 		 */
 		OPT(uint16_t) port() const;
+
+		/**
+		 * @brief Set the path.
+		 * @param path The path
+		 */
+		Url &setPath(std::string_view path);
 
 		/**
 		 * @brief Returns the path of the URL. If the scheme and authority are
@@ -147,16 +206,24 @@ class SC_SYSTEM_CORE_API Url {
 		const std::string &query() const;
 
 		/**
+		 * @brief Sets the query items.
+		 * @param items The query items
+		 */
+		Url &setQueryItems(QueryItems items);
+
+		/**
 		 * @brief Checks if a specific query parameter is set
+		 * @param The query item key
 		 * @return True if the parameter is set
 		 */
-		bool hasQueryItem (const std::string&) const;
+		bool hasQueryItem (const std::string &key) const;
 
 		/**
 		 * @brief Returns the value of a specific query parameter
+		 * @param The query item key
 		 * @return The value
 		 */
-		std::string queryItemValue(const std::string&) const;
+		std::string queryItemValue(const std::string &key) const;
 
 		/**
 		 * @brief Returns a reference to a query item map
@@ -165,22 +232,24 @@ class SC_SYSTEM_CORE_API Url {
 		const QueryItems &queryItems() const;
 
 		/**
+		 * @brief Sets the fragment.
+		 * @param fragment The fragment
+		 */
+		void setFragment(std::string_view fragment);
+
+		/**
 		 * @brief Returns the fragement part of the URL
 		 * @return The fragment
 		 */
 		const std::string &fragment() const;
 
 		/**
-		 * @brief Checks if the URL is valid
-		 * @return True is the URL is not empty and valid.
-		 */
-		bool isValid() const;
-
-		/**
 		 * @brief Returns the status of the URL
 		 * @return The status
 		 */
 		Status status() const;
+
+		const std::string &errorMessage() const;
 
 		/**
 		 * @brief Print parsed URL components
@@ -195,31 +264,44 @@ class SC_SYSTEM_CORE_API Url {
 		std::string withoutScheme() const;
 
 		/**
-		 * @brief Encodes STL string as defined in RFC 3986:
-		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
-		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
-		 * @param s STL string
-		 * @return Encoded STL string
+		 * @brief Encodes the URL from its attributes.
+		 * This method combines the following attributes:
+		 * - scheme
+		 * - username
+		 * - password
+		 * - host
+		 * - port
+		 * - path
+		 * - fragment
+		 * - query items
+		 * Each of the values is properly encoded.
+		 * Note that query items are sorted by key when they are encoded in
+		 * the final URL.
+		 * After this method was called, the
 		 */
-		static std::string Encoded(const std::string &s);
+		Url &encode();
 
 		/**
 		 * @brief Encodes C string based as defined in RFC 3986:
 		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
 		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
+		 *
+		 * @note This method does not take & (ampersand) into account.
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Encoded(const char *s, int len);
+		static std::string Encode(std::string_view sv);
 
 		/**
-		 * @brief Decodes STL string based as defined in RFC 3986:
+		 * @brief Encodes C string based as defined in RFC 3986:
 		 * RFC 3986 section 2.2 Reserved Characters (January 2005) and
 		 * RFC 3986 section 2.3 Unreserved Characters (January 2005)
+		 *
+		 * @note This method takes & (ampersand) into account.
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Decoded(const std::string &s);
+		static std::string EncodeComponent(std::string_view sv);
 
 		/**
 		 * @brief Decodes C string based as defined in RFC 3986 defined:
@@ -228,7 +310,7 @@ class SC_SYSTEM_CORE_API Url {
 		 * @param s C string
 		 * @return Encoded STL string
 		 */
-		static std::string Decoded(const char *s, int len);
+		static std::string Decode(std::string_view sv);
 
 
 	// ----------------------------------------------------------------------
@@ -236,8 +318,9 @@ class SC_SYSTEM_CORE_API Url {
 	// ----------------------------------------------------------------------
 	public:
 		operator bool() const;
-		operator const char*() const;
-		operator const std::string &() const;
+
+		bool operator==(std::string_view sv) const;
+		bool operator!=(std::string_view sv) const;
 
 
 	// ----------------------------------------------------------------------
@@ -257,35 +340,34 @@ class SC_SYSTEM_CORE_API Url {
 		 *                       given.
 		 * @return Status code
 		 */
-		Status parse(const std::string &url, bool implyAuthority);
+		Status parse(std::string_view url, bool implyAuthority);
 
 		/**
 		 * @brief Parses scheme from URL
 		 * @param url The URL
 		 * @return Status code
 		 */
-		Status parseScheme(const std::string &url);
+		Status parseScheme(std::string_view url);
 
 		/**
 		 * @brief Parses authority from URL
 		 * @param The URL
 		 * @return Status code
 		 */
-		Status parseAuthority(const std::string &url);
+		Status parseAuthority(std::string_view url);
 
 		/**
 		 * @brief Parses path from URL
 		 * @param The URL
 		 * @return Status code
 		 */
-		Status parsePath(const std::string &url);
+		Status parsePath(std::string_view url);
 
 		/**
 		 * @brief Parses query from the URL and builds key/value param lookup
-		 * @param url The URL
 		 * @return Status code
 		 */
-		Status parseQuery(const std::string &url);
+		Status parseQuery();
 
 		/**
 		 * @brief Loads scheme specific default values, e.g., for HTTP port 80
@@ -315,16 +397,29 @@ class SC_SYSTEM_CORE_API Url {
 };
 
 
-inline Url::operator bool() const {
+
+inline bool Url::isValid() const {
 	return _isValid;
 }
 
-inline Url::operator const char*() const {
-	return _url.c_str();
+inline Url::operator bool() const {
+	return isValid();
 }
 
-inline Url::operator const std::string &() const {
+inline const std::string &Url::toString() const {
 	return _url;
+}
+
+inline bool Url::operator==(std::string_view sv) const {
+	return _url == sv;
+}
+
+inline bool Url::operator!=(std::string_view sv) const {
+	return _url != sv;
+}
+
+inline const std::string &Url::errorMessage() const {
+	return _errorString;
 }
 
 

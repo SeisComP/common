@@ -1,4 +1,5 @@
 SET(TESTS
+	firstmotion.cpp
 	libtau.cpp
 	polyregion.cpp
 )

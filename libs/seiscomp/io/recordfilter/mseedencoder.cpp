@@ -22,15 +22,14 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/io/records/mseedrecord.h>
+#include <seiscomp/io/records/mseed/encoder/uncompressed.h>
+#include <seiscomp/io/records/mseed/encoder/steim1.h>
+#include <seiscomp/io/records/mseed/encoder/steim2.h>
 
 #include <streambuf>
 #include <istream>
 
 #include "mseedencoder.h"
-
-#include "encoder/mseed/uncompressed.h"
-#include "encoder/mseed/steim1.h"
-#include "encoder/mseed/steim2.h"
 
 
 #define ENCODER static_cast<MSEED::Encoder*>(_encoder.get())
@@ -62,74 +61,6 @@ struct ITypedArrayStream : virtual TypedArrayBuf<T>, std::istream {
 namespace Seiscomp {
 namespace IO {
 namespace {
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool getFraction(int &num, int &den, double value, double epsilon = 1E-5, int maxIterations = 100) {
-	int64_t overflow = INT_MAX;
-	double r0 = value;
-	int64_t a0 = (int64_t)r0;
-	if ( abs(a0) > overflow ) return false;
-
-	// check for (almost) integer arguments, which should not go
-	// to iterations.
-	if ( fabs(a0 - value) < epsilon) {
-		num = (int)a0;
-		den = 1;
-		return true;
-	}
-
-	int64_t p0 = 1;
-	int64_t q0 = 0;
-	int64_t p1 = a0;
-	int64_t q1 = 1;
-
-	int64_t p2 = 0;
-	int64_t q2 = 1;
-
-	int n = 0;
-	bool stop = false;
-
-	do {
-		++n;
-		double r1 = 1.0 / (r0 - a0);
-		int64_t a1 = (int64_t)r1;
-		p2 = (a1 * p1) + p0;
-		q2 = (a1 * q1) + q0;
-		if ( (abs(p2) > overflow) || (abs(q2) > overflow) ) {
-			return false;
-		}
-
-		double convergent = (double)p2 / (double)q2;
-		if ( n < maxIterations && fabs(convergent - value) > epsilon && q2 < INT_MAX) {
-			p0 = p1;
-			p1 = p2;
-			q0 = q1;
-			q1 = q2;
-			a0 = a1;
-			r0 = r1;
-		}
-		else
-			stop = true;
-	}
-	while (!stop);
-
-	if ( n >= maxIterations ) return false;
-
-	if ( q2 < INT_MAX ) {
-		num = (int) p2;
-		den = (int) q2;
-	}
-	else {
-		num = (int) p1;
-		den = (int) q1;
-	}
-
-	return true;
-}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -254,13 +185,13 @@ Record *MSeedEncoder::feed(const Record *rec) {
 		_dataType = dataType;
 
 		int freqn, freqd;
-		if ( !getFraction(freqn, freqd, _samplingFrequency) ) {
+		if ( !MSEED::getFraction(freqn, freqd, _samplingFrequency) ) {
 			SEISCOMP_ERROR("%s: invalid sampling rate: %f",
 			               rec->streamID(), _samplingFrequency);
 			return pop();
 		}
 
-		auto format = new MSEED::StandardFormat(
+		auto format = new MSEED::V2::StandardFormat(
 			rec->networkCode(), rec->stationCode(),
 			rec->locationCode(), rec->channelCode(),
 			freqn, freqd

@@ -27,6 +27,7 @@
 #include <seiscomp/gui/map/texturecache.h>
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/core/compat.h>
+#include <seiscomp/gui/core/icon.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/geo.h>
 
@@ -288,8 +289,8 @@ void MapWidget::init() {
 	zoomLayout->addWidget(zoomIn);
 	zoomLayout->addWidget(zoomOut);
 
-	zoomIn->setIcon(QIcon(":/map/icons/zoomin.png"));
-	zoomOut->setIcon(QIcon(":/map/icons/zoomout.png"));
+	zoomIn->setIcon(icon("zoom_in"));
+	zoomOut->setIcon(icon("zoom_out"));
 
 	_zoomControls->move(0,0);
 	_zoomControls->hide();
@@ -684,7 +685,7 @@ void MapWidget::executeContextMenuAction(QAction *action) {
 				}
 
 				QTextStream stream(&file);
-				QString header = QString(R"("%","rank %2",%3)")
+				QString header = QString(R"("%1","rank %2",%3)")
 				    .arg(_measureSaveDialog->name->text())
 				    .arg(_measureSaveDialog->rank->value())
 				    .arg(closedPolygon?_measurePoints.size():-_measurePoints.size());

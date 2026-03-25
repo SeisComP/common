@@ -234,9 +234,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string>MagTool@GFZ</string>
-            </property>
            </widget>
           </item>
           <item row="4" column="0">
