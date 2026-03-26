@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT Wire
+#define SEISCOMP_COMPONENT Wired
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/baseobject.h>
 
