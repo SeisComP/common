@@ -17,6 +17,7 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
+#define SEISCOMP_COMPONENT FilterPickerCF
 
 #include <seiscomp/math/filter/filterpicker.h>
 #include <seiscomp/math/filter/butterworth.h>
@@ -47,9 +48,9 @@ FilterPickerCF<TYPE>::FilterPickerCF(
 , _highFreq(highFreq)
 , _staWindow(staWindow)
 , _ltaWindow(ltaWindow)
-, _fsamp(fsamp)
 , _numSTA(0)
 , _numLTA(0)
+, _fsamp(fsamp)
 , _initialized(false)
 {
 }
@@ -266,7 +267,7 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 
 	// Step 1: Apply bandpass filter
 	// Use 4-pole Butterworth bandpass
-	Seiscomp::Math::Filtering::ButterworthBandpass<TYPE> bpFilter;
+	Seiscomp::Math::Filtering::IIR::ButterworthBandpass<TYPE> bpFilter;
 	bpFilter.setup(_lowFreq, _highFreq, _fsamp, 4);
 	bpFilter.apply(inputData);
 
