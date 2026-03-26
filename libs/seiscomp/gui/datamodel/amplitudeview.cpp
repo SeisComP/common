@@ -958,6 +958,26 @@ const TravelTime *findPhase(const TravelTimeList &ttt, const QString &phase, dou
 }
 
 
+TravelTime computeFirst(TravelTimeTableInterfacePtr ttt,
+                        double elat, double elon, double edep,
+                        double slat, double slon, double salt = 0.,
+                        int ellc = 1) {
+	try {
+		return ttt->computeFirst(elat, elon, edep, slat, slon, salt, ellc);
+	}
+	catch ( std::out_of_range &e ) {
+		SEISCOMP_ERROR("%s", e.what());
+		if ( edep < 0.001 ) {
+			// Fallback to compute with depth 1m.
+			SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
+			return ttt->computeFirst(elat, elon, 0.001, slat, slon, salt);
+		}
+
+		throw;
+	}
+}
+
+
 }
 
 
@@ -3443,8 +3463,8 @@ void AmplitudeView::loadNextStations(float distance) {
 
 					try {
 						TravelTime ttime =
-							SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-							                           SC_D.origin->depth(), s->latitude(), s->longitude());
+							computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+						                 SC_D.origin->depth(), s->latitude(), s->longitude());
 
 						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
@@ -3739,8 +3759,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		else /*if ( it->second.amp )*/ {
 			try {
 				TravelTime ttime =
-					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-					                           SC_D.origin->depth(), loc->latitude(), loc->longitude());
+					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                 SC_D.origin->depth(), loc->latitude(), loc->longitude());
 
 				reference = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 			}
@@ -6456,8 +6476,8 @@ void AmplitudeView::addStations() {
 
 			try {
 				TravelTime ttime =
-					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                               SC_D.origin->depth(), s->latitude(), s->longitude());
+					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                 SC_D.origin->depth(), s->latitude(), s->longitude());
 
 				Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
