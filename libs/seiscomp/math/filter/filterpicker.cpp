@@ -38,16 +38,16 @@ namespace Filtering {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
 FilterPickerCF<TYPE>::FilterPickerCF(
-	double lowFreq,
-	double highFreq,
-	double staWindow,
-	double ltaWindow,
+	int numBands,
+	double minFreq,
+	double maxFreq,
 	double fsamp
 )
-: _lowFreq(lowFreq)
-, _highFreq(highFreq)
-, _staWindow(staWindow)
-, _ltaWindow(ltaWindow)
+: _numBands(numBands)
+, _minFreq(minFreq)
+, _maxFreq(maxFreq)
+, _staWindow(0.5)
+, _ltaWindow(10.0)
 , _numSTA(0)
 , _numLTA(0)
 , _fsamp(fsamp)
@@ -59,20 +59,19 @@ FilterPickerCF<TYPE>::FilterPickerCF(
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
-void FilterPickerCF<TYPE>::setFrequencies(double lowFreq, double highFreq) {
-	_lowFreq = lowFreq;
-	_highFreq = highFreq;
-	_initialized = false; // Need to recompute sample counts
+void FilterPickerCF<TYPE>::setNumBands(int numBands) {
+	_numBands = numBands;
+	_initialized = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename TYPE>
-void FilterPickerCF<TYPE>::setWindows(double staWindow, double ltaWindow) {
-	_staWindow = staWindow;
-	_ltaWindow = ltaWindow;
-	_initialized = false; // Need to recompute sample counts
+void FilterPickerCF<TYPE>::setFrequencies(double minFreq, double maxFreq) {
+	_minFreq = minFreq;
+	_maxFreq = maxFreq;
+	_initialized = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -87,7 +86,7 @@ void FilterPickerCF<TYPE>::setSamplingFrequency(double fsamp) {
 	}
 
 	_fsamp = fsamp;
-	_initialized = false; // Will be set to true when parameters are validated
+	_initialized = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -96,42 +95,35 @@ void FilterPickerCF<TYPE>::setSamplingFrequency(double fsamp) {
 template<typename TYPE>
 int FilterPickerCF<TYPE>::setParameters(int n, const double *params) {
 	// Expected parameters:
-	// params[0]: lowFreq
-	// params[1]: highFreq
-	// params[2]: staWindow
-	// params[3]: ltaWindow
+	// params[0]: numBands
+	// params[1]: minFreq
+	// params[2]: maxFreq
 
-	if (n < 4) {
-		SEISCOMP_ERROR("FilterPickerCF requires 4 parameters: lowFreq, highFreq, staWindow, ltaWindow");
+	if (n < 3) {
+		SEISCOMP_ERROR("FilterPickerCF requires 3 parameters: numBands, minFreq, maxFreq");
 		return -1;
 	}
 
-	if (params[0] <= 0 || params[1] <= 0) {
-		SEISCOMP_ERROR("Frequencies must be positive: lowFreq=%f, highFreq=%f", params[0], params[1]);
+	if ((int)params[0] < 1) {
+		SEISCOMP_ERROR("numBands must be >= 1, got %d", (int)params[0]);
 		return -1;
 	}
 
-	if (params[0] >= params[1]) {
-		SEISCOMP_ERROR("lowFreq (%f) must be less than highFreq (%f)", params[0], params[1]);
+	if (params[1] <= 0 || params[2] <= 0) {
+		SEISCOMP_ERROR("Frequencies must be positive: minFreq=%f, maxFreq=%f", params[1], params[2]);
 		return -2;
 	}
 
-	if (params[2] <= 0 || params[3] <= 0) {
-		SEISCOMP_ERROR("Windows must be positive: staWindow=%f, ltaWindow=%f", params[2], params[3]);
+	if (params[1] >= params[2]) {
+		SEISCOMP_ERROR("minFreq (%f) must be less than maxFreq (%f)", params[1], params[2]);
 		return -3;
 	}
 
-	if (params[2] >= params[3]) {
-		SEISCOMP_ERROR("staWindow (%f) should be less than ltaWindow (%f)", params[2], params[3]);
-		return -4;
-	}
+	_numBands = (int)params[0];
+	_minFreq = params[1];
+	_maxFreq = params[2];
 
-	_lowFreq = params[0];
-	_highFreq = params[1];
-	_staWindow = params[2];
-	_ltaWindow = params[3];
-
-	return 0; // Success
+	return 3; // Success - return number of parameters used
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -148,9 +140,40 @@ void FilterPickerCF<TYPE>::reset() {
 template<typename TYPE>
 InPlaceFilter<TYPE>* FilterPickerCF<TYPE>::clone() const {
 	FilterPickerCF<TYPE> *filter = new FilterPickerCF<TYPE>(
-		_lowFreq, _highFreq, _staWindow, _ltaWindow, _fsamp
+		_numBands, _minFreq, _maxFreq, _fsamp
 	);
 	return filter;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename TYPE>
+void FilterPickerCF<TYPE>::initFilterBank() {
+	_filterBands.clear();
+	_filterBands.reserve(_numBands);
+
+	double nyquist = _fsamp / 2.0;
+	double fmin = max(_minFreq, 0.1);  // Ensure minimum frequency
+	double fmax = min(_maxFreq, nyquist * 0.95);  // Stay below Nyquist
+
+	if (_numBands == 1) {
+		// Single band
+		_filterBands.push_back({fmin, fmax});
+	} else {
+		// Multiple bands with logarithmic spacing
+		double logMin = log10(fmin);
+		double logMax = log10(fmax);
+		double logStep = (logMax - logMin) / _numBands;
+
+		for (int i = 0; i < _numBands; ++i) {
+			double bandLow = pow(10.0, logMin + i * logStep);
+			double bandHigh = pow(10.0, logMin + (i + 1) * logStep);
+			_filterBands.push_back({bandLow, bandHigh});
+		}
+	}
+
+	_initialized = true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -169,9 +192,8 @@ void FilterPickerCF<TYPE>::computeEnvelope(
 		envelope[i] = std::fabs(data[i]);
 	}
 
-	// Apply short moving average smoother (fixed window, not % of trace)
-	// Use 5-10 samples to preserve onset characteristics
-	int windowSize = std::min(10, std::max(3, n / 100)); // 1% of trace, min 3, max 10
+	// Apply short moving average smoother
+	int windowSize = std::min(10, std::max(3, n / 100));
 	if (windowSize % 2 == 0) windowSize++;
 
 	int halfWindow = windowSize / 2;
@@ -227,7 +249,7 @@ void FilterPickerCF<TYPE>::computeCF(
 		if (lta[i] > epsilon) {
 			cf[i] = sta[i] / lta[i];
 		} else {
-			cf[i] = static_cast<TYPE>(1.0); // Default to 1 when LTA is zero
+			cf[i] = static_cast<TYPE>(1.0);
 		}
 	}
 }
@@ -243,9 +265,8 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 
 	// Validate and initialize parameters if needed
 	if (!_initialized && _fsamp > 0) {
-		// Check frequency range relative to Nyquist
 		double nyquist = _fsamp / 2.0;
-		if (_lowFreq >= nyquist || _highFreq > nyquist) {
+		if (_minFreq >= nyquist || _maxFreq > nyquist) {
 			SEISCOMP_ERROR("Frequencies exceed Nyquist limit (fsamp=%f Hz)", _fsamp);
 			return;
 		}
@@ -254,7 +275,7 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 		_numSTA = std::max(1, static_cast<int>(_staWindow * _fsamp));
 		_numLTA = std::max(_numSTA + 1, static_cast<int>(_ltaWindow * _fsamp));
 
-		_initialized = true;
+		initFilterBank();
 	}
 
 	if (!_initialized) {
@@ -265,22 +286,38 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 	// Convert input to vector for processing
 	std::vector<TYPE> inputData(data, data + ndata);
 
-	// Step 1: Apply bandpass filter
-	// Use 4-pole Butterworth bandpass
-	Seiscomp::Math::Filtering::IIR::ButterworthBandpass<TYPE> bpFilter(4, _lowFreq, _highFreq, _fsamp);
-	bpFilter.apply(ndata, inputData.data());
+	// Compute CF for each band and take maximum
+	std::vector<TYPE> maxCF(ndata, 0.0);
 
-	// Step 2: Compute envelope from filtered data
-	std::vector<TYPE> envelope;
-	computeEnvelope(inputData, envelope);
+	for (size_t b = 0; b < _filterBands.size(); ++b) {
+		double lowFreq = _filterBands[b].first;
+		double highFreq = _filterBands[b].second;
 
-	// Step 3: Compute characteristic function (STA/LTA of envelope)
-	std::vector<TYPE> cf;
-	computeCF(envelope, cf);
+		// Copy input data for this band
+		std::vector<TYPE> bandData = inputData;
+
+		// Apply bandpass filter (4-pole Butterworth)
+		Seiscomp::Math::Filtering::IIR::ButterworthBandpass<TYPE> bpFilter(
+			4, lowFreq, highFreq, _fsamp);
+		bpFilter.apply(ndata, bandData.data());
+
+		// Compute envelope
+		std::vector<TYPE> envelope;
+		computeEnvelope(bandData, envelope);
+
+		// Compute CF for this band
+		std::vector<TYPE> bandCF;
+		computeCF(envelope, bandCF);
+
+		// Take maximum across all bands
+		for (int i = 0; i < ndata; ++i) {
+			maxCF[i] = std::max(maxCF[i], bandCF[i]);
+		}
+	}
 
 	// Copy result back to input array (in-place modification)
 	for (int i = 0; i < ndata; ++i) {
-		data[i] = cf[i];
+		data[i] = maxCF[i];
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -289,8 +326,9 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 // Explicit template instantiations
 INSTANTIATE_INPLACE_FILTER(FilterPickerCF, SC_SYSTEM_CORE_API);
 
-// Register the filter with the factory
+// Register the filter with the factory (multiple names)
 REGISTER_INPLACE_FILTER(FilterPickerCF, "FILTERPICKERCF");
+REGISTER_INPLACE_FILTER(FilterPickerCF, "FP");  // Short name
 
 
 } // namespace Filtering

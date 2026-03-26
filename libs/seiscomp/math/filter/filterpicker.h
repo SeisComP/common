@@ -46,9 +46,8 @@ namespace Filtering {
  * broadband picker for real-time seismic monitoring and earthquake early-warning.
  * Seismological Research Letters, 83(3), 531-540.
  *
- * This implementation operates on a single frequency band. For broadband
- * processing, use multiple instances with different frequency bands and
- * combine the outputs (e.g., using maximum or weighted average).
+ * This implementation operates on multiple frequency bands and combines them
+ * using the maximum CF across all bands, providing broadband phase detection.
  *
  * @tparam TYPE Data type (float or double)
  */
@@ -58,17 +57,15 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 		/**
 		 * @brief Construct a new FilterPicker CF filter
 		 *
-		 * @param lowFreq Low cutoff frequency in Hz (default: 1.0)
-		 * @param highFreq High cutoff frequency in Hz (default: 10.0)
-		 * @param staWindow Short-term average window in seconds (default: 0.5)
-		 * @param ltaWindow Long-term average window in seconds (default: 5.0)
+		 * @param numBands Number of frequency bands (default: 5)
+		 * @param minFreq Minimum frequency in Hz (default: 0.5)
+		 * @param maxFreq Maximum frequency in Hz (default: 20.0)
 		 * @param fsamp Sampling frequency in Hz (default: 1.0)
 		 */
 		FilterPickerCF(
-			double lowFreq = 1.0,
-			double highFreq = 10.0,
-			double staWindow = 0.5,
-			double ltaWindow = 5.0,
+			int numBands = 5,
+			double minFreq = 0.5,
+			double maxFreq = 20.0,
 			double fsamp = 1.0
 		);
 
@@ -78,9 +75,10 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 		 *
 		 * The input data is replaced with the characteristic function values.
 		 * The CF is computed as:
-		 * 1. Apply bandpass filter to input
-		 * 2. Compute envelope (absolute value + smoothing)
-		 * 3. Compute STA/LTA ratio of envelope
+		 * 1. Apply filter bank (multiple bandpass filters)
+		 * 2. Compute envelope for each band
+		 * 3. Compute STA/LTA CF for each band
+		 * 4. Take maximum CF across all bands
 		 *
 		 * @param ndata Number of data samples
 		 * @param data Input/output data array (modified in place)
@@ -106,14 +104,13 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 		 * @brief Set the filter parameters
 		 *
 		 * Parameters:
-		 * - params[0]: Low cutoff frequency (Hz)
-		 * - params[1]: High cutoff frequency (Hz)
-		 * - params[2]: STA window (seconds)
-		 * - params[3]: LTA window (seconds)
+		 * - params[0]: numBands - Number of frequency bands
+		 * - params[1]: minFreq - Minimum frequency (Hz)
+		 * - params[2]: maxFreq - Maximum frequency (Hz)
 		 *
 		 * @param n Number of parameters provided
 		 * @param params Parameter array
-		 * @return 0 on success, negative value on error (abs(return)-1 is error position)
+		 * @return 4 on success (number of params used), negative value on error
 		 */
 		int setParameters(int n, const double *params) override;
 
@@ -125,22 +122,28 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 		InPlaceFilter<TYPE>* clone() const override;
 
 		/**
-		 * @brief Set the bandpass filter frequencies
+		 * @brief Set the number of frequency bands
 		 *
-		 * @param lowFreq Low cutoff frequency in Hz
-		 * @param highFreq High cutoff frequency in Hz
+		 * @param numBands Number of bands
 		 */
-		void setFrequencies(double lowFreq, double highFreq);
+		void setNumBands(int numBands);
 
 		/**
-		 * @brief Set the STA and LTA window lengths
+		 * @brief Set the frequency range
 		 *
-		 * @param staWindow Short-term average window in seconds
-		 * @param ltaWindow Long-term average window in seconds
+		 * @param minFreq Minimum frequency in Hz
+		 * @param maxFreq Maximum frequency in Hz
 		 */
-		void setWindows(double staWindow, double ltaWindow);
+		void setFrequencies(double minFreq, double maxFreq);
 
 	protected:
+		/**
+		 * @brief Initialize the filter bank
+		 *
+		 * Creates bandpass filters for each frequency band
+		 */
+		void initFilterBank();
+
 		/**
 		 * @brief Compute envelope of the signal
 		 *
@@ -161,18 +164,20 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 
 	protected:
 		// Filter parameters
-		double _lowFreq;       ///< Low cutoff frequency in Hz
-		double _highFreq;      ///< High cutoff frequency in Hz
-		double _staWindow;     ///< STA window in seconds
-		double _ltaWindow;     ///< LTA window in seconds
+		int _numBands;         ///< Number of frequency bands
+		double _minFreq;       ///< Minimum frequency in Hz
+		double _maxFreq;       ///< Maximum frequency in Hz
 
 		// Derived parameters
+		double _staWindow;     ///< STA window in seconds (fixed: 0.5)
+		double _ltaWindow;     ///< LTA window in seconds (fixed: 10.0)
 		int _numSTA;           ///< STA window in samples
 		int _numLTA;           ///< LTA window in samples
 		double _fsamp;         ///< Sampling frequency in Hz
 
 		// Internal state
 		bool _initialized;     ///< Whether filter parameters are valid
+		std::vector<std::pair<double, double>> _filterBands; ///< Band frequencies
 };
 
 
