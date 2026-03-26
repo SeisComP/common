@@ -22,6 +22,7 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/filterpicker.h>
 #include "filterpicker.h"
 #include <cmath>
 #include <algorithm>
@@ -410,21 +411,20 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 	CharacteristicFunction cf;
 	int n = static_cast<int>(filtered.size());
 
-	// Compute envelope
-	vector<double> envelope = computeEnvelope(filtered);
 	cf.filtered = filtered;
 
-	// Compute characteristic function (STA/LTA of envelope)
-	// Use standard STA/LTA window sizes for seismic phase detection
-	// STA: 0.5-1.0 s (short-term, reacts to onset)
-	// LTA: 10-20 s (long-term, represents background)
-	int staWindow = max(3, static_cast<int>(_stream.fsamp * 0.5));  // 0.5 s STA
-	int ltaWindow = max(50, static_cast<int>(_stream.fsamp * 10.0)); // 10 s LTA
-	
-	// Ensure LTA is at least 5x STA for proper ratio
-	ltaWindow = max(ltaWindow, staWindow * 5);
+	// Use the FilterPickerCF InPlaceFilter to compute the characteristic function
+	// This provides a reusable CF computation that can be used independently
+	Math::Filtering::FilterPickerCF<double> cfFilter(
+		0.5, 10.0,  // Frequency range (CF is computed on already-filtered data)
+		0.5, 10.0,  // STA/LTA windows in seconds
+		_stream.fsamp
+	);
 
-	cf.values = computeCF(envelope, staWindow, ltaWindow);
+	// Copy filtered data for in-place modification
+	vector<double> cfData = filtered;
+	cfFilter.apply(n, cfData.data());
+	cf.values = cfData;
 
 	// Compute integral and find maximum
 	cf.integral = 0.0;

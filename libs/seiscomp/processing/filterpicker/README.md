@@ -13,6 +13,7 @@ FilterPicker is a general-purpose, broadband phase detector and picker algorithm
 - **Adaptive thresholding**: Optional noise-adaptive threshold scaling
 - **Uncertainty estimation**: Provides realistic timing uncertainty estimates
 - **Polarity detection**: Determines onset polarity (positive/negative)
+- **Reusable InPlaceFilter**: The characteristic function is available as a standalone `InPlaceFilter` for use with other pickers or preprocessing
 
 ## Algorithm
 
@@ -23,6 +24,48 @@ The FilterPicker algorithm works as follows:
 3. **Integration**: The maximum CF across all bands is integrated over a time window
 4. **Detection**: A pick is declared when the integral exceeds a threshold
 5. **Refinement**: The exact onset time and uncertainty are estimated from the CF shape
+
+## Components
+
+### 1. FilterPicker Picker Plugin
+
+The main picker plugin that implements the full FilterPicker algorithm. Use this in `scautopick` for automatic phase picking.
+
+### 2. FilterPickerCF InPlaceFilter
+
+A reusable `InPlaceFilter` that computes the FilterPicker characteristic function. This can be used:
+- As a preprocessing filter before other pickers
+- In custom processing chains
+- For research and analysis of the CF behavior
+
+Example usage of the InPlaceFilter:
+
+```cpp
+#include <seiscomp/math/filter/filterpicker.h>
+
+// Create the CF filter
+Math::Filtering::FilterPickerCF<double> cfFilter(
+    1.0, 10.0,   // Low and high frequency (Hz)
+    0.5, 10.0,   // STA and LTA windows (seconds)
+    100.0        // Sampling frequency (Hz)
+);
+
+// Apply to data (in-place modification)
+cfFilter.apply(numSamples, data);
+// Now 'data' contains the characteristic function values
+```
+
+Or in Python:
+
+```python
+from seiscomp.math import Filtering
+
+# Create the CF filter
+cfFilter = Filtering.FilterPickerCFD(1.0, 10.0, 0.5, 10.0, 100.0)
+
+# Apply to data
+cfFilter.apply(data)
+```
 
 ## Installation
 
