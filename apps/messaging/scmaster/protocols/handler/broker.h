@@ -85,7 +85,6 @@ class BrokerHandler : public WebsocketHandler, Broker::Client {
 
 	private:
 		OPT(Broker::SequenceNumber) _continueWithSeqNo;
-		int                         _bytesSent{0};
 		int                         _messageBacklog{0};
 		std::string                 _requestQueue;
 		std::string                 _initialSubscriptions;
