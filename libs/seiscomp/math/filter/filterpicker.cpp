@@ -287,8 +287,7 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 
 
 // Explicit template instantiations
-template class SC_SYSTEM_CORE_API FilterPickerCF<float>;
-template class SC_SYSTEM_CORE_API FilterPickerCF<double>;
+INSTANTIATE_INPLACE_FILTER(FilterPickerCF, SC_SYSTEM_CORE_API);
 
 // Register the filter with the factory
 REGISTER_INPLACE_FILTER(FilterPickerCF, "FILTERPICKERCF");
