@@ -290,6 +290,9 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 template class SC_SYSTEM_CORE_API FilterPickerCF<float>;
 template class SC_SYSTEM_CORE_API FilterPickerCF<double>;
 
+// Register the filter with the factory
+REGISTER_INPLACE_FILTER(FilterPickerCF, "FILTERPICKERCF");
+
 
 } // namespace Filtering
 } // namespace Math
