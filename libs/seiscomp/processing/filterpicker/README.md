@@ -67,6 +67,48 @@ cfFilter = Filtering.FilterPickerCFD(1.0, 10.0, 0.5, 10.0, 100.0)
 cfFilter.apply(data)
 ```
 
+## Using FilterPickerCF as Preprocessing Filter
+
+The `FilterPickerCF` InPlaceFilter can be used to preprocess data before applying other pickers. This is useful because:
+
+1. **Enhanced phase onsets**: The CF emphasizes phase arrivals, making them easier to detect
+2. **Noise robustness**: The CF is more robust to noise than raw amplitude
+3. **Compatibility**: Works with any picker that accepts prefiltered data
+
+### Example: Using CF with STA/LTA picker
+
+```ini
+# In scautopick.cfg
+
+# First apply FilterPickerCF as preprocessing
+filter = FilterPickerCF(1.0, 10.0, 0.5, 10.0)
+
+# Then use standard STA/LTA picker on the CF-enhanced data
+picker = STA/LTA
+picker.STALTA.lenSTA = 0.5
+picker.STALTA.lenLTA = 10.0
+picker.STALTA.threshold = 3.0
+```
+
+### Programmatic usage in C++
+
+```cpp
+#include <seiscomp/math/filter/filterpicker.h>
+#include <seiscomp/math/filter/stalta.h>
+
+// Create the CF filter
+Math::Filtering::FilterPickerCF<double> cfFilter(1.0, 10.0, 0.5, 10.0, fsamp);
+
+// Create STA/LTA picker
+Math::Filtering::STALTA<double> staltaPicker(0.5, 10.0, fsamp);
+
+// Process data: first CF, then STA/LTA
+cfFilter.apply(n, data);      // data now contains CF
+staltaPicker.apply(n, data);  // data now contains CF-based STA/LTA
+```
+
+This approach allows you to combine the robustness of FilterPicker's characteristic function with the simplicity and speed of other picking algorithms.
+
 ## Installation
 
 ### Prerequisites
