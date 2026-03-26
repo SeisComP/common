@@ -267,11 +267,10 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 
 	// Step 1: Apply bandpass filter
 	// Use 4-pole Butterworth bandpass
-	Seiscomp::Math::Filtering::IIR::ButterworthBandpass<TYPE> bpFilter;
-	bpFilter.setup(_lowFreq, _highFreq, _fsamp, 4);
-	bpFilter.apply(inputData);
+	Seiscomp::Math::Filtering::IIR::ButterworthBandpass<TYPE> bpFilter(4, _lowFreq, _highFreq, _fsamp);
+	bpFilter.apply(ndata, inputData.data());
 
-	// Step 2: Compute envelope
+	// Step 2: Compute envelope from filtered data
 	std::vector<TYPE> envelope;
 	computeEnvelope(inputData, envelope);
 
