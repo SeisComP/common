@@ -81,13 +81,7 @@ The `FilterPickerCF` InPlaceFilter can be used to preprocess data before applyin
 # In scautopick.cfg
 
 # First apply FilterPickerCF as preprocessing
-filter = FilterPickerCF(1.0, 10.0, 0.5, 10.0)
-
-# Then use standard STA/LTA picker on the CF-enhanced data
-picker = STA/LTA
-picker.STALTA.lenSTA = 0.5
-picker.STALTA.lenLTA = 10.0
-picker.STALTA.threshold = 3.0
+filter = FilterPickerCF(1.0, 10.0, 0.5, 10.0)>>STALTA(0.5,10)
 ```
 
 ### Programmatic usage in C++
