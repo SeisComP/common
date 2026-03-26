@@ -326,9 +326,8 @@ void FilterPickerCF<TYPE>::apply(int ndata, TYPE *data) {
 // Explicit template instantiations
 INSTANTIATE_INPLACE_FILTER(FilterPickerCF, SC_SYSTEM_CORE_API);
 
-// Register the filter with the factory (multiple names)
-REGISTER_INPLACE_FILTER(FilterPickerCF, "FILTERPICKERCF");
-REGISTER_INPLACE_FILTER(FilterPickerCF, "FP");  // Short name
+// Register the filter with the factory (short name)
+REGISTER_INPLACE_FILTER(FilterPickerCF, "FP");
 
 
 } // namespace Filtering
