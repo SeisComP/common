@@ -27203,6 +27203,43 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_MSeedRecord_format(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::MSeedRecord *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::IO::MSeedRecord::Format result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_format" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  {
+    try {
+      result = (Seiscomp::IO::MSeedRecord::Format)((Seiscomp::IO::MSeedRecord const *)arg1)->format();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_MSeedRecord_recordLength(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::MSeedRecord *arg1 = 0 ;
@@ -37294,6 +37331,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "MSeedRecord_byteOrder", _wrap_MSeedRecord_byteOrder, METH_O, "MSeedRecord_byteOrder(MSeedRecord self) -> int8_t"},
 	 { "MSeedRecord_encoding", _wrap_MSeedRecord_encoding, METH_O, "MSeedRecord_encoding(MSeedRecord self) -> int8_t"},
 	 { "MSeedRecord_endTime", _wrap_MSeedRecord_endTime, METH_O, "MSeedRecord_endTime(MSeedRecord self) -> Time"},
+	 { "MSeedRecord_format", _wrap_MSeedRecord_format, METH_O, "MSeedRecord_format(MSeedRecord self) -> Seiscomp::IO::MSeedRecord::Format"},
 	 { "MSeedRecord_recordLength", _wrap_MSeedRecord_recordLength, METH_O, "MSeedRecord_recordLength(MSeedRecord self) -> int"},
 	 { "MSeedRecord_data", _wrap_MSeedRecord_data, METH_O, "MSeedRecord_data(MSeedRecord self) -> Array"},
 	 { "MSeedRecord_raw", _wrap_MSeedRecord_raw, METH_O, "MSeedRecord_raw(MSeedRecord self) -> Array"},

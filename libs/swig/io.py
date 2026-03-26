@@ -1497,6 +1497,10 @@ class MSeedRecord(seiscomp.core.Record):
         r"""endTime(MSeedRecord self) -> Time"""
         return _io.MSeedRecord_endTime(self)
 
+    def format(self):
+        r"""format(MSeedRecord self) -> Seiscomp::IO::MSeedRecord::Format"""
+        return _io.MSeedRecord_format(self)
+
     def recordLength(self):
         r"""recordLength(MSeedRecord self) -> int"""
         return _io.MSeedRecord_recordLength(self)
