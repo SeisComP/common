@@ -448,8 +448,8 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 			filteredMax = max(filteredMax, fabs(filtered[i]));
 			filteredSum += fabs(filtered[i]);
 		}
-		SEISCOMP_DEBUG("CF debug: staWin=%d, ltaWin=%d, filtMax=%.6f, filtAvg=%.6f, cfMax=%.4f, cfAvg=%.4f",
-		               staWindow, ltaWindow, filteredMax, filteredSum/n, cf.maxVal, cf.integral/n);
+		SEISCOMP_DEBUG("CF debug: filtMax=%.6f, filtAvg=%.6f, cfMax=%.4f, cfAvg=%.4f",
+		               filteredMax, filteredSum/n, cf.maxVal, cf.integral/n);
 		debugCount++;
 	}
 
