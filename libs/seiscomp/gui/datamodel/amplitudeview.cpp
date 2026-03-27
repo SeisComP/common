@@ -2155,6 +2155,8 @@ void AmplitudeView::init() {
 	addAction(SC_D.ui.actionAlignOnPArrival);
 
 	addAction(SC_D.ui.actionToggleFilter);
+	addAction(SC_D.ui.actionNextFilter);
+	addAction(SC_D.ui.actionPreviousFilter);
 	addAction(SC_D.ui.actionMaximizeAmplitudes);
 
 	addAction(SC_D.ui.actionCreateAmplitude);
@@ -2189,6 +2191,8 @@ void AmplitudeView::init() {
 	SC_D.comboFilter->addItem(DEFAULT_FILTER_STRING);
 	SC_D.comboFilter->setCurrentIndex(1);
 	SC_D.ui.actionToggleFilter->setEnabled(false);
+	SC_D.ui.actionNextFilter->setEnabled(false);
+	SC_D.ui.actionPreviousFilter->setEnabled(false);
 	changeFilter(SC_D.comboFilter->currentIndex());
 
 	SC_D.spinSNR = new QDoubleSpinBox;
@@ -2361,6 +2365,10 @@ void AmplitudeView::init() {
 
 	connect(SC_D.ui.actionToggleFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(toggleFilter()));
+	connect(SC_D.ui.actionNextFilter, SIGNAL(triggered(bool)),
+	        this, SLOT(nextFilter()));
+	connect(SC_D.ui.actionPreviousFilter, SIGNAL(triggered(bool)),
+	        this, SLOT(previousFilter()));
 
 	connect(SC_D.ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleVisibleAmplitudes()));
@@ -2537,6 +2545,8 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 		SC_D.comboFilter->blockSignals(false);
 		SC_D.comboFilter->setCurrentIndex(defaultIndex != -1 ? defaultIndex : 1);
 		SC_D.ui.actionToggleFilter->setEnabled(!SC_D.config.filters.empty());
+		SC_D.ui.actionNextFilter->setEnabled(!SC_D.config.filters.empty());
+		SC_D.ui.actionPreviousFilter->setEnabled(!SC_D.config.filters.empty());
 	}
 
 	RecordViewItem *item = SC_D.recordView->currentItem();
@@ -5445,6 +5455,40 @@ void AmplitudeView::toggleFilter() {
 
 		SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::nextFilter() {
+	// Filtering turned off
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx == 0 ) return;
+
+	++idx;
+	if ( idx >= SC_D.comboFilter->count() )
+		idx = 1;
+
+	SC_D.comboFilter->setCurrentIndex(idx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::previousFilter() {
+	// Filtering turned off
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx == 0 ) return;
+
+	--idx;
+	if ( idx < 1 )
+		idx = SC_D.comboFilter->count()-1;
+
+	SC_D.comboFilter->setCurrentIndex(idx);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
