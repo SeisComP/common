@@ -11,7 +11,6 @@ SET(PROC_SOURCES
 	regions.cpp
 
 	detector.cpp
-        filterpicker.cpp
 	fx.cpp
 	picker.cpp
 	secondarypicker.cpp
@@ -32,7 +31,7 @@ SET(PROC_HEADERS
 	regions.h
 
 	detector.h
-        filterpicker.h
+
 	picker.h
 	secondarypicker.h
 	amplitudeprocessor.h
