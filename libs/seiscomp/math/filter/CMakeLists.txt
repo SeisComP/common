@@ -19,7 +19,7 @@ SET(FILTER_SOURCES
 	seismometers.cpp
 	sr.cpp
 	sum.cpp
-	filterpicker.cpp
+	filterpickercf.cpp
 )
 
 SET(FILTER_HEADERS
@@ -47,7 +47,7 @@ SET(FILTER_HEADERS
 	seismometers.h
 	sr.h
 	sum.h
-	filterpicker.h
+	filterpickercf.h
 )
 
 SC_SETUP_LIB_SUBDIR(FILTER)

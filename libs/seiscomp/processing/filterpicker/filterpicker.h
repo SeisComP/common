@@ -23,7 +23,9 @@
 
 
 #include <seiscomp/processing/picker.h>
+#include <seiscomp/math/filter.h>
 #include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/filterpickercf.h>
 #include <seiscomp/core/plugin.h>
 #include <vector>
 
