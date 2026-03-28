@@ -22,7 +22,7 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/filter/butterworth.h>
-#include <seiscomp/math/filter/filterpicker.h>
+#include <seiscomp/math/filter/filterpickercf.h>
 #include "filterpicker.h"
 #include <cmath>
 #include <algorithm>
@@ -415,11 +415,10 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 
 	// Use the FilterPickerCF InPlaceFilter to compute the characteristic function
 	// This provides a reusable CF computation that can be used independently
-	Math::Filtering::FilterPickerCF<double> cfFilter(
-		0.5, 10.0,  // Frequency range (CF is computed on already-filtered data)
-		0.5, 10.0,  // STA/LTA windows in seconds
-		_stream.fsamp
-	);
+	Math::Filtering::FilterPickerCF<double> cfFilter;
+	double params[3] = {static_cast<double>(_numBands), _minFreq, _maxFreq};
+	cfFilter.setParameters(3, params);
+	cfFilter.setSamplingFrequency(_stream.fsamp);
 
 	// Copy filtered data for in-place modification
 	vector<double> cfData = filtered;

@@ -177,7 +177,6 @@ void cosRamp(size_t n, T *inout, size_t istart, size_t iend, size_t estart, size
 #include<seiscomp/math/hilbert.ipp>
 #include<seiscomp/math/minmax.ipp>
 #include<seiscomp/math/decomp.ipp>
-#include<seiscomp/math/filter/filterpicker.h>
 
 
 #endif

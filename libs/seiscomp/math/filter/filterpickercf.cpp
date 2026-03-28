@@ -251,6 +251,6 @@ template class SC_SYSTEM_CORE_API FilterPickerCF<double>;
 REGISTER_INPLACE_FILTER(FilterPickerCF, "FP");
 
 
-} // namespace Seiscomp::Math::Filter
+} // namespace Seiscomp::Math::Filtering
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
