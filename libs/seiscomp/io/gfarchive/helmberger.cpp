@@ -250,7 +250,7 @@ bool HelmbergerArchive::addRequest(const std::string &id,
                                    const GFSource &source,
                                    const GFReceiver &receiver) {
 	if ( !hasModel(model) ) {
-		SEISCOMP_DEBUG("Wrong model: %s", model.c_str());
+		SEISCOMP_DEBUG("Wrong model: %s", model);
 		return false;
 	}
 
@@ -279,7 +279,7 @@ bool HelmbergerArchive::addRequest(const std::string &id,
                                    const GFReceiver &receiver,
                                    const Core::TimeSpan &span) {
 	if ( !hasModel(model) ) {
-		SEISCOMP_DEBUG("Green's functions - Wrong model: %s", model.c_str());
+		SEISCOMP_DEBUG("Wrong model: %s", model);
 		return false;
 	}
 
@@ -303,7 +303,7 @@ bool HelmbergerArchive::addRequest(const std::string &id,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Core::GreensFunction* HelmbergerArchive::get() {
+Core::GreensFunction *HelmbergerArchive::get() {
 	while ( !_requests.empty() ) {
 		Request req = _requests.front();
 		_requests.pop_front();
@@ -317,8 +317,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 		ModelMap::iterator mit = _models.find(req.model);
 		if ( mit == _models.end() ) {
-			SEISCOMP_DEBUG("Green's functions - helmberger: req dropped, model %s not available",
-			                req.model.c_str());
+			SEISCOMP_DEBUG("Request dropped, model %s not available", req.model);
 			continue;
 		}
 
@@ -338,7 +337,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDistError = dist2 - dist1;
 			if ( dist1 - distKm > maxDistError ) {
-				SEISCOMP_DEBUG("Green's functions - helmberger: distance too low: %d km", distKm);
+				SEISCOMP_DEBUG("Distance too low: %d km", distKm);
 				continue;
 			}
 
@@ -352,7 +351,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDistError = dist2 - dist1;
 			if ( distKm - dist2 > maxDistError ) {
-				SEISCOMP_DEBUG("Green's functions - helmberger: distance too high: %d km", distKm);
+				SEISCOMP_DEBUG("Distance too high: %d km", distKm);
 				continue;
 			}
 
@@ -373,7 +372,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDepError = dep2 - dep1;
 			if ( dep1 - iDepth > maxDepError ) {
-				SEISCOMP_DEBUG("Green's functions - helmberger: depth too low: %d km", iDepth);
+				SEISCOMP_DEBUG("Depth too low: %d km", iDepth);
 				continue;
 			}
 
@@ -388,7 +387,7 @@ Core::GreensFunction* HelmbergerArchive::get() {
 
 			double maxDepError = dep2 - dep1;
 			if ( iDepth - dep2 > maxDepError ) {
-				SEISCOMP_DEBUG("Green's functions - helmberger: depth too high: %d km", iDepth);
+				SEISCOMP_DEBUG("Depth too high: %d km", iDepth);
 				continue;
 			}
 
@@ -457,11 +456,15 @@ Core::GreensFunction* HelmbergerArchive::get() {
 				return gf1;
 			}
 			else {
-				SEISCOMP_ERROR("Green's functions - Unable to read %s or %s",
-				               (pathprefix + Core::toString(dist1) + "d" + Core::toString(dep) + ".disp").c_str(),
-				               file.c_str());
-				if ( gf1 ) delete gf1;
-				if ( gf2 ) delete gf2;
+				SEISCOMP_ERROR("Unable to read %s or %s",
+				               pathprefix + Core::toString(dist1) + "d" + Core::toString(dep) + ".disp",
+				               file);
+				if ( gf1 ) {
+					delete gf1;
+				}
+				if ( gf2 ) {
+					delete gf2;
+				}
 			}
 		}
 
@@ -491,8 +494,8 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 	int components = 0;
 	ifs >> components;
 	if ( components < 8 ) {
-		SEISCOMP_WARNING("Green's functions - %s: invalid number of components: %d, need 8",
-		                 file.c_str(), components);
+		SEISCOMP_WARNING("%s: invalid number of components: %d, need 8",
+		                 file, components);
 		return nullptr;
 	}
 
@@ -502,28 +505,25 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 	boost::smatch what;
 	if ( !boost::regex_match(format, what, boost::regex("^\\(([0-9]*)e([0-9]*)\\.([0-9]*)\\)")) ) {
-		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
-		                 file.c_str(), format.c_str());
+		SEISCOMP_WARNING("%s: wrong format: %s",
+		                 file, format);
 		return nullptr;
 	}
 
 	if ( what.size() != 4 ) {
-		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
-		                 file.c_str(), format.c_str());
+		SEISCOMP_WARNING("%s: wrong format: %s", file, format);
 		return nullptr;
 	}
 
 	int numTokens, tokenSize;
 
 	if ( !Core::fromString(numTokens, what.str(1)) ) {
-		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
-		                 file.c_str(), format.c_str());
+		SEISCOMP_WARNING("%s: wrong format: %s", file, format);
 		return nullptr;
 	}
 
 	if ( !Core::fromString(tokenSize, what.str(2)) ) {
-		SEISCOMP_WARNING("Green's functions - %s: wrong format: %s",
-		                 file.c_str(), format.c_str());
+		SEISCOMP_WARNING("%s: wrong format: %s", file, format);
 		return nullptr;
 	}
 
@@ -570,8 +570,8 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 
 		}
 		else if ( samplingFrequency != gf->samplingFrequency() ) {
-			SEISCOMP_ERROR("Green's functions - %s: mismatching sampling frequencies between components",
-			               file.c_str());
+			SEISCOMP_ERROR("%s: mismatching sampling frequencies between components: %f != %f",
+			               file, samplingFrequency, gf->samplingFrequency());
 			delete gf;
 			return nullptr;
 		}
@@ -579,82 +579,69 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 		int completeLines = numSamples / numTokens;
 		int count = 0;
 
-		if ( maxSamples > numSamples ) maxSamples = numSamples;
+		if ( maxSamples > numSamples ) {
+			maxSamples = numSamples;
+		}
 
 		FloatArrayPtr arr = new FloatArray(maxSamples);
 
-		for ( int i = 0; i < completeLines; ++i ) {
-			tmp.resize(tokenSize);
-			for ( int j = 0; j < numTokens; ++j ) {
-				int idx = 0;
-				while ( idx < tokenSize ) {
-					int read = ifs.readsome(&tmp[idx], tokenSize-idx);
-					if ( read <= 0 ) {
-						SEISCOMP_ERROR("Green's functions - %s: read error", file.c_str());
-						delete gf;
-						return nullptr;
-					}
-					idx += read;
-				}
+		std::string line;
 
-				//std::cout << tmp << "|" << std::flush;
+		for ( int i = 0; i < completeLines; ++i ) {
+			line = {}; std::getline(ifs, line);
+
+			for ( int j = 0; j < numTokens; ++j ) {
+				tmp = Core::trim(line.substr(j * tokenSize, tokenSize));
 
 				float value;
 				if ( !Core::fromString(value, tmp) ) {
-					SEISCOMP_ERROR("Green's functions - %s: invalid numeric value"
-					               "%s at index %d",
-					               file.c_str(), tmp.c_str(), count);
+					SEISCOMP_ERROR("%s: invalid numeric value"
+					               " '%s' at line %d and column %d",
+					               file, tmp, i, j);
 					delete gf;
 					return nullptr;
 				}
 
-				if ( count < arr->size() ) (*arr)[count] = value;
+				if ( count < arr->size() ) {
+					(*arr)[count] = value;
+				}
+
 				++count;
 			}
-
-			//std::cout << std::endl;
-
-			std::getline(ifs, tmp);
 		}
 
-		tmp.resize(tokenSize);
-		for ( int i = count; i < numSamples; ++i ) {
-			int idx = 0;
-			while ( idx < tokenSize ) {
-				int read = ifs.readsome(&tmp[idx], tokenSize-idx);
-				if ( read <= 0 ) {
-					SEISCOMP_ERROR("%s: read error", file.c_str());
-					delete gf;
-					return nullptr;
-				}
-				idx += read;
-			}
+		line = {}; std::getline(ifs, line);
+
+		int idx = 0;
+		for ( int i = count; i < numSamples; ++i, ++idx ) {
+			tmp = Core::trim(line.substr(idx * tokenSize, tokenSize));
 
 			float value;
 			if ( !Core::fromString(value, tmp) ) {
-				SEISCOMP_ERROR("Green's functions - %s: invalid numeric value %s"
-				               "at index %d", file.c_str(), tmp.c_str(), count);
+				SEISCOMP_ERROR("%s: invalid numeric value"
+				               " '%s' at line %d and column %d",
+				               file, tmp, completeLines, i - completeLines * numTokens);
 				delete gf;
 				return nullptr;
 			}
 
-			if ( count < arr->size() ) (*arr)[count] = value;
+			if ( count < arr->size() ) {
+				(*arr)[count] = value;
+			}
+
 			++count;
 		}
 
-		//SEISCOMP_DEBUG("%s: read %d samples", file.c_str(), arr->size());
-
 		if ( orderedComps[c] == Core::ZSS ||
 		     orderedComps[c] == Core::ZDS ||
-		     orderedComps[c] == Core::ZDD )
-		{
-			for ( int i = 0; i < arr->size(); ++i )
+		     orderedComps[c] == Core::ZDD ) {
+			for ( int i = 0; i < arr->size(); ++i ) {
 				(*arr)[i] *= -1.0f;
+			}
 		}
 
 		gf->setData(orderedComps[c], arr.get());
 
-		std::getline(ifs, tmp);
 		// --- to here
 	}
 
