@@ -158,7 +158,7 @@ class FilterPickerCF : public InPlaceFilter<TYPE> {
 };
 
 
-} // namespace Seiscomp::Math::Filtering
+} // namespace Seiscomp::Math::Filter
 } // namespace Seiscomp::Math
 } // namespace Seiscomp
 
