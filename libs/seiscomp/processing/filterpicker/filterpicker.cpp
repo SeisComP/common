@@ -22,7 +22,6 @@
 
 #include <seiscomp/logging/log.h>
 #include <seiscomp/math/filter/butterworth.h>
-#include <seiscomp/math/filter/filterpickercf.h>
 #include "filterpicker.h"
 #include <cmath>
 #include <algorithm>
@@ -411,19 +410,21 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 	CharacteristicFunction cf;
 	int n = static_cast<int>(filtered.size());
 
+	// Compute envelope
+	vector<double> envelope = computeEnvelope(filtered);
 	cf.filtered = filtered;
 
-	// Use the FilterPickerCF InPlaceFilter to compute the characteristic function
-	// This provides a reusable CF computation that can be used independently
-	Math::Filtering::FilterPickerCF<double> cfFilter;
-	double params[3] = {static_cast<double>(_numBands), _minFreq, _maxFreq};
-	cfFilter.setParameters(3, params);
-	cfFilter.setSamplingFrequency(_stream.fsamp);
+	// Compute characteristic function (STA/LTA of envelope)
+	// Use standard STA/LTA window sizes for seismic phase detection
+	// STA: 0.5-1.0 s (short-term, reacts to onset)
+	// LTA: 10-20 s (long-term, represents background)
+	int staWindow = max(3, static_cast<int>(_stream.fsamp * 0.5));  // 0.5 s STA
+	int ltaWindow = max(50, static_cast<int>(_stream.fsamp * 10.0)); // 10 s LTA
+	
+	// Ensure LTA is at least 5x STA for proper ratio
+	ltaWindow = max(ltaWindow, staWindow * 5);
 
-	// Copy filtered data for in-place modification
-	vector<double> cfData = filtered;
-	cfFilter.apply(n, cfData.data());
-	cf.values = cfData;
+	cf.values = computeCF(envelope, staWindow, ltaWindow);
 
 	// Compute integral and find maximum
 	cf.integral = 0.0;
@@ -447,8 +448,8 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 			filteredMax = max(filteredMax, fabs(filtered[i]));
 			filteredSum += fabs(filtered[i]);
 		}
-		SEISCOMP_DEBUG("CF debug: filtMax=%.6f, filtAvg=%.6f, cfMax=%.4f, cfAvg=%.4f",
-		               filteredMax, filteredSum/n, cf.maxVal, cf.integral/n);
+		SEISCOMP_DEBUG("CF debug: staWin=%d, ltaWin=%d, filtMax=%.6f, filtAvg=%.6f, cfMax=%.4f, cfAvg=%.4f",
+		               staWindow, ltaWindow, filteredMax, filteredSum/n, cf.maxVal, cf.integral/n);
 		debugCount++;
 	}
 

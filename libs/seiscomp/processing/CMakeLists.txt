@@ -31,6 +31,7 @@ SET(PROC_HEADERS
 	regions.h
 
 	detector.h
+
 	picker.h
 	secondarypicker.h
 	amplitudeprocessor.h
