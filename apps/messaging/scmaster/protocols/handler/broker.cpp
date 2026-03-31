@@ -261,9 +261,7 @@ void BrokerHandler::welcome() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void BrokerHandler::start() {
-	_bytesSent = 0;
-}
+void BrokerHandler::start() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -591,7 +589,6 @@ size_t BrokerHandler::sendMessage(Broker::Message *msg) {
 
 	size_t frameLength = msg->encodingWebSocket->data.size();
 	frameLength += msg->encodingWebSocket->header.size();
-	_bytesSent += frameLength;
 
 	/*
 	if ( inAvail() > 1024 )
@@ -813,8 +810,9 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 		os << "\n";
 
 		size_t i = 0;
-		for ( ; i < outParams.size(); ++i )
+		for ( ; i < outParams.size(); ++i ) {
 			os << outParams[i].first << ":" << outParams[i].second << "\n";
+		}
 
 		os << "\n";
 	}
@@ -822,35 +820,28 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 	Websocket::Frame::finalizeBuffer(welcomeBuffer.get(), Websocket::Frame::TextFrame);
 	_session->send(welcomeBuffer.get());
 
-	// Collect processors
-
-	_bytesSent += welcomeBuffer->header.size();
-	_bytesSent += welcomeBuffer->data.size();
-
-	if ( _queue ) {
-		/*
-		if ( groupList ) {
-			size_t group_len;
-			const char *group;
-			while ( (group = tokenize2(groupList, ",", groupListLen, group_len)) ) {
-				trim(group, group_len);
-				if ( group_len == 0 ) continue;
-				string groupName(group, group_len);
-				Broker::Queue::Result r = _queue->subscribe(this, groupName);
-				if ( r) {
-					replyWithError(str(ERR_QUEUE_ERRORS + r));
-					return;
-				}
+	/*
+	if ( groupList ) {
+		size_t group_len;
+		const char *group;
+		while ( (group = tokenize2(groupList, ",", groupListLen, group_len)) ) {
+			trim(group, group_len);
+			if ( group_len == 0 ) continue;
+			string groupName(group, group_len);
+			Broker::Queue::Result r = _queue->subscribe(this, groupName);
+			if ( r) {
+				replyWithError(str(ERR_QUEUE_ERRORS + r));
+				return;
 			}
 		}
-		*/
-
-		if ( seqNo ) {
-			_continueWithSeqNo = *seqNo + 1;
-		}
-
-		_session->setTag(true);
 	}
+	*/
+
+	if ( seqNo ) {
+		_continueWithSeqNo = *seqNo + 1;
+	}
+
+	_session->setTag(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1112,8 +1103,9 @@ void BrokerHandler::commandSEND(char *frame, size_t len) {
 
 	size_t headerLength = static_cast<size_t>(headers.getptr() - frame);
 	size_t payloadLength = static_cast<size_t>(len) - headerLength;
-	if ( contentLength < 0 )
+	if ( contentLength < 0 ) {
 		contentLength = static_cast<int>(payloadLength);
+	}
 	else if ( contentLength != static_cast<int>(payloadLength) ) {
 		replyWithError(str(ERR_LENGTH_MISMATCH));
 		delete msg;

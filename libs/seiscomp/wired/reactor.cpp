@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT Wire
+#define SEISCOMP_COMPONENT Wired
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/baseobject.h>
 
@@ -293,7 +293,7 @@ void Reactor::shutdown() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Reactor::release(SessionPtr &ptr) {
-	lock_guard<mutex> l(_mutex);
+	lock_guard<mutex> l(_sessionMutex);
 	ptr = nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

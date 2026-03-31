@@ -958,6 +958,26 @@ const TravelTime *findPhase(const TravelTimeList &ttt, const QString &phase, dou
 }
 
 
+TravelTime computeFirst(TravelTimeTableInterfacePtr ttt,
+                        double elat, double elon, double edep,
+                        double slat, double slon, double salt = 0.,
+                        int ellc = 1) {
+	try {
+		return ttt->computeFirst(elat, elon, edep, slat, slon, salt, ellc);
+	}
+	catch ( std::out_of_range &e ) {
+		SEISCOMP_ERROR("%s", e.what());
+		if ( edep < 0.001 ) {
+			// Fallback to compute with depth 1m.
+			SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
+			return ttt->computeFirst(elat, elon, 0.001, slat, slon, salt);
+		}
+
+		throw;
+	}
+}
+
+
 }
 
 
@@ -2105,6 +2125,8 @@ void AmplitudeView::init() {
 	addAction(SC_D.ui.actionAlignOnPArrival);
 
 	addAction(SC_D.ui.actionToggleFilter);
+	addAction(SC_D.ui.actionNextFilter);
+	addAction(SC_D.ui.actionPreviousFilter);
 	addAction(SC_D.ui.actionMaximizeAmplitudes);
 
 	addAction(SC_D.ui.actionCreateAmplitude);
@@ -2139,6 +2161,8 @@ void AmplitudeView::init() {
 	SC_D.comboFilter->addItem(DEFAULT_FILTER_STRING);
 	SC_D.comboFilter->setCurrentIndex(1);
 	SC_D.ui.actionToggleFilter->setEnabled(false);
+	SC_D.ui.actionNextFilter->setEnabled(false);
+	SC_D.ui.actionPreviousFilter->setEnabled(false);
 	changeFilter(SC_D.comboFilter->currentIndex());
 
 	SC_D.spinSNR = new QDoubleSpinBox;
@@ -2311,6 +2335,10 @@ void AmplitudeView::init() {
 
 	connect(SC_D.ui.actionToggleFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(toggleFilter()));
+	connect(SC_D.ui.actionNextFilter, SIGNAL(triggered(bool)),
+	        this, SLOT(nextFilter()));
+	connect(SC_D.ui.actionPreviousFilter, SIGNAL(triggered(bool)),
+	        this, SLOT(previousFilter()));
 
 	connect(SC_D.ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleVisibleAmplitudes()));
@@ -2487,6 +2515,8 @@ bool AmplitudeView::setConfig(const Config &c, QString *error) {
 		SC_D.comboFilter->blockSignals(false);
 		SC_D.comboFilter->setCurrentIndex(defaultIndex != -1 ? defaultIndex : 1);
 		SC_D.ui.actionToggleFilter->setEnabled(!SC_D.config.filters.empty());
+		SC_D.ui.actionNextFilter->setEnabled(!SC_D.config.filters.empty());
+		SC_D.ui.actionPreviousFilter->setEnabled(!SC_D.config.filters.empty());
 	}
 
 	RecordViewItem *item = SC_D.recordView->currentItem();
@@ -3451,8 +3481,8 @@ void AmplitudeView::loadNextStations(float distance) {
 
 					try {
 						TravelTime ttime =
-							SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-							                           SC_D.origin->depth(), s->latitude(), s->longitude());
+							computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+						                 SC_D.origin->depth(), s->latitude(), s->longitude());
 
 						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
@@ -3747,8 +3777,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 		else /*if ( it->second.amp )*/ {
 			try {
 				TravelTime ttime =
-					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-					                           SC_D.origin->depth(), loc->latitude(), loc->longitude());
+					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                 SC_D.origin->depth(), loc->latitude(), loc->longitude());
 
 				reference = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 			}
@@ -5402,6 +5432,40 @@ void AmplitudeView::toggleFilter() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::nextFilter() {
+	// Filtering turned off
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx == 0 ) return;
+
+	++idx;
+	if ( idx >= SC_D.comboFilter->count() )
+		idx = 1;
+
+	SC_D.comboFilter->setCurrentIndex(idx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::previousFilter() {
+	// Filtering turned off
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx == 0 ) return;
+
+	--idx;
+	if ( idx < 1 )
+		idx = SC_D.comboFilter->count()-1;
+
+	SC_D.comboFilter->setCurrentIndex(idx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::addNewFilter(const QString& filter) {
 	SC_D.lastFilterIndex = SC_D.comboFilter->findData(filter);
 
@@ -6464,8 +6528,8 @@ void AmplitudeView::addStations() {
 
 			try {
 				TravelTime ttime =
-					SC_D.ttTable->computeFirst(SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                               SC_D.origin->depth(), s->latitude(), s->longitude());
+					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
+				                 SC_D.origin->depth(), s->latitude(), s->longitude());
 
 				Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 

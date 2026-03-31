@@ -2382,6 +2382,10 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 	if ( targetComponent() >= VerticalComponent && targetComponent() <= SecondHorizontalComponent ) {
 		SignalUnit unit;
 		if ( !unit.fromString(_streamConfig[targetComponent()].gainUnit.c_str()) ) {
+			SEISCOMP_ERROR("%s.%s.%s.%s - invalid gainUnit string '%s'",
+			               settings.networkCode, settings.stationCode,
+			               settings.locationCode, settings.channelCode,
+                     _streamConfig[targetComponent()].gainUnit.c_str());
 			// Invalid unit string
 			setStatus(IncompatibleUnit, 0);
 			return false;
