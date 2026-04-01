@@ -275,6 +275,8 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 		void clearOrigins();
 		void clearFMs();
 
+		void updateOriginStations(const DataModel::Origin *org);
+
 		void mergeOrigins(const QList<DataModel::Origin*> &origins);
 
 		void setFMActivity(bool);
@@ -304,6 +306,8 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 		// origin tab
 		OriginList                _origins;
 		MapWidget                *_originMap;
+		Map::Layer               *_originStationLayer;
+		Map::AnnotationLayer     *_originAnnotationLayer;
 		QRectF                    _originBoundings;
 		DataModel::OriginPtr      _currentOrigin;
 		DataModel::MagnitudePtr   _currentMagnitude;
