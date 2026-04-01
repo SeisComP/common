@@ -22,6 +22,8 @@
 
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/logging/log.h>
+#include <seiscomp/datamodel/pick.h>
+#include <seiscomp/math/geo.h>
 #include <seiscomp/gui/datamodel/eventedit.h>
 #include <seiscomp/gui/datamodel/originsymbol.h>
 #include <seiscomp/gui/datamodel/publicobjectevaluator.h>
@@ -493,14 +495,14 @@ class OriginTreeWidget : public QTreeWidget {
 
 
 struct StationLayer : Map::Layer {
-	StationLayer(FMMap *map)
+	StationLayer(QWidget *map)
 	: Map::Layer(map) {}
 
 	~StationLayer() override {
 		clear();
 	}
 
-	void setReferenceSymbol(const ExtTensorSymbol *symbol) {
+	void setReferenceSymbol(const Map::Symbol *symbol) {
 		refSymbol = symbol;
 	}
 
@@ -548,7 +550,7 @@ struct StationLayer : Map::Layer {
 		if ( tmpHoverId != hoverId ) {
 			hoverId = tmpHoverId;
 			if ( hoverId != -1 ) {
-				setToolTip(static_cast<FMMap*>(parent())->toolTip());
+				setToolTip(static_cast<QWidget*>(parent())->toolTip());
 				if ( toolTip().isEmpty() ) {
 					if ( !stations[hoverId]->net.empty()
 					  && !stations[hoverId]->code.empty() ) {
@@ -660,14 +662,15 @@ struct StationLayer : Map::Layer {
 		Map::AnnotationItem *annotation{nullptr};
 	};
 
-	QVector<Symbol*>       stations;
-	bool                   drawStationsLines{true};
-	int                    hoverId{-1};
-	const ExtTensorSymbol *refSymbol{nullptr};
+	QVector<Symbol*>     stations;
+	bool                 drawStationsLines{true};
+	int                  hoverId{-1};
+	const Map::Symbol   *refSymbol{nullptr};
 };
 
 
 #define SYMBOLLAYER static_cast<StationLayer*>(_symbolLayer)
+#define ORIGINSYMBOLLAYER static_cast<StationLayer*>(_originStationLayer)
 
 
 double subGeo(double a, double b) {
@@ -1383,6 +1386,13 @@ void EventEdit::init() {
 
 	_ui.frameMap->installEventFilter(new SquareSizeFilter(this));
 	_originMap = new MapWidget(_mapTreeOrigin.get(), _ui.frameMap);
+	_originStationLayer = new StationLayer(_originMap);
+	_originStationLayer->setVisible(false);
+	_originMap->canvas().addLayer(_originStationLayer);
+	_originAnnotationLayer = new Map::AnnotationLayer(_originMap, new Map::Annotations(_originMap));
+	_originAnnotationLayer->setVisible(false);
+	_originMap->canvas().addLayer(_originAnnotationLayer);
+
 	_fmMap = new FMMap(_mapTreeFM.get(), _ui.fmMap);
 
 	_fmActivity = new QLabel(_fmMap);
@@ -1934,8 +1944,97 @@ void EventEdit::setMessagingEnabled(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventEdit::updateOriginStations(const DataModel::Origin *org) {
+	ORIGINSYMBOLLAYER->clear();
+	ORIGINSYMBOLLAYER->refSymbol = nullptr;
+	_originAnnotationLayer->annotations()->clear();
+
+	if ( !org ) {
+		_originMap->update();
+		return;
+	}
+
+	// Load arrivals on demand if not yet attached
+	if ( org->arrivalCount() == 0 && _reader ) {
+		_reader->loadArrivals(const_cast<DataModel::Origin*>(org));
+	}
+
+	for ( size_t i = 0; i < org->arrivalCount(); ++i ) {
+		const Arrival *arrival = org->arrival(i);
+
+		QColor itemColor;
+		try {
+			itemColor = SCScheme.colors.arrivals.residuals.colorAt(arrival->timeResidual());
+		}
+		catch ( ... ) {
+			itemColor = SCScheme.colors.arrivals.undefined;
+		}
+
+		Pick *p = Pick::Find(arrival->pickID());
+		PickPtr fetchedPick;
+		if ( !p && _reader ) {
+			fetchedPick = Pick::Cast(_reader->getObject(Pick::TypeInfo(), arrival->pickID()));
+			p = fetchedPick.get();
+		}
+
+		if ( p ) {
+			try {
+				auto loc = Client::Inventory::Instance()->stationLocation(
+					p->waveformID().networkCode(),
+					p->waveformID().stationCode(),
+					p->time()
+				);
+
+				std::string stationCode = p->waveformID().networkCode() + "." + p->waveformID().stationCode();
+				auto *symbol = new StationLayer::Symbol(
+					QPointF(loc.longitude, loc.latitude),
+					p->waveformID().networkCode(),
+					p->waveformID().stationCode(),
+					_originAnnotationLayer->annotations()->add(stationCode.c_str())
+				);
+				symbol->setColor(itemColor);
+				ORIGINSYMBOLLAYER->stations.append(symbol);
+				continue;
+			}
+			catch ( Core::ValueException & ) {}
+		}
+
+		// Fall back: compute position from distance/azimuth if pick not found
+		try {
+			double lat, lon;
+			Math::Geo::delandaz2coord(arrival->distance(), arrival->azimuth(),
+			                          org->latitude(), org->longitude(),
+			                          &lat, &lon);
+			auto *symbol = new StationLayer::Symbol(QPointF(lon, lat), "", "");
+			symbol->setColor(itemColor);
+			ORIGINSYMBOLLAYER->stations.append(symbol);
+		}
+		catch ( ... ) {}
+	}
+
+	// Set reference symbol to the currently highlighted origin dot
+	auto begin = _originMap->canvas().symbolCollection()->begin();
+	auto end = _originMap->canvas().symbolCollection()->end();
+	for ( auto it = begin; it != end; ++it ) {
+		if ( (*it)->id() == org->publicID() ) {
+			ORIGINSYMBOLLAYER->refSymbol = *it;
+			break;
+		}
+	}
+
+	ORIGINSYMBOLLAYER->update(Map::Layer::Position);
+	_originMap->update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::drawStations(bool e) {
 	_fmMap->setDrawStations(e);
+	ORIGINSYMBOLLAYER->setVisible(e);
+	_originMap->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1945,6 +2044,8 @@ void EventEdit::drawStations(bool e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::drawStationAnnotations(bool e) {
 	_fmMap->setDrawStationAnnotations(e);
+	_originAnnotationLayer->setVisible(e);
+	_originMap->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3079,6 +3180,10 @@ void EventEdit::resetOrigin() {
 	for ( ; it != end; ++it )
 		static_cast<OriginSymbol*>(*it)->setFilled(false);
 
+	ORIGINSYMBOLLAYER->clear();
+	ORIGINSYMBOLLAYER->refSymbol = nullptr;
+	_originAnnotationLayer->annotations()->clear();
+
 	_originMap->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3872,6 +3977,7 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 	}
 
 	updateOrigin();
+	updateOriginStations(_currentOrigin.get());
 	resetMagnitude();
 
 	_ui.treeMagnitudes->blockSignals(true);
