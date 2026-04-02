@@ -191,6 +191,12 @@ void FilterPickerCF<TYPE>::apply(int n, TYPE *inout) {
 		return;
 	}
 
+	// Validate envelope buffer
+	if (_envelopeWindowSize <= 0 || _envelopeBuffer.empty()) {
+		// Not initialized, pass through
+		return;
+	}
+
 	// Process each sample incrementally
 	for (int i = 0; i < n; ++i) {
 		TYPE sample = inout[i];
@@ -199,6 +205,11 @@ void FilterPickerCF<TYPE>::apply(int n, TYPE *inout) {
 		TYPE maxEnvelope = 0;
 
 		for (size_t band = 0; band < _filters.size(); ++band) {
+			// Null check before dereferencing
+			if (_filters[band] == nullptr) {
+				continue;
+			}
+
 			// Apply bandpass filter (maintains internal state)
 			TYPE filtered = sample;
 			_filters[band]->apply(1, &filtered);
@@ -222,7 +233,11 @@ void FilterPickerCF<TYPE>::apply(int n, TYPE *inout) {
 		for (int j = 0; j < _envelopeWindowSize; ++j) {
 			smoothedEnvelope += _envelopeBuffer[j];
 		}
-		smoothedEnvelope /= _envelopeWindowSize;
+		
+		// Prevent division by zero
+		if (_envelopeWindowSize > 0) {
+			smoothedEnvelope /= _envelopeWindowSize;
+		}
 
 		// Output the smoothed maximum envelope (characteristic function)
 		// The picker (AIC, STA/LTA, etc.) will perform detection on this

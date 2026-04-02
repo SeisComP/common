@@ -71,7 +71,10 @@ vector<double> computeEnvelope(const vector<double>& data) {
 			sum += envelope[j];
 			count++;
 		}
-		envelope[i] = sum / count;
+		// Prevent division by zero
+		if (count > 0) {
+			envelope[i] = sum / count;
+		}
 	}
 
 	return envelope;
@@ -382,19 +385,6 @@ vector<vector<double>> FilterPicker::applyFilterBank(const double *data, int n) 
 			trace.assign(n, 0.0);
 		}
 
-		// Debug: check filter output
-		static int filterDebug = 0;
-		if (filterDebug < 5) {
-			double traceMax = 0.0, traceSum = 0.0;
-			for (int j = 0; j < n; ++j) {
-				traceMax = max(traceMax, fabs(trace[j]));
-				traceSum += fabs(trace[j]);
-			}
-			SEISCOMP_DEBUG("Filter band %d (%.2f-%.2f Hz): outMax=%.6f, outAvg=%.6f",
-			               i, config.lowFreq, config.highFreq, traceMax, traceSum/n);
-			filterDebug++;
-		}
-
 		filteredTraces[i] = trace;
 	}
 
@@ -439,20 +429,6 @@ FilterPicker::CharacteristicFunction FilterPicker::computeCharacteristicFunction
 		}
 	}
 
-	// Debug: check if filtered data has signal
-	static int debugCount = 0;
-	if (debugCount < 5) {
-		// Compute stats on filtered data
-		double filteredMax = 0.0, filteredSum = 0.0;
-		for (int i = 0; i < n; ++i) {
-			filteredMax = max(filteredMax, fabs(filtered[i]));
-			filteredSum += fabs(filtered[i]);
-		}
-		SEISCOMP_DEBUG("CF debug: staWin=%d, ltaWin=%d, filtMax=%.6f, filtAvg=%.6f, cfMax=%.4f, cfAvg=%.4f",
-		               staWindow, ltaWindow, filteredMax, filteredSum/n, cf.maxVal, cf.integral/n);
-		debugCount++;
-	}
-
 	return cf;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -465,28 +441,23 @@ double FilterPicker::computeCFIntegral(
 	if (cfs.empty() || startIdx < 0) return 0.0;
 
 	int n = static_cast<int>(cfs[0].values.size());
-	if (startIdx >= n) return 0.0;
+	if (n == 0 || startIdx >= n) return 0.0;
 
-	int endIdx = min(startIdx + windowSize, n);
+	// Ensure windowSize is positive and within bounds
+	int safeWindowSize = max(1, min(windowSize, n - startIdx));
+	int endIdx = min(startIdx + safeWindowSize, n);
 	double maxIntegral = 0.0;
 
 	// Compute integral of maximum CF across all bands
 	for (int i = startIdx; i < endIdx; ++i) {
 		double maxCF = 0.0;
 		for (const auto& cf : cfs) {
-			if (i < static_cast<int>(cf.values.size())) {
+			// Bounds check for each CF vector (they may have different sizes)
+			if (!cf.values.empty() && i < static_cast<int>(cf.values.size())) {
 				maxCF = max(maxCF, cf.values[i]);
 			}
 		}
 		maxIntegral += maxCF;
-	}
-
-	// Debug: log first few calls to understand the issue
-	static int debugCount = 0;
-	if (debugCount < 5) {
-		SEISCOMP_DEBUG("CFIntegral: startIdx=%d, windowSize=%d, n=%d, result=%.3f, cfs[0].size=%zu",
-		               startIdx, windowSize, n, maxIntegral, cfs[0].values.size());
-		debugCount++;
 	}
 
 	return maxIntegral;
@@ -504,13 +475,14 @@ bool FilterPicker::findOnset(const vector<CharacteristicFunction>& cfs,
 	if (n < 10) return false;
 
 	// windowSize is already in samples (passed from calculatePick)
-	int windowSamples = max(1, windowSize);
+	// Ensure windowSamples is within valid bounds to prevent out-of-bounds access
+	int windowSamples = max(1, min(windowSize, n / 2));
 
 	// Always use adaptive thresholding based on noise level
 	// Use first third of trace as noise reference
 	int noiseStart = 0;
 	int noiseEnd = max(10, min(n / 3, static_cast<int>(n / 10.0))); // First 10% or at least 10 samples
-	
+
 	double noiseSum = 0.0;
 	int noiseCount = 0;
 	double noiseMax = 0.0;
@@ -529,7 +501,7 @@ bool FilterPicker::findOnset(const vector<CharacteristicFunction>& cfs,
 
 	double noiseMean = noiseCount > 0 ? noiseSum / noiseCount : 1.0;
 	double noiseStd = 0.0;
-	
+
 	// Compute noise standard deviation
 	for (int i = noiseStart; i < noiseEnd; ++i) {
 		double maxCF = 0.0;
@@ -557,11 +529,20 @@ bool FilterPicker::findOnset(const vector<CharacteristicFunction>& cfs,
 	               n, windowSamples, n - windowSamples, cfs.size());
 
 	// Scan for onset: find first point where MAX CF (not integral) exceeds threshold
+	// Ensure loop bound is valid (n > windowSamples)
 	int maxCFIdx = -1;
 	double maxCFVal = 0.0;
 	int scanCount = 0;
+	int loopEnd = n - windowSamples;
 
-	for (int i = 0; i < n - windowSamples; ++i) {
+	// Prevent negative or zero loop end
+	if (loopEnd <= 0) {
+		SEISCOMP_DEBUG("FilterPicker: invalid loop end (%d), n=%d, windowSamples=%d",
+		               loopEnd, n, windowSamples);
+		return false;
+	}
+
+	for (int i = 0; i < loopEnd; ++i) {
 		// Get max CF value across all bands at this sample
 		double maxCF = 0.0;
 		for (const auto& cf : cfs) {
@@ -643,6 +624,11 @@ void FilterPicker::estimateUncertainty(const vector<CharacteristicFunction>& cfs
 	}
 
 	int n = static_cast<int>(cfs[0].values.size());
+	if (n == 0 || onsetIdx >= n) {
+		lowerUnc = -1;
+		upperUnc = -1;
+		return;
+	}
 
 	// Find the rise time of the characteristic function
 	// Uncertainty is related to how sharp the onset is
@@ -653,6 +639,13 @@ void FilterPicker::estimateUncertainty(const vector<CharacteristicFunction>& cfs
 		if (onsetIdx < static_cast<int>(cf.values.size())) {
 			maxCF = max(maxCF, cf.values[onsetIdx]);
 		}
+	}
+
+	// Handle zero maxCF case
+	if (maxCF <= 0) {
+		lowerUnc = 1;
+		upperUnc = 1;
+		return;
 	}
 
 	// Find points where CF reaches 10% and 90% of maximum
@@ -703,19 +696,38 @@ void FilterPicker::estimateUncertainty(const vector<CharacteristicFunction>& cfs
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Picker::Polarity FilterPicker::determinePolarity(const double *data, int onsetIdx, double fsamp) {
-	if (onsetIdx < 0 || onsetIdx >= static_cast<int>(_stream.fsamp * _config.signalEnd)) {
+	// Validate input parameters
+	if (data == nullptr || onsetIdx < 0 || fsamp <= 0) {
+		return UNDECIDABLE;
+	}
+
+	// Calculate safe data size limit
+	int dataSizeLimit = static_cast<int>(_stream.fsamp * _config.signalEnd);
+	if (dataSizeLimit <= 0) {
+		return UNDECIDABLE;
+	}
+
+	if (onsetIdx >= dataSizeLimit) {
 		return UNDECIDABLE;
 	}
 
 	// Look at the first few samples after onset to determine polarity
 	int windowSize = max(1, static_cast<int>(fsamp * 0.1)); // 100 ms window
 	double sum = 0.0;
+	int count = 0;
 
-	for (int i = onsetIdx; i < min(onsetIdx + windowSize, static_cast<int>(_stream.fsamp * _config.signalEnd)); ++i) {
+	int endIndex = min(onsetIdx + windowSize, dataSizeLimit);
+	for (int i = onsetIdx; i < endIndex; ++i) {
 		sum += data[i];
+		count++;
 	}
 
-	double mean = sum / windowSize;
+	// Prevent division by zero
+	if (count == 0) {
+		return UNDECIDABLE;
+	}
+
+	double mean = sum / count;
 
 	if (mean > 1e-10) {
 		return POSITIVE;
@@ -738,8 +750,16 @@ bool FilterPicker::calculatePick(int n, const double *data,
 	SEISCOMP_DEBUG("FilterPicker::calculatePick: n=%d, signalStart=%d, signalEnd=%d, fsamp=%.2f",
 	               n, signalStartIdx, signalEndIdx, _stream.fsamp);
 
+	// Validate input parameters
 	if (n <= 10) {
 		SEISCOMP_INFO("FilterPicker: not enough data (n=%d)", n);
+		return false;
+	}
+
+	// Validate signal indices
+	if (signalStartIdx < 0 || signalEndIdx <= signalStartIdx || signalEndIdx > n) {
+		SEISCOMP_WARNING("FilterPicker: invalid signal indices (start=%d, end=%d, n=%d)",
+		                 signalStartIdx, signalEndIdx, n);
 		return false;
 	}
 
@@ -757,21 +777,37 @@ bool FilterPicker::calculatePick(int n, const double *data,
 
 	// Demean the data using the noise window
 	int nnoise = max(1, static_cast<int>(n / 3));
+	// Ensure nnoise doesn't exceed available data
+	nnoise = min(nnoise, signalStartIdx);
+	
 	double offset = 0.0;
 	for (int i = 0; i < nnoise; ++i) {
 		offset += data[i];
 	}
 	offset /= nnoise;
 
-	// Create demeaned copy
-	vector<double> demeaned(signalEndIdx - signalStartIdx);
-	for (size_t i = 0; i < demeaned.size(); ++i) {
-		demeaned[i] = data[signalStartIdx + i] - offset;
+	// Create demeaned copy with bounds-checked size
+	int demeanedSize = signalEndIdx - signalStartIdx;
+	if (demeanedSize <= 0) {
+		SEISCOMP_WARNING("FilterPicker: invalid demeaned size (%d)", demeanedSize);
+		return false;
+	}
+	
+	vector<double> demeaned(demeanedSize);
+	for (int i = 0; i < demeanedSize; ++i) {
+		// Bounds check before access
+		if (signalStartIdx + i < n) {
+			demeaned[i] = data[signalStartIdx + i] - offset;
+		} else {
+			SEISCOMP_WARNING("FilterPicker: data access out of bounds (idx=%d, n=%d)",
+			                 signalStartIdx + i, n);
+			demeaned[i] = 0.0;
+		}
 	}
 
 	// Apply filter bank
 	vector<vector<double>> filteredTraces = applyFilterBank(demeaned.data(),
-	                                                         static_cast<int>(demeaned.size()));
+	                                                         demeanedSize);
 
 	// Compute characteristic functions for all bands
 	vector<CharacteristicFunction> cfs;
@@ -782,7 +818,10 @@ bool FilterPicker::calculatePick(int n, const double *data,
 	}
 
 	// Find onset
+	// Ensure windowSamples is within valid bounds
 	int windowSamples = static_cast<int>(_windowSize * _stream.fsamp);
+	windowSamples = max(1, min(windowSamples, demeanedSize / 2));
+	
 	int onsetIdx = -1;
 	snr = -1.0;
 
@@ -794,6 +833,13 @@ bool FilterPicker::calculatePick(int n, const double *data,
 	// Check SNR threshold
 	if (snr < _config.snrMin) {
 		SEISCOMP_INFO("FilterPicker: SNR %.2f below threshold %.2f", snr, _config.snrMin);
+		return false;
+	}
+
+	// Validate onset index before using it
+	if (onsetIdx < 0 || onsetIdx >= demeanedSize) {
+		SEISCOMP_WARNING("FilterPicker: invalid onset index (%d, size=%d)",
+		                 onsetIdx, demeanedSize);
 		return false;
 	}
 
