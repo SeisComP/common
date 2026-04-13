@@ -81,6 +81,29 @@ typedef NamedCoord<float> NamedCoordF;
 typedef NamedCoord<double> NamedCoordD;
 
 
+/**
+ * @brief Administrative region (state, province, etc.) associated with a city.
+ *
+ * Serializes as an XML child element carrying an optional abbreviation
+ * attribute and the full name as element text, e.g.:
+ * @code
+ *   <state abbr="NSW">New South Wales</state>
+ * @endcode
+ *
+ * The @c abbr field holds the ISO 3166-2 subdivision suffix (alphabetic
+ * portion only, e.g. "NSW" from "AU-NSW", "CA" from "US-CA"). It is left
+ * empty for subdivisions that use numeric codes or where no ISO code exists.
+ */
+struct SC_SYSTEM_CORE_API AdminRegion : public Core::BaseObject {
+	DECLARE_SERIALIZATION;
+
+	std::string abbr; //!< ISO 3166-2 suffix, e.g. "NSW", "CA" (may be empty)
+	std::string name; //!< Full region name, e.g. "New South Wales"
+
+	bool empty() const { return name.empty(); }
+};
+
+
 template<typename T>
 class City : public NamedCoord<T> {
 	public:
@@ -101,30 +124,47 @@ class City : public NamedCoord<T> {
 		void setCountryID(const std::string &);
 		const std::string &countryID() const;
 
+		//! Full country name, e.g. "Australia". Serializes as <country> child element.
+		void setCountry(const std::string &);
+		const std::string &country() const;
+
 		void setCategory(std::string &);
 		const std::string &category() const;
 
-		//! Location type, e.g. "city", "town", "village" (GeoNames feature code)
+		/**
+		 * @brief Location type derived from GeoNames feature codes.
+		 *
+		 * One of the following values (or empty if unknown):
+		 *   "city"    — capital or administrative centre (PPLC, PPLA, PPLA2)
+		 *   "town"    — populated place or minor admin centre (PPL, PPLA3, PPLA4)
+		 *   "village" — small settlement (PPLF, PPLL, PPLR, PPLS, etc.)
+		 *   "suburb"  — section of a populated place (PPLX)
+		 */
 		void setType(const std::string &);
 		const std::string &type() const;
 
-		//! Administrative region abbreviation, e.g. "NSW"
-		void setState(const std::string &);
-		const std::string &state() const;
-
-		//! Full administrative region name, e.g. "New South Wales"
-		void setStateFull(const std::string &);
-		const std::string &stateFull() const;
+		/**
+		 * @brief Administrative region (state/province).
+		 *
+		 * Serializes as a child element, e.g.:
+		 * @code
+		 *   <state abbr="NSW"><name>New South Wales</name></state>
+		 * @endcode
+		 * The @c abbr field holds the ISO 3166-2 subdivision suffix (alphabetic
+		 * portion only). It is left empty where no alphabetic ISO code exists.
+		 */
+		void setAdminRegion(const AdminRegion &);
+		const AdminRegion &adminRegion() const;
 
 		void serialize(Core::BaseObject::Archive& ar) override;
 
 	private:
 		std::string _countryID;
+		std::string _country;
 		double _population;
 		std::string _category;
 		std::string _type;
-		std::string _state;
-		std::string _stateFull;
+		AdminRegion _adminRegion;
 };
 
 
