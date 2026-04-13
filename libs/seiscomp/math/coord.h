@@ -104,12 +104,27 @@ class City : public NamedCoord<T> {
 		void setCategory(std::string &);
 		const std::string &category() const;
 
+		//! Location type, e.g. "city", "town", "village" (GeoNames feature code)
+		void setType(const std::string &);
+		const std::string &type() const;
+
+		//! Administrative region abbreviation, e.g. "NSW"
+		void setState(const std::string &);
+		const std::string &state() const;
+
+		//! Full administrative region name, e.g. "New South Wales"
+		void setStateFull(const std::string &);
+		const std::string &stateFull() const;
+
 		void serialize(Core::BaseObject::Archive& ar) override;
 
 	private:
 		std::string _countryID;
 		double _population;
 		std::string _category;
+		std::string _type;
+		std::string _state;
+		std::string _stateFull;
 };
 
 
