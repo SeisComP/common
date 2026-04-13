@@ -292,39 +292,39 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 		Ui::EventEdit _ui;
 
-		QList<DataModel::EventType> _eventTypesWhitelist;
-		DataModel::DatabaseQuery* _reader;
-		Map::ImageTreePtr         _mapTreeOrigin;
-		Map::ImageTreePtr         _mapTreeFM;
-		QLabel                   *_fmActivity;
-		QMovie                   *_fmActivityMovie;
+		QList<DataModel::EventType>  _eventTypesWhitelist;
+		DataModel::DatabaseQuery    *_reader;
+		Map::ImageTreePtr            _mapTreeOrigin;
+		Map::ImageTreePtr            _mapTreeFM;
+		QLabel                      *_fmActivity;
+		QMovie                      *_fmActivityMovie;
 
-		DataModel::EventPtr       _currentEvent;
-		bool                      _updateLocalEPInstance;
-		bool                      _blockObserver;
+		DataModel::EventPtr          _currentEvent;
+		bool                         _updateLocalEPInstance;
+		bool                         _blockObserver;
 
 		// origin tab
-		OriginList                _origins;
-		MapWidget                *_originMap;
-		Map::Layer               *_originStationLayer;
-		Map::AnnotationLayer     *_originAnnotationLayer;
-		QRectF                    _originBoundings;
-		DataModel::OriginPtr      _currentOrigin;
-		DataModel::MagnitudePtr   _currentMagnitude;
-		int                       _fixOriginDefaultActionCount;
-		int                       _preferredOriginIdx;
-		int                       _preferredMagnitudeIdx;
-		QStringList               _originTableHeader;
-		QVector<int>              _originColumnMap;
-		int                       _customColumn;
-		QString                   _customColumnLabel;
-		std::string               _commentID;
-		QString                   _customDefaultText;
-		QMap<std::string, QColor> _customColorMap;
-		QVector<ProcessColumn>    _scriptColumns;
-		QHash<QString, int>       _scriptColumnMap;
+		OriginList                   _origins;
+		MapWidget                   *_originMap;
+		Map::Layer                  *_originStationLayer;
+		Map::AnnotationLayer        *_originAnnotationLayer;
+		QRectF                       _originBoundings;
+		DataModel::OriginPtr         _currentOrigin;
+		DataModel::MagnitudePtr      _currentMagnitude;
+		int                          _fixOriginDefaultActionCount;
+		int                          _preferredOriginIdx;
+		int                          _preferredMagnitudeIdx;
+		QStringList                  _originTableHeader;
+		QVector<int>                 _originColumnMap;
+		int                          _customColumn;
+		QString                      _customColumnLabel;
+		std::string                  _commentID;
+		QString                      _customDefaultText;
+		QMap<std::string, QColor>    _customColorMap;
+		QVector<ProcessColumn>       _scriptColumns;
+		QHash<QString, int>          _scriptColumnMap;
 
-		QTreeWidget              *_originTree;
+		QTreeWidget                 *_originTree;
 
 		// focal mechanism tab
 		FMList                       _fms;

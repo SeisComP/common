@@ -569,37 +569,31 @@ struct StationLayer : Map::Layer {
 	void draw(const Map::Canvas *canvas, QPainter &p) override {
 		int size = SCScheme.map.stationSize;
 
-		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 4);
+		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 2);
 
 		if ( drawStationsLines && (canvas->symbolCollection()->count() > 0) && refSymbol ) {
-			int cutOff = 4;
-
-			if ( cutOff ) {
-				p.setClipping(true);
-				p.setClipRegion(
-					QRegion(
-						p.window()
-					)
-					-
-					QRegion(
-						QRect(
-							refSymbol->pos().x() - cutOff / 2,
-							refSymbol->pos().y() - cutOff / 2,
-							cutOff, cutOff
-						),
-						QRegion::Ellipse
-					)
-				);
-			}
+			p.setClipping(true);
+			p.setClipRegion(
+				QRegion(
+					p.window()
+				)
+				-
+				QRegion(
+					QRect(
+						refSymbol->pos().x() - refSymbol->size().width() / 2,
+						refSymbol->pos().y() - refSymbol->size().height() / 2,
+						refSymbol->size().width(), refSymbol->size().height()
+					),
+					QRegion::Ellipse
+				)
+			);
 
 			p.setPen(SCScheme.colors.map.lines);
 			for ( auto &s : stations ) {
 				canvas->drawLine(p, refSymbol->location(), s->location());
 			}
 
-			if ( cutOff ) {
-				p.setClipping(false);
-			}
+			p.setClipping(false);
 		}
 
 		for ( int i = stations.count() - 1; i >= 0; --i ) {
@@ -654,7 +648,11 @@ struct StationLayer : Map::Layer {
 		, net(nc), code(sc)
 		, annotation(annotation) {
 			setOutlineColor(SCScheme.colors.map.outlines);
+			setFrameSize(0);
 			setVisible(true);
+			if ( annotation ) {
+				annotation->highlighted = true;
+			}
 		}
 
 		std::string          net;
@@ -675,10 +673,12 @@ struct StationLayer : Map::Layer {
 
 double subGeo(double a, double b) {
 	double s = a - b;
-	if ( s < -180 )
+	if ( s < -180 ) {
 		s += 360;
-	else if ( s > 180 )
+	}
+	else if ( s > 180 ) {
 		s -= 360;
+	}
 	return s;
 }
 
@@ -986,10 +986,8 @@ void FMMap::updateStations(const DataModel::FocalMechanism *fm) {
 				(wfid.networkCode() + "." + wfid.stationCode()).c_str()
 			)
 		);
-		symbol->annotation->highlighted = true;
 		symbol->setID(wfid.networkCode() + "." + wfid.stationCode() + "." +
 		              wfid.locationCode() + "." + wfid.channelCode());
-		symbol->setOutlineColor(Qt::black);
 		symbol->setColor(Qt::gray);
 
 		double percent = 0, percentCount = 0;
