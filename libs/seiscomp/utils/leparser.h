@@ -96,7 +96,7 @@ class BinaryOperator : public Expression {
 			if (_rhs) delete _rhs;
 		}
 
-	private:
+	protected:
 		Expression* _lhs;
 		Expression* _rhs;
 };
@@ -118,7 +118,7 @@ class UnaryOperator : public Expression {
 			if (_rhs) delete _rhs;
 		}
 
-	private:
+	protected:
 		Expression* _rhs;
 };
 

@@ -15,6 +15,7 @@ SET(DM_SOURCES
 	publicobject.cpp
 	diff.cpp
 	utils.cpp
+	filter.cpp
 )
 
 SET(DM_HEADERS
@@ -27,6 +28,7 @@ SET(DM_HEADERS
 	publicobject.h
 	diff.h
 	utils.h
+	filter.h
 	${CORE_DATAMODEL_GENERATED_HEADERS}
 )
 
