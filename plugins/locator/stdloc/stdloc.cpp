@@ -2531,20 +2531,25 @@ Origin *StdLoc::createOrigin(
 	Origin *origin = Origin::Create();
 	SEISCOMP_DEBUG("New origin publicID: %s", origin->publicID().c_str());
 
-	if ( _currentProfile.method == Profile::Method::LeastSquares ) {
-		origin->setMethodID("StdLoc:LeastSquares");
+	if ( _currentProfile.name.empty() ) {
+		if ( _currentProfile.method == Profile::Method::LeastSquares ) {
+			origin->setMethodID("StdLoc:LeastSquares");
+		}
+		else if ( _currentProfile.method == Profile::Method::GridSearch ) {
+			origin->setMethodID("StdLoc:GridSearch");
+		}
+		else if ( _currentProfile.method == Profile::Method::OctTree ) {
+			origin->setMethodID("StdLoc:OctTree");
+		}
+		else if ( _currentProfile.method == Profile::Method::GridAndLsqr ) {
+			origin->setMethodID("StdLoc:GridSearch+LeastSquares");
+		}
+		else if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
+			origin->setMethodID("StdLoc:OctTree+LeastSquares");
+		}
 	}
-	else if ( _currentProfile.method == Profile::Method::GridSearch ) {
-		origin->setMethodID("StdLoc:GridSearch");
-	}
-	else if ( _currentProfile.method == Profile::Method::OctTree ) {
-		origin->setMethodID("StdLoc:OctTree");
-	}
-	else if ( _currentProfile.method == Profile::Method::GridAndLsqr ) {
-		origin->setMethodID("StdLoc:GridSearch+LeastSquares");
-	}
-	else if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
-		origin->setMethodID("StdLoc:OctTree+LeastSquares");
+	else {
+		origin->setMethodID("StdLoc:" + _currentProfile.name);
 	}
 
 	origin->setCreationInfo(ci);
