@@ -30,6 +30,35 @@
 namespace Seiscomp{
 
 
+bool computeAzimuthalGaps(const std::vector<double> &azimuths,
+                          double &primary, double &secondary) {
+	if ( azimuths.size() < 2 ) {
+		return false;
+	}
+
+	std::vector<double> azi(azimuths);
+	std::sort(azi.begin(), azi.end());
+
+	primary = secondary = 0.;
+	size_t n = azi.size();
+	azi.push_back(azi[0] + 360.);
+	azi.push_back(azi[1] + 360.);
+
+	for ( size_t i = 0; i < n; ++i ) {
+		double g1 = azi[i + 1] - azi[i];
+		if ( g1 > primary ) {
+			primary = g1;
+		}
+		double g2 = azi[i + 2] - azi[i];
+		if ( g2 > secondary ) {
+			secondary = g2;
+		}
+	}
+
+	return true;
+}
+
+
 void compile(DataModel::OriginQuality &quality, const DataModel::Origin *origin) {
 	int usedPhases = 0;
 	int usedDepthPhases = 0;
@@ -77,15 +106,11 @@ void compile(DataModel::OriginQuality &quality, const DataModel::Origin *origin)
 	}
 
 	if ( !azi.empty() ) {
-		std::sort(azi.begin(), azi.end());
-		azi.push_back(azi.front()+360.);
-		double azGap = 0.;
-		if ( azi.size() > 2 )
-			for ( size_t i = 0; i < azi.size()-1; ++i )
-				azGap = (azi[i+1]-azi[i]) > azGap ? (azi[i+1]-azi[i]) : azGap;
-
-		if ( 0. < azGap && azGap < 360. )
-			quality.setAzimuthalGap(azGap);
+		double primaryGap, secondaryGap;
+		if ( computeAzimuthalGaps(azi, primaryGap, secondaryGap) ) {
+			quality.setAzimuthalGap(primaryGap);
+			quality.setSecondaryAzimuthalGap(secondaryGap);
+		}
 	}
 
 	if ( !dist.empty() ) {
