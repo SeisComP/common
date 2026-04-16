@@ -527,9 +527,59 @@ bool SL4Connection<SocketType>::setTimeout(int seconds) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename SocketType>
+string SL4Connection<SocketType>::StationRequest::data() {
+	string timestr;
+
+	if ( _stime ) {
+		timestr = " " + _stime->iso();
+		if ( _etime ) {
+			timestr += " " + _etime->iso();
+		}
+	}
+
+	if ( _seq ) {
+		return "DATA " + toString(_seq) + timestr;
+	}
+
+	return "DATA ALL" + timestr;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename SocketType>
+void SL4Connection<SocketType>::command(const string &cmd) {
+	_sock.startTimer();
+	_sock.sendRequest(cmd, false);
+	_cmdQueue.push_back(cmd);
+
+	while ( _sock.poll() ) {
+		_sock.startTimer();
+		string resp = _sock.readline();
+
+		if ( _cmdQueue.empty() ) {
+			SEISCOMP_ERROR("Unexpected response: %s", resp);
+			continue;
+		}
+
+		SEISCOMP_DEBUG("Seedlink command: %s", _cmdQueue.front());
+		SEISCOMP_DEBUG("Response: %s", resp);
+		_cmdQueue.pop_front();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template <typename SocketType>
 void SL4Connection<SocketType>::handshake() {
 	Util::StopWatch aStopWatch;
-	list<string> request;
+	map<string, StationRequest> stationRequest;
+	map<string, StationRequest> wildcardRequest;
 
 	_sock.startTimer();
 	_sock.sendRequest("SLPROTO 4.0", true);
@@ -557,28 +607,23 @@ void SL4Connection<SocketType>::handshake() {
 			continue;
 		}
 
-		string timestr;
-
-		if ( stime ) {
-			timestr = " " + stime->iso();
-			if ( etime ) {
-				timestr += " " + etime->iso();
-			}
-		}
-
 		string sta = idx.network() + "_" + idx.station();
 
 		if ( sta.find('?') == string::npos && sta.find('*') == string::npos) {
-			request.push_back("STATION " + sta);
-			request.push_back("SELECT " + idx.selector(_format));
+			auto request = stationRequest[sta];
+			request._selectors.push_back(idx.selector(_format));
+			request._stime = stime;
+			request._etime = etime;
 
 			map<string, uint64_t>::iterator it;
 			if ( (it = _stationSeq.find(sta)) != _stationSeq.end() ) {
-				request.push_back("DATA " + toString(it->second) + timestr);
+				request._seq = it->second;
 			}
 			else {
-				request.push_back("DATA ALL" + timestr);
+				request._seq = Core::None;
 			}
+
+			stationRequest[sta] = request;
 		}
 		else {
 			regex rx = regex(regex_replace(regex_replace(sta,
@@ -587,45 +632,52 @@ void SL4Connection<SocketType>::handshake() {
 
 			for ( const auto &[stationId, seq] : _stationSeq ) {
 				if ( regex_match(stationId, rx) ) {
-					request.push_back("STATION " + stationId);
-					request.push_back("SELECT " + idx.selector(_format));
-					request.push_back("DATA " + toString(seq) + timestr);
+					auto request = stationRequest[stationId];
+					request._selectors.push_back(idx.selector(_format));
+					request._stime = stime;
+					request._etime = etime;
+					request._seq = seq;
+					stationRequest[stationId] = request;
 				}
 			}
 
-			request.push_back("STATION " + sta);
-			request.push_back("SELECT " + idx.selector(_format));
-			request.push_back("DATA ALL" + timestr);
+			auto request = wildcardRequest[sta];
+			request._selectors.push_back(idx.selector(_format));
+			request._stime = stime;
+			request._etime = etime;
+			request._seq = Core::None;
+			wildcardRequest[sta] = request;
 		}
 	}
 
-	list<string>::iterator ri = request.begin();
+	_cmdQueue.clear();
 
-	for ( const auto &req : request ) {
-		_sock.startTimer();
-		_sock.sendRequest(req, false);
+	for ( auto &[stationId, request] : stationRequest ) {
+		command("STATION " + stationId);
 
-		while ( _sock.poll() ) {
-			_sock.startTimer();
-			string resp = _sock.readline();
-
-			if ( ri == request.end() ) {
-				SEISCOMP_ERROR("Unexpected response: %s", resp.c_str());
-				continue;
-			}
-
-			SEISCOMP_DEBUG("Seedlink command: %s", ri->c_str());
-			SEISCOMP_DEBUG("Response: %s", resp.c_str());
-			++ri;
+		for ( const auto &sel : request._selectors ) {
+			command("SELECT " + sel);
 		}
+
+		command(request.data());
 	}
 
-	while ( ri != request.end() ) {
+	for ( auto &[stationPattern, request] : wildcardRequest ) {
+		command("STATION " + stationPattern);
+
+		for ( const auto &sel : request._selectors ) {
+			command("SELECT " + sel);
+		}
+
+		command(request.data());
+	}
+
+	while ( !_cmdQueue.empty() ) {
 		_sock.startTimer();
 		string resp = _sock.readline();
-		SEISCOMP_DEBUG("Seedlink command: %s", ri->c_str());
-		SEISCOMP_DEBUG("Response: %s", resp.c_str());
-		++ri;
+		SEISCOMP_DEBUG("Seedlink command: %s", _cmdQueue.front());
+		SEISCOMP_DEBUG("Response: %s", resp);
+		_cmdQueue.pop_front();
 	}
 
 	_sock.sendRequest(_fetch? "ENDFETCH": "END", false);
@@ -737,14 +789,26 @@ Record *SL4Connection<SocketType>::next() {
 
 			char *payload = _slrecord.data() + HEADSIZE + head->stationIdLength;
 
-			if ( head->format == '2' && !MSEED::V2::isValidHeader(payload) ) {
-				SEISCOMP_WARNING("Invalid MSEED2 record received (header check failed)");
-				continue;
-			}
+			switch ( head->format ) {
+				case '2':
+					if ( !MSEED::V2::isValidHeader(payload) ) {
+						SEISCOMP_WARNING("Invalid MSEED2 record received (header check failed)");
+						continue;
+					}
 
-			if ( head->format == '3' && !MSEED::V3::isValidHeader(payload) ) {
-				SEISCOMP_WARNING("Invalid MSEED3 record received (header check failed)");
-				continue;
+					break;
+
+				case '3':
+					if ( !MSEED::V3::isValidHeader(payload) ) {
+						SEISCOMP_WARNING("Invalid MSEED3 record received (header check failed)");
+						continue;
+					}
+
+					break;
+
+				default:
+					SEISCOMP_NOTICE("Unsupported SeedLink4 payload format: %c", head->format);
+					continue;
 			}
 
 			istream stream(&_streambuf);
