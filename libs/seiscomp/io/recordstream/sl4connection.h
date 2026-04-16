@@ -171,8 +171,20 @@ class SC_SYSTEM_CORE_API SL4Connection : public Seiscomp::IO::RecordStream {
 
 		void handshake();
 
+		void command(const std::string &cmd);
+
 
 	private:
+		class StationRequest {
+			public:
+				std::list<std::string> _selectors;
+				OPT(Core::Time) _stime;
+				OPT(Core::Time) _etime;
+				OPT(uint64_t) _seq;
+
+				std::string data();
+		};
+
 		class StreamBuffer : public std::streambuf {
 			public:
 				StreamBuffer();
@@ -194,6 +206,7 @@ class SC_SYSTEM_CORE_API SL4Connection : public Seiscomp::IO::RecordStream {
 		int                             _format;
 		bool                            _fetch;
 		std::map<std::string, uint64_t> _stationSeq;
+		std::list<std::string>          _cmdQueue;
 };
 
 
