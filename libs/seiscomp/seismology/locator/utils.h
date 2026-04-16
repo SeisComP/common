@@ -21,6 +21,7 @@
 #ifndef SEISCOMP_SEISMOLOGY_LOCATOR_UTILS_H
 #define SEISCOMP_SEISMOLOGY_LOCATOR_UTILS_H
 
+#include <vector>
 
 namespace Seiscomp{
 
@@ -33,12 +34,28 @@ class OriginQuality;
 
 
 /**
+ * @brief Computes primary and secondary azimuthal gaps from a list of azimuths.
+ *
+ * Primary gap: largest angular gap between any two adjacent stations.
+ * Secondary gap: largest angular gap that would remain if any one station
+ * were removed (i.e., the largest span covered by two consecutive gaps).
+ *
+ * @param azimuths Station azimuths in degrees [0, 360). Need not be sorted.
+ * @param primary  Output: primary azimuthal gap in degrees.
+ * @param secondary Output: secondary azimuthal gap in degrees.
+ * @return false if fewer than 2 azimuths are provided (gaps undefined).
+ */
+bool computeAzimuthalGaps(const std::vector<double> &azimuths,
+                          double &primary, double &secondary);
+
+
+/**
  * @brief Compiles an origin quality object from an origin.
  * Computed attributes:
  *  * minimum distance
  *  * median distance
  *  * maximum distance
- *  * azimuthal gap
+ *  * azimuthal gap (primary and secondary)
  *  * associated phase count
  *  * used phase count
  *  * depth phase count
