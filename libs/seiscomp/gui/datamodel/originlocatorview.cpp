@@ -3311,10 +3311,10 @@ void OriginLocatorView::init() {
 	SC_D.ui.groupBox->setFixedWidth(width);
 	*/
 
-	SC_D.displayComment = false;
+	SC_D.displayCommentID = "quality";
+	SC_D.displayComment = true;
 	try {
 		SC_D.displayCommentID = SCApp->configGetString("olv.display.origin.comment.id");
-		SC_D.displayComment = true;
 	}
 	catch ( ... ) {}
 
@@ -3332,7 +3332,7 @@ void OriginLocatorView::init() {
 		SC_D.ui.lbComment->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
 	}
 	catch ( ... ) {
-		SC_D.ui.lbComment->setText(SC_D.displayCommentID.c_str());
+		SC_D.ui.lbComment->setText("Quality:");
 	}
 
 	try {
