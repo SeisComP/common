@@ -972,10 +972,10 @@ void EventSummaryView::init() {
 		_ui->labelCustomValue->setVisible(false);
 	}
 
-	_displayComment = false;
+	_displayCommentID = "quality";
+	_displayComment = true;
 	try {
 		_displayCommentID = SCApp->configGetString("display.origin.comment.id");
-		_displayComment = true;
 	}
 	catch ( ... ) {}
 
@@ -994,7 +994,7 @@ void EventSummaryView::init() {
 		_uiHypocenter->_lbCommentTxt->setText(QString("%1:").arg(SCApp->configGetString("display.origin.comment.label").c_str()));
 	}
 	catch ( ... ) {
-		_uiHypocenter->_lbCommentTxt->setText(_displayCommentID.c_str());
+		_uiHypocenter->_lbCommentTxt->setText("Quality:");
 	}
 
 	_maxHotspotDist = 20.0;
