@@ -1774,9 +1774,18 @@ void EventSummaryView::setOrigin(Seiscomp::DataModel::Origin *origin) {
 			_reader->loadComments(_currentOrigin.get());
 
 		_uiHypocenter->_lbComment->setText(_displayCommentDefault.c_str());
+		_uiHypocenter->_lbComment->setToolTip(QString());
 		for ( size_t i = 0; i < _currentOrigin->commentCount(); ++i ) {
 			if ( _currentOrigin->comment(i)->id() == _displayCommentID ) {
-				_uiHypocenter->_lbComment->setText(_currentOrigin->comment(i)->text().c_str());
+				QString fullText = _currentOrigin->comment(i)->text().c_str();
+				int sep = fullText.indexOf('\n');
+				if ( sep >= 0 ) {
+					_uiHypocenter->_lbComment->setText(fullText.left(sep));
+					_uiHypocenter->_lbComment->setToolTip(fullText.mid(sep + 1));
+				}
+				else {
+					_uiHypocenter->_lbComment->setText(fullText);
+				}
 				break;
 			}
 		}
@@ -1954,9 +1963,18 @@ void EventSummaryView::setAutomaticOrigin(DataModel::Origin* origin) {
 			_reader->loadComments(origin);
 
 		_uiHypocenter->_lbCommentAutomatic->setText(_displayCommentDefault.c_str());
+		_uiHypocenter->_lbCommentAutomatic->setToolTip(QString());
 		for ( size_t i = 0; i < origin->commentCount(); ++i ) {
 			if ( origin->comment(i)->id() == _displayCommentID ) {
-				_uiHypocenter->_lbCommentAutomatic->setText(origin->comment(i)->text().c_str());
+				QString fullText = origin->comment(i)->text().c_str();
+				int sep = fullText.indexOf('\n');
+				if ( sep >= 0 ) {
+					_uiHypocenter->_lbCommentAutomatic->setText(fullText.left(sep));
+					_uiHypocenter->_lbCommentAutomatic->setToolTip(fullText.mid(sep + 1));
+				}
+				else {
+					_uiHypocenter->_lbCommentAutomatic->setText(fullText);
+				}
 				break;
 			}
 		}

@@ -3320,6 +3320,14 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.lbComment->setVisible(SC_D.displayComment);
 	SC_D.ui.labelComment->setVisible(SC_D.displayComment);
+	SC_D.ui.lbComment->setToolTip(
+		"Automatic quality grade (worst-of rule):\n"
+		"  Grade  Gap    Sec.Gap  RMS      Stations  Min.Dist\n"
+		"  A      ≤90°   ≤135°    ≤0.15s   ≥10       ≤30°\n"
+		"  B      ≤135°  ≤180°    ≤0.30s   ≥6        ≤60°\n"
+		"  C      ≤180°  ≤210°    ≤0.50s   ≥4        ≤90°\n"
+		"  D      worse than C"
+	);
 
 	try {
 		SC_D.displayCommentDefault = SCApp->configGetString("display.origin.comment.default");
@@ -4774,6 +4782,22 @@ void OriginLocatorView::setPickerView(PickerView* picker) {
 
 
 
+// Sets the comment label text and tooltip. If the text contains a newline,
+// the first line is shown as the label and the remainder becomes the tooltip.
+static void setCommentLabel(QLabel *label, const QString &text) {
+	int sep = text.indexOf('\n');
+	if ( sep >= 0 ) {
+		label->setText(text.left(sep));
+		label->setToolTip(text.mid(sep + 1));
+	}
+	else {
+		label->setText(text);
+		label->setToolTip(QString());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::Object *o) {
 	if ( SC_D.currentOrigin ) {
@@ -4818,7 +4842,7 @@ void OriginLocatorView::addObject(const QString &parentID, Seiscomp::DataModel::
 			if ( parentID == SC_D.currentOrigin->publicID().c_str() ) {
 				Comment *comment = Comment::Cast(o);
 				if ( comment && comment->id() == SC_D.displayCommentID )
-					SC_D.ui.labelComment->setText(comment->text().c_str());
+					setCommentLabel(SC_D.ui.labelComment, comment->text().c_str());
 			}
 		}
 	}
@@ -4848,7 +4872,7 @@ void OriginLocatorView::updateObject(const QString& parentID, Seiscomp::DataMode
 			if ( parentID == SC_D.currentOrigin->publicID().c_str() ) {
 				Comment *comment = Comment::Cast(o);
 				if ( comment && comment->id() == SC_D.displayCommentID )
-					SC_D.ui.labelComment->setText(comment->text().c_str());
+					setCommentLabel(SC_D.ui.labelComment, comment->text().c_str());
 			}
 		}
 	}
@@ -5371,13 +5395,14 @@ void OriginLocatorView::updateContent() {
 	}
 
 	SC_D.ui.labelComment->setText(SC_D.displayCommentDefault.c_str());
+	SC_D.ui.labelComment->setToolTip(QString());
 	if ( SC_D.displayComment ) {
 		if ( SC_D.reader && SC_D.currentOrigin->commentCount() == 0 )
 			SC_D.reader->loadComments(SC_D.currentOrigin.get());
 
 		for ( size_t i = 0; i < SC_D.currentOrigin->commentCount(); ++i ) {
 			if ( SC_D.currentOrigin->comment(i)->id() == SC_D.displayCommentID ) {
-				SC_D.ui.labelComment->setText(SC_D.currentOrigin->comment(i)->text().c_str());
+				setCommentLabel(SC_D.ui.labelComment, SC_D.currentOrigin->comment(i)->text().c_str());
 				break;
 			}
 		}
