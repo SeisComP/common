@@ -228,7 +228,9 @@ struct CommitOptions {
 			profile.value = string();
 			auto comment = origin ? origin->comment(profile.id) : nullptr;
 			if ( comment ) {
-				profile.value = comment->text();
+				auto text = comment->text();
+				auto nl = text.find('\n');
+				profile.value = nl != string::npos ? text.substr(0, nl) : text;
 			}
 		}
 	}
@@ -7993,7 +7995,10 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 				}
 				else {
 					if ( comment ) {
-						if ( profile.value != comment->text() ) {
+						auto existingText = comment->text();
+						auto nl = existingText.find('\n');
+						auto existingGrade = nl != string::npos ? existingText.substr(0, nl) : existingText;
+						if ( profile.value != existingGrade ) {
 							comment->setText(profile.value);
 							comment->update();
 							if ( !Notifier::IsEnabled()) {
