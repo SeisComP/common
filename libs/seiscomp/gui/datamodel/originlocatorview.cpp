@@ -3322,14 +3322,6 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.lbComment->setVisible(SC_D.displayComment);
 	SC_D.ui.labelComment->setVisible(SC_D.displayComment);
-	SC_D.ui.lbComment->setToolTip(
-		"Automatic quality grade (worst-of rule):\n"
-		"  Grade  Gap    Sec.Gap  RMS      Stations  Min.Dist\n"
-		"  A      ≤90°   ≤135°    ≤0.15s   ≥10       ≤30°\n"
-		"  B      ≤135°  ≤180°    ≤0.30s   ≥6        ≤60°\n"
-		"  C      ≤180°  ≤210°    ≤0.50s   ≥4        ≤90°\n"
-		"  D      worse than C"
-	);
 
 	try {
 		SC_D.displayCommentDefault = SCApp->configGetString("display.origin.comment.default");
