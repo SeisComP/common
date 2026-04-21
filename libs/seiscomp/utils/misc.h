@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_UTILS_MISC
-#define SEISCOMP_UTILS_MISC
+
+#ifndef SEISCOMP_UTILS_MISC_H
+#define SEISCOMP_UTILS_MISC_H
+
 
 #include <string>
 #include <seiscomp/core.h>
