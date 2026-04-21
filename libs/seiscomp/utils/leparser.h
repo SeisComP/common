@@ -17,8 +17,10 @@
  * gempa GmbH.                                                             *
  ***************************************************************************/
 
-#ifndef SEISCOMP_UTILSLEPARSER_H
-#define SEISCOMP_UTILSLEPARSER_H
+
+#ifndef SEISCOMP_UTILS_LEPARSER_H
+#define SEISCOMP_UTILS_LEPARSER_H
+
 
 #include <iostream>
 #include <string>
