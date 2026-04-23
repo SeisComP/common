@@ -102,7 +102,7 @@ constexpr size_t idx(T enumeration) {
 
 
 LeParser::Symbols DefaultParserSymbols = {
-	{ "&", "|", "!", "(", ")" },
+	{ "&&", "||", "!", "(", ")", "'" },
 	{}
 };
 
@@ -115,51 +115,125 @@ std::string comparisonOperators[idx(LeKeyValueFactory::ComparisonOperator::Quant
 class LeKeyValueExpression : public LeExpression {
 	public:
 		using ComparisonOperator = LeKeyValueFactory::ComparisonOperator;
+
+		LeKeyValueExpression(string_view key, ComparisonOperator op)
+		: _key(key), _op(op), _null{true} {}
+
 		LeKeyValueExpression(string_view key, ComparisonOperator op, string_view value)
-		: _key(key), _op(op), _value(value) {
-			double v;
-			if ( Core::fromString(v, _value) ) {
-				_numericValue = v;
-			}
-		}
+		: _key(key), _op(op), _value(value) {}
+
+		LeKeyValueExpression(string_view key, ComparisonOperator op, double value)
+		: _key(key), _op(op), _numericValue(value) {}
 
 	public:
 		bool eval(const void *context) override {
 			auto ctx = reinterpret_cast<const LeKeyValueContext*>(context);
-			if ( _numericValue ) {
-				switch ( _op ) {
-					case ComparisonOperator::Equal:
-						return ctx->getDouble(_key) == *_numericValue;
-					case ComparisonOperator::NotEqual:
-						return ctx->getDouble(_key) != *_numericValue;
-					case ComparisonOperator::LessThan:
-						return ctx->getDouble(_key)< *_numericValue;
-					case ComparisonOperator::LessOrEqual:
-						return ctx->getDouble(_key) <= *_numericValue;
-					case ComparisonOperator::GreaterThan:
-						return ctx->getDouble(_key) > *_numericValue;
-					case ComparisonOperator::GreaterOrEqual:
-						return ctx->getDouble(_key) >= *_numericValue;
-					default:
-						throw runtime_error("invalid comparison operator");
+
+			OPT(double) dValue;
+			OPT(string) sValue;
+
+			bool lhsIsSet = false;
+			try {
+				dValue = ctx->getDouble(_key);
+				lhsIsSet = true;
+			}
+			catch ( Core::ValueException & ) {
+				// Unset, ok
+			}
+			catch ( ... ) {
+				// Error, try to get a string value
+				try {
+					sValue = ctx->getString(_key);
+					lhsIsSet = true;
+				}
+				catch ( Core::ValueException & ) {
+					// Unset, ok
+				}
+				catch ( ... ) {
+					throw;
+				}
+			}
+
+			if ( _null ) {
+				if ( !lhsIsSet ) {
+					if ( (_op == ComparisonOperator::Equal) ||
+					     (_op == ComparisonOperator::LessOrEqual) ||
+					     (_op == ComparisonOperator::GreaterOrEqual) ) {
+						// Equal to unset
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					// lhs is set
+					if ( (_op == ComparisonOperator::NotEqual) ||
+					     (_op == ComparisonOperator::GreaterThan) ||
+					     (_op == ComparisonOperator::GreaterOrEqual) ) {
+						return true;
+					}
+					else {
+						return false;
+					}
 				}
 			}
 			else {
-				switch ( _op ) {
-					case ComparisonOperator::Equal:
-						return ctx->getString(_key) == _value;
-					case ComparisonOperator::NotEqual:
-						return ctx->getString(_key) != _value;
-					case ComparisonOperator::LessThan:
-						return ctx->getString(_key) < _value;
-					case ComparisonOperator::LessOrEqual:
-						return ctx->getString(_key) <= _value;
-					case ComparisonOperator::GreaterThan:
-						return ctx->getString(_key) > _value;
-					case ComparisonOperator::GreaterOrEqual:
-						return ctx->getString(_key) >= _value;
-					default:
-						throw runtime_error("invalid comparison operator");
+				if ( !lhsIsSet ) {
+					if ( (_op == ComparisonOperator::NotEqual) ||
+					     (_op == ComparisonOperator::LessThan) ||
+					     (_op == ComparisonOperator::LessOrEqual) ) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else if ( _numericValue ) {
+					if ( dValue ) {
+						switch ( _op ) {
+							case ComparisonOperator::Equal:
+								return *dValue == *_numericValue;
+							case ComparisonOperator::NotEqual:
+								return *dValue != *_numericValue;
+							case ComparisonOperator::LessThan:
+								return *dValue < *_numericValue;
+							case ComparisonOperator::LessOrEqual:
+								return *dValue <= *_numericValue;
+							case ComparisonOperator::GreaterThan:
+								return *dValue > *_numericValue;
+							case ComparisonOperator::GreaterOrEqual:
+								return *dValue >= *_numericValue;
+							default:
+								throw runtime_error("invalid comparison operator");
+						}
+					}
+					else {
+						throw runtime_error("incompatible types: string and double");
+					}
+				}
+				else {
+					if ( sValue ) {
+						switch ( _op ) {
+							case ComparisonOperator::Equal:
+								return *sValue == _value;
+							case ComparisonOperator::NotEqual:
+								return *sValue != _value;
+							case ComparisonOperator::LessThan:
+								return *sValue < _value;
+							case ComparisonOperator::LessOrEqual:
+								return *sValue <= _value;
+							case ComparisonOperator::GreaterThan:
+								return *sValue > _value;
+							case ComparisonOperator::GreaterOrEqual:
+								return *sValue >= _value;
+							default:
+								throw runtime_error("invalid comparison operator");
+						}
+					}
+					else {
+						throw runtime_error("incompatible types: double and string");
+					}
 				}
 			}
 		}
@@ -169,6 +243,7 @@ class LeKeyValueExpression : public LeExpression {
 		ComparisonOperator _op;
 		string             _value;
 		OPT(double)        _numericValue;
+		bool               _null{false};
 };
 
 
@@ -179,9 +254,9 @@ class LeKeyValueExpression : public LeExpression {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const std::set<std::string> &LeKeyValueFactory::Specials() {
-	static std::set<std::string> specials = { "!=" };
-	return specials;
+const std::set<std::string> &LeKeyValueFactory::Reserved() {
+	static std::set<std::string> reserved = { "!=" };
+	return reserved;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -193,13 +268,42 @@ LeExpression *LeKeyValueFactory::createExpression(string_view condition) const {
 	for ( size_t i = 0; i < idx(ComparisonOperator::Quantity); ++i ) {
 		auto p = condition.find(comparisonOperators[i]);
 		if ( p != string::npos ) {
-			auto key = condition.substr(0, p);
+			auto key = Core::trim(condition.substr(0, p));
+			if ( key.empty() ) {
+				throw runtime_error("comparison left-hand operand must not be empty");
+			}
+
 			if ( !isValid(key) ) {
 				throw runtime_error("invalid key name '" + string(key) + "'");
 			}
 
-			auto value = condition.substr(p + comparisonOperators[i].size());
-			return create(Core::trim(key), ComparisonOperator(i), Core::trim(value));
+			auto value = Core::trim(condition.substr(p + comparisonOperators[i].size()));
+			if ( value.empty() ) {
+				throw runtime_error("comparison right-hand operand must not be empty");
+			}
+
+			bool isString = (value.front() == '\'') || (value.back() == '\'');
+			if ( isString ) {
+				if ( value.front() != '\'' ) {
+					throw runtime_error("missing opening single quotation mark of left-hand comparison operator");
+				}
+
+				if ( value.back() != '\'' ) {
+					throw runtime_error("missing closing single quotation mark of right-hand comparison operator");
+				}
+
+				return create(key, ComparisonOperator(i), value.substr(1, value.size() - 2));
+			}
+			else if ( value == "null" ) {
+				return create(key, ComparisonOperator(i), Core::None);
+			}
+			else {
+				double v;
+				if ( !Core::fromString(v, value) ) {
+					throw runtime_error("invalid numerical value " + string(value));
+				}
+				return create(key, ComparisonOperator(i), v);
+			}
 		}
 	}
 
@@ -213,8 +317,18 @@ LeExpression *LeKeyValueFactory::createExpression(string_view condition) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 LeExpression *LeKeyValueFactory::create(std::string_view key,
                                         ComparisonOperator op,
-                                        std::string_view value) const {
-	return new LeKeyValueExpression(key, op, value);
+                                        RHS rhs) const {
+	if ( !rhs ) {
+		return new LeKeyValueExpression(key, op);
+	}
+	else if ( rhs->index() == 1 ) {
+		// string_view
+		return new LeKeyValueExpression(key, op, get<string_view>(*rhs));
+	}
+	else {
+		// double
+		return new LeKeyValueExpression(key, op, get<double>(*rhs));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -224,6 +338,15 @@ LeExpression *LeKeyValueFactory::create(std::string_view key,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool LeKeyValueFactory::isValid(std::string_view key) const {
 	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void LeParser::Symbols::set(Operator op, const std::string &token) {
+	operators[idx(op)] = token;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -250,23 +373,47 @@ LeParser::~LeParser() {}
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void LeParser::tokenize(Tokens &tokens, string_view expr) {
 	int parenthesesCounter = 0;
+	bool inQuotes = false;
+	bool lastQuote = false;
 
 	string token;
 
 	for ( size_t current = 0; current < expr.size(); ) {
-		if ( !_symbols->specials.empty() ) {
-			bool skipSpecial = false;
+		if ( !_symbols->operators[idx(Operator::Quote)].empty() ) {
+			if ( !expr.compare(current, _symbols->operators[idx(Operator::Quote)].size(), _symbols->operators[idx(Operator::Quote)]) ) {
+				inQuotes = !inQuotes;
+				if ( !inQuotes || !lastQuote ) {
+					token += _symbols->operators[idx(Operator::Quote)];
+				}
+				current += _symbols->operators[idx(Operator::Quote)].size();
+				lastQuote = true;
+				continue;
+			}
 
-			for ( auto &special : _symbols->specials ) {
-				if ( !expr.compare(current, special.size(), special) ) {
-					token += special;
-					current += special.size();
-					skipSpecial = true;
+			lastQuote = false;
+
+			if ( inQuotes ) {
+				token.push_back(expr[current++]);
+				continue;
+			}
+		}
+		else {
+			lastQuote = false;
+		}
+
+		if ( !_symbols->reserved.empty() ) {
+			bool skipReserved = false;
+
+			for ( auto &reserved : _symbols->reserved ) {
+				if ( !expr.compare(current, reserved.size(), reserved) ) {
+					token += reserved;
+					current += reserved.size();
+					skipReserved = true;
 					break;
 				}
 			}
 
-			if ( skipSpecial ) {
+			if ( skipReserved ) {
 				continue;
 			}
 		}
@@ -307,8 +454,7 @@ void LeParser::tokenize(Tokens &tokens, string_view expr) {
 		}
 		*/
 		else {
-			token.push_back(expr[current]);
-			++current;
+			token.push_back(expr[current++]);
 		}
 	}
 
@@ -319,6 +465,10 @@ void LeParser::tokenize(Tokens &tokens, string_view expr) {
 	}
 	else if ( parenthesesCounter > 0 ) {
 		throw runtime_error("too many opening parentheses");
+	}
+
+	if ( inQuotes ) {
+		throw runtime_error("missing closing quotation mark");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

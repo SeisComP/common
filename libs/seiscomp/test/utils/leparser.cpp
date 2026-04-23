@@ -111,12 +111,21 @@ struct DynamicKeyValueContext : public LeKeyValueContext {
 			return 3;
 		}
 
-		throw runtime_error(string(key) + " is not a valid key");
+		throw runtime_error(string(key) + " is not a valid numerical key");
 	}
 
 	string getString(string_view key) const override {
 		if ( key == "type" ) {
 			return "not existing";
+		}
+		else if ( key == "empty" ) {
+			return "";
+		}
+		else if ( key == "unset" ) {
+			throw Core::ValueException();
+		}
+		else if ( key == "misc" ) {
+			return "a && (op == '&&' || op == '||')";
 		}
 
 		throw runtime_error(string(key) + " is not a valid key");
@@ -135,81 +144,81 @@ BOOST_AUTO_TEST_CASE(parser) {
 	LeExpressionPtr expr;
 
 	// And
-	expr = parser.parse("true & false");
+	expr = parser.parse("true && false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("true & true");
+	expr = parser.parse("true && true");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("false & true");
+	expr = parser.parse("false && true");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("false & false");
+	expr = parser.parse("false && false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
 	// Or
-	expr = parser.parse("false | false");
+	expr = parser.parse("false || false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("false | true");
+	expr = parser.parse("false || true");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true | false");
+	expr = parser.parse("true || false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true | true");
+	expr = parser.parse("true || true");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
 	// Complex
-	expr = parser.parse("true & (false | true)");
+	expr = parser.parse("true && (false || true)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("(false | true) & true");
+	expr = parser.parse("(false || true) && true");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("false & (false | true)");
+	expr = parser.parse("false && (false || true)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("(false | true) & false");
+	expr = parser.parse("(false || true) && false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("true & a < 5");
+	expr = parser.parse("true && a < 5");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true & a >= 5");
+	expr = parser.parse("true && a >= 5");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("true & !false");
+	expr = parser.parse("true && !false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("!true & !false");
+	expr = parser.parse("!true && !false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("!!true & !!!false");
+	expr = parser.parse("!!true && !!!false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true & !(a >= 5)");
+	expr = parser.parse("true && !(a >= 5)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true & !(a < 5)");
+	expr = parser.parse("true && !(a < 5)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 }
@@ -218,15 +227,15 @@ BOOST_AUTO_TEST_CASE(parser) {
 BOOST_AUTO_TEST_CASE(specials) {
 	SimpleFactory factory;
 	auto symbols = LeParser::DefaultSymbols();
-	symbols.specials.insert("!=");
+	symbols.reserved.insert("!=");
 	LeParser parser(&factory, &symbols);
 	LeExpressionPtr expr;
 
-	expr = parser.parse("true & a != 5");
+	expr = parser.parse("true && a != 5");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(nullptr));
 
-	expr = parser.parse("true & !(a != 5)");
+	expr = parser.parse("true && !(a != 5)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 }
@@ -234,15 +243,15 @@ BOOST_AUTO_TEST_CASE(specials) {
 
 BOOST_AUTO_TEST_CASE(custom_syntax) {
 	SimpleFactory factory;
-	LeParser::Symbols symbols = { {"&&", "||", "!", "{", "}"} };
+	LeParser::Symbols symbols = { {"&", "|", "!", "{", "}", "'"} };
 	LeParser parser(&factory, &symbols);
 	LeExpressionPtr expr;
 
-	expr = parser.parse("true && false");
+	expr = parser.parse("true & false");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 
-	expr = parser.parse("false && {false || true}");
+	expr = parser.parse("false & {false | true}");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(nullptr));
 }
@@ -250,7 +259,7 @@ BOOST_AUTO_TEST_CASE(custom_syntax) {
 
 BOOST_AUTO_TEST_CASE(custom_syntax2) {
 	SimpleFactory factory;
-	LeParser::Symbols symbols = { {"and", "or", "not", "BEGIN", "END"} };
+	LeParser::Symbols symbols = { {"and", "or", "not", "BEGIN", "END", "'"} };
 	LeParser parser(&factory, &symbols);
 	LeExpressionPtr expr;
 
@@ -268,18 +277,18 @@ BOOST_AUTO_TEST_CASE(keyvalue) {
 	LeKeyValueFactory kv;
 	StaticKeyValueContext ctx;
 	LeParser::Symbols symbols = LeParser::DefaultSymbols();
-	symbols.specials = LeKeyValueFactory::Specials();
+	symbols.reserved = LeKeyValueFactory::Reserved();
 	LeParser parser(&kv, &symbols);
 	LeExpressionPtr expr;
 
 	ctx.values["a"] = 0;
 	ctx.values["b"] = 3;
 
-	expr = parser.parse("a != 5 & b == 3");
+	expr = parser.parse("a != 5 && b == 3");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("a == 5 & b != 3");
+	expr = parser.parse("a == 5 && b != 3");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(&ctx));
 
@@ -307,15 +316,15 @@ BOOST_AUTO_TEST_CASE(keyvalue) {
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(&ctx));
 
-	expr = parser.parse("(a < 5) | (b > 1)");
+	expr = parser.parse("(a < 5) || (b > 1)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("(a >= 5) | (b > 1)");
+	expr = parser.parse("(a >= 5) || (b > 1)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("(a < 5) | (b <= 1)");
+	expr = parser.parse("(a < 5) || (b <= 1)");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 }
@@ -325,29 +334,103 @@ BOOST_AUTO_TEST_CASE(keyvalue2) {
 	LeKeyValueFactory kv;
 	DynamicKeyValueContext ctx;
 	LeParser::Symbols symbols = LeParser::DefaultSymbols();
-	symbols.specials = LeKeyValueFactory::Specials();
+	symbols.reserved = LeKeyValueFactory::Reserved();
 	LeParser parser(&kv, &symbols);
 	LeExpressionPtr expr;
 
-	expr = parser.parse("a != 5 & b == 3");
+	expr = parser.parse("a != 5 && b == 3");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("a == 5 & b != 3");
+	expr = parser.parse("a == 5 && b != 3");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(&ctx));
 
-	expr = parser.parse("type == not existing");
+	expr = parser.parse("type == 'not existing'");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("type != earthquake");
+	expr = parser.parse("type != 'earthquake'");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(expr->eval(&ctx));
 
-	expr = parser.parse("type == who knows what");
+	expr = parser.parse("type == 'who knows what'");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("misc == 'a && (op == ''&&'' || op == ''||'')'");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("empty == ''");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("empty != ''");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("unset == ''");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("unset != ''");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("unset == null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("unset != null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	// Check lhs(unset) : rhs(set) rules
+	expr = parser.parse("unset == 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("unset < 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("unset <= 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("unset > 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("unset >= 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	// Check lhs(set) : rhs(unset) rules
+	expr = parser.parse("empty == null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("empty != null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("empty < null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("empty <= null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("empty > null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
+
+	expr = parser.parse("empty >= null");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(expr->eval(&ctx));
 }
 
 
@@ -355,7 +438,7 @@ BOOST_AUTO_TEST_CASE(errors) {
 	LeKeyValueFactory kv;
 	StaticKeyValueContext ctx;
 	LeParser::Symbols symbols = LeParser::DefaultSymbols();
-	symbols.specials = LeKeyValueFactory::Specials();
+	symbols.reserved = LeKeyValueFactory::Reserved();
 	LeParser parser(&kv, &symbols);
 	LeExpressionPtr expr;
 
@@ -364,18 +447,18 @@ BOOST_AUTO_TEST_CASE(errors) {
 
 	BOOST_CHECK_THROW(parser.parse("!"), runtime_error);
 
-	BOOST_CHECK_THROW(parser.parse("a > 5 &"), runtime_error);
-	BOOST_CHECK_THROW(parser.parse("a > 5 |"), runtime_error);
-	BOOST_CHECK_THROW(parser.parse("& a > 5"), runtime_error);
-	BOOST_CHECK_THROW(parser.parse("| a > 5"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("a > 5 &&"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("a > 5 ||"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("&& a > 5"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("|| a > 5"), runtime_error);
 
-	expr = parser.parse("a <= 5 & c == 0");
+	expr = parser.parse("a <= 5 && c == 0");
 	BOOST_CHECK(expr);
 	// c is undefined (invalid key)
 	BOOST_CHECK_THROW(expr->eval(&ctx), runtime_error);
 
 	// Shortcut evaluation, a > 5 is false so all is false and c == 0 will not be checked.
-	expr = parser.parse("a > 5 & c == 0");
+	expr = parser.parse("a > 5 && c == 0");
 	BOOST_CHECK(expr);
 	BOOST_CHECK(!expr->eval(&ctx));
 

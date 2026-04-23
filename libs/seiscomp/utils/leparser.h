@@ -28,6 +28,7 @@
 #include <vector>
 #include <set>
 #include <sstream>
+#include <variant>
 
 #include <seiscomp/core/baseobject.h>
 
@@ -97,6 +98,14 @@ class SC_SYSTEM_CORE_API LeKeyValueFactory : public LeFactory {
 		};
 
 	public:
+		/**
+		 * @brief Creates an expression from a comparison condition.
+		 * The syntax is: [key] [==|!=|<|<=|>=|>] '[string]'|null|[double].
+		 * Null is a special value which will be used for comparison if the context
+		 * throws a Seiscomp::Core::ValueException when retrieving a value.
+		 * @param condition The string condition.
+		 * @return An expression.
+		 */
 		LeExpression *createExpression(std::string_view condition) const override;
 
 	public:
@@ -104,9 +113,12 @@ class SC_SYSTEM_CORE_API LeKeyValueFactory : public LeFactory {
 		 * @brief Returns a set of special keywords required by this factory.
 		 * @return
 		 */
-		static const std::set<std::string> &Specials();
+		static const std::set<std::string> &Reserved();
 
 	protected:
+		using Variant = std::variant<double,std::string_view>;
+		using RHS = OPT(Variant);
+
 		/**
 		 * @brief Returns whether the key is valid or not.
 		 * If the key is not valid then the expression won't be created.
@@ -115,7 +127,7 @@ class SC_SYSTEM_CORE_API LeKeyValueFactory : public LeFactory {
 		 * @return Validation flag.
 		 */
 		virtual bool isValid(std::string_view key) const;
-		virtual LeExpression *create(std::string_view key, ComparisonOperator op, std::string_view value) const;
+		virtual LeExpression *create(std::string_view key, ComparisonOperator op, RHS rhs) const;
 };
 
 
@@ -123,8 +135,9 @@ class SC_SYSTEM_CORE_API LeKeyValueContext {
 	public:
 		/**
 		 * @brief Returns a double value for a key.
-		 * If the key cannot be found or does not store a double value then an
-		 * exception is thrown.
+		 * If the key cannot be found or does not store a double value then
+		 * std::runtime_error is thrown. If the value is not set but the key is
+		 * valid then Seiscomp::Core::ValueException is thrown.
 		 * @param key The key.
 		 * @return The associated double value.
 		 */
@@ -132,7 +145,9 @@ class SC_SYSTEM_CORE_API LeKeyValueContext {
 
 		/**
 		 * @brief Returns a string value for a key.
-		 * If the key cannot be found then an exception is thrown.
+		 * If the key cannot be found then std::runtime_error is thrown. If the
+		 * value is not set but the key is valid then Seiscomp::Core::ValueException
+		 * is thrown.
 		 * @param key The key.
 		 * @return The associated string value.
 		 */
@@ -155,12 +170,15 @@ class SC_SYSTEM_CORE_API LeParser {
 			Not,
 			POpen,
 			PClose,
+			Quote,
 			Quantity
 		};
 
 		struct Symbols {
+			void set(Operator, const std::string &);
+
 			std::string           operators[static_cast<size_t>(Operator::Quantity)];
-			std::set<std::string> specials;
+			std::set<std::string> reserved;
 		};
 
 		using Tokens = std::vector<std::string>;
