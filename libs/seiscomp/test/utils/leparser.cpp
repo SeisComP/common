@@ -351,4 +351,39 @@ BOOST_AUTO_TEST_CASE(keyvalue2) {
 }
 
 
+BOOST_AUTO_TEST_CASE(errors) {
+	LeKeyValueFactory kv;
+	StaticKeyValueContext ctx;
+	LeParser::Symbols symbols = LeParser::DefaultSymbols();
+	symbols.specials = LeKeyValueFactory::Specials();
+	LeParser parser(&kv, &symbols);
+	LeExpressionPtr expr;
+
+	ctx.values["a"] = 0;
+	ctx.values["b"] = 3;
+
+	BOOST_CHECK_THROW(parser.parse("!"), runtime_error);
+
+	BOOST_CHECK_THROW(parser.parse("a > 5 &"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("a > 5 |"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("& a > 5"), runtime_error);
+	BOOST_CHECK_THROW(parser.parse("| a > 5"), runtime_error);
+
+	expr = parser.parse("a <= 5 & c == 0");
+	BOOST_CHECK(expr);
+	// c is undefined (invalid key)
+	BOOST_CHECK_THROW(expr->eval(&ctx), runtime_error);
+
+	// Shortcut evaluation, a > 5 is false so all is false and c == 0 will not be checked.
+	expr = parser.parse("a > 5 & c == 0");
+	BOOST_CHECK(expr);
+	BOOST_CHECK(!expr->eval(&ctx));
+
+	expr = parser.parse("c == 3");
+	BOOST_CHECK(expr);
+	// c is undefined (invalid key)
+	BOOST_CHECK_THROW(expr->eval(&ctx), runtime_error);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
