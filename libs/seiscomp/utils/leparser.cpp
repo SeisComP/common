@@ -420,11 +420,11 @@ LeExpression *LeParser::parse(Tokens::const_iterator &it,
 						throw runtime_error("could not create expression: " + *it);
 					}
 				}
-				catch ( exception &e ) {
+				catch ( ... ) {
 					if ( lastExpression ) {
 						delete lastExpression;
 					}
-					throw e;
+					throw;
 				}
 			}
 
