@@ -36,10 +36,14 @@
 
 #include "eventlistview.h"
 
+#include <seiscomp/core/exceptions.h>
 #include <seiscomp/gui/core/gradient.h>
 #include <seiscomp/gui/datamodel/ui_eventlistview.h>
+#include <seiscomp/utils/leparser.h>
 
+#include <QColor>
 #include <QTimer>
+#include <vector>
 
 
 namespace Seiscomp {
@@ -82,6 +86,13 @@ class EventListViewPrivate {
 		};
 
 	public:
+		struct HighlightRule {
+			Utils::LeExpressionPtr expression;
+			QColor                 background;
+			QColor                 foreground;
+		};
+
+	public:
 		EventListViewPrivate();
 		~EventListViewPrivate();
 
@@ -118,6 +129,7 @@ class EventListViewPrivate {
 		mutable int                         _visibleEventCount;
 		QTimer                              _otimeAgoTimer;
 		QString                             _exportScript;
+		std::vector<HighlightRule>          _highlightRules;
 
 	friend class EventListView;
 };
