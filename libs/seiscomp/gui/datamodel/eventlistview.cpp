@@ -3334,32 +3334,26 @@ class EventKeyValueContext : public Utils::V2::LeKeyValueContext {
 
 		std::string getString(std::string_view key) const override {
 			if ( key == "type" ) {
-				try { return DataModel::EEventTypeNames::name(_event->type()); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return DataModel::EEventTypeNames::name(_event->type());
 			}
 			if ( key == "typecertainty" ) {
-				try { return DataModel::EEventTypeCertaintyNames::name(_event->typeCertainty()); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return DataModel::EEventTypeCertaintyNames::name(_event->typeCertainty());
 			}
 			if ( key == "evaluationstatus" || key == "status" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return DataModel::EEvaluationStatusNames::name(_origin->evaluationStatus()); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return DataModel::EEvaluationStatusNames::name(_origin->evaluationStatus());
 			}
 			if ( key == "evaluationmode" || key == "mode" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return DataModel::EEvaluationModeNames::name(_origin->evaluationMode()); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return DataModel::EEvaluationModeNames::name(_origin->evaluationMode());
 			}
 			if ( key == "agencyid" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return _origin->creationInfo().agencyID(); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return _origin->creationInfo().agencyID();
 			}
 			if ( key == "author" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return _origin->creationInfo().author(); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return _origin->creationInfo().author();
 			}
 			throw std::runtime_error(std::string("unknown key: ") + std::string(key));
 		}
@@ -3375,8 +3369,7 @@ class EventKeyValueContext : public Utils::V2::LeKeyValueContext {
 			}
 			if ( key == "depth" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return _origin->depth().value(); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return _origin->depth().value();
 			}
 			if ( key == "magnitude" || key == "mag" ) {
 				if ( !_magnitude ) throw Core::ValueException();
@@ -3384,13 +3377,11 @@ class EventKeyValueContext : public Utils::V2::LeKeyValueContext {
 			}
 			if ( key == "rms" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return _origin->quality().standardError(); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return _origin->quality().standardError();
 			}
 			if ( key == "azimuthalgap" || key == "gap" ) {
 				if ( !_origin ) throw Core::ValueException();
-				try { return _origin->quality().azimuthalGap(); }
-				catch ( ... ) { throw Core::ValueException(); }
+				return _origin->quality().azimuthalGap();
 			}
 			throw std::runtime_error(std::string("unknown key: ") + std::string(key));
 		}
