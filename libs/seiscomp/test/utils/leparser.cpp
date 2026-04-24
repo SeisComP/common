@@ -34,7 +34,7 @@
 
 using namespace std;
 using namespace Seiscomp;
-using namespace Seiscomp::Utils;
+using namespace Seiscomp::Utils::V2;
 
 
 class TrueExpression : public LeExpression {
