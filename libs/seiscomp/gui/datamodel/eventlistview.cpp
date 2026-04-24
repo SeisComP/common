@@ -3325,7 +3325,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace {
 
-class EventKeyValueContext : public Utils::LeKeyValueContext {
+class EventKeyValueContext : public Utils::V2::LeKeyValueContext {
 	public:
 		EventKeyValueContext(DataModel::Event *event,
 		                     DataModel::Origin *origin,
@@ -3415,10 +3415,10 @@ void EventListView::loadHighlightRules() {
 	}
 	catch ( ... ) { return; }
 
-	Utils::LeKeyValueFactory factory;
-	Utils::LeParser::Symbols symbols = Utils::LeParser::DefaultSymbols();
-	symbols.reserved = Utils::LeKeyValueFactory::Reserved();
-	Utils::LeParser parser(&factory, &symbols);
+	Utils::V2::LeKeyValueFactory factory;
+	Utils::V2::LeParser::Symbols symbols = Utils::V2::LeParser::DefaultSymbols();
+	symbols.reserved = Utils::V2::LeKeyValueFactory::Reserved();
+	Utils::V2::LeParser parser(&factory, &symbols);
 
 	for ( const auto &name : names ) {
 		const std::string base = "eventlist.highlight." + name;
@@ -3429,7 +3429,7 @@ void EventListView::loadHighlightRules() {
 		}
 		catch ( ... ) { continue; }
 
-		Utils::LeExpression *expr = nullptr;
+		Utils::V2::LeExpression *expr = nullptr;
 		try {
 			expr = parser.parse(condStr);
 		}

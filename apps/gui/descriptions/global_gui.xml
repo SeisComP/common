@@ -1780,6 +1780,66 @@
 						</parameter>
 					</group>
 				</group>
+				<group name="highlight">
+					<description>
+					Configurable row colouring rules for the event list. Each named
+					rule defines a logical condition and the background/foreground
+					colours to apply when the condition matches. The first matching
+					rule wins; rows that match no rule revert to the default style.
+
+					Condition syntax: boolean expressions using &amp;&amp; (AND),
+					|| (OR) and ! (NOT). String values must be single-quoted;
+					numeric values are unquoted. Unset optional fields (e.g. no
+					preferred magnitude, typecertainty not set) are treated as null:
+					!= returns true, == returns false.
+
+					Supported string keys: type, typecertainty,
+					evaluationstatus (alias: status), evaluationmode (alias: mode),
+					agencyid, author.
+
+					Supported numeric keys: latitude (alias: lat),
+					longitude (alias: lon), depth, magnitude (alias: mag),
+					rms, azimuthalgap (alias: gap).
+
+					String values use SeisComP enum names as-is (lowercase with
+					spaces), e.g. 'earthquake', 'not existing', 'quarry blast'.
+
+					Example:
+					eventlist.highlight = auto, preliminary
+					eventlist.highlight.auto.condition = "evaluationmode == 'automatic'"
+					eventlist.highlight.auto.background = FF4100
+					eventlist.highlight.auto.foreground = 000000
+					</description>
+					<parameter name="highlight" type="list:string">
+						<description>
+						Ordered list of highlight rule names. The first rule whose
+						condition matches the event is applied; subsequent rules are
+						not evaluated.
+						</description>
+					</parameter>
+					<struct type="highlight rule" link="eventlist.highlight">
+						<parameter name="condition" type="string">
+							<description>
+							Logical expression evaluated against the event's preferred
+							origin, magnitude and event metadata. String values must
+							be single-quoted. Use &amp;&amp; for AND, || for OR, ! for NOT.
+							</description>
+						</parameter>
+						<parameter name="background" type="color">
+							<description>
+							Row background colour when this rule matches. Accepts a
+							6-digit hex value (e.g. FFA500) or a Qt named colour
+							(e.g. yellow).
+							</description>
+						</parameter>
+						<parameter name="foreground" type="color">
+							<description>
+							Row foreground (text) colour when this rule matches.
+							Accepts a 6-digit hex value or a Qt named colour.
+							</description>
+						</parameter>
+					</struct>
+				</group>
 			</group>
 			<group name="eventedit">
 				<description>
