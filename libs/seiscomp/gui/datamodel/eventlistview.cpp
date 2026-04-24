@@ -3317,8 +3317,175 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 
 	connect(&SC_D._otimeAgoTimer, SIGNAL(timeout()), this, SLOT(updateOTimeAgo()));
 	updateOTimeAgoTimer();
+	loadHighlightRules();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+class EventKeyValueContext : public Utils::LeKeyValueContext {
+	public:
+		EventKeyValueContext(DataModel::Event *event,
+		                     DataModel::Origin *origin,
+		                     DataModel::Magnitude *magnitude)
+		    : _event(event), _origin(origin), _magnitude(magnitude) {}
+
+		std::string getString(std::string_view key) const override {
+			if ( key == "type" ) {
+				try { return DataModel::EEventTypeNames::name(_event->type()); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "typecertainty" ) {
+				try { return DataModel::EEventTypeCertaintyNames::name(_event->typeCertainty()); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "evaluationstatus" || key == "status" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return DataModel::EEvaluationStatusNames::name(_origin->evaluationStatus()); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "evaluationmode" || key == "mode" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return DataModel::EEvaluationModeNames::name(_origin->evaluationMode()); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "agencyid" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return _origin->creationInfo().agencyID(); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "author" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return _origin->creationInfo().author(); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			throw std::runtime_error(std::string("unknown key: ") + std::string(key));
+		}
+
+		double getDouble(std::string_view key) const override {
+			if ( key == "latitude" || key == "lat" ) {
+				if ( !_origin ) throw Core::ValueException();
+				return _origin->latitude().value();
+			}
+			if ( key == "longitude" || key == "lon" ) {
+				if ( !_origin ) throw Core::ValueException();
+				return _origin->longitude().value();
+			}
+			if ( key == "depth" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return _origin->depth().value(); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "magnitude" || key == "mag" ) {
+				if ( !_magnitude ) throw Core::ValueException();
+				return _magnitude->magnitude().value();
+			}
+			if ( key == "rms" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return _origin->quality().standardError(); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			if ( key == "azimuthalgap" || key == "gap" ) {
+				if ( !_origin ) throw Core::ValueException();
+				try { return _origin->quality().azimuthalGap(); }
+				catch ( ... ) { throw Core::ValueException(); }
+			}
+			throw std::runtime_error(std::string("unknown key: ") + std::string(key));
+		}
+
+	private:
+		DataModel::Event     *_event;
+		DataModel::Origin    *_origin;
+		DataModel::Magnitude *_magnitude;
+};
+
+} // namespace
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::loadHighlightRules() {
+	SC_D._highlightRules.clear();
+
+	std::vector<std::string> names;
+	try {
+		names = SCApp->configGetStrings("eventlist.highlight");
+	}
+	catch ( ... ) { return; }
+
+	Utils::LeKeyValueFactory factory;
+	Utils::LeParser::Symbols symbols = Utils::LeParser::DefaultSymbols();
+	symbols.reserved = Utils::LeKeyValueFactory::Reserved();
+	Utils::LeParser parser(&factory, &symbols);
+
+	for ( const auto &name : names ) {
+		const std::string base = "eventlist.highlight." + name;
+
+		std::string condStr;
+		try {
+			condStr = SCApp->configGetString(base + ".condition");
+		}
+		catch ( ... ) { continue; }
+
+		Utils::LeExpression *expr = nullptr;
+		try {
+			expr = parser.parse(condStr);
+		}
+		catch ( const std::exception &e ) {
+			SEISCOMP_WARNING("eventlist.highlight.%s: invalid condition: %s",
+			                 name.c_str(), e.what());
+			continue;
+		}
+
+		EventListViewPrivate::HighlightRule rule;
+		rule.expression = expr;
+		rule.background = SCApp->configGetColor(base + ".background", QColor());
+		rule.foreground = SCApp->configGetColor(base + ".foreground", QColor());
+		SC_D._highlightRules.emplace_back(std::move(rule));
+	}
+
+	SEISCOMP_INFO("Loaded %d event highlight rule(s)", (int)SC_D._highlightRules.size());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventListView::applyHighlight(QTreeWidgetItem *item,
+                                   DataModel::Event *event,
+                                   DataModel::Origin *origin,
+                                   DataModel::Magnitude *magnitude) const {
+	if ( !event || SC_D._highlightRules.empty() ) return;
+
+	EventKeyValueContext ctx(event, origin, magnitude);
+
+	const EventListViewPrivate::HighlightRule *matched = nullptr;
+	for ( const auto &rule : SC_D._highlightRules ) {
+		if ( !rule.expression ) continue;
+		try {
+			if ( rule.expression->eval(&ctx) ) {
+				matched = &rule;
+				break;
+			}
+		}
+		catch ( ... ) {}
+	}
+
+	int cols = item->columnCount();
+	for ( int c = 0; c < cols; ++c ) {
+		if ( matched ) {
+			if ( matched->background.isValid() )
+				item->setBackground(c, matched->background);
+			if ( matched->foreground.isValid() )
+				item->setForeground(c, matched->foreground);
+		}
+		else {
+			item->setData(c, Qt::BackgroundRole, QVariant());
+			item->setData(c, Qt::ForegroundRole, QVariant());
+		}
+	}
+}
 
 
 
@@ -4627,6 +4794,7 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	SC_D._ui->btnClear->setEnabled(true);
 
 	updateEventProcessColumns(item, true);
+	applyHighlight(item, event, preferredOrigin.get(), preferredMagnitude.get());
 
 	return item;
 }
@@ -4863,6 +5031,8 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 						if ( e && e->preferredOriginID() == o->publicID() ) {
 							parent->update(this);
 							emit eventUpdatedInList(e);
+							Magnitude *mag = Magnitude::Find(e->preferredMagnitudeID());
+							applyHighlight(parent, e, o, mag);
 						}
 					}
 					break;
@@ -4993,6 +5163,13 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					item->reset();
 					updateEventProcessColumns(item, true);
 					item->update(this);
+
+					{
+						Origin *prefOrigin = originItem
+						    ? static_cast<Origin*>(static_cast<SchemeTreeItem*>(originItem)->object())
+						    : preferredOrigin.get();
+						applyHighlight(item, event, prefOrigin, nm.get());
+					}
 
 					if ( SC_D._withFocalMechanisms ) {
 						auto *fmItem = findFocalMechanism(event->preferredFocalMechanismID());
