@@ -293,6 +293,12 @@ class SC_GUI_API EventListView : public QWidget {
 
 		void loadItem(QTreeWidgetItem*);
 
+		void loadHighlightRules();
+		void applyHighlight(QTreeWidgetItem *item,
+		                    Seiscomp::DataModel::Event *event,
+		                    Seiscomp::DataModel::Origin *origin,
+		                    Seiscomp::DataModel::Magnitude *magnitude) const;
+
 		//! \since 17.0.0
 		void updateOTimeAgoTimer();
 
