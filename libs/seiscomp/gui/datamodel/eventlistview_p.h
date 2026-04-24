@@ -87,7 +87,7 @@ class EventListViewPrivate {
 
 	public:
 		struct HighlightRule {
-			Utils::LeExpressionPtr expression;
+			Utils::V2::LeExpressionPtr expression;
 			QColor                 background;
 			QColor                 foreground;
 		};
