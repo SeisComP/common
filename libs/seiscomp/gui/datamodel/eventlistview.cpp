@@ -2934,7 +2934,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 					name = SCApp->configGetString("eventlist.region." + regionProfile + ".name");
 					SEISCOMP_WARNING("The parameter 'eventlist.region.%s.name' is deprecated and will be removed in future. "
 					                 "Please replace with 'eventlist.filter.regions.region.%s.name'.",
-					                 regionProfile.c_str(), regionProfile.c_str());
+					                 regionProfile, regionProfile);
 				}
 				catch ( ... ) {
 					std::cerr << "WARNING: eventlist.filter.regions.region."
@@ -2997,7 +2997,7 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 						defs = SCApp->configGetDoubles("eventlist.region." + regionProfile + ".rect");
 						SEISCOMP_WARNING("The parameter 'eventlist.region.%s.rect' is deprecated and will be removed in future. "
 						                 "Please replace with 'eventlist.filter.regions.region.%s.rect'.",
-						                 regionProfile.c_str(), regionProfile.c_str());
+						                 regionProfile, regionProfile);
 					}
 					catch ( ... ) {
 						std::cerr << "WARNING: eventlist.filter.regions.region."
@@ -3426,7 +3426,7 @@ void EventListView::loadHighlightRules() {
 		}
 		catch ( const std::exception &e ) {
 			SEISCOMP_WARNING("eventlist.highlight.%s: invalid condition: %s",
-			                 name.c_str(), e.what());
+			                 name, e.what());
 			continue;
 		}
 
@@ -5085,7 +5085,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 			{
 				auto *item = static_cast<EventTreeItem*>(findEvent(e->publicID()));
 				if ( item ) {
-					SEISCOMP_DEBUG("Delete event item %s", e->publicID().c_str());
+					SEISCOMP_DEBUG("Delete event item %s", e->publicID());
 					bool visibleItem = !item->isHidden();
 					EventPtr event = item->event();
 					delete item;
@@ -5231,7 +5231,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 				{
 					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 					if ( eventItem ) {
-						SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
+						SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID(), eventItem->object()->registered());
 						auto *originItem = findOrigin(ref->originID());
 						if ( originItem ) {
 							if ( originItem->parent()->parent() != eventItem ) {
@@ -5316,7 +5316,7 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 					{
 						auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
 						if ( eventItem ) {
-							SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID().c_str(), eventItem->object()->registered());
+							SEISCOMP_INFO("found eventitem with publicID '%s', registered(%d)", eventItem->object()->publicID(), eventItem->object()->registered());
 							auto *fmItem = findFocalMechanism(fm_ref->focalMechanismID());
 							if ( fmItem && fmItem->parent()->parent() != eventItem ) {
 								int index = fmItem->parent()->indexOfChild(fmItem);
