@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#define SEISCOMP_COMPONENT SL4Connection
+#define SEISCOMP_COMPONENT Seedlink4
 
 
 #include <cstring>
@@ -30,8 +30,17 @@
 #include <seiscomp/io/records/mseedrecord.h>
 #include <seiscomp/io/records/mseed/decoder/format.h>
 
-#include "sl4connection.h"
+#include "seedlink4_private.h"
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 struct SL4FixedHeader {
 	char signature[2];
 	char format;
@@ -49,11 +58,6 @@ struct SL4FixedHeader {
 #define TERMTOKEN "END"
 /* ... or in case of problems with ERROR */
 #define ERRTOKEN "ERROR"
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-namespace Seiscomp {
-namespace RecordStream {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -61,7 +65,6 @@ namespace RecordStream {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 using namespace std;
-using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::IO;
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -99,13 +102,6 @@ REGISTER_RECORDSTREAM(SSLSL4Connection, "slink4s");
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SL4StreamIdx::SL4StreamIdx() {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 SL4StreamIdx::SL4StreamIdx(const string &net, const string &sta, const string &loc,
                            const string &cha)
 : _net(net), _sta(sta), _loc(loc), _cha(cha) {}
@@ -119,20 +115,6 @@ SL4StreamIdx::SL4StreamIdx(const string &net, const string &sta, const string &l
                            const string &cha, const OPT(Time) &stime, const OPT(Time) &etime)
 : _net(net), _sta(sta), _loc(loc), _cha(cha)
 , _stime(stime), _etime(etime) {}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-SL4StreamIdx& SL4StreamIdx::operator=(const SL4StreamIdx &other) {
-	if ( this != &other ) {
-		this->~SL4StreamIdx();
-		new(this) SL4StreamIdx(other);
-	}
-
-	return *this;
-}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -184,16 +166,6 @@ bool SL4StreamIdx::operator<(const SL4StreamIdx &other) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool SL4StreamIdx::operator==(const SL4StreamIdx &other) const {
-	return (_net == other._net && _sta == other._sta &&
-	        _loc == other._loc && _cha == other._cha);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const string &SL4StreamIdx::network() const {
 	return _net;
 }
@@ -212,38 +184,24 @@ const string &SL4StreamIdx::station() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const string &SL4StreamIdx::channel() const {
-	return _cha;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-const string &SL4StreamIdx::location() const {
-	return _loc;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string SL4StreamIdx::selector(int format) const {
 	string cha = _cha;
 
-	if ( cha.length() == 3 && cha.find('_') == string::npos )
+	if ( cha.length() == 3 && cha.find('_') == string::npos ) {
 		cha = cha.substr(0, 1) + "_" + cha.substr(1, 1) + "_" + cha.substr(2, 1);
+	}
 
 	string selector = _loc + "_" + cha;
 
-	if ( format == 2 )
+	if ( format == 2 ) {
 		selector += ".2D";
-	else if ( format == 3 )
+	}
+	else if ( format == 3 ) {
 		selector += ".3D";
-	else
+	}
+	else {
 		selector += ".?D";
+	}
 
 	return selector;
 }
@@ -273,17 +231,6 @@ const OPT(Time) &SL4StreamIdx::endTime() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const OPT(Time) &SL4StreamIdx::timestamp() const {
 	return _timestamp;
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SL4StreamIdx::setTimestamp(const OPT(Time) &rectime) const {
-	if ( _timestamp < rectime ) {
-		_timestamp = rectime;
-	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -690,18 +637,6 @@ void SL4Connection<SocketType>::handshake() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void updateStreams(std::set<SL4StreamIdx> &streams, const MSeedRecord &prec) {
-	SL4StreamIdx idx(prec.networkCode(), prec.stationCode(), prec.locationCode(), prec.channelCode());
-	if ( auto it = streams.find(idx); it != streams.end() ) {
-		it->setTimestamp(prec.endTime());
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <typename SocketType>
 Record *SL4Connection<SocketType>::next() {
 	if (_readingData && !_sock.isOpen()) {
@@ -878,6 +813,5 @@ Record *SL4Connection<SocketType>::next() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

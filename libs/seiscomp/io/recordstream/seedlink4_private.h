@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#ifndef SEISCOMP_IO_RECORDSTREAM_SL4CONNECTION_H
-#define SEISCOMP_IO_RECORDSTREAM_SL4CONNECTION_H
+#ifndef SEISCOMP_IO_RECORDSTREAM_SEEDLINK4_PRIVATE_H
+#define SEISCOMP_IO_RECORDSTREAM_SEEDLINK4_PRIVATE_H
 
 
 #include <string>
@@ -27,34 +27,35 @@
 #include <map>
 #include <iostream>
 #include <sstream>
-#include <signal.h>
+#include <csignal>
+
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/core.h>
 #include <seiscomp/io/socket.h>
 
 
-namespace Seiscomp {
-namespace RecordStream {
+namespace {
 
 
-class SC_SYSTEM_CORE_API SeedlinkException: public Seiscomp::IO::RecordStreamException {
+using namespace Seiscomp;
+
+
+class SeedlinkException : public IO::RecordStreamException {
 	public:
 		SeedlinkException(): RecordStreamException("Seedlink exception") {}
-		SeedlinkException(const std::string& what): RecordStreamException(what) {}
+		SeedlinkException(const std::string &what): RecordStreamException(what) {}
 };
 
-class SC_SYSTEM_CORE_API SeedlinkCommandException: public SeedlinkException {
+class SeedlinkCommandException : public SeedlinkException {
 	public:
 		SeedlinkCommandException(): SeedlinkException("command not accepted") {}
-		SeedlinkCommandException(const std::string& what): SeedlinkException(what) {}
+		SeedlinkCommandException(const std::string &what): SeedlinkException(what) {}
 };
 
 
-class SC_SYSTEM_CORE_API SL4StreamIdx {
+class SL4StreamIdx {
 	public:
-		SL4StreamIdx();
-
 		SL4StreamIdx(const std::string &net, const std::string &sta,
 		             const std::string &loc, const std::string &cha);
 
@@ -64,10 +65,7 @@ class SC_SYSTEM_CORE_API SL4StreamIdx {
 		             const OPT(Core::Time) &etime);
 
 	public:
-		SL4StreamIdx& operator=(const SL4StreamIdx &other);
-
 		bool operator<(const SL4StreamIdx &other) const;
-		bool operator==(const SL4StreamIdx &other) const;
 
 	public:
 		//! Returns the network code
@@ -95,8 +93,6 @@ class SC_SYSTEM_CORE_API SL4StreamIdx {
 		//! Returns the most recent record end time
 		const OPT(Core::Time) &timestamp() const;
 
-		//! Sets the time stamp
-		void setTimestamp(const OPT(Core::Time) &rectime) const;
 
 	private:
 		const std::string       _net;
@@ -111,9 +107,7 @@ class SC_SYSTEM_CORE_API SL4StreamIdx {
 
 // DEFINE_SMARTPOINTER(SL4Connection);
 template<typename SocketType>
-class SC_SYSTEM_CORE_API SL4Connection : public Seiscomp::IO::RecordStream {
-	//DECLARE_SC_CLASS(SL4Connection);
-
+class SL4Connection : public IO::RecordStream {
 	public:
 		//! C'tor
 		SL4Connection();
@@ -210,7 +204,6 @@ class SC_SYSTEM_CORE_API SL4Connection : public Seiscomp::IO::RecordStream {
 };
 
 
-}
 }
 
 
