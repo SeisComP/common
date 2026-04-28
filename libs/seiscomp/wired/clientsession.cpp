@@ -34,6 +34,26 @@
 using namespace std;
 
 
+namespace {
+
+
+template <typename T, T FLAG>
+struct FlagGuard {
+	constexpr inline FlagGuard(T &flag) : instance(flag) {
+		instance |= FLAG;
+	}
+
+	inline ~FlagGuard() {
+		instance &= ~FLAG;
+	}
+
+	T &instance;
+};
+
+
+}
+
+
 namespace Seiscomp {
 namespace Wired {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -263,6 +283,8 @@ void ClientSession::bufferSent(Buffer*) {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ClientSession::update() {
+	FlagGuard<uint16_t, InUpdate> guard(_flags);
+
 	SEISCOMP_TRACE("%p: write quota: %d", static_cast<void*>(this), _writeQuota);
 	// Flush the outbox
 	flush();
@@ -491,30 +513,32 @@ void ClientSession::send(const char *data, size_t len) {
 		return;
 	}
 
-	// Limit to remaining quota for the current turn.
-	auto chunk = std::min(len, _writeQuota);
+	if ( _flags & InUpdate ) {
+		// Limit to remaining quota for the current turn.
+		auto chunk = std::min(len, _writeQuota);
 
-	if ( chunk > 0 ) {
-		auto r = _device->write(data, chunk);
-		if ( r < 0 ) {
-			if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
-				invalidate();
-				close();
-				return;
+		if ( chunk > 0 ) {
+			auto r = _device->write(data, chunk);
+			if ( r < 0 ) {
+				if ( (errno != EAGAIN) && (errno != EWOULDBLOCK) ) {
+					invalidate();
+					close();
+					return;
+				}
+
+				// Would block, queue it.
+				r = 0;
+			}
+			else {
+				_flags |= PendingFlush;
 			}
 
-			// Would block, queue it.
-			r = 0;
+			// Adjust quota
+			_writeQuota -= r;
+			SEISCOMP_TRACE("%p: sent direct %d, quota = %d", static_cast<void*>(this), r, _writeQuota);
+			len -= r;
+			data += r;
 		}
-		else {
-			_flags |= PendingFlush;
-		}
-
-		// Adjust quota
-		_writeQuota -= r;
-		SEISCOMP_TRACE("%p: sent direct %d, quota = %d", static_cast<void*>(this), r, _writeQuota);
-		len -= r;
-		data += r;
 	}
 
 	if ( len ) {
@@ -549,9 +573,9 @@ bool ClientSession::send(Buffer *buf) {
 	// Clear "private buffer" flag
 	_flags &= ~AppendBuffer;
 
-	if ( _currentBuffer || !_writeQuota ) {
-		// If another buffer is currently active or no quota left
-		// then queue this one.
+	if ( _currentBuffer || !_writeQuota || !(_flags & InUpdate) ) {
+		// If another buffer is currently active or no quota left or send is called outside
+		// the update method then queue this one.
 		return queue(buf);
 	}
 

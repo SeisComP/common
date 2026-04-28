@@ -132,7 +132,7 @@ class SC_SYSTEM_CORE_API ClientSession : public Session {
 			//Future1     = 0x0004,
 			//Future2     = 0x0008,
 			//Future3     = 0x0010,
-			//Future4     = 0x0020,
+			InUpdate      = 0x0020,
 			PendingFlush  = 0x0040,
 			AppendBuffer  = 0x0080,
 			Erroneous     = 0x0100
