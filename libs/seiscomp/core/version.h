@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 1, 2)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 3, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x110102
+#define SC_API_VERSION 0x110300
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,14 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "17.3.0"   0x110300
+   - Added Seiscomp::Utils::V2::LeExpression
+   - Added Seiscomp::Utils::V2::LeFactory
+   - Added Seiscomp::Utils::V2::LeKeyValueFactory
+   - Added Seiscomp::Utils::V2::LeKeyValueContext
+   - Added Seiscomp::Utils::V2::LeParser
+   - Added Seiscomp::Wired::ClientSession::InUpdate enumeration
+
  "17.2.0"   0x110200
    - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
    - Added Seiscomp::DataModel::NotifierStateGuard<T>
