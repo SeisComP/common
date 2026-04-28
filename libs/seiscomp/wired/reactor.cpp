@@ -219,8 +219,9 @@ bool Reactor::run() {
 //						SEISCOMP_DEBUG("[reactor] session closed its socket, remove it");
 						removeSession(session);
 					}
-					else if ( session->isTagged() )
+					else if ( session->isTagged() ) {
 						sessionTagged(session);
+					}
 				}
 			}
 		}

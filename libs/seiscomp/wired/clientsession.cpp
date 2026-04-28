@@ -568,7 +568,7 @@ bool ClientSession::send(Buffer *buf) {
 		_bufferBytesPending += buf_length;
 	}
 
-	// Do not all buffersFlushed() inside this call to prevent recursion.
+	// Do not call buffersFlushed() inside this call to prevent recursion.
 	// Instead set the flag PendingFlush if the buffer has been flushed
 	// to call buffersFlushed() in update.
 	flush(true);
