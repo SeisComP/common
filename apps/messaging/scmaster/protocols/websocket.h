@@ -91,6 +91,8 @@ class WebsocketSession : public HttpSession {
 	//  Public HTTPSession interface
 	// ----------------------------------------------------------------------
 	public:
+		bool reset() override;
+
 		//! Called when the session has been added to its actual worker,
 		//! either the queue or the database pool.
 		void welcome() { _handler->welcome(); }
@@ -100,10 +102,7 @@ class WebsocketSession : public HttpSession {
 		void handleHeader(const char *name, size_t nlen,
 		                  const char *value, size_t vlen) override;
 
-		void close() override;
 		void buffersFlushed() override;
-
-		void requestFinished() override;
 
 		void handleWebsocketFrame(Seiscomp::Wired::Websocket::Frame &frame) override;
 		void upgradeToWebsocket(const char *protocol,
