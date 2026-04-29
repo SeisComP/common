@@ -22,6 +22,7 @@
 #define SEISCOMP_MATH_GEO_COORD_H
 
 #include <seiscomp/core/baseobject.h>
+#include <seiscomp/core/enumeration.h>
 #include <string>
 
 
@@ -82,6 +83,29 @@ typedef NamedCoord<double> NamedCoordD;
 
 
 /**
+ * Location type of a city derived from GeoNames feature codes.
+ * Serializes as a lowercase string attribute in XML.
+ */
+MAKEENUM(
+	CityType,
+	EVALUES(
+		CITYTYPE_UNKNOWN, //!< Absent or unrecognised type attribute
+		CITYTYPE_CITY,    //!< Capital or administrative centre (PPLC, PPLA, PPLA2)
+		CITYTYPE_TOWN,    //!< Populated place or minor admin centre (PPL, PPLA3, PPLA4)
+		CITYTYPE_VILLAGE, //!< Small settlement (PPLF, PPLL, PPLR, PPLS, etc.)
+		CITYTYPE_SUBURB   //!< Section of a populated place (PPLX)
+	),
+	ENAMES(
+		"",
+		"city",
+		"town",
+		"village",
+		"suburb"
+	)
+);
+
+
+/**
  * @brief Administrative region (state, province, etc.) associated with a city.
  *
  * Serializes as an XML child element carrying an optional abbreviation
@@ -131,17 +155,8 @@ class City : public NamedCoord<T> {
 		void setCategory(std::string &);
 		const std::string &category() const;
 
-		/**
-		 * @brief Location type derived from GeoNames feature codes.
-		 *
-		 * One of the following values (or empty if unknown):
-		 *   "city"    — capital or administrative centre (PPLC, PPLA, PPLA2)
-		 *   "town"    — populated place or minor admin centre (PPL, PPLA3, PPLA4)
-		 *   "village" — small settlement (PPLF, PPLL, PPLR, PPLS, etc.)
-		 *   "suburb"  — section of a populated place (PPLX)
-		 */
-		void setType(const std::string &);
-		const std::string &type() const;
+		void setType(CityType);
+		CityType type() const;
 
 		/**
 		 * @brief Administrative region (state/province).
@@ -163,7 +178,7 @@ class City : public NamedCoord<T> {
 		std::string _country;
 		double _population;
 		std::string _category;
-		std::string _type;
+		CityType _type;
 		AdminRegion _adminRegion;
 };
 
