@@ -5083,20 +5083,21 @@ void PickerView::figureOutTravelTimeTable() {
 	}
 
 	if ( idx < 0 ) {
-		std::string defaultLocator = "LOCSAT";
+		std::string defaultTableType = "LOCSAT";
 		try {
-			defaultLocator = SCApp->configGetString("olv.locator.interface");
+			defaultTableType = SCApp->configGetString("ttt.default.tableType");
 		}
-		catch ( ... ) {
-			try {
-				defaultLocator = SCApp->configGetString("olv.locator");
-			}
-			catch ( ... ) {}
-		}
+		catch ( ... ) { }
 
-		idx = SC_D.comboTTT->findText(defaultLocator.c_str());
+		idx = SC_D.comboTTT->findText(defaultTableType.c_str());
 		if ( idx < 0 ) {
 			idx = SC_D.comboTTT->findText("LOCSAT");
+		}
+		else {
+			try {
+				SC_D.ttTableName = SCApp->configGetString("ttt.default.table");
+			}
+			catch ( ... ) { }
 		}
 	}
 

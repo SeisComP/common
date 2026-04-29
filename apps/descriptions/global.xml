@@ -409,6 +409,22 @@
 				homogeneous. For each loaded interface the supported tables must
 				be provided.
 				</description>
+				<group name="default">
+					<description>
+					Configure the default travel-time table interface and model to be
+					used by all modules that supports configurable ttt.
+					</description>
+					<parameter name="tableType" type="string" default="LOCSAT">
+						<description>
+						The default travel-time tables type (interface) to use.
+						</description>
+					</parameter>
+					<parameter name="table" type="string" default="iasp91">
+						<description>
+						The default table (model) to use.
+						</description>
+					</parameter>
+				</group>
 				<struct type="ttt profile">
 					<parameter name="tables" type="list:string">
 						<description>
