@@ -90,9 +90,9 @@ typedef NamedCoord<double> NamedCoordD;
 MAKEENUM(
 	CityType,
 	EVALUES(
-		CITYTYPE_UNKNOWN, //!< Absent or unrecognised type attribute
-		CITYTYPE_CITY,    //!< Capital or administrative centre (PPLC, PPLA, PPLA2)
-		CITYTYPE_TOWN,    //!< Populated place or minor admin centre (PPL, PPLA3, PPLA4)
+		CITYTYPE_UNKNOWN, //!< Absent or unrecognized type attribute
+		CITYTYPE_CITY,    //!< Capital or administrative center (PPLC, PPLA, PPLA2)
+		CITYTYPE_TOWN,    //!< Populated place or minor admin center (PPL, PPLA3, PPLA4)
 		CITYTYPE_VILLAGE, //!< Small settlement (PPLF, PPLL, PPLR, PPLS, etc.)
 		CITYTYPE_SUBURB   //!< Section of a populated place (PPLX)
 	),
