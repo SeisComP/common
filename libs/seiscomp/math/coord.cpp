@@ -293,7 +293,7 @@ void City<T>::setType(CityType t) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 CityType City<T>::type() const {
-	return _type;
+	return _type.value_or(CityType{});
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -313,7 +313,8 @@ void City<T>::setAdminRegion(const AdminRegion &r) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 const AdminRegion &City<T>::adminRegion() const {
-	return _adminRegion;
+	static const AdminRegion empty{};
+	return _adminRegion ? *_adminRegion : empty;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

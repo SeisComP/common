@@ -23,6 +23,7 @@
 
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/enumeration.h>
+#include <seiscomp/core/optional.h>
 #include <string>
 
 
@@ -178,8 +179,8 @@ class City : public NamedCoord<T> {
 		std::string _country;
 		double _population;
 		std::string _category;
-		CityType _type;
-		AdminRegion _adminRegion;
+		OPT(CityType) _type;
+		OPT(AdminRegion) _adminRegion;
 };
 
 
