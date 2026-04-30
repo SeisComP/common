@@ -24,6 +24,7 @@
 #include <string>
 
 #include <QThread>
+#include <QMutex>
 #include <QtCore>
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/record.h>
@@ -130,7 +131,6 @@ class SC_GUI_API RecordStreamState : public QObject {
 		static RecordStreamState& Instance();
 
 		int connectionCount() const;
-		QList<RecordStreamThread*> connections() const;
 
 	private:
 		void openedConnection(RecordStreamThread*);
@@ -144,9 +144,10 @@ class SC_GUI_API RecordStreamState : public QObject {
 		void lastConnectionClosed();
 
 	private:
-		static RecordStreamState _instance;
+		static RecordStreamState   _instance;
 
-		int _connectionCount;
+		QMutex                     _mutex;
+		int                        _connectionCount;
 		QList<RecordStreamThread*> _activeThreads;
 
 	friend class RecordStreamThread;
