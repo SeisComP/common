@@ -51,6 +51,14 @@ namespace Core {
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
 
+ "17.3.0"   0x110300
+   - Added Seiscomp::Utils::V2::LeExpression
+   - Added Seiscomp::Utils::V2::LeFactory
+   - Added Seiscomp::Utils::V2::LeKeyValueFactory
+   - Added Seiscomp::Utils::V2::LeKeyValueContext
+   - Added Seiscomp::Utils::V2::LeParser
+   - Added Seiscomp::Wired::ClientSession::InUpdate enumeration
+
  "17.2.0"   0x110200
    - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
    - Added Seiscomp::DataModel::NotifierStateGuard<T>
