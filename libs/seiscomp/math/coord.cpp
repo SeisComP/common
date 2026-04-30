@@ -87,7 +87,6 @@ void Coord<T>::serialize(Archive& ar) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AdminRegion::serialize(Core::BaseObject::Archive& ar) {
-	abbr = ""; name = "";
 	ar & NAMED_OBJECT("abbr", abbr);
 	ar & NAMED_OBJECT_HINT("name", name, Core::BaseObject::Archive::XML_ELEMENT);
 }
