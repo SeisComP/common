@@ -168,6 +168,12 @@ void touch(T *o) {
 }
 
 
+template <typename T>
+void touch(Core::SmartPointer<T> &o) {
+	touch(*o);
+}
+
+
 MAKEENUM(
 	InventoryError,
 	EVALUES(
