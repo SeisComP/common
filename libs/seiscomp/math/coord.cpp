@@ -77,7 +77,6 @@ bool Coord<T>::operator!=(const Coord<T> &other) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
 void Coord<T>::serialize(Archive& ar) {
-	lat = lon = 0;
 	ar & NAMED_OBJECT_HINT("latitude", lat, Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("longitude", lon, Archive::XML_ELEMENT);
 }
@@ -147,7 +146,6 @@ const std::string& NamedCoord<T>::name() const {
 template<typename T>
 void NamedCoord<T>::serialize(Core::BaseObject::Archive& ar) {
 	Coord<T>::serialize(ar);
-	_name = "";
 	ar & NAMED_OBJECT_HINT("name", _name, Core::BaseObject::Archive::XML_ELEMENT);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -255,7 +253,6 @@ const std::string &City<T>::category() const {
 template<typename T>
 void City<T>::serialize(Core::BaseObject::Archive& ar) {
 	NamedCoord<T>::serialize(ar);
-	_category = ""; _countryID = "";
 	ar & NAMED_OBJECT("countryID", _countryID);
 	ar & NAMED_OBJECT("category", _category);
 	ar & NAMED_OBJECT_HINT("population", _population, Core::BaseObject::Archive::XML_ELEMENT);
