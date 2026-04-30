@@ -772,7 +772,7 @@ void EventSummaryView::init() {
 	displayRect.setRect(lonmin, latmin, lonmax-lonmin, latmax-latmin);
 
 	// Store bounds for reuse when recentering on an event, so that
-	// display.lonmin/max/latmin/max are honoured beyond initial startup.
+	// display.lonmin/max/latmin/max are honored beyond initial startup.
 	// Takes priority over display.defaultEventRadius.
 	bool hasCustomBounds = lonmin != -180 || lonmax != 180 || latmin != -90 || latmax != 90;
 	_displayRect = hasCustomBounds ? displayRect : QRectF();
