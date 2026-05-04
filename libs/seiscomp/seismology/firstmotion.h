@@ -30,7 +30,7 @@
 namespace Seiscomp::Seismology {
 
 
-struct PolarityObservation {
+SC_SYSTEM_CORE_API struct PolarityObservation {
 	double azimuth;   // degrees, station azimuth from source
 	double takeoff;   // degrees, takeoff angle at source (0=down, 180=up)
 	int    polarity;  // +1 = compressional (up), -1 = dilatational (down)
@@ -51,7 +51,7 @@ struct PolarityObservation {
 /**
  * @brief Quality grade for a focal mechanism solution.
  */
-enum class FMQuality {
+SC_SYSTEM_CORE_API enum class FMQuality {
 	A,  //!< Well constrained: low misfit, small gap, good coverage
 	B,  //!< Acceptable: moderate misfit or gap
 	C,  //!< Poorly constrained: high misfit or large gap
@@ -59,7 +59,7 @@ enum class FMQuality {
 };
 
 
-struct FMSolution {
+SC_SYSTEM_CORE_API struct FMSolution {
 	Math::NODAL_PLANE np1{0, 0, 0};
 	Math::NODAL_PLANE np2{0, 0, 0};
 	double            misfit{0};        // polarity misfit fraction [0,1]
@@ -87,7 +87,7 @@ struct FMSolution {
  * Use `accepted` to render a "cloud" of nodal lines showing the range
  * of possible orientations (solution ambiguity).
  */
-struct FMInversionResult {
+SC_SYSTEM_CORE_API struct FMInversionResult {
 	FMSolution              best;
 	std::vector<FMSolution> accepted;
 	bool                    valid{false};
@@ -205,7 +205,7 @@ SC_SYSTEM_CORE_API const char *qualityLabel(FMQuality q);
 /**
  * @brief Configuration for the polarity inversion.
  */
-struct FMInversionConfig {
+SC_SYSTEM_CORE_API struct FMInversionConfig {
 	double gridSpacing{5.0};        // degrees for strike/dip/rake grid
 	double maxMisfitFraction{0.2};  // max fraction of wrong polarities to accept
 
@@ -227,7 +227,7 @@ struct FMInversionConfig {
 	 * @brief Validate and clamp configuration to sane ranges.
 	 * @return true if config was already valid, false if clamping was needed.
 	 */
-	SC_SYSTEM_CORE_API bool validate();
+	bool validate();
 };
 
 
