@@ -37,7 +37,9 @@ namespace Gui {
 namespace {
 
 double getSpacing(double width, int steps, bool onlyIntegerSpacing) {
-	if ( steps <= 0 ) return 0;
+	if ( steps <= 0 ) {
+		return 0;
+	}
 
 	double fSpacing = width / ((double)steps+1e-10);
 	int pow10 = int(floor(log10(fSpacing)));
@@ -191,11 +193,14 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 	_ticks.clear();
 	_subTicks.clear();
 
-	if ( _width <= 0 ) return;
+	if ( _width <= 0 ) {
+		return;
+	}
 
-	if ( isHorizontal )
+	if ( isHorizontal ) {
 		//tickCount = 10;
 		tickCount = qMax(_width / fontWidth, 2);
+	}
 	else {
 		// Get maximum tick count based on fontHeight
 		tickCount = qMax(_width / fontHeight / 3, 3);
@@ -223,16 +228,21 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 			}
 		}
 	}
-	else
+	else {
 		lowerRange = upperRange = 0;
+	}
 
-	_tickSpacing = getSpacing(upperRange-lowerRange, tickCount, _logScale);
+	_tickSpacing = getSpacing(upperRange - lowerRange, tickCount, _logScale);
 	_tickStart = floor(lowerRange / _tickSpacing) * _tickSpacing;
-	if ( lowerRange == upperRange )
+	if ( lowerRange == upperRange ) {
 		scale = 1;
-	else
-		scale = (_width-1) / (upperRange-lowerRange);
-	if ( _tickStart < lowerRange ) _tickStart += _tickSpacing;
+	}
+	else {
+		scale = (_width - 1) / (upperRange - lowerRange);
+	}
+	if ( _tickStart < lowerRange ) {
+		_tickStart += _tickSpacing;
+	}
 
 	// Epsilon for checking of equality against tick positions
 	double epsilon = _tickSpacing * 1E-2;
@@ -346,8 +356,9 @@ void Axis::updateLayout(const QFontMetrics &fm, QRect &rect) {
 			}
 			else {
 				int steps = _logBase;
-				while ( tickSpacingPx*2 < fontHeight*steps )
+				while ( tickSpacingPx*2 < fontHeight*steps ) {
 					steps /= 2;
+				}
 
 				if ( firstTick ) {
 					for ( int j = steps-1; j > 0; --j ) {

@@ -140,19 +140,25 @@ void Plot::updateRanges() {
 	xAxis2->setRange(Range());
 	yAxis2->setRange(Range());
 
-	for ( int i = 0; i < _extraXAxis1.count(); ++i )
+	for ( int i = 0; i < _extraXAxis1.count(); ++i ) {
 		_extraXAxis1[i]->setRange(Range());
-	for ( int i = 0; i < _extraXAxis2.count(); ++i )
+	}
+	for ( int i = 0; i < _extraXAxis2.count(); ++i ) {
 		_extraXAxis2[i]->setRange(Range());
-	for ( int i = 0; i < _extraYAxis1.count(); ++i )
+	}
+	for ( int i = 0; i < _extraYAxis1.count(); ++i ) {
 		_extraYAxis1[i]->setRange(Range());
-	for ( int i = 0; i < _extraYAxis2.count(); ++i )
+	}
+	for ( int i = 0; i < _extraYAxis2.count(); ++i ) {
 		_extraYAxis2[i]->setRange(Range());
+	}
 
 	foreach ( Graph *graph, _graphs ) {
 		Range key, value;
 
-		if ( graph->isEmpty() ) continue;
+		if ( graph->isEmpty() ) {
+			continue;
+		}
 		graph->getBounds(key, value);
 
 		graph->keyAxis()->extendRange(key);
