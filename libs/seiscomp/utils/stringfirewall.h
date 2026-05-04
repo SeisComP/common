@@ -39,13 +39,13 @@ DEFINE_SMARTPOINTER(StringFirewall);
 /**
  * @brief The StringFirewall class implements a "firewall" for strings.
  *
- * It manages a blacklist and a whitelist of strings. Whether a string is
+ * It manages a denylist and a allowlist of strings. Whether a string is
  * accepted is checked with the following algorithm:
  *   - Accept if both lists are empty
  *   - If either list is empty the partial result (accepted1 or accepted2) is true
- *   - If the input string matches any item in the whitelist, accepted1 is true,
+ *   - If the input string matches any item in the allowlist, accepted1 is true,
  *     false otherwise
- *   - If the input string matches any item in the blacklist, accepted2 is false,
+ *   - If the input string matches any item in the denylist, accepted2 is false,
  *     true otherwise
  *   - The result is accepted1 && accepted2
  */
@@ -56,8 +56,8 @@ class SC_SYSTEM_CORE_API StringFirewall : public Core::BaseObject {
 	public:
 		typedef std::set<std::string> StringSet;
 
-		StringSet allow; //!< The whitelist
-		StringSet deny;  //!< The blacklist
+		StringSet allow; //!< The allowlist
+		StringSet deny;  //!< The denylist
 
 
 	// ----------------------------------------------------------------------
