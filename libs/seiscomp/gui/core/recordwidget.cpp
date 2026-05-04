@@ -4478,7 +4478,7 @@ void RecordWidget::setActive(bool a) {
 		setCursorPos(alignment());
 	*/
 
-	setCursor(_active && !_cursorText.isEmpty()?Qt::CrossCursor:Qt::ArrowCursor);
+	setCursor(_active && !_cursorText.isEmpty() ? Qt::CrossCursor : Qt::ArrowCursor);
 
 	update();
 }
