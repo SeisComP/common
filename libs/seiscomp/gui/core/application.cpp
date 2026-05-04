@@ -209,7 +209,7 @@ void Application::_GUI_Core_Settings::_MapsDesc::accept(SettingsLinker &linker) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Application::Application(int& argc, char **argv, int flags, Type type)
+Application::Application(int &argc, char **argv, int flags, Type type)
 : QObject(), Client::Application(argc, argv)
 , _qSettings(nullptr)
 , _readOnlyMessaging(false)
@@ -274,6 +274,13 @@ Application::Application(int& argc, char **argv, int flags, Type type)
 
 	_thread = nullptr;
 	_filterCommands = true;
+
+	_messageGroups.pick = "PICK";
+	_messageGroups.amplitude = "AMPLITUDE";
+	_messageGroups.magnitude = "MAGNITUDE";
+	_messageGroups.location = "LOCATION";
+	_messageGroups.focalMechanism = "FOCMECH";
+	_messageGroups.event = "EVENT";
 
 	// argc and argv may be modified by QApplication. It removes the
 	// commandline options it recognizes so we can go on without an
@@ -837,6 +844,8 @@ void Application::configSetColorGradient(const std::string& query, const Gradien
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::initConfiguration() {
+	using namespace Core::Literals;
+
 	if ( !Client::Application::initConfiguration() ) {
 		return false;
 	}
@@ -851,36 +860,50 @@ bool Application::initConfiguration() {
 		dynamic_cast<QApplication*>(_app)->setPalette(pal);
 	}
 
+	try { _messageGroups.pick = configGetString("groups.pick"); }
+	catch ( ... ) {}
+	try { _messageGroups.amplitude = configGetString("groups.amplitude"); }
+	catch ( ... ) {}
+	try { _messageGroups.magnitude = configGetString("groups.magnitude"); }
+	catch ( ... ) {}
+	try { _messageGroups.location = configGetString("groups.location"); }
+	catch ( ... ) {}
+	try { _messageGroups.focalMechanism = configGetString("groups.focalMechanism"); }
+	catch ( ... ) {}
+	try { _messageGroups.event = configGetString("groups.event"); }
+	catch ( ... ) {}
+
 	_settings.mapsDesc.location = Environment::Instance()->absolutePath(
 		_settings.mapsDesc.location.toStdString()
 	).c_str();
 
-	_eventTimeAgo = 0.0;
+	_eventTimeAgo = Core::TimeSpan(0, 0);
 	bool setTimeAgo = false;
+
 	try {
-		_eventTimeAgo += double(configGetInt("events.timeAgo.days")*24*60*60);
+		_eventTimeAgo += Core::TimeSpan(configGetInt("events.timeAgo.days") * 60 * 60 * 24, 0);
 		setTimeAgo = true;
 	}
 	catch (...) {}
 	try {
-		_eventTimeAgo += double(configGetInt("events.timeAgo.hours")*60*60);
+		_eventTimeAgo += Core::TimeSpan(configGetInt("events.timeAgo.hours") * 60 * 60, 0);
 		setTimeAgo = true;
 	}
 	catch (...) {}
 	try {
-		_eventTimeAgo += double(configGetInt("events.timeAgo.minutes")*60);
+		_eventTimeAgo += Core::TimeSpan(configGetInt("events.timeAgo.minutes") * 60, 0);
 		setTimeAgo = true;
 	}
 	catch (...) {}
 	try {
-		_eventTimeAgo += double(configGetInt("events.timeAgo.seconds"));
+		_eventTimeAgo += Core::TimeSpan(configGetInt("events.timeAgo.seconds"), 0);
 		setTimeAgo = true;
 	}
 	catch (...) {}
 
 	// Default is: display events from 1 day ago until 'now'
 	if ( !setTimeAgo ) {
-		_eventTimeAgo = double(24*60*60);
+		_eventTimeAgo = 1_days;
 	}
 
 	return true;
@@ -1043,26 +1066,6 @@ bool Application::init() {
 			_readOnlyMessaging = true;
 		}
 	}
-	catch ( ... ) {}
-
-	_messageGroups.pick = "PICK";
-	_messageGroups.amplitude = "AMPLITUDE";
-	_messageGroups.magnitude = "MAGNITUDE";
-	_messageGroups.location = "LOCATION";
-	_messageGroups.focalMechanism = "FOCMECH";
-	_messageGroups.event = "EVENT";
-
-	try { _messageGroups.pick = configGetString("groups.pick"); }
-	catch ( ... ) {}
-	try { _messageGroups.amplitude = configGetString("groups.amplitude"); }
-	catch ( ... ) {}
-	try { _messageGroups.magnitude = configGetString("groups.magnitude"); }
-	catch ( ... ) {}
-	try { _messageGroups.location = configGetString("groups.location"); }
-	catch ( ... ) {}
-	try { _messageGroups.focalMechanism = configGetString("groups.focalMechanism"); }
-	catch ( ... ) {}
-	try { _messageGroups.event = configGetString("groups.event"); }
 	catch ( ... ) {}
 
 	if ( Client::Application::_settings.soh.interval > 0 ) {
