@@ -81,11 +81,14 @@ char objectEvaluationStatusToChar(const T *o) {
 template <typename T>
 char objectStatusToChar(const T *o) {
 	char evalStat = objectEvaluationStatusToChar(o);
-	if ( evalStat ) return evalStat;
+	if ( evalStat ) {
+		return evalStat;
+	}
 
 	try {
-		if ( o->evaluationMode() == MANUAL )
+		if ( o->evaluationMode() == MANUAL ) {
 			return 'M';
+		}
 	}
 	catch ( ... ) {}
 
