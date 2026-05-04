@@ -23,34 +23,34 @@
 				</parameter>
 				<parameter name="usePickUncertainties" type="boolean" default="false">
 					<description>
-					Whether to use pick time untertainties for arrival deltim rather
-					than a fixed time error. If true then the uncertainties are
-					retrieved from each individual pick object. If they are not
-					defined then the default pick time uncertainty will be used
+					Whether to use pick time uncertainties for arrivals rather
+					than a fixed time error. If true, the uncertainties are
+					retrieved from each individual phase pick. If they are not
+					defined, the default pick time uncertainty will be used
 					as fallback.
 					</description>
 				</parameter>
 				<parameter name="defaultTimeError" type="double" default="1.0" unit="s">
 					<description>
-					The default pick time uncertainty assigned to LOCSAT's arrival deltim
+					The default pick time uncertainty assigned to LOCSAT's arrival
 					attribute if pick uncertainties are not going to be used or
 					if they are absent. A time uncertainty of 0 s may result in
 					errors of the SVD decomposition in LOCSAT.
 					</description>
 				</parameter>
-				<parameter name="usePickBackazimuth" type="boolean" default="true">
+				<parameter name="usePickBackazimuth" type="boolean" default="false">
 					<description>
-					Whether to forward pick backazimuth to LOCSAT or not. In an
-					automatic mode backazimuth measurements might be inaccurrate
+					Forward backazimuth measured for phase picks to LOCSAT.
+					Backazimuth measured automaticaly may be inaccurate
 					and disabling their usage in LOCSAT can be controlled with
 					this parameter.
 					</description>
 				</parameter>
-				<parameter name="usePickSlowness" type="boolean" default="true">
+				<parameter name="usePickSlowness" type="boolean" default="false">
 					<description>
-					Whether to forward pick horizontal slowness to LOCSAT or not.
-					In an automatic mode slowness measurements might be
-					inaccurrate and disabling their usage in LOCSAT can be
+					Forward horizontal slowness measured for phase picks to LOCSAT.
+					Slowness values measured automatically may be
+					inaccurate and disabling their usage in LOCSAT can be
 					controlled with	this parameter.
 					</description>
 				</parameter>

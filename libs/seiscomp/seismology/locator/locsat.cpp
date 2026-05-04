@@ -833,8 +833,8 @@ void LOCSAT::setDefaultLocatorParams() {
 	P(max_iterations) = 100;
 	_defaultPickUncertainty = ARRIVAL_DEFAULT_TIME_ERROR;
 	_usePickUncertainties   = false;
-	_usePickBackazimuth     = true;
-	_usePickSlowness        = true;
+	_usePickBackazimuth     = false;
+	_usePickSlowness        = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
