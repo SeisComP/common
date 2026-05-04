@@ -132,12 +132,13 @@ Timer::~Timer() {
 void Timer::setTimeout(unsigned int timeout) {
 	_timeout = timeout;
 #if !defined(SC_HAS_TIMER_CREATE)
-	if ( !_timeout && _isActive )
+	if ( !_timeout && _isActive ) {
 #else
 	_timeoutNs = 0;
-	if ( !_timeout && !_timeoutNs && _timerID )
+	if ( !_timeout && !_timeoutNs && _timerID ) {
 #endif
 		stop();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -147,8 +148,9 @@ void Timer::setTimeout(unsigned int timeout) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::setTimeout2(unsigned int seconds, unsigned int nanoseconds) {
 #if !defined(SC_HAS_TIMER_CREATE)
-	if ( nanoseconds )
+	if ( nanoseconds ) {
 		return false;
+	}
 
 	setTimeout(seconds);
 	return true;
@@ -156,8 +158,9 @@ bool Timer::setTimeout2(unsigned int seconds, unsigned int nanoseconds) {
 	_timeout = seconds;
 	_timeoutNs = nanoseconds;
 
-	if ( !_timeout && !_timeoutNs && _timerID )
+	if ( !_timeout && !_timeoutNs && _timerID ) {
 		stop();
+	}
 
 	return true;
 #endif
@@ -188,20 +191,23 @@ void Timer::setSingleShot(bool s) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Timer::start() {
 #if !defined(SC_HAS_TIMER_CREATE)
-	if ( !_timeout )
+	if ( !_timeout ) {
 #else
-	if ( !_timeout && !_timeoutNs )
+	if ( !_timeout && !_timeoutNs ) {
 #endif
 		return false;
+	}
 
 #if !defined(SC_HAS_TIMER_CREATE)
 	std::lock_guard<std::mutex> lk(_mutex);
 
-	if ( _isActive )
+	if ( _isActive ) {
 		return false;
+	}
 
-	if ( find(_timers.begin(), _timers.end(), this) == _timers.end() )
+	if ( find(_timers.begin(), _timers.end(), this) == _timers.end() ) {
 		_timers.push_back(this);
+	}
 
 	_isActive = true;
 	_value = _timeout;
@@ -211,7 +217,9 @@ bool Timer::start() {
 		std::this_thread::yield();
 	}
 #else
-	if ( _timerID ) return false;
+	if ( _timerID ) {
+		return false;
+	}
 
 	sigevent sev;
 	pthread_attr_t attr;
@@ -318,7 +326,9 @@ bool Timer::deactivate(bool remove) {
 bool Timer::destroy() {
 	std::lock_guard<std::mutex> lock(_callbackMutex);
 
-	if ( !_timerID ) return false;
+	if ( !_timerID ) {
+		return false;
+	}
 
 	if ( timer_delete(_timerID) ) {
 		SEISCOMP_ERROR("Failed to delete timer %p: %d: %s", _timerID, errno, strerror(errno));
