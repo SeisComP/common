@@ -57,6 +57,7 @@ namespace Core {
    - Added Seiscomp::Utils::V2::LeKeyValueFactory
    - Added Seiscomp::Utils::V2::LeKeyValueContext
    - Added Seiscomp::Utils::V2::LeParser
+   - Added Seiscomp::Utils::Diff5
    - Added Seiscomp::Wired::ClientSession::InUpdate enumeration
 
  "17.2.0"   0x110200
