@@ -10,7 +10,7 @@ The LOCSAT :ref:`locator interface <locsat_li>` implements a wrapper for the
 LocSAT locator by :cite:t:`bratt-1991` (according to the README file shipped
 with the LocSAT distribution) referred to as **LOCSAT** in |scname|. The LOCSAT
 :ref:`travel-time interface <locsat_tti>` provides travel time for specfic
-phases, epicentral distance, soure depth and station elevation.
+phases, epicentral distance, source depth and station elevation.
 
 
 .. _locsat_li:
@@ -187,13 +187,13 @@ Custom travel-time tables
 
    .. code-block:: properties
 
-      ttt.LOCSAT.tables = iasp91, tab, custom
+      ttt.LOCSAT.tables = iasp91, custom
 
    and to the list of locator profiles
 
    .. code-block:: properties
 
-      LOCSAT.profiles = iasp91, tab, custom
+      LOCSAT.profiles = iasp91, custom
 
    and optionally to locators which make use of LOCSAT tables, e.g.,
    :ref:`global_fixedhypocenter`.
@@ -202,31 +202,41 @@ Custom travel-time tables
 Application with modules
 ------------------------
 
-Additional parameters of LOCSAT may be configured in global module configuration
-(:confval:`LOCSAT.*`).
+LOCSAT-specific parameters may be configured by global module configuration
+(:ref:`LOCSAT.*`) and overridden per module:
 
 * The profiles for locating may be extended or limited by
   :confval:`LOCSAT.profiles`.
 * When using picks with time uncertainties, consider
   :confval:`LOCSAT.usePickUncertainties` and :confval:`LOCSAT.defaultTimeError`.
-* Measurements of backazimuth and slowness may be deactivated by
-  :confval:`LOCSAT.useBackazimuth` and :confval:`LOCSAT.useSlownewss`, respectively.
-  Such measurements may be obtained from array processing or from feature
-  extraction using :ref:`scautopick`.
+* Measurements of backazimuth and slowness may be obtained as attributes to
+  picks from array processing or from feature extraction by
+  :ref:`scautopick`. These pick attributes may be activated for default
+  application by configuration of the global module parameters
+  :confval:`LOCSAT.usePickBackazimuth` and :confval:`LOCSAT.usePickSlowness`.
+* :ref:`scautoloc` and :ref:`scolv` will consider backazimuth and slowness when
+  :confval:`LOCSAT.usePickBackazimuth` and :confval:`LOCSAT.usePickSlowness`,
+  respectively, are true.
 
-You may also configure some |scname| modules with LOCSAT and a profile.
+Specific modules:
 
-* :ref:`scautoloc`: Configure a profile for automatic locations,
-* :ref:`screloc`: Configure *LOCSAT* along with a profile for automatically
-  relocating.
-* :ref:`scolv`: Configure *LOCSAT* along with a profile  as defaults for
-  interactive locations.
+* :ref:`scolv`:
 
-When using LOCSAT in :ref:`scolv` you may interactively some settings. The
-changes only apply during runtime.
+  * define the profile to be used by default in
+    :ref:`scolv module configuration <scolv_configuration>`
+  * interactively adjust the settings for uncertainties and the pick
+    attributes. The changes only apply during runtime:
 
-.. figure:: media/scolv-locsat-settings.png
-   :align: center
-   :width: 10cm
+    .. figure:: media/scolv-locsat-settings.png
+       :align: center
+       :width: 10cm
 
-   scolv Location tab with LOCSAT selected and the settings menu.
+       scolv Location tab with LOCSAT selected and the settings menu.
+
+* :ref:`scautoloc`: Define the profile used for automatic locations in
+  :ref:`scautoloc module configuration <scautoloc_configuration>`.
+* :ref:`screloc`: Define *LOCSAT* as a locator along with the profile for
+  automatic relocation in
+  :ref:`screloc module configuration <screloc_configuration>`.
+
+

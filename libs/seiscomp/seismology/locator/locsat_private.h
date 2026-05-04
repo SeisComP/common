@@ -116,8 +116,8 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		double                      _minArrivalWeight{0.5};
 		double                      _defaultPickUncertainty;
 		bool                        _usePickUncertainties{false};
-		bool                        _usePickBackazimuth{true};
-		bool                        _usePickSlowness{true};
+		bool                        _usePickBackazimuth{false};
+		bool                        _usePickSlowness{false};
 
 		bool                        _enableDebugOutput;
 
