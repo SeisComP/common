@@ -11,13 +11,12 @@
 			</parameter>
 			<parameter name="datacenterID" type="string">
 				<description>
-				Datacenter ID which is primarily used by Arclink and
-				its tools. Should not contain spaces.
+				Datacenter ID. Should not contain spaces.
 				</description>
 			</parameter>
 			<parameter name="organization" type="string" default="Unset">
 				<description>
-				Organization name used mainly by ArcLink and SeedLink.
+				Organization name used mainly by SeedLink.
 				</description>
 			</parameter>
 			<parameter name="author" type="string" default="@appname@@@@hostname@">
@@ -706,9 +705,8 @@
 				<input name="organization" type="string" default="">
 					<text>Organization string</text>
 					<description>
-					This is used mainly by SeedLink and Arclink to
-					identify the server organization. Also, the ArcLink full
-					SEED volumes will have this organization value set.
+					This is used mainly by SeedLink to identify the server
+					organization.
 					</description>
 				</input>
 			</group>
