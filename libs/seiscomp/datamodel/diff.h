@@ -198,13 +198,78 @@ class Diff4 : public Diff3 {
 		/**
 		 * @brief Confirm removal of an object.
 		 *
-		 * This method will be called if there is not remote counterpart.
+		 * This method will be called if there is no remote counterpart.
 		 *
 		 * @param localO The local object
 		 * @param node The log node
 		 * @return true if the object is allowed to be removed, false otherwise
 		 */
 		virtual bool confirmRemove(const Core::BaseObject *localO,
+		                           LogNode *node) = 0;
+
+		/**
+		 * @brief Confirm descending to child objects.
+		 *
+		 * This method will only be called on array properties.
+		 *
+		 * @param localO The local parent node.
+		 * @param remoteO The remote parent node.
+		 * @param updateConfirmed The state of the preceding confirmUpdate call.
+		 * @param property The property which reflects the subtree.
+		 * @param node The log node.
+		 * @return true if descending is allowed, false otherwise.
+		 */
+		virtual bool confirmDescent(const Core::BaseObject *localO,
+		                            const Core::BaseObject *remoteO,
+		                            bool updateConfirmed,
+		                            const Core::MetaProperty *property,
+		                            LogNode *node) = 0;
+};
+
+
+/**
+ * @brief An object tree difference calculator version 5.
+ *
+ * In addition to version 4 this class allows for derived classes to decide
+ * whether adding and removing childs is allowed based on the update flag
+ * of the parent object.
+ *
+ * @version 17.3
+ */
+class Diff5 : public Diff3 {
+	public:
+		void diff(Object *o1, Object *o2,
+		          const std::string &o1ParentID, Notifiers &notifiers,
+		          LogNode *logNode = nullptr,
+		          bool parentUpdateConfirmed = true);
+
+	protected:
+		/**
+		 * @brief Confirm removal of an object.
+		 *
+		 * This method will be called if there is no local counterpart.
+		 *
+		 * @param remoteO The remote object
+		 * @param parentUpdateConfirmed The state of the preceding confirmUpdate call.
+		 * @param node The log node
+		 * @return true if the object is allowed to be added, false otherwise
+		 */
+		virtual bool confirmAdd(const Core::BaseObject *remoteO,
+		                        bool parentUpdateConfirmed,
+		                        LogNode *node) = 0;
+
+		/**
+		 * @brief Confirm removal of an object.
+		 *
+		 * This method will be called if there is no remote counterpart.
+		 *
+		 * @param localO The local object
+		 * @param parentUpdateConfirmed The state of the preceding confirmUpdate call.
+		 * @param node The log node
+		 * @return true if the object is allowed to be removed, false otherwise
+		 */
+		virtual bool confirmRemove(const Core::BaseObject *localO,
+		                           bool parentUpdateConfirmed,
 		                           LogNode *node) = 0;
 
 		/**
