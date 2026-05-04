@@ -560,7 +560,7 @@ Core::GreensFunction* HelmbergerArchive::read(const std::string &file,
 		//std::cout << "number of samples: " << numSamples << std::endl;
 		//std::cout << "sampling frequency: " << samplingFrequency << std::endl;
 
-		if ( gf == nullptr ) {
+		if ( !gf ) {
 			gf = new Core::GreensFunction();
 			gf->setSamplingFrequency(samplingFrequency);
 			gf->setTimeOffset(timeOfs);
