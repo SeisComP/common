@@ -165,7 +165,7 @@ class SC_SYSTEM_CORE_API Timer {
 
 	private:
 #if defined(SC_HAS_TIMER_CREATE)
-		timer_t          _timerID;
+		timer_t          _timerID{0};
 #else
 		typedef std::list<Timer*> TimerList;
 		static TimerList _timers;
