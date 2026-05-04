@@ -459,7 +459,9 @@ template <class CONT>
 inline std::string join(const CONT &tokens, const char *separator) {
 	static std::string defaultSeparator = ",";
 
-	if ( !separator ) separator = defaultSeparator.c_str();
+	if ( !separator ) {
+		separator = defaultSeparator.data();
+	}
 
 	std::string s;
 	bool first = true;
@@ -482,7 +484,7 @@ inline std::string join(const CONT &tokens, const char *separator) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template <class CONT>
 std::string join(const CONT &tokens, const std::string &separator) {
-	return join(tokens, separator.c_str());
+	return join(tokens, separator.data());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
