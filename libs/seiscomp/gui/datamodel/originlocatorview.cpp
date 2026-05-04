@@ -2147,16 +2147,17 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case STATUS:
 				pick = Pick::Cast(PublicObject::Find(a->pickID()));
 				if ( pick ) {
+					string status = "-";
 					try {
-						const char *strStat = pick->evaluationMode().toString();
-
-						if ( pick->methodID().empty() )
-							return QString("%1").arg(strStat && *strStat?(char)toupper(*strStat):'-');
-						else
-							return QString("%1<%2>").arg(strStat && *strStat?(char)toupper(*strStat):'-')
-							                        .arg((char)toupper(pick->methodID()[0]));
+						status = pick->evaluationStatus().toString();
 					}
 					catch ( ValueException& ) {}
+					string mode = "-";
+					try {
+						mode = toupper(pick->evaluationMode().toString()[0]);
+					}
+					catch ( ValueException& ) {}
+					return QString("%1 (%2)").arg(status.c_str()).arg(mode.c_str());
 				}
 				break;
 
