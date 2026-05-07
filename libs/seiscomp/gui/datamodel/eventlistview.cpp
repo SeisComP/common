@@ -3228,6 +3228,8 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._ui->btnReadDays->setEnabled(SC_D._reader != nullptr);
 	SC_D._ui->btnReadInterval->setEnabled(SC_D._reader != nullptr);
 
+	SC_D._ui->dateTimeEditStart->setDateRange(QDate(-32768, 1, 1), QDate(32767, 12, 31));
+	SC_D._ui->dateTimeEditEnd->setDateRange(QDate(-32768, 1, 1), QDate(32767, 12, 31));
 	QT_DTE_SET(SC_D._ui->dateTimeEditStart, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
 	QT_DTE_SET(SC_D._ui->dateTimeEditEnd, QDateTime::currentDateTimeUtc(), SCScheme.dateTime.useLocalTime);
 
