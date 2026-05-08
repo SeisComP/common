@@ -32,37 +32,6 @@ namespace {
 
 std::string ExpectedAmplitudeUnit = "nm*s";
 
-// PREM (Dziewonski & Anderson 1981) depth layers.
-// Each row: { max_depth_km, alpha_m_s, rho_kg_m3 }
-// Used to correct M0 for source depth instead of the hardcoded mantle values.
-struct PremLayer { double depthKm; double alpha; double rho; };
-static const PremLayer PREM[] = {
-	{  15,  6400, 2800},   // continental crust
-	{  35,  6800, 2900},   // lower crust
-	{  80,  8050, 3380},   // lithospheric mantle
-	{ 220,  8100, 3380},   // upper mantle (LVZ)
-	{ 400,  8905, 3540},   // upper transition zone
-	{ 600,  9990, 3820},   // lower transition zone
-	{ 660, 10266, 3993},   // 660-km discontinuity
-	{ 771, 10752, 4381},   // lower mantle top
-	{1000, 11065, 4526},   // lower mantle
-	{2000, 12254, 5074},   // deep lower mantle
-	{2891, 13716, 5566},   // CMB
-};
-static const int NPREM = sizeof(PREM) / sizeof(PREM[0]);
-
-void premAtDepth(double depthKm, double &alpha, double &rho) {
-	for ( int i = 0; i < NPREM; ++i ) {
-		if ( depthKm <= PREM[i].depthKm ) {
-			alpha = PREM[i].alpha;
-			rho   = PREM[i].rho;
-			return;
-		}
-	}
-	alpha = PREM[NPREM-1].alpha;
-	rho   = PREM[NPREM-1].rho;
-}
-
 }
 
 
@@ -112,7 +81,7 @@ bool MagnitudeProcessor_Mwp::setup(const Settings &settings) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 	double amplitude, const std::string &unit,
-	double, double, double delta, double depth,
+	double, double, double delta, double,
 	const DataModel::Origin *,
 	const DataModel::SensorLocation *,
 	const DataModel::Amplitude *, const Locale *,
@@ -126,11 +95,7 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::computeMagnitude(
 		return InvalidAmplitudeUnit;
 	}
 
-	double alpha, rho;
-	premAtDepth(depth, alpha, rho);
-
-	if ( Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value,
-	                              0.0, 1.0, alpha, rho) ) {
+	if ( Magnitudes::compute_Mwp(amplitude*1.E-9, delta, value) ) {
 		return OK;
 	}
 	else {
