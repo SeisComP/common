@@ -166,12 +166,9 @@ bool AmplitudeProcessor_Mwp::setup(const Settings &settings) {
 		return false;
 	}
 
-	// Read from localConfiguration (global.cfg plain key or scconfig module.trunk. prefix).
-	// settings.getBool() uses a namespaced lookup that doesn't match bare global.cfg keys.
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 	if ( cfg ) {
-		if ( !cfg->getBool(_useFirstPeak, "amplitudes.Mwp.useFirstPeak") )
-			cfg->getBool(_useFirstPeak, "module.trunk.amplitudes.Mwp.useFirstPeak");
+		cfg->getBool(_useFirstPeak, "amplitudes.Mwp.useFirstPeak");
 	}
 
 	SEISCOMP_DEBUG("  + useFirstPeak = %s", _useFirstPeak ? "true" : "false");
@@ -255,8 +252,8 @@ bool AmplitudeProcessor_Mwp::computeAmplitude(const DoubleArray &data,
 
 	// Amplitude in nanometers
 	amplitude->value = _useFirstPeak
-	    ? 1.E9*Mwp_first_peak_amplitude(si2, _processedData.typedData(), si1, &onset)
-	    : 1.E9*Mwp_amplitude(si2, _processedData.typedData(), si1, &onset);
+	    ? 1.E9 * Mwp_first_peak_amplitude(si2, _processedData.typedData(), si1, &onset)
+	    : 1.E9 * Mwp_amplitude(si2, _processedData.typedData(), si1, &onset);
 
 	dt->index = onset; // FIXME
 	*period = 0.0;

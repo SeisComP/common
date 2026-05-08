@@ -89,13 +89,10 @@ bool MagnitudeProcessor_Mwp::setup(const Settings &settings) {
 		return false;
 	}
 
-	// Read from localConfiguration (global.cfg plain key or scconfig module.trunk. prefix).
-	// settings.getDouble() uses a namespaced lookup that doesn't match bare global.cfg keys.
 	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
 	auto readDouble = [&](const std::string &key, double &val) {
 		if ( !cfg ) return;
-		if ( cfg->getDouble(val, key) ) return;
-		cfg->getDouble(val, "module.trunk." + key);
+		cfg->getDouble(val, key);
 	};
 
 	readDouble("magnitudes.Mwp.estimateMw.a",        _mwA);
