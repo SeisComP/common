@@ -34,6 +34,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
 		AmplitudeProcessor_Mwp();
 
 	public:
+		bool setup(const Settings &settings) override;
 		const DoubleArray *processedData(Component comp) const override;
 
 	protected:
@@ -50,6 +51,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_Mwp : public AmplitudeProcessor {
 
 	private:
 		DoubleArray _processedData;
+		bool        _useFirstPeak{false};
 };
 
 

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="Mwp">
+		<extends>global</extends>
+		<description>
+		Mwp: Moment magnitude from P-wave displacement integral (Tsuboi et al. 1995, 1999).
+		Measures the double integral of P-wave ground velocity on vertical BHZ channels
+		at teleseismic distances (5–105 deg) and converts to Mw via M0.
+
+		The Mw(Mwp) estimate uses the linear Whitmore et al. (2002) correction.
+		All regression coefficients and the amplitude measurement strategy are
+		configurable from global.cfg so operators can apply updated calibrations
+		without recompiling.
+		</description>
+	</plugin>
+	<binding name="Mwp" module="global">
+		<description>
+		Parameters for computing Mwp and the derived Mw(Mwp) estimate.
+		</description>
+		<configuration>
+			<extend-struct type="GlobalAmplitudeProfile" match-name="Mwp">
+				<description>
+				Amplitude measurement parameters for Mwp.
+				</description>
+				<parameter name="useFirstPeak" type="boolean" default="false">
+					<description>
+					If true, use the first local maximum of the doubly-integrated
+					displacement after the P arrival (Tsuboi et al. 1995 original
+					algorithm) instead of the global maximum in the signal window.
+
+					The global-maximum default was adopted in SeisComP for robustness
+					on noisy records; the first-peak option is theoretically cleaner
+					because later arrivals (PP, pP, surface reflections) can inflate
+					the global maximum for large events, contributing to Mwp saturation.
+
+					Default false preserves backward compatibility with existing
+					SeisComP Mwp measurements.
+					</description>
+				</parameter>
+			</extend-struct>
+
+			<extend-struct type="GlobalMagnitudeProfile" match-name="Mwp">
+				<description>
+				Mw(Mwp) regression parameters (Whitmore et al. 2002).
+				Override these after running a regional or updated calibration.
+				</description>
+				<group name="estimateMw">
+					<description>
+					Linear regression coefficients for Mw = a * Mwp + b.
+					Defaults are from Whitmore et al. (2002), fitted against Harvard CMT
+					catalogues at that time.  These can be updated from larger modern
+					datasets (e.g. using mwp_calibrate.py in the SeisComP-contrib tools).
+					</description>
+					<parameter name="a" type="double" default="1.186">
+						<description>
+						Slope of the Mw(Mwp) linear regression: Mw = a * Mwp + b.
+						Whitmore et al. (2002) value: 1.186.
+						Values above 1.0 correct for systematic Mwp underestimation
+						at high magnitudes.
+						</description>
+					</parameter>
+					<parameter name="b" type="double" default="-1.222">
+						<description>
+						Intercept of the Mw(Mwp) linear regression: Mw = a * Mwp + b.
+						Whitmore et al. (2002) value: -1.222.
+						</description>
+					</parameter>
+					<parameter name="stdError" type="double" default="0.4">
+						<description>
+						Standard error of the Mw(Mwp) regression, reported with the
+						magnitude estimate.  The SeisComP default of 0.4 is a
+						conservative placeholder from Whitmore et al. (2002).
+						Update after calibration — shallow events typically show
+						sigma ~0.25 mag, deep events (>300 km) ~0.09 mag.
+						</description>
+					</parameter>
+				</group>
+			</extend-struct>
+		</configuration>
+	</binding>
+</seiscomp>
