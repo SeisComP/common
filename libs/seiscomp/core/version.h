@@ -50,6 +50,7 @@ namespace Core {
    - Changed Seiscomp::Gui::EventLayer::SymbolMap
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
+   - Removed Seiscomp::Gui::StationMagnitudeModel
 
  "17.3.0"   0x110300
    - Added Seiscomp::Utils::V2::LeExpression
