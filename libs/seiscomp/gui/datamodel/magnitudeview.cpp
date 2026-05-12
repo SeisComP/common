@@ -492,13 +492,15 @@ StationMagnitudeModel::StationMagnitudeModel(DataModel::Origin* origin,
 : QAbstractTableModel(parent), _cache(cache) {
 	for ( int i = 0; i < StaMagsListColumns::Quantity; ++i )
 		if ( i == DISTANCE ) {
-			if ( SCScheme.unit.distanceInKM )
+			if ( SCScheme.unit.distanceInKM ) {
 				_header << QString("%1 (km)").arg(EStaMagsListColumnsNames::name(i));
-			else
+			}
+			else {
 				_header << QString("%1 (°)").arg(EStaMagsListColumnsNames::name(i));
+			}
 		}
 		else if ( i == RESIDUAL ) {
-			_header << QString("%1 (s)").arg(EStaMagsListColumnsNames::name(i));
+			_header << QString("%1").arg(EStaMagsListColumnsNames::name(i));
 		}
 		else if ( i == CREATED ) {
 			_header << QString("%1 (UTC)").arg(EStaMagsListColumnsNames::name(i));
