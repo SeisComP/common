@@ -499,9 +499,6 @@ StationMagnitudeModel::StationMagnitudeModel(DataModel::Origin* origin,
 				_header << QString("%1 (°)").arg(EStaMagsListColumnsNames::name(i));
 			}
 		}
-		else if ( i == RESIDUAL ) {
-			_header << QString("%1").arg(EStaMagsListColumnsNames::name(i));
-		}
 		else if ( i == CREATED ) {
 			_header << QString("%1 (UTC)").arg(EStaMagsListColumnsNames::name(i));
 		}
