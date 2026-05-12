@@ -85,6 +85,7 @@ class SC_GUI_API StationMagnitudeModel : public QAbstractTableModel {
 		DataModel::Magnitude         *_magnitude;
 		QVector<Qt::CheckState>       _used;
 		QVector<double>               _distance;
+		QVector<double>               _azimuth;
 		QStringList                   _header;
 		int                           _rowCount;
 };
@@ -260,6 +261,11 @@ class SC_GUI_API MagnitudeView : public QWidget {
 
 
 	private:
+		struct SourceReceiver {
+			double distance;
+			double azimuth;
+		};
+
 		void init(Seiscomp::DataModel::DatabaseQuery* reader);
 
 		void setContent();
@@ -276,9 +282,9 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		void calcMinMax(Seiscomp::DataModel::Origin*, double& latMin, double& latMax, double& lonMin, double& lonMax );
 
 		//! returns distance to origin
-		double addStationMagnitude(DataModel::Magnitude* magnitude,
-		                           DataModel::StationMagnitude* stationMagnitude,
-		                           double weight);
+		SourceReceiver addStationMagnitude(DataModel::Magnitude* magnitude,
+		                                   DataModel::StationMagnitude* stationMagnitude,
+		                                   double weight);
 
 		struct MagnitudeStatus {
 			MagnitudeStatus(const  std::string &t,

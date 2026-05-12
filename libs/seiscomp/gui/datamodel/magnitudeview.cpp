@@ -100,6 +100,7 @@ MAKEENUM(
 		MAGNITUDE,
 		RESIDUAL,
 		DISTANCE,
+		AZIMUTH,
 		AMP,
 		SNR,
 		PERIOD,
@@ -114,6 +115,7 @@ MAKEENUM(
 		"Mag",
 		"Res",
 		"Dist",
+		"Az",
 		"Amp",
 		"SNR",
 		"Per (s)",
@@ -131,6 +133,7 @@ bool colVisibility[StaMagsListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	true,
 	false,
 	true,
 	true,
@@ -140,10 +143,11 @@ bool colVisibility[StaMagsListColumns::Quantity] = {
 
 
 QVariant colAligns[StaMagsListColumns::Quantity] = {
-	QVariant(),
+	{},
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
@@ -164,6 +168,7 @@ class StaMagsSortFilterProxyModel : public QSortFilterProxyModel {
 			if ( (left.column() == MAGNITUDE && right.column() == MAGNITUDE) ||
 			     (left.column() == RESIDUAL && right.column() == RESIDUAL) ||
 			     (left.column() == DISTANCE && right.column() == DISTANCE) ||
+			     (left.column() == AZIMUTH && right.column() == AZIMUTH) ||
 			     (left.column() == SNR && right.column() == SNR) ||
 			     (left.column() == PERIOD && right.column() == PERIOD) )
 				return sourceModel()->data(left, Qt::UserRole).toDouble() < sourceModel()->data(right, Qt::UserRole).toDouble();
@@ -499,14 +504,18 @@ StationMagnitudeModel::StationMagnitudeModel(DataModel::Origin* origin,
 				_header << QString("%1 (°)").arg(EStaMagsListColumnsNames::name(i));
 			}
 		}
+		else if ( i == AZIMUTH ) {
+			_header << QString("%1 (°)").arg(EStaMagsListColumnsNames::name(i));
+		}
 		else if ( i == CREATED ) {
 			_header << QString("%1 (UTC)").arg(EStaMagsListColumnsNames::name(i));
 		}
 		else if ( i == UPDATED ) {
 			_header << QString("%1 (UTC)").arg(EStaMagsListColumnsNames::name(i));
 		}
-		else
+		else {
 			_header << EStaMagsListColumnsNames::name(i);
+		}
 
 	setOrigin(origin, netMag);
 }
@@ -525,6 +534,7 @@ void StationMagnitudeModel::setOrigin(DataModel::Origin* origin,
 		if ( _magnitude ) {
 			_rowCount = _magnitude->stationMagnitudeContributionCount();
 			_distance.fill(-1.0, _rowCount);
+			_azimuth.fill(999.0, _rowCount);
 			_used.fill(Qt::Checked, _rowCount);
 		}
 	}
@@ -573,28 +583,33 @@ bool StationMagnitudeModel::insertRow(int row, const QModelIndex & parent) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
-	if ( !index.isValid() )
-		return QVariant();
+	if ( !index.isValid() ) {
+		return {};
+	}
 
-	if ( !_magnitude )
-		return QVariant();
+	if ( !_magnitude ) {
+		return {};
+	}
 
-	if ( index.row() >= (int)_magnitude->stationMagnitudeContributionCount() )
-		return QVariant();
+	if ( index.row() >= static_cast<int>(_magnitude->stationMagnitudeContributionCount()) ) {
+		return {};
+	}
 
 
 	if ( role == Qt::CheckStateRole && index.column() == 0 ) {
-		if ( index.row() < _used.size() )
+		if ( index.row() < _used.size() ) {
 			return _used[index.row()];
-		else
-			return QVariant();
+		}
+		else {
+			return {};
+		}
 	}
 
 	StationMagnitude *sm = StationMagnitude::Find(_magnitude->stationMagnitudeContribution(index.row())->stationMagnitudeID());
 
 	if ( role == Qt::DisplayRole ) {
 		if ( !sm ) {
-			return QVariant();
+			return {};
 		}
 
 		char buf[10];
@@ -610,17 +625,29 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 				break;
 
 			case NETWORK:
-				try{return sm->waveformID().networkCode().c_str();}catch(...){return QVariant();}
+				try{
+					return sm->waveformID().networkCode().c_str();
+				}
+				catch ( ... ) {
+					return {};
+				}
 
 			case STATION:
-				try{return sm->waveformID().stationCode().c_str();}catch(...){return QVariant();}
+				try {
+					return sm->waveformID().stationCode().c_str();
+				}
+				catch ( ... ) {
+					return {};
+				}
 
 			case CHANNEL:
 				try {
-					if ( sm->waveformID().locationCode().empty() )
+					if ( sm->waveformID().locationCode().empty() ) {
 						return sm->waveformID().channelCode().c_str();
-					else
+					}
+					else {
 						return (sm->waveformID().locationCode() + '.' + sm->waveformID().channelCode()).c_str();
+					}
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -643,13 +670,23 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 				if ( index.row() < _distance.size() ) {
 					double distance = _distance[index.row()];
 					if ( distance >= 0 ) {
-						if ( SCScheme.unit.distanceInKM )
+						if ( SCScheme.unit.distanceInKM ) {
 							snprintf(buf, 10, "%.*f", SCScheme.precision.distance, Math::Geo::deg2km(distance));
-						else
+						}
+						else {
 							snprintf(buf, 10, distance<10 ? "%.2f" : "%.1f", distance);
+						}
 						return QString::fromUtf8(buf);
 					}
-					// return _distance[index.row()] < 0?QVariant():_distance[index.row()];
+				}
+				break;
+
+			case AZIMUTH: // azimuth
+				if ( index.row() < _azimuth.size() ) {
+					double az = _azimuth[index.row()];
+					if ( az < 999.0 ) {
+						return static_cast<int>(az);
+					}
 				}
 				break;
 
@@ -710,8 +747,9 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 	else if ( role == Qt::BackgroundRole ) {
 		if ( sm ) {
 			try {
-				if ( !sm->passedQC() )
+				if ( !sm->passedQC() ) {
 					return failedQCColor;
+				}
 			}
 			catch ( ... ) {}
 		}
@@ -755,7 +793,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 			// Residual
 			case RESIDUAL:
 				try {
-					return fabs(_magnitude->stationMagnitudeContribution(index.row())->residual());
+					return std::abs(_magnitude->stationMagnitudeContribution(index.row())->residual());
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -765,6 +803,15 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 					double distance = _distance[index.row()];
 					if ( distance >= 0 ) {
 						return distance;
+					}
+				}
+				break;
+			// Azimuth
+			case AZIMUTH:
+				if ( index.row() < _azimuth.size() ) {
+					double az = _azimuth[index.row()];
+					if ( az < 999.0 ) {
+						return az;
 					}
 				}
 				break;
@@ -841,7 +888,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 
-	return QVariant();
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -907,12 +954,23 @@ bool StationMagnitudeModel::setData(const QModelIndex &index, const QVariant &va
 	// set data fields
 	if ( index.isValid() && role == Qt::DisplayRole ) {
 		// distance
-		if (index.column() == DISTANCE){
-			if ( _distance.size() <= index.row() )
-				_distance.resize(index.row()+1);
+		if ( index.column() == DISTANCE ) {
+			if ( _distance.size() <= index.row() ) {
+				_distance.resize(index.row() + 1);
+			}
 
 			//_distance[index.row()] = QString("%1").arg(value.toDouble(), 0, 'f', 1).toDouble();
 			_distance[index.row()] = value.toDouble();
+			emit dataChanged(index, index);
+			return true;
+		}
+		else if ( index.column() == AZIMUTH ) {
+			if ( _azimuth.size() <= index.row() ) {
+				_azimuth.resize(index.row() + 1);
+			}
+
+			//_distance[index.row()] = QString("%1").arg(value.toDouble(), 0, 'f', 1).toDouble();
+			_azimuth[index.row()] = value.toDouble();
 			emit dataChanged(index, index);
 			return true;
 		}
@@ -3636,8 +3694,9 @@ void MagnitudeView::updateContent() {
 		for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
 			staMagnitude = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			// set distance in distanceList
-			if ( staMagnitude )
+			if ( staMagnitude ) {
 				addStationMagnitude(staMagnitude, i);
+			}
 		}
 	}
 
@@ -3883,8 +3942,9 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 
 	//SEISCOMP_DEBUG("Current model rowCount = %d", _modelStationMagnitudes.rowCount());
 
-	if ( _map )
+	if ( _map ) {
 		_map->addStationMagnitude(stationMagnitude, index);
+	}
 
 	while ( _modelStationMagnitudes.rowCount() <= index ) {
 		_modelStationMagnitudes.insertRow(_modelStationMagnitudes.rowCount());
@@ -3897,9 +3957,11 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 	}
 	catch ( ... ) {}
 
+	auto sr = addStationMagnitude(_netMag.get(), stationMagnitude, weight);
 	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, DISTANCE),
-	                                addStationMagnitude(_netMag.get(), stationMagnitude, weight),
-	                                Qt::DisplayRole);
+	                                sr.distance, Qt::DisplayRole);
+	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, AZIMUTH),
+	                                sr.azimuth, Qt::DisplayRole);
 	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, USED),
 	                                Qt::Checked, Qt::CheckStateRole);
 
@@ -3907,11 +3969,13 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 
 	double value = stationMagnitude->magnitude().value();
 
-	if ( value < _minStationMagnitude )
+	if ( value < _minStationMagnitude ) {
 		_minStationMagnitude = value;
+	}
 
-	if ( value > _maxStationMagnitude )
+	if ( value > _maxStationMagnitude ) {
 		_maxStationMagnitude = value;
+	}
 
 	updateMinMaxMagnitude();
 }
@@ -3922,10 +3986,11 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 //! add StationMag to distance-MagResidual diagram
 //! returns the distance: origin-station
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-double MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
-                                          DataModel::StationMagnitude *stationMagnitude,
-                                          double weight) {
-	double distance = -999;
+MagnitudeView::SourceReceiver
+MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
+                                   DataModel::StationMagnitude *stationMagnitude,
+                                   double weight) {
+	double distance = -1.0, az = 999.0;
 
 	try {
 		const WaveformStreamID &wfsID = stationMagnitude->waveformID();
@@ -3934,10 +3999,9 @@ double MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 			StationLocation loc = Client::Inventory::Instance()->stationLocation(
 				wfsID.networkCode(), wfsID.stationCode(), _origin->time().value());
 
-			double azi1, azi2;
 			Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
 			                  loc.latitude, loc.longitude,
-			                  &distance, &azi1, &azi2);
+			                  &distance, &az);
 		}
 		catch ( ValueException& ) {
 			SEISCOMP_ERROR("MagnitudeView::addStationMagnitude: Station %s.%s "
@@ -3963,10 +4027,12 @@ double MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 		catch ( ... ) {}
 	}
 
-	if ( SCScheme.unit.distanceInKM )
+	if ( SCScheme.unit.distanceInKM ) {
 		_stamagnitudes->addValue(QPointF(Math::Geo::deg2km(distance), residual), c);
-	else
+	}
+	else {
 		_stamagnitudes->addValue(QPointF(distance, residual), c);
+	}
 
 	_stamagnitudes->setValueSelected(_stamagnitudes->count()-1, weight > 0.0);
 	changeMagnitudeState(_stamagnitudes->count()-1, _stamagnitudes->isValueSelected(_stamagnitudes->count()-1));
@@ -3980,9 +4046,10 @@ double MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 		_stamagnitudes->update();
 	}
 
-	return distance;
+	return { distance, az };
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 
 
 //! return pick for arrival
@@ -4002,7 +4069,6 @@ DataModel::Pick *MagnitudeView::getPick(DataModel::Arrival* arrival){
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
