@@ -481,21 +481,56 @@ struct opXor {
 typedef ModelRowFilterMultiOperation<opOr> ModelRowFilter;
 
 QColor failedQCColor(255,160,0,64);
-
-}
-
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
 // Implementation of StationMagnitudeModel
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+class StationMagnitudeModel : public QAbstractTableModel {
+	public:
+		StationMagnitudeModel(DataModel::PublicObjectCache *cache = nullptr,
+		                      QObject *parent = 0);
+
+		void setOrigin(DataModel::Origin *origin,
+		               DataModel::Magnitude *netMag);
+
+		int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+		int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+		QVariant data(const QModelIndex &index, int role) const override;
+		QVariant headerData(int section, Qt::Orientation orientation,
+		                    int role = Qt::DisplayRole) const override;
+
+		Qt::ItemFlags flags(const QModelIndex &index) const override;
+		bool setData(const QModelIndex &index, const QVariant &value,
+		             int role = Qt::EditRole) override;
+
+		bool insertRow(int row, const QModelIndex & parent = QModelIndex());
+
+		bool useMagnitude(int row) const;
+
+
+	private:
+		DataModel::PublicObjectCache *_cache;
+		DataModel::Origin            *_origin;
+		DataModel::Magnitude         *_magnitude;
+		QVector<Qt::CheckState>       _used;
+		QVector<double>               _distance;
+		QVector<double>               _azimuth;
+		QStringList                   _header;
+		int                           _rowCount;
+};
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-StationMagnitudeModel::StationMagnitudeModel(DataModel::Origin* origin,
-                                             DataModel::Magnitude* netMag,
-                                             PublicObjectCache *cache,
+StationMagnitudeModel::StationMagnitudeModel(PublicObjectCache *cache,
                                              QObject *parent)
 : QAbstractTableModel(parent), _cache(cache) {
-	for ( int i = 0; i < StaMagsListColumns::Quantity; ++i )
+	for ( int i = 0; i < StaMagsListColumns::Quantity; ++i ) {
 		if ( i == DISTANCE ) {
 			if ( SCScheme.unit.distanceInKM ) {
 				_header << QString("%1 (km)").arg(EStaMagsListColumnsNames::name(i));
@@ -516,8 +551,9 @@ StationMagnitudeModel::StationMagnitudeModel(DataModel::Origin* origin,
 		else {
 			_header << EStaMagsListColumnsNames::name(i);
 		}
+	}
 
-	setOrigin(origin, netMag);
+	setOrigin(nullptr, nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -898,7 +934,7 @@ QVariant StationMagnitudeModel::data(const QModelIndex &index, int role) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QVariant StationMagnitudeModel::headerData(int section, Qt::Orientation orientation,
                                   int role) const {
-	if ( section < 0 ) return QVariant();
+	if ( section < 0 ) return {};
 
 	if ( orientation == Qt::Horizontal ) {
 		switch ( role ) {
@@ -915,7 +951,7 @@ QVariant StationMagnitudeModel::headerData(int section, Qt::Orientation orientat
 	else
 		return section;
 
-	return QVariant();
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -924,12 +960,13 @@ QVariant StationMagnitudeModel::headerData(int section, Qt::Orientation orientat
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Qt::ItemFlags StationMagnitudeModel::flags(const QModelIndex &index) const {
-	if ( !index.isValid() )
+	if ( !index.isValid() ) {
 		return Qt::ItemIsEnabled;
+	}
 
-	if ( index.column() == 0 )
+	if ( index.column() == 0 ) {
 		return QAbstractTableModel::flags(index) | Qt::ItemIsUserCheckable;
-
+	}
 
 	return QAbstractTableModel::flags(index);
 }
@@ -990,6 +1027,7 @@ bool StationMagnitudeModel::useMagnitude(int row) const {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+}
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1239,10 +1277,10 @@ MagnitudeView::MagnitudeView(const MapsDesc &maps,
                              QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 , _reader(reader)
-, _modelStationMagnitudes(nullptr, nullptr, &_objCache)
 , _origin(nullptr)
 , _objCache(_reader, 500) {
 	_maptree = new Map::ImageTree(maps);
+	_modelStationMagnitudes = new StationMagnitudeModel(&_objCache, this);
 	_modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
@@ -1257,10 +1295,10 @@ MagnitudeView::MagnitudeView(Map::ImageTree* mapTree,
                              QWidget * parent, Qt::WindowFlags f)
 : QWidget(parent, f)
 , _reader(reader)
-, _modelStationMagnitudes(nullptr, nullptr, &_objCache)
 , _origin(nullptr)
 , _objCache(_reader, 500) {
 	_maptree = mapTree;
+	_modelStationMagnitudes = new StationMagnitudeModel(&_objCache, this);
 	_modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
@@ -1474,7 +1512,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	connect(_stamagnitudes, SIGNAL(clicked(int)), this, SLOT(selectMagnitude(int)));
 
 	// on selection in table
-	connect(&_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	connect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
 	connect(_ui->btnRecalculate, SIGNAL(clicked()), this, SLOT(recalculateMagnitude()));
@@ -1675,13 +1713,15 @@ bool MagnitudeView::setDefaultAggregationType(const std::string &type) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::recalculateMagnitude() {
 	// Recalculate the magnitudes according the defined settings
-	if ( !_netMag ) return;
+	if ( !_netMag ) {
+		return;
+	}
 
 	vector<double> mags;
 	vector<double> weights;
 
-	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
-		if ( _modelStationMagnitudes.useMagnitude(i) ) {
+	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
+		if ( static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->useMagnitude(i) ) {
 			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			if ( !sm ) {
 				QMessageBox::critical(this, "Error", QString("StationMagnitude %1 not found").arg(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID().c_str()));
@@ -1768,25 +1808,28 @@ void MagnitudeView::recalculateMagnitude() {
 
 	idx = 0;
 	int staCount = 0;
-	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
-		if ( _modelStationMagnitudes.useMagnitude(i) ) {
-			if ( weights[idx] > 0.0 )
+	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
+		if ( static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->useMagnitude(i) ) {
+			if ( weights[idx] > 0.0 ) {
 				++staCount;
+			}
 
 			_netMag->stationMagnitudeContribution(i)->setWeight(weights[idx]);
 			++idx;
 		}
-		else
+		else {
 			_netMag->stationMagnitudeContribution(i)->setWeight(0.);
+		}
 	}
 
-	for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
+	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
 		if ( staCount ) {
 			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			_netMag->stationMagnitudeContribution(i)->setResidual(sm->magnitude().value() - netmag);
 		}
-		else
+		else {
 			_netMag->stationMagnitudeContribution(i)->setResidual(Core::None);
+		}
 	}
 
 	_netMag->setStationCount(staCount);
@@ -2942,13 +2985,13 @@ void MagnitudeView::magnitudesSelected() {
 
 	// if nothing selected --> unCheck all everywhere
 	if ( brect.isEmpty() && !brect.isNull() ) {
-		for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i )
+		for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i )
 			changeStationState(i, false);
 		return;
 	}
 
 	// prevent loop, when changing table values [BEGIN]
-	disconnect(&_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	disconnect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
 	// set "used" checkBox in table and change color in map
@@ -2956,24 +2999,24 @@ void MagnitudeView::magnitudesSelected() {
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
 		for ( int j = startIndex; j < selectedIds[i]; ++j ){
-			_modelStationMagnitudes.setData(_modelStationMagnitudes.index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
+			_modelStationMagnitudes->setData(_modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
 			if ( _map )
 				_map->setMagnitudeState(j, false);
 		}
-		_modelStationMagnitudes.setData(_modelStationMagnitudes.index(selectedIds[i], USED), Qt::Checked, Qt::CheckStateRole);
+		_modelStationMagnitudes->setData(_modelStationMagnitudes->index(selectedIds[i], USED), Qt::Checked, Qt::CheckStateRole);
 		if ( _map )
 			_map->setMagnitudeState(selectedIds[i], true);
 		startIndex = selectedIds[i]+1;
 	}
 
-	for ( int j = startIndex; j < _modelStationMagnitudes.rowCount(); ++j ){
-		_modelStationMagnitudes.setData(_modelStationMagnitudes.index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
+	for ( int j = startIndex; j < _modelStationMagnitudes->rowCount(); ++j ){
+		_modelStationMagnitudes->setData(_modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
 		if ( _map )
 			_map->setMagnitudeState(j, false);
 	}
 
 	// prevent loop, when changing table values [END]
-	connect(&_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	connect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
 }
@@ -2989,8 +3032,8 @@ void MagnitudeView::hoverMagnitude(int id) {
 		w->setToolTip("");
 	else
 		w->setToolTip(
-			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, NETWORK), Qt::DisplayRole).toString() + "." +
-			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, STATION), Qt::DisplayRole).toString());
+			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString() + "." +
+			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3001,14 +3044,14 @@ void MagnitudeView::hoverMagnitude(int id) {
 void MagnitudeView::selectMagnitude(int id) {
 	if ( id == -1 ) return;
 
-	QModelIndex idx = _modelStationMagnitudesProxy->mapFromSource(_modelStationMagnitudes.index(id, 0));
+	QModelIndex idx = _modelStationMagnitudesProxy->mapFromSource(_modelStationMagnitudes->index(id, 0));
 	_ui->tableStationMagnitudes->setCurrentIndex(idx);
 	_ui->tableStationMagnitudes->scrollTo(idx);
 
 	if ( _amplitudeView ) {
 		_amplitudeView->setCurrentStation(
-			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, NETWORK), Qt::DisplayRole).toString().toStdString(),
-			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, STATION), Qt::DisplayRole).toString().toStdString()
+			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString().toStdString(),
+			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString().toStdString()
 		);
 	}
 }
@@ -3089,7 +3132,7 @@ void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoin
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::changeMagnitudeState(int id, bool state) {
-	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
+	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3099,7 +3142,7 @@ void MagnitudeView::changeMagnitudeState(int id, bool state) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::changeStationState(int id, bool state) {
 	// set state (un/checked) in table
-	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
+	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3110,7 +3153,7 @@ void MagnitudeView::changeStationState(int id, bool state) {
 void MagnitudeView::dataChanged(const QModelIndex& topLeft, const QModelIndex&){
 	if ( topLeft.column() != 0 ) return;
 
-	bool state = _modelStationMagnitudes.data(topLeft, Qt::CheckStateRole).toInt() == Qt::Checked;
+	bool state = _modelStationMagnitudes->data(topLeft, Qt::CheckStateRole).toInt() == Qt::Checked;
 
 	// set state (color) in diagram
 	_stamagnitudes->setValueSelected(topLeft.row(), state);
@@ -3620,13 +3663,13 @@ void MagnitudeView::resetContent() {
 	_stamagnitudes->clear();
 	_stamagnitudes->update();
 
- 	_modelStationMagnitudes.setOrigin(nullptr, nullptr);
+ 	static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->setOrigin(nullptr, nullptr);
 
 	QAbstractItemModel* m = _ui->tableStationMagnitudes->model();
 	if ( m ) delete m;
 
 	_modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
-	_modelStationMagnitudesProxy->setSourceModel(&_modelStationMagnitudes);
+	_modelStationMagnitudesProxy->setSourceModel(_modelStationMagnitudes);
 	_ui->tableStationMagnitudes->setModel(_modelStationMagnitudesProxy);
 
 	if (_map){
@@ -3677,13 +3720,15 @@ void MagnitudeView::updateContent() {
 	_stamagnitudes->clear();
 
 	// setup model/view table
-	_modelStationMagnitudes.setOrigin(_origin.get(), _netMag.get());
+	static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->setOrigin(_origin.get(), _netMag.get());
 
 	QAbstractItemModel *m = _ui->tableStationMagnitudes->model();
-	if ( m ) delete m;
+	if ( m ) {
+		delete m;
+	}
 
 	_modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
-	_modelStationMagnitudesProxy->setSourceModel(&_modelStationMagnitudes);
+	_modelStationMagnitudesProxy->setSourceModel(_modelStationMagnitudes);
 	_ui->tableStationMagnitudes->setModel(_modelStationMagnitudesProxy);
 
 	_minStationMagnitude = 999.99;
@@ -3899,8 +3944,8 @@ void MagnitudeView::updateMagnitudeLabels() {
 
 			_map->setMagnitude(_netMag.get());
 
-			for ( int i = 0; i < _modelStationMagnitudes.rowCount(); ++i ) {
-				bool state = _modelStationMagnitudes.data(_modelStationMagnitudes.index(i, USED), Qt::CheckStateRole).toInt() == Qt::Checked;
+			for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
+				bool state = _modelStationMagnitudes->data(_modelStationMagnitudes->index(i, USED), Qt::CheckStateRole).toInt() == Qt::Checked;
 				_map->setMagnitudeState(i, state);
 			}
 
@@ -3940,14 +3985,14 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 		return;
 	}
 
-	//SEISCOMP_DEBUG("Current model rowCount = %d", _modelStationMagnitudes.rowCount());
+	//SEISCOMP_DEBUG("Current model rowCount = %d", _modelStationMagnitudes->rowCount());
 
 	if ( _map ) {
 		_map->addStationMagnitude(stationMagnitude, index);
 	}
 
-	while ( _modelStationMagnitudes.rowCount() <= index ) {
-		_modelStationMagnitudes.insertRow(_modelStationMagnitudes.rowCount());
+	while ( _modelStationMagnitudes->rowCount() <= index ) {
+		_modelStationMagnitudes->insertRow(_modelStationMagnitudes->rowCount());
 		updateMagnitudeLabels();
 	}
 
@@ -3958,11 +4003,11 @@ void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* s
 	catch ( ... ) {}
 
 	auto sr = addStationMagnitude(_netMag.get(), stationMagnitude, weight);
-	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, DISTANCE),
+	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, DISTANCE),
 	                                sr.distance, Qt::DisplayRole);
-	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, AZIMUTH),
+	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, AZIMUTH),
 	                                sr.azimuth, Qt::DisplayRole);
-	_modelStationMagnitudes.setData(_modelStationMagnitudes.index(index, USED),
+	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, USED),
 	                                Qt::Checked, Qt::CheckStateRole);
 
 	_ui->tableStationMagnitudes->resizeRowToContents(index);

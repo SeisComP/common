@@ -51,46 +51,6 @@ namespace Seiscomp {
 namespace Gui {
 
 
-class SC_GUI_API StationMagnitudeModel : public QAbstractTableModel {
-	Q_OBJECT
-
-	public:
-		StationMagnitudeModel(DataModel::Origin *origin = nullptr,
-		                      DataModel::Magnitude *netMag = nullptr,
-		                      DataModel::PublicObjectCache *cache = nullptr,
-		                      QObject *parent = 0);
-
-		void setOrigin(DataModel::Origin *origin,
-		               DataModel::Magnitude *netMag);
-
-		int rowCount(const QModelIndex &parent = QModelIndex()) const;
-		int columnCount(const QModelIndex &parent = QModelIndex()) const;
-
-		QVariant data(const QModelIndex &index, int role) const;
-		QVariant headerData(int section, Qt::Orientation orientation,
-		                    int role = Qt::DisplayRole) const;
-
-		Qt::ItemFlags flags(const QModelIndex &index) const;
-		bool setData(const QModelIndex &index, const QVariant &value,
-		             int role = Qt::EditRole);
-
-		bool insertRow(int row, const QModelIndex & parent = QModelIndex());
-
-		bool useMagnitude(int row) const;
-
-
-	private:
-		DataModel::PublicObjectCache *_cache;
-		DataModel::Origin            *_origin;
-		DataModel::Magnitude         *_magnitude;
-		QVector<Qt::CheckState>       _used;
-		QVector<double>               _distance;
-		QVector<double>               _azimuth;
-		QStringList                   _header;
-		int                           _rowCount;
-};
-
-
 class ModelAbstractRowFilter {
 	public:
 		MAKEENUM(
@@ -324,7 +284,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		MagnitudeMap                       *_map;
 
 		DiagramWidget                      *_stamagnitudes;
-		StationMagnitudeModel               _modelStationMagnitudes;
+		QAbstractTableModel                *_modelStationMagnitudes;
 		QSortFilterProxyModel              *_modelStationMagnitudesProxy;
 
 		AmplitudeView::Config               _amplitudeConfig;
