@@ -119,7 +119,7 @@ by the |scname| :ref:`fdsnws`. See also :cite:t:`fdsn` and
 Definition
 ^^^^^^^^^^
 
-URL: ``fdsnws[s]://host[:port][path]``
+URL: ``fdsnws[s]://[user:pass@]host[:port][path][?parameter]``
 
 The host is a mandatory parameter. The default port depends on the URL scheme
 used:
@@ -127,10 +127,22 @@ used:
 - `fdsnws`: `80` (HTTP)
 - `fdsnwss`: `443` (HTTPS)
 
-The default path is set to `/fdsnws/dataselect/1/query`. If a path is specified,
-it needs to be complete up until the `query` resource.
+If specified, the optional `user:pass` parameters are used to:
 
-Authentication via the `queryauth` resource is currently not supported.
+- Preemptively send a `Authorization: Basic` header if no prior auth challenge
+  has been received and the HTTPS protocol is used.
+- Respond to a `WWW-Authenticate: Digest` challenge of the server typically send
+  when the `queryauth` resource is requested.
+
+The path component of the URL is optional. If a path is specified, it needs to
+be complete up until the `query` or `queryauth` resource. Without a path
+specification the default `/fdsnws/dataselect/1/query` is used unless a `user`
+is specified in which case it defaults to `/fdsnws/dataselect/1/queryauth`.
+
+Optional URL encoded parameters are:
+
+- `crlf` - use ``\r\n`` to separate lines in the request's POST data,
+           default: false
 
 
 Examples
