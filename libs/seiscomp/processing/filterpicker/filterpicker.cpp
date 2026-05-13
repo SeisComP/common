@@ -276,7 +276,11 @@ bool FilterPicker::setup(const Settings &settings) {
 	}
 
 	// Reinitialize filter bank with new parameters
-	initFilterBank();
+	// NOTE: fsamp may not be set yet (set when first record is processed)
+	// The filter bank will be initialized in calculatePick() when fsamp is available
+	if (_stream.fsamp > 0) {
+		initFilterBank();
+	}
 
 	return true;
 }
