@@ -458,6 +458,15 @@ void FDSNWSConnectionBase::openConnection() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 string FDSNWSConnectionBase::createPostData() {
 	string request;
+	string lineSeparator;
+
+	auto it = _url.queryItems().find("clrf");
+	if ( (it != _url.queryItems().end()) && (it->second.empty() || it->second == "true") ) {
+		lineSeparator = "\r\n";
+	}
+	else {
+		lineSeparator = "\n";
+	}
 
 	for ( auto it = _streams.begin(); it != _streams.end(); ++it ) {
 		if ( (!it->startTime() && !_stime) || (!it->endTime() && !_etime) ) {
@@ -492,7 +501,7 @@ string FDSNWSConnectionBase::createPostData() {
 		else {
 			request += (_etime ? *_etime : Time()).toString("%FT%T.%f");
 		}
-		request += "\r\n";
+		request += lineSeparator;
 	}
 
 	return request;
