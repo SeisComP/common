@@ -443,7 +443,7 @@ string FDSNWSConnectionBase::createPostData() {
 		else {
 			request += (_etime ? *_etime : Time()).toString("%FT%T.%f");
 		}
-		request += "\r\n";
+		request += "\n";
 	}
 
 	return request;
