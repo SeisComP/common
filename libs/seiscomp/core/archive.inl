@@ -711,23 +711,24 @@ inline void Archive<ROOT_TYPE>::readPtr(ROOT_TYPE*, T*& object) {
 	}
 	else {
 		object = static_cast<T*>(ClassFactoryInterface<ROOT_TYPE>::Create(T::ClassName()));
-		if ( !object )
+		if ( !object ) {
 			throw ClassNotFound(T::ClassName());
+		}
 	}
 
 	if ( object ) {
-             	try {
+		try {
 			read(*object);
 		}
-		catch (...) {
+		catch ( ... ) {
 			delete object;
 			object = nullptr;
 			throw;
 		}
-
 	}
-	else
+	else {
 		_validObject = false;
+	}
 
 	if ( !success() && object ) {
 		delete object;
@@ -744,13 +745,16 @@ template <typename ROOT_TYPE>
 template <typename T>
 inline void Archive<ROOT_TYPE>::readPtr(void*, T*& object) {
 	object = new T;
+
 	try {
-	   	read(*object);
-	} catch (...) {
+		read(*object);
+	}
+	catch ( ... ) {
 		delete object;
 		object = nullptr;
-        	throw;
-	} 
+		throw;
+	}
+
 	if ( !success() ) {
 		delete object;
 		object = nullptr;
