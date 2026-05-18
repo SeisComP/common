@@ -715,8 +715,17 @@ inline void Archive<ROOT_TYPE>::readPtr(ROOT_TYPE*, T*& object) {
 			throw ClassNotFound(T::ClassName());
 	}
 
-	if ( object )
-		read(*object);
+	if ( object ) {
+             	try {
+			read(*object);
+		}
+		catch (...) {
+			delete object;
+			object = nullptr;
+			throw;
+		}
+
+	}
 	else
 		_validObject = false;
 
@@ -735,11 +744,17 @@ template <typename ROOT_TYPE>
 template <typename T>
 inline void Archive<ROOT_TYPE>::readPtr(void*, T*& object) {
 	object = new T;
-	read(*object);
+	try {
+	   	read(*object);
+	} catch (...) {
+		delete object;
+		object = nullptr;
+        	throw;
+	} 
 	if ( !success() ) {
 		delete object;
 		object = nullptr;
-	}
+	} 
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
