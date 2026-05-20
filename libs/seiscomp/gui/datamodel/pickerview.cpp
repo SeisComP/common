@@ -5411,30 +5411,17 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	Core::Time minTime = originTime;
 	Core::Time maxTime = originTime;
 
-	// Add a buffer of one minute to the time span
-	minTime -= SC_D.config.preOffset;
-	maxTime += SC_D.config.postOffset;
-
-	double relTimeWindowStart = (minTime - originTime).length();
-	double relTimeWindowEnd = (maxTime - originTime).length();
-
-	double timeWindowLength = relTimeWindowEnd - relTimeWindowStart;
-
-	SC_D.minTime = relTimeWindowStart;
-	SC_D.maxTime = relTimeWindowEnd;
-
-	SEISCOMP_DEBUG("update time range to: [%.2f,%.2f]", SC_D.minTime, SC_D.maxTime);
-
-	timeWindowLength = std::max(timeWindowLength, (double)SC_D.config.minimumTimeWindow);
-	SC_D.timeWindow = Core::TimeWindow((Core::Time)originTime + Core::TimeSpan(relTimeWindowStart),
-	                               timeWindowLength);
-
-	SC_D.timeScale->setSelectionEnabled(false);
 
 	if ( SC_D.origin ) {
 		for ( size_t i = 0; i < SC_D.origin->arrivalCount(); ++i ) {
 			Pick* pick = Pick::Find(SC_D.origin->arrival(i)->pickID());
 			if ( pick ) {
+				if ( (Core::Time)pick->time() < minTime )
+					minTime = pick->time();
+
+				if ( (Core::Time)pick->time() > maxTime )
+					maxTime = pick->time();
+
 				RecordViewItem* item = SC_D.recordView->item(adjustWaveformStreamID(pick->waveformID()));
 				if ( !item ) {
 					SensorLocation *loc = nullptr;
@@ -5465,6 +5452,29 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 			}
 		}
 	}
+
+	if ( minTime > maxTime )
+		std::swap(minTime, maxTime);
+
+	// Add a buffer of one minute to the time span
+	minTime -= SC_D.config.preOffset;
+	maxTime += SC_D.config.postOffset;
+
+	double relTimeWindowStart = (minTime - originTime).length();
+	double relTimeWindowEnd = (maxTime - originTime).length();
+
+	double timeWindowLength = relTimeWindowEnd - relTimeWindowStart;
+
+	SC_D.minTime = relTimeWindowStart;
+	SC_D.maxTime = relTimeWindowEnd;
+
+	SEISCOMP_DEBUG("update time range to: [%.2f,%.2f]", SC_D.minTime, SC_D.maxTime);
+
+	timeWindowLength = std::max(timeWindowLength, (double)SC_D.config.minimumTimeWindow);
+	SC_D.timeWindow = Core::TimeWindow((Core::Time)originTime + Core::TimeSpan(relTimeWindowStart),
+	                               timeWindowLength);
+
+	SC_D.timeScale->setSelectionEnabled(false);
 
 	fillRawPicks();
 
