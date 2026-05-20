@@ -158,6 +158,16 @@ void checkQuality(const sd::Origin* firstOrigin, const sd::Origin *secondOrigin,
 
 using RefData = std::map<std::string, sd::OriginPtr>;
 
+// The default locsat beam parameters have been changed in
+// 874289bb63163f995b5857c4be7402387359a612. Restore the old defaults here to leave
+// the original test set unchanged.
+Seiscomp::Config::Config &getConfig() {
+	static Seiscomp::Config::Config cfg;
+	cfg.setBool("LOCSAT.usePickBackazimuth", true);
+	cfg.setBool("LOCSAT.usePickSlowness", true);
+	return cfg;
+}
+
 struct TestInstance {
 	TestInstance() {
 		if ( !Seiscomp::Client::Inventory::Instance()->inventory() ) {
@@ -167,7 +177,7 @@ struct TestInstance {
 		setenv("SEISCOMP_LOCSAT_TABLE_DIR", "../../../../3rd-party/locsat/data", 1);
 
 		locator = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
-		locator->init(Seiscomp::Config::Config());
+		locator->init(getConfig());
 		locator->setProfile("iasp91");
 
 		for ( const auto &entry : fs::directory_iterator("data/locsat-refdata") ) {
@@ -204,7 +214,7 @@ struct TestInstanceIII {
 		setenv("SEISCOMP_LOCSAT_TABLE_DIR", "../../../../3rd-party/locsat/data", 1);
 
 		locator = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
-		locator->init(Seiscomp::Config::Config());
+		locator->init(getConfig());
 		locator->setProfile("iasp91");
 		locator->setIgnoreInitialLocation(true);
 
@@ -379,7 +389,7 @@ BOOST_AUTO_TEST_CASE(RelocateMultiThreaded) {
 	std::vector<Seiscomp::Seismology::LocatorInterfacePtr> locators;
 	for ( int i = 0; i < numThreads; ++i ) {
 		auto *loc = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
-		loc->init(Seiscomp::Config::Config());
+		loc->init(getConfig());
 		loc->setProfile("iasp91");
 		locators.push_back(loc);
 	}
