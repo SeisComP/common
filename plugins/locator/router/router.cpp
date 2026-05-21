@@ -42,8 +42,8 @@ namespace {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ADD_SC_PLUGIN("Meta locator routing location requests to actual locator "
-              "implementations",
-              "gempa GmbH <seiscomp-devel@gempa.de>", 0, 1, 0)
+              "implementations based on region profiles",
+              "gempa GmbH <seiscomp-devel@gempa.de>", 0, 2, 0)
 REGISTER_LOCATOR(RouterLocator, "Router");
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -73,6 +73,7 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 	}
 	catch ( ... ) {}
 
+	string initialLocatorName = "<unset>";
 	if ( !locator.empty() ) {
 		_initialLocator = LocatorInterface::Create(locator.c_str());
 		if ( !_initialLocator ) {
@@ -85,9 +86,11 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 			return false;
 		}
 
+		initialLocatorName = locator;
 		if ( !profile.empty() ) {
 			const auto &profiles = _initialLocator->profiles();
-			if ( find(profiles.begin(), profiles.end(), profile) == profiles.end() ) {
+			if ( find(profiles.begin(), profiles.end(),
+			          profile) == profiles.end() ) {
 				SEISCOMP_ERROR("Profile '" + profile +
 				               "' not supported by initial locator '" +
 				               locator + "'");
@@ -95,6 +98,9 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 			}
 
 			_initialLocator->setProfile(profile);
+			initialLocatorName += " (";
+			initialLocatorName += profile;
+			initialLocatorName += ")";
 		}
 
 		_locators[locProcIndex(locator, profile)] = _initialLocator;
@@ -119,7 +125,7 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 	}
 
 	if ( !_geoFeatureSet.readFile(regionFile, nullptr) ) {
-		SEISCOMP_ERROR("No regions found in: %s", regionFile.c_str());
+		SEISCOMP_ERROR("No regions found in: %s", regionFile);
 		return false;
 	}
 
@@ -161,10 +167,10 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 		// lookup profile locator
 		string key = locProcIndex(profile.locatorName, profile.profileName);
 		auto loc_it = _locators.find(key);
-		const auto *locName = profile.locatorName.c_str();
 
 		// cache miss: create and initialize locator
 		if ( loc_it == _locators.end() ) {
+			const auto *locName = profile.locatorName.c_str();
 			LocatorInterfacePtr tmpLoc = LocatorInterface::Create(locName);
 			if ( !tmpLoc ) {
 				SEISCOMP_WARNING("[%s] Could not load locator: %s",
@@ -182,38 +188,77 @@ bool RouterLocator::init(const Seiscomp::Config::Config &config) {
 				const auto &profiles = tmpLoc->profiles();
 				if ( find(profiles.begin(), profiles.end(),
 				          profile.profileName) == profiles.end() ) {
-					SEISCOMP_WARNING("[%s] Profile '%s' not supported by "
-					                 "locator: %s", featureName,
-					                 profile.profileName.c_str(), locName);
+					SEISCOMP_WARNING("[%s] Profile '%s' not supported by locator: %s",
+					                 featureName, profile.profileName, locName);
 					continue;
 				}
 				tmpLoc->setProfile(profile.profileName);
 			}
 
-			_locators[key] = tmpLoc;
+			loc_it = _locators.emplace(key, tmpLoc).first;
 			_joinedCapabilities |= tmpLoc->capabilities();
-
-			profile.feature = feature;
-			profile.locator = tmpLoc.get();
-			_profiles.emplace_back(profile);
 		}
+
+		profile.feature = feature;
+		profile.locator = loc_it->second.get();
+		_profiles.emplace_back(profile);
 	}
 
 	if ( _profiles.empty() ) {
-		SEISCOMP_ERROR("No valid profiles found in: %s", regionFile.c_str());
+		SEISCOMP_ERROR("No valid region profiles found in: %s", regionFile);
 		return false;
 	}
 
 	// sort by rank and area, prioritize larger ranks and smaller areas
 	std::sort(_profiles.begin(), _profiles.end(),
 	          [](const LocatorProfile& a, const LocatorProfile& b) {
-		return a.feature->rank() > a.feature->rank() ||
-		       ( a.feature->rank() == a.feature->rank() &&
-		         a.feature->area() < b.feature->area() );
+		if ( a.feature->rank() > a.feature->rank() ) {
+			return true;
+		}
+
+		if ( a.feature->rank() < a.feature->rank() ) {
+			return false;
+		}
+
+		auto areaA = a.feature->area();
+		auto areaB = b.feature->area();
+
+		// The area for the world defined via 90/-90 and 180/-180 computes to 0.
+		// Make sure to prioritize any other polygon here.
+		return areaA < areaB && areaA != 0 && areaB != 0;
 	});
 
-	SEISCOMP_DEBUG("Router locator initialized with %lu profiles",
-	               _profiles.size());
+	SEISCOMP_INFO("Router locator initialized with %zu region profile(s) and %zu "
+	              "locator-profile implementation(s), initial locator: %s",
+	              _profiles.size(), _locators.size(), initialLocatorName);
+/*
+	if ( !_profiles.empty() ) {
+		auto fmtProfiles = [&]() -> std::string {
+			ostringstream ss;
+			for ( const auto &profile : _profiles ) {
+				const auto *f = profile.feature;
+				ss << "\n  " << f->name() << " -> " << profile.locatorName;
+				if ( !profile.profileName.empty() ) {
+					ss << " (" << profile.profileName << ")";
+				}
+				ss << "\t(rank: " << f->rank() << ", area (deg²): " << f->area();
+				if ( profile.minDepth && profile.maxDepth ) {
+					ss << ", depth (km): ["
+					   << *profile.minDepth << " - " << *profile.maxDepth << "]";
+				}
+				else if ( profile.minDepth ) {
+					ss << ", depth >= " << *profile.minDepth << " km";
+				}
+				else if ( profile.maxDepth ) {
+					ss << ", depth <= " << *profile.maxDepth << " km";
+				}
+				ss << ")";
+			}
+			return ss.str();
+		};
+		SEISCOMP_DEBUG("Configured region profiles: %s", fmtProfiles());
+	}
+*/
 
 	return true;
 }
@@ -270,8 +315,8 @@ Origin *RouterLocator::locate(PickList &pickList,
 		return nullptr;
 	}
 
-	auto *origin =_initialLocator->locate(pickList, initLat, initLon, initDepth,
-	                                      initTime);
+	auto *origin = _initialLocator->locate(pickList, initLat, initLon, initDepth,
+	                                       initTime);
 	return origin ? relocate(origin) : nullptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -283,7 +328,7 @@ Origin *RouterLocator::locate(PickList &pickList,
 DataModel::Origin *RouterLocator::relocate(const Origin *origin) {
 	const auto *locProf = lookup(origin);
 	if ( !locProf ) {
-		throw LocatorException("Could not find suitable locator profile for "
+		throw LocatorException("Could not find suitable region profile for "
 		                       "initial location");
 	}
 
@@ -303,15 +348,20 @@ RouterLocator::lookup(const scdm::Origin *origin) const {
 
 	auto epicenter = Geo::GeoCoordinate(origin->latitude().value(),
 	                                    origin->longitude().value());
+	auto fmtEpicenter = [&]() -> std::string {
+		std::ostringstream ss;
+		ss << Geo::OStreamFormat(epicenter);
+		return ss.str();
+	};
+
 	OPT(double) depth;
 	try {
 		depth = origin->depth().value();
-		SEISCOMP_DEBUG("Locator lookup for hypocenter: %f/%f/%f",
-		               epicenter.latitude(), epicenter.latitude(), *depth);
+		SEISCOMP_DEBUG("Locator region lookup for hypocenter: %s / %f km",
+		               fmtEpicenter(), *depth);
 	}
 	catch ( ValueException& ) {
-		SEISCOMP_DEBUG("Locator lookup for epicenter: %f/%f",
-		               epicenter.latitude(), epicenter.latitude());
+		SEISCOMP_DEBUG("Locator region lookup for epicenter: %s", fmtEpicenter());
 	}
 
 	for ( const auto &profile : _profiles ) {
@@ -325,18 +375,24 @@ RouterLocator::lookup(const scdm::Origin *origin) const {
 			continue;
 		}
 
-		// check if depth constrains are fulfilled
+		// check if depth constraints are fulfilled
 		if ( (profile.minDepth && depth < *profile.minDepth) ||
 		     (profile.maxDepth && depth > *profile.maxDepth) ) {
 			continue;
 		}
 
-		SEISCOMP_DEBUG("Feature '%s' matches %scenter, locator: %s/%s",
-		               profile.feature->name().c_str(),
+		SEISCOMP_DEBUG(R"(Region profile match for %scenter:
+  feature            : %s
+  locator/profile    : %s/%s
+  rank/area (deg²)   : %i/%f
+  min/max depth (km) : %s/%s)",
 		               profile.minDepth||profile.maxDepth ? "hypo" : "epi",
-		               profile.locatorName.c_str(),
-		               profile.profileName.empty() ?
-		                   "-" : profile.profileName.c_str());
+		               profile.feature->name(),
+		               profile.locatorName,
+		               profile.profileName.empty() ? "-" : profile.profileName,
+		               profile.feature->rank(), profile.feature->area(),
+		               profile.minDepth ? toString(*profile.minDepth) : "-",
+		               profile.maxDepth ? toString(*profile.maxDepth) : "-");
 
 		return &profile;
 	}
