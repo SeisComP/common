@@ -1387,6 +1387,18 @@ class Diff4(Diff3):
 
 # Register Diff4 in _datamodel:
 _datamodel.Diff4_swigregister(Diff4)
+class Diff5(Diff3):
+    r"""Proxy of C++ Seiscomp::DataModel::Diff5 class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _datamodel.delete_Diff5
+
+# Register Diff5 in _datamodel:
+_datamodel.Diff5_swigregister(Diff5)
 class PublicObjectCacheIterator(object):
     r"""Proxy of C++ PublicObjectCacheIterator class."""
 
