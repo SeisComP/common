@@ -1085,27 +1085,6 @@ class NodalPlaneDialog : public QDialog {
 };
 
 
-double spherical2polar(double &azi, double &beta) {
-	if ( beta > 90 ) {
-		beta = 180 - beta;
-		azi -= 180;
-		if ( azi < 0 ) azi += 360;
-	}
-
-	// In seismology beta/dip/takeoffangle is measured against negative Z
-	// stereographic projection requires agains positive Z
-	double tmpbeta = deg2rad(180-beta);
-	return sin(tmpbeta) / (1 - cos(tmpbeta));
-}
-
-
-QPointF equalarea(double azi, double dip) {
-	dip = 90-dip;
-	auto R = spherical2polar(azi, dip);
-	return QPointF(R, azi);
-}
-
-
 class PlotWidget : public OriginLocatorPlot {
 	public:
 		enum ShapeType {
@@ -1360,6 +1339,11 @@ class PlotWidget : public OriginLocatorPlot {
 		}
 
 
+		const TensorRenderer &tensorRenderer() const {
+			return _renderer;
+		}
+
+
 		const Shape &shape(PolarityType type) {
 			return _shapes[type];
 		}
@@ -1420,14 +1404,14 @@ class PlotWidget : public OriginLocatorPlot {
 			spec.spect(_tensor);
 			spec.sort();
 
-			Math::AXIS t,n,p;
-			Math::spectral2axis(spec, t,n,p, 0);
+			Math::AXIS t, n, p;
+			Math::spectral2axis(spec, t, n, p, 0);
 			Math::pa2nd(spec.n1, spec.n3, tn, td);
 			Math::nd2dc(tn, td, &_np1, &_np2);
 
-			_tAxis = equalarea(t.str, t.dip);
-			_pAxis = equalarea(p.str, p.dip);
-			_nAxis = equalarea(n.str, n.dip);
+			_tAxis = _renderer.projectForward(90 - t.dip, t.str);
+			_pAxis = _renderer.projectForward(90 - p.dip, p.str);
+			_nAxis = _renderer.projectForward(90 - n.dip, n.str);
 
 			_npLabel->setText(QString("NP1: <a href=\"np1\">%1/%2/%3</a> "
 			                          "NP2: <a href=\"np2\">%4/%5/%6</a>")
@@ -4713,10 +4697,11 @@ void OriginLocatorView::setConfig(const Config &c) {
 					 static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).shown ) {
 					double azi = SC_D.residuals->value(i, PC_AZIMUTH);
 
-					auto R = spherical2polar(azi, beta);
+					auto *plotWidget = static_cast<PlotWidget*>(SC_D.residuals);
+					auto polar = plotWidget->tensorRenderer().projectForward(beta, azi);
 
-					SC_D.residuals->setValue(i, PC_FMAZI, azi);
-					SC_D.residuals->setValue(i, PC_FMDIST, R);
+					SC_D.residuals->setValue(i, PC_FMAZI, polar.y());
+					SC_D.residuals->setValue(i, PC_FMDIST, polar.x());
 					SC_D.residuals->setValueValid(i, PC_FMDIST, true);
 					SC_D.residuals->setValueValid(i, PC_FMAZI, true);
 				}
@@ -5791,13 +5776,14 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 			double azi;
 			azi = SC_D.residuals->value(id, PC_AZIMUTH);
 
-			auto R = spherical2polar(azi, beta);
+			auto *plotWidget = static_cast<PlotWidget*>(SC_D.residuals);
+			auto polar = plotWidget->tensorRenderer().projectForward(beta, azi);
 
 			//if ( static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).colorUsed )
 			//	SC_D.residuals->setValueColor(id, PC_FMAZI, static_cast<PlotWidget*>(SC_D.residuals)->shape(polarity).color);
 
-			SC_D.residuals->setValue(id, PC_FMAZI, azi);
-			SC_D.residuals->setValue(id, PC_FMDIST, R);
+			SC_D.residuals->setValue(id, PC_FMAZI, polar.y());
+			SC_D.residuals->setValue(id, PC_FMDIST, polar.x());
 		}
 		else {
 			SC_D.residuals->setValue(id, PC_FMDIST, 0.0);

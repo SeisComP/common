@@ -299,11 +299,95 @@ int BeachballPlot::plot(Math::AXIS ax[3])
 */
 
 
+struct Projection {
+	static void forward(const Math::Vector3d &v, double &xf, double &yf);
+	template <typename T> static Math::Vector3<T> backward(const T xf, const T yf, const T distSquared);
+};
+
+
+struct Lambert {
+	static inline void forward(const Math::Vector3d &v, double &xf, double &yf) {
+		xf = -v.y / sqrt(1 + v.z);
+		yf = v.x / sqrt(1 + v.z);
+	}
+
+	template <typename T>
+	static inline Math::Vector3<T> backward(const T xf, const T yf, const T distSquared) {
+		const auto s = sqrt(2 - distSquared);
+		return {
+			yf * s,
+			-xf * s,
+			distSquared - T(1.0)
+		};
+	}
+};
+
+
+struct Stereo {
+	static inline void forward(const Math::Vector3d &v, double &xf, double &yf) {
+		// In seismology takeoffangle is measured against negative Z
+		// stereographic projection requires againts positive Z
+		xf = -v.y / (1.0 + v.z);
+		yf = v.x / (1.0 + v.z);
+	}
+
+	template <typename T>
+	static inline Math::Vector3<T> backward(const T xf, const T yf, const T distSquared) {
+		const T div_z = (distSquared + T(1.0));
+		return {
+			yf * 2 / div_z,
+			-xf * 2 / div_z,
+			(distSquared - T(1.0)) / div_z
+		};
+	}
+};
+
+
+struct Legacy {
+	// Modified projection to improve area distribution for a more "flatten" look.
+	static constexpr double BSCALE = M_SQRT2;
+	static constexpr double FSCALE = 0.5;
+
+	// Stereographic projection.
+	// static constexpr double BSCALE = 2.0;
+	// static constexpr double FSCALE = 0.0;
+
+	static inline void forward(const Math::Vector3d &v, double &xf, double &yf) {
+		// In seismology takeoffangle is measured against negative Z
+		// stereographic projection requires againts positive Z
+		xf = -v.y / (1.0 + v.z);
+		yf = v.x / (1.0 + v.z);
+		double s = (1 + FSCALE) / (1 + FSCALE * sqrt(xf * xf + yf * yf));
+		xf *= s;
+		yf *= s;
+	}
+
+	template <typename T>
+	static inline Math::Vector3<T> backward(const T xf, const T yf, const T distSquared) {
+		const T div_z = (distSquared + T(1.0));
+		return {
+			yf * T(BSCALE) / div_z,
+			-xf * T(BSCALE) / div_z,
+			(distSquared - T(1.0)) / div_z
+		};
+	}
+};
+
+
+using ActiveProjection = Legacy;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 TensorRenderer::TensorRenderer() {
 	_colorT = Qt::red;
 	_colorP = Qt::white;
@@ -314,44 +398,147 @@ TensorRenderer::TensorRenderer() {
 	_materialAmbient = 0.75;
 	_materialDiffuse = 0.25;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setShadingEnabled(bool e) {
 	_shading = e;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setMaterial(float ambient, float diffuse) {
 	_materialAmbient = ambient;
 	_materialDiffuse = diffuse;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setMargin(int m) {
 	_margin = m;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setProjectMargin(int m) {
 	_projectMargin = m;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setBorderColor(QColor c) {
 	_border = c;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setTColor(QColor c) {
 	_colorT = c;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::setPColor(QColor c) {
 	_colorP = c;
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+inline Math::Vector3f TensorRenderer::projectBackward(const float xf, const float yf, float distSquared) const {
+	return ActiveProjection::backward(xf, yf, distSquared);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+inline Math::Vector3d TensorRenderer::projectBackward(const double xf, const double yf, double distSquared) const {
+	return ActiveProjection::backward(xf, yf, distSquared);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QPointF TensorRenderer::projectForward(const Math::Vector3d &v) const {
+	QPointF p;
+	ActiveProjection::forward(v, p.rx(), p.ry());
+	return p;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QPointF TensorRenderer::projectForward(double takeOffAngle, double azimuth) const {
+	if ( takeOffAngle > 90 ) {
+		takeOffAngle = 180 - takeOffAngle;
+		azimuth -= 180;
+		if ( azimuth < 0 ) {
+			azimuth += 360;
+		}
+	}
+
+	const auto v = tp2xyz(takeOffAngle, azimuth);
+
+	double xf;
+	double yf;
+
+	ActiveProjection::forward(v, xf, yf);
+
+	return {
+		sqrt(xf * xf + yf * yf),
+		azimuth
+	};
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Math::Vector3d TensorRenderer::tp2xyz(const double theta, const double phi) {
+	double tmptheta = deg2rad(theta);
+	double tmpphi = deg2rad(phi);
+	return {
+		sin(tmptheta) * cos(tmpphi),
+		sin(tmptheta) * sin(tmpphi),
+		cos(tmptheta)
+	};
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::renderBorder(QImage& img) {
 	QSize size(img.size());
 
@@ -386,43 +573,30 @@ void TensorRenderer::renderBorder(QImage& img) {
 	for ( int i = 0; i < size.height(); ++i, yf += dt ) {
 		float xf = ixf;
 		for ( int j = 0; j < size.width(); ++j, ++data, xf += dt ) {
-			Math::Vector3f v;
+			float distSquared = xf * xf + yf * yf;
 
-			float dist = xf*xf + yf*yf;
-
-			if ( dist > 1.0f ) {
-				if ( dist <= distLimit2 ) {
-					float d = (sqrt(dist) - 1.0f) / smoothDist;
+			if ( distSquared > 1.0f ) {
+				if ( distSquared <= distLimit2 ) {
+					float d = (sqrt(distSquared) - 1.0f) / smoothDist;
 					*data = qRgba(_border.red(),_border.green(),_border.blue(),(int)(255-d*255));
 				}
-				else
+				else {
 					*data = qRgba(0,0,0,0);
+				}
 				continue;
 			}
 
-#define STEREO_PROJECTION
-#ifdef STEREO_PROJECTION
-			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = 2 * div_z;
-
-			v[0] = yf * div_xy;
-			v[1] = -xf * div_xy;
-			v[2] = -(1.0f - dist) * div_z;
-#else
-			v[0] = yf;
-			v[1] = xf;
-			v[2] = float(sqrt(1.0f - dist));
-#endif
+			auto v = projectBackward(xf, yf, distSquared);
 
 			float tmp(smoothDist);
-			smoothDist += (1.0 - sqrt(dist)) * smoothDist;
+			smoothDist += (1.0 - sqrt(distSquared)) * smoothDist;
 
 			c = fill.rgb();
 
 			smoothDist = tmp;
 
-			if ( dist > distLimit ) {
-				float d = (sqrt(dist) - 1.0f) / smoothDist + 1;
+			if ( distSquared > distLimit ) {
+				float d = (sqrt(distSquared) - 1.0f) / smoothDist + 1;
 				int intensity = (int)(d * 255);
 				if ( intensity > 255 ) intensity = 255;
 				if ( intensity < 0 ) intensity = 0;
@@ -441,13 +615,18 @@ void TensorRenderer::renderBorder(QImage& img) {
 				             (int)(qGreen(c)*intensity),
 				             (int)(qBlue(c)*intensity));
 			}
-			else
+			else {
 				*data = c;
+			}
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::render(QImage& img, double strike, double dip, double slip) {
 	Math::Tensor2Sd t;
 	Math::Matrix3f m;
@@ -465,8 +644,12 @@ void TensorRenderer::render(QImage& img, double strike, double dip, double slip)
 
 	img.fill(0);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::render(QImage& img, const Math::Matrix3d &m) {
 	Math::Matrix3f mf;
 	for ( int i = 0; i < 3; ++i )
@@ -475,8 +658,12 @@ void TensorRenderer::render(QImage& img, const Math::Matrix3d &m) {
 
 	render(img, mf);
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::render(QImage& img, const Math::Matrix3f &m) {
 	QSize size(img.size());
 
@@ -509,36 +696,23 @@ void TensorRenderer::render(QImage& img, const Math::Matrix3f &m) {
 	for ( int i = 0; i < size.height(); ++i, yf += dt ) {
 		float xf = ixf;
 		for ( int j = 0; j < size.width(); ++j, ++data, xf += dt ) {
-			Math::Vector3f v;
+			float distSquared = xf * xf + yf * yf;
 
-			float dist = xf*xf + yf*yf;
-
-			if ( dist > 1.0f ) {
-				if ( dist <= distLimit2 ) {
-					float d = (sqrt(dist) - 1.0f) / smoothDist;
+			if ( distSquared > 1.0f ) {
+				if ( distSquared <= distLimit2 ) {
+					float d = (sqrt(distSquared) - 1.0f) / smoothDist;
 					*data = qRgba(_border.red(),_border.green(),_border.blue(),(int)(255-d*255));
 				}
-				else
+				else {
 					*data = qRgba(0,0,0,0);
+				}
 				continue;
 			}
 
-#define STEREO_PROJECTION
-#ifdef STEREO_PROJECTION
-			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = 2 * div_z;
-
-			v[0] = yf * div_xy;
-			v[1] = -xf * div_xy;
-			v[2] = -(1.0f - dist) * div_z;
-#else
-			v[0] = yf;
-			v[1] = xf;
-			v[2] = float(sqrt(1.0f - dist));
-#endif
+			auto v = projectBackward(xf, yf, distSquared);
 
 			float tmp(smoothDist);
-			smoothDist += (1.0 - sqrt(dist)) * smoothDist;
+			smoothDist += (1.0 - sqrt(distSquared)) * smoothDist;
 
 			Math::Vector3f vr;
 			m.invTransform(vr, v);
@@ -585,8 +759,8 @@ void TensorRenderer::render(QImage& img, const Math::Matrix3f &m) {
 
 			smoothDist = tmp;
 
-			if ( dist > distLimit ) {
-				float d = (sqrt(dist) - 1.0f) / smoothDist + 1;
+			if ( distSquared > distLimit ) {
+				float d = (sqrt(distSquared) - 1.0f) / smoothDist + 1;
 				int intensity = (int)(d * 255);
 				if ( intensity > 255 ) intensity = 255;
 				if ( intensity < 0 ) intensity = 0;
@@ -608,11 +782,12 @@ void TensorRenderer::render(QImage& img, const Math::Matrix3f &m) {
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-//#define M_SQRT2 1.41421356237309504880
 
 
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::Matrix3f &m) {
 	QSize size(img.size());
 
@@ -692,9 +867,7 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 	float distLimit = (1.0f - smoothDist) * (1.0f - smoothDist);
 	float distLimit2 = (1.0f + smoothDist) * (1.0f + smoothDist);
 
-	float dist;
-	float div_z;
-	float div_xy;
+	float distSquared;
 	float xx, yy, zz, xy, xz, yz;
 	float sign;
 	Math::Vector3f v, vr, n, l(-1,1,-2);
@@ -709,23 +882,19 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 	for ( int i = 0; i < size.height(); ++i, yf += dt ) {
 		float xf = ixf;
 		for ( int j = 0; j < size.width(); ++j, ++data, xf += dt ) {
-			dist = xf*xf + yf*yf;
-			if ( dist > 1.0f ) {
-				if ( dist <= distLimit2 ) {
-					float d = (sqrt(dist) - 1.0f) / smoothDist;
+			distSquared = xf * xf + yf * yf;
+			if ( distSquared > 1.0f ) {
+				if ( distSquared <= distLimit2 ) {
+					float d = (sqrt(distSquared) - 1.0f) / smoothDist;
 					*data = qRgba(_border.red(),_border.green(),_border.blue(),(int)(255-d*255));
 				}
-				else
+				else {
 					*data = qRgba(0,0,0,0);
+				}
 				continue;
 			}
 
-			div_z = 1.0f / (1.0f + dist);
-			div_xy = 2 * div_z;
-
-			v[0] = yf * div_xy;
-			v[1] = -xf * div_xy;
-			v[2] = -(1.0f - dist) * div_z;
+			v = projectBackward(xf, yf, distSquared);
 
 			xx = v[0]*v[0];
 			xy = v[0]*v[1];
@@ -744,7 +913,7 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 			float y = vr[2];
 
 			float tmp(smoothDist);
-			smoothDist += (1.0 - sqrt(dist)) * smoothDist;
+			smoothDist += (1.0 - sqrt(distSquared)) * smoothDist;
 
 			if ( sign >= 0 )
 				c = _colorT.rgb();
@@ -773,8 +942,8 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 
 			smoothDist = tmp;
 
-			if ( dist > distLimit ) {
-				float d = (sqrt(dist) - 1.0f) / smoothDist + 1;
+			if ( distSquared > distLimit ) {
+				float d = (sqrt(distSquared) - 1.0f) / smoothDist + 1;
 				int intensity = (int)(d * 255);
 				if ( intensity > 255 ) intensity = 255;
 				if ( intensity < 0 ) intensity = 0;
@@ -796,8 +965,12 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t, const Math::M
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 	QSize size(img.size());
 
@@ -878,9 +1051,7 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 	float distLimit = (1.0f - smoothDist) * (1.0f - smoothDist);
 	float distLimit2 = (1.0f + smoothDist) * (1.0f + smoothDist);
 
-	float dist;
-	float div_z;
-	float div_xy;
+	float distSquared;
 	float xx, yy, zz, xy, xz, yz;
 	float sign;
 	Math::Vector3f v, vr, l(-1,1,-2);
@@ -892,23 +1063,19 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 	for ( int i = 0; i < size.height(); ++i, yf += dt ) {
 		float xf = ixf;
 		for ( int j = 0; j < size.width(); ++j, ++data, xf += dt ) {
-			dist = xf*xf + yf*yf;
-			if ( dist > 1.0f ) {
-				if ( dist <= distLimit2 ) {
-					float d = (sqrt(dist) - 1.0f) / smoothDist;
+			distSquared = xf * xf + yf * yf;
+			if ( distSquared > 1.0f ) {
+				if ( distSquared <= distLimit2 ) {
+					float d = (sqrt(distSquared) - 1.0f) / smoothDist;
 					*data = qRgba(_border.red(),_border.green(),_border.blue(),(int)(255-d*255));
 				}
-				else
+				else {
 					*data = qRgba(0,0,0,0);
+				}
 				continue;
 			}
 
-			div_z = 1.0f / (1.0f + dist);
-			div_xy = 2 * div_z;
-
-			v[0] = yf * div_xy;
-			v[1] = -xf * div_xy;
-			v[2] = -(1.0f - dist) * div_z;
+			v = projectBackward(xf, yf, distSquared);
 
 			xx = v[0]*v[0];
 			xy = v[0]*v[1];
@@ -925,8 +1092,8 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 			else
 				c = _colorP.rgb();
 
-			if ( dist > distLimit ) {
-				float d = (sqrt(dist) - 1.0f) / smoothDist + 1;
+			if ( distSquared > distLimit ) {
+				float d = (sqrt(distSquared) - 1.0f) / smoothDist + 1;
 				int intensity = (int)(d * 255);
 				if ( intensity > 255 ) intensity = 255;
 				if ( intensity < 0 ) intensity = 0;
@@ -943,12 +1110,18 @@ void TensorRenderer::render(QImage& img, const Math::Tensor2Sd &t) {
 				             (int)(qGreen(c)*intensity),
 				             (int)(qBlue(c)*intensity));
 			}
-			else
+			else {
 				*data = c;
+			}
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void TensorRenderer::renderNP(QImage& img, double strike, double dip, double slip, QColor color) {
 	Math::Matrix3f m;
 	Math::NODAL_PLANE np;
@@ -999,28 +1172,16 @@ void TensorRenderer::renderNP(QImage& img, double strike, double dip, double sli
 	for ( int i = 0; i < size.height(); ++i, yf += dt ) {
 		float xf = ixf;
 		for ( int j = 0; j < size.width(); ++j, ++data, xf += dt ) {
-			Math::Vector3f v;
+			float distSquared = xf * xf + yf * yf;
 
-			float dist = xf*xf + yf*yf;
+			if ( distSquared > 1.0f ) {
+				continue;
+			}
 
-			if ( dist > 1.0f ) continue;
-
-#define STEREO_PROJECTION
-#ifdef STEREO_PROJECTION
-			float div_z = 1.0f / (1.0f + dist);
-			float div_xy = 2 * div_z;
-
-			v[0] = yf * div_xy;
-			v[1] = -xf * div_xy;
-			v[2] = -(1.0f - dist) * div_z;
-#else
-			v[0] = yf;
-			v[1] = xf;
-			v[2] = float(sqrt(1.0f - dist));
-#endif
+			auto v = projectBackward(xf, yf, distSquared);
 
 			float tmp(smoothDist);
-			smoothDist += (1.0 - sqrt(dist)) * smoothDist;
+			smoothDist += (1.0 - sqrt(distSquared)) * smoothDist;
 
 			Math::Vector3f vr;
 			m.invTransform(vr, v);
@@ -1043,24 +1204,36 @@ void TensorRenderer::renderNP(QImage& img, double strike, double dip, double sli
 		}
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint TensorRenderer::project(Math::Vector3f &v) const {
 	float px = -v.y / (1.0 - v.z);
 	float py = v.x / (1.0 - v.z);
 
 	return QPoint((int)(_ballRadius*px+_center.x()), (int)(_ballRadius*py+_center.y()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint TensorRenderer::project(Math::Vector3d &v) const {
 	double px = -v.y / (1.0 - v.z);
 	double py = v.x / (1.0 - v.z);
 
 	return QPoint((int)(_ballRadius*px+_center.x()), (int)(_ballRadius*py+_center.y()));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint TensorRenderer::project(double azimuth, double dist) const {
 	double azi = deg2rad(azimuth);
 	double px = dist * sin(azi);
@@ -1069,8 +1242,12 @@ QPoint TensorRenderer::project(double azimuth, double dist) const {
 	return QPoint((int)(_projectRadius * px + _center.x()),
 	              (int)(_center.y() - _projectRadius * py));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QPoint TensorRenderer::projectMargin(double azimuth, int margin, double dist) const {
 	double azi = deg2rad(azimuth);
 	double px = dist * sin(azi);
@@ -1079,30 +1256,35 @@ QPoint TensorRenderer::projectMargin(double azimuth, int margin, double dist) co
 	return QPoint((int)((_radius - margin) * px + _center.x()),
 	              (int)(_center.y() - (_radius-margin) * py));
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool TensorRenderer::unproject(Math::Vector3d &v, const QPointF &p) const {
 	double xf = double(p.x() - _center.x()) / (double)_ballRadius;
 	double yf = double(p.y() - _center.y()) / (double)_ballRadius;
 
-	double dist = xf * xf + yf * yf;
+	double distSquared = xf * xf + yf * yf;
 
-	if ( dist > 1.0 ) {
+	if ( distSquared > 1.0 ) {
 		v[0] =  yf;
 		v[1] = -xf;
 		v[2] =  0;
 		return false;
 	}
 	else {
-		double div_z = 1.0 / (1.0f + dist);
-		double div_xy = 2 * div_z;
-		v[0] = yf * div_xy;
-		v[1] = -xf * div_xy;
-		v[2] = -(1.0f - dist) * div_z;
+		v = projectBackward(xf, yf, distSquared);
 		return true;
 	}
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -60,6 +60,28 @@ class SC_GUI_API TensorRenderer {
 		void setTColor(QColor);
 		void setPColor(QColor);
 
+		/**
+		 * @brief Projects take-off angle and azimuth to a normalized polar coordinate.
+		 * @param takeOffAngle The take-off angle in degrees.
+		 * @param azimuth The azimuth angle in degrees.
+		 * @return A polar coordinate in format { distance (x), azimuth (y) }. The distance
+		 *         is within [0, 1].
+		 */
+		QPointF projectForward(double takeOffAngle, double azimuth) const;
+		QPointF projectForward(const Math::Vector3d &v) const;
+
+		/**
+		 * @brief Backward projects a normalized screen coordinate onto the
+		 *        beachball sphere.
+		 * @param xf X within [-1, 1]
+		 * @param yf Y within [-1, 1]
+		 * @return The unprojected 3D vector.
+		 */
+		Math::Vector3f projectBackward(const float xf, const float yf, float distSquared) const;
+		Math::Vector3d projectBackward(const double xf, const double yf, double distSquared) const;
+
+		// The following project methods project a point on the sphere onto
+		// the screen.
 		QPoint project(Math::Vector3f &v) const;
 		QPoint project(Math::Vector3d &v) const;
 		QPoint project(double azimuth, double dist = 1.0) const;
@@ -80,6 +102,8 @@ class SC_GUI_API TensorRenderer {
 		void render(QImage& img, const Math::Tensor2Sd &t);
 		void renderNP(QImage& img, double strike, double dip, double slip, QColor color);
 
+		static Math::Vector3d tp2xyz(const double theta, const double phi);
+
 
 	private:
 		QColor _colorT;
@@ -95,8 +119,8 @@ class SC_GUI_API TensorRenderer {
 		int    _projectMargin;
 		float  _materialAmbient;
 		float  _materialDiffuse;
-};
 
+};
 
 }
 }

@@ -60,6 +60,9 @@ namespace Core {
    - Added Seiscomp::Utils::V2::LeParser
    - Added Seiscomp::Utils::Diff5
    - Added Seiscomp::Wired::ClientSession::InUpdate enumeration
+   - Added Seiscomp::Gui::TensorRenderer::projectForward
+   - Added Seiscomp::Gui::TensorRenderer::projectBackward
+   - Added Seiscomp::Gui::TensorRenderer::tp2xyz
 
  "17.2.0"   0x110200
    - Added Seiscomp::DataModel::DatabaseQuery::getPickComments()
