@@ -69,15 +69,27 @@ std::optional<double> parseAttr(const Geo::GeoFeature *f,
 
 class DepthLookupConstant : public DepthLookup {
 	public:
-		bool init(const Config::Config &) override { return true; }
-
-		double getDefaultDepth(double, double, double fallback) const override {
-			return fallback;
+		bool init(const Config::Config &config) override {
+			try {
+				_value = config.getDouble("depths.constant.value");
+			}
+			catch ( ... ) {
+				SEISCOMP_INFO("DepthLookup/Constant: depths.constant.value not set, "
+				              "using default %.0f km", _value);
+			}
+			return true;
 		}
 
-		double getMaxDepth(double, double, double fallback) const override {
-			return fallback;
+		double fetch(double, double) const override {
+			return _value;
 		}
+
+		double fetchMaxDepth(double, double) const override {
+			return _value;
+		}
+
+	private:
+		double _value{10.0};
 };
 
 REGISTER_DEPTH_LOOKUP(DepthLookupConstant, "Constant");
@@ -90,20 +102,30 @@ REGISTER_DEPTH_LOOKUP(DepthLookupConstant, "Constant");
 /**
  * Queries named polygon features from SeisComP's global GeoFeatureSet.
  *
- * Config key: autoloc.regionDepth.regions  (list of feature names)
+ * Config keys:
+ *   depths.polygon.regions   — ordered list of feature names
+ *   depths.polygon.fallback  — depth returned when no polygon matches (km)
  */
 class DepthLookupPolygon : public DepthLookup {
 	public:
 		bool init(const Config::Config &config) override {
+			try {
+				_fallback = config.getDouble("depths.polygon.fallback");
+			}
+			catch ( ... ) {
+				SEISCOMP_INFO("DepthLookup/Polygon: depths.polygon.fallback not set, "
+				              "using default %.0f km", _fallback);
+			}
+
 			std::vector<std::string> names;
 			try {
-				names = config.getStrings("autoloc.regionDepth.regions");
+				names = config.getStrings("depths.polygon.regions");
 			}
 			catch ( ... ) {}
 
 			if ( names.empty() ) {
 				SEISCOMP_WARNING("DepthLookup/Polygon: no regions configured "
-				                 "under autoloc.regionDepth.regions");
+				                 "under depths.polygon.regions");
 				return true;
 			}
 
@@ -136,24 +158,22 @@ class DepthLookupPolygon : public DepthLookup {
 			return true;
 		}
 
-		double getDefaultDepth(double lat, double lon,
-		                       double fallback) const override {
+		double fetch(double lat, double lon) const override {
 			for ( const auto &e : _entries ) {
 				if ( e.feature->contains({lat, lon}) ) {
 					return e.defaultDepth;
 				}
 			}
-			return fallback;
+			return _fallback;
 		}
 
-		double getMaxDepth(double lat, double lon,
-		                   double fallback) const override {
+		double fetchMaxDepth(double lat, double lon) const override {
 			for ( const auto &e : _entries ) {
 				if ( e.feature->contains({lat, lon}) ) {
-					return e.maxDepth.value_or(fallback);
+					return e.maxDepth.value_or(_fallback);
 				}
 			}
-			return fallback;
+			return _fallback;
 		}
 
 	private:
@@ -163,6 +183,7 @@ class DepthLookupPolygon : public DepthLookup {
 			std::optional<double>    maxDepth;
 		};
 
+		double             _fallback{10.0};
 		std::vector<Entry> _entries;
 };
 

@@ -44,13 +44,17 @@ DEFINE_SMARTPOINTER(DepthLookup);
  * and instantiated at runtime through DepthLookupFactory::Create().
  *
  * Two implementations ship with the library:
- *  - "Constant"  Returns the caller-supplied fallback (no-op default).
+ *  - "Constant"  Returns a fixed depth read from @c depths.constant.value.
  *  - "Polygon"   Queries named polygon features from SeisComP's global
  *                GeoFeatureSet; each polygon must carry a @c defaultDepth
  *                attribute (km, required) and may carry @c maxDepth (km).
+ *                Fallback is read from @c depths.polygon.fallback.
  *
  * A separate @c dlslab2 plugin (seiscomp/main) provides depth lookup from
  * USGS Slab2.0 depth-footprint contours.
+ *
+ * Each implementation owns all depth knowledge including its fallback value;
+ * callers pass no fallback.
  */
 class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 	public:
@@ -68,17 +72,19 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 
 		/**
 		 * @brief Return the default depth (km) at (@p lat, @p lon).
-		 * @param fallback  Returned when no region/slab matches.
+		 *
+		 * Always returns a finite value; the implementation supplies its
+		 * own configured fallback when no region/slab matches.
 		 */
-		virtual double getDefaultDepth(double lat, double lon,
-		                               double fallback) const = 0;
+		virtual double fetch(double lat, double lon) const = 0;
 
 		/**
 		 * @brief Return the maximum acceptable depth (km) at (@p lat, @p lon).
-		 * @param fallback  Returned when no region/slab matches.
+		 *
+		 * Always returns a finite value; the implementation supplies its
+		 * own configured fallback when no region/slab matches.
 		 */
-		virtual double getMaxDepth(double lat, double lon,
-		                           double fallback) const = 0;
+		virtual double fetchMaxDepth(double lat, double lon) const = 0;
 };
 
 
