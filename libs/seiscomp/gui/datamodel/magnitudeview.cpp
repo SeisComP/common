@@ -536,13 +536,6 @@ void StationMagnitudeModel::setOrigin(DataModel::Origin* origin,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int StationMagnitudeModel::rowCount(const QModelIndex &) const {
-	/*
-	if ( _magnitude ) {
-		cout << "------ REQUESTED ROWCOUNT: " << _magnitude->stationMagnitudeContributionCount() << endl;
-		return _magnitude->stationMagnitudeContributionCount();
-	}
-	return 0;
-	*/
 	return _rowCount;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -560,9 +553,11 @@ int StationMagnitudeModel::columnCount(const QModelIndex &) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeModel::insertRow(int row, const QModelIndex & parent) {
+bool StationMagnitudeModel::insertRow(int row, const QModelIndex &parent) {
 	beginInsertRows(QModelIndex(), row, row);
 	++_rowCount;
+	_distance.append(-1.0);
+	_used.append(Qt::Checked);
 	endInsertRows();
 	return true;
 }
