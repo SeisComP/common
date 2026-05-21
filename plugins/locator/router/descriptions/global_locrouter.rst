@@ -47,12 +47,21 @@ attributes are:
 * name (recommended): Name of polygon. An empty string is assumed if not given.
 * locator (mandatory): Name of the locator interface to use.
 * profile: Name of the locator-specific profile which must be configured
-  according to the selected locator.
+  according to the selected locator. A locator may or may not support profiles.
+  It may or may not define a default profile.
 * minDepth: Minimum depth in km the profile should be applied to.
 * maxDepth: Maximum depth in km the profile should be applied to.
 
+An origin matches a region if the epicenter is contained by the polygon and
+either
+
+* no minDepth or maxDepth constraints are defined or
+* the depth is available and matches the minDepth and/or maxDepth constraints
+
 The configured features are sorted by rank and area. Larger ranks and smaller
-areas are prioritized.
+areas are prioritized. The area is a rough estimate calculated in square
+degrees independent of the latitude and will be overestimated with increasing
+distance from the equator.
 
 Example :ref:`GeoJSON file<sec-gui_layers-vector-format-geojson>`:
 
