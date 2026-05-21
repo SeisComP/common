@@ -144,9 +144,9 @@ class SC_GUI_API RecordStreamState : public QObject {
 		void lastConnectionClosed();
 
 	private:
-		static RecordStreamState _instance;
+		static RecordStreamState   _instance;
 
-		int _connectionCount;
+		int                        _connectionCount;
 		QList<RecordStreamThread*> _activeThreads;
 
 	friend class RecordStreamThread;

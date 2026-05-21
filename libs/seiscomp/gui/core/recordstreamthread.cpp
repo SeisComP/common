@@ -30,13 +30,33 @@
 #include <seiscomp/core/record.h>
 #include <seiscomp/core/strings.h>
 
+#include <QMutex>
+
+
+namespace {
+
+QMutex mutex;
+
+}
+
+
 Q_DECLARE_METATYPE(Seiscomp::RecordPtr)
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Gui {
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int RecordStreamThread::_numberOfThreads = 0;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 RecordStreamThread::RecordStreamThread(const std::string& recordStreamURL)
@@ -393,6 +413,8 @@ QList<RecordStreamThread*> RecordStreamState::connections() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamState::openedConnection(RecordStreamThread *thread) {
+	QMutexLocker l(&mutex);
+
 	++_connectionCount;
 	_activeThreads.removeAll(thread);
 	_activeThreads.append(thread);
@@ -411,6 +433,8 @@ void RecordStreamState::openedConnection(RecordStreamThread *thread) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void RecordStreamState::closedConnection(RecordStreamThread *thread) {
+	QMutexLocker l(&mutex);
+
 	--_connectionCount;
 	_activeThreads.removeAll(thread);
 
@@ -426,7 +450,12 @@ void RecordStreamState::closedConnection(RecordStreamThread *thread) {
 		emit lastConnectionClosed();
 	}
 }
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace Gui
 } // namespace Seiscomp
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
