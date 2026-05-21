@@ -3867,7 +3867,7 @@ void MagnitudeView::updateMagnitudeLabels() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* stationMagnitude, int index) {
+void MagnitudeView::addStationMagnitude(StationMagnitude *stationMagnitude, int index) {
 	//SEISCOMP_DEBUG("Adding stationMagnitude at index #%d", index);
 
 	// StationMagnitude has been inserted already -> skip it
