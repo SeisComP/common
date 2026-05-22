@@ -5531,10 +5531,10 @@ void EventListView::updateOrigin(Seiscomp::DataModel::Origin* origin) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventListView::insertOrigin(Seiscomp::DataModel::Origin* origin,
-                                 Seiscomp::DataModel::Event* baseEvent,
+void EventListView::insertOrigin(Seiscomp::DataModel::Origin *origin,
+                                 Seiscomp::DataModel::Event *baseEvent,
                                  const Seiscomp::Gui::ObjectChangeList<Seiscomp::DataModel::Pick> &changedPicks,
-                                 const std::vector<Seiscomp::DataModel::AmplitudePtr>& newAmplitudes) {
+                                 const std::vector<Seiscomp::DataModel::AmplitudePtr> &newAmplitudes) {
 	EventParametersPtr ep;
 
 	if ( SC_D._updateLocalEPInstance ) {
