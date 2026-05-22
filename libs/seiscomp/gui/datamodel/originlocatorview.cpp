@@ -483,20 +483,26 @@ QVariant colAligns[ArrivalListColumns::Quantity] = {
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
+	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
 	int(Qt::AlignRight | Qt::AlignVCenter),
-	int(Qt::AlignLeft | Qt::AlignVCenter),
-	int(Qt::AlignLeft | Qt::AlignVCenter),
-	int(Qt::AlignLeft | Qt::AlignVCenter)
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignHCenter | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter),
+	int(Qt::AlignRight | Qt::AlignVCenter)
 };
 
 
 bool colVisibility[ArrivalListColumns::Quantity] = {
 	true,
 	false,
-	true,
+	false,
 	true,
 	false,
 	false,
@@ -2151,7 +2157,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				pick = Pick::Cast(PublicObject::Find(a->pickID()));
 				if ( pick ) {
 					try {
-						return timeToString(pick->creationInfo().creationTime(), "%T.%1f");
+						return timeToString(pick->creationInfo().creationTime(), _pickTimeFormat.c_str());
 					}
 					catch ( ValueException& ) {}
 				}
@@ -2257,7 +2263,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			// Residual
 			case RESIDUAL:
 				try {
-					snprintf(buf, 10, "%.2f", a->timeResidual());
+					snprintf(buf, 10, "%.*f", SCScheme.precision.pickTime, a->timeResidual());
 					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
@@ -2266,8 +2272,10 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			case BACKAZIMUTH:
 				pick = Pick::Cast(PublicObject::Find(a->pickID()));
 				try {
-					if ( pick )
-						return pick->backazimuth().value();
+					if ( pick ) {
+						snprintf(buf, 10, "%.1f", pick->backazimuth().value());
+						return QString::fromUtf8(buf);
+					}
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -2277,21 +2285,43 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 					snprintf(buf, 10, "%.1f", a->backazimuthResidual());
 					return QString::fromUtf8(buf);
 				}
-				catch ( ValueException& ) {}
+				catch ( ValueException& ) {
+					pick = Pick::Cast(PublicObject::Find(a->pickID()));
+					try {
+						if ( pick ) {
+							auto sLoc = Client::Inventory::Instance()->getSensorLocation(pick);
+							if ( sLoc ) {
+								auto bazMeasured = pick->backazimuth().value();
+								auto sLat = sLoc->latitude();
+								auto sLon = sLoc->longitude();
+								auto oLat = _origin->latitude().value();
+								auto oLon = _origin->longitude().value();
+								double bazComputed;
+								Math::Geo::delazi(oLat, oLon, sLat, sLon, nullptr, nullptr, &bazComputed);
+
+								snprintf(buf, 10, "%.1f", bazMeasured - bazComputed);
+								return QString::fromUtf8(buf);
+							}
+						}
+					}
+					catch ( ValueException& ) {}
+				}
 				break;
 
 			case SLOWNESS:
 				pick = Pick::Cast(PublicObject::Find(a->pickID()));
 				try {
-					if ( pick )
-						return pick->horizontalSlowness().value();
+					if ( pick ) {
+						snprintf(buf, 10, "%.1f", pick->horizontalSlowness().value());
+						return QString::fromUtf8(buf);
+					}
 				}
 				catch ( ValueException& ) {}
 				break;
 
 			case SLOWNESS_RESIDUAL:
 				try {
-					snprintf(buf, 10, "%.2f", a->horizontalSlownessResidual());
+					snprintf(buf, 10, "%.1f", a->horizontalSlownessResidual());
 					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
@@ -2318,7 +2348,8 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			// Azimuth
 			case AZIMUTH:
 				try {
-					return (int)a->azimuth();
+					snprintf(buf, 10, "%.1f", a->azimuth());
+					return QString::fromUtf8(buf);
 				}
 				catch ( ValueException& ) {}
 				break;
@@ -2426,8 +2457,20 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		}
 	}
 	else if ( role == Qt::ForegroundRole ) {
-		if ( index.row() < _enableState.size() )
-			return _enableState[index.row()]?QVariant():_disabledForeground;
+		switch ( index.column() ) {
+			case BACKAZIMUTH_RESIDUAL:
+				try {
+					a->backazimuthResidual();
+				}
+				catch ( ValueException& ) {
+					return _disabledForeground;
+				}
+			default:
+				break;
+		}
+		if ( index.row() < _enableState.size() && !_enableState[index.row()] ) {
+			return _disabledForeground;
+		}
 	}
 	/*
 	else if ( role == Qt::TextColorRole ) {
