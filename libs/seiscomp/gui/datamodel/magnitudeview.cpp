@@ -22,6 +22,8 @@
 #define SEISCOMP_COMPONENT Gui::MagnitudeView
 
 #include "magnitudeview.h"
+#include "magnitudeview_p.h"
+
 #include <seiscomp/gui/core/diagramwidget.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/math/mean.h>
@@ -54,6 +56,7 @@ using namespace Seiscomp::DataModel;
 
 
 #define INVALID_MAG 0.0
+#define SC_D (*_d_ptr)
 
 
 namespace {
@@ -498,6 +501,8 @@ class StationMagnitudeModel : public QAbstractTableModel {
 		int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 		int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
+		bool insertRows(int row, int count, const QModelIndex &parent) override;
+
 		QVariant data(const QModelIndex &index, int role) const override;
 		QVariant headerData(int section, Qt::Orientation orientation,
 		                    int role = Qt::DisplayRole) const override;
@@ -505,8 +510,6 @@ class StationMagnitudeModel : public QAbstractTableModel {
 		Qt::ItemFlags flags(const QModelIndex &index) const override;
 		bool setData(const QModelIndex &index, const QVariant &value,
 		             int role = Qt::EditRole) override;
-
-		bool insertRow(int row, const QModelIndex & parent = QModelIndex());
 
 		bool useMagnitude(int row) const;
 
@@ -606,10 +609,26 @@ int StationMagnitudeModel::columnCount(const QModelIndex &) const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool StationMagnitudeModel::insertRow(int row, const QModelIndex & parent) {
-	beginInsertRows(QModelIndex(), row, row);
-	++_rowCount;
+bool StationMagnitudeModel::insertRows(int row, int count, const QModelIndex &parent) {
+	if ( count <= 0 ) {
+		return false;
+	}
+
+	if ( row < _rowCount ) {
+		// Only append is supported
+		return false;
+	}
+
+	beginInsertRows(parent, row, row + count - 1);
+
+	_rowCount += count;
+
+	_distance.insert(_distance.end(), _rowCount, -1.0);
+	_azimuth.insert(_azimuth.end(), _rowCount, 999.0);
+	_used.insert(_used.end(), _rowCount, Qt::Checked);
+
 	endInsertRows();
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1273,15 +1292,12 @@ ModelAbstractRowFilter *&selectionFilter() {
 //! Implementation of MagnitudeView
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeView::MagnitudeView(const MapsDesc &maps,
-                             Seiscomp::DataModel::DatabaseQuery* reader,
-                             QWidget * parent, Qt::WindowFlags f)
+                             Seiscomp::DataModel::DatabaseQuery *reader,
+                             QWidget *parent, Qt::WindowFlags f)
 : QWidget(parent, f)
-, _reader(reader)
-, _origin(nullptr)
-, _objCache(_reader, 500) {
-	_maptree = new Map::ImageTree(maps);
-	_modelStationMagnitudes = new StationMagnitudeModel(&_objCache, this);
-	_modelStationMagnitudesProxy = nullptr;
+, _d_ptr(new MagnitudeViewPrivate(reader, new Map::ImageTree(maps))) {
+	SC_D.modelStationMagnitudes = new StationMagnitudeModel(&SC_D.objCache, this);
+	SC_D.modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1290,16 +1306,13 @@ MagnitudeView::MagnitudeView(const MapsDesc &maps,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MagnitudeView::MagnitudeView(Map::ImageTree* mapTree,
-                             Seiscomp::DataModel::DatabaseQuery* reader,
-                             QWidget * parent, Qt::WindowFlags f)
+MagnitudeView::MagnitudeView(Map::ImageTree *mapTree,
+                             Seiscomp::DataModel::DatabaseQuery *reader,
+                             QWidget *parent, Qt::WindowFlags f)
 : QWidget(parent, f)
-, _reader(reader)
-, _origin(nullptr)
-, _objCache(_reader, 500) {
-	_maptree = mapTree;
-	_modelStationMagnitudes = new StationMagnitudeModel(&_objCache, this);
-	_modelStationMagnitudesProxy = nullptr;
+, _d_ptr(new MagnitudeViewPrivate(reader, mapTree)) {
+	SC_D.modelStationMagnitudes = new StationMagnitudeModel(&SC_D.objCache, this);
+	SC_D.modelStationMagnitudesProxy = nullptr;
 	init(reader);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1309,7 +1322,9 @@ MagnitudeView::MagnitudeView(Map::ImageTree* mapTree,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::closeEvent(QCloseEvent *e) {
-	if ( _amplitudeView ) _amplitudeView->close();
+	if ( SC_D.amplitudeView ) {
+		SC_D.amplitudeView->close();
+	}
 	QWidget::closeEvent(e);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1319,19 +1334,21 @@ void MagnitudeView::closeEvent(QCloseEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::closeTab(int idx) {
-	std::string magID = _tabMagnitudes->tabData(idx).value<TabData>().publicID;
+	std::string magID = SC_D.tabMagnitudes->tabData(idx).value<TabData>().publicID;
 	MagnitudePtr mag = Magnitude::Find(magID);
 
-	if ( mag != nullptr ) {
+	if ( mag) {
 		if ( mag->detach() ) {
-			emit magnitudeRemoved(_origin->publicID().c_str(), mag.get());
-			_tabMagnitudes->removeTab(idx);
+			emit magnitudeRemoved(SC_D.origin->publicID().c_str(), mag.get());
+			SC_D.tabMagnitudes->removeTab(idx);
 		}
-		else
+		else {
 			QMessageBox::critical(this, "Error", tr("An error occured while removing magnitude %1").arg(magID.c_str()));
+		}
 	}
-	else
+	else {
 		QMessageBox::critical(this, "Error", tr("Did not find magnitude %1").arg(magID.c_str()));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1342,12 +1359,12 @@ void MagnitudeView::closeTab(int idx) {
 void MagnitudeView::debugCreateMagRef() {
 	StationMagnitudePtr staMag = StationMagnitude::Create();
 	staMag->setMagnitude(10.0);
-	staMag->setType(_netMag->type());
+	staMag->setType(SC_D.netMag->type());
 	staMag->setWaveformID(WaveformStreamID("II", "KAPI", "00", "BH", ""));
 
 	StationMagnitudeContributionPtr magRef = new StationMagnitudeContribution(staMag->publicID());
-	_netMag->add(magRef.get());
-	addObject(_netMag->publicID().c_str(), magRef.get());
+	SC_D.netMag->add(magRef.get());
+	addObject(SC_D.netMag->publicID().c_str(), magRef.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1356,30 +1373,29 @@ void MagnitudeView::debugCreateMagRef() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
-	_ui = new ::Ui::MagnitudeView;
-	_ui->setupUi(this);
+	SC_D.ui.setupUi(this);
 
-	_amplitudeView = nullptr;
-	_computeMagnitudesSilently = false;
-	_enableMagnitudeTypeSelection = true;
+	SC_D.amplitudeView = nullptr;
+	SC_D.computeMagnitudesSilently = false;
+	SC_D.enableMagnitudeTypeSelection = true;
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
 
-	_ui->labelRegion->setFont(SCScheme.fonts.heading3);
-	_ui->labelRegion->installEventFilter(drawFilter);
-	//_ui->comboMagType->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelRegion->setFont(SCScheme.fonts.heading3);
+	SC_D.ui.labelRegion->installEventFilter(drawFilter);
+	//SC_D.ui.comboMagType->setFont(SCScheme.fonts.highlight);
 
-	_ui->label_7->setFont(SCScheme.fonts.normal);
-	_ui->label->setFont(SCScheme.fonts.normal);
-	_ui->label_8->setFont(SCScheme.fonts.normal);
-	_ui->label_3->setFont(SCScheme.fonts.normal);
-	_ui->label_2->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_7->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_8->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_3->setFont(SCScheme.fonts.normal);
+	SC_D.ui.label_2->setFont(SCScheme.fonts.normal);
 
-	_ui->labelMagnitude->setFont(SCScheme.fonts.highlight);
-	_ui->labelRMS->setFont(SCScheme.fonts.normal);
-	_ui->labelNumStaMags->setFont(SCScheme.fonts.highlight);
-	_ui->labelMinMag->setFont(SCScheme.fonts.normal);
-	_ui->labelMaxMag->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelMagnitude->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelRMS->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelNumStaMags->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.labelMinMag->setFont(SCScheme.fonts.normal);
+	SC_D.ui.labelMaxMag->setFont(SCScheme.fonts.normal);
 
 	/*
 	_ui.lbAgencyID->setFont(SCScheme.fonts.normal);
@@ -1390,45 +1406,45 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	_ui.labelMethod->setFont(SCScheme.fonts.highlight);
 	*/
 
-	setBold(_ui->labelAgencyID, true);
-	setBold(_ui->labelAuthor, true);
-	setBold(_ui->labelMethod, true);
+	setBold(SC_D.ui.labelAgencyID, true);
+	setBold(SC_D.ui.labelAuthor, true);
+	setBold(SC_D.ui.labelMethod, true);
 
 	ElideFadeDrawer *elider = new ElideFadeDrawer(this);
 
-	fixWidth(_ui->labelMethod, 8);
-	_ui->labelMethod->installEventFilter(elider);
+	fixWidth(SC_D.ui.labelMethod, 8);
+	SC_D.ui.labelMethod->installEventFilter(elider);
 	//fixWidth(_ui.labelAgencyID, 8);
-	_ui->labelAgencyID->installEventFilter(elider);
-	_ui->labelAuthor->installEventFilter(elider);
+	SC_D.ui.labelAgencyID->installEventFilter(elider);
+	SC_D.ui.labelAuthor->installEventFilter(elider);
 
-	_ui->btnCommit->setFont(SCScheme.fonts.highlight);
+	SC_D.ui.btnCommit->setFont(SCScheme.fonts.highlight);
 
-	_ui->cbEvalStatus->addItem("- unset -");
+	SC_D.ui.cbEvalStatus->addItem("- unset -");
 	for ( int i = 0; i < 6; ++i ) {
-		_ui->cbEvalStatus->addItem(QString());
+		SC_D.ui.cbEvalStatus->addItem(QString());
 	}
 	for ( size_t i = EvaluationStatus::First; i < EvaluationStatus::Quantity; ++i ) {
 		if ( EvaluationStatus::Type(i) == FINAL ) {
-			_ui->cbEvalStatus->setItemText(1, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(1, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else if ( EvaluationStatus::Type(i) == REVIEWED ) {
-			_ui->cbEvalStatus->setItemText(2, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(2, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else if ( EvaluationStatus::Type(i) == CONFIRMED ) {
-			_ui->cbEvalStatus->setItemText(3, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(3, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else if ( EvaluationStatus::Type(i) == PRELIMINARY ) {
-			_ui->cbEvalStatus->setItemText(4, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(4, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else if ( EvaluationStatus::Type(i) == REPORTED ) {
-			_ui->cbEvalStatus->setItemText(5, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(5, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else if ( EvaluationStatus::Type(i) == REJECTED ) {
-			_ui->cbEvalStatus->setItemText(6, EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->setItemText(6, EvaluationStatus::NameDispatcher::name(i));
 		}
 		else {
-			_ui->cbEvalStatus->addItem(EvaluationStatus::NameDispatcher::name(i));
+			SC_D.ui.cbEvalStatus->addItem(EvaluationStatus::NameDispatcher::name(i));
 		}
 	}
 
@@ -1440,133 +1456,133 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	        this, SLOT(debugCreateMagRef()));
 	*/
 
-	_stamagnitudes = new DiagramWidget(_ui->groupMagnitudes);
+	SC_D.stamagnitudes = new DiagramWidget(SC_D.ui.groupMagnitudes);
 	if ( SCScheme.unit.distanceInKM ) {
-		_stamagnitudes->setAbscissaName("Epi. distance (km)");
+		SC_D.stamagnitudes->setAbscissaName("Epi. distance (km)");
 	}
 	else {
-		_stamagnitudes->setAbscissaName("Epi. distance (°)");
+		SC_D.stamagnitudes->setAbscissaName("Epi. distance (°)");
 	}
-	_stamagnitudes->setOrdinateName("Residual");
-	_stamagnitudes->setMarkerDistance(10, 0.1);
-	_stamagnitudes->setDisplayRect(QRectF(0,-2,180,4));
-	_stamagnitudes->setValueDisabledColor(SCScheme.colors.magnitudes.disabled);
-	_ui->groupMagnitudes->layout()->addWidget(_stamagnitudes);
+	SC_D.stamagnitudes->setOrdinateName("Residual");
+	SC_D.stamagnitudes->setMarkerDistance(10, 0.1);
+	SC_D.stamagnitudes->setDisplayRect(QRectF(0,-2,180,4));
+	SC_D.stamagnitudes->setValueDisabledColor(SCScheme.colors.magnitudes.disabled);
+	SC_D.ui.groupMagnitudes->layout()->addWidget(SC_D.stamagnitudes);
 
-	_map = new MagnitudeMap(_maptree.get(), _ui->frameMap);
+	SC_D.map = new MagnitudeMap(SC_D.maptree.get(), SC_D.ui.frameMap);
 
-	if ( _map ) {
-		connect(_map, SIGNAL(magnitudeChanged(int,bool)),
+	if ( SC_D.map ) {
+		connect(SC_D.map, SIGNAL(magnitudeChanged(int,bool)),
 		        this, SLOT(changeStationState(int,bool)));
-		connect(_map, SIGNAL(clickedMagnitude(int)), this, SLOT(selectMagnitude(int)));
-		connect(_map, SIGNAL(clickedStation(const std::string &, const std::string &)), this, SLOT(selectStation(const std::string &, const std::string &)));
+		connect(SC_D.map, SIGNAL(clickedMagnitude(int)), this, SLOT(selectMagnitude(int)));
+		connect(SC_D.map, SIGNAL(clickedStation(const std::string &, const std::string &)), this, SLOT(selectStation(const std::string &, const std::string &)));
 	}
 
-	QHBoxLayout* hboxLayout = new QHBoxLayout(_ui->frameMap);
+	auto hboxLayout = new QHBoxLayout(SC_D.ui.frameMap);
 	hboxLayout->setContentsMargins(0, 0, 0, 0);
-	if ( _map ) {
-		_map->setMouseTracking(true);
-		hboxLayout->addWidget(_map);
+	if ( SC_D.map ) {
+		SC_D.map->setMouseTracking(true);
+		hboxLayout->addWidget(SC_D.map);
 
 		try {
-			_map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
+			SC_D.map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
 		}
 		catch ( ... ) {}
 	}
 
-	hboxLayout = new QHBoxLayout(_ui->frameMagnitudeTypes);
+	hboxLayout = new QHBoxLayout(SC_D.ui.frameMagnitudeTypes);
 	hboxLayout->setContentsMargins(0, 0, 0, 0);
 
-	_tabMagnitudes = new QTabBar(_ui->frameMagnitudeTypes);
-	_tabMagnitudes->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
-	_tabMagnitudes->setShape(QTabBar::RoundedNorth);
-	_tabMagnitudes->setUsesScrollButtons(true);
+	SC_D.tabMagnitudes = new QTabBar(SC_D.ui.frameMagnitudeTypes);
+	SC_D.tabMagnitudes->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
+	SC_D.tabMagnitudes->setShape(QTabBar::RoundedNorth);
+	SC_D.tabMagnitudes->setUsesScrollButtons(true);
 
-	connect(_tabMagnitudes, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+	connect(SC_D.tabMagnitudes, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 
-	hboxLayout->addWidget(_tabMagnitudes);
+	hboxLayout->addWidget(SC_D.tabMagnitudes);
 
 	// reset GUI to default
 	resetContent();
 
-	_ui->tableStationMagnitudes->horizontalHeader()->setSortIndicatorShown(true);
-	_ui->tableStationMagnitudes->horizontalHeader()->setSortIndicator(DISTANCE, Qt::AscendingOrder);
-	//_ui->tableStationMagnitudes->horizontalHeader()->setStretchLastSection(true);
-	_ui->tableStationMagnitudes->setContextMenuPolicy(Qt::CustomContextMenu);
-	_ui->tableStationMagnitudes->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	_ui->tableStationMagnitudes->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+	SC_D.ui.tableStationMagnitudes->horizontalHeader()->setSortIndicatorShown(true);
+	SC_D.ui.tableStationMagnitudes->horizontalHeader()->setSortIndicator(DISTANCE, Qt::AscendingOrder);
+	//SC_D.ui.tableStationMagnitudes->horizontalHeader()->setStretchLastSection(true);
+	SC_D.ui.tableStationMagnitudes->setContextMenuPolicy(Qt::CustomContextMenu);
+	SC_D.ui.tableStationMagnitudes->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	SC_D.ui.tableStationMagnitudes->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	connect(_ui->tableStationMagnitudes->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
+	connect(SC_D.ui.tableStationMagnitudes->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableStationMagnitudesHeaderContextMenuRequested(const QPoint &)));
 
-	connect(_ui->tableStationMagnitudes->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
-	        _ui->tableStationMagnitudes, SLOT(sortByColumn(int, Qt::SortOrder)));
-	connect(_ui->tableStationMagnitudes, SIGNAL(customContextMenuRequested(const QPoint &)),
+	connect(SC_D.ui.tableStationMagnitudes->horizontalHeader(), SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)),
+	        SC_D.ui.tableStationMagnitudes, SLOT(sortByColumn(int, Qt::SortOrder)));
+	connect(SC_D.ui.tableStationMagnitudes, SIGNAL(customContextMenuRequested(const QPoint &)),
 	        this, SLOT(tableStationMagnitudesContextMenuRequested(const QPoint &)));
 
 	// on selection in  diagram
-	connect(_stamagnitudes, SIGNAL(valueActiveStateChanged(int, bool)), this, SLOT(changeMagnitudeState(int, bool)));
-	connect(_stamagnitudes, SIGNAL(endSelection()), this, SLOT(magnitudesSelected()));
-	connect(_stamagnitudes, SIGNAL(adjustZoomRect(QRectF&)), this, SLOT(adjustMagnitudeRect(QRectF&)));
-	connect(_stamagnitudes, SIGNAL(hover(int)), this, SLOT(hoverMagnitude(int)));
-	connect(_stamagnitudes, SIGNAL(clicked(int)), this, SLOT(selectMagnitude(int)));
+	connect(SC_D.stamagnitudes, SIGNAL(valueActiveStateChanged(int, bool)), this, SLOT(changeMagnitudeState(int, bool)));
+	connect(SC_D.stamagnitudes, SIGNAL(endSelection()), this, SLOT(magnitudesSelected()));
+	connect(SC_D.stamagnitudes, SIGNAL(adjustZoomRect(QRectF&)), this, SLOT(adjustMagnitudeRect(QRectF&)));
+	connect(SC_D.stamagnitudes, SIGNAL(hover(int)), this, SLOT(hoverMagnitude(int)));
+	connect(SC_D.stamagnitudes, SIGNAL(clicked(int)), this, SLOT(selectMagnitude(int)));
 
 	// on selection in table
-	connect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	connect(SC_D.modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
-	connect(_ui->btnRecalculate, SIGNAL(clicked()), this, SLOT(recalculateMagnitude()));
-	connect(_ui->btnSelect, SIGNAL(clicked()), this, SLOT(selectChannels()));
-	connect(_ui->btnActivate, SIGNAL(clicked()), this, SLOT(activateChannels()));
-	connect(_ui->btnDeactivate, SIGNAL(clicked()), this, SLOT(deactivateChannels()));
-	connect(_ui->btnWaveforms, SIGNAL(clicked()), this, SLOT(openWaveforms()));
-	connect(_ui->cbEvalStatus, SIGNAL(currentIndexChanged(int)), this, SLOT(evaluationStatusChanged(int)));
+	connect(SC_D.ui.btnRecalculate, SIGNAL(clicked()), this, SLOT(recalculateMagnitude()));
+	connect(SC_D.ui.btnSelect, SIGNAL(clicked()), this, SLOT(selectChannels()));
+	connect(SC_D.ui.btnActivate, SIGNAL(clicked()), this, SLOT(activateChannels()));
+	connect(SC_D.ui.btnDeactivate, SIGNAL(clicked()), this, SLOT(deactivateChannels()));
+	connect(SC_D.ui.btnWaveforms, SIGNAL(clicked()), this, SLOT(openWaveforms()));
+	connect(SC_D.ui.cbEvalStatus, SIGNAL(currentIndexChanged(int)), this, SLOT(evaluationStatusChanged(int)));
 
-	QMenu *selectMenu = new QMenu(_ui->btnSelect);
+	QMenu *selectMenu = new QMenu(SC_D.ui.btnSelect);
 	QAction *editSelectionFilter = new QAction(tr("Edit"), this);
 	editSelectionFilter->setShortcut(QKeySequence("shift+s"));
 	selectMenu->addAction(editSelectionFilter);
 
-	_ui->btnSelect->setMenu(selectMenu);
+	SC_D.ui.btnSelect->setMenu(selectMenu);
 	connect(editSelectionFilter, SIGNAL(triggered()), this, SLOT(selectChannelsWithEdit()));
 
 	//NOTE: Set to visible if you want to activate magnitude recalculation and
 	//      comitting: Very alpha and comitting does still not work
-	_ui->btnCommit->setVisible(false);
+	SC_D.ui.btnCommit->setVisible(false);
 	//_ui.btnWaveforms->setVisible(false);
 
-	_ui->groupReview->setEnabled(false);
+	SC_D.ui.groupReview->setEnabled(false);
 
 	try {
-		_magnitudeTypes = SCApp->configGetStrings("magnitudes");
+		SC_D.magnitudeTypes = SCApp->configGetStrings("magnitudes");
 	}
 	catch ( ... ) {
-		_magnitudeTypes.push_back("MLv");
-		_magnitudeTypes.push_back("mb");
-		_magnitudeTypes.push_back("mB");
-		_magnitudeTypes.push_back("Mwp");
+		SC_D.magnitudeTypes.push_back("MLv");
+		SC_D.magnitudeTypes.push_back("mb");
+		SC_D.magnitudeTypes.push_back("mB");
+		SC_D.magnitudeTypes.push_back("Mwp");
 	}
 
 	// Gather available magnitudes types
-	_availableMagTypes = Processing::MagnitudeProcessorFactory::Services();
-	if ( _availableMagTypes != nullptr ) {
-		for ( size_t i = 0; i < _magnitudeTypes.size(); ) {
-			if ( std::find(_availableMagTypes->begin(), _availableMagTypes->end(), _magnitudeTypes[i])
-			     == _availableMagTypes->end() ) {
-				SEISCOMP_WARNING("Removing unavailable magnitude: %s", _magnitudeTypes[i].c_str());
-				_magnitudeTypes.erase(_magnitudeTypes.begin()+i);
+	SC_D.availableMagTypes = Processing::MagnitudeProcessorFactory::Services();
+	if ( SC_D.availableMagTypes != nullptr ) {
+		for ( size_t i = 0; i < SC_D.magnitudeTypes.size(); ) {
+			if ( std::find(SC_D.availableMagTypes->begin(), SC_D.availableMagTypes->end(), SC_D.magnitudeTypes[i])
+			     == SC_D.availableMagTypes->end() ) {
+				SEISCOMP_WARNING("Removing unavailable magnitude: %s", SC_D.magnitudeTypes[i]);
+				SC_D.magnitudeTypes.erase(SC_D.magnitudeTypes.begin() + i);
 			}
 			else
 				++i;
 		}
 	}
 
-	_currentMagnitudeTypes = _magnitudeTypes;
+	SC_D.currentMagnitudeTypes = SC_D.magnitudeTypes;
 
 	try {
-		int baseIdx = _ui->layoutActions->indexOf(_ui->cbEvalStatus);
+		int baseIdx = SC_D.ui.layoutActions->indexOf(SC_D.ui.cbEvalStatus);
 		if ( baseIdx < 0 ) {
-			baseIdx = _ui->layoutActions->count() - 1;
+			baseIdx = SC_D.ui.layoutActions->count() - 1;
 		}
 
 		auto profiles = SCApp->configGetStrings("olv.magnitudeComments");
@@ -1579,20 +1595,20 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 				commentProfile.id = SCApp->configGetString("olv.magnitudeComments." + profile + ".id");
 				if ( commentProfile.id.empty() ) {
 					SEISCOMP_WARNING("olv.magnitudeComments.%s.id is empty: ignoring",
-					                 profile.c_str());
+					                 profile);
 					continue;
 				}
 
 				if ( ids.find(commentProfile.id) != ids.end() ) {
 					SEISCOMP_WARNING("Duplicate olv.magnitudeComments.%s.id: ignoring",
-					                 profile.c_str());
+					                 profile);
 					continue;
 				}
 
 				commentProfile.label = SCApp->configGetString("olv.magnitudeComments." + profile + ".label");
 				if ( commentProfile.label.empty() ) {
 					SEISCOMP_WARNING("olv.magnitudeComments.%s.label is empty: ignoring",
-					                 profile.c_str());
+					                 profile);
 					continue;
 				}
 
@@ -1600,7 +1616,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 			}
 			catch ( exception &e ) {
 				SEISCOMP_WARNING("olv.magnitudeComments: %s, ignoring %s",
-				                 e.what(), profile.c_str());
+				                 e.what(), profile);
 				continue;
 			}
 
@@ -1611,7 +1627,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 
 			ids.insert(commentProfile.id);
 
-			_ui->layoutActions->insertWidget(baseIdx + 1, new QLabel((commentProfile.label + ":").c_str()));
+			SC_D.ui.layoutActions->insertWidget(baseIdx + 1, new QLabel((commentProfile.label + ":").c_str()));
 
 			auto comboComment = new QComboBox;
 			comboComment->setObjectName(QString("comboBox/magnitude/comment/%1").arg(commentProfile.id.c_str()));
@@ -1635,7 +1651,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 			connect(comboComment, SIGNAL(currentTextChanged(QString)),
 			        this, SLOT(magnitudeCommentChanged(QString)));
 
-			_ui->layoutActions->insertWidget(baseIdx + 2, comboComment);
+			SC_D.ui.layoutActions->insertWidget(baseIdx + 2, comboComment);
 
 			baseIdx += 2;
 		}
@@ -1651,11 +1667,11 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 MagnitudeView::~MagnitudeView() {
-	delete _ui;
-
-	if ( _availableMagTypes != nullptr ) {
-		delete _availableMagTypes;
+	if ( SC_D.availableMagTypes ) {
+		delete SC_D.availableMagTypes;
 	}
+
+	delete _d_ptr;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1663,8 +1679,8 @@ MagnitudeView::~MagnitudeView() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-MapWidget* MagnitudeView::map() const {
-	return _map;
+MapWidget *MagnitudeView::map() const {
+	return SC_D.map;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1673,19 +1689,19 @@ MapWidget* MagnitudeView::map() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setPreferredMagnitudeID(const string &id) {
-	_preferredMagnitudeID = id;
+	SC_D.preferredMagnitudeID = id;
 
 	//QColor col = palette().color(QPalette::WindowText);
-	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
-		TabData d = _tabMagnitudes->tabData(i).value<TabData>();
-		if ( d.publicID == _preferredMagnitudeID ) {
-			//_tabMagnitudes->setTabTextColor(i, Qt::green);
-			_tabMagnitudes->setTabIcon(i, icon("tab_ok"));
+	for ( int i = 0; i < SC_D.tabMagnitudes->count(); ++i ) {
+		TabData d = SC_D.tabMagnitudes->tabData(i).value<TabData>();
+		if ( d.publicID == SC_D.preferredMagnitudeID ) {
+			//SC_D.tabMagnitudes->setTabTextColor(i, Qt::green);
+			SC_D.tabMagnitudes->setTabIcon(i, icon("tab_ok"));
 			resetPreferredMagnitudeSelection();
 		}
 		else {
-			//_tabMagnitudes->setTabTextColor(i, col);
-			_tabMagnitudes->setTabIcon(i, QIcon());
+			//SC_D.tabMagnitudes->setTabTextColor(i, col);
+			SC_D.tabMagnitudes->setTabIcon(i, QIcon());
 		}
 	}
 }
@@ -1700,7 +1716,7 @@ bool MagnitudeView::setDefaultAggregationType(const std::string &type) {
 	  || type == "trimmedMean"
 	  || type == "median"
 	  || type == "medianTrimmedMean" ) {
-		_defaultMagnitudeAggregation = type;
+		SC_D.defaultMagnitudeAggregation = type;
 		return true;
 	}
 	return false;
@@ -1713,18 +1729,18 @@ bool MagnitudeView::setDefaultAggregationType(const std::string &type) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::recalculateMagnitude() {
 	// Recalculate the magnitudes according the defined settings
-	if ( !_netMag ) {
+	if ( !SC_D.netMag ) {
 		return;
 	}
 
 	vector<double> mags;
 	vector<double> weights;
 
-	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
-		if ( static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->useMagnitude(i) ) {
-			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+	for ( int i = 0; i < SC_D.modelStationMagnitudes->rowCount(); ++i ) {
+		if ( static_cast<StationMagnitudeModel*>(SC_D.modelStationMagnitudes)->useMagnitude(i) ) {
+			StationMagnitude* sm = StationMagnitude::Find(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			if ( !sm ) {
-				QMessageBox::critical(this, "Error", QString("StationMagnitude %1 not found").arg(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID().c_str()));
+				QMessageBox::critical(this, "Error", QString("StationMagnitude %1 not found").arg(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID().c_str()));
 				return;
 			}
 
@@ -1739,18 +1755,18 @@ void MagnitudeView::recalculateMagnitude() {
 
 	double netmag, stdev;
 
-	if ( _ui->btnDefault->isChecked() ) {
+	if ( SC_D.ui.btnDefault->isChecked() ) {
 		if ( mags.size() < 4 ) {
 			Math::Statistics::computeMean(mags, netmag, stdev);
 			weights.resize(mags.size(), 1.);
-			_netMag->setMethodID("mean");
+			SC_D.netMag->setMethodID("mean");
 		}
 		else {
 			Math::Statistics::computeTrimmedMean(mags, 25.0, netmag, stdev, &weights);
-			_netMag->setMethodID("trimmed mean(25)");
+			SC_D.netMag->setMethodID("trimmed mean(25)");
 		}
 	}
-	else if ( _ui->btnMean->isChecked() ) {
+	else if ( SC_D.ui.btnMean->isChecked() ) {
 		if ( !Math::Statistics::computeMean(mags, netmag, stdev) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the mean failed for unknown reason");
 			return;
@@ -1758,17 +1774,17 @@ void MagnitudeView::recalculateMagnitude() {
 
 		weights.resize(mags.size(), 1.);
 
-		_netMag->setMethodID("mean");
+		SC_D.netMag->setMethodID("mean");
 	}
-	else if ( _ui->btnTrimmedMean->isChecked() ) {
-		if ( !Math::Statistics::computeTrimmedMean(mags, _ui->spinTrimmedMeanValue->value(), netmag, stdev, &weights) ) {
+	else if ( SC_D.ui.btnTrimmedMean->isChecked() ) {
+		if ( !Math::Statistics::computeTrimmedMean(mags, SC_D.ui.spinTrimmedMeanValue->value(), netmag, stdev, &weights) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the trimmed mean failed for unknown reason");
 			return;
 		}
 
-		_netMag->setMethodID(Core::stringify("trimmed mean(%d)", _ui->spinTrimmedMeanValue->value()));
+		SC_D.netMag->setMethodID(Core::stringify("trimmed mean(%d)", SC_D.ui.spinTrimmedMeanValue->value()));
 	}
-	else if ( _ui->btnMedian->isChecked() ) {
+	else if ( SC_D.ui.btnMedian->isChecked() ) {
 		netmag = Math::Statistics::median(mags);
 		if ( mags.size() > 1 ) {
 			stdev = 0;
@@ -1780,88 +1796,88 @@ void MagnitudeView::recalculateMagnitude() {
 
 		weights.resize(mags.size(), 1.);
 
-		_netMag->setMethodID("median");
+		SC_D.netMag->setMethodID("median");
 	}
-	else if ( _ui->btnTrimmedMedian->isChecked() ) {
-		if ( !Math::Statistics::computeMedianTrimmedMean(mags, _ui->spinTrimmedMedianValue->value(), netmag, stdev, &weights) ) {
+	else if ( SC_D.ui.btnTrimmedMedian->isChecked() ) {
+		if ( !Math::Statistics::computeMedianTrimmedMean(mags, SC_D.ui.spinTrimmedMedianValue->value(), netmag, stdev, &weights) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the median trimmed mean failed for unknown reason");
 			return;
 		}
 
-		_netMag->setMethodID(Core::stringify("median trimmed mean(%f)", _ui->spinTrimmedMedianValue->value()));
+		SC_D.netMag->setMethodID(Core::stringify("median trimmed mean(%f)", SC_D.ui.spinTrimmedMedianValue->value()));
 	}
 	else {
 		QMessageBox::critical(this, "Error", "Please select a method to recalculate the magnitude.");
 		return;
 	}
 
-	_netMag->setMagnitude(DataModel::RealQuantity(netmag, stdev, Core::None, Core::None, Core::None));
-	_netMag->setEvaluationStatus(EvaluationStatus(CONFIRMED));
+	SC_D.netMag->setMagnitude(DataModel::RealQuantity(netmag, stdev, Core::None, Core::None, Core::None));
+	SC_D.netMag->setEvaluationStatus(EvaluationStatus(CONFIRMED));
 
-	_ui->cbEvalStatus->blockSignals(true);
-	_ui->cbEvalStatus->setCurrentIndex(_netMag->evaluationStatus().toInt()+1);
-	_ui->cbEvalStatus->blockSignals(false);
+	SC_D.ui.cbEvalStatus->blockSignals(true);
+	SC_D.ui.cbEvalStatus->setCurrentIndex(SC_D.netMag->evaluationStatus().toInt()+1);
+	SC_D.ui.cbEvalStatus->blockSignals(false);
 
-	int idx = findType(_tabMagnitudes, _netMag->type().c_str());
-	_tabMagnitudes->setTabTextColor(idx, QColor());
-	_tabMagnitudes->setTabIcon(idx, QIcon());
+	int idx = findType(SC_D.tabMagnitudes, SC_D.netMag->type().c_str());
+	SC_D.tabMagnitudes->setTabTextColor(idx, QColor());
+	SC_D.tabMagnitudes->setTabIcon(idx, QIcon());
 
 	idx = 0;
 	int staCount = 0;
-	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
-		if ( static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->useMagnitude(i) ) {
+	for ( int i = 0; i < SC_D.modelStationMagnitudes->rowCount(); ++i ) {
+		if ( static_cast<StationMagnitudeModel*>(SC_D.modelStationMagnitudes)->useMagnitude(i) ) {
 			if ( weights[idx] > 0.0 ) {
 				++staCount;
 			}
 
-			_netMag->stationMagnitudeContribution(i)->setWeight(weights[idx]);
+			SC_D.netMag->stationMagnitudeContribution(i)->setWeight(weights[idx]);
 			++idx;
 		}
 		else {
-			_netMag->stationMagnitudeContribution(i)->setWeight(0.);
+			SC_D.netMag->stationMagnitudeContribution(i)->setWeight(0.);
 		}
 	}
 
-	for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
+	for ( int i = 0; i < SC_D.modelStationMagnitudes->rowCount(); ++i ) {
 		if ( staCount ) {
-			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
-			_netMag->stationMagnitudeContribution(i)->setResidual(sm->magnitude().value() - netmag);
+			StationMagnitude* sm = StationMagnitude::Find(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+			SC_D.netMag->stationMagnitudeContribution(i)->setResidual(sm->magnitude().value() - netmag);
 		}
 		else {
-			_netMag->stationMagnitudeContribution(i)->setResidual(Core::None);
+			SC_D.netMag->stationMagnitudeContribution(i)->setResidual(Core::None);
 		}
 	}
 
-	_netMag->setStationCount(staCount);
+	SC_D.netMag->setStationCount(staCount);
 
 	// Update corresponding Mw estimation
-	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(_netMag->type().c_str());
+	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(SC_D.netMag->type().c_str());
 	if ( proc ) {
 		double Mw, MwError;
 		string type = proc->typeMw();
 
 		if ( proc->estimateMw(&SCCoreApp->configuration(), netmag, Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
-			idx = findType(_tabMagnitudes, type.c_str());
+			idx = findType(SC_D.tabMagnitudes, type.c_str());
 			//int idx = _ui.comboMagType->findText(type.c_str());
 			if ( idx != -1 ) {
 				MagnitudePtr magMw =
 					//Magnitude::Find(_ui.comboMagType->itemData(idx).value<QString>().toStdString());
-					Magnitude::Find(_tabMagnitudes->tabData(idx).value<TabData>().publicID);
+					Magnitude::Find(SC_D.tabMagnitudes->tabData(idx).value<TabData>().publicID);
 
-				if ( magMw && magMw != _netMag ) {
+				if ( magMw && magMw != SC_D.netMag ) {
 					stdev = stdev > MwError?stdev:MwError;
 					magMw->setMagnitude(RealQuantity(Mw, stdev, Core::None, Core::None, Core::None));
 					try {
-						magMw->setStationCount(_netMag->stationCount());
+						magMw->setStationCount(SC_D.netMag->stationCount());
 					}
 					catch ( ... ) {
 						magMw->setStationCount(Core::None);
 					}
 					magMw->setEvaluationStatus(EvaluationStatus(CONFIRMED));
-					emit magnitudeUpdated(_origin->publicID().c_str(), magMw.get());
+					emit magnitudeUpdated(SC_D.origin->publicID().c_str(), magMw.get());
 				}
 
-				_tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
+				SC_D.tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
 				                           .arg(magMw->type().c_str())
 				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
 				                           .arg(usedStationCount(magMw.get()))
@@ -1876,16 +1892,16 @@ void MagnitudeView::recalculateMagnitude() {
 				ci.setCreationTime(Core::Time::UTC());
 				stdev = stdev > MwError ? stdev : MwError;
 
-				for ( size_t m = 0; m < _origin->magnitudeCount(); ++m ) {
-					if ( _origin->magnitude(m)->type() == proc->typeMw() ) {
-						magMw = _origin->magnitude(m);
+				for ( size_t m = 0; m < SC_D.origin->magnitudeCount(); ++m ) {
+					if ( SC_D.origin->magnitude(m)->type() == proc->typeMw() ) {
+						magMw = SC_D.origin->magnitude(m);
 						break;
 					}
 				}
 
 				if ( !magMw ) {
 					magMw = Magnitude::Create();
-					_origin->add(magMw.get());
+					SC_D.origin->add(magMw.get());
 				}
 
 				magMw->setCreationInfo(ci);
@@ -1893,7 +1909,7 @@ void MagnitudeView::recalculateMagnitude() {
 				magMw->setMagnitude(RealQuantity(Mw, stdev, Core::None, Core::None, Core::None));
 
 				try {
-					magMw->setStationCount(_netMag->stationCount());
+					magMw->setStationCount(SC_D.netMag->stationCount());
 				}
 				catch ( ... ) {
 					magMw->setStationCount(Core::None);
@@ -1903,18 +1919,19 @@ void MagnitudeView::recalculateMagnitude() {
 			}
 		}
 		else {
-			idx = findType(_tabMagnitudes, type.c_str());
-			if ( idx != -1 )
-				_tabMagnitudes->removeTab(idx);
+			idx = findType(SC_D.tabMagnitudes, type.c_str());
+			if ( idx != -1 ) {
+				SC_D.tabMagnitudes->removeTab(idx);
+			}
 		}
 	}
 
-	updateTab(_tabMagnitudes, _netMag.get());
+	updateTab(SC_D.tabMagnitudes, SC_D.netMag.get());
 
 	updateMagnitudeLabels();
-	_ui->tableStationMagnitudes->reset();
+	SC_D.ui.tableStationMagnitudes->reset();
 
-	emit magnitudeUpdated(_origin->publicID().c_str(), _netMag.get());
+	emit magnitudeUpdated(SC_D.origin->publicID().c_str(), SC_D.netMag.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1933,12 +1950,12 @@ void MagnitudeView::selectChannels() {
 	if ( filter == nullptr )
 		return;
 
-	_ui->tableStationMagnitudes->selectionModel()->clear();
+	SC_D.ui.tableStationMagnitudes->selectionModel()->clear();
 
-	int rowCount = _modelStationMagnitudesProxy->rowCount();
+	int rowCount = SC_D.modelStationMagnitudesProxy->rowCount();
 	for ( int i = 0; i < rowCount; ++i ) {
-		if ( reinterpret_cast<ModelAbstractRowFilter*>(filter)->passes(_modelStationMagnitudesProxy, i) )
-			_ui->tableStationMagnitudes->selectionModel()->select(_modelStationMagnitudesProxy->index(i, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+		if ( reinterpret_cast<ModelAbstractRowFilter*>(filter)->passes(SC_D.modelStationMagnitudesProxy, i) )
+			SC_D.ui.tableStationMagnitudes->selectionModel()->select(SC_D.modelStationMagnitudesProxy->index(i, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1960,9 +1977,9 @@ void MagnitudeView::selectChannelsWithEdit() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::activateChannels() {
-	QModelIndexList rows = _ui->tableStationMagnitudes->selectionModel()->selectedRows();
+	QModelIndexList rows = SC_D.ui.tableStationMagnitudes->selectionModel()->selectedRows();
 	foreach ( const QModelIndex &idx, rows )
-		changeStationState(_modelStationMagnitudesProxy->mapToSource(idx).row(), true);
+		changeStationState(SC_D.modelStationMagnitudesProxy->mapToSource(idx).row(), true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1971,9 +1988,9 @@ void MagnitudeView::activateChannels() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::deactivateChannels() {
-	QModelIndexList rows = _ui->tableStationMagnitudes->selectionModel()->selectedRows();
+	QModelIndexList rows = SC_D.ui.tableStationMagnitudes->selectionModel()->selectedRows();
 	foreach ( const QModelIndex &idx, rows )
-		changeStationState(_modelStationMagnitudesProxy->mapToSource(idx).row(), false);
+		changeStationState(SC_D.modelStationMagnitudesProxy->mapToSource(idx).row(), false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1982,52 +1999,52 @@ void MagnitudeView::deactivateChannels() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::openWaveforms() {
-	if ( !_netMag ) return;
+	if ( !SC_D.netMag ) return;
 
-	if ( _amplitudeView ) {
-		if ( _amplitudeView->currentMagnitudeType() == _netMag->type() ) {
-			_amplitudeView->activateWindow();
-			_amplitudeView->raise();
+	if ( SC_D.amplitudeView ) {
+		if ( SC_D.amplitudeView->currentMagnitudeType() == SC_D.netMag->type() ) {
+			SC_D.amplitudeView->activateWindow();
+			SC_D.amplitudeView->raise();
 			return;
 		}
 		else {
 			if ( QMessageBox::question(this, "Waveform review",
 			                           QString("A waveform review window for type %1 is still active.\n"
 			                                   "Do you want to replace it with current type %2?")
-			                           .arg(_amplitudeView->currentMagnitudeType().c_str(),
-			                                _netMag->type().c_str()),
+			                           .arg(SC_D.amplitudeView->currentMagnitudeType().c_str(),
+			                                SC_D.netMag->type().c_str()),
 			                           QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
 			     == QMessageBox::No )
 				return;
 		}
 	}
 	else {
-		_amplitudeView = new AmplitudeView(nullptr, Qt::Window);
-		_amplitudeView->setAttribute(Qt::WA_DeleteOnClose);
-		_amplitudeView->setDatabase(_reader);
+		SC_D.amplitudeView = new AmplitudeView(nullptr, Qt::Window);
+		SC_D.amplitudeView->setAttribute(Qt::WA_DeleteOnClose);
+		SC_D.amplitudeView->setDatabase(SC_D.reader);
 
 		try {
-			_amplitudeView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
+			SC_D.amplitudeView->setStrongMotionCodes(SCApp->configGetStrings("picker.accelerationChannelCodes"));
 		}
 		catch ( ... ) {}
 
-		connect(_amplitudeView, SIGNAL(magnitudeCreated(Seiscomp::DataModel::Magnitude*)),
+		connect(SC_D.amplitudeView, SIGNAL(magnitudeCreated(Seiscomp::DataModel::Magnitude*)),
 		        this, SLOT(magnitudeCreated(Seiscomp::DataModel::Magnitude*)));
-		connect(_amplitudeView, SIGNAL(amplitudesConfirmed(Seiscomp::DataModel::Origin*, QList<Seiscomp::DataModel::AmplitudePtr>)),
+		connect(SC_D.amplitudeView, SIGNAL(amplitudesConfirmed(Seiscomp::DataModel::Origin*, QList<Seiscomp::DataModel::AmplitudePtr>)),
 		        this, SLOT(amplitudesConfirmed(Seiscomp::DataModel::Origin*, QList<Seiscomp::DataModel::AmplitudePtr>)));
-		connect(_amplitudeView, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
+		connect(SC_D.amplitudeView, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
 	}
 
-	_amplitudeView->setConfig(_amplitudeConfig);
+	SC_D.amplitudeView->setConfig(SC_D.amplitudeConfig);
 
-	if ( !_amplitudeView->setOrigin(_origin.get(), _netMag->type()) ) {
-		delete _amplitudeView;
-		_amplitudeView = nullptr;
+	if ( !SC_D.amplitudeView->setOrigin(SC_D.origin.get(), SC_D.netMag->type()) ) {
+		delete SC_D.amplitudeView;
+		SC_D.amplitudeView = nullptr;
 		return;
 	}
 
-	_amplitudeView->show();
-	_amplitudeView->raise();
+	SC_D.amplitudeView->show();
+	SC_D.amplitudeView->raise();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2036,8 +2053,9 @@ void MagnitudeView::openWaveforms() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::objectDestroyed(QObject *o) {
-	if ( o == _amplitudeView )
-		_amplitudeView = nullptr;
+	if ( o == SC_D.amplitudeView ) {
+		SC_D.amplitudeView = nullptr;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2047,11 +2065,11 @@ void MagnitudeView::objectDestroyed(QObject *o) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::computeMagnitudes() {
 	try {
-		_origin->depth();
+		SC_D.origin->depth();
 	}
 	catch ( ... ) {
 		SEISCOMP_ERROR("Origin.depth not set: recompute magnitudes failed");
-		if ( !_computeMagnitudesSilently ) {
+		if ( !SC_D.computeMagnitudesSilently ) {
 			QMessageBox::critical(this, tr("Compute magnitudes"),
 			                      tr("Origin.depth is not set, cannot compute "
 			                      "magnitudes."));
@@ -2059,7 +2077,7 @@ void MagnitudeView::computeMagnitudes() {
 		return;
 	}
 
-	if ( _availableMagTypes == nullptr ) {
+	if ( SC_D.availableMagTypes == nullptr ) {
 		QMessageBox::critical(this, tr("Compute magnitudes"),
 		                      tr("No magnitude processors available."));
 		return;
@@ -2067,7 +2085,7 @@ void MagnitudeView::computeMagnitudes() {
 
 	std::vector<std::string> magnitudeTypes;
 
-	if ( _enableMagnitudeTypeSelection && !_computeMagnitudesSilently ) {
+	if ( SC_D.enableMagnitudeTypeSelection && !SC_D.computeMagnitudesSilently ) {
 		QDialog setupTypesDlg;
 		setupTypesDlg.setWindowTitle(tr("Select magnitude types"));
 
@@ -2094,14 +2112,14 @@ void MagnitudeView::computeMagnitudes() {
 		QGridLayout *grid = new QGridLayout;
 		QVector<QCheckBox*> typeChecks;
 
-		for ( size_t i = 0; i < _availableMagTypes->size(); ++i ) {
+		for ( size_t i = 0; i < SC_D.availableMagTypes->size(); ++i ) {
 			CheckBox *check = new CheckBox;
-			check->setChecked(std::find(_currentMagnitudeTypes.begin(), _currentMagnitudeTypes.end(), _availableMagTypes->at(i)) != _currentMagnitudeTypes.end());
+			check->setChecked(std::find(SC_D.currentMagnitudeTypes.begin(), SC_D.currentMagnitudeTypes.end(), SC_D.availableMagTypes->at(i)) != SC_D.currentMagnitudeTypes.end());
 			connect(selectAll, &CheckBox::clicked, check, &CheckBox::check);
 			connect(deselectAll, &CheckBox::clicked, check, &CheckBox::unCheck);
 
 			QLabel *label = new QLabel;
-			label->setText(_availableMagTypes->at(i).c_str());
+			label->setText(SC_D.availableMagTypes->at(i).c_str());
 
 			grid->addWidget(check, i, 0);
 			grid->addWidget(label, i, 1);
@@ -2110,7 +2128,7 @@ void MagnitudeView::computeMagnitudes() {
 		}
 
 		QSpacerItem *spacer = new QSpacerItem(0, 0, QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
-		grid->addItem(spacer, _availableMagTypes->size(), 0);
+		grid->addItem(spacer, SC_D.availableMagTypes->size(), 0);
 		grid->setColumnStretch(0, 0);
 		grid->setColumnStretch(1, 1);
 		grid->setContentsMargins(0, 0, 0, 0);
@@ -2165,16 +2183,16 @@ void MagnitudeView::computeMagnitudes() {
 		for ( int i = 0; i < typeChecks.size(); ++i ) {
 			QCheckBox *check = typeChecks[i];
 			if ( check->isChecked() ) {
-				magnitudeTypes.push_back(_availableMagTypes->at(i));
+				magnitudeTypes.push_back(SC_D.availableMagTypes->at(i));
 			}
 		}
 	}
 	else {
-		magnitudeTypes = _magnitudeTypes;
+		magnitudeTypes = SC_D.magnitudeTypes;
 	}
 
 	// Save the last choice
-	_currentMagnitudeTypes = magnitudeTypes;
+	SC_D.currentMagnitudeTypes = magnitudeTypes;
 
 	// Gather all amplitude types required to compute the magnitudes
 	CalculateAmplitudes::TypeSet ampTypes;
@@ -2183,21 +2201,21 @@ void MagnitudeView::computeMagnitudes() {
 		proc = Processing::MagnitudeProcessorFactory::Create(magnitudeTypes[i].c_str());
 		if ( proc ) {
 			ampTypes.insert(proc->amplitudeType());
-			SEISCOMP_DEBUG("+ %s : %s", magnitudeTypes[i].c_str(), proc->amplitudeType().c_str());
+			SEISCOMP_DEBUG("+ %s : %s", magnitudeTypes[i], proc->amplitudeType());
 		}
 	}
 
-	CalculateAmplitudes dlg(_origin.get(), this);
+	CalculateAmplitudes dlg(SC_D.origin.get(), this);
 	static QByteArray geomCalculateAmplitudes;
 
 	dlg.restoreGeometry(geomCalculateAmplitudes);
 	// TODO: This should go into the settings panel
 	dlg.setRecomputeAmplitudes(false);
 	dlg.setAmplitudeTypes(ampTypes);
-	dlg.setDatabase(_reader);
-	dlg.setStreamURL(_amplitudeConfig.recordURL.toStdString());
-	dlg.setAmplitudeCache(&_amplitudes);
-	dlg.setSilentMode(_computeMagnitudesSilently);
+	dlg.setDatabase(SC_D.reader);
+	dlg.setStreamURL(SC_D.amplitudeConfig.recordURL.toStdString());
+	dlg.setAmplitudeCache(&SC_D.amplitudes);
+	dlg.setSilentMode(SC_D.computeMagnitudesSilently);
 	if ( dlg.exec() != QDialog::Accepted ) {
 		geomCalculateAmplitudes = dlg.saveGeometry();
 		return;
@@ -2212,12 +2230,11 @@ void MagnitudeView::computeMagnitudes() {
 		sessionAmplitudes.append(it->second.first);
 
 		// Find all cached amplitudes for the current pick
-		pair<PickAmplitudeMap::iterator, PickAmplitudeMap::iterator> itp;
-		itp = _amplitudes.equal_range(it->first);
+		auto itp = SC_D.amplitudes.equal_range(it->first);
 
 		// Check if this pick-amplitude association has been registered already
 		bool found = false;
-		for ( PickAmplitudeMap::iterator ita = itp.first; ita != itp.second; ++ita ) {
+		for ( auto ita = itp.first; ita != itp.second; ++ita ) {
 			if ( ita->second.first == it->second.first ) {
 				found = true;
 				break;
@@ -2225,18 +2242,18 @@ void MagnitudeView::computeMagnitudes() {
 		}
 
 		if ( !found ) {
-			_amplitudes.insert(PickAmplitudeMap::value_type(it->first, it->second));
+			SC_D.amplitudes.insert(MagnitudeViewPrivate::PickAmplitudeMap::value_type(it->first, it->second));
 		}
 	}
 
-	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
+	SEISCOMP_DEBUG("Amplitude cache size: %d", SC_D.amplitudes.size());
 
 	MagnitudeStats magErrors;
 
 	for ( size_t i = 0; i < magnitudeTypes.size(); ++i ) {
 		Magnitude *mag = computeStationMagnitudes(magnitudeTypes[i], &sessionAmplitudes, &magErrors);
 		if ( mag ) {
-			computeMagnitude(mag, _defaultMagnitudeAggregation?*_defaultMagnitudeAggregation:"");
+			computeMagnitude(mag, SC_D.defaultMagnitudeAggregation?*SC_D.defaultMagnitudeAggregation:"");
 
 			Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(mag->type().c_str());
 			if ( proc ) {
@@ -2255,9 +2272,9 @@ void MagnitudeView::computeMagnitudes() {
 					stddev = stddev > MwError ? stddev : MwError;
 					MagnitudePtr MagMw;
 
-					for ( size_t m = 0; m < _origin->magnitudeCount(); ++m ) {
-						if ( _origin->magnitude(m)->type() == proc->typeMw() ) {
-							MagMw = _origin->magnitude(m);
+					for ( size_t m = 0; m < SC_D.origin->magnitudeCount(); ++m ) {
+						if ( SC_D.origin->magnitude(m)->type() == proc->typeMw() ) {
+							MagMw = SC_D.origin->magnitude(m);
 							break;
 						}
 					}
@@ -2274,7 +2291,7 @@ void MagnitudeView::computeMagnitudes() {
 						MagMw->setStationCount(Core::None);
 
 					}
-					_origin->add(MagMw.get());
+					SC_D.origin->add(MagMw.get());
 				}
 			}
 		}
@@ -2291,11 +2308,11 @@ void MagnitudeView::computeMagnitudes() {
 
 			mag->setCreationInfo(ci);
 
-			_origin->add(mag.get());
+			SC_D.origin->add(mag.get());
 		}
 	}
 
-	if ( !magErrors.isEmpty() && !_computeMagnitudesSilently ) {
+	if ( !magErrors.isEmpty() && !SC_D.computeMagnitudesSilently ) {
 		static QByteArray geomCalculateMagnitudes;
 
 		QDialog dlg;
@@ -2352,27 +2369,28 @@ void MagnitudeView::computeMagnitudes() {
 	// Synchronize local amplitudes for commit
 	set<string> ampIDs;
 
-	for ( size_t i = 0; i < _origin->stationMagnitudeCount(); ++i ) {
-		if ( _origin->stationMagnitude(i)->amplitudeID().empty() ) continue;
-		ampIDs.insert(_origin->stationMagnitude(i)->amplitudeID());
+	for ( size_t i = 0; i < SC_D.origin->stationMagnitudeCount(); ++i ) {
+		if ( SC_D.origin->stationMagnitude(i)->amplitudeID().empty() ) continue;
+		ampIDs.insert(SC_D.origin->stationMagnitude(i)->amplitudeID());
 	}
 
 	AmplitudeSet ampSet;
 
-	for ( PickAmplitudeMap::iterator it = _amplitudes.begin();
-	      it != _amplitudes.end(); ++it ) {
-
+	for ( auto it = SC_D.amplitudes.begin(); it != SC_D.amplitudes.end(); ++it ) {
 		// Skip external amplitudes
-		if ( it->second.second == false ) continue;
+		if ( !it->second.second ) {
+			continue;
+		}
 
 		// Skip unrequested amplitudes
-		if ( ampIDs.find(it->second.first->publicID()) == ampIDs.end() )
+		if ( ampIDs.find(it->second.first->publicID()) == ampIDs.end() ) {
 			continue;
+		}
 
 		ampSet.insert(AmplitudeSet::value_type(it->second.first, true));
 	}
 
-	emit localAmplitudesAvailable(_origin.get(), &ampSet, &ampIDs);
+	emit localAmplitudesAvailable(SC_D.origin.get(), &ampSet, &ampIDs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2385,18 +2403,18 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 	ObjectChangeList<DataModel::Amplitude> changedAmps;
 	view->getChangedAmplitudes(changedAmps);
 
-	if ( netMag->origin() != _origin ) return;
+	if ( netMag->origin() != SC_D.origin ) return;
 
-	if ( _ui->btnMean->isChecked() ) {
+	if ( SC_D.ui.btnMean->isChecked() ) {
 		computeMagnitude(netMag, "mean");
 	}
-	else if ( _ui->btnTrimmedMean->isChecked() ) {
+	else if ( SC_D.ui.btnTrimmedMean->isChecked() ) {
 		computeMagnitude(netMag, "trimmedMean");
 	}
-	else if ( _ui->btnMedian->isChecked() ) {
+	else if ( SC_D.ui.btnMedian->isChecked() ) {
 		computeMagnitude(netMag, "median");
 	}
-	else if ( _ui->btnTrimmedMedian->isChecked() ) {
+	else if ( SC_D.ui.btnTrimmedMedian->isChecked() ) {
 		computeMagnitude(netMag, "medianTrimmedMean");
 	}
 	else {
@@ -2404,32 +2422,36 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 	}
 
 	for ( auto it = changedAmps.begin(); it != changedAmps.end(); ++it ) {
-		_amplitudes.insert(PickAmplitudeMap::value_type(it->first->pickID(), AmplitudeEntry(it->first, true)));
+		SC_D.amplitudes.insert(
+			MagnitudeViewPrivate::PickAmplitudeMap::value_type(
+				it->first->pickID(), MagnitudeViewPrivate::AmplitudeEntry(it->first, true)
+			)
+		);
 	}
 
-	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
+	SEISCOMP_DEBUG("Amplitude cache size: %d", SC_D.amplitudes.size());
 
 	// Estimate Mw
 	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(netMag->type().c_str());
 	if ( proc ) {
 		double Mw, MwError;
 		string type = proc->typeMw();
-		int idx = findType(_tabMagnitudes, type.c_str());
+		int idx = findType(SC_D.tabMagnitudes, type.c_str());
 		if ( proc->estimateMw(&SCCoreApp->configuration(), netMag->magnitude().value(), Mw, MwError) == Processing::MagnitudeProcessor::OK ) {
-			//int idx = _ui->comboMagType->findText(type.c_str());
+			//int idx = SC_D.ui.comboMagType->findText(type.c_str());
 			if ( idx != -1 ) {
 				MagnitudePtr magMw =
-					Magnitude::Find(_tabMagnitudes->tabData(idx).value<TabData>().publicID);
+					Magnitude::Find(SC_D.tabMagnitudes->tabData(idx).value<TabData>().publicID);
 
 				if ( magMw ) {
 					if ( MwError < netMag->magnitude().uncertainty() )
 						MwError = netMag->magnitude().uncertainty();
 					magMw->setMagnitude(RealQuantity(Mw, MwError, Core::None, Core::None, Core::None));
 					magMw->setStationCount(netMag->stationCount());
-					emit magnitudeUpdated(_origin->publicID().c_str(), magMw.get());
+					emit magnitudeUpdated(SC_D.origin->publicID().c_str(), magMw.get());
 				}
 
-				_tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
+				SC_D.tabMagnitudes->setTabText(idx, QString("%1 %2 (%3/%4)")
 				                           .arg(magMw->type().c_str())
 				                           .arg(magMw->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
 				                           .arg(usedStationCount(magMw.get()))
@@ -2437,37 +2459,39 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 			}
 		}
 		else if ( idx != -1 )
-			_tabMagnitudes->removeTab(idx);
+			SC_D.tabMagnitudes->removeTab(idx);
 	}
 
-	int typeIdx = findType(_tabMagnitudes, netMag->type().c_str());
+	int typeIdx = findType(SC_D.tabMagnitudes, netMag->type().c_str());
 	if ( typeIdx == -1 ) {
 		typeIdx = addMagnitude(netMag);
-		_tabMagnitudes->setCurrentIndex(typeIdx);
-		emit magnitudeUpdated(_origin->publicID().c_str(), netMag);
+		SC_D.tabMagnitudes->setCurrentIndex(typeIdx);
+		emit magnitudeUpdated(SC_D.origin->publicID().c_str(), netMag);
 		return;
 	}
 
 	/*
 	data.setValue(QString(netMag->publicID().c_str()));
-	int idx = findData(_tabMagnitudes, data);
+	int idx = findData(SC_D.tabMagnitudes, data);
 	if ( idx != -1 ) {
-		updateObject(_origin->publicID().c_str(), netMag);
-		_tabMagnitudes->setCurrentIndex(idx);
-		emit magnitudeUpdated(_origin->publicID().c_str(), netMag);
+		updateObject(SC_D.origin->publicID().c_str(), netMag);
+		SC_D.tabMagnitudes->setCurrentIndex(idx);
+		emit magnitudeUpdated(SC_D.origin->publicID().c_str(), netMag);
 		return;
 	}
 	*/
 
 	// Replace magnitude
-	updateTab(_tabMagnitudes, netMag);
-	_tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(netMag->publicID()));
-	if ( _tabMagnitudes->currentIndex() != typeIdx )
-		_tabMagnitudes->setCurrentIndex(typeIdx);
-	else
+	updateTab(SC_D.tabMagnitudes, netMag);
+	SC_D.tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(netMag->publicID()));
+	if ( SC_D.tabMagnitudes->currentIndex() != typeIdx ) {
+		SC_D.tabMagnitudes->setCurrentIndex(typeIdx);
+	}
+	else {
 		updateContent();
+	}
 
-	emit magnitudeUpdated(_origin->publicID().c_str(), netMag);
+	emit magnitudeUpdated(SC_D.origin->publicID().c_str(), netMag);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2481,9 +2505,9 @@ void MagnitudeView::amplitudesConfirmed(Origin *origin,
 	ObjectChangeList<DataModel::Amplitude> changedAmps;
 	view->getChangedAmplitudes(changedAmps);
 
-	if ( origin != _origin ) return;
+	if ( origin != SC_D.origin ) return;
 	try {
-		_origin->depth();
+		SC_D.origin->depth();
 	}
 	catch ( ... ) {
 		QMessageBox::critical(this, "Compute magnitudes",
@@ -2493,52 +2517,62 @@ void MagnitudeView::amplitudesConfirmed(Origin *origin,
 	}
 
 	ObjectChangeList<DataModel::Amplitude>::iterator it;
-	for ( it = changedAmps.begin(); it != changedAmps.end(); ++it )
-		_amplitudes.insert(PickAmplitudeMap::value_type(it->first->pickID(), AmplitudeEntry(it->first, true)));
+	for ( it = changedAmps.begin(); it != changedAmps.end(); ++it ) {
+		SC_D.amplitudes.insert({ it->first->pickID(), { it->first, true } }	);
+	}
 
-	SEISCOMP_DEBUG("Amplitude cache size: %d", (int)_amplitudes.size());
+	SEISCOMP_DEBUG("Amplitude cache size: %d", SC_D.amplitudes.size());
 
-	MagnitudePtr mag = computeStationMagnitudes(_amplitudeView->currentMagnitudeType(), &amps);
-	if ( !mag ) return;
+	MagnitudePtr mag = computeStationMagnitudes(SC_D.amplitudeView->currentMagnitudeType(), &amps);
+	if ( !mag ) {
+		return;
+	}
 
-	int typeIdx = findType(_tabMagnitudes, mag->type().c_str());
+	int typeIdx = findType(SC_D.tabMagnitudes, mag->type().c_str());
 
 	// Type not yet available, add it
-	if ( typeIdx == -1 )
+	if ( typeIdx == -1 ) {
 		typeIdx = addMagnitude(mag.get());
+	}
 	// Update magnitude for type
-	else
-		_tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(mag->publicID()));
+	else {
+		SC_D.tabMagnitudes->setTabData(typeIdx, QVariant::fromValue<TabData>(mag->publicID()));
+	}
 
-	if ( _tabMagnitudes->currentIndex() != typeIdx )
+	if ( SC_D.tabMagnitudes->currentIndex() != typeIdx ) {
 		showMagnitude(mag->publicID());
-	else
+	}
+	else {
 		updateContent();
+	}
 
 	recalculateMagnitude();
 
 	set<string> ampIDs;
-	for ( size_t i = 0; i < _origin->stationMagnitudeCount(); ++i ) {
-		if ( _origin->stationMagnitude(i)->amplitudeID().empty() ) continue;
-		ampIDs.insert(_origin->stationMagnitude(i)->amplitudeID());
+	for ( size_t i = 0; i < SC_D.origin->stationMagnitudeCount(); ++i ) {
+		if ( SC_D.origin->stationMagnitude(i)->amplitudeID().empty() ) {
+			continue;
+		}
+		ampIDs.insert(SC_D.origin->stationMagnitude(i)->amplitudeID());
 	}
 
 	AmplitudeSet ampSet;
 
-	for ( PickAmplitudeMap::iterator it = _amplitudes.begin();
-	      it != _amplitudes.end(); ++it ) {
-
+	for ( auto it = SC_D.amplitudes.begin(); it != SC_D.amplitudes.end(); ++it ) {
 		// Skip external amplitudes
-		if ( it->second.second == false ) continue;
+		if ( !it->second.second ) {
+			continue;
+		}
 
 		// Skip unrequested amplitudes
-		if ( ampIDs.find(it->second.first->publicID()) == ampIDs.end() )
+		if ( ampIDs.find(it->second.first->publicID()) == ampIDs.end() ) {
 			continue;
+		}
 
-		ampSet.insert(AmplitudeSet::value_type(it->second.first, true));
+		ampSet.insert({ it->second.first, true });
 	}
 
-	emit localAmplitudesAvailable(_origin.get(), &ampSet, &ampIDs);
+	emit localAmplitudesAvailable(SC_D.origin.get(), &ampSet, &ampIDs);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2561,21 +2595,21 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 	MagnitudePtr mag;
 	QList<Seiscomp::DataModel::AmplitudePtr> tmpAmps;
 
-	SEISCOMP_DEBUG("Origin.stationMags before: %d", (int)_origin->stationMagnitudeCount());
+	SEISCOMP_DEBUG("Origin.stationMags before: %d", (int)SC_D.origin->stationMagnitudeCount());
 
 	// Remove all station magnitudes of origin with requested type
-	for ( size_t i = 0; i < _origin->stationMagnitudeCount(); ) {
-		if ( _origin->stationMagnitude(i)->type() == magType )
-			_origin->removeStationMagnitude(i);
+	for ( size_t i = 0; i < SC_D.origin->stationMagnitudeCount(); ) {
+		if ( SC_D.origin->stationMagnitude(i)->type() == magType )
+			SC_D.origin->removeStationMagnitude(i);
 		else
 			++i;
 	}
 
-	SEISCOMP_DEBUG("Origin.stationMags after: %d", (int)_origin->stationMagnitudeCount());
+	SEISCOMP_DEBUG("Origin.stationMags after: %d", (int)SC_D.origin->stationMagnitudeCount());
 
-	for ( size_t i = 0; i < _origin->magnitudeCount(); ++i ) {
-		if ( _origin->magnitude(i)->type() == magType ) {
-			mag = _origin->magnitude(i);
+	for ( size_t i = 0; i < SC_D.origin->magnitudeCount(); ++i ) {
+		if ( SC_D.origin->magnitude(i)->type() == magType ) {
+			mag = SC_D.origin->magnitude(i);
 			break;
 		}
 	}
@@ -2620,8 +2654,8 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 		PickStreamMap pickStreamMap;
 
 		// Fetch all picks to get amplitudes for
-		for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
-			Arrival *ar = _origin->arrival(i);
+		for ( size_t i = 0; i < SC_D.origin->arrivalCount(); ++i ) {
+			Arrival *ar = SC_D.origin->arrival(i);
 
 			double weight = 1.;
 			try { weight = ar->weight(); } catch (Seiscomp::Core::ValueException &) {}
@@ -2661,8 +2695,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 			PickCPtr pick = it.value();
 
 			// The amplitude map contains always the newest manual amplitudes
-			pair<PickAmplitudeMap::iterator, PickAmplitudeMap::iterator> itp;
-			itp = _amplitudes.equal_range(pick->publicID());
+			auto itp = SC_D.amplitudes.equal_range(pick->publicID());
 
 			bool gotAmplitude = false;
 
@@ -2685,8 +2718,8 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				continue;
 			}
 
-			if ( _reader ) {
-				auto it = _reader->getAmplitudesForPick(pick->publicID());
+			if ( SC_D.reader ) {
+				auto it = SC_D.reader->getAmplitudesForPick(pick->publicID());
 				for ( ; *it; ++it ) {
 					AmplitudePtr amp = Amplitude::Cast(*it);
 					if ( !amp ) {
@@ -2694,7 +2727,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 					}
 
 					// Save to cache
-					_amplitudes.insert(PickAmplitudeMap::value_type(amp->pickID(), AmplitudeEntry(amp, false)));
+					SC_D.amplitudes.insert({ amp->pickID(), { amp, false } });
 
 					// Skip unrequestes amplitude types
 					if ( amp->type() != ampType ) {
@@ -2711,7 +2744,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 				continue;
 			}
 
-			EventParameters *ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
+			auto ep = EventParameters::Cast(PublicObject::Find("EventParameters"));
 			if ( ep ) {
 				for ( size_t i = 0; i < ep->amplitudeCount(); ++i ) {
 					Amplitude *amp = ep->amplitude(i);
@@ -2774,16 +2807,16 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 
 			if ( !loc ) {
 				SEISCOMP_ERROR("Failed to get meta data for %s.%s.%s",
-				               amp->waveformID().networkCode().c_str(),
-				               amp->waveformID().stationCode().c_str(),
-				               amp->waveformID().locationCode().empty() ? "--" : amp->waveformID().locationCode().c_str());
+				               amp->waveformID().networkCode(),
+				               amp->waveformID().stationCode(),
+				               amp->waveformID().locationCode().empty() ? "--" : amp->waveformID().locationCode());
 				continue;
 			}
 
 			try {
 				double baz;
 				Math::Geo::delazi(loc->latitude(), loc->longitude(),
-				                  _origin->latitude(), _origin->longitude(),
+				                  SC_D.origin->latitude(), SC_D.origin->longitude(),
 				                  &dist, &az, &baz);
 			}
 			catch ( Core::GeneralException &e ) {
@@ -2801,13 +2834,13 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 			Processing::MagnitudeProcessor::Status stat =
 				magProc->computeMagnitude(
 					amp->amplitude().value(), amp->unit(), period, snr,
-					dist, _origin->depth(), _origin.get(), loc, amp.get(), magValue
+					dist, SC_D.origin->depth(), SC_D.origin.get(), loc, amp.get(), magValue
 				);
 
 			if ( stat != Processing::MagnitudeProcessor::OK ) {
 				SEISCOMP_DEBUG("Do not compute %s magnitude for station %s: %d (%s)",
-				               mag->type().c_str(),
-				               amp->waveformID().stationCode().c_str(),
+				               mag->type(),
+				               amp->waveformID().stationCode(),
 				               (int)stat, stat.toString());
 
 				if ( !magProc->treatAsValidMagnitude() ) {
@@ -2838,7 +2871,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 
 			magProc->finalizeMagnitude(staMag.get());
 
-			_origin->add(staMag.get());
+			SC_D.origin->add(staMag.get());
 
 			StationMagnitudeContributionPtr ref = new StationMagnitudeContribution;
 			ref->setStationMagnitudeID(staMag->publicID());
@@ -2850,7 +2883,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 
 	if ( addMag ) {
 		if ( mag->stationMagnitudeContributionCount() > 0 ) {
-			_origin->add(mag.get());
+			SC_D.origin->add(mag.get());
 		}
 		else {
 			return nullptr;
@@ -2981,42 +3014,45 @@ bool MagnitudeView::editSelectionFilter() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::magnitudesSelected() {
 	// get selected Rect from diagram
-	QRectF brect = _stamagnitudes->getSelectedValuesRect();
+	QRectF brect = SC_D.stamagnitudes->getSelectedValuesRect();
 
 	// if nothing selected --> unCheck all everywhere
 	if ( brect.isEmpty() && !brect.isNull() ) {
-		for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i )
+		for ( int i = 0; i < SC_D.modelStationMagnitudes->rowCount(); ++i )
 			changeStationState(i, false);
 		return;
 	}
 
 	// prevent loop, when changing table values [BEGIN]
-	disconnect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	disconnect(SC_D.modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
 	// set "used" checkBox in table and change color in map
-	QVector<int> selectedIds = _stamagnitudes->getSelectedValues();
+	QVector<int> selectedIds = SC_D.stamagnitudes->getSelectedValues();
 	int startIndex = 0;
 	for ( int i = 0; i < selectedIds.count(); ++i ) {
 		for ( int j = startIndex; j < selectedIds[i]; ++j ){
-			_modelStationMagnitudes->setData(_modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
-			if ( _map )
-				_map->setMagnitudeState(j, false);
+			SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
+			if ( SC_D.map ) {
+				SC_D.map->setMagnitudeState(j, false);
+			}
 		}
-		_modelStationMagnitudes->setData(_modelStationMagnitudes->index(selectedIds[i], USED), Qt::Checked, Qt::CheckStateRole);
-		if ( _map )
-			_map->setMagnitudeState(selectedIds[i], true);
+		SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(selectedIds[i], USED), Qt::Checked, Qt::CheckStateRole);
+		if ( SC_D.map ) {
+			SC_D.map->setMagnitudeState(selectedIds[i], true);
+		}
 		startIndex = selectedIds[i]+1;
 	}
 
-	for ( int j = startIndex; j < _modelStationMagnitudes->rowCount(); ++j ){
-		_modelStationMagnitudes->setData(_modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
-		if ( _map )
-			_map->setMagnitudeState(j, false);
+	for ( int j = startIndex; j < SC_D.modelStationMagnitudes->rowCount(); ++j ){
+		SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(j, USED), Qt::Unchecked, Qt::CheckStateRole);
+		if ( SC_D.map ) {
+			SC_D.map->setMagnitudeState(j, false);
+		}
 	}
 
 	// prevent loop, when changing table values [END]
-	connect(_modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+	connect(SC_D.modelStationMagnitudes, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
 	        this, SLOT(dataChanged(const QModelIndex&, const QModelIndex&)));
 
 }
@@ -3032,8 +3068,8 @@ void MagnitudeView::hoverMagnitude(int id) {
 		w->setToolTip("");
 	else
 		w->setToolTip(
-			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString() + "." +
-			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString());
+			SC_D.modelStationMagnitudes->data(SC_D.modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString() + "." +
+			SC_D.modelStationMagnitudes->data(SC_D.modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3044,14 +3080,14 @@ void MagnitudeView::hoverMagnitude(int id) {
 void MagnitudeView::selectMagnitude(int id) {
 	if ( id == -1 ) return;
 
-	QModelIndex idx = _modelStationMagnitudesProxy->mapFromSource(_modelStationMagnitudes->index(id, 0));
-	_ui->tableStationMagnitudes->setCurrentIndex(idx);
-	_ui->tableStationMagnitudes->scrollTo(idx);
+	QModelIndex idx = SC_D.modelStationMagnitudesProxy->mapFromSource(SC_D.modelStationMagnitudes->index(id, 0));
+	SC_D.ui.tableStationMagnitudes->setCurrentIndex(idx);
+	SC_D.ui.tableStationMagnitudes->scrollTo(idx);
 
-	if ( _amplitudeView ) {
-		_amplitudeView->setCurrentStation(
-			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString().toStdString(),
-			_modelStationMagnitudes->data(_modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString().toStdString()
+	if ( SC_D.amplitudeView ) {
+		SC_D.amplitudeView->setCurrentStation(
+			SC_D.modelStationMagnitudes->data(SC_D.modelStationMagnitudes->index(id, NETWORK), Qt::DisplayRole).toString().toStdString(),
+			SC_D.modelStationMagnitudes->data(SC_D.modelStationMagnitudes->index(id, STATION), Qt::DisplayRole).toString().toStdString()
 		);
 	}
 }
@@ -3062,8 +3098,8 @@ void MagnitudeView::selectMagnitude(int id) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::selectStation(const std::string &net, const std::string &code) {
-	if ( _amplitudeView )
-		_amplitudeView->setCurrentStation(net, code);
+	if ( SC_D.amplitudeView )
+		SC_D.amplitudeView->setCurrentStation(net, code);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3086,13 +3122,13 @@ void MagnitudeView::adjustMagnitudeRect(QRectF& rect) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::tableStationMagnitudesContextMenuRequested(const QPoint &pos) {
-	if ( !_ui->tableStationMagnitudes->selectionModel() ) return;
-	if ( !_ui->tableStationMagnitudes->selectionModel()->hasSelection() ) return;
+	if ( !SC_D.ui.tableStationMagnitudes->selectionModel() ) return;
+	if ( !SC_D.ui.tableStationMagnitudes->selectionModel()->hasSelection() ) return;
 	QMenu menu;
 	QAction *actionCopy = menu.addAction("Copy selected rows to clipboard");
-	QAction *result = menu.exec(_ui->tableStationMagnitudes->mapToGlobal(pos));
+	QAction *result = menu.exec(SC_D.ui.tableStationMagnitudes->mapToGlobal(pos));
 	if ( result == actionCopy )
-		SCApp->copyToClipboard(_ui->tableStationMagnitudes);
+		SCApp->copyToClipboard(SC_D.ui.tableStationMagnitudes);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3101,8 +3137,8 @@ void MagnitudeView::tableStationMagnitudesContextMenuRequested(const QPoint &pos
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoint &pos) {
-	int count = _ui->tableStationMagnitudes->horizontalHeader()->count();
-	QAbstractItemModel *model = _ui->tableStationMagnitudes->horizontalHeader()->model();
+	int count = SC_D.ui.tableStationMagnitudes->horizontalHeader()->count();
+	QAbstractItemModel *model = SC_D.ui.tableStationMagnitudes->horizontalHeader()->model();
 
 	QMenu menu;
 
@@ -3111,10 +3147,10 @@ void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoin
 	for ( int i = 0; i < count; ++i ) {
 		actions[i] = menu.addAction(model->headerData(i, Qt::Horizontal).toString());
 		actions[i]->setCheckable(true);
-		actions[i]->setChecked(!_ui->tableStationMagnitudes->horizontalHeader()->isSectionHidden(i));
+		actions[i]->setChecked(!SC_D.ui.tableStationMagnitudes->horizontalHeader()->isSectionHidden(i));
 	}
 
-	QAction *result = menu.exec(_ui->tableStationMagnitudes->horizontalHeader()->mapToGlobal(pos));
+	QAction *result = menu.exec(SC_D.ui.tableStationMagnitudes->horizontalHeader()->mapToGlobal(pos));
 	if ( result == nullptr ) return;
 
 	int section = actions.indexOf(result);
@@ -3123,7 +3159,7 @@ void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoin
 	for ( int i = 0; i < count; ++i )
 		colVisibility[i] = actions[i]->isChecked();
 
-	_ui->tableStationMagnitudes->horizontalHeader()->setSectionHidden(section, !colVisibility[section]);
+	SC_D.ui.tableStationMagnitudes->horizontalHeader()->setSectionHidden(section, !colVisibility[section]);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3132,7 +3168,7 @@ void MagnitudeView::tableStationMagnitudesHeaderContextMenuRequested(const QPoin
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::changeMagnitudeState(int id, bool state) {
-	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
+	SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3142,7 +3178,7 @@ void MagnitudeView::changeMagnitudeState(int id, bool state) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::changeStationState(int id, bool state) {
 	// set state (un/checked) in table
-	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
+	SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(id, USED), state?Qt::Checked:Qt::Unchecked, Qt::CheckStateRole);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3153,14 +3189,15 @@ void MagnitudeView::changeStationState(int id, bool state) {
 void MagnitudeView::dataChanged(const QModelIndex& topLeft, const QModelIndex&){
 	if ( topLeft.column() != 0 ) return;
 
-	bool state = _modelStationMagnitudes->data(topLeft, Qt::CheckStateRole).toInt() == Qt::Checked;
+	bool state = SC_D.modelStationMagnitudes->data(topLeft, Qt::CheckStateRole).toInt() == Qt::Checked;
 
 	// set state (color) in diagram
-	_stamagnitudes->setValueSelected(topLeft.row(), state);
+	SC_D.stamagnitudes->setValueSelected(topLeft.row(), state);
 
 	// set state (color) in map
-	if ( _map )
-		_map->setMagnitudeState(topLeft.row(), state);
+	if ( SC_D.map ) {
+		SC_D.map->setMagnitudeState(topLeft.row(), state);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3171,15 +3208,15 @@ void MagnitudeView::dataChanged(const QModelIndex& topLeft, const QModelIndex&){
 void MagnitudeView::selectPreferredMagnitude(int idx) {
 	Magnitude *mag = nullptr;
 
-	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
-		TabData d = _tabMagnitudes->tabData(i).value<TabData>();
+	for ( int i = 0; i < SC_D.tabMagnitudes->count(); ++i ) {
+		TabData d = SC_D.tabMagnitudes->tabData(i).value<TabData>();
 		d.selected = d.valid && (i == idx);
-		_tabMagnitudes->setTabData(i, QVariant::fromValue(d));
+		SC_D.tabMagnitudes->setTabData(i, QVariant::fromValue(d));
 
 		if ( d.selected )
 			mag = Magnitude::Find(d.publicID);
 
-		QCheckBox *cb = static_cast<QCheckBox*>(_tabMagnitudes->tabButton(i, QTabBar::LeftSide));
+		QCheckBox *cb = static_cast<QCheckBox*>(SC_D.tabMagnitudes->tabButton(i, QTabBar::LeftSide));
 		if ( cb ) {
 			cb->blockSignals(true);
 			cb->setCheckState(d.selected ? Qt::Checked : Qt::Unchecked);
@@ -3187,7 +3224,7 @@ void MagnitudeView::selectPreferredMagnitude(int idx) {
 		}
 	}
 
-	emit magnitudeSelected(_origin->publicID().c_str(), mag);
+	emit magnitudeSelected(SC_D.origin->publicID().c_str(), mag);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3197,8 +3234,8 @@ void MagnitudeView::selectPreferredMagnitude(int idx) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::tabStateChanged(int state) {
 	if ( state == Qt::Checked ) {
-		for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
-			QCheckBox *cb = static_cast<QCheckBox*>(_tabMagnitudes->tabButton(i, QTabBar::LeftSide));
+		for ( int i = 0; i < SC_D.tabMagnitudes->count(); ++i ) {
+			QCheckBox *cb = static_cast<QCheckBox*>(SC_D.tabMagnitudes->tabButton(i, QTabBar::LeftSide));
 			if ( cb == sender() ) {
 				selectPreferredMagnitude(i);
 				return;
@@ -3215,7 +3252,7 @@ void MagnitudeView::tabStateChanged(int state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setDrawGridLines(bool f) {
-	_stamagnitudes->setDrawGridLines(f);
+	SC_D.stamagnitudes->setDrawGridLines(f);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3224,7 +3261,7 @@ void MagnitudeView::setDrawGridLines(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setComputeMagnitudesSilently(bool f) {
-	_computeMagnitudesSilently = f;
+	SC_D.computeMagnitudesSilently = f;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3233,7 +3270,7 @@ void MagnitudeView::setComputeMagnitudesSilently(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setMagnitudeTypeSelectionEnabled(bool f) {
-	_enableMagnitudeTypeSelection = f;
+	SC_D.enableMagnitudeTypeSelection = f;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3242,8 +3279,8 @@ void MagnitudeView::setMagnitudeTypeSelectionEnabled(bool f) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::drawStations(bool enable) {
-	_map->setDrawStations(enable);
-	_map->update();
+	SC_D.map->setDrawStations(enable);
+	SC_D.map->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3252,8 +3289,8 @@ void MagnitudeView::drawStations(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::drawStationAnnotations(bool enable) {
-	_map->setDrawStationAnnotations(enable);
-	_map->update();
+	SC_D.map->setDrawStationAnnotations(enable);
+	SC_D.map->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3262,10 +3299,10 @@ void MagnitudeView::drawStationAnnotations(bool enable) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setAmplitudeConfig(const AmplitudeView::Config &config) {
-	_amplitudeConfig = config;
+	SC_D.amplitudeConfig = config;
 
-	if ( _amplitudeView )
-		_amplitudeView->setConfig(_amplitudeConfig);
+	if ( SC_D.amplitudeView )
+		SC_D.amplitudeView->setConfig(SC_D.amplitudeConfig);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3274,7 +3311,7 @@ void MagnitudeView::setAmplitudeConfig(const AmplitudeView::Config &config) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const AmplitudeView::Config &MagnitudeView::amplitudeConfig() const {
-	return _amplitudeConfig;
+	return SC_D.amplitudeConfig;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3283,27 +3320,31 @@ const AmplitudeView::Config &MagnitudeView::amplitudeConfig() const {
 //! set origin & event (and if applicable, the preferred magnitude)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setOrigin(Origin* o, Event *e) {
-	if ( _origin == o ) return;
+	if ( SC_D.origin == o ) {
+		return;
+	}
 
-	bool eventChanged = (_event != e) || ( e == nullptr);
+	bool eventChanged = (SC_D.event != e) || !e;
 
-	_origin = o;
-	_event = e;
-	_netMag = nullptr;
-	_amplitudes.clear();
+	SC_D.origin = o;
+	SC_D.event = e;
+	SC_D.netMag = nullptr;
+	SC_D.amplitudes.clear();
 
-	if ( _amplitudeView )
-		_amplitudeView->close();
+	if ( SC_D.amplitudeView ) {
+		SC_D.amplitudeView->close();
+	}
 
-	if ( _origin == nullptr ) {
-		_currentMagnitudeTypes = _magnitudeTypes;
+	if ( !SC_D.origin ) {
+		SC_D.currentMagnitudeTypes = SC_D.magnitudeTypes;
 		resetContent();
 		return;
 	}
 
 	// If a new event is set reset the selected magnitudes to default
-	if ( eventChanged )
-		_currentMagnitudeTypes = _magnitudeTypes;
+	if ( eventChanged ) {
+		SC_D.currentMagnitudeTypes = SC_D.magnitudeTypes;
+	}
 
 	reload();
 }
@@ -3314,18 +3355,17 @@ void MagnitudeView::setOrigin(Origin* o, Event *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeView::showMagnitude(const string &id) {
-	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
-		if ( _tabMagnitudes->tabData(i).value<TabData>().publicID == id ) {
-			_tabMagnitudes->setCurrentIndex(i);
-
+	for ( int i = 0; i < SC_D.tabMagnitudes->count(); ++i ) {
+		if ( SC_D.tabMagnitudes->tabData(i).value<TabData>().publicID == id ) {
+			SC_D.tabMagnitudes->setCurrentIndex(i);
 			return true;
 		}
 	}
 
 	/*
-	for ( int i = 0; i < _ui->comboMagType->count(); ++i ) {
-		if ( _ui->comboMagType->itemData(i).toString() == id.c_str() ) {
-			_ui->comboMagType->setCurrentIndex(i);
+	for ( int i = 0; i < SC_D.ui.comboMagType->count(); ++i ) {
+		if ( SC_D.ui.comboMagType->itemData(i).toString() == id.c_str() ) {
+			SC_D.ui.comboMagType->setCurrentIndex(i);
 			return true;
 		}
 	}
@@ -3341,10 +3381,11 @@ bool MagnitudeView::showMagnitude(const string &id) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::reload() {
 	// otherwise display the first magnitude
-	_netMag = nullptr;
-	for ( size_t i = 0; i < _origin->magnitudeCount(); ++i ) {
-		MagnitudePtr mag = _origin->magnitude(i);
-		_netMag = mag;
+	SC_D.netMag = nullptr;
+
+	for ( size_t i = 0; i < SC_D.origin->magnitudeCount(); ++i ) {
+		MagnitudePtr mag = SC_D.origin->magnitude(i);
+		SC_D.netMag = mag;
 		break;
 	}
 
@@ -3364,23 +3405,23 @@ void MagnitudeView::addObject(const QString &parentID, Seiscomp::DataModel::Obje
 		Magnitude *netMag = Magnitude::Find(pid);
 		if ( netMag ) {
 			// Update the corresponding tab header
-			updateTab(_tabMagnitudes, netMag);
+			updateTab(SC_D.tabMagnitudes, netMag);
 		}
 
 		// It does not influence the currently displayed magnitude -> dont care
-		if ( !_netMag || pid != _netMag->publicID() )
+		if ( !SC_D.netMag || pid != SC_D.netMag->publicID() )
 			return;
 
 		StationMagnitude* staMag = StationMagnitude::Find(magRef->stationMagnitudeID());
 		if ( staMag == nullptr ) {
 			SEISCOMP_DEBUG("Received stationMagnitudeContribution for magnitude '%s' that has not been found",
-			               magRef->stationMagnitudeID().c_str());
+			               magRef->stationMagnitudeID());
 			return;
 		}
 
-		//cout << "Add StationStationMagnitudeContribution for Magnitude '" << _netMag->publicID() << "'" << endl;
-		SEISCOMP_DEBUG("NetMag '%s' has %lu StaMags", _netMag->publicID().c_str(), (unsigned long)_netMag->stationMagnitudeContributionCount());
-		addStationMagnitude(staMag, _netMag->stationMagnitudeContributionCount()-1);
+		//cout << "Add StationStationMagnitudeContribution for Magnitude '" << SC_D.netMag->publicID() << "'" << endl;
+		SEISCOMP_DEBUG("NetMag '%s' has %lu StaMags", SC_D.netMag->publicID(), (unsigned long)SC_D.netMag->stationMagnitudeContributionCount());
+		addStationMagnitude(staMag, SC_D.netMag->stationMagnitudeContributionCount()-1);
 
 		return;
 	}
@@ -3389,15 +3430,15 @@ void MagnitudeView::addObject(const QString &parentID, Seiscomp::DataModel::Obje
 	Magnitude* netMag = Magnitude::Cast(o);
 	if ( netMag ) {
 		// Not for now
-		if ( !_origin || _origin->publicID() != parentID.toStdString() )
+		if ( !SC_D.origin || SC_D.origin->publicID() != parentID.toStdString() ) {
 			return;
+		}
 
-		//cout << "Added Magnitude '" << netMag->publicID()
-		//          << "' to Origin '" << _origin->publicID() << "'" << endl;
-
-		//if ( _ui->comboMagType->count() == 0 )
-		if ( _tabMagnitudes->count() == 0 )
-			if ( _map ) _map->update();
+		if ( SC_D.tabMagnitudes->count() == 0 ) {
+			if ( SC_D.map ) {
+				SC_D.map->update();
+			}
+		}
 
 		addMagnitude(netMag);
 		return;
@@ -3409,8 +3450,8 @@ void MagnitudeView::addObject(const QString &parentID, Seiscomp::DataModel::Obje
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeView::removeObject(const QString&, Seiscomp::DataModel::Object*) {
-	// this shouldn't happen now
+void MagnitudeView::removeObject(const QString &, Seiscomp::DataModel::Object *) {
+	// this shouldn't happen
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3430,17 +3471,17 @@ void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::O
 			return;
 		}
 
-		if ( !_origin || _origin->publicID() != parentID.toStdString() ) {
+		if ( !SC_D.origin || SC_D.origin->publicID() != parentID.toStdString() ) {
 			return;
 		}
 
-		updateTab(_tabMagnitudes, netMag);
+		updateTab(SC_D.tabMagnitudes, netMag);
 
-		if ( !_netMag || _netMag->publicID() != netMag->publicID() ) {
+		if ( !SC_D.netMag || SC_D.netMag->publicID() != netMag->publicID() ) {
 			return;
 		}
 
-		SEISCOMP_INFO("Updating magnitude %s", netMag->publicID().c_str());
+		SEISCOMP_INFO("Updating magnitude %s", netMag->publicID());
 		updateMagnitudeLabels();
 		return;
 	}
@@ -3452,12 +3493,12 @@ void MagnitudeView::updateObject(const QString &parentID, Seiscomp::DataModel::O
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setReadOnly(bool e) {
-	_ui->groupReview->setVisible(!e);
+	SC_D.ui.groupReview->setVisible(!e);
 
-	_tabMagnitudes->setTabsClosable(!e);
+	SC_D.tabMagnitudes->setTabsClosable(!e);
 
-	if ( _amplitudeView && e )
-		_amplitudeView->close();
+	if ( SC_D.amplitudeView && e )
+		SC_D.amplitudeView->close();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3485,17 +3526,17 @@ void MagnitudeView::disableRework() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
-	//for ( int i = 0; i < _ui->comboMagType->count(); ++i ) {
-	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
-		if ( _tabMagnitudes->tabData(i).value<TabData>().publicID == netMag->publicID() ) {
-		//if ( _ui->comboMagType->itemData(i).toString() == netMag->publicID().c_str() ) {
-			SEISCOMP_DEBUG("Magnitude '%s' has been added already", netMag->publicID().c_str());
+	//for ( int i = 0; i < SC_D.ui.comboMagType->count(); ++i ) {
+	for ( int i = 0; i < SC_D.tabMagnitudes->count(); ++i ) {
+		if ( SC_D.tabMagnitudes->tabData(i).value<TabData>().publicID == netMag->publicID() ) {
+		//if ( SC_D.ui.comboMagType->itemData(i).toString() == netMag->publicID().c_str() ) {
+			SEISCOMP_DEBUG("Magnitude '%s' has been added already", netMag->publicID());
 			return i;
 		}
 	}
 
-	//_ui->comboMagType->addItem(QString("%1").arg(netMag->type().c_str()), data);
-	int tabIndex = _tabMagnitudes->addTab(
+	//SC_D.ui.comboMagType->addItem(QString("%1").arg(netMag->type().c_str()), data);
+	int tabIndex = SC_D.tabMagnitudes->addTab(
 		QString("%1 %2 (%3/%4)")
 		.arg(netMag->type().c_str())
 		.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
@@ -3506,20 +3547,20 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 
 	try {
 		if ( netMag->evaluationStatus() == REJECTED ) {
-			_tabMagnitudes->setTabText(
+			SC_D.tabMagnitudes->setTabText(
 				tabIndex, QString("%1 -.-- (%2/%3)")
 				.arg(netMag->type().c_str())
 				.arg(usedStationCount(netMag))
 				.arg(totalStationCount(netMag))
 			);
-			_tabMagnitudes->setTabTextColor(tabIndex, palette().color(QPalette::Disabled, QPalette::WindowText));
-			_tabMagnitudes->setTabIcon(tabIndex, icon("tab_disabled"));
+			SC_D.tabMagnitudes->setTabTextColor(tabIndex, palette().color(QPalette::Disabled, QPalette::WindowText));
+			SC_D.tabMagnitudes->setTabIcon(tabIndex, icon("tab_disabled"));
 			data.valid = false;
 		}
 	}
 	catch ( ... ) {}
 
-	_tabMagnitudes->setTabData(tabIndex, QVariant::fromValue<TabData>(data));
+	SC_D.tabMagnitudes->setTabData(tabIndex, QVariant::fromValue<TabData>(data));
 
 	if ( data.valid ) {
 		QCheckBox *btn = new QCheckBox;
@@ -3527,15 +3568,15 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 		                   "type when the event will be committed either "
 		                   "with additional options or with custom commit profiles."));
 		btn->setProperty("tabIndex", tabIndex);
-		_tabMagnitudes->setTabButton(tabIndex, QTabBar::LeftSide, btn);
+		SC_D.tabMagnitudes->setTabButton(tabIndex, QTabBar::LeftSide, btn);
 		connect(btn, SIGNAL(stateChanged(int)), this, SLOT(tabStateChanged(int)));
 	}
 
-	if ( tabIndex == _tabMagnitudes->currentIndex() )
+	if ( tabIndex == SC_D.tabMagnitudes->currentIndex() )
 		updateContent();
 
-	if ( !_ui->frameMagnitudeTypes->isVisible() )
-		_ui->frameMagnitudeTypes->setVisible(true);
+	if ( !SC_D.ui.frameMagnitudeTypes->isVisible() )
+		SC_D.ui.frameMagnitudeTypes->setVisible(true);
 
 	return tabIndex;
 }
@@ -3547,39 +3588,39 @@ int MagnitudeView::addMagnitude(Seiscomp::DataModel::Magnitude* netMag) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::setContent() {
 	// fill MagComboBox with all magnitudes from origin
-	//disconnect(_ui->comboMagType, SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
-	disconnect(_tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
-	//_ui->comboMagType->clear();
-	while ( _tabMagnitudes->count() > 0 ) _tabMagnitudes->removeTab(0);
-	emit magnitudeSelected(_origin ? QString(_origin->publicID().c_str()) : QString(), 0);
+	//disconnect(SC_D.ui.comboMagType, SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
+	disconnect(SC_D.tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
+	//SC_D.ui.comboMagType->clear();
+	while ( SC_D.tabMagnitudes->count() > 0 ) SC_D.tabMagnitudes->removeTab(0);
+	emit magnitudeSelected(SC_D.origin ? QString(SC_D.origin->publicID().c_str()) : QString(), 0);
 
-	_ui->frameMagnitudeTypes->setVisible(false);
+	SC_D.ui.frameMagnitudeTypes->setVisible(false);
 
-	if ( _origin ) {
-		for (size_t i = 0; i < _origin->magnitudeCount(); i++)
-			addMagnitude(_origin->magnitude(i));
+	if ( SC_D.origin ) {
+		for (size_t i = 0; i < SC_D.origin->magnitudeCount(); i++)
+			addMagnitude(SC_D.origin->magnitude(i));
 
-		if ( _netMag ) {
+		if ( SC_D.netMag ) {
 			// set combo box item according to desired netMag
-			_tabMagnitudes->setCurrentIndex(findData(_tabMagnitudes, _netMag->publicID()));
+			SC_D.tabMagnitudes->setCurrentIndex(findData(SC_D.tabMagnitudes, SC_D.netMag->publicID()));
 		}
 	}
 
-	//connect(_ui->comboMagType,SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
-	connect(_tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
+	//connect(SC_D.ui.comboMagType,SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
+	connect(SC_D.tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
 
 	// setup map, show all stations in red; associated with netMag in green
-	if ( _map ) {
-		_map->setOrigin(_origin.get());
+	if ( SC_D.map ) {
+		SC_D.map->setOrigin(SC_D.origin.get());
 
-		int iLatitude = (int)_origin->latitude();
-		int iLongitude = (int)_origin->longitude();
+		int iLatitude = (int)SC_D.origin->latitude();
+		int iLongitude = (int)SC_D.origin->longitude();
 
-		if (_origin->arrivalCount() > 0){ // if true --> calculate map boundary so, that ALL stations are visible
+		if (SC_D.origin->arrivalCount() > 0){ // if true --> calculate map boundary so, that ALL stations are visible
 
 			// min/max stations coordinates incl. Origin
 			double latMin, latMax, lonMin, lonMax;
-			calcMinMax(_origin.get(), latMin, latMax, lonMin, lonMax);
+			calcMinMax(SC_D.origin.get(), latMin, latMax, lonMin, lonMax);
 
 			// lower left corner of displaying rectangle, currentOrigin is inside
 			double x = lonMin;
@@ -3595,7 +3636,7 @@ void MagnitudeView::setContent() {
 			catch(...){displayRectAspectRatio = 1.0;}
 
 			double frameMapAspectRatio;
-			try {frameMapAspectRatio = (double)_ui->frameMap->width()/(double)_ui->frameMap->height();}
+			try {frameMapAspectRatio = (double)SC_D.ui.frameMap->width()/(double)SC_D.ui.frameMap->height();}
 			catch(...){frameMapAspectRatio = 1.0;}
 
 			double ndx, ndy;
@@ -3607,39 +3648,39 @@ void MagnitudeView::setContent() {
 				ndy = dy;
 
 			if ( ndy < 180.0 ){
-				_map->canvas().displayRect(QRectF(x-(frame*dx), (y-((ndy-dy)/2))-(frame*ndy), dx+(2*frame*dx), ndy+(2*frame*ndy)));
+				SC_D.map->canvas().displayRect(QRectF(x-(frame*dx), (y-((ndy-dy)/2))-(frame*ndy), dx+(2*frame*dx), ndy+(2*frame*ndy)));
 			}
 			else{
 				ndx = 180.0 * frameMapAspectRatio;
-				_map->canvas().displayRect(QRectF(iLongitude-ndx/2, -90.0, ndx, 180));
+				SC_D.map->canvas().displayRect(QRectF(iLongitude-ndx/2, -90.0, ndx, 180));
 			}
 		}
 		else{ // if false --> center map around origin
-			_map->canvas().displayRect(QRectF(iLongitude-30, iLatitude-30, 60, 60));
+			SC_D.map->canvas().displayRect(QRectF(iLongitude-30, iLatitude-30, 60, 60));
 		}
 
-		_map->update();
+		SC_D.map->update();
 	}
 	else
 		SEISCOMP_ERROR("no Map");
 
 	// Set default aggregation type
-	if ( _defaultMagnitudeAggregation ) {
-		if ( *_defaultMagnitudeAggregation == "median" ) {
-			_ui->btnMedian->setChecked(true);
+	if ( SC_D.defaultMagnitudeAggregation ) {
+		if ( *SC_D.defaultMagnitudeAggregation == "median" ) {
+			SC_D.ui.btnMedian->setChecked(true);
 		}
-		else if ( *_defaultMagnitudeAggregation == "mean" ) {
-			_ui->btnMean->setChecked(true);
+		else if ( *SC_D.defaultMagnitudeAggregation == "mean" ) {
+			SC_D.ui.btnMean->setChecked(true);
 		}
-		else if ( *_defaultMagnitudeAggregation == "trimmedMean" ) {
-			_ui->btnTrimmedMean->setChecked(true);
+		else if ( *SC_D.defaultMagnitudeAggregation == "trimmedMean" ) {
+			SC_D.ui.btnTrimmedMean->setChecked(true);
 		}
-		else if ( *_defaultMagnitudeAggregation == "medianTrimmedMean" ) {
-			_ui->btnTrimmedMedian->setChecked(true);
+		else if ( *SC_D.defaultMagnitudeAggregation == "medianTrimmedMean" ) {
+			SC_D.ui.btnTrimmedMedian->setChecked(true);
 		}
 	}
 	else {
-		_ui->btnDefault->setChecked(true);
+		SC_D.ui.btnDefault->setChecked(true);
 	}
 
 	updateContent();
@@ -3651,33 +3692,33 @@ void MagnitudeView::setContent() {
 //! reset content to default, disconnect signals
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::resetContent() {
-	_ui->frameMagnitudeTypes->setVisible(false);
+	SC_D.ui.frameMagnitudeTypes->setVisible(false);
 
 	// remove all entries in comboBox
-	//disconnect(_ui->comboMagType,SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
-	disconnect(_tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
-	//_ui->comboMagType->clear();
-	while ( _tabMagnitudes->count() > 0 ) _tabMagnitudes->removeTab(0);
-	emit magnitudeSelected(_origin ? QString(_origin->publicID().c_str()) : QString(), 0);
+	//disconnect(SC_D.ui.comboMagType,SIGNAL(currentIndexChanged(int)), this, SLOT(updateContent()));
+	disconnect(SC_D.tabMagnitudes, SIGNAL(currentChanged(int)), this, SLOT(updateContent()));
+	//SC_D.ui.comboMagType->clear();
+	while ( SC_D.tabMagnitudes->count() > 0 ) SC_D.tabMagnitudes->removeTab(0);
+	emit magnitudeSelected(SC_D.origin ? QString(SC_D.origin->publicID().c_str()) : QString(), 0);
 
-	_stamagnitudes->clear();
-	_stamagnitudes->update();
+	SC_D.stamagnitudes->clear();
+	SC_D.stamagnitudes->update();
 
- 	static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->setOrigin(nullptr, nullptr);
+ 	static_cast<StationMagnitudeModel*>(SC_D.modelStationMagnitudes)->setOrigin(nullptr, nullptr);
 
-	QAbstractItemModel* m = _ui->tableStationMagnitudes->model();
+	QAbstractItemModel* m = SC_D.ui.tableStationMagnitudes->model();
 	if ( m ) delete m;
 
-	_modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
-	_modelStationMagnitudesProxy->setSourceModel(_modelStationMagnitudes);
-	_ui->tableStationMagnitudes->setModel(_modelStationMagnitudesProxy);
+	SC_D.modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
+	SC_D.modelStationMagnitudesProxy->setSourceModel(SC_D.modelStationMagnitudes);
+	SC_D.ui.tableStationMagnitudes->setModel(SC_D.modelStationMagnitudesProxy);
 
-	if (_map){
-		_map->setOrigin(nullptr);
-		_map->canvas().displayRect(QRectF(-180.0,-90.0, 360.0, 180.0));
+	if ( SC_D.map ) {
+		SC_D.map->setOrigin(nullptr);
+		SC_D.map->canvas().displayRect(QRectF(-180.0,-90.0, 360.0, 180.0));
 	}
 
-	_ui->labelRegion->setText("Region");
+	SC_D.ui.labelRegion->setText("Region");
 
 	updateMagnitudeLabels();
 }
@@ -3688,56 +3729,56 @@ void MagnitudeView::resetContent() {
 //! update map, diagram, table and labels
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::updateContent() {
-	_ui->labelRegion->setText("");
+	SC_D.ui.labelRegion->setText("");
 
-	if ( !_origin ) {
+	if ( !SC_D.origin ) {
 		return;
 	}
 
-	_ui->labelRegion->setText(Regions::getRegionName(_origin->latitude(), _origin->longitude()).c_str());
+	SC_D.ui.labelRegion->setText(Regions::getRegionName(SC_D.origin->latitude(), SC_D.origin->longitude()).c_str());
 
 	//  use selection from comboBox for netmagType
-	//_netMag = _origin->findMagnitude((_ui->comboMagType->itemData(_ui->comboMagType->currentIndex()).value<QString>()).toAscii().data());
-	_netMag = _origin->findMagnitude(_tabMagnitudes->tabData(_tabMagnitudes->currentIndex()).value<TabData>().publicID);
+	//SC_D.netMag = SC_D.origin->findMagnitude((SC_D.ui.comboMagType->itemData(SC_D.ui.comboMagType->currentIndex()).value<QString>()).toAscii().data());
+	SC_D.netMag = SC_D.origin->findMagnitude(SC_D.tabMagnitudes->tabData(SC_D.tabMagnitudes->currentIndex()).value<TabData>().publicID);
 
-	if ( _netMag ) {
-		for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
-			if ( !StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID()) ) {
-				StationMagnitudePtr stamag = (StationMagnitude*)_reader->getObject(StationMagnitude::TypeInfo(), _netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+	if ( SC_D.netMag ) {
+		for ( size_t i = 0; i < SC_D.netMag->stationMagnitudeContributionCount(); ++i ) {
+			if ( !StationMagnitude::Find(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID()) ) {
+				StationMagnitudePtr stamag = (StationMagnitude*)SC_D.reader->getObject(StationMagnitude::TypeInfo(), SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 				if ( stamag ) {
-					_origin->add(stamag.get());
+					SC_D.origin->add(stamag.get());
 				}
 			}
 		}
 	}
 
-	if ( _map ) {
-		_map->setMagnitude(_netMag.get());
-		_map->update();
+	if ( SC_D.map ) {
+		SC_D.map->setMagnitude(SC_D.netMag.get());
+		SC_D.map->update();
 	}
 
 	// clear diagram
-	_stamagnitudes->clear();
+	SC_D.stamagnitudes->clear();
 
 	// setup model/view table
-	static_cast<StationMagnitudeModel*>(_modelStationMagnitudes)->setOrigin(_origin.get(), _netMag.get());
+	static_cast<StationMagnitudeModel*>(SC_D.modelStationMagnitudes)->setOrigin(SC_D.origin.get(), SC_D.netMag.get());
 
-	QAbstractItemModel *m = _ui->tableStationMagnitudes->model();
+	QAbstractItemModel *m = SC_D.ui.tableStationMagnitudes->model();
 	if ( m ) {
 		delete m;
 	}
 
-	_modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
-	_modelStationMagnitudesProxy->setSourceModel(_modelStationMagnitudes);
-	_ui->tableStationMagnitudes->setModel(_modelStationMagnitudesProxy);
+	SC_D.modelStationMagnitudesProxy = new StaMagsSortFilterProxyModel(this);
+	SC_D.modelStationMagnitudesProxy->setSourceModel(SC_D.modelStationMagnitudes);
+	SC_D.ui.tableStationMagnitudes->setModel(SC_D.modelStationMagnitudesProxy);
 
-	_minStationMagnitude = 999.99;
-	_maxStationMagnitude = -999.99;
+	SC_D.minStationMagnitude = 999.99;
+	SC_D.maxStationMagnitude = -999.99;
 
-	if ( _netMag ) {
+	if ( SC_D.netMag ) {
 		StationMagnitude* staMagnitude;
-		for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
-			staMagnitude = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+		for ( size_t i = 0; i < SC_D.netMag->stationMagnitudeContributionCount(); ++i ) {
+			staMagnitude = StationMagnitude::Find(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			// set distance in distanceList
 			if ( staMagnitude ) {
 				addStationMagnitude(staMagnitude, i);
@@ -3751,13 +3792,13 @@ void MagnitudeView::updateContent() {
 	auto regExp = QRegularExpression("^comboBox/magnitude/comment/.*$");
 	auto magnitudeComments = findChildren<QComboBox*>(regExp);
 
-	if ( !_netMag ) {
-		_ui->cbEvalStatus->setCurrentIndex(0);
+	if ( !SC_D.netMag ) {
+		SC_D.ui.cbEvalStatus->setCurrentIndex(0);
 		for ( auto comboBox : magnitudeComments ) {
 			comboBox->setCurrentIndex(0);
 		}
 
-		_ui->groupReview->setEnabled(false);
+		SC_D.ui.groupReview->setEnabled(false);
 
 		// set dist column in table & add Net/Sta-Mag to diagram: dist = addStationMagnitude()
 		updateMinMaxMagnitude();
@@ -3765,25 +3806,25 @@ void MagnitudeView::updateContent() {
 		return;
 	}
 	else {
-		_ui->cbEvalStatus->blockSignals(true);
+		SC_D.ui.cbEvalStatus->blockSignals(true);
 		try {
-			int idx = _ui->cbEvalStatus->findText(_netMag->evaluationStatus().toString());
+			int idx = SC_D.ui.cbEvalStatus->findText(SC_D.netMag->evaluationStatus().toString());
 			if ( idx != -1 ) {
-				_ui->cbEvalStatus->setCurrentIndex(idx);
+				SC_D.ui.cbEvalStatus->setCurrentIndex(idx);
 			}
 			else {
-				_ui->cbEvalStatus->setCurrentIndex(0);
+				SC_D.ui.cbEvalStatus->setCurrentIndex(0);
 			}
 		}
 		catch ( ... ) {
-			_ui->cbEvalStatus->setCurrentIndex(0);
+			SC_D.ui.cbEvalStatus->setCurrentIndex(0);
 		}
-		_ui->cbEvalStatus->blockSignals(false);
+		SC_D.ui.cbEvalStatus->blockSignals(false);
 
 		for ( QComboBox *comboBox : magnitudeComments ) {
 			comboBox->blockSignals(true);
 			auto id = comboBox->property("id").toString().toStdString();
-			auto comment = _netMag->comment(id);
+			auto comment = SC_D.netMag->comment(id);
 			if ( comment ) {
 				auto idx = comboBox->findText(comment->text().c_str());
 				if ( idx >= 0 ) {
@@ -3805,227 +3846,226 @@ void MagnitudeView::updateContent() {
 		}
 	}
 
-	SEISCOMP_DEBUG("selected magnitude: %s with %lu magRefs ", _netMag->publicID().c_str(), (unsigned long)_netMag->stationMagnitudeContributionCount() );
-	SEISCOMP_DEBUG("selected Origin          : %s with %lu arrivals", _origin->publicID().c_str(), (unsigned long)_origin->arrivalCount() );
+	SEISCOMP_DEBUG("selected magnitude: %s with %lu magRefs ", SC_D.netMag->publicID(), (unsigned long)SC_D.netMag->stationMagnitudeContributionCount() );
+	SEISCOMP_DEBUG("selected Origin          : %s with %lu arrivals", SC_D.origin->publicID(), (unsigned long)SC_D.origin->arrivalCount() );
 
 	for ( int i = 0; i < StaMagsListColumns::Quantity; ++i )
-		_ui->tableStationMagnitudes->setColumnHidden(i, !colVisibility[i]);
+		SC_D.ui.tableStationMagnitudes->setColumnHidden(i, !colVisibility[i]);
 
 	// update column width in table view
-	_ui->tableStationMagnitudes->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	//_ui->tableStationMagnitudes->resizeColumnsToContents();
-	_ui->tableStationMagnitudes->resizeRowsToContents();
-	_ui->tableStationMagnitudes->sortByColumn(
-	            _ui->tableStationMagnitudes->horizontalHeader()->sortIndicatorSection(),
-	            _ui->tableStationMagnitudes->horizontalHeader()->sortIndicatorOrder());
+	SC_D.ui.tableStationMagnitudes->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	//SC_D.ui.tableStationMagnitudes->resizeColumnsToContents();
+	SC_D.ui.tableStationMagnitudes->resizeRowsToContents();
+	SC_D.ui.tableStationMagnitudes->sortByColumn(
+	            SC_D.ui.tableStationMagnitudes->horizontalHeader()->sortIndicatorSection(),
+	            SC_D.ui.tableStationMagnitudes->horizontalHeader()->sortIndicatorOrder());
 
-	if ( _netMag->stationMagnitudeContributionCount() == 0 ) {
-		_ui->groupReview->setEnabled(false);
+	if ( SC_D.netMag->stationMagnitudeContributionCount() == 0 ) {
+		SC_D.ui.groupReview->setEnabled(false);
 		updateMinMaxMagnitude();
 
 		try {
-			if ( _netMag->evaluationStatus() == REJECTED ) {
-				_ui->groupReview->setEnabled(true);
+			if ( SC_D.netMag->evaluationStatus() == REJECTED ) {
+				SC_D.ui.groupReview->setEnabled(true);
 			}
 		}
 		catch ( ... ) {}
 	}
 	else {
-		_ui->groupReview->setEnabled(true);
+		SC_D.ui.groupReview->setEnabled(true);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::updateMinMaxMagnitude() {
-	_ui->labelMinMag->setText("-");
-	_ui->labelMaxMag->setText("-");
-	if (_minStationMagnitude <= _maxStationMagnitude && _minStationMagnitude > -10 && _maxStationMagnitude < 15) {
+	SC_D.ui.labelMinMag->setText("-");
+	SC_D.ui.labelMaxMag->setText("-");
+	if ( SC_D.minStationMagnitude <= SC_D.maxStationMagnitude
+	  && SC_D.minStationMagnitude > -10 && SC_D.maxStationMagnitude < 15 ) {
 		char buf[10];
-		snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, _minStationMagnitude);
-		_ui->labelMinMag->setText(buf);
-		snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, _maxStationMagnitude);
-		_ui->labelMaxMag->setText(buf);
+		snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, SC_D.minStationMagnitude);
+		SC_D.ui.labelMinMag->setText(buf);
+		snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, SC_D.maxStationMagnitude);
+		SC_D.ui.labelMaxMag->setText(buf);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::updateMagnitudeLabels() {
-	if ( _netMag ) {
+	if ( SC_D.netMag ) {
 		char buf[10] = "-";
-		double netmagval = _netMag->magnitude().value();
-		if ( netmagval < 12 )
+		double netmagval = SC_D.netMag->magnitude().value();
+		if ( netmagval < 12 ) {
 			snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, netmagval);
-		else if ( netmagval < 1000000000 )
+		}
+		else if ( netmagval < 1000000000 ) {
 			snprintf(buf, 10, "%d", (int)netmagval);
-
-		_ui->labelMethod->setText(_netMag->methodID().c_str());
-		_ui->labelMethod->setToolTip(_netMag->methodID().c_str());
-		try {
-			_ui->labelAgencyID->setText(_netMag->creationInfo().agencyID().c_str());
-			_ui->labelAgencyID->setToolTip(_netMag->creationInfo().agencyID().c_str());
-		}
-		catch(Core::ValueException &) {
-			_ui->labelAgencyID->setText("");
-			_ui->labelAgencyID->setToolTip("");
 		}
 
+		SC_D.ui.labelMethod->setText(SC_D.netMag->methodID().c_str());
+		SC_D.ui.labelMethod->setToolTip(SC_D.netMag->methodID().c_str());
 		try {
-			_ui->labelAuthor->setText(_netMag->creationInfo().author().c_str());
-			_ui->labelAuthor->setToolTip(_netMag->creationInfo().author().c_str());
+			SC_D.ui.labelAgencyID->setText(SC_D.netMag->creationInfo().agencyID().c_str());
+			SC_D.ui.labelAgencyID->setToolTip(SC_D.netMag->creationInfo().agencyID().c_str());
 		}
 		catch(Core::ValueException &) {
-			_ui->labelAuthor->setText("");
-			_ui->labelAuthor->setToolTip("");
+			SC_D.ui.labelAgencyID->setText("");
+			SC_D.ui.labelAgencyID->setToolTip("");
 		}
 
 		try {
-			_ui->labelEvaluation->setText(_netMag->evaluationStatus().toString());
+			SC_D.ui.labelAuthor->setText(SC_D.netMag->creationInfo().author().c_str());
+			SC_D.ui.labelAuthor->setToolTip(SC_D.netMag->creationInfo().author().c_str());
 		}
 		catch(Core::ValueException &) {
-			_ui->labelEvaluation->setText("-");
+			SC_D.ui.labelAuthor->setText("");
+			SC_D.ui.labelAuthor->setToolTip("");
 		}
 
-		_ui->labelMagnitude->setText(buf);
 		try {
-			_ui->labelNumStaMags->setText(QString("%1 (%2)").arg(_netMag->stationCount()).arg(_netMag->stationMagnitudeContributionCount()));
+			SC_D.ui.labelEvaluation->setText(SC_D.netMag->evaluationStatus().toString());
 		}
 		catch(Core::ValueException &) {
-			_ui->labelNumStaMags->setText(QString("-"));
+			SC_D.ui.labelEvaluation->setText("-");
+		}
+
+		SC_D.ui.labelMagnitude->setText(buf);
+		try {
+			SC_D.ui.labelNumStaMags->setText(QString("%1 (%2)").arg(SC_D.netMag->stationCount()).arg(SC_D.netMag->stationMagnitudeContributionCount()));
+		}
+		catch(Core::ValueException &) {
+			SC_D.ui.labelNumStaMags->setText(QString("-"));
 		}
 
 		strcpy(buf, "-");
 		try {
-			double rms = quantityUncertainty(_netMag->magnitude());
+			double rms = quantityUncertainty(SC_D.netMag->magnitude());
 			if ( rms < 10 )
 				snprintf(buf, 10, "%.*f", SCScheme.precision.magnitude, rms);
 		}
 		catch ( ... ) {}
-		_ui->labelRMS->setText(buf);
+		SC_D.ui.labelRMS->setText(buf);
 
-		if ( (size_t)_stamagnitudes->count() == _netMag->stationMagnitudeContributionCount() ) {
-			_stamagnitudes->setUpdatesEnabled(false);
-			for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
-				StationMagnitudePtr staMagnitude = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
+		if ( (size_t)SC_D.stamagnitudes->count() == SC_D.netMag->stationMagnitudeContributionCount() ) {
+			SC_D.stamagnitudes->setUpdatesEnabled(false);
+			for ( size_t i = 0; i < SC_D.netMag->stationMagnitudeContributionCount(); ++i ) {
+				StationMagnitudePtr staMagnitude = StationMagnitude::Find(SC_D.netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 				// set distance in distanceList
 				if ( staMagnitude ) {
-					QPointF p = _stamagnitudes->value(i);
+					QPointF p = SC_D.stamagnitudes->value(i);
 					double residual = staMagnitude->magnitude().value() - netmagval;
 					p.setY(residual);
-					_stamagnitudes->setValue(i, p);
+					SC_D.stamagnitudes->setValue(i, p);
 					try {
-						_stamagnitudes->setValueSelected(i, _netMag->stationMagnitudeContribution(i)->weight() > 0.0);
+						SC_D.stamagnitudes->setValueSelected(i, SC_D.netMag->stationMagnitudeContribution(i)->weight() > 0.0);
 					}
 					catch ( ... ) {
-						_stamagnitudes->setValueSelected(i, true);
+						SC_D.stamagnitudes->setValueSelected(i, true);
 					}
 
-					changeMagnitudeState(i, _stamagnitudes->isValueSelected(i));
+					changeMagnitudeState(i, SC_D.stamagnitudes->isValueSelected(i));
 				}
 			}
 
-			_stamagnitudes->updateBoundingRect();
-			QRectF rect(_stamagnitudes->boundingRect());
+			SC_D.stamagnitudes->updateBoundingRect();
+			QRectF rect(SC_D.stamagnitudes->boundingRect());
 			QRectF newRect(rect);
 			adjustMagnitudeRect(newRect);
 			newRect.setLeft(max(0.0, double(rect.left())));
 
-			_stamagnitudes->setDisplayRect(newRect);
-			_stamagnitudes->setUpdatesEnabled(true);
+			SC_D.stamagnitudes->setDisplayRect(newRect);
+			SC_D.stamagnitudes->setUpdatesEnabled(true);
 
-			_map->setMagnitude(_netMag.get());
+			SC_D.map->setMagnitude(SC_D.netMag.get());
 
-			for ( int i = 0; i < _modelStationMagnitudes->rowCount(); ++i ) {
-				bool state = _modelStationMagnitudes->data(_modelStationMagnitudes->index(i, USED), Qt::CheckStateRole).toInt() == Qt::Checked;
-				_map->setMagnitudeState(i, state);
+			for ( int i = 0; i < SC_D.modelStationMagnitudes->rowCount(); ++i ) {
+				bool state = SC_D.modelStationMagnitudes->data(SC_D.modelStationMagnitudes->index(i, USED), Qt::CheckStateRole).toInt() == Qt::Checked;
+				SC_D.map->setMagnitudeState(i, state);
 			}
 
-			_map->update();
+			SC_D.map->update();
 		}
 	}
 	else {
-		_ui->labelNumStaMags->setText("0");
-		_ui->labelMagnitude->setText("-");
-		_ui->labelMinMag->setText("-");
-		_ui->labelMaxMag->setText("-");
-		_ui->labelRMS->setText("-");
+		SC_D.ui.labelNumStaMags->setText("0");
+		SC_D.ui.labelMagnitude->setText("-");
+		SC_D.ui.labelMinMag->setText("-");
+		SC_D.ui.labelMaxMag->setText("-");
+		SC_D.ui.labelRMS->setText("-");
 
-		_ui->labelAgencyID->setText("");
-		_ui->labelAgencyID->setToolTip("");
+		SC_D.ui.labelAgencyID->setText("");
+		SC_D.ui.labelAgencyID->setToolTip("");
 
-		_ui->labelAuthor->setText("");
-		_ui->labelAuthor->setToolTip("");
+		SC_D.ui.labelAuthor->setText("");
+		SC_D.ui.labelAuthor->setToolTip("");
 
-		_ui->labelMethod->setText("");
-		_ui->labelMethod->setToolTip("");
+		SC_D.ui.labelMethod->setText("");
+		SC_D.ui.labelMethod->setToolTip("");
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeView::addStationMagnitude(Seiscomp::DataModel::StationMagnitude* stationMagnitude, int index) {
+void MagnitudeView::addStationMagnitude(StationMagnitude *stationMagnitude, int index) {
 	//SEISCOMP_DEBUG("Adding stationMagnitude at index #%d", index);
 
 	// StationMagnitude has been inserted already -> skip it
-	if ( index < _stamagnitudes->count() ) {
-		SEISCOMP_WARNING("Index out of bounds (%d >= %d), has been added already", index, _stamagnitudes->count());
+	if ( index < SC_D.stamagnitudes->count() ) {
+		SEISCOMP_WARNING("Index out of bounds (%d >= %d), has been added already", index, SC_D.stamagnitudes->count());
 		return;
 	}
 
-	//SEISCOMP_DEBUG("Current model rowCount = %d", _modelStationMagnitudes->rowCount());
+	//SEISCOMP_DEBUG("Current model rowCount = %d", SC_D.modelStationMagnitudes->rowCount());
 
-	if ( _map ) {
-		_map->addStationMagnitude(stationMagnitude, index);
+	if ( SC_D.map ) {
+		SC_D.map->addStationMagnitude(stationMagnitude, index);
 	}
 
-	while ( _modelStationMagnitudes->rowCount() <= index ) {
-		_modelStationMagnitudes->insertRow(_modelStationMagnitudes->rowCount());
+	while ( SC_D.modelStationMagnitudes->rowCount() <= index ) {
+		SC_D.modelStationMagnitudes->insertRow(SC_D.modelStationMagnitudes->rowCount());
 		updateMagnitudeLabels();
 	}
 
 	double weight = 1.0;
 	try {
-		weight = _netMag->stationMagnitudeContribution(index)->weight();
+		weight = SC_D.netMag->stationMagnitudeContribution(index)->weight();
 	}
 	catch ( ... ) {}
 
-	auto sr = addStationMagnitude(_netMag.get(), stationMagnitude, weight);
-	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, DISTANCE),
+	auto sr = addStationMagnitude(SC_D.netMag.get(), stationMagnitude, weight);
+	SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(index, DISTANCE),
 	                                sr.distance, Qt::DisplayRole);
-	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, AZIMUTH),
+	SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(index, AZIMUTH),
 	                                sr.azimuth, Qt::DisplayRole);
-	_modelStationMagnitudes->setData(_modelStationMagnitudes->index(index, USED),
+	SC_D.modelStationMagnitudes->setData(SC_D.modelStationMagnitudes->index(index, USED),
 	                                Qt::Checked, Qt::CheckStateRole);
 
-	_ui->tableStationMagnitudes->resizeRowToContents(index);
+	SC_D.ui.tableStationMagnitudes->resizeRowToContents(index);
 
 	double value = stationMagnitude->magnitude().value();
 
-	if ( value < _minStationMagnitude ) {
-		_minStationMagnitude = value;
+	if ( value < SC_D.minStationMagnitude ) {
+		SC_D.minStationMagnitude = value;
 	}
 
-	if ( value > _maxStationMagnitude ) {
-		_maxStationMagnitude = value;
+	if ( value > SC_D.maxStationMagnitude ) {
+		SC_D.maxStationMagnitude = value;
 	}
 
 	updateMinMaxMagnitude();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 //! add StationMag to distance-MagResidual diagram
@@ -4042,28 +4082,28 @@ MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 
 		try {
 			StationLocation loc = Client::Inventory::Instance()->stationLocation(
-				wfsID.networkCode(), wfsID.stationCode(), _origin->time().value());
+				wfsID.networkCode(), wfsID.stationCode(), SC_D.origin->time().value());
 
-			Math::Geo::delazi(_origin->latitude(), _origin->longitude(),
+			Math::Geo::delazi(SC_D.origin->latitude(), SC_D.origin->longitude(),
 			                  loc.latitude, loc.longitude,
 			                  &distance, &az);
 		}
 		catch ( ValueException& ) {
 			SEISCOMP_ERROR("MagnitudeView::addStationMagnitude: Station %s.%s "
-			               "not found. Not added.", wfsID.networkCode().c_str(),
-			               wfsID.stationCode().c_str());
+			               "not found. Not added.", wfsID.networkCode(),
+			               wfsID.stationCode());
 		}
 	}
 	catch ( ValueException& ) {
 		SEISCOMP_ERROR("MagnitudeView::addStationMagnitude: WaveformID in "
 		               "magnitude '%s' not set",
-		               stationMagnitude->publicID().c_str());
+		               stationMagnitude->publicID());
 	}
 
 	double residual = stationMagnitude->magnitude().value() - magnitude->magnitude().value();
 
 	QColor c = SCScheme.colors.arrivals.automatic;
-	AmplitudePtr amp = _objCache.get<Amplitude>(stationMagnitude->amplitudeID());
+	AmplitudePtr amp = SC_D.objCache.get<Amplitude>(stationMagnitude->amplitudeID());
 	if ( amp ) {
 		try {
 			if ( amp->evaluationMode() == DataModel::MANUAL )
@@ -4073,22 +4113,25 @@ MagnitudeView::addStationMagnitude(DataModel::Magnitude *magnitude,
 	}
 
 	if ( SCScheme.unit.distanceInKM ) {
-		_stamagnitudes->addValue(QPointF(Math::Geo::deg2km(distance), residual), c);
+		SC_D.stamagnitudes->addValue(QPointF(Math::Geo::deg2km(distance), residual), c);
 	}
 	else {
-		_stamagnitudes->addValue(QPointF(distance, residual), c);
+		SC_D.stamagnitudes->addValue(QPointF(distance, residual), c);
 	}
 
-	_stamagnitudes->setValueSelected(_stamagnitudes->count()-1, weight > 0.0);
-	changeMagnitudeState(_stamagnitudes->count()-1, _stamagnitudes->isValueSelected(_stamagnitudes->count()-1));
+	SC_D.stamagnitudes->setValueSelected(SC_D.stamagnitudes->count() - 1, weight > 0.0);
+	changeMagnitudeState(
+		SC_D.stamagnitudes->count() - 1,
+		SC_D.stamagnitudes->isValueSelected(SC_D.stamagnitudes->count() - 1)
+	);
 
-	QRectF rect(_stamagnitudes->boundingRect());
+	QRectF rect(SC_D.stamagnitudes->boundingRect());
 	adjustMagnitudeRect(rect);
 	rect.setLeft(max(0.0, double(rect.left())));
 
-	if ( rect != _stamagnitudes->displayRect() ) {
-		_stamagnitudes->setDisplayRect(rect);
-		_stamagnitudes->update();
+	if ( rect != SC_D.stamagnitudes->displayRect() ) {
+		SC_D.stamagnitudes->setDisplayRect(rect);
+		SC_D.stamagnitudes->update();
 	}
 
 	return { distance, az };
@@ -4103,8 +4146,8 @@ DataModel::Pick *MagnitudeView::getPick(DataModel::Arrival* arrival){
 	if ( arrival ){
 		DataModel::Pick* pick = DataModel::Pick::Cast(DataModel::PublicObject::Find(arrival->pickID()));
 
-		if ( !pick && _reader ) {
-			pick = DataModel::Pick::Cast(_reader->getObject(DataModel::Pick::TypeInfo(), arrival->pickID() ));
+		if ( !pick && SC_D.reader ) {
+			pick = DataModel::Pick::Cast(SC_D.reader->getObject(DataModel::Pick::TypeInfo(), arrival->pickID() ));
 		}
 
 		return pick;
@@ -4162,39 +4205,39 @@ void MagnitudeView::calcMinMax(Seiscomp::DataModel::Origin* o, double& latMin, d
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::evaluationStatusChanged(int index) {
-	if ( index < 0 || !_netMag ) return;
+	if ( index < 0 || !SC_D.netMag ) return;
 
 	if ( !index ) {
-		_netMag->setEvaluationStatus(Core::None);
+		SC_D.netMag->setEvaluationStatus(Core::None);
 	}
 	else {
 		EvaluationStatus stat;
-		if ( !stat.fromString(_ui->cbEvalStatus->itemText(index).toStdString()) ) {
+		if ( !stat.fromString(SC_D.ui.cbEvalStatus->itemText(index).toStdString()) ) {
 			return;
 		}
-		_netMag->setEvaluationStatus(stat);
+		SC_D.netMag->setEvaluationStatus(stat);
 	}
 
-	emit magnitudeUpdated(_origin->publicID().c_str(), _netMag.get());
+	emit magnitudeUpdated(SC_D.origin->publicID().c_str(), SC_D.netMag.get());
 
 	// Update linked Mw estimate
-	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(_netMag->type().c_str());
+	Processing::MagnitudeProcessorPtr proc = Processing::MagnitudeProcessorFactory::Create(SC_D.netMag->type().c_str());
 	if ( proc ) {
 		string type = proc->typeMw();
-		int idx = findType(_tabMagnitudes, type.c_str());
+		int idx = findType(SC_D.tabMagnitudes, type.c_str());
 		if ( idx != -1 ) {
 			MagnitudePtr magMw =
-				//Magnitude::Find(_ui->comboMagType->itemData(idx).value<QString>().toStdString());
-				Magnitude::Find(_tabMagnitudes->tabData(idx).value<TabData>().publicID);
+				//Magnitude::Find(SC_D.ui.comboMagType->itemData(idx).value<QString>().toStdString());
+				Magnitude::Find(SC_D.tabMagnitudes->tabData(idx).value<TabData>().publicID);
 
-			if ( magMw && magMw != _netMag ) {
+			if ( magMw && magMw != SC_D.netMag ) {
 				try {
-					magMw->setEvaluationStatus(_netMag->evaluationStatus());
+					magMw->setEvaluationStatus(SC_D.netMag->evaluationStatus());
 				}
 				catch ( ... ) {
 					magMw->setEvaluationStatus(Core::None);
 				}
-				emit magnitudeUpdated(_origin->publicID().c_str(), magMw.get());
+				emit magnitudeUpdated(SC_D.origin->publicID().c_str(), magMw.get());
 			}
 		}
 	}
@@ -4208,7 +4251,7 @@ void MagnitudeView::evaluationStatusChanged(int index) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::magnitudeCommentChanged(QString) {
-	if ( !_netMag ) {
+	if ( !SC_D.netMag ) {
 		return;
 	}
 
@@ -4216,7 +4259,7 @@ void MagnitudeView::magnitudeCommentChanged(QString) {
 	auto id = comboComment->property("id").toString().toStdString();
 	auto text = comboComment->currentText().toStdString();
 
-	CommentPtr comment = _netMag->comment(id);
+	CommentPtr comment = SC_D.netMag->comment(id);
 	if ( comment ) {
 		if ( comment->text() == text ) {
 			return;
@@ -4228,7 +4271,7 @@ void MagnitudeView::magnitudeCommentChanged(QString) {
 		comment = new Comment;
 		comment->setId(id);
 		comment->setText(text);
-		_netMag->add(comment.get());
+		SC_D.netMag->add(comment.get());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

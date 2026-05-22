@@ -22,27 +22,14 @@
 #define SEISCOMP_GUI_MAGNITUDEVIEW_H
 
 
-#include <QtGui>
-#include <seiscomp/gui/datamodel/ui_magnitudeview.h>
-#include <seiscomp/gui/datamodel/ui_magnitudeview_filter.h>
-#include <seiscomp/gui/datamodel/magnitudemap.h>
-#include <seiscomp/gui/map/mapwidget.h>
-#include <seiscomp/gui/core/diagramwidget.h>
-#include <seiscomp/gui/datamodel/amplitudeview.h>
-#include <seiscomp/gui/datamodel/calculateamplitudes.h>
-#ifndef Q_MOC_RUN
-#include <seiscomp/core/baseobject.h>
-#include <seiscomp/datamodel/databasequery.h>
-#include <seiscomp/datamodel/publicobjectcache.h>
-#include <seiscomp/datamodel/event.h>
-#include <seiscomp/datamodel/origin.h>
-#include <seiscomp/datamodel/arrival.h>
-#include <seiscomp/datamodel/pick.h>
-#include <seiscomp/datamodel/station.h>
-#include <seiscomp/datamodel/magnitude.h>
-#include <seiscomp/datamodel/stationmagnitude.h>
+#include <QComboBox>
+
+#include <seiscomp/core/enumeration.h>
 #include <seiscomp/datamodel/amplitude.h>
-#endif
+#include <seiscomp/datamodel/databasequery.h>
+#include <seiscomp/gui/datamodel/amplitudeview.h>
+#include <seiscomp/gui/datamodel/ui_magnitudeview_filter.h>
+#include <seiscomp/gui/map/mapwidget.h>
 
 #include <set>
 
@@ -121,12 +108,15 @@ class SC_GUI_API MagnitudeRowFilter : public QDialog {
 };
 
 
+class MagnitudeViewPrivate;
+
+
 class SC_GUI_API MagnitudeView : public QWidget {
 	Q_OBJECT
 
 	public:
-		typedef std::set<std::pair<DataModel::AmplitudePtr, bool> > AmplitudeSet;
-		typedef std::set<std::string> StringSet;
+		using AmplitudeSet = std::set<std::pair<DataModel::AmplitudePtr, bool> >;
+		using StringSet = std::set<std::string>;
 
 
 	public:
@@ -134,7 +124,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		              Seiscomp::DataModel::DatabaseQuery* reader,
 		              QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
-		MagnitudeView(Map::ImageTree* mapTree,
+		MagnitudeView(Map::ImageTree *mapTree,
 		              Seiscomp::DataModel::DatabaseQuery* reader,
 		              QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
 
@@ -147,7 +137,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		void setAmplitudeConfig(const AmplitudeView::Config &config);
 		const AmplitudeView::Config &amplitudeConfig() const;
 
-		MapWidget* map() const;
+		MapWidget *map() const;
 
 		void setPreferredMagnitudeID(const std::string &);
 
@@ -272,44 +262,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 
 
 	private:
-		typedef CalculateAmplitudes::AmplitudeEntry AmplitudeEntry;
-		typedef CalculateAmplitudes::PickAmplitudeMap PickAmplitudeMap;
-		typedef Processing::MagnitudeProcessorFactory::ServiceNames AvailableTypes;
-
-		Seiscomp::DataModel::DatabaseQuery *_reader;
-
-		::Ui::MagnitudeView                *_ui;
-
-		Map::ImageTreePtr                   _maptree;
-		MagnitudeMap                       *_map;
-
-		DiagramWidget                      *_stamagnitudes;
-		QAbstractTableModel                *_modelStationMagnitudes;
-		QSortFilterProxyModel              *_modelStationMagnitudesProxy;
-
-		AmplitudeView::Config               _amplitudeConfig;
-		AmplitudeView                      *_amplitudeView;
-
-		QTabBar                            *_tabMagnitudes;
-
-		DataModel::OriginPtr                _origin;
-		DataModel::EventPtr                 _event;
-		DataModel::MagnitudePtr             _netMag;
-
-		double                              _minStationMagnitude;
-		double                              _maxStationMagnitude;
-
-		DataModel::PublicObjectRingBuffer   _objCache;
-
-		bool                                _computeMagnitudesSilently;
-		bool                                _enableMagnitudeTypeSelection;
-		OPT(std::string)                    _defaultMagnitudeAggregation;
-
-		PickAmplitudeMap                    _amplitudes;
-		std::string                         _preferredMagnitudeID;
-		std::vector<std::string>            _magnitudeTypes;
-		std::vector<std::string>            _currentMagnitudeTypes;
-		AvailableTypes                     *_availableMagTypes;
+		MagnitudeViewPrivate *_d_ptr;
 };
 
 

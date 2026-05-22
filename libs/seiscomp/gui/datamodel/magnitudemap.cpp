@@ -377,15 +377,14 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 		for ( size_t i = 0; i < _magnitude->stationMagnitudeContributionCount(); ++i ) {
 			auto contrib = _magnitude->stationMagnitudeContribution(i);
 
-			StationMagnitude* staMag = StationMagnitude::Find(contrib->stationMagnitudeID());
+			auto staMag = StationMagnitude::Find(contrib->stationMagnitudeID());
 			if ( !staMag ) {
-				SEISCOMP_DEBUG("StationMagnitude '%s' not found", contrib->stationMagnitudeID().c_str());
+				SEISCOMP_DEBUG("StationMagnitude '%s' not found", contrib->stationMagnitudeID());
 				continue;
 			}
 
-			double residual = staMag->magnitude().value() - _magnitude->magnitude().value();
 			addStationMagnitude(staMag, i);
-			setMagnitudeResidual(i, residual);
+
 			try {
 				setMagnitudeState(i, contrib->weight() > 0.0);
 			}
@@ -429,16 +428,22 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 
 	setMagnitude(nullptr);
 
-	if ( !_origin ) return;
+	if ( !_origin ) {
+		return;
+	}
 
-	AdvancedOriginSymbol *symbol = new AdvancedOriginSymbol(o);
-	try { symbol->setDepth(o->depth()); } catch ( Core::ValueException& ) {}
+	auto symbol = new AdvancedOriginSymbol(o);
+	try {
+		symbol->setDepth(o->depth());
+	}
+	catch ( Core::ValueException& ) {}
+
 	canvas().symbolCollection()->add(symbol);
 
 	for ( size_t i = 0; i < _origin->arrivalCount(); ++i ) {
 		bool foundStation = false;
-		Arrival* arrival = _origin->arrival(i);
-		Pick* p = Pick::Cast(PublicObject::Find(arrival->pickID()));
+		auto arrival = _origin->arrival(i);
+		auto p = Pick::Cast(PublicObject::Find(arrival->pickID()));
 		if ( p ) {
 			try {
 				StationLocation loc = Client::Inventory::Instance()->stationLocation(
@@ -502,20 +507,31 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 		}
 	}
 
-	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
+	auto inv = Client::Inventory::Instance()->inventory();
 	if ( inv ) {
 		for ( size_t n = 0; n < inv->networkCount(); ++n ) {
-			DataModel::Network *net = inv->network(n);
-			if ( net->start() > _origin->time().value() )
+			auto net = inv->network(n);
+			if ( net->start() > _origin->time().value() ) {
 				continue;
-			try { if ( net->end() < _origin->time().value() ) continue; }
+			}
+
+			try {
+				if ( net->end() < _origin->time().value() ) {
+					continue;
+				}
+			}
 			catch ( ... ) {}
 
 			for ( size_t s = 0; s < net->stationCount(); ++s ) {
-				DataModel::Station *sta = net->station(s);
-				if ( sta->start() > _origin->time().value() )
+				auto sta = net->station(s);
+				if ( sta->start() > _origin->time().value() ) {
 					continue;
-				try { if ( sta->end() < _origin->time().value() ) continue; }
+				}
+				try {
+					if ( sta->end() < _origin->time().value() ) {
+						continue;
+					}
+				}
 				catch ( ... ) {}
 
 				double dist, azi1, azi2;
@@ -523,20 +539,24 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					Math::Geo::delazi(
 						sta->latitude(), sta->longitude(),
 						_origin->latitude(), _origin->longitude(),
-						&dist, &azi1, &azi2);
+						&dist, &azi1, &azi2
+					);
 				}
 				catch ( ... ) {
 					continue;
 				}
 
 				// Limit to 20 degrees
-				if ( dist > _stationsMaxDist ) continue;
+				if ( dist > _stationsMaxDist ) {
+					continue;
+				}
 
 				std::string stationCode = net->code() + "." + sta->code();
 
 				// Station already registered as arrival
-				if ( _stationCodes.find(stationCode) != _stationCodes.end() )
+				if ( _stationCodes.find(stationCode) != _stationCodes.end() ) {
 					continue;
+				}
 
 				SYMBOLLAYER->stations.push_back(
 					new StationLayer::Symbol(
@@ -561,8 +581,10 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
-	if ( index < _magnitudes.size() ) return;
+void MagnitudeMap::addStationMagnitude(StationMagnitude *staMag, int index) {
+	if ( index < _magnitudes.size() ) {
+		return;
+	}
 
 	try {
 		std::string stationCode = staMag->waveformID().networkCode() + "." + staMag->waveformID().stationCode();
@@ -573,10 +595,15 @@ void MagnitudeMap::addStationMagnitude(StationMagnitude* staMag, int index) {
 
 		if ( stationId != -1 ) {
 			addMagnitude(stationId, index);
+
+			if ( _magnitude ) {
+				double residual = staMag->magnitude().value() - _magnitude->magnitude().value();
+				setStationResidual(stationId, residual);
+			}
 		}
 	}
 	catch ( ... ) {
-		SEISCOMP_DEBUG("WaveformID in magnitude '%s' not set", staMag->publicID().c_str());
+		SEISCOMP_DEBUG("WaveformID in magnitude '%s' not set", staMag->publicID());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -616,25 +643,48 @@ int MagnitudeMap::findStation(const std::string& stationCode) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int MagnitudeMap::addStation(const std::string &netCode, const std::string &staCode) {
-	if ( !_origin ) return -1;
+	if ( !_origin ) {
+		return -1;
+	}
+
 	// Add station
-	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
-	if ( !inv ) return -1;
+	auto inv = Client::Inventory::Instance()->inventory();
+	if ( !inv ) {
+		return -1;
+	}
 
 	for ( size_t n = 0; n < inv->networkCount(); ++n ) {
-		DataModel::Network *net = inv->network(n);
-		if ( net->code() != netCode ) continue;
-		if ( net->start() > _origin->time().value() )
+		auto net = inv->network(n);
+		if ( net->code() != netCode ) {
 			continue;
-		try { if ( net->end() < _origin->time().value() ) continue; }
+		}
+
+		if ( net->start() > _origin->time().value() ) {
+			continue;
+		}
+
+		try {
+			if ( net->end() < _origin->time().value() ) {
+				continue;
+			}
+		}
 		catch ( ... ) {}
 
 		for ( size_t s = 0; s < net->stationCount(); ++s ) {
-			DataModel::Station *sta = net->station(s);
-			if ( sta->code() != staCode ) continue;
-			if ( sta->start() > _origin->time().value() )
+			auto sta = net->station(s);
+			if ( sta->code() != staCode ) {
 				continue;
-			try { if ( sta->end() < _origin->time().value() ) continue; }
+			}
+
+			if ( sta->start() > _origin->time().value() ) {
+				continue;
+			}
+
+			try {
+				if ( sta->end() < _origin->time().value() ) {
+					continue;
+				}
+			}
 			catch ( ... ) {}
 
 			std::string stationCode = net->code() + "." + sta->code();
@@ -642,11 +692,12 @@ int MagnitudeMap::addStation(const std::string &netCode, const std::string &staC
 			SYMBOLLAYER->stations.push_back(
 				new StationLayer::Symbol(
 					QPointF(sta->longitude(),sta->latitude()),
-					net->code(), sta->code().c_str(), true
+					net->code(), sta->code().c_str(), true,
+					_annotationLayer->annotations()->add(stationCode.c_str())
 				)
 			);
 
-			int stationId = SYMBOLLAYER->stations.size()-1;
+			int stationId = SYMBOLLAYER->stations.size() - 1;
 			SYMBOLLAYER->stations.back()->isActive = true;
 			_stationCodes[stationCode] = stationId;
 			return stationId;
@@ -665,10 +716,13 @@ void MagnitudeMap::addMagnitude(int stationId, int magId) {
 	SYMBOLLAYER->stations[stationId]->magnitudeId = magId;
 	SYMBOLLAYER->stations[stationId]->isMagnitude = true;
 
-	if ( magId >= _magnitudes.size() )
-		_magnitudes.resize(magId+1);
+	if ( magId >= _magnitudes.size() ) {
+		_magnitudes.resize(magId + 1);
+	}
 
 	_magnitudes[magId] = stationId;
+
+
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -677,7 +731,9 @@ void MagnitudeMap::addMagnitude(int stationId, int magId) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setMagnitudeState(int id, bool state) {
-	if ( id < 0 || id >= _magnitudes.size() ) return;
+	if ( id < 0 || id >= _magnitudes.size() ) {
+		return;
+	}
 	int stationId = _magnitudes[id];
 	setStationState(stationId, state);
 }
@@ -688,7 +744,9 @@ void MagnitudeMap::setMagnitudeState(int id, bool state) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setMagnitudeResidual(int id, double residual) {
-	if ( id < 0 || id >= _magnitudes.size() ) return;
+	if ( id < 0 || id >= _magnitudes.size() ) {
+		return;
+	}
 	int stationId = _magnitudes[id];
 	setStationResidual(stationId, residual);
 }
@@ -699,7 +757,9 @@ void MagnitudeMap::setMagnitudeResidual(int id, double residual) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setStationState(int i, bool state) {
-	if ( SYMBOLLAYER->stations[i]->isActive == state ) return;
+	if ( SYMBOLLAYER->stations[i]->isActive == state ) {
+		return;
+	}
 	SYMBOLLAYER->stations[i]->isActive = state;
 	if ( SYMBOLLAYER->stations[i]->isVisible() ) {
 		if ( SYMBOLLAYER->stations[i]->annotation ) {
@@ -730,8 +790,9 @@ void MagnitudeMap::setStationResidual(int i, double residual) {
 	SYMBOLLAYER->stations[i]->residual = residual;
 	SYMBOLLAYER->stations[i]->color = SCScheme.colors.magnitudes.residuals.colorAt(residual);
 
-	if ( SYMBOLLAYER->isVisible() )
+	if ( SYMBOLLAYER->isVisible() ) {
 		update();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
