@@ -7139,20 +7139,22 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	std::set<PickPtr> originPicks;
 	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
 		PickPtr p = Pick::Find(SC_D.currentOrigin->arrival(i)->pickID());
-		if ( p ) originPicks.insert(p);
+		if ( p ) {
+			originPicks.insert(p);
+		}
 	}
 
 	// intersect the picks in the origin with the already tracked
 	// manual created picks
-	for ( PickSet::iterator it = SC_D.changedPicks.begin();
-		  it != SC_D.changedPicks.end(); ++it ) {
-		if ( originPicks.find(it->first) == originPicks.end() ) continue;
-		pickCommitList.push_back(*it);
+	for ( const auto &p : SC_D.changedPicks ) {
+		if ( originPicks.find(p.first) == originPicks.end() ) {
+			continue;
+		}
+		pickCommitList.push_back(p);
 	}
 
-	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
-		  it != SC_D.changedAmplitudes.end(); ++it ) {
-		amplitudeCommitList.push_back(it->first);
+	for ( const auto &a : SC_D.changedAmplitudes ) {
+		amplitudeCommitList.push_back(a.first);
 	}
 
 #if 0
@@ -7180,7 +7182,9 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 
 		// try to find the pick somewhere in the client memory
 		PickPtr pick = Pick::Find(pickID);
-		if ( pick ) SC_D.associatedPicks[pickID] = pick;
+		if ( pick ) {
+			SC_D.associatedPicks[pickID] = pick;
+		}
 	}
 
 	if ( SC_D.localOrigin ) {
@@ -7203,12 +7207,14 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		}
 	}
 
-	if ( !SC_D.localOrigin )
+	if ( !SC_D.localOrigin ) {
 		emit updatedOrigin(SC_D.currentOrigin.get());
-	else
+	}
+	else {
 		emit committedOrigin(SC_D.currentOrigin.get(),
-							 associate?SC_D.baseEvent.get():nullptr,
-							 pickCommitList, amplitudeCommitList);
+		                     associate?SC_D.baseEvent.get():nullptr,
+		                     pickCommitList, amplitudeCommitList);
+	}
 
 	if ( !ignoreDefaultEventType && SC_D.baseEvent && SC_D.defaultEventType ) {
 		// Check if event type changed
