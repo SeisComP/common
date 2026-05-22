@@ -51,27 +51,31 @@ Travel-Time Tables
 ==================
 
 |scname| ships with two sets of predefined travel-time tables which are
-made available as the profiles tab and iasp91.
-
+made available as the profiles *tab* and *iasp91*.
 The default profile is *iasp91*.
 
-LOCSAT travel time tables are located as plain ascii files under
-:file:`@DATADIR@/locsat/tables/`.
-The tables provide the travel times for particular seismic phases at
-given depth and epicentral distance in one file per Earth model and seismic
-phase. E.g. P-wave arrival times in the iasp91 model are found in
-:file:`@DATADIR@/locsat/tables/iasp91.P`. You may easily add your own tables
-for any available Earth model and seismic phase by adopting existing ones in new
-files which are added by :ref:`configuration <locsat_station_application>` to
-your |scname| modules.
+LOCSAT travel time tables and optional profile files are located as plain
+ascii files in :file:`@DATADIR@/locsat/tables/`. All profile-related files
+have file names starting with the profile name. The specific type is added by a
+suffix. Types include
 
+* :ref:`Travel times <locsat_tables>` for a phase (mandatory). Suffix is the
+  phase name. E.g., P-wave travel times for the *iasp91* profile are found in
+  :file:`@DATADIR@/locsat/tables/iasp91.P`.
+* :ref:`Station elevation corrections <locsat_station_elevation>` (optional).
+  Suffix is *stacor*.
+* :ref:`Phase definitions <locsat_phases>` (optional). Suffix is *ph*.
+
+
+.. _locsat_limitations:
 
 Limitations
 -----------
 
 #. The source depth is limited to non-negative values up to 800 km.
 #. Only phases for which a travel-time table exists can be considered.
-#. LOCSAT currently considers travel-time tables for phases which are hard-coded
+#. LOCSAT considers default travel-time tables for phases which are hard-coded.
+   Currently, the phases are:
 
    * seismic body waves: P, Pb, Pg, Pn, pP, PP, PcP, PKiKP, PKIKP, PKKP, PKP,
      PKPab, PKPbc, PKPdf, pPKPab, pPKPbc, pPKPdf,
@@ -83,6 +87,12 @@ Limitations
      all distances no matter the take-off angle at the source.
    * seismic surface waves: LQ, LR, Lg, Rg.
    * infrasound: Is, It, Iw.
+
+   .. hint::
+
+      A custom list of phases can be provided replacing the default phases.
+      Read section :ref:`locsat_phases` for the details.
+
 
 #. The maximum number of distance and depth intervals per table file is
    currently 210 and 50, respectively.
@@ -101,6 +111,44 @@ Limitations
 #. The considered minimum depth is 0 km. Elevations and depths above datum are
    not natively considered. The effects of station elevation can be
    :ref:`empirically corrected for<locsat_station_elevation>`.
+
+
+.. _locsat_tables:
+
+Travel-time tables
+------------------
+
+The tables provide the travel times for an Earth model (profile) and particular
+seismic phases at given depth and epicentral distance in one file per profile
+and seismic phase. The file format can be read from
+:file:`@DATADIR@/locsat/tables/iasp91.P` which ships with |scname| by default.
+
+You may easily add your own tables for any available Earth model and seismic
+phase by adopting existing ones in new files which are added by
+:ref:`configuration <locsat_station_application>` to your |scname| modules.
+
+
+.. _locsat_phases:
+
+Custom phase list
+-----------------
+
+A custom list of phases can be provided for a LOCSAT profile replacing the
+default phases. The file lists the supported phase names. Use one phase name
+per line. Example:
+
+.. code-block:: properties
+
+   P
+   S
+   PmP
+   Pg
+   Sg
+
+For a given profile, the name of the file consists of the profile name and the
+suffix *ph* like :file:`[profile].ph`. E.g., for
+adding phase definitions to the *iasp91* profile, the file
+:file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.ph` can be created.
 
 
 .. _locsat_station_elevation:
@@ -122,8 +170,9 @@ the observation time to be compatible with the NonLinLoc :cite:p:`nonlinloc`
 station correction definitions.
 
 Each LOCSAT profile (travel time table) can have one associated station
-correction file. E.g. for adding station corrections to the iasp91 tables, the
-file :file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.stacor` needs to be
+correction file. For a given profile, the name of the file is
+:file:`[profile].stacor`. E.g., for adding station corrections to the *iasp91*
+profile, the file :file:`$SEISCOMP_ROOT/share/locsat/tables/iasp91.stacor` can be
 created.
 
 Station correction files take the form (example):
@@ -180,8 +229,10 @@ Custom travel-time tables
 #. Generate your travel-time tables from a custom Earth model, depth and
    distance intervals. Use the same format as the defaults as the *iasp91*
    tables. Tools such as :cite:t:`taup` allow the generation.
-#. Add your custom travel-time tables along with station corrections to
-   :file:`@DATADIR@/locsat/tables/`
+#. Optionally add the files for station elevation corrections and phase
+   definitions.
+#. Add your custom travel-time tables along with optional station elevation
+   corrections and the custom phase list to :file:`@DATADIR@/locsat/tables/`.
 #. Add your available custom LOCSAT travel-time tables in global configuration,
    e.g., to the list of tables of travel-time interfaces
 
