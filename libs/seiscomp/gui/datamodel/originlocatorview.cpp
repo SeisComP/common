@@ -2459,21 +2459,6 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 			return _disabledForeground;
 		}
 	}
-	/*
-	else if ( role == Qt::TextColorRole ) {
-		switch ( index.column() ) {
-			// Residual
-			case RESIDUAL:
-				try {
-					return a->residual() < 0?Qt::darkRed:Qt::darkGreen;
-				}
-				catch ( ValueException& ) {}
-				break;
-			default:
-				break;
-		}
-	}
-	*/
 	else if ( role == Qt::TextAlignmentRole ) {
 		return colAligns[index.column()];
 	}
