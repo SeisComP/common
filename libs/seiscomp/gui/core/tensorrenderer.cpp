@@ -355,11 +355,9 @@ struct Legacy {
 	static inline void forward(const Math::Vector3d &v, double &xf, double &yf) {
 		// In seismology takeoffangle is measured against negative Z
 		// stereographic projection requires againts positive Z
-		xf = -v.y / (1.0 + v.z);
-		yf = v.x / (1.0 + v.z);
-		double s = (1 + FSCALE) / (1 + FSCALE * sqrt(xf * xf + yf * yf));
-		xf *= s;
-		yf *= s;
+		double s = (1 + FSCALE) / (1.0 + v.z + FSCALE * sqrt(v.x * v.x + v.y * v.y));
+		xf = -v.y * s;
+		yf = +v.x * s;
 	}
 
 	template <typename T>
