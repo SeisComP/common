@@ -311,7 +311,8 @@ class Module(kernel.CoreModule):
                             self.env.SEISCOMP_ROOT, "bin", "seiscomp-python"
                         )
 
-                        cmd = "{} - {} {} {}".format(
+                        # Do not create pyc files with root:root ownership
+                        cmd = "{} - {} -B {} {}".format(
                             binary, script, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
                     else:
@@ -377,7 +378,8 @@ class Module(kernel.CoreModule):
                             ),
                             file=sys.stderr,
                         )
-                        cmd = '{} postgres "{}/seiscomp-python {} {}"'.format(
+                        # Do not create pyc files with root:root ownership
+                        cmd = '{} postgres "{}/seiscomp-python -B {} {}"'.format(
                             binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
                         )
 
