@@ -36,6 +36,7 @@
 #include "statistics/statistics.h"
 
 #include <deque>
+#include <unordered_map>
 
 
 namespace Seiscomp {
@@ -119,6 +120,7 @@ class Server : public Wired::Server {
 			std::string     dbURL;
 			QueueWorker    *worker{nullptr};
 			std::thread    *thread{nullptr};
+			size_t          index{0};
 		};
 
 		struct DatabaseItem {
@@ -155,7 +157,7 @@ class Server : public Wired::Server {
 	//  Private members
 	// ----------------------------------------------------------------------
 	private:
-		using Queues = std::map<std::string, QueueItem>;
+		using Queues = std::unordered_map<std::string, QueueItem>;
 		using DatabaseWorkers = std::list<DatabaseItem>;
 
 		Queues                               _queues;

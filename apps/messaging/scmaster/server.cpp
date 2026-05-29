@@ -187,11 +187,13 @@ Server::~Server() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Server::QueueItem *Server::addQueue(const std::string &name, uint64_t maxPayloadSize) {
-	if ( _queues.find(name) != _queues.end() )
+	if ( _queues.find(name) != _queues.end() ) {
 		return nullptr;
+	}
 
 	Queue *newQueue = new Queue(name, maxPayloadSize);
 	QueueItem &item = _queues[name];
+	item.index = _queues.size() - 1;
 	item.queue = newQueue;
 	item.worker = new QueueWorker(item.queue);
 	item.worker->setTriggerMode(Wired::DeviceGroup::LevelTriggered);
@@ -220,9 +222,10 @@ const char *makeString(const Wired::Socket::IPAddress &addr) {
 
 Queue *Server::getQueue(const std::string &name,
                         const Wired::Socket::IPAddress &remoteAddress) const {
-	Queues::const_iterator it = _queues.find(name);
-	if ( it == _queues.end() )
+	auto it = _queues.find(name);
+	if ( it == _queues.end() ) {
 		return nullptr;
+	}
 
 	if ( !it->second.acl.check(remoteAddress) ) {
 		SEISCOMP_INFO("Access blocked to queue %s for IP %s",
@@ -270,24 +273,24 @@ void Server::createStatisticsSnapshot() {
 
 	_cummulatedStats.queues.resize(numberOfQueues());
 
-	size_t idx;
-	Queues::iterator it;
-	for ( it = _queues.begin(), idx = 0; it != _queues.end(); ++it, ++idx ) {
-		it->second.worker->lock();
-		it->second.queue->getStatisticsSnapshot(stats->queues[idx], true);
-		it->second.worker->unlock();
+	for ( const auto &[name, q] : _queues ) {
+		q.worker->lock();
+		q.queue->getStatisticsSnapshot(stats->queues[q.index], true);
+		q.worker->unlock();
 
-		_cummulatedStats.queues[idx] += stats->queues[idx];
+		_cummulatedStats.queues[q.index] += stats->queues[q.index];
 
-		stats->messages += stats->queues[idx].messages;
-		stats->bytes += stats->queues[idx].bytes;
-		stats->payload += stats->queues[idx].payload;
+		stats->messages += stats->queues[q.index].messages;
+		stats->bytes += stats->queues[q.index].bytes;
+		stats->payload += stats->queues[q.index].payload;
 	}
 
-	if ( _serverStats.empty() )
+	if ( _serverStats.empty() ) {
 		stats->sequenceNumber = 0;
-	else
+	}
+	else {
 		stats->sequenceNumber = _serverStats.back()->sequenceNumber + 1;
+	}
 
 	_cummulatedStats.sequenceNumber = -1;
 	_cummulatedStats.timestamp = stats->timestamp;
@@ -327,8 +330,7 @@ bool Server::init() {
 		return false;
 
 	// Start all reactor threads
-	Queues::iterator it;
-	for ( it = _queues.begin(); it != _queues.end(); ++it ) {
+	for ( auto it = _queues.begin(); it != _queues.end(); ++it ) {
 		QueueItem &item = it->second;
 		item.queue->activate();
 		if ( !item.worker->setup() )
