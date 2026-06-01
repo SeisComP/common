@@ -652,7 +652,7 @@ class Module(kernel.CoreModule):
 
                 try:
                     vfrommaj, vfrommin, vfromrev = [int(t) for t in vfrom.split("_")]
-                except ValueError as e:
+                except ValueError:
                     try:
                         vfrommaj, vfrommin = [int(t) for t in vfrom.split("_")]
                         vfromrev = 0
