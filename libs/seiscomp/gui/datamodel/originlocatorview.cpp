@@ -2534,7 +2534,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				}
 				summary += "Created: ";
 				try {
-					summary += timeToString(pick->time().value(), _pickCTimeFormat.c_str());
+					summary += timeToString(pick->creationInfo().modificationTime(), _pickCTimeFormat.c_str());
 				}
 				catch ( ... ) {
 					summary += '-';
