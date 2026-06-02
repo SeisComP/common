@@ -473,7 +473,7 @@ MAKEENUM(
 
 
 QVariant colAligns[ArrivalListColumns::Quantity] = {
-	QVariant(),
+	{},
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
 	int(Qt::AlignHCenter | Qt::AlignVCenter),
@@ -2063,10 +2063,10 @@ void ArrivalModel::setOrigin(DataModel::Origin* origin) {
 	_origin = origin;
 	if ( _origin ) {
 		_used.fill(Seismology::LocatorInterface::F_NONE, _origin->arrivalCount());
-		_backgroundColors.fill(QVariant(), _origin->arrivalCount());
+		_backgroundColors.fill({}, _origin->arrivalCount());
 		_enableState.fill(true, _origin->arrivalCount());
-		_distances.fill(QVariant(), _origin->arrivalCount());
-		_takeOffs.fill(QVariant(), _origin->arrivalCount());
+		_distances.fill({}, _origin->arrivalCount());
+		_takeOffs.fill({}, _origin->arrivalCount());
 		_hoverState.fill(-1, _origin->arrivalCount());
 	}
 }
@@ -2077,7 +2077,9 @@ void ArrivalModel::setOrigin(DataModel::Origin* origin) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ArrivalModel::setRowColor(int row, const QColor& c) {
-	if ( row >= rowCount() ) return;
+	if ( row >= rowCount() ) {
+		return;
+	}
 	_backgroundColors[row] = c;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2106,10 +2108,10 @@ int ArrivalModel::columnCount(const QModelIndex &) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 	if ( !index.isValid() )
-		return QVariant();
+		return {};
 
 	if ( index.row() >= (int)_origin->arrivalCount() )
-		return QVariant();
+		return {};
 
 	if ( index.column() == USED ) {
 		if ( role == UsedRole ) {
@@ -2135,7 +2137,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				catch ( Core::ValueException& ) {}
 				break;
 				*/
-				return QVariant();
+				return {};
 
 			case CREATED:
 				pick = Pick::Cast(PublicObject::Find(a->pickID()));
@@ -2437,7 +2439,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 				if ( index.row() < _backgroundColors.size() )
 					return _backgroundColors[index.row()];
 			default:
-				return QVariant();
+				return {};
 		}
 	}
 	else if ( role == Qt::ForegroundRole ) {
@@ -2569,7 +2571,7 @@ QVariant ArrivalModel::data(const QModelIndex &index, int role) const {
 		return summary;
 	}
 
-	return QVariant();
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2596,7 +2598,7 @@ QVariant ArrivalModel::headerData(int section, Qt::Orientation orientation,
 		return section;
 	}
 
-	return QVariant();
+	return {};
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5641,7 +5643,7 @@ void OriginLocatorView::addArrival(int idx, const Arrival *arrival,
 	else {
 		SC_D.residuals->setValue(id, PC_DISTANCE, 0.0);
 		SC_D.residuals->setValueValid(id, PC_DISTANCE, false);
-		SC_D.modelArrivals.setDistance(id, QVariant());
+		SC_D.modelArrivals.setDistance(id, {});
 	}
 
 	try {
@@ -6765,7 +6767,7 @@ void OriginLocatorView::magnitudeSelected(const QString &id, Seiscomp::DataModel
 		SC_D.actionCommitOptions->setProperty("EvPrefMagType", QString(mag->type().c_str()));
 	}
 	else {
-		SC_D.actionCommitOptions->setProperty("EvPrefMagType", QVariant());
+		SC_D.actionCommitOptions->setProperty("EvPrefMagType", {});
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
