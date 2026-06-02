@@ -1274,10 +1274,11 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
                                       mutex *mutex,
                                       bool forceBlock) {
 	while ( true ) {
-		if ( frame.isFinished() ) {
-			frame.reset();
-		}
 		while ( _getcount ) {
+			if ( frame.isFinished() ) {
+				frame.reset();
+			}
+
 			while ( !frame.isFinished() ) {
 				int len = frame.feed(_getp, _getcount);
 				if ( len <= 0 ) {
