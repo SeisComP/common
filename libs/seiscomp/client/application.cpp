@@ -2338,12 +2338,15 @@ void Application::handleMessage(Core::Message* msg) {
 		if ( !nm ) {
 			for ( MessageIterator it = msg->iter(); *it; ++it ) {
 				DataModel::Notifier* n = DataModel::Notifier::Cast(*it);
-				if ( n ) n->apply();
+				if ( n ) {
+					n->apply();
+				}
 			}
 		}
 		else {
-			for ( DataModel::NotifierMessage::iterator it = nm->begin(); it != nm->end(); ++it )
-				(*it)->apply();
+			for ( auto &notifier : *nm ) {
+				notifier->apply();
+			}
 		}
 	}
 
@@ -2351,12 +2354,15 @@ void Application::handleMessage(Core::Message* msg) {
 		if ( !nm ) {
 			for ( MessageIterator it = msg->iter(); *it; ++it ) {
 				DataModel::Notifier* n = DataModel::Notifier::Cast(*it);
-				if ( n ) handleNotifier(n);
+				if ( n ) {
+					handleNotifier(n);
+				}
 			}
 		}
 		else {
-			for ( DataModel::NotifierMessage::iterator it = nm->begin(); it != nm->end(); ++it )
+			for ( DataModel::NotifierMessage::iterator it = nm->begin(); it != nm->end(); ++it ) {
 				handleNotifier(it->get());
+			}
 		}
 	}
 }

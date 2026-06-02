@@ -156,14 +156,17 @@ bool PublicObject::operator!=(const PublicObject& rhs) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PublicObject::registerMe() {
-	if ( !IsRegistrationEnabled() )
+	if ( !IsRegistrationEnabled() ) {
 		return true;
+	}
 
-	if ( _publicID.empty() ) return false;
+	if ( _publicID.empty() ) {
+		return false;
+	}
 
 	std::lock_guard<std::mutex> lk(cacheMutex);
 
-	PublicObjectMap::iterator it = _publicObjects.find(_publicID);
+	auto it = _publicObjects.find(_publicID);
 	if ( it == _publicObjects.end() ) {
 		_publicObjects[_publicID] = this;
 		_registered = true;
@@ -182,12 +185,13 @@ bool PublicObject::registerMe() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PublicObject::deregisterMe() {
-	if ( _publicID.empty() || !_registered )
+	if ( _publicID.empty() || !_registered ) {
 		return false;
+	}
 
 	std::lock_guard<std::mutex> lk(cacheMutex);
 
-	PublicObjectMap::iterator it = _publicObjects.find(_publicID);
+	auto it = _publicObjects.find(_publicID);
 	if ( it != _publicObjects.end() ) {
 		_publicObjects.erase(it);
 		_registered = false;
@@ -240,10 +244,13 @@ bool PublicObject::validId() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PublicObject* PublicObject::Find(const std::string& publicID) {
-	PublicObjectMap::iterator it = _publicObjects.find(publicID);
-	if ( it == _publicObjects.end() ) return nullptr;
-	return (*it).second;
+PublicObject *PublicObject::Find(const std::string &publicID) {
+	auto it = _publicObjects.find(publicID);
+	if ( it == _publicObjects.end() ) {
+		return nullptr;
+	}
+
+	return it->second;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -305,7 +312,7 @@ void PublicObject::SetIdGeneration(bool e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PublicObject::SetIdPattern(const std::string& pattern) {
+void PublicObject::SetIdPattern(const std::string &pattern) {
 	_idPattern = pattern;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -323,7 +330,7 @@ const std::string &PublicObject::GetIdPattern() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-PublicObject* PublicObject::GenerateId(PublicObject* object) {
+PublicObject *PublicObject::GenerateId(PublicObject *object) {
 	if ( object == nullptr ) return nullptr;
 	object->deregisterMe();
 	object->generateId(_idPattern);
