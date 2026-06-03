@@ -245,6 +245,8 @@ bool PublicObject::validId() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 PublicObject *PublicObject::Find(const std::string &publicID) {
+	std::lock_guard<std::mutex> lk(cacheMutex);
+
 	auto it = _publicObjects.find(publicID);
 	if ( it == _publicObjects.end() ) {
 		return nullptr;
