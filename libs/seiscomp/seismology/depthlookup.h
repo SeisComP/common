@@ -23,7 +23,6 @@
 
 
 #include <string>
-#include <stdexcept>
 
 #include <seiscomp/config/config.h>
 #include <seiscomp/core/baseobject.h>
@@ -49,13 +48,14 @@ DEFINE_SMARTPOINTER(DepthLookup);
  *  - "Polygon"   Queries named polygon features from SeisComP's global
  *                GeoFeatureSet; each polygon must carry a defaultDepth
  *                attribute (km, required) and may carry maxDepth (km).
- *                Throws std::out_of_range when no polygon matches.
+ *                Returns depths.polygon.fallback when no polygon matches.
  *
  * A separate dlslab2 plugin (seiscomp/main) provides depth lookup from
  * USGS Slab2.0 depth-footprint contours.
  *
- * Use the utility functions fetchDepth() / fetchMaxDepth() when a fallback
- * value is needed instead of an exception.
+ * All depth knowledge — including the fallback for locations outside any
+ * configured region — is fully encapsulated in the backend. The client
+ * never needs to supply or handle a fallback value.
  */
 class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 	public:
@@ -74,40 +74,24 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		/**
 		 * @brief Return the default depth (km) at (@p lat, @p lon).
 		 *
-		 * @throws std::out_of_range if no depth information is available
-		 *         for the given location (e.g. outside all configured
-		 *         regions or slab zones). Use fetchDepth() for a
-		 *         fallback-based alternative.
+		 * Always returns a finite value. When no region or slab zone
+		 * contains the given location the backend returns its own
+		 * configured fallback depth.
 		 */
 		virtual double fetch(double lat, double lon) const = 0;
 
 		/**
 		 * @brief Return the maximum acceptable depth (km) at (@p lat, @p lon).
 		 *
-		 * @throws std::out_of_range if no depth information is available
-		 *         for the given location. Use fetchMaxDepth() for a
-		 *         fallback-based alternative.
+		 * Always returns a finite value. When no region or slab zone
+		 * contains the given location the backend returns its own
+		 * configured fallback.
 		 */
 		virtual double fetchMaxDepth(double lat, double lon) const = 0;
 };
 
 
 DEFINE_INTERFACE_FACTORY(DepthLookup);
-
-
-/**
- * @brief Return lookup->fetch(lat, lon), or @p fallback if it throws.
- */
-SC_SYSTEM_CORE_API double fetchDepth(const DepthLookup *lookup,
-                                     double lat, double lon,
-                                     double fallback) noexcept;
-
-/**
- * @brief Return lookup->fetchMaxDepth(lat, lon), or @p fallback if it throws.
- */
-SC_SYSTEM_CORE_API double fetchMaxDepth(const DepthLookup *lookup,
-                                        double lat, double lon,
-                                        double fallback) noexcept;
 
 
 } // namespace Seismology
