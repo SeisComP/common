@@ -23,6 +23,7 @@
 
 
 #include <string>
+#include <stdexcept>
 
 #include <seiscomp/config/config.h>
 #include <seiscomp/core/baseobject.h>
@@ -37,24 +38,24 @@ namespace Seismology {
 DEFINE_SMARTPOINTER(DepthLookup);
 
 /**
- * @brief Abstract interface for region- and slab-based default/maximum depth
- *        lookup, used by scautoloc and other SeisComP processing modules.
+ * @brief Abstract interface for region- and slab-based depth lookup,
+ *        used by scautoloc and other SeisComP processing modules.
  *
  * Concrete implementations are registered via the REGISTER_DEPTH_LOOKUP macro
  * and instantiated at runtime through DepthLookupFactory::Create().
  *
  * Two implementations ship with the library:
- *  - "Constant"  Returns a fixed depth read from @c depths.constant.value.
+ *  - "Constant"  Always returns a fixed depth read from depths.constant.value.
  *  - "Polygon"   Queries named polygon features from SeisComP's global
- *                GeoFeatureSet; each polygon must carry a @c defaultDepth
- *                attribute (km, required) and may carry @c maxDepth (km).
- *                Fallback is read from @c depths.polygon.fallback.
+ *                GeoFeatureSet; each polygon must carry a defaultDepth
+ *                attribute (km, required) and may carry maxDepth (km).
+ *                Throws std::out_of_range when no polygon matches.
  *
- * A separate @c dlslab2 plugin (seiscomp/main) provides depth lookup from
+ * A separate dlslab2 plugin (seiscomp/main) provides depth lookup from
  * USGS Slab2.0 depth-footprint contours.
  *
- * Each implementation owns all depth knowledge including its fallback value;
- * callers pass no fallback.
+ * Use the utility functions fetchDepth() / fetchMaxDepth() when a fallback
+ * value is needed instead of an exception.
  */
 class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 	public:
@@ -63,7 +64,7 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		/**
 		 * @brief Initialise the implementation.
 		 *
-		 * Called once after construction.  Each implementation reads its
+		 * Called once after construction. Each implementation reads its
 		 * own settings from @p config.
 		 *
 		 * @return True on success.
@@ -73,22 +74,40 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		/**
 		 * @brief Return the default depth (km) at (@p lat, @p lon).
 		 *
-		 * Always returns a finite value; the implementation supplies its
-		 * own configured fallback when no region/slab matches.
+		 * @throws std::out_of_range if no depth information is available
+		 *         for the given location (e.g. outside all configured
+		 *         regions or slab zones). Use fetchDepth() for a
+		 *         fallback-based alternative.
 		 */
 		virtual double fetch(double lat, double lon) const = 0;
 
 		/**
 		 * @brief Return the maximum acceptable depth (km) at (@p lat, @p lon).
 		 *
-		 * Always returns a finite value; the implementation supplies its
-		 * own configured fallback when no region/slab matches.
+		 * @throws std::out_of_range if no depth information is available
+		 *         for the given location. Use fetchMaxDepth() for a
+		 *         fallback-based alternative.
 		 */
 		virtual double fetchMaxDepth(double lat, double lon) const = 0;
 };
 
 
 DEFINE_INTERFACE_FACTORY(DepthLookup);
+
+
+/**
+ * @brief Return lookup->fetch(lat, lon), or @p fallback if it throws.
+ */
+SC_SYSTEM_CORE_API double fetchDepth(const DepthLookup *lookup,
+                                     double lat, double lon,
+                                     double fallback) noexcept;
+
+/**
+ * @brief Return lookup->fetchMaxDepth(lat, lon), or @p fallback if it throws.
+ */
+SC_SYSTEM_CORE_API double fetchMaxDepth(const DepthLookup *lookup,
+                                        double lat, double lon,
+                                        double fallback) noexcept;
 
 
 } // namespace Seismology

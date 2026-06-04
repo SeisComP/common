@@ -29,6 +29,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -103,20 +104,14 @@ REGISTER_DEPTH_LOOKUP(DepthLookupConstant, "Constant");
  * Queries named polygon features from SeisComP's global GeoFeatureSet.
  *
  * Config keys:
- *   depths.polygon.regions   — ordered list of feature names
- *   depths.polygon.fallback  — depth returned when no polygon matches (km)
+ *   depths.polygon.regions  — ordered list of feature names
+ *
+ * Throws std::out_of_range when no configured polygon contains the point.
+ * Use fetchDepth() / fetchMaxDepth() utility functions for fallback behaviour.
  */
 class DepthLookupPolygon : public DepthLookup {
 	public:
 		bool init(const Config::Config &config) override {
-			try {
-				_fallback = config.getDouble("depths.polygon.fallback");
-			}
-			catch ( ... ) {
-				SEISCOMP_INFO("DepthLookup/Polygon: depths.polygon.fallback not set, "
-				              "using default %.0f km", _fallback);
-			}
-
 			std::vector<std::string> names;
 			try {
 				names = config.getStrings("depths.polygon.regions");
@@ -164,16 +159,19 @@ class DepthLookupPolygon : public DepthLookup {
 					return e.defaultDepth;
 				}
 			}
-			return _fallback;
+			throw std::out_of_range("No polygon contains the given location");
 		}
 
 		double fetchMaxDepth(double lat, double lon) const override {
 			for ( const auto &e : _entries ) {
 				if ( e.feature->contains({lat, lon}) ) {
-					return e.maxDepth.value_or(_fallback);
+					if ( e.maxDepth ) {
+						return *e.maxDepth;
+					}
+					throw std::out_of_range("Polygon has no maxDepth attribute");
 				}
 			}
-			return _fallback;
+			throw std::out_of_range("No polygon contains the given location");
 		}
 
 	private:
@@ -183,11 +181,37 @@ class DepthLookupPolygon : public DepthLookup {
 			std::optional<double>    maxDepth;
 		};
 
-		double             _fallback{10.0};
 		std::vector<Entry> _entries;
 };
 
 REGISTER_DEPTH_LOOKUP(DepthLookupPolygon, "Polygon");
+
+
+// ---------------------------------------------------------------------------
+// Utility functions
+// ---------------------------------------------------------------------------
+
+double fetchDepth(const DepthLookup *lookup,
+                  double lat, double lon,
+                  double fallback) noexcept {
+	try {
+		return lookup->fetch(lat, lon);
+	}
+	catch ( ... ) {
+		return fallback;
+	}
+}
+
+double fetchMaxDepth(const DepthLookup *lookup,
+                     double lat, double lon,
+                     double fallback) noexcept {
+	try {
+		return lookup->fetchMaxDepth(lat, lon);
+	}
+	catch ( ... ) {
+		return fallback;
+	}
+}
 
 
 } // namespace Seismology
