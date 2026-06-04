@@ -460,7 +460,7 @@ string FDSNWSConnectionBase::createPostData() {
 	string request;
 	string lineSeparator;
 
-	auto it = _url.queryItems().find("clrf");
+	auto it = _url.queryItems().find("crlf");
 	if ( (it != _url.queryItems().end()) && (it->second.empty() || it->second == "true") ) {
 		lineSeparator = "\r\n";
 	}
