@@ -23,6 +23,8 @@
 
 #include "pickerview.h"
 #include "pickerview_p.h"
+#include "pickerview_accessibility.h"
+#include <seiscomp/gui/core/waveformaudio.h>
 
 #include <seiscomp/core/platform/platform.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
@@ -55,6 +57,7 @@
 #include <seiscomp/math/windows/hann.h>
 #include <seiscomp/math/windows/hamming.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/core/typedarray.h>
 #include <seiscomp/core/interfacefactory.ipp>
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/utils/misc.h>
@@ -65,6 +68,12 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QToolButton>
+#include <QAccessible>
+#include <QAccessibleEvent>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QAccessibleAnnouncementEvent>
+#endif
+#include <QStatusBar>
 
 #include <algorithm>
 #include <cmath>
@@ -136,6 +145,254 @@ PickerView::Config::UnitType fromGainUnit(const std::string &gainUnit) {
 		return PickerView::Config::UT_DISP;
 	}
 	return PickerView::Config::UT_RAW;
+}
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//! Compute amplitude and SNR for a pick at given time from current record data
+//! Returns true if successful, fills amplitude, snr, and quality parameters
+static bool computePickAmplitudeAndSNR(RecordWidget* widget, const Core::Time& pickTime,
+                                        double& outAmplitude, double& outSNR, QString& outQuality) {
+	if ( !widget ) return false;
+	
+	int slot = widget->currentRecords();
+	if ( slot < 0 ) return false;
+	
+	auto seq = widget->isFilteringEnabled()
+		? widget->filteredRecords(slot)
+		: widget->records(slot);
+	
+	if ( !seq || seq->empty() ) return false;
+	
+	// Find record containing pick time
+	auto it = seq->lowerBound(pickTime);
+	if ( it == seq->end() ) return false;
+	
+	auto rec = *it;
+	if ( !rec || !rec->data() ) return false;
+	
+	double fsamp = rec->samplingFrequency();
+	if ( fsamp <= 0 ) return false;
+	
+	int pickSample = static_cast<int>((pickTime - rec->startTime()).length() * fsamp);
+	if ( pickSample < 0 || pickSample >= rec->sampleCount() ) return false;
+	
+	// Get data array
+	const double* data = nullptr;
+	auto dArray = DoubleArray::ConstCast(rec->data());
+	if ( dArray && pickSample < dArray->size() ) {
+		data = dArray->typedData();
+	} else {
+		auto fArray = FloatArray::ConstCast(rec->data());
+		if ( fArray && pickSample < fArray->size() ) {
+			// Use float data directly
+			const float* fdata = fArray->typedData();
+			outAmplitude = std::abs(fdata[pickSample]);
+		} else {
+			return false;
+		}
+	}
+	
+	if ( data ) {
+		outAmplitude = std::abs(data[pickSample]);
+	}
+	
+	// Compute SNR using pre/post windows
+	int preSamples = static_cast<int>(5.0 * fsamp);   // 5 seconds noise window
+	int postSamples = static_cast<int>(10.0 * fsamp); // 10 seconds signal window
+	
+	int noiseStart = std::max(0, pickSample - preSamples);
+	int noiseEnd = pickSample;
+	int signalStart = pickSample;
+	int signalEnd = std::min(rec->sampleCount(), pickSample + postSamples);
+	
+	// Compute RMS in noise window
+	double noiseSum = 0.0;
+	int noiseSamples = 0;
+	for ( int i = noiseStart; i < noiseEnd; ++i ) {
+		double amp = data ? data[i] : 0.0;
+		noiseSum += amp * amp;
+		++noiseSamples;
+	}
+	double noiseRMS = noiseSamples > 0 ? std::sqrt(noiseSum / noiseSamples) : 0.0;
+	
+	// Compute RMS in signal window
+	double signalSum = 0.0;
+	int signalSamples = 0;
+	for ( int i = signalStart; i < signalEnd; ++i ) {
+		double amp = data ? data[i] : 0.0;
+		signalSum += amp * amp;
+		++signalSamples;
+	}
+	double signalRMS = signalSamples > 0 ? std::sqrt(signalSum / signalSamples) : 0.0;
+	
+	// Compute SNR
+	if ( noiseRMS < 1e-10 ) {
+		outSNR = -1.0;
+		outQuality = "unknown";
+	} else {
+		outSNR = signalRMS / noiseRMS;
+		// Map SNR to quality
+		if ( outSNR > 10 ) outQuality = "excellent";
+		else if ( outSNR > 5 ) outQuality = "good";
+		else if ( outSNR > 2 ) outQuality = "fair";
+		else outQuality = "poor";
+	}
+	
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// Helper function to compute SNR around a pick time
+double computePickSNR(RecordWidget* widget, const Core::Time& pickTime, double preWindow = 5.0, double postWindow = 10.0) {
+	int slot = widget->currentRecords();
+	if ( slot < 0 ) {
+		SEISCOMP_DEBUG("computePickSNR: invalid slot %d", slot);
+		return -1.0;
+	}
+
+	// Use filtered records if filtering is enabled
+	RecordSequence* seq = widget->isFilteringEnabled()
+		? widget->filteredRecords(slot)
+		: widget->records(slot);
+	
+	if ( !seq || seq->empty() ) {
+		SEISCOMP_DEBUG("computePickSNR: no records in slot %d", slot);
+		return -1.0;
+	}
+
+	// Find the record containing pickTime
+	auto it = seq->lowerBound(pickTime);
+	if ( it == seq->end() ) {
+		SEISCOMP_DEBUG("computePickSNR: no record containing pick time");
+		return -1.0;
+	}
+
+	RecordCPtr rec = *it;
+	if ( !rec ) {
+		SEISCOMP_DEBUG("computePickSNR: null record");
+		return -1.0;
+	}
+
+	double fsamp = rec->samplingFrequency();
+	if ( fsamp <= 0 ) {
+		SEISCOMP_DEBUG("computePickSNR: invalid sampling frequency %.2f", fsamp);
+		return -1.0;
+	}
+
+	// Get data array - try double first, then float
+	const double* data = nullptr;
+	std::vector<double> tempData; // For float conversion
+	
+	auto dArray = DoubleArray::ConstCast(rec->data());
+	if ( dArray ) {
+		if ( dArray->size() > 0 ) {
+			data = dArray->typedData();
+		}
+	} else {
+		auto fArray = FloatArray::ConstCast(rec->data());
+		if ( fArray && fArray->size() > 0 ) {
+			// Convert float data to double for processing
+			const float* fdata = fArray->typedData();
+			tempData.resize(fArray->size());
+			for ( size_t i = 0; i < fArray->size(); ++i ) {
+				tempData[i] = static_cast<double>(fdata[i]);
+			}
+			data = tempData.data();
+		}
+	}
+	
+	if ( !data ) {
+		SEISCOMP_DEBUG("computePickSNR: null data pointer");
+		return -1.0;
+	}
+
+	int sampleCount = rec->sampleCount();
+	Core::Time startTime = rec->startTime();
+
+	// Compute sample indices for windows
+	int preSamples = static_cast<int>(preWindow * fsamp);
+	int postSamples = static_cast<int>(postWindow * fsamp);
+
+	// Find sample index for pick time
+	int pickSample = static_cast<int>((pickTime - startTime).length() * fsamp);
+	
+	// Validate pick sample range
+	if ( pickSample < 0 || pickSample >= sampleCount ) {
+		SEISCOMP_DEBUG("computePickSNR: pickSample %d out of range [0, %d)", pickSample, sampleCount);
+		return -1.0;
+	}
+
+	SEISCOMP_DEBUG("computePickSNR: pickTime=%s, startTime=%s, fsamp=%.2f, pickSample=%d, sampleCount=%d",
+		pickTime.toString("%H:%M:%S.%f").c_str(),
+		startTime.toString("%H:%M:%S.%f").c_str(),
+		fsamp, pickSample, sampleCount);
+
+	// Compute RMS in pre-pick window (noise)
+	// Use adaptive window sizing - ensure at least 1 second of data
+	int minNoiseSamples = static_cast<int>(fsamp); // At least 1 second
+	int noiseStart = std::max(0, pickSample - preSamples);
+	int noiseEnd = pickSample;
+	
+	// Ensure we have enough samples for meaningful statistics
+	if ( (noiseEnd - noiseStart) < minNoiseSamples ) {
+		// Try to extend the window
+		noiseStart = std::max(0, noiseEnd - minNoiseSamples);
+	}
+
+	double noiseSum = 0.0;
+	int noiseSamples = 0;
+
+	for ( int i = noiseStart; i < noiseEnd; ++i ) {
+		double amp = data[i];
+		noiseSum += amp * amp;
+		++noiseSamples;
+	}
+
+	double noiseRMS = noiseSamples > 0 ? std::sqrt(noiseSum / noiseSamples) : 0.0;
+
+	// Compute RMS in post-pick window (signal + noise)
+	int signalStart = pickSample;
+	int signalEnd = std::min(sampleCount, pickSample + postSamples);
+	
+	// Ensure minimum signal window
+	if ( (signalEnd - signalStart) < minNoiseSamples ) {
+		signalEnd = std::min(sampleCount, signalStart + minNoiseSamples);
+	}
+
+	double signalSum = 0.0;
+	int signalSamples = 0;
+
+	for ( int i = signalStart; i < signalEnd; ++i ) {
+		double amp = data[i];
+		signalSum += amp * amp;
+		++signalSamples;
+	}
+
+	double signalRMS = signalSamples > 0 ? std::sqrt(signalSum / signalSamples) : 0.0;
+
+	SEISCOMP_DEBUG("computePickSNR: noiseSamples=%d, noiseRMS=%.6f, signalSamples=%d, signalRMS=%.6f",
+		noiseSamples, noiseRMS, signalSamples, signalRMS);
+
+	// Compute SNR
+	if ( noiseRMS < 1e-10 ) {
+		SEISCOMP_DEBUG("computePickSNR: noiseRMS too small, returning -1");
+		return -1.0;
+	}
+
+	double snr = signalRMS / noiseRMS;
+	SEISCOMP_DEBUG("computePickSNR: SNR=%.2f", snr);
+	return snr;
+}
+
+// Helper function to get quality string from SNR
+QString getPickQualityString(double snr) {
+	if ( snr < 0 ) return QObject::tr("unknown");
+	if ( snr > 10 ) return QObject::tr("excellent");
+	if ( snr > 5 ) return QObject::tr("good");
+	if ( snr > 2 ) return QObject::tr("fair");
+	return QObject::tr("poor");
 }
 
 
@@ -2693,8 +2950,18 @@ void PickerView::init() {
 	Mac::addFullscreen(this);
 #endif
 
+	// Install custom accessibility factory for RecordWidget and RecordViewItem
+	QAccessible::installFactory(pickerViewAccessibleFactory);
+
 	SC_D.ui.setupUi(this);
 	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
+
+	// Set accessible properties for central widget (used for announcements)
+	SC_D.ui.centralwidget->setAccessibleName(tr("Seismic Phase Picker"));
+	SC_D.ui.centralwidget->setAccessibleDescription(tr(
+		"Interactive tool for viewing seismic waveforms and picking P and S phase arrivals. "
+		"Use arrow keys to navigate, space to create picks."
+	));
 
 	QFont f(font());
 	f.setBold(true);
@@ -2736,6 +3003,30 @@ void PickerView::init() {
 	connect(SC_D.recordView, SIGNAL(currentItemChanged(RecordViewItem*,RecordViewItem*)),
 	        this, SLOT(itemSelected(RecordViewItem*,RecordViewItem*)));
 
+	// Announce station changes for screen reader accessibility
+	connect(SC_D.recordView, &RecordView::currentItemChanged,
+	        this, [this](RecordViewItem* current, RecordViewItem* previous) {
+		if (current) {
+			QString netSta = current->label()->text(0);
+			QString info = tr("Selected station: %1").arg(netSta);
+			
+			// Add distance and azimuth if available
+			if (current->value(ITEM_DISTANCE_INDEX) >= 0) {
+				if (SCScheme.unit.distanceInKM) {
+					info += tr(", distance %1 km").arg(Math::Geo::deg2km(current->value(ITEM_DISTANCE_INDEX)), 0, 'f', SCScheme.precision.distance);
+				} else {
+					info += tr(", distance %1°").arg(current->value(ITEM_DISTANCE_INDEX), 0, 'f', 1);
+				}
+			}
+			if (current->value(ITEM_AZIMUTH_INDEX) >= 0) {
+				info += tr(", azimuth %1°").arg(current->value(ITEM_AZIMUTH_INDEX), 0, 'f', 1);
+			}
+			
+			statusBar()->showMessage(info, 3000);
+			announceToScreenReader(info);
+		}
+	});
+
 	connect(SC_D.recordView, SIGNAL(fedRecord(RecordViewItem*,const Seiscomp::Record*)),
 	        this, SLOT(updateTraceInfo(RecordViewItem*,const Seiscomp::Record*)));
 
@@ -2757,6 +3048,11 @@ void PickerView::init() {
 	SC_D.recordView->setRowSpacing(2);
 	SC_D.recordView->setHorizontalSpacing(6);
 	SC_D.recordView->setFramesEnabled(false);
+	// Set accessible names for screen readers
+	SC_D.recordView->setAccessibleName(tr("Station list"));
+	SC_D.recordView->setAccessibleDescription(tr(
+		"List of seismic stations. Click to select a station. "
+		"Selected station waveform is shown in detail view above."));
 	//SC_D.recordView->setDefaultActions();
 
 	SC_D.connectionState = new ConnectionStateLabel(this);
@@ -2798,6 +3094,12 @@ void PickerView::init() {
 	statusBar()->addPermanentWidget(SC_D.searchLabel, 5);
 	statusBar()->addPermanentWidget(SC_D.connectionState);
 
+	// Add mode indicator for accessibility
+	SC_D.modeLabel = new QLabel(tr("Mode: View"));
+	SC_D.modeLabel->setAccessibleName(tr("Current picking mode"));
+	SC_D.modeLabel->setToolTip(tr("Shows whether you are in view mode or picking P/S phases"));
+	statusBar()->addPermanentWidget(SC_D.modeLabel);
+
 	SC_D.currentRecord = new ZoomRecordWidget();
 	SC_D.currentRecord->showScaledValues(SC_D.ui.actionShowTraceValuesInNmS->isChecked());
 	SC_D.currentRecord->setClippingEnabled(SC_D.ui.actionClipComponentsToViewport->isChecked());
@@ -2808,6 +3110,11 @@ void PickerView::init() {
 	SC_D.currentRecord->setDrawAxis(true);
 	SC_D.currentRecord->setDrawSPS(true);
 	SC_D.currentRecord->setAxisPosition(RecordWidget::Left);
+	// Set accessible names for screen readers
+	SC_D.currentRecord->setAccessibleName(tr("Waveform display"));
+	SC_D.currentRecord->setAccessibleDescription(tr(
+		"Seismic waveform view. Current phase for picking is shown in status bar. "
+		"Click on waveform to move cursor. Press Space to create pick at cursor."));
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowAmplitudes(SC_D.ui.actionShowAmplitudeValuesAtCursor->isChecked());
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->spectrogramAmplitudesChanged = bind(
 		&PickerView::specAmplitudesChanged,
@@ -2973,6 +3280,10 @@ void PickerView::init() {
 	addAction(SC_D.ui.actionSetPick);
 	addAction(SC_D.ui.actionDeletePick);
 
+	addAction(SC_D.ui.actionToggleAudioSonification);
+	addAction(SC_D.ui.actionPlayTraceAudio);
+	addAction(SC_D.ui.actionStopAudioPlayback);
+
 	addAction(SC_D.ui.actionShowZComponent);
 	addAction(SC_D.ui.actionShowNComponent);
 	addAction(SC_D.ui.actionShowEComponent);
@@ -2998,12 +3309,16 @@ void PickerView::init() {
 
 	addAction(SC_D.ui.actionShowSpectrogram);
 
+	addAction(SC_D.ui.actionAnnouncePickDetails);
+
 	SC_D.lastFilterIndex = 0;
 
 	SC_D.comboFilter = new QComboBox;
 	//SC_D.comboFilter->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 	SC_D.comboFilter->setDuplicatesEnabled(false);
 	SC_D.comboFilter->addItem(NO_FILTER_STRING);
+	SC_D.comboFilter->setAccessibleName(tr("Filter selection"));
+	SC_D.comboFilter->setAccessibleDescription(tr("Select a frequency filter to apply to seismic data"));
 
 	SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
 	changeFilter(SC_D.comboFilter->currentIndex());
@@ -3017,6 +3332,8 @@ void PickerView::init() {
 		SC_D.comboRotation->addItem(PickerView::Config::ERotationTypeNames::name(i));
 	}
 	SC_D.comboRotation->setCurrentIndex(SC_D.currentRotationMode);
+	SC_D.comboRotation->setAccessibleName(tr("Component rotation"));
+	SC_D.comboRotation->setAccessibleDescription(tr("Select rotation type for three-component seismic data (123, ZNE, ZRT, LQT, or ZH)"));
 	changeRotation(SC_D.comboRotation->currentIndex());
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboRotation);
@@ -3027,6 +3344,8 @@ void PickerView::init() {
 		SC_D.comboUnit->addItem(PickerView::Config::EUnitTypeNames::name(i));
 	}
 	SC_D.comboUnit->setCurrentIndex(SC_D.currentUnitMode);
+	SC_D.comboUnit->setAccessibleName(tr("Unit type"));
+	SC_D.comboUnit->setAccessibleDescription(tr("Select display unit: raw sensor counts, acceleration, velocity, or displacement"));
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboUnit);
 
@@ -3053,6 +3372,8 @@ void PickerView::init() {
 	SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTT);
 
 	SC_D.comboTTT->setToolTip(tr("Select one of the supported travel time table backends."));
+	SC_D.comboTTT->setAccessibleName(tr("Travel time table backend"));
+	SC_D.comboTTT->setAccessibleDescription(tr("Select the travel time model for calculating theoretical arrival times"));
 	TravelTimeTableInterfaceFactory::ServiceNames *ttServices = TravelTimeTableInterfaceFactory::Services();
 	if ( ttServices ) {
 		TravelTimeTableInterfaceFactory::ServiceNames::iterator it;
@@ -3072,6 +3393,8 @@ void PickerView::init() {
 		connect(SC_D.comboTTT, SIGNAL(currentIndexChanged(int)), this, SLOT(ttInterfaceChanged(int)));
 		SC_D.comboTTTables = new QComboBox;
 		SC_D.comboTTTables->setToolTip(tr("Select one of the supported tables for the current travel time table backend."));
+		SC_D.comboTTTables->setAccessibleName(tr("Travel time table"));
+		SC_D.comboTTTables->setAccessibleDescription(tr("Select the specific travel time table for the chosen backend"));
 		SC_D.ui.toolBarTTT->addWidget(SC_D.comboTTTables);
 		ttInterfaceChanged(SC_D.comboTTT->currentIndex());
 		connect(SC_D.comboTTTables, SIGNAL(currentIndexChanged(int)), this, SLOT(ttTableChanged(int)));
@@ -3121,6 +3444,8 @@ void PickerView::init() {
 
 	SC_D.spinDistance = new QDoubleSpinBox;
 	SC_D.spinDistance->setValue(15);
+	SC_D.spinDistance->setAccessibleName(tr("Station distance range"));
+	SC_D.spinDistance->setAccessibleDescription(tr("Set the maximum distance from earthquake for adding nearby stations"));
 
 	if ( SCScheme.unit.distanceInKM ) {
 		SC_D.spinDistance->setRange(0, 25000);
@@ -3244,6 +3569,25 @@ void PickerView::init() {
 	        this, SLOT(confirmPick()));
 	connect(SC_D.ui.actionDeletePick, SIGNAL(triggered(bool)),
 	        this, SLOT(deletePick()));
+	connect(SC_D.ui.actionAnnouncePickDetails, SIGNAL(triggered(bool)),
+	        this, SLOT(announceCurrentPickDetails()));
+
+	SC_D.audioSonification = new WaveformAudio(this);
+	connect(SC_D.ui.actionToggleAudioSonification, SIGNAL(triggered(bool)),
+	        this, SLOT(toggleAudioSonification()));
+	connect(SC_D.ui.actionPlayTraceAudio, SIGNAL(triggered(bool)),
+	        this, SLOT(playCurrentTraceAudio()));
+	connect(SC_D.ui.actionStopAudioPlayback, SIGNAL(triggered(bool)),
+	        this, SLOT(stopAudioPlayback()));
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionToggleAudioSonification);
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionPlayTraceAudio);
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionStopAudioPlayback);
+
+	SC_D.audioDebounceTimer = new QTimer(this);
+	SC_D.audioDebounceTimer->setSingleShot(true);
+	SC_D.audioDebounceTimer->setInterval(300);
+	connect(SC_D.audioDebounceTimer, &QTimer::timeout,
+	        this, &PickerView::playAudioAtCursor);
 
 	connect(SC_D.ui.actionRelocate, SIGNAL(triggered(bool)),
 	        this, SLOT(relocate()));
@@ -3983,6 +4327,53 @@ void PickerView::changeEvent(QEvent *e) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::keyPressEvent(QKeyEvent *event) {
+	// Handle Applications/Menu key for accessible context menus
+	if ( event->key() == Qt::Key_Menu || event->key() == Qt::Key_Context1 ) {
+		// Determine which context menu to show based on current focus/selection
+		RecordViewItem *item = SC_D.recordView->currentItem();
+		if ( item && item->widget() ) {
+			RecordWidget *widget = item->widget();
+
+			// Check if there's a current marker (pick/arrival) at cursor
+			PickerMarker *marker = static_cast<PickerMarker*>(widget->currentMarker());
+			if ( !marker ) {
+				marker = static_cast<PickerMarker*>(widget->marker(widget->cursorText()));
+			}
+
+			if ( marker && (marker->isPick() || marker->isArrival()) ) {
+				// Show record context menu for pick/arrival
+				// Position menu at center of widget for keyboard access
+				// Ensure zoom widget knows which marker we're showing
+				QPoint centerPos = SC_D.currentRecord->rect().center();
+				openRecordContextMenu(centerPos);
+				event->accept();
+				return;
+			} else if ( !widget->cursorText().isEmpty() ) {
+				// Has cursor but no marker - still show record context menu
+				QPoint centerPos = SC_D.currentRecord->rect().center();
+				openRecordContextMenu(centerPos);
+				event->accept();
+				return;
+			}
+		}
+
+		// No specific record context - don't show general context menu
+		// as it requires a valid origin and station context
+		announceToScreenReader(tr("No context menu available for current selection"));
+		event->accept();
+		return;
+	}
+
+	// Pass other key events to parent class
+	QMainWindow::keyPressEvent(event);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::onSelectedTime(Seiscomp::Core::Time time) {
 	//updatePhaseMarker(SC_D.currentRecord, time);
 	if ( SC_D.recordView->currentItem() ) {
@@ -4114,10 +4505,16 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 				}
 
 				widget->setCurrentMarker(marker);
+
+				// Announce pick creation for screen readers with full details
+				announcePickDetails(widget, time, marker->text(), false);
 			}
 			else {
 				declareArrival(reusedMarker, widget->cursorText(), false);
 				widget->setCurrentMarker(reusedMarker);
+
+				// Announce pick update for screen readers with full details
+				announcePickDetails(widget, time, widget->cursorText(), true);
 			}
 
 			widget->update();
@@ -5813,6 +6210,11 @@ bool PickerView::fillRawPicks() {
 		pickAdded = result || pickAdded;
 	}
 
+	// Announce summary of loaded picks for screen readers
+	if ( pickAdded && SC_D.picksInTime.size() > 0 ) {
+		announceToScreenReader(tr("Loaded %1 picks in time window").arg(SC_D.picksInTime.size()));
+	}
+
 	return pickAdded;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5887,6 +6289,32 @@ bool PickerView::addRawPick(Seiscomp::DataModel::Pick *pick) {
 	marker->setPick(pick);
 	marker->setVisible(CFG_LOAD_PICKS);
 	marker->update();
+
+	// Announce existing pick for screen readers when loading
+	// Only announce if we're in the current time window and picks are being loaded
+	if ( CFG_LOAD_PICKS && widget == SC_D.currentRecord ) {
+		QString phaseName = marker->text();
+		QString timeStr = QString::fromStdString(pick->time().value().toString("%H:%M:%S.%f"));
+		QString stationCode = item->label()->text(0);
+
+		// Compute SNR if data is available
+		double snr = computePickSNR(widget, pick->time().value());
+		QString quality = getPickQualityString(snr);
+
+		if ( snr > 0 ) {
+			// First announce basic pick info
+			announceToScreenReader(tr("Existing %1 pick at %2, %3").arg(phaseName).arg(stationCode).arg(timeStr));
+			// Then announce quality with a slight delay
+			QMetaObject::invokeMethod(this, "delayedQualityAnnouncement",
+			                          Qt::QueuedConnection,
+			                          Q_ARG(QString, tr("Quality %1, SNR %2").arg(quality).arg(snr, 0, 'f', 1)));
+		} else {
+			announceToScreenReader(tr("Existing %1 pick at %2, %3")
+				.arg(phaseName)
+				.arg(stationCode)
+				.arg(timeStr));
+		}
+	}
 
 	return true;
 }
@@ -6021,21 +6449,58 @@ void PickerView::setPickPolarity() {
 		old->parent()->setCurrentMarker(m);
 	}
 
+	QString polarityName;
 	if ( sender() == SC_D.ui.actionSetPolarityPositive ) {
 		m->setPolarity(PickPolarity(POSITIVE));
+		polarityName = tr("positive (up)");
 	}
 	else if ( sender() == SC_D.ui.actionSetPolarityNegative ) {
 		m->setPolarity(PickPolarity(NEGATIVE));
+		polarityName = tr("negative (down)");
 	}
 	else if ( sender() == SC_D.ui.actionSetPolarityUndecidable ) {
 		m->setPolarity(PickPolarity(UNDECIDABLE));
+		polarityName = tr("undecidable");
 	}
 	else if ( sender() == SC_D.ui.actionSetPolarityUnset ) {
 		m->setPolarity(Core::None);
+		polarityName = tr("unset");
+	}
+	else {
+		QAction *act = static_cast<QAction*>(sender());
+		if ( act ) {
+			int val = act->data().toInt();
+			switch ( val ) {
+				case DataModel::POSITIVE:
+					m->setPolarity(PickPolarity(DataModel::POSITIVE));
+					polarityName = tr("positive (up)");
+					break;
+				case DataModel::NEGATIVE:
+					m->setPolarity(PickPolarity(DataModel::NEGATIVE));
+					polarityName = tr("negative (down)");
+					break;
+				case DataModel::UNDECIDABLE:
+					m->setPolarity(PickPolarity(DataModel::UNDECIDABLE));
+					polarityName = tr("undecidable");
+					break;
+				default:
+					m->setPolarity(Core::None);
+					polarityName = tr("unset");
+					break;
+			}
+		}
+		else {
+			return;
+		}
 	}
 
 	SC_D.currentRecord->update();
 	SC_D.recordView->currentItem()->widget()->update();
+
+	// Announce polarity change for screen readers
+	QString phaseName = m->text();
+	QString timeStr = QString::fromStdString(m->correctedTime().toString("%H:%M:%S.%f"));
+	announceToScreenReader(tr("Set %1 phase polarity to %2 at %3").arg(phaseName).arg(polarityName).arg(timeStr));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6061,21 +6526,58 @@ void PickerView::setPickOnset() {
 		old->parent()->setCurrentMarker(m);
 	}
 
+	QString onsetName;
 	if ( sender() == SC_D.ui.actionSetPickOnsetEmergent ) {
 		m->setPickOnset(PickOnset(EMERGENT));
+		onsetName = tr("emergent");
 	}
 	else if ( sender() == SC_D.ui.actionSetPickOnsetImpulsive ) {
 		m->setPickOnset(PickOnset(IMPULSIVE));
+		onsetName = tr("impulsive");
 	}
 	else if ( sender() == SC_D.ui.actionSetPickOnsetQuestionable ) {
 		m->setPickOnset(PickOnset(QUESTIONABLE));
+		onsetName = tr("questionable");
 	}
 	else if ( sender() == SC_D.ui.actionSetPickOnsetUnset ) {
 		m->setPickOnset(Core::None);
+		onsetName = tr("unset");
+	}
+	else {
+		QAction *act = static_cast<QAction*>(sender());
+		if ( act ) {
+			int val = act->data().toInt();
+			switch ( val ) {
+				case DataModel::EMERGENT:
+					m->setPickOnset(PickOnset(DataModel::EMERGENT));
+					onsetName = tr("emergent");
+					break;
+				case DataModel::IMPULSIVE:
+					m->setPickOnset(PickOnset(DataModel::IMPULSIVE));
+					onsetName = tr("impulsive");
+					break;
+				case DataModel::QUESTIONABLE:
+					m->setPickOnset(PickOnset(DataModel::QUESTIONABLE));
+					onsetName = tr("questionable");
+					break;
+				default:
+					m->setPickOnset(Core::None);
+					onsetName = tr("unset");
+					break;
+			}
+		}
+		else {
+			return;
+		}
 	}
 
 	SC_D.currentRecord->update();
 	SC_D.recordView->currentItem()->widget()->update();
+
+	// Announce onset change for screen readers
+	QString phaseName = m->text();
+	QString timeStr = QString::fromStdString(m->correctedTime().toString("%H:%M:%S.%f"));
+	announceToScreenReader(tr("Set %1 phase onset to %2 at %3").arg(phaseName).arg(onsetName).arg(timeStr));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6137,10 +6639,17 @@ void PickerView::setPickUncertainty() {
 			old->parent()->setCurrentMarker(m);
 		}
 
-		if ( idx == -1 )
+		QString uncertaintyText;
+		if ( idx == -1 ) {
 			m->setUncertainty(-1,-1);
-		else
-			m->setUncertainty(SC_D.uncertainties[idx].first, SC_D.uncertainties[idx].second);
+			uncertaintyText = tr("unset");
+		}
+		else {
+			double lower = SC_D.uncertainties[idx].first;
+			double upper = SC_D.uncertainties[idx].second;
+			m->setUncertainty(lower, upper);
+			uncertaintyText = tr("-%1/+%2 seconds").arg(lower).arg(upper);
+		}
 
 		updateUncertaintyHandles(m);
 
@@ -6151,6 +6660,12 @@ void PickerView::setPickUncertainty() {
 
 		SC_D.currentRecord->update();
 		SC_D.recordView->currentItem()->widget()->update();
+
+		// Announce uncertainty change for screen readers
+		QString phaseName = m->text();
+		QString timeStr = QString::fromStdString(m->correctedTime().toString("%H:%M:%S.%f"));
+		announceToScreenReader(tr("Set %1 phase uncertainty to %2 at %3").arg(phaseName).arg(uncertaintyText).arg(timeStr));
+
 		return;
 	}
 }
@@ -6169,6 +6684,9 @@ void PickerView::openContextMenu(const QPoint &p) {
 		return;
 	}
 
+	// Announce menu opening for screen readers
+	announceToScreenReader(tr("Station context menu opened. Use arrow keys to navigate options."));
+	
 	QMenu menu(this);
 	int entries = 0;
 
@@ -6294,10 +6812,34 @@ void PickerView::openContextMenu(const QPoint &p) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::openRecordContextMenu(const QPoint &p) {
-	SC_D.currentRecord->setCurrentMarker(SC_D.currentRecord->hoveredMarker());
+	// Safety check - ensure currentRecord is valid
+	if ( !SC_D.currentRecord ) {
+		SEISCOMP_WARNING("openRecordContextMenu: SC_D.currentRecord is null");
+		return;
+	}
+	
+	// When triggered by mouse, use the hovered marker
+	// When triggered by keyboard (no hover), find marker by time at cursor
+	if ( SC_D.currentRecord->hoveredMarker() ) {
+		SC_D.currentRecord->setCurrentMarker(SC_D.currentRecord->hoveredMarker());
+	}
+	else {
+		PickerMarker *found = nullptr;
+		if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+			found = static_cast<PickerMarker*>(
+				SC_D.currentRecord->marker(SC_D.currentRecord->cursorText())
+			);
+		}
+		if ( !found ) {
+			found = static_cast<PickerMarker*>(
+				SC_D.currentRecord->nearestMarker(SC_D.currentRecord->cursorPos(), 30)
+			);
+		}
+		SC_D.currentRecord->setCurrentMarker(found);
+	}
 	PickerMarker *m = static_cast<PickerMarker*>(SC_D.currentRecord->currentMarker());
 
-	QMenu menu;
+	QMenu menu(this);
 
 	QAction *defineUncertainties = nullptr;
 	QAction *dropDirectivity = nullptr;
@@ -6318,8 +6860,23 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 	if ( !markerMode && !SC_D.currentRecord->cursorText().isEmpty() ) {
 		return;
 	}
+	
+	// If neither marker mode nor cursor text, nothing to show
+	if ( !markerMode && SC_D.currentRecord->cursorText().isEmpty() ) {
+		SEISCOMP_WARNING("openRecordContextMenu: no marker and no cursor text");
+		return;
+	}
 
-	if ( markerMode ) {
+	// Announce menu opening for screen readers
+	if ( markerMode && m ) {
+		QString phaseName = m->text();
+		QString menuType = m->isArrival() ? tr("arrival") : tr("pick");
+		announceToScreenReader(tr("%1 %2 context menu opened. Use arrow keys to navigate options.").arg(menuType).arg(phaseName));
+	} else {
+		announceToScreenReader(tr("Pick context menu opened. Use arrow keys to navigate options."));
+	}
+
+	if ( markerMode && m ) {
 		// Save uncertainties to reset them again if changed
 		// during preview
 		SC_D.tmpLowerUncertainty = m->lowerUncertainty();
@@ -6333,10 +6890,35 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			QMenu *menuOnset = menu.addMenu(tr("Onset"));
 			QMenu *menuUncertainty = menu.addMenu(tr("Uncertainty"));
 
+			QAction *polPositive = menuPolarity->addAction(tr("positive"));
+			polPositive->setData(static_cast<int>(DataModel::POSITIVE));
+			connect(polPositive, SIGNAL(triggered(bool)), this, SLOT(setPickPolarity()));
+			QAction *polNegative = menuPolarity->addAction(tr("negative"));
+			polNegative->setData(static_cast<int>(DataModel::NEGATIVE));
+			connect(polNegative, SIGNAL(triggered(bool)), this, SLOT(setPickPolarity()));
+			QAction *polUndecidable = menuPolarity->addAction(tr("undecidable"));
+			polUndecidable->setData(static_cast<int>(DataModel::UNDECIDABLE));
+			connect(polUndecidable, SIGNAL(triggered(bool)), this, SLOT(setPickPolarity()));
+			QAction *polUnset = menuPolarity->addAction(tr("unset"));
+			polUnset->setData(-1);
+			connect(polUnset, SIGNAL(triggered(bool)), this, SLOT(setPickPolarity()));
+
+			QAction *onsEmergent = menuOnset->addAction(tr("emergent"));
+			onsEmergent->setData(static_cast<int>(DataModel::EMERGENT));
+			connect(onsEmergent, SIGNAL(triggered(bool)), this, SLOT(setPickOnset()));
+			QAction *onsImpulsive = menuOnset->addAction(tr("impulsive"));
+			onsImpulsive->setData(static_cast<int>(DataModel::IMPULSIVE));
+			connect(onsImpulsive, SIGNAL(triggered(bool)), this, SLOT(setPickOnset()));
+			QAction *onsQuestionable = menuOnset->addAction(tr("questionable"));
+			onsQuestionable->setData(static_cast<int>(DataModel::QUESTIONABLE));
+			connect(onsQuestionable, SIGNAL(triggered(bool)), this, SLOT(setPickOnset()));
+			QAction *onsUnset = menuOnset->addAction(tr("unset"));
+			onsUnset->setData(-1);
+			connect(onsUnset, SIGNAL(triggered(bool)), this, SLOT(setPickOnset()));
+
 			if ( SC_D.actionsUncertainty ) {
 				connect(menuUncertainty, SIGNAL(hovered(QAction*)),
 				        this, SLOT(previewUncertainty(QAction*)));
-
 				foreach ( QAction *action, SC_D.actionsUncertainty->actions() ) {
 					menuUncertainty->addAction(action);
 				}
@@ -6344,16 +6926,6 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			}
 
 			defineUncertainties = menuUncertainty->addAction(tr("Define..."));
-
-			menuPolarity->addAction(SC_D.ui.actionSetPolarityPositive);
-			menuPolarity->addAction(SC_D.ui.actionSetPolarityNegative);
-			menuPolarity->addAction(SC_D.ui.actionSetPolarityUndecidable);
-			menuPolarity->addAction(SC_D.ui.actionSetPolarityUnset);
-
-			menuOnset->addAction(SC_D.ui.actionSetPickOnsetEmergent);
-			menuOnset->addAction(SC_D.ui.actionSetPickOnsetImpulsive);
-			menuOnset->addAction(SC_D.ui.actionSetPickOnsetQuestionable);
-			menuOnset->addAction(SC_D.ui.actionSetPickOnsetUnset);
 		}
 
 		bool needSeparator = !menu.isEmpty();
@@ -6398,7 +6970,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 	QAction *res = menu.exec(SC_D.currentRecord->mapToGlobal(p));
 
 	if ( !res ) {
-		if ( markerMode ) {
+		if ( markerMode && m ) {
 			m->setUncertainty(SC_D.tmpLowerUncertainty, SC_D.tmpUpperUncertainty);
 			m->update();
 			SC_D.currentRecord->update();
@@ -6597,6 +7169,90 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::currentMarkerChanged(Seiscomp::Gui::RecordMarker *m) {
 	updateUncertaintyHandles(m);
+
+	// Note: Screen reader announcements for marker selection are now handled
+	// by the specific navigation functions (gotoNextMarker, gotoPreviousMarker,
+	// setCursorPos) to avoid duplicate announcements and to include amplitude/SNR.
+	// This function is called for all marker changes, including programmatic ones
+	// where we don't want to announce.
+	
+	/*
+	// Announce marker selection for screen readers
+	if ( m ) {
+		PickerMarker *pickerMarker = static_cast<PickerMarker*>(m);
+		QString phaseName = pickerMarker->text();
+		QString timeStr = QString::fromStdString(m->correctedTime().toString("%Y-%m-%d %H:%M:%S.%f"));
+		QString markerType;
+
+		if ( pickerMarker->isArrival() ) {
+			if ( pickerMarker->pick() ) {
+				markerType = tr("pick");
+			} else {
+				markerType = tr("arrival");
+			}
+		} else if ( pickerMarker->isPick() ) {
+			markerType = tr("manual pick");
+		} else if ( pickerMarker->type() == PickerMarker::Theoretical ) {
+			markerType = tr("theoretical arrival");
+		} else {
+			markerType = tr("marker");
+		}
+
+		// Build detailed announcement with pick attributes if available
+		QString announcement = tr("Selected %1 %2 at %3").arg(phaseName).arg(markerType).arg(timeStr);
+
+		// Add polarity if set
+		if ( pickerMarker->polarity() ) {
+			QString polStr;
+			switch ( *pickerMarker->polarity() ) {
+				case DataModel::POSITIVE:
+					polStr = tr("positive polarity");
+					break;
+				case DataModel::NEGATIVE:
+					polStr = tr("negative polarity");
+					break;
+				case DataModel::UNDECIDABLE:
+					polStr = tr("undecidable polarity");
+					break;
+				default:
+					polStr = tr("unknown polarity");
+					break;
+			}
+			announcement += tr(", %1").arg(polStr);
+		}
+
+		// Add onset if set
+		if ( pickerMarker->onset() ) {
+			QString onsetStr;
+			switch ( *pickerMarker->onset() ) {
+				case DataModel::EMERGENT:
+					onsetStr = tr("emergent onset");
+					break;
+				case DataModel::IMPULSIVE:
+					onsetStr = tr("impulsive onset");
+					break;
+				case DataModel::QUESTIONABLE:
+					onsetStr = tr("questionable onset");
+					break;
+				default:
+					onsetStr = tr("unknown onset");
+					break;
+			}
+			announcement += tr(", %1").arg(onsetStr);
+		}
+
+		// Add uncertainty if set
+		if ( pickerMarker->hasUncertainty() ) {
+			double lower = pickerMarker->lowerUncertainty();
+			double upper = pickerMarker->upperUncertainty();
+			if ( lower >= 0 && upper >= 0 ) {
+				announcement += tr(", uncertainty -%1/+%2 seconds").arg(lower).arg(upper);
+			}
+		}
+
+		announceToScreenReader(announcement);
+	}
+	*/
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6791,6 +7447,10 @@ RecordViewItem* PickerView::addRawStream(const DataModel::SensorLocation *loc,
 	item->label()->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(item->label(), SIGNAL(customContextMenuRequested(QPoint)),
 	        this, SLOT(openContextMenu(QPoint)));
+
+	// Set accessible name for screen readers
+	item->label()->setAccessibleName(tr("Station %1").arg(text.c_str()));
+	item->label()->setAccessibleDescription(tr("Station list item for %1. Double-click to enable/disable. Right-click for menu.").arg(text.c_str()));
 
 	if ( SC_D.currentRecord )
 		item->widget()->setCursorText(SC_D.currentRecord->cursorText());
@@ -7156,9 +7816,12 @@ void PickerView::updateSubCursor(RecordWidget* w, int s) {
 	SC_D.recordView->currentItem()->widget()->blockSignals(false);
 
 	announceAmplitude();
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		SC_D.audioDebounceTimer->start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -7205,6 +7868,8 @@ void PickerView::applyThemeColors() {
 void PickerView::announceAmplitude() {
 	bool gotAmplitude = false;
 	double amplitude;
+	double snr = -1.0;
+	QString quality = "unknown";
 
 	auto seq =
 		SC_D.currentRecord->isFilteringEnabled()
@@ -7227,6 +7892,15 @@ void PickerView::announceAmplitude() {
 							amplitude *= *SC_D.currentRecord->recordScale(SC_D.currentSlot);
 						}
 						gotAmplitude = true;
+						
+						// Compute SNR for better context
+						snr = computePickSNR(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
+						if ( snr > 0 ) {
+							if ( snr > 10 ) quality = "excellent";
+							else if ( snr > 5 ) quality = "good";
+							else if ( snr > 2 ) quality = "fair";
+							else quality = "poor";
+						}
 					}
 				}
 				else {
@@ -7238,6 +7912,15 @@ void PickerView::announceAmplitude() {
 								amplitude *= *SC_D.currentRecord->recordScale(SC_D.currentSlot);
 							}
 							gotAmplitude = true;
+							
+							// Compute SNR for better context
+							snr = computePickSNR(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
+							if ( snr > 0 ) {
+								if ( snr > 10 ) quality = "excellent";
+								else if ( snr > 5 ) quality = "good";
+								else if ( snr > 2 ) quality = "fair";
+								else quality = "poor";
+							}
 						}
 					}
 				}
@@ -7255,6 +7938,100 @@ void PickerView::announceAmplitude() {
 		auto level = width != 0.0 ? (amplitude - range.first) / width : 0.5;
 		SC_D.ui.progressAmpLevel->setEnabled(true);
 		SC_D.ui.progressAmpLevel->setValue(static_cast<int>(100.0 * level));
+		
+		// Announce amplitude with SNR for screen reader accessibility
+		QString timeStr = QString::fromStdString(SC_D.currentRecord->cursorPos().toString("%H:%M:%S.%f"));
+		if ( snr > 0 ) {
+			announceToScreenReader(tr("Amplitude %1, SNR %2, quality %3 at %4")
+				.arg(amplitude, 0, 'e', 2)
+				.arg(snr, 0, 'f', 1)
+				.arg(quality)
+				.arg(timeStr));
+		} else {
+			announceToScreenReader(tr("Amplitude %1 at %2")
+				.arg(amplitude, 0, 'e', 2)
+				.arg(timeStr));
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::announcePickDetails(RecordWidget* widget, const Core::Time& pickTime, 
+                                      const QString& phaseName, bool isUpdate) {
+	if ( !widget ) return;
+	
+	QString timeStr = QString::fromStdString(pickTime.toString("%H:%M:%S.%f"));
+	QString action = isUpdate ? tr("Updated") : tr("Created");
+	
+	// Compute amplitude and SNR for the pick
+	double amplitude = 0.0, snr = -1.0;
+	QString quality = "unknown";
+	
+	bool success = computePickAmplitudeAndSNR(widget, pickTime, amplitude, snr, quality);
+	
+	if ( success ) {
+		// Build comprehensive announcement with all available information
+		QString announcement;
+
+		if ( snr > 0 ) {
+			// Full detail with SNR
+			announcement = tr("%1 %2 pick at %3, amplitude %4, SNR %5, quality %6")
+				.arg(action)
+				.arg(phaseName)
+				.arg(timeStr)
+				.arg(amplitude, 0, 'e', 2)
+				.arg(snr, 0, 'f', 1)
+				.arg(quality);
+		} else {
+			// Basic announcement without SNR
+			announcement = tr("%1 %2 pick at %3, amplitude %4")
+				.arg(action)
+				.arg(phaseName)
+				.arg(timeStr)
+				.arg(amplitude, 0, 'e', 2);
+		}
+		
+		// Add station information if available
+		RecordViewItem* item = SC_D.recordView->currentItem();
+		if ( item ) {
+			QString stationCode = item->label()->text(0);
+			QString channelCode = item->label()->text(1);
+			
+			if ( !stationCode.isEmpty() ) {
+				announcement += tr(", station %1").arg(stationCode);
+			}
+			if ( !channelCode.isEmpty() ) {
+				announcement += tr(", channel %1").arg(channelCode);
+			}
+			
+			// Add distance if available
+			QString distance = item->label()->text(ITEM_DISTANCE_INDEX);
+			if ( !distance.isEmpty() && distance != "-" ) {
+				announcement += tr(", distance %1").arg(distance);
+			}
+		}
+		
+		announceToScreenReader(announcement);
+	} else {
+		// Fallback announcement with minimal information
+		QString announcement = tr("%1 %2 pick at %3")
+			.arg(action)
+			.arg(phaseName)
+			.arg(timeStr);
+		
+		RecordViewItem* item = SC_D.recordView->currentItem();
+		if ( item ) {
+			QString stationCode = item->label()->text(0);
+			if ( !stationCode.isEmpty() ) {
+				announcement += tr(" at station %1").arg(stationCode);
+			}
+		}
+		
+		announceToScreenReader(announcement);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -7375,6 +8152,77 @@ void PickerView::setCursorPos(const Seiscomp::Core::Time& t, bool always) {
 
 	if ( !always && SC_D.currentRecord->cursorText() == "" ) {
 		return;
+	}
+
+	// Announce cursor time change for screen readers when in picking mode
+	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
+		// Throttle announcements to avoid spam during rapid scrolling
+		// but allow reasonable feedback for arrow key navigation
+		static Core::Time lastAnnouncementTime;
+		static int announcementCount = 0;
+
+		double timeSinceLastAnnouncement = (t - lastAnnouncementTime).length();
+
+		// For arrow key scrolling, announce every 0.3 seconds or on first movement
+		// This provides good feedback without overwhelming the user
+		bool shouldAnnounce = (timeSinceLastAnnouncement > 0.3) || (announcementCount == 0);
+
+		if ( shouldAnnounce ) {
+			QString timeStr = QString::fromStdString(t.toString("%H:%M:%S.%f"));
+			QString phaseMode = SC_D.currentRecord->cursorText();
+
+			// Check if there's a pick at this time on the current station trace
+			// Note: We check the station list widget, not the zoom widget
+			PickerMarker* marker = nullptr;
+			if ( SC_D.recordView->currentItem() ) {
+				RecordWidget* stationWidget = SC_D.recordView->currentItem()->widget();
+				RecordMarker* markerBase = stationWidget->marker(phaseMode, true);
+				if ( markerBase ) {
+					marker = static_cast<PickerMarker*>(markerBase);
+				}
+			}
+
+			if ( marker ) {
+				// Announce when cursor is on a pick with amplitude and SNR
+				QString timeStr = QString::fromStdString(t.toString("%H:%M:%S.%f"));
+				QString phaseMode = SC_D.currentRecord->cursorText();
+				
+				// Try to compute amplitude and SNR from current record
+				double amplitude = 0.0, snr = -1.0;
+				QString quality = "unknown";
+				if ( computePickAmplitudeAndSNR(SC_D.currentRecord, marker->time(), amplitude, snr, quality) ) {
+					if ( snr > 0 ) {
+						announceToScreenReader(tr("%1 pick at %2, amplitude %3, quality %4, SNR %5")
+							.arg(phaseMode)
+							.arg(timeStr)
+							.arg(amplitude, 0, 'e', 2)
+							.arg(quality)
+							.arg(snr, 0, 'f', 1));
+					} else {
+						announceToScreenReader(tr("%1 pick at %2, amplitude %3")
+							.arg(phaseMode)
+							.arg(timeStr)
+							.arg(amplitude, 0, 'e', 2));
+					}
+				} else {
+					announceToScreenReader(tr("%1 pick at %2").arg(phaseMode).arg(timeStr));
+				}
+			} else {
+				// Announce cursor position periodically during navigation
+				// Announce every 3rd movement for better feedback
+				if ( announcementCount % 3 == 0 ) {
+					announceToScreenReader(tr("%1 mode, %2").arg(phaseMode).arg(timeStr));
+				}
+			}
+
+			lastAnnouncementTime = t;
+			++announcementCount;
+
+			// Reset counter after 30 announcements to allow fresh announcements
+			if ( announcementCount > 30 ) {
+				announcementCount = 0;
+			}
+		}
 	}
 
 	double offset = 0;
@@ -7606,9 +8454,12 @@ void PickerView::move(double offset) {
 
 	SC_D.recordView->move(offset);
 	setTimeRange(tmin, tmax);
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		SC_D.audioDebounceTimer->start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -7771,6 +8622,75 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 		streamID.locationCode().c_str(),
 		cha.c_str())
 	);
+
+	// Announce station change to screen readers
+	QString distanceText = SC_D.ui.labelDistance->text();
+	QString azimuthText = SC_D.ui.labelAzimuth->text();
+	int rowIndex = -1;
+	int rowCount = SC_D.recordView->rowCount();
+	for ( int r = 0; r < rowCount; ++r ) {
+		if ( SC_D.recordView->itemAt(r) == item ) {
+			rowIndex = r;
+			break;
+		}
+	}
+	announceToScreenReader(tr("Station %1 of %2: %3, channel %4, distance %5, azimuth %6")
+	                       .arg(rowIndex + 1)
+	                       .arg(rowCount)
+	                       .arg(streamID.stationCode().c_str())
+	                       .arg(cha.c_str())
+	                       .arg(distanceText)
+	                       .arg(azimuthText));
+
+	// Announce existing picks on this station for screen readers
+	int pickCount = 0;
+	QStringList pickPhases;
+	for ( int m = 0; m < item->widget()->markerCount(); ++m ) {
+		PickerMarker* marker = static_cast<PickerMarker*>(item->widget()->marker(m));
+		if ( marker->isPick() || marker->isArrival() ) {
+			++pickCount;
+			if ( !pickPhases.contains(marker->text()) ) {
+				pickPhases.append(marker->text());
+			}
+		}
+	}
+	if ( pickCount > 0 ) {
+		// Concise format: "2 picks: P, S. Latest P at 10:30:45.2, quality good, SNR 5.3"
+		QString pickSummary = tr("%1 picks: ").arg(pickCount);
+		pickSummary += pickPhases.join(", ");
+
+		// Get the most recent pick time for announcement
+		Core::Time latestPickTime;
+		PickerMarker* latestMarker = nullptr;
+		for ( int m = 0; m < item->widget()->markerCount(); ++m ) {
+			PickerMarker* marker = static_cast<PickerMarker*>(item->widget()->marker(m));
+			if ( (marker->isPick() || marker->isArrival()) &&
+			     (latestMarker == nullptr || marker->time() > latestMarker->time()) ) {
+				latestMarker = marker;
+			}
+		}
+		if ( latestMarker ) {
+			// Compute SNR for the latest pick
+			double snr = computePickSNR(item->widget(), latestMarker->time());
+			QString quality = getPickQualityString(snr);
+
+			if ( snr > 0 ) {
+				// First announce basic pick summary
+				announceToScreenReader(tr("%1. Latest %2 at %3").arg(pickSummary).arg(latestMarker->text()).arg(QString::fromStdString(latestMarker->time().toString("%H:%M:%S.%f"))));
+				// Then announce quality with a slight delay
+				QMetaObject::invokeMethod(this, "delayedQualityAnnouncement",
+				                          Qt::QueuedConnection,
+				                          Q_ARG(QString, tr("Quality %1, SNR %2").arg(quality).arg(snr, 0, 'f', 1)));
+			} else {
+				announceToScreenReader(tr("%1. Latest %2 at %3")
+					.arg(pickSummary)
+					.arg(latestMarker->text())
+					.arg(QString::fromStdString(latestMarker->time().toString("%H:%M:%S.%f"))));
+			}
+		} else {
+			announceToScreenReader(pickSummary);
+		}
+	}
 
 	PickerRecordLabel *label = static_cast<PickerRecordLabel*>(item->label());
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setTraces(label->data.traces);
@@ -7989,6 +8909,8 @@ void PickerView::scaleVisibleAmplitudes() {
 	SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 	SC_D.currentAmplScale = 1;
 	SC_D.currentRecord->setAmplScale(0.0);
+
+	announceToScreenReader(tr("Amplitudes maximized to viewport"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -8101,6 +9023,8 @@ void PickerView::sortAlphabetically() {
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted alphabetically"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8115,6 +9039,8 @@ void PickerView::sortByDistance() {
 	SC_D.ui.actionSortByDistance->setChecked(true);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted by distance"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8129,6 +9055,8 @@ void PickerView::sortByAzimuth() {
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(true);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted by azimuth"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8137,12 +9065,14 @@ void PickerView::sortByAzimuth() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::sortByResidual() {
-	SC_D.recordView->sortByValue(ITEM_RESIDUAL_INDEX);
+	SC_D.recordView->sortByValue(ITEM_RESIDUAL_INDEX, ITEM_PRIORITY_INDEX);
 
 	SC_D.ui.actionSortAlphabetically->setChecked(false);
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(true);
+
+	announceToScreenReader(tr("Sorted by residual"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8168,6 +9098,8 @@ void PickerView::showAllComponents(bool showAll) {
 	if ( SC_D.currentRecord ) {
 		SC_D.currentRecord->setDrawMode(showAll ? RecordWidget::InRows : RecordWidget::Single);
 	}
+
+	announceToScreenReader(showAll ? tr("Showing all components") : tr("Showing single component"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8213,6 +9145,8 @@ void PickerView::alignOnOriginTime() {
 	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
 	SC_D.ui.actionAlignOnPArrival->setChecked(false);
 	SC_D.ui.actionAlignOnSArrival->setChecked(false);
+
+	announceToScreenReader(tr("Aligned on origin time"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8222,6 +9156,7 @@ void PickerView::alignOnOriginTime() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnPArrivals() {
 	alignOnPhase("P", false);
+	announceToScreenReader(tr("Aligned on P arrivals"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8231,6 +9166,7 @@ void PickerView::alignOnPArrivals() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnSArrivals() {
 	alignOnPhase("S", false);
+	announceToScreenReader(tr("Aligned on S arrivals"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8238,8 +9174,16 @@ void PickerView::alignOnSArrivals() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::pickP(bool) {
+void PickerView::pickP(bool checked) {
 	setCursorText("P");
+	// Update mode indicator for accessibility
+	if (checked) {
+		SC_D.modeLabel->setText(tr("Mode: Pick P phase"));
+		announceToScreenReader(tr("P phase picking mode enabled. Click on waveform or press Space to set pick."));
+	} else {
+		SC_D.modeLabel->setText(tr("Mode: View"));
+		announceToScreenReader(tr("P phase picking mode disabled. Now in view mode."));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8257,6 +9201,10 @@ void PickerView::pickNone(bool) {
 
 	if ( SC_D.recordView->currentItem() )
 		SC_D.recordView->currentItem()->widget()->setCurrentMarker(nullptr);
+
+	// Update mode indicator for accessibility
+	SC_D.modeLabel->setText(tr("Mode: View"));
+	announceToScreenReader(tr("Picking mode disabled. Now in view mode."));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8264,8 +9212,16 @@ void PickerView::pickNone(bool) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void PickerView::pickS(bool) {
+void PickerView::pickS(bool checked) {
 	setCursorText("S");
+	// Update mode indicator for accessibility
+	if (checked) {
+		SC_D.modeLabel->setText(tr("Mode: Pick S phase"));
+		announceToScreenReader(tr("S phase picking mode enabled. Click on waveform or press Space to set pick."));
+	} else {
+		SC_D.modeLabel->setText(tr("Mode: View"));
+		announceToScreenReader(tr("S phase picking mode disabled. Now in view mode."));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8279,18 +9235,14 @@ void PickerView::scaleAmplUp() {
 	auto value = (scale == 0 ? 1.0 : scale) * SC_D.recordView->zoomFactor();
 	if ( value > 1000 ) value = 1000;
 	if ( /*value < 1*/true ) {
-		SC_D.currentRecord->setAmplScale(value);
+	SC_D.currentRecord->setAmplScale(value);
 		SC_D.currentAmplScale = 1;
 	}
-	else {
-		SC_D.currentRecord->setAmplScale(1);
-		SC_D.currentAmplScale = value;
-	}
 
+	announceToScreenReader(tr("Amplitude increased"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -8304,7 +9256,7 @@ void PickerView::scaleAmplDown() {
 
 	//SC_D.currentRecord->setAmplScale(value);
 	if ( /*value < 1*/true ) {
-		SC_D.currentRecord->setAmplScale(value);
+	SC_D.currentRecord->setAmplScale(value);
 		SC_D.currentAmplScale = 1;
 	}
 	else {
@@ -8312,10 +9264,10 @@ void PickerView::scaleAmplDown() {
 		SC_D.currentAmplScale = value;
 	}
 
+	announceToScreenReader(tr("Amplitude decreased"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -8325,6 +9277,7 @@ void PickerView::scaleReset() {
 	SC_D.currentAmplScale = 1.0;
 	zoom(0.0);
 
+	announceToScreenReader(tr("Scale reset"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -8378,6 +9331,12 @@ void PickerView::zoom(float factor) {
 
 	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
 	setTimeRange(tmin, tmax);
+
+	int zoomLevel = static_cast<int>(SC_D.zoom);
+	if ( factor > 1.0 )
+		announceToScreenReader(tr("Zoom in, level %1").arg(zoomLevel));
+	else
+		announceToScreenReader(tr("Zoom out, level %1").arg(zoomLevel));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8653,6 +9612,54 @@ void PickerView::gotoNextMarker() {
 		SC_D.centerSelection = oldCenter;
 
 		ensureVisibility(m->correctedTime(), 5);
+
+		// Announce marker navigation for screen readers
+		// First announce pick info if it's a pick/arrival, then navigation
+		PickerMarker *pickerMarker = static_cast<PickerMarker*>(m);
+		QString phaseName = pickerMarker->text();
+		QString timeStr = QString::fromStdString(m->correctedTime().toString("%H:%M:%S.%f"));
+		QString markerType;
+
+		if ( pickerMarker->isArrival() ) {
+			markerType = pickerMarker->pick() ? tr("pick") : tr("arrival");
+		} else if ( pickerMarker->isPick() ) {
+			markerType = tr("manual pick");
+		} else if ( pickerMarker->type() == PickerMarker::Theoretical ) {
+			markerType = tr("theoretical arrival");
+		} else {
+			markerType = tr("marker");
+		}
+
+		// For picks and arrivals, compute and announce pick info first, then navigation
+		if ( pickerMarker->isArrival() || pickerMarker->isPick() ) {
+			// Try to compute amplitude and SNR from current record
+			double amplitude = 0.0, snr = -1.0;
+			QString quality = "unknown";
+			
+			// First announce pick info with amplitude/SNR
+			if ( computePickAmplitudeAndSNR(SC_D.currentRecord, m->correctedTime(), amplitude, snr, quality) ) {
+				if ( snr > 0 ) {
+					announceToScreenReader(tr("Picked %1 at %2, amplitude %3, SNR %4, quality %5")
+						.arg(phaseName)
+						.arg(timeStr)
+						.arg(amplitude, 0, 'e', 2)
+						.arg(snr, 0, 'f', 1)
+						.arg(quality));
+				} else {
+					announceToScreenReader(tr("Picked %1 at %2, amplitude %3")
+						.arg(phaseName)
+						.arg(timeStr)
+						.arg(amplitude, 0, 'e', 2));
+				}
+			}
+			
+			// Then announce navigation context
+			announceToScreenReader(tr("Navigated to %1 %2 at %3").arg(phaseName).arg(markerType).arg(timeStr));
+		} else {
+			announceToScreenReader(tr("Navigated to %1 %2 at %3").arg(phaseName).arg(markerType).arg(timeStr));
+		}
+	} else {
+		announceToScreenReader(tr("No more %1 markers on this trace").arg(active ? tr("phase") : tr("marker")));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -8674,7 +9681,143 @@ void PickerView::gotoPreviousMarker() {
 		SC_D.centerSelection = oldCenter;
 
 		ensureVisibility(m->correctedTime(), 5);
+
+		// Announce marker navigation for screen readers
+		// First announce pick info if it's a pick/arrival, then navigation
+		PickerMarker *pickerMarker = static_cast<PickerMarker*>(m);
+		QString phaseName = pickerMarker->text();
+		QString timeStr = QString::fromStdString(m->correctedTime().toString("%H:%M:%S.%f"));
+		QString markerType;
+
+		if ( pickerMarker->isArrival() ) {
+			markerType = pickerMarker->pick() ? tr("pick") : tr("arrival");
+		} else if ( pickerMarker->isPick() ) {
+			markerType = tr("manual pick");
+		} else if ( pickerMarker->type() == PickerMarker::Theoretical ) {
+			markerType = tr("theoretical arrival");
+		} else {
+			markerType = tr("marker");
+		}
+
+		// For picks and arrivals, compute and announce pick info first, then navigation
+		if ( pickerMarker->isArrival() || pickerMarker->isPick() ) {
+			// Try to compute amplitude and SNR from current record
+			double amplitude = 0.0, snr = -1.0;
+			QString quality = "unknown";
+			
+			// First announce pick info with amplitude/SNR
+			if ( computePickAmplitudeAndSNR(SC_D.currentRecord, m->correctedTime(), amplitude, snr, quality) ) {
+				if ( snr > 0 ) {
+					announceToScreenReader(tr("Picked %1 at %2, amplitude %3, SNR %4, quality %5")
+						.arg(phaseName)
+						.arg(timeStr)
+						.arg(amplitude, 0, 'e', 2)
+						.arg(snr, 0, 'f', 1)
+						.arg(quality));
+				} else {
+					announceToScreenReader(tr("Picked %1 at %2, amplitude %3")
+						.arg(phaseName)
+						.arg(timeStr)
+						.arg(amplitude, 0, 'e', 2));
+				}
+			}
+			
+			// Then announce navigation context
+			announceToScreenReader(tr("Navigated to %1 %2 at %3").arg(phaseName).arg(markerType).arg(timeStr));
+		} else {
+			announceToScreenReader(tr("Navigated to %1 %2 at %3").arg(phaseName).arg(markerType).arg(timeStr));
+		}
+	} else {
+		announceToScreenReader(tr("No previous %1 markers on this trace").arg(active ? tr("phase") : tr("marker")));
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::announceToScreenReader(const QString &message) {
+	// Announce message to screen readers using Qt accessibility APIs
+	// This provides feedback for Orca and other screen readers
+
+	// Method 1: Status bar message (for debugging and visual feedback)
+	statusBar()->showMessage(message, 5000);
+
+	// Always log for debugging
+	SEISCOMP_DEBUG("Screen reader announcement: %s", message.toStdString().c_str());
+	
+	// Check accessibility status
+	bool accessibilityActive = QAccessible::isActive();
+	SEISCOMP_DEBUG("Accessibility active: %s", accessibilityActive ? "yes" : "no");
+
+	// Method 2: Use QAccessibleAnnouncementEvent (Qt 6.8+) or fallback for older Qt
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	// Qt 6.8+ has proper announcement support
+	// Send the announcement regardless of isActive() state
+	{
+		QAccessibleAnnouncementEvent event(SC_D.ui.centralwidget, message);
+		
+		// Use appropriate politeness based on message content
+		// Assertive for critical pick events, Polite for cursor/position updates
+		if ( message.contains("Created") || message.contains("Updated") || 
+		     message.contains("Deleted") || message.contains("phase picking mode") ||
+		     message.contains("Quality") || message.contains("SNR") ||
+		     message.contains("pick at") ) {
+			// Critical events - announce immediately
+			event.setPoliteness(QAccessible::AnnouncementPoliteness::Assertive);
+			SEISCOMP_DEBUG("Sending ASSERTIVE announcement");
+		} else {
+			// Normal updates - announce at natural break
+			event.setPoliteness(QAccessible::AnnouncementPoliteness::Polite);
+			SEISCOMP_DEBUG("Sending POLITE announcement");
+		}
+		
+		// Ensure the widget has accessibility interface
+		QAccessibleInterface *iface = QAccessible::queryAccessibleInterface(SC_D.ui.centralwidget);
+		if ( iface ) {
+			SEISCOMP_DEBUG("Widget has accessible interface: %s", iface->text(QAccessible::Name).toStdString().c_str());
+		} else {
+			SEISCOMP_DEBUG("Widget does NOT have accessible interface");
+		}
+		
+		QAccessible::updateAccessibility(&event);
+		SEISCOMP_DEBUG("Accessibility announcement sent (Qt6.8+ QAccessibleAnnouncementEvent)");
+	}
+	
+	// Also try sending via QAccessible::Announcement event type directly
+	{
+		QAccessibleEvent directEvent(SC_D.ui.centralwidget, QAccessible::Announcement);
+		QAccessible::updateAccessibility(&directEvent);
+		SEISCOMP_DEBUG("Sent direct QAccessible::Announcement event");
+	}
+#else
+	// Fallback for Qt 5.x - 6.7
+	if ( accessibilityActive ) {
+		// Create a text inserted event - this is what Orca listens for
+		QAccessibleTextInsertEvent event(SC_D.ui.centralwidget, 0, message);
+		QAccessible::updateAccessibility(&event);
+
+		// Also try alert event
+		QAccessibleEvent alertEvent(SC_D.ui.centralwidget, QAccessible::Alert);
+		QAccessible::updateAccessibility(&alertEvent);
+		
+		SEISCOMP_DEBUG("Accessibility announcement sent (Qt5-6.7 fallback)");
+	} else {
+		SEISCOMP_DEBUG("Accessibility not active, announcement skipped");
+	}
+#endif
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::delayedQualityAnnouncement(const QString &message) {
+	// Use Qt's singleShot to delay the announcement by 100ms
+	// This ensures Orca has time to process the previous announcement
+	QMetaObject::invokeMethod(this, "announceToScreenReader",
+	                          Qt::QueuedConnection,
+	                          Q_ARG(QString, message));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8914,6 +10057,8 @@ void PickerView::setDefaultDisplay() {
 	alignOnOriginTime();
 	selectFirstVisibleItem(SC_D.recordView);
 	scaleReset();
+
+	announceToScreenReader(tr("Default view restored"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9696,6 +10841,8 @@ void PickerView::resetPick() {
 
 	item->widget()->update();
 	SC_D.currentRecord->update();
+
+	announceToScreenReader(tr("Pick reset"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9714,10 +10861,16 @@ void PickerView::deletePick() {
 					if ( old ) old->setEnabled(true);
 				}
 
-				if ( m->isMovable() || !SC_D.loadedPicks )
+				QString phaseName = m->text();
+				QString stationCode = item->label()->text(0);
+				if ( m->isMovable() || !SC_D.loadedPicks ) {
 					delete m;
-				else
+					announceToScreenReader(tr("Deleted %1 pick at station %2").arg(phaseName).arg(stationCode));
+				}
+				else {
 					m->setType(PickerMarker::Pick);
+					announceToScreenReader(tr("Converted %1 arrival to manual pick").arg(phaseName));
+				}
 
 				item->widget()->update();
 				SC_D.currentRecord->update();
@@ -9726,6 +10879,70 @@ void PickerView::deletePick() {
 		else if ( !item->widget()->cursorText().isEmpty() )
 			resetPick();
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::announceCurrentPickDetails() {
+	RecordViewItem *item = SC_D.recordView->currentItem();
+	if ( !item ) {
+		announceToScreenReader(tr("No station selected"));
+		return;
+	}
+	
+	RecordWidget* widget = item->widget();
+	if ( !widget ) {
+		announceToScreenReader(tr("No waveform data for selected station"));
+		return;
+	}
+	
+	// Get the current marker (pick) if one exists
+	PickerMarker* marker = static_cast<PickerMarker*>(widget->currentMarker());
+	if ( !marker ) {
+		// Try to get marker at cursor position
+		marker = static_cast<PickerMarker*>(widget->marker(widget->cursorText()));
+	}
+	
+	if ( !marker ) {
+		// No pick at current position, announce cursor position with amplitude/SNR
+		OPT(Core::Time) cursorTime = widget->cursorPos();
+		if ( !cursorTime ) {
+			announceToScreenReader(tr("No pick at current position and no cursor time"));
+			return;
+		}
+		
+		// Announce amplitude and SNR at cursor position
+		double amplitude = 0.0, snr = -1.0;
+		QString quality = "unknown";
+		
+		if ( computePickAmplitudeAndSNR(widget, *cursorTime, amplitude, snr, quality) ) {
+			QString timeStr = QString::fromStdString(cursorTime->toString("%H:%M:%S.%f"));
+			QString stationCode = item->label()->text(0);
+
+			if ( snr > 0 ) {
+				announceToScreenReader(tr("Cursor at %1, station %2, amplitude %3, SNR %4, quality %5")
+					.arg(timeStr)
+					.arg(stationCode)
+					.arg(amplitude, 0, 'e', 2)
+					.arg(snr, 0, 'f', 1)
+					.arg(quality));
+			} else {
+				announceToScreenReader(tr("Cursor at %1, station %2, amplitude %3")
+					.arg(timeStr)
+					.arg(stationCode)
+					.arg(amplitude, 0, 'e', 2));
+			}
+		} else {
+			announceToScreenReader(tr("No pick at current position and unable to compute amplitude"));
+		}
+		return;
+	}
+	
+	// Announce pick details
+	announcePickDetails(widget, marker->correctedTime(), marker->text(), false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9842,12 +11059,13 @@ void PickerView::showTheoreticalArrivals(bool v) {
 		for ( int i = 0; i < w->markerCount(); ++i ) {
 			PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
 			if ( m->type() == PickerMarker::Theoretical )
-				m->setVisible(v);
+			m->setVisible(v);
 		}
 	}
+
+	announceToScreenReader(v ? tr("Theoretical arrivals shown") : tr("Theoretical arrivals hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -9896,18 +11114,20 @@ void PickerView::showUnassociatedPicks(bool v) {
 			w->setMarkerSourceWidget(w->markerSourceWidget());
 		}
 	}
+
+	announceToScreenReader(v ? tr("Unassociated picks shown") : tr("Unassociated picks hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::showSpectrogram(bool v) {
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowSpectrogram(v);
+
+	announceToScreenReader(v ? tr("Spectrogram shown") : tr("Spectrogram hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -10096,6 +11316,9 @@ void PickerView::changeRotation(int index) {
 	}
 
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(tr("Rotation changed to %1")
+		.arg(PickerView::Config::ERotationTypeNames::name(index)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -10110,6 +11333,9 @@ void PickerView::changeUnit(int index) {
 	applyFilter();
 
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(tr("Unit changed to %1")
+		.arg(PickerView::Config::EUnitTypeNames::name(index)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -10349,6 +11575,8 @@ void PickerView::changeFilter(int index, bool) {
 	SC_D.lastFilterIndex = index;
 	QApplication::restoreOverrideCursor();
 
+	announceToScreenReader(tr("Filter changed to %1").arg(name));
+
 	/*
 	if ( index == SC_D.lastFilterIndex && !force ) {
 		if ( !SC_D.ui.actionLimitFilterToZoomTrace->isChecked() )
@@ -10451,6 +11679,170 @@ bool PickerView::setArrivalState(RecordWidget* w, int arrivalId, bool state) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Audio Sonification Implementation
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+void PickerView::toggleAudioSonification() {
+	SC_D.audioSonification->setEnabled(!SC_D.audioSonification->isEnabled());
+
+	SC_D.ui.actionToggleAudioSonification->setChecked(SC_D.audioSonification->isEnabled());
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		statusBar()->showMessage(tr("Audio sonification enabled - press Ctrl+Space to play"), 5000);
+	}
+	else {
+		statusBar()->showMessage(tr("Audio sonification disabled"), 5000);
+	}
+}
+
+void PickerView::playCurrentTraceAudio() {
+	if ( !SC_D.audioSonification->isEnabled() ) {
+		statusBar()->showMessage(tr("Audio sonification is disabled - enable with Ctrl+Shift+A first"), 5000);
+		return;
+	}
+
+	if ( !SC_D.currentRecord ) {
+		return;
+	}
+
+	auto seq = SC_D.currentRecord->isFilteringEnabled()
+		? SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+		: SC_D.currentRecord->records(SC_D.currentSlot);
+
+	if ( !seq ) {
+		statusBar()->showMessage(tr("No waveform data available for sonification"), 5000);
+		return;
+	}
+
+	std::vector<double> waveformData;
+	double originalSampleRate = 0.0;
+
+	for ( auto it = seq->begin(); it != seq->end(); ++it ) {
+		auto rec = *it;
+		if ( !rec || !rec->data() ) continue;
+
+		if ( originalSampleRate == 0.0 ) {
+			originalSampleRate = rec->samplingFrequency();
+		}
+
+		auto dArray = DoubleArray::ConstCast(rec->data());
+		if ( dArray ) {
+			for ( int i = 0; i < dArray->size(); ++i ) {
+				waveformData.push_back((*dArray)[i]);
+			}
+		}
+		else {
+			auto fArray = FloatArray::ConstCast(rec->data());
+			if ( fArray ) {
+				for ( int i = 0; i < fArray->size(); ++i ) {
+					waveformData.push_back(static_cast<double>((*fArray)[i]));
+				}
+			}
+		}
+	}
+
+	if ( waveformData.empty() ) {
+		statusBar()->showMessage(tr("No waveform data available for sonification"), 5000);
+		return;
+	}
+
+	SC_D.audioSonification->setWaveformData(waveformData, originalSampleRate, 160.0f);
+
+	double dataDuration = SC_D.audioSonification->dataDurationSec();
+	int audioDurationMs = SC_D.audioSonification->audioDurationMs();
+
+	statusBar()->showMessage(
+		tr("Playing %1s of seismic data at %2 Hz, speeded up 160x (audio: %3 ms)")
+			.arg(dataDuration, 0, 'f', 1)
+			.arg(originalSampleRate, 0, 'f', 1)
+			.arg(audioDurationMs),
+		5000
+	);
+
+	SC_D.audioSonification->play();
+}
+
+void PickerView::stopAudioPlayback() {
+	SC_D.audioSonification->stop();
+	statusBar()->showMessage(tr("Audio playback stopped"), 3000);
+}
+
+void PickerView::playAudioAtCursor() {
+	if ( !SC_D.audioSonification->isEnabled() ) {
+		return;
+	}
+
+	if ( !SC_D.currentRecord ) {
+		return;
+	}
+
+	auto seq = SC_D.currentRecord->isFilteringEnabled()
+		? SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+		: SC_D.currentRecord->records(SC_D.currentSlot);
+
+	if ( !seq ) {
+		return;
+	}
+
+	double windowSecs = 15.0;
+	Core::Time cursorTime = SC_D.currentRecord->cursorPos();
+	Core::Time startTime = cursorTime - Core::TimeSpan(windowSecs * 0.2);
+	Core::Time endTime = cursorTime + Core::TimeSpan(windowSecs * 0.8);
+
+	std::vector<double> waveformData;
+	double originalSampleRate = 0.0;
+
+	for ( auto it = seq->begin(); it != seq->end(); ++it ) {
+		auto rec = *it;
+		if ( !rec || !rec->data() ) continue;
+
+		if ( originalSampleRate == 0.0 ) {
+			originalSampleRate = rec->samplingFrequency();
+		}
+
+		if ( rec->endTime() < startTime || rec->startTime() > endTime ) {
+			continue;
+		}
+
+		auto dArray = DoubleArray::ConstCast(rec->data());
+		if ( dArray ) {
+			double fs = rec->samplingFrequency();
+			int startIdx = std::max(0, static_cast<int>(
+				static_cast<double>(startTime - rec->startTime()) * fs));
+			int endIdx = std::min(dArray->size(), static_cast<int>(
+				static_cast<double>(endTime - rec->startTime()) * fs) + 1);
+
+			for ( int i = startIdx; i < endIdx; ++i ) {
+				waveformData.push_back((*dArray)[i]);
+			}
+		}
+		else {
+			auto fArray = FloatArray::ConstCast(rec->data());
+			if ( fArray ) {
+				double fs = rec->samplingFrequency();
+				int startIdx = std::max(0, static_cast<int>(
+					static_cast<double>(startTime - rec->startTime()) * fs));
+				int endIdx = std::min(fArray->size(), static_cast<int>(
+					static_cast<double>(endTime - rec->startTime()) * fs) + 1);
+
+				for ( int i = startIdx; i < endIdx; ++i ) {
+					waveformData.push_back(static_cast<double>((*fArray)[i]));
+				}
+			}
+		}
+	}
+
+	if ( waveformData.size() < 10 ) {
+		return;
+	}
+
+	SC_D.audioSonification->setWaveformData(waveformData, originalSampleRate, 80.0f);
+
+	SC_D.audioSonification->play();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 

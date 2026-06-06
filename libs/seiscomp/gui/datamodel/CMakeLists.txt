@@ -15,6 +15,7 @@ SET(GUI_DATAMODEL_SOURCES
 	origintime.cpp
 	origindialog.cpp
 	pickerview.cpp
+	pickerview_accessibility.cpp
 	pickerzoomframe.cpp
 	pickersettings.cpp
 	amplitudeview.cpp
@@ -36,6 +37,7 @@ SET(GUI_DATAMODEL_HEADERS
 	tensorsymbol.h
 	ttdecorator.h
 	utils.h
+	pickerview_accessibility.h
 )
 
 SET(GUI_DATAMODEL_MOC_HEADERS

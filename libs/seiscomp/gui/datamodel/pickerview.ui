@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>Picker</string>
   </property>
+  <property name="accessibleName">
+   <string>Seismic Phase Picker</string>
+  </property>
+  <property name="accessibleDescription">
+   <string>Interactive tool for viewing seismic waveforms and picking P and S phase arrivals</string>
+  </property>
   <property name="iconSize">
    <size>
     <width>16</width>
@@ -41,12 +47,24 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
+      <property name="accessibleName">
+       <string>Waveform display splitter</string>
+      </property>
+      <property name="accessibleDescription">
+       <string>Adjustable split view with zoom trace on top and station list below</string>
+      </property>
       <widget class="QFrame" name="frameZoomWrapper">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="accessibleName">
+        <string>Zoom trace view</string>
+       </property>
+       <property name="accessibleDescription">
+        <string>Detailed waveform view with zoom controls for phase picking</string>
        </property>
        <layout class="QVBoxLayout">
         <property name="spacing">
@@ -108,6 +126,12 @@
              <property name="frameShadow">
               <enum>QFrame::Plain</enum>
              </property>
+             <property name="accessibleName">
+              <string>Current station information</string>
+             </property>
+             <property name="accessibleDescription">
+              <string>Displays station code, channel, distance, azimuth, and amplitude level for the currently selected trace</string>
+             </property>
              <layout class="QHBoxLayout">
               <property name="spacing">
                <number>6</number>
@@ -134,6 +158,12 @@
                 </property>
                 <property name="text">
                  <string>ABCD</string>
+                </property>
+                <property name="accessibleName">
+                 <string>Station code</string>
+                </property>
+                <property name="accessibleDescription">
+                 <string>Four-character seismic station identifier</string>
                 </property>
                </widget>
               </item>
@@ -171,12 +201,21 @@
                   <property name="text">
                    <string>AB  BHZ</string>
                   </property>
+                  <property name="accessibleName">
+                   <string>Channel code</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Network, location, and channel codes identifying the seismic component</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label">
                   <property name="text">
                    <string>, distance: </string>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Distance label</string>
                   </property>
                  </widget>
                 </item>
@@ -185,6 +224,12 @@
                   <property name="text">
                    <string>-1°</string>
                   </property>
+                  <property name="accessibleName">
+                   <string>Epicentral distance</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Distance from earthquake to station in degrees</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -192,12 +237,21 @@
                   <property name="text">
                    <string>, azimuth: </string>
                   </property>
+                  <property name="accessibleName">
+                   <string>Azimuth label</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="labelAzimuth">
                   <property name="text">
                    <string>-1°</string>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Azimuth</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Direction from earthquake to station in degrees</string>
                   </property>
                  </widget>
                 </item>
@@ -233,6 +287,12 @@
                 <property name="value">
                  <number>0</number>
                 </property>
+                <property name="accessibleName">
+                 <string>Amplitude level indicator</string>
+                </property>
+                <property name="accessibleDescription">
+                 <string>Visual indicator of current signal amplitude level</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -251,6 +311,12 @@
              </property>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
+             </property>
+             <property name="accessibleName">
+              <string>Detailed waveform display</string>
+             </property>
+             <property name="accessibleDescription">
+              <string>Main waveform display area showing three-component seismic data for detailed picking</string>
              </property>
             </widget>
            </item>
@@ -284,6 +350,12 @@
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
+               </property>
+               <property name="accessibleName">
+                <string>Picking control buttons</string>
+               </property>
+               <property name="accessibleDescription">
+                <string>Buttons to accept, deactivate, or reset picks for the current trace</string>
                </property>
                <layout class="QHBoxLayout">
                 <property name="spacing">
@@ -323,6 +395,12 @@
                   </property>
                   <property name="toolTip">
                    <string>Accept picked phase</string>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Accept pick</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Confirm and save the current phase pick</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -364,6 +442,12 @@
                   <property name="toolTip">
                    <string>Deactivate current pick or trace depending on the picking mode</string>
                   </property>
+                  <property name="accessibleName">
+                   <string>Deactivate pick or trace</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Remove or deactivate the current pick or disable the trace</string>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -403,6 +487,12 @@
                   </property>
                   <property name="toolTip">
                    <string>Reset manual picks</string>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Reset manual picks</string>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string>Clear all manual picks and restore to original state</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -448,15 +538,31 @@
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
        </property>
+       <property name="accessibleName">
+        <string>Station list view</string>
+       </property>
+       <property name="accessibleDescription">
+        <string>List of all seismic stations with their picks and arrival times</string>
+       </property>
       </widget>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="accessibleName">
+    <string>Status bar showing current station, channel, and picking information</string>
+   </property>
+  </widget>
   <widget class="QToolBar" name="toolBarScale">
    <property name="windowTitle">
     <string>Zooming</string>
+   </property>
+   <property name="accessibleName">
+    <string>Amplitude and time scale controls</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Tools for adjusting the zoom level and amplitude scaling of seismic traces</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -485,6 +591,12 @@
    <property name="windowTitle">
     <string>Sort</string>
    </property>
+   <property name="accessibleName">
+    <string>Station sorting options</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Sort seismic stations by distance, azimuth, name, or residual</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -509,6 +621,12 @@
    <property name="windowTitle">
     <string>Alignment</string>
    </property>
+   <property name="accessibleName">
+    <string>Trace alignment options</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Align seismic traces on origin time or P and S arrivals</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -531,6 +649,12 @@
   <widget class="QToolBar" name="toolBarComponent">
    <property name="windowTitle">
     <string>Components</string>
+   </property>
+   <property name="accessibleName">
+    <string>Component visibility controls</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Show or hide vertical (Z), north (N), and east (E) seismic components</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -561,6 +685,12 @@
    <property name="windowTitle">
     <string>Add stations</string>
    </property>
+   <property name="accessibleName">
+    <string>Station management</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Add nearby stations and control which stations are displayed</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -586,6 +716,12 @@
    <property name="movable">
     <bool>true</bool>
    </property>
+   <property name="accessibleName">
+    <string>Phase picking controls</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Tools for picking P and S seismic phases on waveform traces</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -608,6 +744,12 @@
    <property name="windowTitle">
     <string>Filter</string>
    </property>
+   <property name="accessibleName">
+    <string>Filter selection</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Apply frequency filters to seismic data</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -628,6 +770,12 @@
    <property name="windowTitle">
     <string>Travel times</string>
    </property>
+   <property name="accessibleName">
+    <string>Travel time table selection</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Select travel time model for calculating theoretical arrival times</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -638,27 +786,53 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QToolBar" name="toolBarRelocate">
-   <property name="windowTitle">
-    <string>Apply</string>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
+   <widget class="QToolBar" name="toolBarRelocate">
+    <property name="windowTitle">
+     <string>Apply</string>
+    </property>
+    <property name="accessibleName">
+     <string>Apply changes and relocate</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Apply pick changes to the earthquake origin and recalculate residuals</string>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+    <attribute name="toolBarArea">
+     <enum>TopToolBarArea</enum>
+    </attribute>
+    <attribute name="toolBarBreak">
+     <bool>false</bool>
+    </attribute>
+   </widget>
+   <widget class="QToolBar" name="toolBarSonification">
+    <property name="windowTitle">
+     <string>Sonification</string>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+    <attribute name="toolBarArea">
+     <enum>TopToolBarArea</enum>
+    </attribute>
+    <attribute name="toolBarBreak">
+     <bool>false</bool>
+    </attribute>
+   </widget>
+   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -667,9 +841,21 @@
      <height>30</height>
     </rect>
    </property>
+   <property name="accessibleName">
+    <string>Main menu bar</string>
+   </property>
+   <property name="accessibleDescription">
+    <string>Access to all PickerView functions including view options, navigation, picking, filtering, and tools</string>
+   </property>
    <widget class="QMenu" name="menu_Filter">
     <property name="title">
      <string>&amp;Filter</string>
+    </property>
+    <property name="accessibleName">
+     <string>Filter menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Filter control options including toggle, next, previous, and limit to zoom trace</string>
     </property>
     <addaction name="actionToggleFilter"/>
     <addaction name="actionNextFilter"/>
@@ -680,6 +866,12 @@
     <property name="title">
      <string>&amp;Locator</string>
     </property>
+    <property name="accessibleName">
+     <string>Locator menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Earthquake location tools including relocate and modify origin</string>
+    </property>
     <addaction name="actionRelocate"/>
     <addaction name="actionModifyOrigin"/>
    </widget>
@@ -687,11 +879,27 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <property name="accessibleName">
+     <string>Tools menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Additional analysis tools including spectrum view</string>
+    </property>
     <addaction name="actionOpenSpectrum"/>
+    <addaction name="separator"/>
+    <addaction name="actionToggleAudioSonification"/>
+    <addaction name="actionPlayTraceAudio"/>
+    <addaction name="actionStopAudioPlayback"/>
    </widget>
    <widget class="QMenu" name="menuPicking">
     <property name="title">
      <string>&amp;Picking</string>
+    </property>
+    <property name="accessibleName">
+     <string>Picking menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Phase picking options including automatic repicking</string>
     </property>
     <addaction name="actionRepickAutomatically"/>
     <addaction name="separator"/>
@@ -699,6 +907,12 @@
    <widget class="QMenu" name="menu_Navigation">
     <property name="title">
      <string>&amp;Navigation</string>
+    </property>
+    <property name="accessibleName">
+     <string>Navigation menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Scroll and navigate through seismic traces</string>
     </property>
     <addaction name="actionScrollLeft"/>
     <addaction name="actionScrollRight"/>
@@ -709,9 +923,21 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <property name="accessibleName">
+     <string>View menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Display options for traces, components, scaling, and alignment</string>
+    </property>
     <widget class="QMenu" name="menuComponents">
      <property name="title">
       <string>&amp;Components</string>
+     </property>
+     <property name="accessibleName">
+      <string>Components submenu</string>
+     </property>
+     <property name="accessibleDescription">
+      <string>Control which seismic components (Z, N, E) are displayed</string>
      </property>
      <addaction name="actionShowZComponent"/>
      <addaction name="actionShowNComponent"/>
@@ -720,6 +946,12 @@
     <widget class="QMenu" name="menuTraces">
      <property name="title">
       <string>&amp;Scaling</string>
+     </property>
+     <property name="accessibleName">
+      <string>Scaling submenu</string>
+     </property>
+     <property name="accessibleDescription">
+      <string>Adjust trace amplitude and time scale</string>
      </property>
      <addaction name="actionIncreaseRowHeight"/>
      <addaction name="actionDecreaseRowHeight"/>
@@ -731,11 +963,23 @@
      <property name="title">
       <string>&amp;Alignment</string>
      </property>
+     <property name="accessibleName">
+      <string>Alignment submenu</string>
+     </property>
+     <property name="accessibleDescription">
+      <string>Align traces on origin time or specific phases</string>
+     </property>
      <addaction name="actionAlignOnOriginTime"/>
     </widget>
     <widget class="QMenu" name="menu_Zoomtrace">
      <property name="title">
       <string>&amp;Zoom trace</string>
+     </property>
+     <property name="accessibleName">
+      <string>Zoom trace submenu</string>
+     </property>
+     <property name="accessibleDescription">
+      <string>Detailed zoom and scale controls for the selected trace</string>
      </property>
      <addaction name="actionIncreaseAmplitudeScale"/>
      <addaction name="actionDecreaseAmplitudeScale"/>
@@ -762,6 +1006,12 @@
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>&amp;Window</string>
+    </property>
+    <property name="accessibleName">
+     <string>Window menu</string>
+    </property>
+    <property name="accessibleDescription">
+     <string>Window management options</string>
     </property>
    </widget>
    <addaction name="menuView"/>
@@ -1094,6 +1344,9 @@
    <property name="text">
     <string>Pick P phase</string>
    </property>
+   <property name="toolTip">
+    <string>Enable P phase picking mode. Click on the waveform or press Space to set a P phase pick at the cursor position</string>
+   </property>
    <property name="shortcut">
     <string>F1</string>
    </property>
@@ -1104,6 +1357,9 @@
    </property>
    <property name="text">
     <string>Pick S phase</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable S phase picking mode. Click on the waveform or press Space to set an S phase pick at the cursor position</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
@@ -1143,6 +1399,20 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionAnnouncePickDetails">
+   <property name="text">
+    <string>Announce pick details</string>
+   </property>
+   <property name="toolTip">
+    <string>Announce current pick details with SNR and amplitude (Ctrl+Shift+D)</string>
+   </property>
+   <property name="statusTip">
+    <string>Announce current pick details including signal-to-noise ratio, amplitude, and quality information for screen reader users</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
   <action name="actionRelocate">
@@ -1426,6 +1696,45 @@
    </property>
    <property name="shortcut">
     <string>Space</string>
+   </property>
+  </action>
+  <action name="actionToggleAudioSonification">
+   <property name="text">
+    <string>Toggle audio sonification</string>
+   </property>
+   <property name="iconText">
+    <string>Toggle audio</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable/disable audio sonification of waveforms (Ctrl+Shift+A)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionPlayTraceAudio">
+   <property name="text">
+    <string>Play trace audio</string>
+   </property>
+   <property name="iconText">
+    <string>Play audio</string>
+   </property>
+   <property name="toolTip">
+    <string>Play current trace as audio (Ctrl+Space)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionStopAudioPlayback">
+   <property name="text">
+    <string>Stop audio playback</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop current audio sonification playback (Ctrl+Shift+Space)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Space</string>
    </property>
   </action>
   <action name="actionShowTheoreticalArrivals">

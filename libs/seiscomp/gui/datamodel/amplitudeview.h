@@ -309,8 +309,6 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void limitFilterToZoomTrace(bool);
 
 		void toggleFilter();
-		void nextFilter();
-		void previousFilter();
 		void addNewFilter(const QString&);
 
 		void scaleVisibleAmplitudes();
