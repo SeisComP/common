@@ -4271,6 +4271,8 @@ void OriginLocatorView::plotTabChanged(int tab) {
 
 	SC_D.residuals->setDisplayRect(rect);
 	SC_D.residuals->update();
+
+	announceToScreenReader(tr("Showing %1 plot").arg(EPlotTabsNames::name(tab)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5808,6 +5810,13 @@ void OriginLocatorView::setStationEnabled(const std::string& networkCode,
 										  bool state) {
 	if ( SC_D.recordView )
 		SC_D.recordView->setStationEnabled(networkCode, stationCode, state);
+
+	if ( state )
+		announceToScreenReader(tr("Added station %1.%2")
+			.arg(networkCode.c_str()).arg(stationCode.c_str()));
+	else
+		announceToScreenReader(tr("Removed station %1.%2")
+			.arg(networkCode.c_str()).arg(stationCode.c_str()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6092,10 +6101,16 @@ void OriginLocatorView::importArrivals() {
 
 	qApp->restoreOverrideCursor();
 
+	size_t targetCountBefore = targetPhases.size();
 	if ( !merge(sourcePhasesPtr, targetPhasesPtr, true, associateOnly, preferTargetPhases) ) {
 		SEISCOMP_DEBUG("No additional picks to merge");
 		QMessageBox::information(this, "ImportPicks", "There are no additional "
 		                         "streams with picks to merge.");
+	}
+	else {
+		int importedCount = int(targetPhases.size() - targetCountBefore);
+		if ( importedCount > 0 )
+			announceToScreenReader(tr("Imported %1 picks").arg(importedCount));
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6605,6 +6620,29 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 		}
 	}
 
+	{
+		// Announce locator result to screen reader
+		double rms = 0.0, gap = 0.0;
+		try { rms = origin->quality().standardError(); } catch ( ... ) {}
+		try { gap = origin->quality().azimuthalGap(); } catch ( ... ) {}
+
+		double mag = 0.0;
+		bool hasMag = false;
+		try {
+			if ( origin->magnitudeCount() > 0 ) {
+				mag = origin->magnitude(0)->magnitude().value();
+				hasMag = true;
+			}
+		} catch ( ... ) {}
+
+		if ( hasMag )
+			announceToScreenReader(tr("Location computed: M %1, RMS %2, gap %3")
+				.arg(mag, 0, 'f', 1).arg(rms, 0, 'f', 2).arg(gap, 0, 'f', 0));
+		else
+			announceToScreenReader(tr("Location computed: RMS %1, gap %2")
+				.arg(rms, 0, 'f', 2).arg(gap, 0, 'f', 0));
+	}
+
 	emit newOriginSet(origin, SC_D.baseEvent.get(), SC_D.localOrigin, relocated);
 
 	SC_D.ui.btnCommit->setText("Commit");
@@ -6983,6 +7021,19 @@ void OriginLocatorView::setScript1(const std::string &script) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::announceToScreenReader(const QString &message) {
+	// TODO: Implement screen reader announcement using
+	// QAccessibleAnnouncementEvent or a status bar when available.
+	// OriginLocatorView is a QWidget (not QMainWindow), so there is
+	// no statusBar() available.
+	Q_UNUSED(message);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::editComment() {
 	if ( !SC_D.baseEvent ) return;
 
@@ -7202,12 +7253,15 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		}
 	}
 
+	announceToScreenReader(tr("Origin committed with %1 phases")
+		.arg(SC_D.currentOrigin->arrivalCount()));
+
 	if ( !SC_D.localOrigin )
 		emit updatedOrigin(SC_D.currentOrigin.get());
 	else
 		emit committedOrigin(SC_D.currentOrigin.get(),
-							 associate?SC_D.baseEvent.get():nullptr,
-							 pickCommitList, amplitudeCommitList);
+		                     associate?SC_D.baseEvent.get():nullptr,
+		                     pickCommitList, amplitudeCommitList);
 
 	if ( !ignoreDefaultEventType && SC_D.baseEvent && SC_D.defaultEventType ) {
 		// Check if event type changed
@@ -7416,6 +7470,8 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	ci.setCreationTime(Core::Time::UTC());
 
 	fm->setCreationInfo(ci);
+
+	announceToScreenReader(tr("Focal mechanism committed"));
 
 	if ( fm )
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
@@ -8518,6 +8574,17 @@ void OriginLocatorView::dataChanged(const QModelIndex& topLeft, const QModelInde
 		SC_D.toolMap->setArrivalState(topLeft.row(), used);
 	if ( SC_D.recordView )
 		SC_D.recordView->setArrivalState(topLeft.row(), used);
+
+	if ( used ) {
+		QString sta = SC_D.modelArrivals.data(
+			topLeft.sibling(topLeft.row(), STATION), Qt::DisplayRole).toString();
+		announceToScreenReader(tr("Arrival %1 toggled on").arg(sta));
+	}
+	else {
+		QString sta = SC_D.modelArrivals.data(
+			topLeft.sibling(topLeft.row(), STATION), Qt::DisplayRole).toString();
+		announceToScreenReader(tr("Arrival %1 toggled off").arg(sta));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

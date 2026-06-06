@@ -478,6 +478,8 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void setBaseEvent(DataModel::Event *e);
 		void resetCustomLabels();
 
+		void announceToScreenReader(const QString &message);
+
 		void deleteSelectedArrivals();
 		void activateSelectedArrivals(Seiscomp::Seismology::LocatorInterface::Flags flags,
 		                              bool activate);
