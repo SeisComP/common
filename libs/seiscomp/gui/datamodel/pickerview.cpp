@@ -8898,6 +8898,8 @@ void PickerView::scaleVisibleAmplitudes() {
 	SC_D.currentRecord->setNormalizationWindow(SC_D.currentRecord->visibleTimeWindow());
 	SC_D.currentAmplScale = 1;
 	SC_D.currentRecord->setAmplScale(0.0);
+
+	announceToScreenReader(tr("Amplitudes maximized to viewport"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -9077,6 +9079,8 @@ void PickerView::showAllComponents(bool showAll) {
 	if ( SC_D.currentRecord ) {
 		SC_D.currentRecord->setDrawMode(showAll ? RecordWidget::InRows : RecordWidget::Single);
 	}
+
+	announceToScreenReader(showAll ? tr("Showing all components") : tr("Showing single component"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9208,18 +9212,14 @@ void PickerView::scaleAmplUp() {
 	auto value = (scale == 0 ? 1.0 : scale) * SC_D.recordView->zoomFactor();
 	if ( value > 1000 ) value = 1000;
 	if ( /*value < 1*/true ) {
-		SC_D.currentRecord->setAmplScale(value);
+	SC_D.currentRecord->setAmplScale(value);
 		SC_D.currentAmplScale = 1;
 	}
-	else {
-		SC_D.currentRecord->setAmplScale(1);
-		SC_D.currentAmplScale = value;
-	}
 
+	announceToScreenReader(tr("Amplitude increased"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -9233,7 +9233,7 @@ void PickerView::scaleAmplDown() {
 
 	//SC_D.currentRecord->setAmplScale(value);
 	if ( /*value < 1*/true ) {
-		SC_D.currentRecord->setAmplScale(value);
+	SC_D.currentRecord->setAmplScale(value);
 		SC_D.currentAmplScale = 1;
 	}
 	else {
@@ -9241,10 +9241,10 @@ void PickerView::scaleAmplDown() {
 		SC_D.currentAmplScale = value;
 	}
 
+	announceToScreenReader(tr("Amplitude decreased"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -9254,6 +9254,7 @@ void PickerView::scaleReset() {
 	SC_D.currentAmplScale = 1.0;
 	zoom(0.0);
 
+	announceToScreenReader(tr("Scale reset"));
 	//SC_D.currentRecord->resize(SC_D.zoomTrace->width(), (int)(SC_D.zoomTrace->height()*SC_D.currentAmplScale));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -9307,6 +9308,12 @@ void PickerView::zoom(float factor) {
 
 	if ( SC_D.checkVisibility ) ensureVisibility(tmin, tmax);
 	setTimeRange(tmin, tmax);
+
+	int zoomLevel = static_cast<int>(SC_D.zoom);
+	if ( factor > 1.0 )
+		announceToScreenReader(tr("Zoom in, level %1").arg(zoomLevel));
+	else
+		announceToScreenReader(tr("Zoom out, level %1").arg(zoomLevel));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -10027,6 +10034,8 @@ void PickerView::setDefaultDisplay() {
 	alignOnOriginTime();
 	selectFirstVisibleItem(SC_D.recordView);
 	scaleReset();
+
+	announceToScreenReader(tr("Default view restored"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
