@@ -1231,12 +1231,17 @@ void MagnitudeView::closeTab(int idx) {
 		if ( mag->detach() ) {
 			emit magnitudeRemoved(_origin->publicID().c_str(), mag.get());
 			_tabMagnitudes->removeTab(idx);
+			announceToScreenReader(tr("Magnitude %1 removed").arg(mag->type().c_str()));
 		}
-		else
+		else {
 			QMessageBox::critical(this, "Error", tr("An error occured while removing magnitude %1").arg(magID.c_str()));
+			announceToScreenReader(tr("Error removing magnitude"));
+		}
 	}
-	else
+	else {
 		QMessageBox::critical(this, "Error", tr("Did not find magnitude %1").arg(magID.c_str()));
+		announceToScreenReader(tr("Magnitude not found"));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1267,6 +1272,7 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 	_amplitudeView = nullptr;
 	_computeMagnitudesSilently = false;
 	_enableMagnitudeTypeSelection = true;
+	_suppressScreenReaderAnnouncements = false;
 
 	QObject *drawFilter = new ElideFadeDrawer(this);
 
@@ -1628,6 +1634,7 @@ void MagnitudeView::recalculateMagnitude() {
 			StationMagnitude* sm = StationMagnitude::Find(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID());
 			if ( !sm ) {
 				QMessageBox::critical(this, "Error", QString("StationMagnitude %1 not found").arg(_netMag->stationMagnitudeContribution(i)->stationMagnitudeID().c_str()));
+				announceToScreenReader(tr("Station magnitude not found"));
 				return;
 			}
 
@@ -1637,6 +1644,7 @@ void MagnitudeView::recalculateMagnitude() {
 
 	if ( mags.empty() ) {
 		QMessageBox::critical(this, "Error", "At least one station magnitude must be selected");
+		announceToScreenReader(tr("At least one station magnitude must be selected"));
 		return;
 	}
 
@@ -1656,6 +1664,7 @@ void MagnitudeView::recalculateMagnitude() {
 	else if ( _ui->btnMean->isChecked() ) {
 		if ( !Math::Statistics::computeMean(mags, netmag, stdev) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the mean failed for unknown reason");
+			announceToScreenReader(tr("Recalculating the magnitude using the mean failed"));
 			return;
 		}
 
@@ -1666,6 +1675,7 @@ void MagnitudeView::recalculateMagnitude() {
 	else if ( _ui->btnTrimmedMean->isChecked() ) {
 		if ( !Math::Statistics::computeTrimmedMean(mags, _ui->spinTrimmedMeanValue->value(), netmag, stdev, &weights) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the trimmed mean failed for unknown reason");
+			announceToScreenReader(tr("Recalculating the magnitude using the trimmed mean failed"));
 			return;
 		}
 
@@ -1688,6 +1698,7 @@ void MagnitudeView::recalculateMagnitude() {
 	else if ( _ui->btnTrimmedMedian->isChecked() ) {
 		if ( !Math::Statistics::computeMedianTrimmedMean(mags, _ui->spinTrimmedMedianValue->value(), netmag, stdev, &weights) ) {
 			QMessageBox::critical(this, "Error", "Recalculating the magnitude using the median trimmed mean failed for unknown reason");
+			announceToScreenReader(tr("Recalculating the magnitude using the median trimmed mean failed"));
 			return;
 		}
 
@@ -1695,6 +1706,7 @@ void MagnitudeView::recalculateMagnitude() {
 	}
 	else {
 		QMessageBox::critical(this, "Error", "Please select a method to recalculate the magnitude.");
+		announceToScreenReader(tr("Please select a method to recalculate the magnitude"));
 		return;
 	}
 
@@ -1811,8 +1823,16 @@ void MagnitudeView::recalculateMagnitude() {
 
 	updateTab(_tabMagnitudes, _netMag.get());
 
+	_suppressScreenReaderAnnouncements = true;
 	updateMagnitudeLabels();
 	_ui->tableStationMagnitudes->reset();
+	_suppressScreenReaderAnnouncements = false;
+
+	announceToScreenReader(tr("Recalculated %1 %2 \u00b1 %3 with %4 stations")
+		.arg(_netMag->type().c_str())
+		.arg(_netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude)
+		.arg(_netMag->magnitude().uncertainty(), 0, 'f', SCScheme.precision.magnitude)
+		.arg(_netMag->stationCount()));
 
 	emit magnitudeUpdated(_origin->publicID().c_str(), _netMag.get());
 }
@@ -1861,8 +1881,12 @@ void MagnitudeView::selectChannelsWithEdit() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::activateChannels() {
 	QModelIndexList rows = _ui->tableStationMagnitudes->selectionModel()->selectedRows();
+	_suppressScreenReaderAnnouncements = true;
 	foreach ( const QModelIndex &idx, rows )
 		changeStationState(_modelStationMagnitudesProxy->mapToSource(idx).row(), true);
+	_suppressScreenReaderAnnouncements = false;
+	if ( rows.size() > 0 )
+		announceToScreenReader(tr("%1 channels activated").arg(rows.size()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1872,8 +1896,12 @@ void MagnitudeView::activateChannels() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::deactivateChannels() {
 	QModelIndexList rows = _ui->tableStationMagnitudes->selectionModel()->selectedRows();
+	_suppressScreenReaderAnnouncements = true;
 	foreach ( const QModelIndex &idx, rows )
 		changeStationState(_modelStationMagnitudesProxy->mapToSource(idx).row(), false);
+	_suppressScreenReaderAnnouncements = false;
+	if ( rows.size() > 0 )
+		announceToScreenReader(tr("%1 channels deactivated").arg(rows.size()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2344,6 +2372,9 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 	if ( typeIdx == -1 ) {
 		typeIdx = addMagnitude(netMag);
 		_tabMagnitudes->setCurrentIndex(typeIdx);
+		announceToScreenReader(tr("Magnitude %1 %2 created")
+			.arg(netMag->type().c_str())
+			.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 		emit magnitudeUpdated(_origin->publicID().c_str(), netMag);
 		return;
 	}
@@ -2366,6 +2397,10 @@ void MagnitudeView::magnitudeCreated(Seiscomp::DataModel::Magnitude *netMag) {
 		_tabMagnitudes->setCurrentIndex(typeIdx);
 	else
 		updateContent();
+
+	announceToScreenReader(tr("Magnitude %1 %2 created")
+		.arg(netMag->type().c_str())
+		.arg(netMag->magnitude().value(), 0, 'f', SCScheme.precision.magnitude));
 
 	emit magnitudeUpdated(_origin->publicID().c_str(), netMag);
 }
@@ -2928,12 +2963,17 @@ void MagnitudeView::magnitudesSelected() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::hoverMagnitude(int id) {
 	QWidget *w = (QWidget*)sender();
-	if ( id == -1 )
+	if ( id == -1 ) {
 		w->setToolTip("");
-	else
+	}
+	else {
 		w->setToolTip(
 			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, NETWORK), Qt::DisplayRole).toString() + "." +
 			_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, STATION), Qt::DisplayRole).toString());
+		announceToScreenReader(tr("Station %1 magnitude %2")
+			.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, STATION), Qt::DisplayRole).toString())
+			.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, MAGNITUDE), Qt::DisplayRole).toString()));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2947,6 +2987,12 @@ void MagnitudeView::selectMagnitude(int id) {
 	QModelIndex idx = _modelStationMagnitudesProxy->mapFromSource(_modelStationMagnitudes.index(id, 0));
 	_ui->tableStationMagnitudes->setCurrentIndex(idx);
 	_ui->tableStationMagnitudes->scrollTo(idx);
+
+	announceToScreenReader(tr("Station %1.%2 magnitude %3 residual %4")
+		.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, NETWORK), Qt::DisplayRole).toString())
+		.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, STATION), Qt::DisplayRole).toString())
+		.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, MAGNITUDE), Qt::DisplayRole).toString())
+		.arg(_modelStationMagnitudes.data(_modelStationMagnitudes.index(id, RESIDUAL), Qt::DisplayRole).toString()));
 
 	if ( _amplitudeView ) {
 		_amplitudeView->setCurrentStation(
@@ -3061,6 +3107,15 @@ void MagnitudeView::dataChanged(const QModelIndex& topLeft, const QModelIndex&){
 	// set state (color) in map
 	if ( _map )
 		_map->setMagnitudeState(topLeft.row(), state);
+
+	if ( !_suppressScreenReaderAnnouncements ) {
+		QString station = _modelStationMagnitudes.data(_modelStationMagnitudes.index(topLeft.row(), STATION), Qt::DisplayRole).toString();
+		QString net = _modelStationMagnitudes.data(_modelStationMagnitudes.index(topLeft.row(), NETWORK), Qt::DisplayRole).toString();
+		if ( state )
+			announceToScreenReader(tr("Station %1.%2 included in magnitude").arg(net, station));
+		else
+			announceToScreenReader(tr("Station %1.%2 excluded from magnitude").arg(net, station));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3214,10 +3269,11 @@ void MagnitudeView::setOrigin(Origin* o, Event *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool MagnitudeView::showMagnitude(const string &id) {
+	_suppressScreenReaderAnnouncements = true;
 	for ( int i = 0; i < _tabMagnitudes->count(); ++i ) {
 		if ( _tabMagnitudes->tabData(i).value<TabData>().publicID == id ) {
 			_tabMagnitudes->setCurrentIndex(i);
-
+			_suppressScreenReaderAnnouncements = false;
 			return true;
 		}
 	}
@@ -3231,6 +3287,7 @@ bool MagnitudeView::showMagnitude(const string &id) {
 	}
 	*/
 
+	_suppressScreenReaderAnnouncements = false;
 	return false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3632,6 +3689,9 @@ void MagnitudeView::updateContent() {
 	_minStationMagnitude = 999.99;
 	_maxStationMagnitude = -999.99;
 
+	bool wasSuppressed = _suppressScreenReaderAnnouncements;
+	_suppressScreenReaderAnnouncements = true;
+
 	if ( _netMag ) {
 		StationMagnitude* staMagnitude;
 		for ( size_t i = 0; i < _netMag->stationMagnitudeContributionCount(); ++i ) {
@@ -3644,6 +3704,8 @@ void MagnitudeView::updateContent() {
 
 	// set labels ...
 	updateMagnitudeLabels();
+
+	_suppressScreenReaderAnnouncements = wasSuppressed;
 
 	auto regExp = QRegularExpression("^comboBox/magnitude/comment/.*$");
 	auto magnitudeComments = findChildren<QComboBox*>(regExp);
@@ -3730,6 +3792,9 @@ void MagnitudeView::updateContent() {
 	else {
 		_ui->groupReview->setEnabled(true);
 	}
+
+	if ( sender() == _tabMagnitudes && !_suppressScreenReaderAnnouncements && _netMag )
+		announceToScreenReader(tr("Showing %1 magnitude").arg(_netMag->type().c_str()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4089,7 +4154,11 @@ void MagnitudeView::evaluationStatusChanged(int index) {
 		}
 	}
 
+	_suppressScreenReaderAnnouncements = true;
 	updateMagnitudeLabels();
+	_suppressScreenReaderAnnouncements = false;
+
+	announceToScreenReader(tr("Evaluation status set to %1").arg(_ui->cbEvalStatus->currentText()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4120,6 +4189,14 @@ void MagnitudeView::magnitudeCommentChanged(QString) {
 		comment->setText(text);
 		_netMag->add(comment.get());
 	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeView::announceToScreenReader(const QString &message) {
+	// TODO: use QAccessibleAnnouncementEvent when available
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -303,6 +303,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 		void computeMagnitude(DataModel::Magnitude *magnitude, const std::string &aggType);
 		bool editSelectionFilter();
 		void resetPreferredMagnitudeSelection();
+		void announceToScreenReader(const QString &message);
 
 
 	private:
@@ -337,6 +338,7 @@ class SC_GUI_API MagnitudeView : public QWidget {
 
 		bool                                _computeMagnitudesSilently;
 		bool                                _enableMagnitudeTypeSelection;
+		bool                                _suppressScreenReaderAnnouncements;
 		OPT(std::string)                    _defaultMagnitudeAggregation;
 
 		PickAmplitudeMap                    _amplitudes;
