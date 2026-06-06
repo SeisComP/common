@@ -279,6 +279,8 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 
 		void setFMActivity(bool);
 
+		void announceToScreenReader(const QString &message);
+
 
 	private:
 		typedef std::list<DataModel::OriginPtr> OriginList;

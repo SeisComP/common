@@ -2292,6 +2292,8 @@ void EventEdit::updatePreferredOriginIndex() {
 				item->setFont(_originColumnMap[c], f);
 			}
 			_preferredOriginIdx = i;
+			announceToScreenReader(QString("Preferred origin changed to %1")
+				.arg(item->data(0, Qt::UserRole).toString()));
 			break;
 		}
 	}
@@ -2327,6 +2329,8 @@ void EventEdit::updatePreferredMagnitudeIndex() {
 				item->setFont(c, f);
 			}
 			_preferredMagnitudeIdx = i;
+			announceToScreenReader(QString("Preferred magnitude changed to %1")
+				.arg(_ui.treeMagnitudes->topLevelItem(i)->data(0, Qt::UserRole).toString()));
 			break;
 		}
 	}
@@ -2362,6 +2366,8 @@ void EventEdit::updatePreferredFMIndex() {
 				item->setFont(_fmColumnMap[c], f);
 			}
 			_preferredFMIdx = i;
+			announceToScreenReader(QString("Preferred focal mechanism changed to %1")
+				.arg(item->data(0, Qt::UserRole).toString()));
 			break;
 		}
 	}
@@ -3003,6 +3009,10 @@ void EventEdit::updateContent() {
 	sortFMItems(_ui.fmTree->header()->sortIndicatorSection());
 	_fmMap->setEvent(_currentEvent.get());
 
+	announceToScreenReader(QString("Loaded %1 origins, %2 focal mechanisms")
+		.arg(_originTree->topLevelItemCount())
+		.arg(_ui.fmTree->topLevelItemCount()));
+
 	updateEvent();
 	updateJournal();
 }
@@ -3229,8 +3239,10 @@ bool EventEdit::sendJournal(const std::string &action,
 		nm->attach(n.get());
 		if ( SCApp->sendMessage(SCApp->messageGroups().event.c_str(), nm.get()) ) {
 			addJournal(entry.get());
+			announceToScreenReader("Journal entry added");
 			return true;
 		}
+		announceToScreenReader("Journal entry failed");
 	}
 
 	return false;
@@ -3834,6 +3846,7 @@ void EventEdit::currentTypeChanged(int row) {
 
 	if ( !sendJournal("EvType", type) )
 		updateEvent();
+	announceToScreenReader(QString("Event type changed to %1").arg(type.empty() ? "unset" : type.c_str()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3849,6 +3862,7 @@ void EventEdit::currentTypeCertaintyChanged(int row) {
 
 	if ( !sendJournal("EvTypeCertainty", typeCertainty) )
 		updateEvent();
+	announceToScreenReader(QString("Event certainty changed to %1").arg(typeCertainty.empty() ? "unset" : typeCertainty.c_str()));
 }
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3912,6 +3926,10 @@ void EventEdit::currentOriginChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 		_ui.comboFixOrigin->addItem(tr("selected origin"));
 		_ui.comboFixOrigin->setCurrentIndex(_ui.comboFixOrigin->count()-1);
 	}
+
+	announceToScreenReader(QString("Selected origin %1 %2").arg(
+		_currentOrigin->publicID().c_str(),
+		timeToString(_currentOrigin->time().value(), PanelOTimeFormat.c_str())));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3950,6 +3968,8 @@ void EventEdit::currentFMChanged(QTreeWidgetItem* item, QTreeWidgetItem*) {
 	}
 	else
 		resetMT(true);
+
+	announceToScreenReader(QString("Selected focal mechanism %1").arg(_currentFM->publicID().c_str()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3974,6 +3994,10 @@ void EventEdit::currentMagnitudeChanged(QTreeWidgetItem *item, QTreeWidgetItem*)
 
 	_ui.buttonFixMagnitudeType->setEnabled(true);
 	_ui.buttonReleaseMagnitudeType->setEnabled(true);
+
+	announceToScreenReader(QString("Selected magnitude %1 %2").arg(
+		_currentMagnitude->type().c_str(),
+		QString::number(_currentMagnitude->magnitude().value(), 'f', 1)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4155,11 +4179,13 @@ void EventEdit::fixOrigin() {
 		}
 
 		sendJournal("EvPrefOrgID", _currentOrigin->publicID());
+		announceToScreenReader(QString("Origin %1 fixed").arg(_currentOrigin->publicID().c_str()));
 	}
 	else {
 		int sep = _ui.comboFixOrigin->currentText().indexOf(' ');
 		if ( sep != -1 ) {
 			sendJournal("EvPrefOrgEvalMode", _ui.comboFixOrigin->currentText().mid(0, sep).toStdString());
+			announceToScreenReader(QString("Origin evaluation mode changed to %1").arg(_ui.comboFixOrigin->currentText().mid(0, sep)));
 		}
 		else {
 			QMessageBox::critical(this, "Error", "Internal error.");
@@ -4175,6 +4201,7 @@ void EventEdit::fixFM() {
 	if ( _ui.fmFixCombo->currentText() == "unset" ) {
 		// Fix an unset ID -> preferred focal mechanism becomes unset
 		sendJournal("EvPrefFocMecID", "");
+		announceToScreenReader("Focal mechanism released");
 	}
 	else if ( _ui.fmFixCombo->currentText() == "selected focal mechanism" ) {
 		if ( !_currentFM ) {
@@ -4183,11 +4210,13 @@ void EventEdit::fixFM() {
 		}
 
 		sendJournal("EvPrefFocMecID", _currentFM->publicID());
+		announceToScreenReader("Focal mechanism fixed");
 	}
 	else {
 		int sep = _ui.fmFixCombo->currentText().indexOf(' ');
 		if ( sep != -1 ) {
 			sendJournal("EvPrefFocEvalMode", _ui.fmFixCombo->currentText().mid(0, sep).toStdString());
+			announceToScreenReader(QString("Focal mechanism evaluation mode changed to %1").arg(_ui.fmFixCombo->currentText().mid(0, sep)));
 		}
 		else {
 			QMessageBox::critical(this, "Error", "Internal error.");
@@ -4202,6 +4231,7 @@ void EventEdit::fixFM() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::releaseOrigin() {
 	sendJournal("EvPrefOrgAutomatic", "");
+	announceToScreenReader("Origin released");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4211,6 +4241,7 @@ void EventEdit::releaseOrigin() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::releaseFM() {
 	sendJournal("EvPrefFocAutomatic", "");
+	announceToScreenReader("Focal mechanism released");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4223,6 +4254,7 @@ void EventEdit::fixMagnitudeType() {
 	if ( !item ) return;
 
 	sendJournal("EvPrefMagType", _ui.labelMagnitudeTypeValue->text().toStdString());
+	announceToScreenReader(QString("Magnitude %1 %2 fixed").arg(_ui.labelMagnitudeTypeValue->text(), _ui.labelMagnitudeValue->text()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4232,6 +4264,7 @@ void EventEdit::fixMagnitudeType() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::releaseMagnitudeType() {
 	sendJournal("EvPrefMagType", "");
+	announceToScreenReader("Magnitude released");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4329,6 +4362,14 @@ void EventEdit::evalResultError(const QString &oid,
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EventEdit::announceToScreenReader(const QString &message) {
+	// TODO: use QAccessibleAnnouncementEvent when available
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
