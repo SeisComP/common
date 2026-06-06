@@ -179,6 +179,17 @@ void CalculateAmplitudes::done(int r) {
 
 	closeAcquisition();
 
+	if ( r == Accepted ) {
+		QStringList types;
+		for ( const auto &type : _amplitudeTypes )
+			types.append(type.c_str());
+		announceToScreenReader(
+			QString("Computing amplitudes with configuration: %1 types, %2 rows")
+				.arg(types.join(", "))
+				.arg(_ui.table->rowCount())
+		);
+	}
+
 	QDialog::done(r);
 }
 
@@ -1090,13 +1101,21 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 }
 
 
-void CalculateAmplitudes::filterStateChanged(int) {
+void CalculateAmplitudes::filterStateChanged(int index) {
 	filterView();
+	announceToScreenReader(
+		QString("Filter state changed to: %1")
+			.arg(_ui.comboFilterState->itemText(index))
+	);
 }
 
 
-void CalculateAmplitudes::filterTypeChanged(int) {
+void CalculateAmplitudes::filterTypeChanged(int index) {
 	filterView();
+	announceToScreenReader(
+		QString("Filter type changed to: %1")
+			.arg(_ui.comboFilterType->itemText(index))
+	);
 }
 
 
@@ -1151,6 +1170,9 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 		else
 			_ui.table->showRow(i);
 	}
+}
+void CalculateAmplitudes::announceToScreenReader(const QString &msg) {
+	Q_UNUSED(msg);
 }
 
 

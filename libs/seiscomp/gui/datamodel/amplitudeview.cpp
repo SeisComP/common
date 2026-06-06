@@ -3207,6 +3207,13 @@ void AmplitudeView::recalculateAmplitude() {
 
 	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(
+		QString("Amplitude %1 recalculated at station %2.%3")
+			.arg(SC_D.amplitudeType.c_str())
+			.arg(item->streamID().networkCode().c_str())
+			.arg(item->streamID().stationCode().c_str())
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3277,6 +3284,11 @@ void AmplitudeView::recalculateAmplitudes() {
 
 	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(
+		QString("%1 amplitudes recalculated across all stations")
+			.arg(SC_D.amplitudeType.c_str())
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3356,6 +3368,11 @@ void AmplitudeView::showComponent(char componentCode) {
 	SC_D.ui.actionShowZComponent->setChecked(SC_D.currentSlot == 0);
 	SC_D.ui.actionShowNComponent->setChecked(SC_D.currentSlot == 1);
 	SC_D.ui.actionShowEComponent->setChecked(SC_D.currentSlot == 2);
+
+	announceToScreenReader(
+		QString("Showing %1 component")
+			.arg(SC_D.currentSlot == 0 ? "vertical" : (SC_D.currentSlot == 1 ? "first horizontal" : "second horizontal"))
+	);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4634,10 +4651,13 @@ void AmplitudeView::updateRecordValue(Seiscomp::Core::Time t) {
 
 	const double *v = SC_D.currentRecord->value(t);
 
-	if ( v == nullptr )
+	if ( v == nullptr ) {
 		statusBar()->clearMessage();
-	else
+	}
+	else {
 		statusBar()->showMessage(QString("value = %1").arg(*v, 0, 'f', 2));
+		announceToScreenReader(QString("Trace value %1").arg(*v, 0, 'f', 2));
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5240,6 +5260,13 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 			cha.c_str()
 		)
 	);
+
+	announceToScreenReader(
+		QString("Station %1.%2 selected, distance %3")
+			.arg(streamID.networkCode().c_str())
+			.arg(streamID.stationCode().c_str())
+			.arg(SC_D.ui.labelDistance->text())
+	);
 	/*
 	const RecordSequence* seq = SC_D.currentRecord->records();
 	if ( seq && !seq->empty() )
@@ -5407,6 +5434,7 @@ void AmplitudeView::updateTraceInfo(RecordViewItem* item,
 void AmplitudeView::toggleFilter() {
 	if ( SC_D.comboFilter->currentIndex() > 1 ) {
 		SC_D.comboFilter->setCurrentIndex(1);
+		announceToScreenReader("Filter reset to default");
 	}
 	else {
 		if ( SC_D.lastFilterIndex < 0 ) {
@@ -5414,6 +5442,10 @@ void AmplitudeView::toggleFilter() {
 		}
 
 		SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
+		announceToScreenReader(
+			QString("Filter applied: %1")
+				.arg(SC_D.comboFilter->itemText(SC_D.lastFilterIndex))
+		);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5432,6 +5464,8 @@ void AmplitudeView::addNewFilter(const QString& filter) {
 
 	SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
 	SC_D.currentRecord->setFilter(SC_D.recordView->filter());
+
+	announceToScreenReader(QString("New filter applied: %1").arg(filter));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6039,8 +6073,10 @@ void AmplitudeView::commit() {
 		amps.append(amp);
 	}
 
-	if ( !amps.isEmpty() )
+	if ( !amps.isEmpty() ) {
 		emit amplitudesConfirmed(SC_D.origin.get(), amps);
+		announceToScreenReader(QString("%1 amplitudes committed").arg(amps.size()));
+	}
 
 	return;
 
@@ -6631,6 +6667,12 @@ void AmplitudeView::createAmplitude() {
 		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
 
 		SC_D.recordView->selectNextRow();
+
+		announceToScreenReader(
+			QString("Amplitude created at station %1.%2")
+				.arg(item->streamID().networkCode().c_str())
+				.arg(item->streamID().stationCode().c_str())
+		);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6644,6 +6686,12 @@ void AmplitudeView::setAmplitude() {
 	if ( item && !item->widget()->cursorText().isEmpty() ) {
 		onSelectedTime(item->widget(), item->widget()->cursorPos());
 		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
+
+		announceToScreenReader(
+			QString("Amplitude set at station %1.%2")
+				.arg(item->streamID().networkCode().c_str())
+				.arg(item->streamID().stationCode().c_str())
+		);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6657,6 +6705,12 @@ void AmplitudeView::confirmAmplitude() {
 	if ( item && !item->widget()->cursorText().isEmpty() ) {
 		onSelectedTime(item->widget(), item->widget()->cursorPos());
 		onSelectedTime(SC_D.currentRecord, SC_D.currentRecord->cursorPos());
+
+		announceToScreenReader(
+			QString("Amplitude confirmed at station %1.%2")
+				.arg(item->streamID().networkCode().c_str())
+				.arg(item->streamID().stationCode().c_str())
+		);
 
 		int row = item->row() + 1;
 
@@ -6700,6 +6754,12 @@ void AmplitudeView::deleteAmplitude() {
 		else {
 			resetAmplitude(item, item->widget()->cursorText(), true);
 		}
+
+		announceToScreenReader(
+			QString("Amplitude removed at station %1.%2")
+				.arg(item->streamID().networkCode().c_str())
+				.arg(item->streamID().stationCode().c_str())
+		);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6880,6 +6940,8 @@ void AmplitudeView::changeFilter(int index, bool force) {
 
 	SC_D.lastFilterIndex = index;
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(QString("Filter changed to: %1").arg(name));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6951,5 +7013,12 @@ bool AmplitudeView::setArrivalState(RecordWidget* w, int arrivalId, bool state) 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::announceToScreenReader(const QString &msg) {
+	Q_UNUSED(msg);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
 }
 }

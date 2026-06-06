@@ -144,6 +144,8 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 		void filterView(int startRow = 0, int cnt = -1);
 		void updateTitle();
 
+		void announceToScreenReader(const QString &msg);
+
 
 	private:
 		typedef std::vector<Processing::AmplitudeProcessorPtr> ProcessorSlot;

@@ -482,6 +482,8 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void newAmplitudeAvailable(const Processing::AmplitudeProcessor*,
 		                           const Processing::AmplitudeProcessor::Result &);
 
+		void announceToScreenReader(const QString &msg);
+
 	private:
 		AmplitudeViewPrivate *_d_ptr;
 };
