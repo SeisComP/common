@@ -32,6 +32,7 @@
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/gui/core/uncertainties.h>
+#include <seiscomp/gui/core/waveformaudio.h>
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/client/configdb.h>
 #include <seiscomp/datamodel/eventparameters.h>
@@ -2147,6 +2148,10 @@ void AmplitudeView::init() {
 	addAction(SC_D.ui.actionRecalculateAmplitude);
 	addAction(SC_D.ui.actionRecalculateAmplitudes);
 
+	addAction(SC_D.ui.actionToggleAudioSonification);
+	addAction(SC_D.ui.actionPlayTraceAudio);
+	addAction(SC_D.ui.actionStopAudioPlayback);
+
 	SC_D.ui.actionRecalculateAmplitude->setIcon(icon("amplitudes_remeasure_single"));
 	SC_D.ui.actionRecalculateAmplitudes->setIcon(icon("amplitudes_remeasure"));
 
@@ -2195,6 +2200,23 @@ void AmplitudeView::init() {
 	SC_D.ui.toolBarSetup->insertSeparator(SC_D.ui.actionPickAmplitude);
 	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.labelAmpCombiner = new QLabel("Amp.combiner:"));
 	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.comboAmpCombiner);
+
+	SC_D.audioSonification = new WaveformAudio(this);
+	connect(SC_D.ui.actionToggleAudioSonification, SIGNAL(triggered(bool)),
+	        this, SLOT(toggleAudioSonification()));
+	connect(SC_D.ui.actionPlayTraceAudio, SIGNAL(triggered(bool)),
+	        this, SLOT(playCurrentTraceAudio()));
+	connect(SC_D.ui.actionStopAudioPlayback, SIGNAL(triggered(bool)),
+	        this, SLOT(stopAudioPlayback()));
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionToggleAudioSonification);
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionPlayTraceAudio);
+	SC_D.ui.toolBarSonification->addAction(SC_D.ui.actionStopAudioPlayback);
+
+	SC_D.audioDebounceTimer = new QTimer(this);
+	SC_D.audioDebounceTimer->setSingleShot(true);
+	SC_D.audioDebounceTimer->setInterval(300);
+	connect(SC_D.audioDebounceTimer, &QTimer::timeout,
+	        this, &AmplitudeView::playAudioAtCursor);
 
 	// TTT selection
 	SC_D.comboTTT = new QComboBox;
@@ -4639,6 +4661,10 @@ void AmplitudeView::updateSubCursor(RecordWidget* w, int s) {
 	SC_D.recordView->currentItem()->widget()->blockSignals(true);
 	SC_D.recordView->currentItem()->widget()->setCursorPos(w->cursorPos());
 	SC_D.recordView->currentItem()->widget()->blockSignals(false);
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		SC_D.audioDebounceTimer->start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5083,10 +5109,12 @@ void AmplitudeView::moveTraces(double offset) {
 
 	setTimeRange(SC_D.currentRecord->tmin() + offset,
 	             SC_D.currentRecord->tmax() + offset);
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		SC_D.audioDebounceTimer->start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -5113,6 +5141,10 @@ void AmplitudeView::move(double offset) {
 
 	SC_D.recordView->move(offset);
 	setTimeRange(tmin, tmax);
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		SC_D.audioDebounceTimer->start();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7018,6 +7050,222 @@ void AmplitudeView::announceToScreenReader(const QString &msg) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::keyPressEvent(QKeyEvent *event) {
+	if ( event->key() == Qt::Key_Menu || event->key() == Qt::Key_Context1 ) {
+		RecordViewItem *item = SC_D.recordView->currentItem();
+		if ( item && item->widget() ) {
+			RecordWidget *widget = item->widget();
+
+			AmplitudeViewMarker *marker = static_cast<AmplitudeViewMarker*>(widget->currentMarker());
+			if ( !marker ) {
+				marker = static_cast<AmplitudeViewMarker*>(widget->marker(widget->cursorText()));
+			}
+
+			if ( marker && (marker->isAmplitude() || marker->isReference()) ) {
+				SC_D.currentRecord->setCursorText(widget->cursorText());
+				SC_D.currentRecord->setCursorPos(widget->cursorPos());
+				QPoint centerPos = SC_D.currentRecord->rect().center();
+
+				if ( SC_D.currentRecord->contextMenuPolicy() == Qt::CustomContextMenu )
+					emit SC_D.currentRecord->customContextMenuRequested(centerPos);
+
+				event->accept();
+				return;
+			}
+			else if ( !widget->cursorText().isEmpty() ) {
+				SC_D.currentRecord->setCursorText(widget->cursorText());
+				SC_D.currentRecord->setCursorPos(widget->cursorPos());
+				QPoint centerPos = SC_D.currentRecord->rect().center();
+
+				if ( SC_D.currentRecord->contextMenuPolicy() == Qt::CustomContextMenu )
+					emit SC_D.currentRecord->customContextMenuRequested(centerPos);
+
+				event->accept();
+				return;
+			}
+		}
+
+		announceToScreenReader(tr("No context menu available for current selection"));
+		event->accept();
+		return;
+	}
+
+	QMainWindow::keyPressEvent(event);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::toggleAudioSonification() {
+	SC_D.audioSonification->setEnabled(!SC_D.audioSonification->isEnabled());
+
+	SC_D.ui.actionToggleAudioSonification->setChecked(SC_D.audioSonification->isEnabled());
+
+	if ( SC_D.audioSonification->isEnabled() ) {
+		statusBar()->showMessage(tr("Audio sonification enabled - press Ctrl+Space to play"), 5000);
+	}
+	else {
+		statusBar()->showMessage(tr("Audio sonification disabled"), 5000);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::playCurrentTraceAudio() {
+	if ( !SC_D.audioSonification->isEnabled() ) {
+		statusBar()->showMessage(tr("Audio sonification is disabled - enable with Ctrl+Shift+A first"), 5000);
+		return;
+	}
+
+	if ( !SC_D.currentRecord ) {
+		return;
+	}
+
+	auto seq = SC_D.currentRecord->isFilteringEnabled()
+		? SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+		: SC_D.currentRecord->records(SC_D.currentSlot);
+
+	if ( !seq ) {
+		statusBar()->showMessage(tr("No waveform data available for sonification"), 5000);
+		return;
+	}
+
+	std::vector<double> waveformData;
+	double originalSampleRate = 0.0;
+
+	for ( auto it = seq->begin(); it != seq->end(); ++it ) {
+		auto rec = *it;
+		if ( !rec || !rec->data() ) continue;
+
+		if ( originalSampleRate == 0.0 ) {
+			originalSampleRate = rec->samplingFrequency();
+		}
+
+		auto dArray = DoubleArray::ConstCast(rec->data());
+		if ( dArray ) {
+			for ( int i = 0; i < dArray->size(); ++i ) {
+				waveformData.push_back((*dArray)[i]);
+			}
+		}
+		else {
+			auto fArray = FloatArray::ConstCast(rec->data());
+			if ( fArray ) {
+				for ( int i = 0; i < fArray->size(); ++i ) {
+					waveformData.push_back(static_cast<double>((*fArray)[i]));
+				}
+			}
+		}
+	}
+
+	if ( waveformData.empty() ) {
+		statusBar()->showMessage(tr("No waveform data available for sonification"), 5000);
+		return;
+	}
+
+	SC_D.audioSonification->setWaveformData(waveformData, originalSampleRate, 160.0f);
+
+	double dataDuration = SC_D.audioSonification->dataDurationSec();
+	int audioDurationMs = SC_D.audioSonification->audioDurationMs();
+
+	statusBar()->showMessage(
+		tr("Playing %1s of seismic data at %2 Hz, speeded up 160x (audio: %3 ms)")
+			.arg(dataDuration, 0, 'f', 1)
+			.arg(originalSampleRate, 0, 'f', 1)
+			.arg(audioDurationMs),
+		5000
+	);
+
+	SC_D.audioSonification->play();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::stopAudioPlayback() {
+	SC_D.audioSonification->stop();
+	statusBar()->showMessage(tr("Audio playback stopped"), 3000);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::playAudioAtCursor() {
+	if ( !SC_D.audioSonification->isEnabled() ) {
+		return;
+	}
+
+	if ( !SC_D.currentRecord ) {
+		return;
+	}
+
+	auto seq = SC_D.currentRecord->isFilteringEnabled()
+		? SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
+		: SC_D.currentRecord->records(SC_D.currentSlot);
+
+	if ( !seq ) {
+		return;
+	}
+
+	double windowSecs = 15.0;
+	Core::Time cursorTime = SC_D.currentRecord->cursorPos();
+	Core::Time startTime = cursorTime - Core::TimeSpan(windowSecs * 0.2);
+	Core::Time endTime = cursorTime + Core::TimeSpan(windowSecs * 0.8);
+
+	std::vector<double> waveformData;
+	double originalSampleRate = 0.0;
+
+	for ( auto it = seq->begin(); it != seq->end(); ++it ) {
+		auto rec = *it;
+		if ( !rec || !rec->data() ) continue;
+
+		if ( originalSampleRate == 0.0 ) {
+			originalSampleRate = rec->samplingFrequency();
+		}
+
+		if ( rec->endTime() < startTime || rec->startTime() > endTime ) {
+			continue;
+		}
+
+		auto dArray = DoubleArray::ConstCast(rec->data());
+		if ( dArray ) {
+			double fs = rec->samplingFrequency();
+			int startIdx = std::max(0, static_cast<int>(
+				static_cast<double>(startTime - rec->startTime()) * fs));
+			int endIdx = std::min(dArray->size(), static_cast<int>(
+				static_cast<double>(endTime - rec->startTime()) * fs) + 1);
+
+			for ( int i = startIdx; i < endIdx; ++i ) {
+				waveformData.push_back((*dArray)[i]);
+			}
+		}
+		else {
+			auto fArray = FloatArray::ConstCast(rec->data());
+			if ( fArray ) {
+				double fs = rec->samplingFrequency();
+				int startIdx = std::max(0, static_cast<int>(
+					static_cast<double>(startTime - rec->startTime()) * fs));
+				int endIdx = std::min(fArray->size(), static_cast<int>(
+					static_cast<double>(endTime - rec->startTime()) * fs) + 1);
+
+				for ( int i = startIdx; i < endIdx; ++i ) {
+					waveformData.push_back(static_cast<double>((*fArray)[i]));
+				}
+			}
+		}
+	}
+
+	if ( waveformData.size() < 10 ) {
+		return;
+	}
+
+	SC_D.audioSonification->setWaveformData(waveformData, originalSampleRate, 80.0f);
+
+	SC_D.audioSonification->play();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 }

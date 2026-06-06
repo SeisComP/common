@@ -493,8 +493,28 @@
    </attribute>
    <addaction name="actionAddStationsInDistanceRange"/>
    <addaction name="actionShowUsedStations"/>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
+   </widget>
+   <widget class="QToolBar" name="toolBarSonification">
+    <property name="windowTitle">
+     <string>Sonification</string>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>24</width>
+      <height>24</height>
+     </size>
+    </property>
+    <attribute name="toolBarArea">
+     <enum>TopToolBarArea</enum>
+    </attribute>
+    <attribute name="toolBarBreak">
+     <bool>false</bool>
+    </attribute>
+   </widget>
+   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -582,12 +602,21 @@
     </property>
     <addaction name="actionToggleFilter"/>
    </widget>
-   <addaction name="menuView"/>
-   <addaction name="menuNavigation"/>
-   <addaction name="menuFilter"/>
-   <addaction name="menuLocate"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarTTT">
+    <widget class="QMenu" name="menu_Tools">
+     <property name="title">
+      <string>&amp;Tools</string>
+     </property>
+     <addaction name="actionToggleAudioSonification"/>
+     <addaction name="actionPlayTraceAudio"/>
+     <addaction name="actionStopAudioPlayback"/>
+    </widget>
+    <addaction name="menuView"/>
+    <addaction name="menuNavigation"/>
+    <addaction name="menuFilter"/>
+    <addaction name="menuLocate"/>
+    <addaction name="menu_Tools"/>
+   </widget>
+   <widget class="QToolBar" name="toolBarTTT">
    <property name="windowTitle">
     <string>Travel times</string>
    </property>
@@ -1218,15 +1247,54 @@
     <string>Space</string>
    </property>
   </action>
-  <action name="actionResetScale">
-   <property name="text">
-    <string>Reset Scale</string>
-   </property>
-   <property name="shortcut">
-    <string>W</string>
-   </property>
-  </action>
- </widget>
+   <action name="actionResetScale">
+    <property name="text">
+     <string>Reset Scale</string>
+    </property>
+    <property name="shortcut">
+     <string>W</string>
+    </property>
+   </action>
+   <action name="actionToggleAudioSonification">
+    <property name="text">
+     <string>Toggle audio sonification</string>
+    </property>
+    <property name="iconText">
+     <string>Toggle audio</string>
+    </property>
+    <property name="toolTip">
+     <string>Enable/disable audio sonification of waveforms (Ctrl+Shift+A)</string>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+Shift+A</string>
+    </property>
+   </action>
+   <action name="actionPlayTraceAudio">
+    <property name="text">
+     <string>Play trace audio</string>
+    </property>
+    <property name="iconText">
+     <string>Play audio</string>
+    </property>
+    <property name="toolTip">
+     <string>Play current trace as audio (Ctrl+Space)</string>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+Space</string>
+    </property>
+   </action>
+   <action name="actionStopAudioPlayback">
+    <property name="text">
+     <string>Stop audio playback</string>
+    </property>
+    <property name="toolTip">
+     <string>Stop current audio sonification playback (Ctrl+Shift+Space)</string>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+Shift+Space</string>
+    </property>
+   </action>
+  </widget>
  <customwidgets>
   <customwidget>
    <class>Seiscomp::Gui::ZoomRecordFrame</class>

@@ -46,6 +46,7 @@
 #include <QSet>
 #include <QLabel>
 #include <QLineEdit>
+#include <QKeyEvent>
 
 
 namespace Seiscomp {
@@ -60,6 +61,7 @@ namespace Gui {
 
 class TimeScale;
 class AmplitudeView;
+class WaveformAudio;
 
 
 namespace PrivateAmplitudeView {
@@ -277,6 +279,11 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 		void setCurrentStation(const std::string& networkCode,
 		                       const std::string& stationCode);
 
+		void toggleAudioSonification();
+		void playCurrentTraceAudio();
+		void stopAudioPlayback();
+		void playAudioAtCursor();
+
 
 	signals:
 		void magnitudeCreated(Seiscomp::DataModel::Magnitude*);
@@ -399,6 +406,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 	protected:
 		void showEvent(QShowEvent* event);
 		void changeEvent(QEvent *e) override;
+		void keyPressEvent(QKeyEvent *event) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 

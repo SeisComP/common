@@ -48,6 +48,8 @@ namespace Ui {
 namespace Seiscomp {
 namespace Gui {
 
+class WaveformAudio;
+
 
 class AmplitudeViewPrivate {
 	private:
@@ -130,6 +132,9 @@ class AmplitudeViewPrivate {
 
 		RecordWidgetDecorator              *zoomDecorator;
 		RecordWidgetDecorator              *generalDecorator;
+
+		WaveformAudio                      *audioSonification{nullptr};
+		QTimer                             *audioDebounceTimer{nullptr};
 
 		AmplitudeView::Config               config;
 
