@@ -9012,6 +9012,8 @@ void PickerView::sortAlphabetically() {
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted alphabetically"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9026,6 +9028,8 @@ void PickerView::sortByDistance() {
 	SC_D.ui.actionSortByDistance->setChecked(true);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted by distance"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9040,6 +9044,8 @@ void PickerView::sortByAzimuth() {
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(true);
 	SC_D.ui.actionSortByResidual->setChecked(false);
+
+	announceToScreenReader(tr("Sorted by azimuth"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9048,12 +9054,14 @@ void PickerView::sortByAzimuth() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::sortByResidual() {
-	SC_D.recordView->sortByValue(ITEM_RESIDUAL_INDEX);
+	SC_D.recordView->sortByValue(ITEM_RESIDUAL_INDEX, ITEM_PRIORITY_INDEX);
 
 	SC_D.ui.actionSortAlphabetically->setChecked(false);
 	SC_D.ui.actionSortByDistance->setChecked(false);
 	SC_D.ui.actionSortByAzimuth->setChecked(false);
 	SC_D.ui.actionSortByResidual->setChecked(true);
+
+	announceToScreenReader(tr("Sorted by residual"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9126,6 +9134,8 @@ void PickerView::alignOnOriginTime() {
 	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
 	SC_D.ui.actionAlignOnPArrival->setChecked(false);
 	SC_D.ui.actionAlignOnSArrival->setChecked(false);
+
+	announceToScreenReader(tr("Aligned on origin time"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9135,6 +9145,7 @@ void PickerView::alignOnOriginTime() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnPArrivals() {
 	alignOnPhase("P", false);
+	announceToScreenReader(tr("Aligned on P arrivals"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -9144,6 +9155,7 @@ void PickerView::alignOnPArrivals() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnSArrivals() {
 	alignOnPhase("S", false);
+	announceToScreenReader(tr("Aligned on S arrivals"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -10818,6 +10830,8 @@ void PickerView::resetPick() {
 
 	item->widget()->update();
 	SC_D.currentRecord->update();
+
+	announceToScreenReader(tr("Pick reset"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -11034,12 +11048,13 @@ void PickerView::showTheoreticalArrivals(bool v) {
 		for ( int i = 0; i < w->markerCount(); ++i ) {
 			PickerMarker* m = static_cast<PickerMarker*>(w->marker(i));
 			if ( m->type() == PickerMarker::Theoretical )
-				m->setVisible(v);
+			m->setVisible(v);
 		}
 	}
+
+	announceToScreenReader(v ? tr("Theoretical arrivals shown") : tr("Theoretical arrivals hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
@@ -11088,18 +11103,20 @@ void PickerView::showUnassociatedPicks(bool v) {
 			w->setMarkerSourceWidget(w->markerSourceWidget());
 		}
 	}
+
+	announceToScreenReader(v ? tr("Unassociated picks shown") : tr("Unassociated picks hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::showSpectrogram(bool v) {
 	static_cast<ZoomRecordWidget*>(SC_D.currentRecord)->setShowSpectrogram(v);
+
+	announceToScreenReader(v ? tr("Spectrogram shown") : tr("Spectrogram hidden"));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 
 
 
