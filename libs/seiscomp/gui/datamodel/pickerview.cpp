@@ -8615,7 +8615,17 @@ void PickerView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem) {
 	// Announce station change to screen readers
 	QString distanceText = SC_D.ui.labelDistance->text();
 	QString azimuthText = SC_D.ui.labelAzimuth->text();
-	announceToScreenReader(tr("Station %1, channel %2, distance %3, azimuth %4")
+	int rowIndex = -1;
+	int rowCount = SC_D.recordView->rowCount();
+	for ( int r = 0; r < rowCount; ++r ) {
+		if ( SC_D.recordView->itemAt(r) == item ) {
+			rowIndex = r;
+			break;
+		}
+	}
+	announceToScreenReader(tr("Station %1 of %2: %3, channel %4, distance %5, azimuth %6")
+	                       .arg(rowIndex + 1)
+	                       .arg(rowCount)
 	                       .arg(streamID.stationCode().c_str())
 	                       .arg(cha.c_str())
 	                       .arg(distanceText)
@@ -11269,6 +11279,9 @@ void PickerView::changeRotation(int index) {
 	}
 
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(tr("Rotation changed to %1")
+		.arg(PickerView::Config::ERotationTypeNames::name(index)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -11283,6 +11296,9 @@ void PickerView::changeUnit(int index) {
 	applyFilter();
 
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(tr("Unit changed to %1")
+		.arg(PickerView::Config::EUnitTypeNames::name(index)));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -11521,6 +11537,8 @@ void PickerView::changeFilter(int index, bool) {
 
 	SC_D.lastFilterIndex = index;
 	QApplication::restoreOverrideCursor();
+
+	announceToScreenReader(tr("Filter changed to %1").arg(name));
 
 	/*
 	if ( index == SC_D.lastFilterIndex && !force ) {
