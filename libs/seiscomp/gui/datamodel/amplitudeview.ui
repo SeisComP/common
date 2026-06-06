@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1217</width>
-    <height>874</height>
+    <width>917</width>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,16 +24,7 @@
     <property name="spacing">
      <number>6</number>
     </property>
-    <property name="leftMargin">
-     <number>6</number>
-    </property>
-    <property name="topMargin">
-     <number>6</number>
-    </property>
-    <property name="rightMargin">
-     <number>6</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>6</number>
     </property>
     <item>
@@ -52,16 +43,7 @@
         <property name="spacing">
          <number>6</number>
         </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -82,16 +64,7 @@
            <property name="spacing">
             <number>6</number>
            </property>
-           <property name="leftMargin">
-            <number>6</number>
-           </property>
-           <property name="topMargin">
-            <number>6</number>
-           </property>
-           <property name="rightMargin">
-            <number>6</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>6</number>
            </property>
            <item>
@@ -112,16 +85,7 @@
               <property name="spacing">
                <number>6</number>
               </property>
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
@@ -142,16 +106,7 @@
                 <property name="spacing">
                  <number>0</number>
                 </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
+                <property name="margin">
                  <number>0</number>
                 </property>
                 <item>
@@ -240,16 +195,7 @@
              <property name="spacing">
               <number>6</number>
              </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>0</number>
              </property>
              <item>
@@ -270,16 +216,7 @@
                 <property name="spacing">
                  <number>6</number>
                 </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
+                <property name="margin">
                  <number>0</number>
                 </property>
                 <item>
@@ -562,8 +499,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1217</width>
-     <height>30</height>
+     <width>917</width>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuView">
@@ -574,7 +511,7 @@
      <property name="title">
       <string>&amp;Zoom trace</string>
      </property>
-     <addaction name="actionTimeScaleUp"/>
+	 <addaction name="actionTimeScaleUp"/>
      <addaction name="actionTimeScaleDown"/>
      <addaction name="actionIncreaseAmplitudeScale"/>
      <addaction name="actionDecreaseAmplitudeScale"/>
@@ -634,8 +571,8 @@
     </property>
     <addaction name="actionDisablePicking"/>
     <addaction name="actionPickAmplitude"/>
-    <addaction name="actionRecalculateAmplitude"/>
-    <addaction name="actionRecalculateAmplitudes"/>
+   <addaction name="actionRecalculateAmplitude"/>
+   <addaction name="actionRecalculateAmplitudes"/>
     <addaction name="separator"/>
     <addaction name="actionComputeMagnitudes"/>
    </widget>
@@ -644,8 +581,6 @@
      <string>&amp;Filter</string>
     </property>
     <addaction name="actionToggleFilter"/>
-    <addaction name="actionNextFilter"/>
-    <addaction name="actionPreviousFilter"/>
    </widget>
    <addaction name="menuView"/>
    <addaction name="menuNavigation"/>
@@ -1291,28 +1226,6 @@
     <string>W</string>
    </property>
   </action>
-  <action name="actionNextFilter">
-   <property name="text">
-    <string>Next filter</string>
-   </property>
-   <property name="toolTip">
-    <string>Next filter</string>
-   </property>
-   <property name="shortcut">
-    <string>G</string>
-   </property>
-  </action>
-  <action name="actionPreviousFilter">
-   <property name="text">
-    <string>Previous filter</string>
-   </property>
-   <property name="toolTip">
-    <string>Previous filter</string>
-   </property>
-   <property name="shortcut">
-    <string>D</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1322,6 +1235,5 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
  <connections/>
 </ui>

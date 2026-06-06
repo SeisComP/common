@@ -42,6 +42,7 @@
 #include <QSet>
 #include <QLabel>
 #include <QLineEdit>
+#include <QKeyEvent>
 #include <QMainWindow>
 
 
@@ -64,6 +65,7 @@ namespace Gui {
 class TimeScale;
 class PickerView;
 class SpectrumWidget;
+class WaveformAudio;
 
 
 namespace PrivatePickerView {
@@ -411,6 +413,11 @@ class SC_GUI_API PickerView : public QMainWindow {
 		                       const std::string& stationCode,
 		                       bool state);
 
+		void toggleAudioSonification();
+		void playCurrentTraceAudio();
+		void stopAudioPlayback();
+		void playAudioAtCursor();
+
 
 	private slots:
 		void receivedRecord(Seiscomp::Record*);
@@ -495,11 +502,15 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void gotoNextMarker();
 		void gotoPreviousMarker();
 
+		void announceToScreenReader(const QString &message);
+		void delayedQualityAnnouncement(const QString &message);
+
 		void createPick();
 		void setPick();
 		void confirmPick();
 		void resetPick();
 		void deletePick();
+		void announceCurrentPickDetails();
 
 		void setCurrentRowEnabled(bool);
 		void setCurrentRowDisabled(bool);
@@ -558,16 +569,15 @@ class SC_GUI_API PickerView : public QMainWindow {
 	protected:
 		void showEvent(QShowEvent* event) override;
 		void changeEvent(QEvent *e) override;
+		void keyPressEvent(QKeyEvent *event) override;
 
 		RecordLabel* createLabel(RecordViewItem*) const;
 
 
 	private:
-<<<<<<< HEAD
-=======
 		void applyThemeColors();
->>>>>>> e0ce74329ae8520ae62312544942fb745c885087
 		void announceAmplitude();
+		void announcePickDetails(RecordWidget* widget, const Core::Time& pickTime, const QString& phaseName, bool isUpdate = false);
 		void figureOutTravelTimeTable();
 		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
 

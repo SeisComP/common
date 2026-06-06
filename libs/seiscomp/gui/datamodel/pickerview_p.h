@@ -44,6 +44,7 @@ namespace Gui {
 
 
 class SpectrogramSettings;
+class WaveformAudio;
 
 
 class PickerViewPrivate {
@@ -157,6 +158,10 @@ class PickerViewPrivate {
 		QWidget                            *spectrumView;
 		QMenu                              *auxiliaryProfileMenu{nullptr};
 		QMenu                              *auxiliaryProfileVisibilityMenu{nullptr};
+
+		QLabel                             *modeLabel;
+		WaveformAudio                      *audioSonification{nullptr};
+		QTimer                             *audioDebounceTimer{nullptr};
 
 		::Ui::PickerView                    ui;
 		bool                                settingsRestored;

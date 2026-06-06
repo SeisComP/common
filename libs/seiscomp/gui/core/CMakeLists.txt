@@ -36,6 +36,7 @@ SET(
 		uncertainties.cpp
 		utils.cpp
 		vruler.cpp
+		waveformaudio.cpp
 		xmlview.cpp
 )
 
@@ -63,6 +64,7 @@ SET(
 		spectrogramrenderer.h
 		tensorrenderer.h
 		utils.h
+		waveformaudio.h
 )
 
 SET(
@@ -92,6 +94,7 @@ SET(
 		timescale.h
 		uncertainties.h
 		vruler.h
+		waveformaudio.h
 		xmlview.h
 )
 
