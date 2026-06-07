@@ -3114,14 +3114,20 @@ void OriginLocatorView::init() {
 	SC_D.ui.btnCustom1->setVisible(false);
 
 	SC_D.commitMenu = new QMenu(this);
-	SC_D.commitMenu->addAction(tr("Commit"))->setShortcut(QKeySequence("Return"));
-	connect(SC_D.commitMenu->actions().first(), SIGNAL(triggered()), this, SLOT(commit()));
+	QAction *commitAction = SC_D.commitMenu->addAction(tr("Commit"));
+	commitAction->setShortcut(QKeySequence("Return"));
+	connect(commitAction, SIGNAL(triggered()), this, SLOT(commit()));
 	SC_D.commitMenu->addSeparator();
 	SC_D.actionCommitOptions = SC_D.commitMenu->addAction("With additional options...");
-	SC_D.actionCommitOptions->setShortcut(QKeySequence("Ctrl+Return"));
+	SC_D.actionCommitOptions->setShortcut(QKeySequence("Ctrl+Shift+Return"));
 	SC_D.ui.btnCommit->setMenu(SC_D.commitMenu);
 	SC_D.ui.btnCommit->setPopupMode(QToolButton::MenuButtonPopup);
-	SC_D.ui.btnCommit->setToolTip(tr("Commit (Enter). Ctrl+Enter for options dialog"));
+	SC_D.ui.btnCommit->setToolTip(tr("Commit (Enter). Ctrl+Enter for menu, Ctrl+Shift+Enter for options dialog"));
+
+	QAction *showCommitMenu = new QAction(this);
+	showCommitMenu->setShortcut(QKeySequence("Ctrl+Return"));
+	connect(showCommitMenu, SIGNAL(triggered()), SC_D.ui.btnCommit, SLOT(showMenu()));
+	addAction(showCommitMenu);
 
 	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(0, 1000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
