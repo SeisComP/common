@@ -4196,7 +4196,11 @@ void MagnitudeView::magnitudeCommentChanged(QString) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeView::announceToScreenReader(const QString &message) {
-	// TODO: use QAccessibleAnnouncementEvent when available
+	SEISCOMP_DEBUG("Screen reader announcement: %s", message.toStdString().c_str());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	QAccessibleAnnouncementEvent event(this, message);
+	QAccessible::updateAccessibility(&event);
+#endif
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -1172,7 +1172,11 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 	}
 }
 void CalculateAmplitudes::announceToScreenReader(const QString &msg) {
-	Q_UNUSED(msg);
+	SEISCOMP_DEBUG("Screen reader announcement: %s", msg.toStdString().c_str());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	QAccessibleAnnouncementEvent event(this, msg);
+	QAccessible::updateAccessibility(&event);
+#endif
 }
 
 
