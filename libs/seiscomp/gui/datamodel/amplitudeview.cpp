@@ -7046,7 +7046,7 @@ bool AmplitudeView::setArrivalState(RecordWidget* w, int arrivalId, bool state) 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void AmplitudeView::announceToScreenReader(const QString &msg) {
-	statusBar()->showMessage(msg, 5000);
+	SEISCOMP_DEBUG("Screen reader announcement: %s", msg.toStdString().c_str());
 #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
 	QAccessibleAnnouncementEvent event(this, msg);
 	QAccessible::updateAccessibility(&event);

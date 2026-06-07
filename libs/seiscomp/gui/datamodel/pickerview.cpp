@@ -9728,12 +9728,8 @@ void PickerView::gotoPreviousMarker() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::announceToScreenReader(const QString &message) {
 	// Announce message to screen readers using Qt accessibility APIs
-	// This provides feedback for Orca and other screen readers
+	// No visual status bar output — keeps the UI clean for sighted users
 
-	// Method 1: Status bar message (for debugging and visual feedback)
-	statusBar()->showMessage(message, 5000);
-
-	// Always log for debugging
 	SEISCOMP_DEBUG("Screen reader announcement: %s", message.toStdString().c_str());
 	
 	// Check accessibility status
