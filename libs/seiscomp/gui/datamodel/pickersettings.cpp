@@ -21,6 +21,10 @@
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/datamodel/pickersettings.h>
 #include <QHeaderView>
+#include <QAccessible>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QAccessibleAnnouncementEvent>
+#endif
 
 
 namespace Seiscomp {
@@ -138,6 +142,13 @@ class FilterModel : public QAbstractListModel {
 		FilterList &_data;
 };
 
+void announceToScreenReader(QWidget *widget, const QString &message) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	QAccessibleAnnouncementEvent event(widget, message);
+	QAccessible::updateAccessibility(&event);
+#endif
+}
+
 }
 
 
@@ -246,6 +257,29 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 
 	connect(_ui.saveButton, SIGNAL(clicked()),
 	        this, SLOT(save()));
+
+	connect(this, &QDialog::finished, this, [this](int result) {
+		if ( result == QDialog::Accepted ) {
+			announceToScreenReader(this, tr("Picker settings saved"));
+		}
+	});
+
+	connect(_ui.slPreOffset, &QSlider::sliderReleased, this, [this]() {
+		announceToScreenReader(this, tr("Pre-offset set to %1 minutes")
+			.arg(_ui.slPreOffset->value()));
+	});
+	connect(_ui.slPostOffset, &QSlider::sliderReleased, this, [this]() {
+		announceToScreenReader(this, tr("Post-offset set to %1 minutes")
+			.arg(_ui.slPostOffset->value()));
+	});
+	connect(_ui.slAmplitudePreOffset, &QSlider::sliderReleased, this, [this]() {
+		announceToScreenReader(this, tr("Amplitude pre-offset set to %1 minutes")
+			.arg(_ui.slAmplitudePreOffset->value()));
+	});
+	connect(_ui.slAmplitudePostOffset, &QSlider::sliderReleased, this, [this]() {
+		announceToScreenReader(this, tr("Amplitude post-offset set to %1 minutes")
+			.arg(_ui.slAmplitudePostOffset->value()));
+	});
 
 	_ui.spinPVel->setValue(_locatorConfig.reductionVelocityP);
 	_ui.cbMaplines->setChecked(_locatorConfig.drawMapLines);

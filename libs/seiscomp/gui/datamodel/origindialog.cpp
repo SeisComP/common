@@ -22,12 +22,27 @@
 #include <iostream>
 #include <QTime>
 #include <QDate>
+#include <QAccessible>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QAccessibleAnnouncementEvent>
+#endif
 
 #include <seiscomp/core/datetime.h>
 
 
 namespace Seiscomp {
 namespace Gui {
+
+namespace {
+
+void announceToScreenReader(QWidget *widget, const QString &message) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	QAccessibleAnnouncementEvent event(widget, message);
+	QAccessible::updateAccessibility(&event);
+#endif
+}
+
+}
 
 
 double OriginDialog::_defaultDepth = 10;
@@ -291,6 +306,13 @@ void OriginDialog::init(double lon, double lat, double dep) {
 	setAdvanced(false);
 	setPhaseCount(10);
 	setMagValue(5.0);
+
+	connect(this, &QDialog::finished, this, [this](int result) {
+		if ( result == QDialog::Accepted ) {
+			announceToScreenReader(this, tr("Origin set: lat %1, lon %2, depth %3")
+				.arg(latitude()).arg(longitude()).arg(depth()));
+		}
+	});
 }
 
 

@@ -33,12 +33,25 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QCompleter>
+#include <QAccessible>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QAccessibleAnnouncementEvent>
+#endif
 
 
 namespace Seiscomp {
 namespace Gui {
 
 namespace {
+
+void announceToScreenReader(QWidget *widget, const QString &message) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	QAccessibleAnnouncementEvent event(widget, message);
+	QAccessible::updateAccessibility(&event);
+#endif
+}
+
+
 
 
 QString parse(QString s) {
@@ -469,6 +482,16 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	connect(_ui.cbExcludeSensorUnit, SIGNAL(toggled(bool)),
 	        this, SLOT(listMatchingStations()));
 
+	connect(_ui.table->selectionModel(), &QItemSelectionModel::selectionChanged,
+	        this, [this](const QItemSelection &selected, const QItemSelection &) {
+		if ( selected.isEmpty() ) return;
+		QModelIndex idx = selected.indexes().first();
+		if ( idx.column() != 0 ) {
+			idx = idx.sibling(idx.row(), 0);
+		}
+		announceToScreenReader(this, tr("Selected station %1").arg(idx.data().toString()));
+	});
+
 	listMatchingStations();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -519,6 +542,9 @@ void SelectStation::listMatchingStations() {
 	model->includeSensorUnit(!_ui.cbExcludeSensorUnit->isChecked());
 
 	model->setFilterWildcard(_ui.lineEditNSLC->text().trimmed());
+
+	announceToScreenReader(this, tr("Showing %1 stations matching filter")
+		.arg(_ui.table->model()->rowCount()));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

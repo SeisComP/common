@@ -7818,6 +7818,16 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		OriginCommitOptions dlg;
 		tmp = *options_ptr;
 		dlg.setOptions(tmp, SC_D.baseEvent.get(), SC_D.localOrigin);
+
+		{
+			QString evalStatus = tmp.originStatus && *tmp.originStatus
+				? QString::fromStdString((*tmp.originStatus)->toString()) : QString("unset");
+			QString evType = tmp.eventType
+				? QString::fromStdString(tmp.eventType->toString()) : QString("unset");
+			announceToScreenReader(tr("Committing origin with evaluation status %1, event type %2, %3 phases")
+				.arg(evalStatus).arg(evType).arg(SC_D.currentOrigin->arrivalCount()));
+		}
+
 		if ( dlg.exec() != QDialog::Accepted ) {
 			return;
 		}
@@ -7836,6 +7846,15 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		}
 
 		dialogConfirmed = true;
+
+		{
+			QString evalStatus = tmp.originStatus && *tmp.originStatus
+				? QString::fromStdString((*tmp.originStatus)->toString()) : QString("unset");
+			QString evType = tmp.eventType
+				? QString::fromStdString(tmp.eventType->toString()) : QString("unset");
+			announceToScreenReader(tr("Committing origin with evaluation status %1, event type %2, %3 phases")
+				.arg(evalStatus).arg(evType).arg(SC_D.currentOrigin->arrivalCount()));
+		}
 	}
 
 	const CommitOptions &options = *options_ptr;
