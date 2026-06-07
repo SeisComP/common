@@ -3115,8 +3115,11 @@ void OriginLocatorView::init() {
 
 	SC_D.commitMenu = new QMenu(this);
 	SC_D.actionCommitOptions = SC_D.commitMenu->addAction("With additional options...");
+	SC_D.actionCommitOptions->setShortcut(QKeySequence("Ctrl+Shift+Return"));
 
 	SC_D.ui.btnCommit->setMenu(SC_D.commitMenu);
+	SC_D.ui.btnCommit->setPopupMode(QToolButton::MenuButtonPopup);
+	SC_D.ui.btnCommit->setToolTip(tr("Commit origin (press and hold for menu, or use Ctrl+Shift+Enter for options dialog)"));
 
 	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(0, 1000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
