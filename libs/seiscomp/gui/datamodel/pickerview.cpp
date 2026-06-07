@@ -3022,7 +3022,6 @@ void PickerView::init() {
 				info += tr(", azimuth %1°").arg(current->value(ITEM_AZIMUTH_INDEX), 0, 'f', 1);
 			}
 			
-			statusBar()->showMessage(info, 3000);
 			announceToScreenReader(info);
 		}
 	});
