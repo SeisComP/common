@@ -3119,7 +3119,32 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.btnCommit->setMenu(SC_D.commitMenu);
 
+	// fixed depth
 	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(-1000, 1000.0, 3, SC_D.ui.editFixedDepth));
+	SC_D.ui.editFixedDepth->lineEdit()->setAlignment(Qt::AlignRight);
+
+	// add item for initial depth value
+	auto *editFixedDepthModel = SC_D.ui.editFixedDepth->model();
+	SC_D.ui.editFixedDepth->clear();
+	SC_D.ui.editFixedDepth->addItem("-");
+	editFixedDepthModel->setData(editFixedDepthModel->index(0, 0),
+	                             "Initial value", Qt::ToolTipRole);
+
+	// add fix depth presets read from configuration
+	try {
+		auto precision = std::max(3, SCScheme.precision.depth);
+		for ( auto d : SCApp->configGetDoubles("olv.fixedDepths") ) {
+			SC_D.ui.editFixedDepth->addItem(depthToString(d, precision));
+		}
+	}
+	catch ( ... ) {}
+
+	for ( auto i = 0; i < SC_D.ui.editFixedDepth->count(); ++i ) {
+		editFixedDepthModel->setData(editFixedDepthModel->index(i, 0),
+		                             Qt::AlignRight, Qt::TextAlignmentRole);
+	}
+
+	SC_D.ui.editFixedDepth->lineEdit()->setAlignment(Qt::AlignRight);
 	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setText("1000");
 
@@ -5322,13 +5347,15 @@ void OriginLocatorView::updateContent() {
 
 	try {
 		SC_D.ui.labelDepth->setText(depthToString(SC_D.currentOrigin->depth(), SCScheme.precision.depth));
-		SC_D.ui.editFixedDepth->setText(depthToString(SC_D.currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
-		SC_D.ui.labelDepthUnit->setText("km");
+		SC_D.ui.editFixedDepth->setItemText(0, depthToString(SC_D.currentOrigin->depth(), std::max(3, SCScheme.precision.depth)));
 	}
 	catch ( ValueException& ) {
 		SC_D.ui.labelDepth->setText("-");
-		SC_D.ui.editFixedDepth->setText("");
+		SC_D.ui.editFixedDepth->setItemText(0, "");
 	}
+	SC_D.ui.labelDepthUnit->setText("km");
+	SC_D.ui.editFixedDepth->setCurrentIndex(0);
+
 
 	try {
 		SC_D.ui.labelDepth->setToolTip(tr("Type: %1").arg(SC_D.currentOrigin->depthType().toString()));
@@ -6468,7 +6495,7 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 
 	for ( int loop = 1; loop <= 2; ++loop ) {
 		if ( fixedDepth ) {
-			double depth = loop == 1 ? SC_D.ui.editFixedDepth->text().toDouble() : SC_D.minimumDepth;
+			double depth = loop == 1 ? SC_D.ui.editFixedDepth->currentText().toDouble() : SC_D.minimumDepth;
 
 			SC_D.locator->setFixedDepth(depth);
 
