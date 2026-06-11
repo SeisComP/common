@@ -3158,7 +3158,15 @@ void OriginLocatorView::init() {
 		                             Qt::AlignRight, Qt::TextAlignmentRole);
 	}
 
-	SC_D.ui.editFixedDepth->lineEdit()->setAlignment(Qt::AlignRight);
+	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::checkStateChanged, [this](int state) {
+		int idx = 0; // set by locator
+		if ( state == Qt::Checked ) {
+			// operator assigned, unset as fallback
+			idx = max(SC_D.ui.cbDepthType->findData(OPERATOR_ASSIGNED), 1);
+		}
+		SC_D.ui.cbDepthType->setCurrentIndex(idx);
+	});
+
 	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setText("1000");
 
