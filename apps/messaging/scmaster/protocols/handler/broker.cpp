@@ -139,8 +139,7 @@ struct FrameHeaders {
 	typedef char CH;
 
 	FrameHeaders(CH *src, size_t l)
-	: _source(src), _source_len(l)
-	, _numberOfHeaders(0) {}
+	: _source(src), _source_len(l) {}
 
 	bool next() {
 		size_t len;
@@ -199,12 +198,12 @@ struct FrameHeaders {
 
 	CH     *_source;
 	size_t  _source_len;
-	size_t  _numberOfHeaders;
+	size_t  _numberOfHeaders{0};
 
-	CH     *name_start;
-	size_t  name_len;
-	CH     *val_start;
-	size_t  val_len;
+	CH     *name_start{nullptr};
+	size_t  name_len{0};
+	CH     *val_start{nullptr};
+	size_t  val_len{0};
 };
 
 
