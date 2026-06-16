@@ -297,9 +297,11 @@ class SC_GUI_API EventSummaryView : public QWidget
 		bool _interactive;
 		bool _autoSelect;
 		bool _displayFocMechs;
-		bool _recenterMap;
-		bool _recenterMapConfig;
-		bool _ignoreOtherEvents;
+		bool   _recenterMap;
+		bool   _recenterMapConfig;
+		bool   _ignoreOtherEvents;
+		QRectF _displayRect;
+		double _defaultEventRadius{-1};
 		bool _showLastAutomaticSolution;
 		bool _showOnlyMostRecentEvent;
 		bool _enableFullTensor;

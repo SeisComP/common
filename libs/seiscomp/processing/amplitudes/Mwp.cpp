@@ -20,7 +20,9 @@
 
 #include <seiscomp/processing/amplitudes/Mwp.h>
 #include <seiscomp/math/filter/iirintegrate.h>
-#include<seiscomp/math/filter/butterworth.h>
+#include <seiscomp/math/filter/butterworth.h>
+#include <seiscomp/logging/log.h>
+#include <seiscomp/config/config.h>
 
 #include <seiscomp/math/geo.h>
 
@@ -112,6 +114,26 @@ double Mwp_amplitude(int n, double *f, int i0, int *pos) {
 }
 
 
+// Tsuboi et al. (1995) original algorithm: first local peak after P onset,
+// not the global maximum.  Stops as soon as amplitude starts decreasing.
+double Mwp_first_peak_amplitude(int n, double *f, int i0, int *pos) {
+	double prev = 0.0;
+	*pos = i0;
+
+	for (int i = i0; i < n - 1; i++) {
+		double s = fabs(f[i]);
+		if (s >= prev) {
+			*pos = i;
+			prev = s;
+		}
+		else {
+			return prev;  // first local maximum found
+		}
+	}
+	return prev;
+}
+
+
 void Mwp_double_integration(int n, double *f, int i0, double fsamp) {
 	Mwp_integr(n, f, i0);
 	Mwp_integr(n, f, i0);
@@ -132,6 +154,26 @@ REGISTER_AMPLITUDEPROCESSOR(AmplitudeProcessor_Mwp, "Mwp");
 AmplitudeProcessor_Mwp::AmplitudeProcessor_Mwp()
 	: AmplitudeProcessor("Mwp") {
 	init();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool AmplitudeProcessor_Mwp::setup(const Settings &settings) {
+	if ( !AmplitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
+	if ( cfg ) {
+		cfg->getBool(_useFirstPeak, "amplitudes.Mwp.useFirstPeak");
+	}
+
+	SEISCOMP_DEBUG("  + useFirstPeak = %s", _useFirstPeak ? "true" : "false");
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -209,7 +251,9 @@ bool AmplitudeProcessor_Mwp::computeAmplitude(const DoubleArray &data,
 	delete hp;
 
 	// Amplitude in nanometers
-	amplitude->value = 1.E9*Mwp_amplitude(si2, _processedData.typedData(), si1, &onset);
+	amplitude->value = _useFirstPeak
+	    ? 1.E9 * Mwp_first_peak_amplitude(si2, _processedData.typedData(), si1, &onset)
+	    : 1.E9 * Mwp_amplitude(si2, _processedData.typedData(), si1, &onset);
 
 	dt->index = onset; // FIXME
 	*period = 0.0;
