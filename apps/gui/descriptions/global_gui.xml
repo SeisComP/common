@@ -91,11 +91,94 @@
 				</parameter>
 				<parameter name="type" type="string">
 					<description>
-					The tile store implementation provided by a plugin for
-					considering maps if a non-default tile store is configured
-					in 'map.location'.
+					The tile store implementation for considering maps if a
+					non-default tile store is configured in 'map.location'.
+
+					The built-in 'xyz' store fetches tiles from any standard
+					XYZ / slippy-map server (OpenStreetMap, OpenTopoMap, ESRI,
+					CartoDB, custom servers); see the 'xyz' group below.
+					Additional stores may be provided by plugins.
 					</description>
 				</parameter>
+				<group name="xyz">
+					<description>
+					Configuration of the built-in XYZ tile store
+					(map.type = xyz). The tile URL template in 'map.location'
+					uses the tokens {z} (zoom), {x} (column), {y} (row) and
+					{s} (subdomain), e.g.
+					https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png.
+					Note: some servers (e.g. ESRI) expect {z}/{y}/{x} order.
+					</description>
+					<parameter name="sources" type="list:string">
+						<description>
+						Optional list of tile sources, each serving a contiguous
+						zoom-level band, to show different basemaps at different
+						zoom levels. Each entry has the form
+						"minLevel:maxLevel:urlTemplate"; only the first two
+						colons are separators, so the "https://" in the URL is
+						preserved. When set, this overrides 'map.location'. When
+						empty, 'map.location' is used with minLevel/maxLevel.
+						</description>
+					</parameter>
+					<parameter name="minLevel" type="uint" default="0" range="0:29">
+						<description>
+						Minimum zoom level requested from the single-source
+						'map.location'. Ignored when 'map.xyz.sources' is set.
+						</description>
+					</parameter>
+					<parameter name="maxLevel" type="uint" default="19" range="0:29">
+						<description>
+						Maximum zoom level requested from the single-source
+						'map.location'. Ignored when 'map.xyz.sources' is set.
+						Provider maxima differ (OSM 19, Google ~21-22, ESRI 23);
+						the hard ceiling is 29.
+						</description>
+					</parameter>
+					<parameter name="subdomains" type="string" default="a,b,c">
+						<description>
+						Comma-separated subdomains substituted for {s} in the URL
+						template, rotated for basic load-balancing. Leave empty
+						if the server has no subdomain variants.
+						</description>
+					</parameter>
+					<parameter name="tileSize" type="string" default="256" unit="px"
+					           values="256,512">
+						<description>
+						Edge length of square tiles in pixels. Must match what
+						the server actually serves; a mismatch renders blurry.
+						256 = standard tiles, 512 = HiDPI/retina tiles.
+						</description>
+					</parameter>
+					<parameter name="cacheDir" type="directory">
+						<description>
+						Directory for caching downloaded tiles
+						(cacheDir/{z}/{x}/{y}). Leave empty to disable disk
+						caching.
+						</description>
+					</parameter>
+					<parameter name="cacheDuration" type="int" default="86400" unit="s">
+						<description>
+						How long a cached tile is considered fresh before it is
+						fetched again. -1 = never expire, 0 = disable caching.
+						</description>
+					</parameter>
+					<parameter name="missingTTL" type="int" default="300" unit="s">
+						<description>
+						How long to remember that a tile returned an HTTP error
+						(e.g. 404 above a server's max zoom) before retrying it,
+						to avoid re-requesting absent tiles on every redraw.
+						-1 = remember for the whole session, 0 = always retry.
+						</description>
+					</parameter>
+					<parameter name="userAgent" type="string"
+					           default="SeisComP-xyztiles/1.0">
+						<description>
+						HTTP User-Agent header sent with every tile request. Set
+						this to identify your institution when deploying
+						publicly; required by OSM's tile usage policy.
+						</description>
+					</parameter>
+				</group>
 				<parameter name="customLayers" type="list:string">
 					<description>
 						Allows to add custom layers that are included via plugins.
