@@ -127,7 +127,7 @@ size_t readBNA(GeoFeatureSet &featureSet, const std::string &path,
 	if ( infile.fail() ) {
 		SEISCOMP_WARNING("Could not open segment file for reading: %s",
 		                 path);
-		return false;
+		return 0;
 	}
 
 	vector<GeoFeature*> features;
