@@ -61,6 +61,7 @@ void setText(QLabel *l, const QString &txt, int maxLength = 16) {
 	}
 	else*/
 		l->setText(txt);
+	l->setToolTip(txt);
 }
 
 
