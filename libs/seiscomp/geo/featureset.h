@@ -133,10 +133,10 @@ class SC_SYSTEM_CORE_API GeoFeatureSet : public Core::BaseObject {
 		bool addFeature(GeoFeature *feature);
 
 		/** Returns reference to GeoFeature vector */
-		const Features &features() const { return _features; };
+		const Features &features() const { return _features; }
 
 		/** Returns reference to Category vector */
-		const Categories &categories() const { return _categories; };
+		const Categories &categories() const { return _categories; }
 
 
 	private:
