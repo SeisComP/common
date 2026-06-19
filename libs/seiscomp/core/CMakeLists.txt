@@ -33,6 +33,7 @@ SET(CORE_HEADERS
 	baseobject.h
 	baseobject.inl
 	defs.h
+	endianess.h
 	factory.h
 	factory.inl
 	factory.ipp
