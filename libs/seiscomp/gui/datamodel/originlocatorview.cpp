@@ -3144,7 +3144,7 @@ void OriginLocatorView::init() {
 		                             Qt::AlignRight, Qt::TextAlignmentRole);
 	}
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
 	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::checkStateChanged, [this](Qt::CheckState state) {
 #else
 	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::stateChanged, [this](int state) {
