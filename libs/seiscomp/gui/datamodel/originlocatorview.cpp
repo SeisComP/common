@@ -3144,7 +3144,11 @@ void OriginLocatorView::init() {
 		                             Qt::AlignRight, Qt::TextAlignmentRole);
 	}
 
-	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::checkStateChanged, [this](int state) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::checkStateChanged, [this](Qt::CheckState state) {
+#else
+	QObject::connect(SC_D.ui.cbFixedDepth, &QCheckBox::stateChanged, [this](int state) {
+#endif
 		int idx = 0; // set by locator
 		if ( state == Qt::Checked ) {
 			// operator assigned, unset as fallback
