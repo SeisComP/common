@@ -3133,7 +3133,7 @@ void OriginLocatorView::init() {
 
 	SC_D.ui.btnCommit->setMenu(SC_D.commitMenu);
 
-	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(0, 1000.0, 3, SC_D.ui.editFixedDepth));
+	SC_D.ui.editFixedDepth->setValidator(new QDoubleValidator(-1000, 1000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setValidator(new QDoubleValidator(0, 25000.0, 3, SC_D.ui.editFixedDepth));
 	SC_D.ui.editDistanceCutOff->setText("1000");
 
