@@ -47,6 +47,7 @@ SET(CORE_HEADERS
 	datetime.h
 	datetime.ipp
 	timewindow.h
+	timewindow.ipp
 	optional.h
 	optional.inl
 	enumeration.h
