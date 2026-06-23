@@ -103,21 +103,21 @@ MAKEENUM(
 	)
 );
 
-int OriginColAligns[OriginListColumns::Quantity] = {
-	Qt::AlignLeft | Qt::AlignVCenter,
-	Qt::AlignRight | Qt::AlignVCenter,
+QFlags<Qt::AlignmentFlag> OriginColAligns[OriginListColumns::Quantity] = {
+	Qt::AlignLeft    | Qt::AlignVCenter,
+	Qt::AlignRight   | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
-	Qt::AlignRight | Qt::AlignVCenter,
-	Qt::AlignRight | Qt::AlignVCenter,
-	Qt::AlignRight | Qt::AlignVCenter,
-	Qt::AlignHCenter | Qt::AlignVCenter,
-	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignRight   | Qt::AlignVCenter,
+	Qt::AlignRight   | Qt::AlignVCenter,
+	Qt::AlignRight   | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
-	Qt::AlignLeft | Qt::AlignVCenter,
-	Qt::AlignLeft | Qt::AlignVCenter
+	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignHCenter | Qt::AlignVCenter,
+	Qt::AlignLeft    | Qt::AlignVCenter,
+	Qt::AlignLeft    | Qt::AlignVCenter
 };
 
 bool OriginColBold[OriginListColumns::Quantity] = {
@@ -185,16 +185,16 @@ MAKEENUM(
 	)
 );
 
-int MagnitudeColAligns[MagnitudeListColumns::Quantity] = {
-	Qt::AlignLeft | Qt::AlignVCenter,
-	Qt::AlignLeft | Qt::AlignVCenter,
+QFlags<Qt::AlignmentFlag> MagnitudeColAligns[MagnitudeListColumns::Quantity] = {
+	Qt::AlignLeft    | Qt::AlignVCenter,
+	Qt::AlignLeft    | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter,
-	Qt::AlignLeft | Qt::AlignVCenter,
+	Qt::AlignLeft    | Qt::AlignVCenter,
 	Qt::AlignHCenter | Qt::AlignVCenter
 };
 
@@ -261,7 +261,7 @@ MAKEENUM(
 	)
 );
 
-int FMColAligns[FMListColumns::Quantity] = {
+QFlags<Qt::AlignmentFlag> FMColAligns[FMListColumns::Quantity] = {
 	Qt::AlignLeft | Qt::AlignVCenter, // CREATED
 	Qt::AlignCenter,                  // DEPTH
 	Qt::AlignCenter,                  // MAG
@@ -1634,15 +1634,16 @@ void EventEdit::init() {
 
 	// Custom event types
 	try {
-		vector<string> eventTypes = SCApp->configGetStrings("olv.commonEventTypes");
-		for (  size_t i = 0; i < eventTypes.size(); ++i ) {
+		auto eventTypes = SCApp->configGetStrings("olv.commonEventTypes");
+		for ( size_t i = 0; i < eventTypes.size(); ++i ) {
 			DataModel::EventType type;
 			if ( !type.fromString(eventTypes[i].c_str()) ) {
 				SEISCOMP_WARNING("olv.commonEventTypes: invalid type, ignoring: %s",
 				                 eventTypes[i].c_str());
 			}
-			else
+			else {
 				_eventTypesWhitelist.append(type);
+			}
 		}
 	}
 	catch ( ... ) {}
@@ -1683,22 +1684,23 @@ void EventEdit::init() {
 		types.sort();
 		foreach (QString type, types) {
 			_ui.comboTypes->addItem(type);
-			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, type, Qt::ToolTipRole);
+			_ui.comboTypes->setItemData(_ui.comboTypes->count() - 1, type, Qt::ToolTipRole);
 		}
 	}
 	else {
 		bool usedFlags[DataModel::EventType::Quantity];
-		for ( int i = 0; i < DataModel::EventType::Quantity; ++i )
+		for ( int i = 0; i < DataModel::EventType::Quantity; ++i ) {
 			usedFlags[i] = false;
+		}
 
 		for ( int i = 0; i < _eventTypesWhitelist.count(); ++i ) {
 			if ( usedFlags[_eventTypesWhitelist[i]] ) continue;
 			_ui.comboTypes->addItem(_eventTypesWhitelist[i].toString());
-			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1,
+			_ui.comboTypes->setItemData(_ui.comboTypes->count() - 1,
 			                            _eventTypesWhitelist[i].toString(), Qt::ToolTipRole);
 			usedFlags[_eventTypesWhitelist[i]] = true;
 		}
-		_ui.comboTypes->insertSeparator(_eventTypesWhitelist.count()+1);
+		_ui.comboTypes->insertSeparator(_ui.comboTypes->count());
 
 		QColor reducedColor;
 		reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 50);
@@ -1711,14 +1713,71 @@ void EventEdit::init() {
 		types.sort();
 		foreach (QString type, types) {
 			_ui.comboTypes->addItem(type);
-			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, reducedColor, Qt::ForegroundRole);
-			_ui.comboTypes->setItemData(_ui.comboTypes->count()-1, type, Qt::ToolTipRole);
+			_ui.comboTypes->setItemData(_ui.comboTypes->count() - 1, reducedColor, Qt::ForegroundRole);
+			_ui.comboTypes->setItemData(_ui.comboTypes->count() - 1, type, Qt::ToolTipRole);
 		}
 	}
 
+	// Custom event type certainties
+	QList<DataModel::EventTypeCertainty> eventTypeCertaintiesWhiteList;
+	try {
+		auto eventTypeCertainties = SCApp->configGetStrings("olv.commonEventTypeCertainties");
+		for ( size_t i = 0; i < eventTypeCertainties.size(); ++i ) {
+			DataModel::EventTypeCertainty certainty;
+			if ( !certainty.fromString(eventTypeCertainties[i].c_str()) ) {
+				SEISCOMP_WARNING("olv.commonEventTypeCertainties: invalid type certainty, ignoring: %s",
+				                 eventTypeCertainties[i].c_str());
+			}
+			else {
+				eventTypeCertaintiesWhiteList.append(certainty);
+			}
+		}
+	}
+	catch ( ... ) {}
+
 	_ui.comboTypeCertainties->addItem(tr("- unset -"));
-	for ( int i = (int)EventTypeCertainty::First; i < (int)EventTypeCertainty::Quantity; ++i )
-		_ui.comboTypeCertainties->addItem(EventTypeCertainty::NameDispatcher::name(i));
+
+	if ( eventTypeCertaintiesWhiteList.isEmpty() ) {
+		for ( int i = (int)EventTypeCertainty::First; i < (int)EventTypeCertainty::Quantity; ++i ) {
+			_ui.comboTypeCertainties->addItem(EventTypeCertainty::NameDispatcher::name(i));
+		}
+	}
+	else {
+		bool usedFlags[DataModel::EventTypeCertainty::Quantity];
+		for ( int i = 0; i < DataModel::EventTypeCertainty::Quantity; ++i ) {
+			usedFlags[i] = false;
+		}
+
+		for ( int i = 0; i < eventTypeCertaintiesWhiteList.count(); ++i ) {
+			if ( usedFlags[eventTypeCertaintiesWhiteList[i]] ) {
+				continue;
+			}
+			_ui.comboTypeCertainties->addItem(eventTypeCertaintiesWhiteList[i].toString());
+			_ui.comboTypeCertainties->setItemData(_ui.comboTypeCertainties->count() - 1,
+			                                      eventTypeCertaintiesWhiteList[i].toString(),
+			                                      Qt::ToolTipRole);
+			usedFlags[eventTypeCertaintiesWhiteList[i]] = true;
+		}
+
+		_ui.comboTypeCertainties->insertSeparator(_ui.comboTypeCertainties->count());
+
+		QColor reducedColor;
+		reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 50);
+
+		QStringList typeCertainties;
+		for ( int i = 0; i < DataModel::EventTypeCertainty::Quantity; ++i ) {
+			if ( usedFlags[i] ) {
+				continue;
+			}
+			typeCertainties << EventTypeCertainty::NameDispatcher::name(i);
+		}
+		typeCertainties.sort();
+		foreach (QString certainty, typeCertainties) {
+			_ui.comboTypeCertainties->addItem(certainty);
+			_ui.comboTypeCertainties->setItemData(_ui.comboTypeCertainties->count() - 1, reducedColor, Qt::ForegroundRole);
+			_ui.comboTypeCertainties->setItemData(_ui.comboTypeCertainties->count() - 1, certainty, Qt::ToolTipRole);
+		}
+	}
 
 	QVector<ConfigProcessColumn> scriptColumns;
 
@@ -3397,13 +3456,15 @@ void EventEdit::addJournal(JournalEntry *entry) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::addMagnitude(Magnitude *mag) {
 	for ( int i = 0; i < _ui.treeMagnitudes->topLevelItemCount(); ++i ) {
-		if ( mag->publicID() == (const char*)_ui.treeMagnitudes->topLevelItem(i)->data(0, Qt::UserRole).toString().toLatin1() )
+		if ( mag->publicID() == (const char*)_ui.treeMagnitudes->topLevelItem(i)->data(0, Qt::UserRole).toString().toLatin1() ) {
 			return;
+		}
 	}
 
 	QTreeWidgetItem *item = new QTreeWidgetItem;
-	for ( int i = 0; i < MagnitudeListColumns::Quantity; ++i )
+	for ( int i = 0; i < MagnitudeListColumns::Quantity; ++i ) {
 		item->setTextAlignment(i, MagnitudeColAligns[i]);
+	}
 
 	_ui.treeMagnitudes->addTopLevelItem(item);
 

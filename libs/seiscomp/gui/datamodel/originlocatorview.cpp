@@ -695,10 +695,69 @@ class OriginCommitOptions : public QDialog {
 			ui.comboEventTypes->setCurrentIndex(ui.comboEventTypes->findText(defaultType.toString()));
 
 			// event certainty
-			ui.comboEventTypeCertainty->addItem("- unset -");
-			for ( int i = int(EventTypeCertainty::First); i < int(EventTypeCertainty::Quantity); ++i )
-				ui.comboEventTypeCertainty->addItem(EventTypeCertainty::NameDispatcher::name(i));
-			ui.comboEventTypeCertainty->setCurrentIndex(0);
+			{
+				QList<DataModel::EventTypeCertainty> eventTypeCertaintiesWhiteList;
+				try {
+					auto eventTypeCertainties = SCApp->configGetStrings("olv.commonEventTypeCertainties");
+					for ( size_t i = 0; i < eventTypeCertainties.size(); ++i ) {
+						DataModel::EventTypeCertainty certainty;
+						if ( !certainty.fromString(eventTypeCertainties[i].c_str()) ) {
+							SEISCOMP_WARNING("olv.commonEventTypeCertainties: invalid type certainty, ignoring: %s",
+							                 eventTypeCertainties[i].c_str());
+						}
+						else {
+							eventTypeCertaintiesWhiteList.append(certainty);
+						}
+					}
+				}
+				catch ( ... ) {}
+
+				ui.comboEventTypeCertainty->addItem(tr("- unset -"));
+
+				if ( eventTypeCertaintiesWhiteList.isEmpty() ) {
+					for ( int i = (int)EventTypeCertainty::First; i < (int)EventTypeCertainty::Quantity; ++i ) {
+						ui.comboEventTypeCertainty->addItem(EventTypeCertainty::NameDispatcher::name(i));
+					}
+				}
+				else {
+					bool usedFlags[DataModel::EventTypeCertainty::Quantity];
+					for ( int i = 0; i < DataModel::EventTypeCertainty::Quantity; ++i ) {
+						usedFlags[i] = false;
+					}
+
+					for ( int i = 0; i < eventTypeCertaintiesWhiteList.count(); ++i ) {
+						if ( usedFlags[eventTypeCertaintiesWhiteList[i]] ) {
+							continue;
+						}
+						ui.comboEventTypeCertainty->addItem(eventTypeCertaintiesWhiteList[i].toString());
+						ui.comboEventTypeCertainty->setItemData(ui.comboEventTypeCertainty->count() - 1,
+						                                        eventTypeCertaintiesWhiteList[i].toString(),
+						                                        Qt::ToolTipRole);
+						usedFlags[eventTypeCertaintiesWhiteList[i]] = true;
+					}
+
+					ui.comboEventTypeCertainty->insertSeparator(eventTypeCertaintiesWhiteList.count() + 1);
+
+					QColor reducedColor;
+					reducedColor = blend(palette().color(QPalette::Text), palette().color(QPalette::Base), 50);
+
+					QStringList typeCertainties;
+					for ( int i = 0; i < DataModel::EventTypeCertainty::Quantity; ++i ) {
+						if ( usedFlags[i] ) {
+							continue;
+						}
+						typeCertainties << EventTypeCertainty::NameDispatcher::name(i);
+					}
+					typeCertainties.sort();
+					foreach (QString certainty, typeCertainties) {
+						ui.comboEventTypeCertainty->addItem(certainty);
+						ui.comboEventTypeCertainty->setItemData(ui.comboEventTypeCertainty->count() - 1, reducedColor, Qt::ForegroundRole);
+						ui.comboEventTypeCertainty->setItemData(ui.comboEventTypeCertainty->count() - 1, certainty, Qt::ToolTipRole);
+					}
+				}
+
+				ui.comboEventTypeCertainty->setCurrentIndex(0);
+			}
 
 			// origin status
 			ui.comboOriginStates->addItem("- unset -");
