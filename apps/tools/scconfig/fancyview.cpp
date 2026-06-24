@@ -1676,8 +1676,9 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		}
 		else {
 			ComboEdit *combo = new ComboEdit;
+			// remove whitespaces allowing line breaks in descriptions with value list
 			for ( const auto &value : param->definition->values ) {
-				combo->addItem(value.c_str());
+				combo->addItem(QString(value.c_str()).trimmed());
 			}
 			combo->setValue(idx.sibling(idx.row(),2).data().toString());
 			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextChanged(QString)));
