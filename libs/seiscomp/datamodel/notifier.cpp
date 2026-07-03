@@ -353,9 +353,8 @@ bool Notifier::apply() const {
 		return false;
 	}
 
-	bool saveState = IsEnabled();
+	NotifierDisableGuard disableGuard;
 	bool result = false;
-	Disable();
 
 	switch ( _operation ) {
 		case OP_ADD:
@@ -370,11 +369,7 @@ bool Notifier::apply() const {
 			if ( po ) {
 				auto *rpo = PublicObject::Find(po->publicID());
 				if ( rpo && (rpo != po) ) {
-					auto saveState = IsEnabled();
-					Disable();
 					rpo->assign(po);
-					rpo->update();
-					SetEnabled(saveState);
 					return true;
 				}
 			}
@@ -384,8 +379,6 @@ bool Notifier::apply() const {
 		default:
 			break;
 	}
-
-	SetEnabled(saveState);
 
 	return result;
 }
