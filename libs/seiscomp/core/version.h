@@ -46,6 +46,9 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "17.4.0"   0x110400
+   - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
+
  "17.3.0"   0x110300
    - Added Seiscomp::Utils::V2::LeExpression
    - Added Seiscomp::Utils::V2::LeFactory

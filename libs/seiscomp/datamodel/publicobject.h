@@ -268,6 +268,27 @@ class SC_SYSTEM_CORE_API PublicIDPatternResolver : public Util::VariableResolver
 };
 
 
+template <bool WANT_ENABLE>
+class PublicObjectRegistrationGuard {
+	public:
+		PublicObjectRegistrationGuard() {
+			_initialState = PublicObject::IsRegistrationEnabled();
+			PublicObject::SetRegistrationEnabled(WANT_ENABLE);
+		}
+
+		~PublicObjectRegistrationGuard() {
+			PublicObject::SetRegistrationEnabled(_initialState);
+		}
+
+	private:
+		bool _initialState;
+};
+
+
+using RegistrationEnableGuard = PublicObjectRegistrationGuard<true>;
+using RegistrationDisableGuard = PublicObjectRegistrationGuard<false>;
+
+
 }
 }
 
