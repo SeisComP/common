@@ -23,6 +23,7 @@
 
 
 #include <string>
+#include <vector>
 
 #include <seiscomp/config/config.h>
 #include <seiscomp/core/baseobject.h>
@@ -88,6 +89,19 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		 * configured fallback.
 		 */
 		virtual double fetchMaxDepth(double lat, double lon) const = 0;
+
+		/**
+		 * @brief Return candidate seed depths (km) at (@p lat, @p lon).
+		 *
+		 * For regions with dual seismicity (shallow crustal layer above a
+		 * subducting slab), a backend may return more than one depth so the
+		 * caller can evaluate each seed independently. The default
+		 * implementation returns {fetch(lat, lon)}, i.e. a single depth,
+		 * which is the correct behaviour for all current backends.
+		 */
+		virtual std::vector<double> fetchCandidates(double lat, double lon) const {
+			return {fetch(lat, lon)};
+		}
 };
 
 

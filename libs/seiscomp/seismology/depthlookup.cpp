@@ -60,8 +60,6 @@ std::optional<double> parseAttr(const Geo::GeoFeature *f,
 	return v;
 }
 
-} // anonymous namespace
-
 
 // ---------------------------------------------------------------------------
 // DepthLookupConstant
@@ -189,6 +187,7 @@ class DepthLookupPolygon : public DepthLookup {
 
 REGISTER_DEPTH_LOOKUP(DepthLookupPolygon, "Polygon");
 
+} // anonymous namespace
 
 
 } // namespace Seismology
