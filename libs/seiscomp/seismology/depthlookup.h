@@ -46,13 +46,12 @@ DEFINE_SMARTPOINTER(DepthLookup);
  *
  * Two implementations ship with the library:
  *  - "Constant"  Always returns a fixed depth read from depths.constant.value.
+ *                Maximum depth is configurable via depths.constant.maxDepth.
  *  - "Polygon"   Queries named polygon features from SeisComP's global
  *                GeoFeatureSet; each polygon must carry a defaultDepth
  *                attribute (km, required) and may carry maxDepth (km).
- *                Returns depths.polygon.fallback when no polygon matches.
- *
- * A separate dlslab2 plugin (seiscomp/main) provides depth lookup from
- * USGS Slab2.0 depth-footprint contours.
+ *                Falls back to depths.polygon.fallback / depths.polygon.maxDepth
+ *                when no polygon matches.
  *
  * All depth knowledge — including the fallback for locations outside any
  * configured region — is fully encapsulated in the backend. The client

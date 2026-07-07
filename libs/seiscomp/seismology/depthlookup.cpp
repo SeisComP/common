@@ -107,7 +107,8 @@ REGISTER_DEPTH_LOOKUP(DepthLookupConstant, "Constant");
  *
  * Config keys:
  *   depths.polygon.regions   — ordered list of feature names
- *   depths.polygon.fallback  — depth returned when no polygon matches (km)
+ *   depths.polygon.fallback  — default depth returned when no polygon matches (km)
+ *   depths.polygon.maxDepth  — max depth returned when no polygon matches (km)
  */
 class DepthLookupPolygon : public DepthLookup {
 	public:
