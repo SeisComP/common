@@ -75,6 +75,10 @@ class DepthLookupConstant : public DepthLookup {
 				SEISCOMP_INFO("DepthLookup/Constant: depths.constant.value not set, "
 				              "using default %.0f km", _value);
 			}
+			try {
+				_maxDepth = config.getDouble("depths.constant.maxDepth");
+			}
+			catch ( ... ) {}
 			return true;
 		}
 
@@ -83,11 +87,12 @@ class DepthLookupConstant : public DepthLookup {
 		}
 
 		double fetchMaxDepth(double, double) const override {
-			return _value;
+			return _maxDepth;
 		}
 
 	private:
 		double _value{10.0};
+		double _maxDepth{1000.0};
 };
 
 REGISTER_DEPTH_LOOKUP(DepthLookupConstant, "Constant");
@@ -114,6 +119,10 @@ class DepthLookupPolygon : public DepthLookup {
 				SEISCOMP_INFO("DepthLookup/Polygon: depths.polygon.fallback not set, "
 				              "using default %.0f km", _fallback);
 			}
+			try {
+				_maxDepthFallback = config.getDouble("depths.polygon.maxDepth");
+			}
+			catch ( ... ) {}
 
 			std::vector<std::string> names;
 			try {
@@ -168,10 +177,10 @@ class DepthLookupPolygon : public DepthLookup {
 		double fetchMaxDepth(double lat, double lon) const override {
 			for ( const auto &e : _entries ) {
 				if ( e.feature->contains({lat, lon}) ) {
-					return e.maxDepth.value_or(_fallback);
+					return e.maxDepth.value_or(_maxDepthFallback);
 				}
 			}
-			return _fallback;
+			return _maxDepthFallback;
 		}
 
 	private:
@@ -182,6 +191,7 @@ class DepthLookupPolygon : public DepthLookup {
 		};
 
 		double             _fallback{10.0};
+		double             _maxDepthFallback{1000.0};
 		std::vector<Entry> _entries;
 };
 
