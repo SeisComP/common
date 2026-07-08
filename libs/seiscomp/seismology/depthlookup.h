@@ -74,11 +74,11 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		/**
 		 * @brief Return the default depth (km) at (@p lat, @p lon).
 		 *
-		 * Always returns a finite value. When no region or slab zone
-		 * contains the given location the backend returns its own
-		 * configured fallback depth.
+		 * Always returns a finite value and never throws. When no region
+		 * or slab zone contains the given location the backend returns its
+		 * own configured fallback depth.
 		 */
-		virtual double fetch(double lat, double lon) const = 0;
+		virtual double fetch(double lat, double lon) const noexcept = 0;
 
 		/**
 		 * @brief Return the maximum acceptable depth (km) at (@p lat, @p lon).
@@ -87,7 +87,7 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		 * contains the given location the backend returns its own
 		 * configured fallback.
 		 */
-		virtual double fetchMaxDepth(double lat, double lon) const = 0;
+		virtual double fetchMaxDepth(double lat, double lon) const noexcept = 0;
 
 		/**
 		 * @brief Return candidate seed depths (km) at (@p lat, @p lon).
@@ -98,7 +98,7 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		 * implementation returns {fetch(lat, lon)}, i.e. a single depth,
 		 * which is the correct behaviour for all current backends.
 		 */
-		virtual std::vector<double> fetchCandidates(double lat, double lon) const {
+		virtual std::vector<double> fetchCandidates(double lat, double lon) const noexcept {
 			return {fetch(lat, lon)};
 		}
 };
