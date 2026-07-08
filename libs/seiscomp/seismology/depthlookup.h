@@ -93,12 +93,12 @@ class SC_SYSTEM_CORE_API DepthLookup : public Core::BaseObject {
 		 * @brief Return candidate seed depths (km) at (@p lat, @p lon).
 		 *
 		 * For regions with dual seismicity (shallow crustal layer above a
-		 * subducting slab), a backend may return more than one depth so the
-		 * caller can evaluate each seed independently. The default
-		 * implementation returns {fetch(lat, lon)}, i.e. a single depth,
-		 * which is the correct behaviour for all current backends.
+		 * subducting slab), a backend may return more than one candidate
+		 * depth for the caller to evaluate independently. The default
+		 * implementation wraps fetch() and returns a single depth, which
+		 * is the correct behaviour for all current backends.
 		 */
-		virtual std::vector<double> fetchCandidates(double lat, double lon) const noexcept {
+		virtual std::vector<double> fetchCandidateDepths(double lat, double lon) const noexcept {
 			return {fetch(lat, lon)};
 		}
 };
