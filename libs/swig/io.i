@@ -105,6 +105,10 @@
     $input = PyBytes_FromStringAndSize($1, $2);
 }
 
+%apply int *OUTPUT { size_t *tail };
+%apply std::string &OUTPUT { std::string &out };
+%ignore Seiscomp::IO::DatabaseInterface::Query;
+
 %import "math.i"
 %include "seiscomp/core.h"
 %include "seiscomp/io/database.h"
@@ -147,6 +151,32 @@
 		## for Python 2 compatibility
 		#def next(self):
 		#    return self.__next__()
+	%}
+};
+
+%extend Seiscomp::IO::DatabaseInterface {
+	%pythoncode %{
+		@staticmethod
+		def Query(db, s, *args):
+		    n = len(args)
+		    sql = ""
+		    while n >= 0:
+		        r = DatabaseInterface.Parse(db, s)
+		        sql = sql + r[0]
+		        if r[1] < 0:
+		            if n > 0:
+		                raise IndexError("parameter overflow")
+		            break
+		        else:
+		            if n == 0:
+		                raise IndexError("parameter underflow")
+		            if type(args[len(args) - n]) == str:
+		                sql = sql + "'" + db.escape(args[len(args) - n])[1] + "'"
+		            else:
+		                sql = sql + str(args[len(args) - n])
+		            s = s[r[1]:]
+		        n = n - 1
+		    return sql
 	%}
 };
 

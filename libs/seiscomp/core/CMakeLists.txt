@@ -72,6 +72,7 @@ SET(CORE_HEADERS
 	datamessage.h
 	plugin.h
 	system.h
+	typetraits.h
 	version.h
 )
 
