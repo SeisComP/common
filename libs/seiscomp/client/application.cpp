@@ -246,7 +246,7 @@ void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
 	& cfg(URL, "server")
 	& cfg(primaryGroup, "primaryGroup")
 	& cfg(subscriptions, "subscriptions")
-	& cfg(contentType, "encoding")
+	& cfg(contentType, "contentType")
 	& cfg(timeout, "timeout")
 	& cfg(certificate, "certificate")
 
