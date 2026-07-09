@@ -32,6 +32,7 @@
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/core/strings.h>
+#include <seiscomp/core/typetraits.h>
 
 
 using namespace std;
@@ -580,6 +581,24 @@ BOOST_AUTO_TEST_CASE(tok2) {
 	tok = tokenize2(sv, ";");
 	BOOST_CHECK_EQUAL(tok, "");
 	BOOST_CHECK_EQUAL(tok.data(), nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(stringLike) {
+	BOOST_CHECK(TypeTraits::IsStringLike<string>());
+	BOOST_CHECK(TypeTraits::IsStringLike<string&>());
+	BOOST_CHECK(TypeTraits::IsStringLike<string&&>());
+	BOOST_CHECK(TypeTraits::IsStringLike<const string&>());
+	BOOST_CHECK(TypeTraits::IsStringLike<string_view>());
+	BOOST_CHECK(TypeTraits::IsStringLike<string_view&>());
+	BOOST_CHECK(TypeTraits::IsStringLike<const string_view&>());
+	BOOST_CHECK(TypeTraits::IsStringLike<char *>());
+	BOOST_CHECK(TypeTraits::IsStringLike<const char *>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<int>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<const int>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<float>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<const float>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<Time>());
+	BOOST_CHECK(!TypeTraits::IsStringLike<const Time&>());
 }
 
 

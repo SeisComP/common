@@ -25,15 +25,84 @@
 #include <seiscomp/logging/log.h>
 #include <seiscomp/utils/url.h>
 
-#include <string.h>
+#include <cstring>
+#include <exception>
+
 
 IMPLEMENT_INTERFACE_FACTORY(Seiscomp::IO::DatabaseInterface, SC_SYSTEM_CORE_API);
 
-namespace Seiscomp {
-namespace IO {
+
+#define TABLE_PREFIX     '@' // E.g. @Origin
+#define ATTRIBUTE_PREFIX '$' // E.g. @Origin.$time_value
+#define STRING_PREFIX1   '\''
+#define STRING_PREFIX2   '"'
+#define PARAM_TOKEN      '?'
 
 
 using namespace std;
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+inline bool validIdentifierChar(char ch) {
+	// isalnum() has undefined behavior for arguments that are not representable
+	// as unsigned char (e.g. bytes >= 0x80 from UTF-8 input), so cast first.
+	return isalnum(static_cast<unsigned char>(ch)) || (ch == '_');
+}
+
+string fillIdentifier(size_t n, const char *in, size_t &i) {
+	string id;
+
+	// Identifiers are strictly [A-Za-z0-9_]. The first non-identifier character
+	// terminates the identifier; it is then processed by the main loop (so an
+	// escaped special character still works, but can no longer be smuggled into
+	// an unescaped table/column name).
+	++i;
+	while ( i < n && validIdentifierChar(in[i]) ) {
+		id += in[i];
+		++i;
+	}
+
+	return id;
+}
+
+string fillString(size_t n, const char *in, size_t &i, char quote) {
+	string s;
+
+	while ( i < n ) {
+		if ( in[i] == '\\' ) {
+			++i;
+			if ( i >= n ) {
+				break;
+			}
+		}
+		else if ( in[i] == quote ) {
+			++i;
+			return s;
+		}
+
+		s += in[i];
+		++i;
+	}
+
+	throw runtime_error(string("expected closing (") + quote + ")");
+}
+
+
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace Seiscomp {
+namespace IO {
 
 
 IMPLEMENT_SC_ABSTRACT_CLASS(DatabaseInterface, "DatabaseInterface");
@@ -72,7 +141,6 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 	const char* tmp;
 	std::string service;
 	std::string source;
-	std::string type;
 
 	tmp = strstr(uri, "://");
 	if ( tmp ) {
@@ -105,6 +173,116 @@ DatabaseInterface* DatabaseInterface::Open(const char* uri) {
 	}
 
 	return db;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+string DatabaseInterface::Query(
+	const DatabaseInterface *db, string_view s
+) {
+	size_t tail = 0;
+	string sql;
+	while ( tail < s.length() ) {
+		sql += Parse(db, s.substr(tail), &tail);
+		if ( tail != string::npos ) {
+			throw runtime_error("parameter underflow");
+		}
+	}
+	return sql;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+std::string DatabaseInterface::Parse(
+	const DatabaseInterface *db, std::string_view s, size_t *tail
+) {
+	size_t lastOut = 0;
+
+	string sql;
+	auto n = s.length();
+	*tail = string::npos;
+
+	for ( size_t i = 0; (s[i] != '\0') && (i < n); ) {
+		switch ( s[i] ) {
+			case '\\':
+				++i;
+				sql += s.substr(lastOut, i - lastOut - 1);
+				if ( (s[i] != '\0') && (i < n) ) {
+					sql += s[i];
+					lastOut = i + 1;
+				}
+				break;
+			case STRING_PREFIX1:
+			case STRING_PREFIX2:
+			{
+				auto quote = s[i];
+				sql += s.substr(lastOut, i - lastOut);
+				string in = fillString(n, s.data(), ++i, quote), out;
+
+				if ( !db->escape(out, in) ) {
+					throw runtime_error("escape error: " + in);
+				}
+
+				sql += STRING_PREFIX1;
+				sql += out;
+				sql += STRING_PREFIX1;
+				lastOut = i;
+				continue;
+			}
+			case PARAM_TOKEN:
+				sql += s.substr(lastOut, i - lastOut);
+				*tail = i + 1;
+				return sql;
+			default:
+				switch ( s[i] ) {
+					case TABLE_PREFIX:
+					{
+						// Table replace
+						sql += s.substr(lastOut, i - lastOut);
+						auto id = fillIdentifier(n, s.data(), i);
+						if ( id.empty() ) {
+							throw runtime_error("empty table name after '@'");
+						}
+						sql += id;
+						lastOut = i;
+						continue;
+					}
+					case ATTRIBUTE_PREFIX:
+						if ( !i || !validIdentifierChar(s[i - 1]) ) {
+							// Attribute replace
+							sql += s.substr(lastOut, i - lastOut);
+							auto id = fillIdentifier(n, s.data(), i);
+							if ( id.empty() ) {
+								throw runtime_error("empty column name after '$'");
+							}
+							sql += db->convertColumnName(id);
+							lastOut = i;
+							continue;
+						}
+						break;
+					default:
+						break;
+				}
+				break;
+		}
+
+		++i;
+	}
+
+	size_t i = lastOut;
+	while ( (i < n) && (s[i] != '\0') ) {
+		++i;
+	}
+
+	sql += s.substr(lastOut, i - lastOut);
+
+	return sql;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

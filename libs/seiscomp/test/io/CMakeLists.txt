@@ -1,1 +1,1 @@
-SUBDIRS(archive records recordfilter recordstream streams)
+SUBDIRS(archive db records recordfilter recordstream streams)

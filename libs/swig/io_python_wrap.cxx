@@ -9685,6 +9685,79 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_DatabaseInterface_Parse(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::DatabaseInterface *arg1 = 0 ;
+  std::string_view arg2 ;
+  size_t *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *bytes2 = NULL ;
+  size_t temp3 ;
+  int res3 = SWIG_TMPOBJ ;
+  PyObject *swig_obj[2] ;
+  std::string result;
+  
+  arg3 = &temp3;
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "DatabaseInterface_Parse", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__DatabaseInterface, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseInterface_Parse" "', argument " "1"" of type '" "Seiscomp::IO::DatabaseInterface const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::DatabaseInterface * >(argp1);
+  {
+    Py_ssize_t len;
+#ifdef SWIG_PYTHON_STRICT_BYTE_CHAR
+    const char *p = PyBytes_AsString(swig_obj[1]);
+    if (!p) SWIG_fail;
+    len = PyBytes_Size(swig_obj[1]);
+#else
+    const char *p;
+    if (PyUnicode_Check(swig_obj[1])) {
+      p = SWIG_PyUnicode_AsUTF8AndSize(swig_obj[1], &len, &bytes2);
+      if (!p) SWIG_fail;
+    } else {
+      p = PyBytes_AsString(swig_obj[1]);
+      if (!p) SWIG_fail;
+      len = PyBytes_Size(swig_obj[1]);
+    }
+#endif
+    arg2 = std::string_view(p, len);
+  }
+  {
+    try {
+      result = Seiscomp::IO::DatabaseInterface::Parse((Seiscomp::IO::DatabaseInterface const *)arg1,SWIG_STD_MOVE(arg2),arg3);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_std_basic_string_Sl_char_Sg_(static_cast< std::basic_string<char> >(result));
+  if (SWIG_IsTmpObj(res3)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_int((*arg3)), 0);
+  } else {
+    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_size_t, new_flags), 0);
+  }
+  
+  SWIG_Py_XDECREF(bytes2);
+  
+  return resultobj;
+fail:
+  
+  SWIG_Py_XDECREF(bytes2);
+  
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_DatabaseInterface_backend(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::DatabaseInterface *arg1 = 0 ;
@@ -10599,30 +10672,23 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_escape(PyObject *self, PyObject *ar
   std::string *arg3 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
+  std::string temp2 ;
+  int res2 = SWIG_TMPOBJ ;
   int res3 = SWIG_OLDOBJ ;
-  PyObject *swig_obj[3] ;
+  PyObject *swig_obj[2] ;
   bool result;
   
+  arg2 = &temp2;
   (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "DatabaseInterface_escape", 3, 3, swig_obj)) SWIG_fail;
+  if (!SWIG_Python_UnpackTuple(args, "DatabaseInterface_escape", 2, 2, swig_obj)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__DatabaseInterface, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseInterface_escape" "', argument " "1"" of type '" "Seiscomp::IO::DatabaseInterface const *""'"); 
   }
   arg1 = reinterpret_cast< Seiscomp::IO::DatabaseInterface * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_std__basic_stringT_char_t,  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DatabaseInterface_escape" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DatabaseInterface_escape" "', argument " "2"" of type '" "std::string &""'"); 
-  }
-  arg2 = reinterpret_cast< std::string * >(argp2);
   {
     std::basic_string<char> *ptr = (std::basic_string<char> *)0;
-    res3 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[2], &ptr);
+    res3 = SWIG_AsPtr_std_basic_string_Sl_char_Sg_(swig_obj[1], &ptr);
     if (!SWIG_IsOK(res3)) {
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DatabaseInterface_escape" "', argument " "3"" of type '" "std::string const &""'"); 
     }
@@ -10646,6 +10712,12 @@ SWIGINTERN PyObject *_wrap_DatabaseInterface_escape(PyObject *self, PyObject *ar
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsTmpObj(res2)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_std_basic_string_Sl_char_Sg_((*arg2)), 0);
+  } else {
+    int new_flags = SWIG_IsNewObj(res2) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg2), SWIGTYPE_p_std__basic_stringT_char_t, new_flags), 0);
+  }
   if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj;
 fail:
@@ -36879,6 +36951,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "delete_DatabaseInterface", _wrap_delete_DatabaseInterface, METH_O, "delete_DatabaseInterface(DatabaseInterface self)"},
 	 { "DatabaseInterface_Create", _wrap_DatabaseInterface_Create, METH_O, "DatabaseInterface_Create(char const * service) -> DatabaseInterface"},
 	 { "DatabaseInterface_Open", _wrap_DatabaseInterface_Open, METH_O, "DatabaseInterface_Open(char const * uri) -> DatabaseInterface"},
+	 { "DatabaseInterface_Parse", _wrap_DatabaseInterface_Parse, METH_VARARGS, "DatabaseInterface_Parse(DatabaseInterface db, std::string_view s) -> string"},
 	 { "DatabaseInterface_backend", _wrap_DatabaseInterface_backend, METH_O, "DatabaseInterface_backend(DatabaseInterface self) -> Seiscomp::IO::DatabaseInterface::Backend"},
 	 { "DatabaseInterface_connect", _wrap_DatabaseInterface_connect, METH_VARARGS, "DatabaseInterface_connect(DatabaseInterface self, char const * connection) -> bool"},
 	 { "DatabaseInterface_disconnect", _wrap_DatabaseInterface_disconnect, METH_O, "DatabaseInterface_disconnect(DatabaseInterface self)"},
@@ -36901,7 +36974,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "DatabaseInterface_getRowFieldSize", _wrap_DatabaseInterface_getRowFieldSize, METH_VARARGS, "DatabaseInterface_getRowFieldSize(DatabaseInterface self, int index) -> size_t"},
 	 { "DatabaseInterface_timeToString", _wrap_DatabaseInterface_timeToString, METH_VARARGS, "DatabaseInterface_timeToString(DatabaseInterface self, Time arg2) -> string"},
 	 { "DatabaseInterface_stringToTime", _wrap_DatabaseInterface_stringToTime, METH_VARARGS, "DatabaseInterface_stringToTime(DatabaseInterface self, char const * arg2) -> Time"},
-	 { "DatabaseInterface_escape", _wrap_DatabaseInterface_escape, METH_VARARGS, "DatabaseInterface_escape(DatabaseInterface self, string out, string _in) -> bool"},
+	 { "DatabaseInterface_escape", _wrap_DatabaseInterface_escape, METH_VARARGS, "DatabaseInterface_escape(DatabaseInterface self, string _in) -> bool"},
 	 { "DatabaseInterface_columnPrefix", _wrap_DatabaseInterface_columnPrefix, METH_O, "DatabaseInterface_columnPrefix(DatabaseInterface self) -> string"},
 	 { "DatabaseInterface_convertColumnName", _wrap_DatabaseInterface_convertColumnName, METH_VARARGS, "DatabaseInterface_convertColumnName(DatabaseInterface self, string name) -> string"},
 	 { "DatabaseInterface_swigregister", DatabaseInterface_swigregister, METH_O, NULL},

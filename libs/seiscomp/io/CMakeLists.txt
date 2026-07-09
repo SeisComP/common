@@ -14,6 +14,7 @@ SET(IO_SOURCES
 
 SET(IO_HEADERS
 	database.h
+	database.ipp
 	importer.h
 	exporter.h
 	recordinput.h

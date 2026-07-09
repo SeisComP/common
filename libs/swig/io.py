@@ -331,6 +331,11 @@ class DatabaseInterface(seiscomp.core.BaseObject):
         r"""Open(char const * uri) -> DatabaseInterface"""
         return _io.DatabaseInterface_Open(uri)
 
+    @staticmethod
+    def Parse(db, s):
+        r"""Parse(DatabaseInterface db, std::string_view s) -> string"""
+        return _io.DatabaseInterface_Parse(db, s)
+
     def backend(self):
         r"""backend(DatabaseInterface self) -> Seiscomp::IO::DatabaseInterface::Backend"""
         return _io.DatabaseInterface_backend(self)
@@ -419,9 +424,9 @@ class DatabaseInterface(seiscomp.core.BaseObject):
         r"""stringToTime(DatabaseInterface self, char const * arg2) -> Time"""
         return _io.DatabaseInterface_stringToTime(self, arg2)
 
-    def escape(self, out, _in):
-        r"""escape(DatabaseInterface self, string out, string _in) -> bool"""
-        return _io.DatabaseInterface_escape(self, out, _in)
+    def escape(self, _in):
+        r"""escape(DatabaseInterface self, string _in) -> bool"""
+        return _io.DatabaseInterface_escape(self, _in)
 
     def columnPrefix(self):
         r"""columnPrefix(DatabaseInterface self) -> string"""
@@ -430,6 +435,29 @@ class DatabaseInterface(seiscomp.core.BaseObject):
     def convertColumnName(self, name):
         r"""convertColumnName(DatabaseInterface self, string name) -> string"""
         return _io.DatabaseInterface_convertColumnName(self, name)
+
+    @staticmethod
+    def Query(db, s, *args):
+        n = len(args)
+        sql = ""
+        while n >= 0:
+            r = DatabaseInterface.Parse(db, s)
+            sql = sql + r[0]
+            if r[1] < 0:
+                if n > 0:
+                    raise IndexError("parameter overflow")
+                break
+            else:
+                if n == 0:
+                    raise IndexError("parameter underflow")
+                if type(args[len(args) - n]) == str:
+                    sql = sql + "'" + db.escape(args[len(args) - n])[1] + "'"
+                else:
+                    sql = sql + str(args[len(args) - n])
+                s = s[r[1]:]
+            n = n - 1
+        return sql
+
 
 # Register DatabaseInterface in _io:
 _io.DatabaseInterface_swigregister(DatabaseInterface)

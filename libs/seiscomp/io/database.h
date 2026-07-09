@@ -26,6 +26,8 @@
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/core/enumeration.h>
 #include <seiscomp/core/datetime.h>
+#include <seiscomp/core/strings.h>
+#include <seiscomp/core/typetraits.h>
 #include <seiscomp/core.h>
 
 #include <string>
@@ -132,6 +134,37 @@ DEFINE_SMARTPOINTER(DatabaseInterface);
 		//!         NOTE: The returned pointer has to be deleted by the
 		//!               caller!
 		static DatabaseInterface *Open(const char* uri);
+
+		/**
+		 * @brief Creates a valid database query for a certain database backend.
+		 * For example, converting a query to PostgreSQL would look like:
+		 * @code
+		 * db = DatabaseInterface::Open("postgresql://localhost");
+		 * auto q = DatabaseInterface::Query(db, "select * from @Origin where $methodID='LOCSAT'")
+		 * @endcode
+		 * This method will throw an exception if the input string cannot be fully processed.
+		 * Strings surrounded by single quotes will be converted to secure SQL strings.
+		 * @param s The input generic SQL string. Tables names are prefixed with @ and
+		 *          field names with $.
+		 * @return
+		 */
+		static std::string Query(const DatabaseInterface *db, std::string_view s);
+
+		template <typename T, typename... Args>
+		static std::string Query(const DatabaseInterface *db, std::string_view s, T param1, Args... args);
+
+		/**
+		 * @brief Parses an SQL string and converts table names and column
+		 *        names to the backend representations.
+		 * @param db The database backend to use.
+		 * @param s The input generic SQL string. Tables names are prefixed with @ and
+		 *          field names with $.
+		 * @param tail The remainder if a parameter has been found. If no parameter
+		 *             has been found then the value is string::npos.
+		 * @return The converted string.
+		 */
+		static std::string Parse(const DatabaseInterface *db, std::string_view s,
+		                         size_t *tail);
 
 		/**
 		 * @brief Returns the implemented backend from one of the supported
@@ -355,6 +388,9 @@ DEFINE_INTERFACE_FACTORY(DatabaseInterface);
 
 #define REGISTER_DB_INTERFACE(Class, Service) \
 Seiscomp::Core::Generic::InterfaceFactory<Seiscomp::IO::DatabaseInterface, Class> __##Class##InterfaceFactory__(Service)
+
+
+#include "database.ipp"
 
 
 }
