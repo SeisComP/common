@@ -22,13 +22,13 @@
 
 #include <seiscomp/seismology/depthlookup.h>
 #include <seiscomp/core/interfacefactory.ipp>
+#include <seiscomp/core/optional.h>
 #include <seiscomp/geo/feature.h>
 #include <seiscomp/geo/featureset.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/logging/log.h>
 
 #include <algorithm>
-#include <optional>
 #include <string>
 #include <vector>
 
@@ -46,16 +46,15 @@ namespace Seismology {
 
 namespace {
 
-std::optional<double> parseAttr(const Geo::GeoFeature *f,
-                                const std::string &key) {
+OPT(double) parseAttr(const Geo::GeoFeature *f, const std::string &key) {
 	const auto &attrs = f->attributes();
 	auto it = attrs.find(key);
 	if ( it == attrs.end() || it->second.empty() ) {
-		return std::nullopt;
+		return Core::None;
 	}
 	double v;
 	if ( !Core::fromString(v, it->second) ) {
-		return std::nullopt;
+		return Core::None;
 	}
 	return v;
 }
@@ -199,7 +198,7 @@ class DepthLookupPolygon : public DepthLookup, public Geo::GeoFeatureSetObserver
 		struct Entry {
 			const Geo::GeoFeature   *feature{nullptr};
 			double                   defaultDepth{0.0};
-			std::optional<double>    maxDepth;
+			OPT(double)              maxDepth;
 		};
 
 		std::vector<std::string> _names;
