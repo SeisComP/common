@@ -4,6 +4,7 @@ SET(IO_SOURCES
 	database.cpp
 	importer.cpp
 	exporter.cpp
+	httpclient.cpp
 	recordinput.cpp
 	recordfilter.cpp
 	recordstream.cpp
@@ -17,6 +18,7 @@ SET(IO_HEADERS
 	database.ipp
 	importer.h
 	exporter.h
+	httpclient.h
 	recordinput.h
 	recordfilter.h
 	recordstreamexceptions.h

@@ -29,7 +29,7 @@
 #include <seiscomp/core/interruptible.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/utils/timer.h>
-#include <seiscomp/utils/url.h>
+#include <seiscomp/io/httpclient.h>
 #include <seiscomp/io/recordstream.h>
 #include <seiscomp/io/socket.h>
 #include <seiscomp/io/recordstream/streamidx.h>
@@ -38,10 +38,22 @@ namespace Seiscomp {
 namespace RecordStream {
 
 
-class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
+class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream,
+                                                public IO::HTTPClient {
 	protected:
-		//! C'tor
-		FDSNWSConnectionBase(const char *protocol, IO::Socket *socket, int defaultPort);
+		/**
+		 * @brief Constructor.
+		 * @param protocol The default HTTP-level protocol to use when
+		 *                 the source URL has no scheme of its own,
+		 *                 either "http" or "https". The string must
+		 *                 remain valid for the lifetime of the object
+		 *                 (typically a string literal).
+		 * @param defaultPort The default TCP port to imply for URLs
+		 *                 that carry neither a port nor a scheme.
+		 *                 Normally 80 (http) or 443 (https).
+		 */
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		FDSNWSConnectionBase(const char *protocol, int defaultPort);
 
 
 	public:
@@ -49,8 +61,24 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 		//! connection. It will always create MiniSeed records
 		bool setRecordType(const char *type) override;
 
-		//! Initialize the arclink connection.
+		//! Initialize the connection.
+		//!
+		//! This is the public entry point inherited from
+		//! IO::RecordStream. It just delegates to setURL() so the
+		//! URL is processed identically whether it comes from the
+		//! user or from an internal redirect.
 		bool setSource(const std::string &source) override;
+
+	protected:
+		//! Translates the FDSNWS-specific URL schemes "fdsnws" and
+		//! "fdsnwss" to plain "http" and "https" before passing the
+		//! URL to IO::HTTPClient::setURL. If the URL has no scheme
+		//! at all, the connection's default scheme (see constructor)
+		//! is used. Also applies the FDSNWS default request path when
+		//! the URL carries none.
+		bool setURL(const std::string &url) override;
+
+	public:
 
 		//! Supply user credentials
 		//! Adds the given stream to the server connection description
@@ -89,32 +117,17 @@ class SC_SYSTEM_CORE_API FDSNWSConnectionBase : public IO::RecordStream {
 		//! Removes all stream list, time window, etc. -entries from the connection description object.
 		bool clear();
 
-
-	private:
-		const char *getProxy() const;
-		void openConnection();
-
-		//! Blocking read from socket
-		std::string readBinary(int size, bool close = true);
 		std::string createPostData();
-		void handshake(const std::string &postData, size_t redirectCount = 0,
-		               std::string authHeader = {});
 
 
 	private:
 		const char          *_protocol;
-		IO::SocketPtr        _socket;
-
-		Util::Url            _url;
 		int                  _defaultPort;
 		std::set<StreamIdx>  _streams;
 		OPT(Core::Time)      _stime;
 		OPT(Core::Time)      _etime;
 		std::string          _reqID;
 		bool                 _readingData;
-		bool                 _chunkMode;
-		int                  _remainingBytes;
-		std::string          _error;
 };
 
 
@@ -135,4 +148,3 @@ class SC_SYSTEM_CORE_API FDSNWSSSLConnection : public FDSNWSConnectionBase {
 }
 
 #endif
-
