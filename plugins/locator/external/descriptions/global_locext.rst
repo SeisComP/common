@@ -6,13 +6,18 @@ input/output channels of the called process: stdin and stdout.
 Plugin
 ======
 
-To enable the ExternalLocator the plugin ``locext`` must be loaded.
+To enable the ExternalLocator the plugin ``locext`` must be loaded by module
+configuration. Example configuration:
+
+.. code:: properties
+
+   plugins = ${plugins}, locext
 
 
-Commandline Parameters
-======================
+Command-Line Parameters
+=======================
 
-There are several commandline parameters passed to the script depending on
+There are several command-line parameters passed to the script depending on
 the locator configuration. The following table summarizes them.
 
 =========================  ====================================================
@@ -38,18 +43,22 @@ Example:
    <?xml version="1.0" encoding="UTF-8"?>
    <seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">
      <EventParameters>
-       <pick ...>...</pick>
-       <pick ...>...</pick>
+       <pick publicID="...">
        ...
-       <origin ...>
-         ...
+       </pick>
+       <pick publicID="...">
+       ...
+       </pick>
+
+       <origin publicID="...">
+
          <arrival>
-           ...
+         ...
          </arrival>
          <arrival>
-           ...
-         </arrival>
          ...
+         </arrival>
+
        </origin>
      </EventParameters>
    </seiscomp>
@@ -58,7 +67,7 @@ Example:
 Output
 ======
 
-The output is read from stdout and is expected to be a SeisComP XML document
+The output is read from stdout and is expected to be a :term:`SCML` document
 just containing an origin.
 
 Example:
@@ -77,7 +86,7 @@ Example Configuration
 
 #. Define the external locator by global configuration e.g. in :file:`global.cfg`:
 
-   .. code::
+   .. code:: properties
 
       plugins = ${plugins}, locext
 
