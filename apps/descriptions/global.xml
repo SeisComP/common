@@ -246,10 +246,17 @@
 				</parameter>
 				<parameter name="contentType" type="string" default="binary">
 					<description>
-					Define the message encoding for sending. Allowed values
+					Define the message content-type for sending. Allowed values
 					are &quot;binary&quot;, &quot;json&quot; or &quot;xml&quot;.
 					XML has more overhead in processing but is more robust when
 					schema versions between client and server are different.
+					</description>
+				</parameter>
+				<parameter name="encoding" type="string" default="deflate" values="identity,deflate,gzip,lz4">
+					<description>
+					Define the message encoding for sending.
+					Compression introduces more overhead but reduces the transferred
+					message size. The default should be a good compromise.
 					</description>
 				</parameter>
 				<parameter name="subscriptions" type="list:string">
