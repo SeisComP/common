@@ -29,6 +29,7 @@
 #include <seiscomp/broker/utils/utils.h>
 #include <seiscomp/core/version.h>
 #include <seiscomp/datamodel/version.h>
+#include <seiscomp/io/archive/binarchive.h>
 
 #include "broker.h"
 
@@ -799,6 +800,7 @@ void BrokerHandler::commandCONNECT(char *frame, size_t len) {
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_VERSION ":1.0\n"
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_FRAMEWORK_VERSION ":" << CurrentVersion.toString() << "\n"
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_SCHEMA_VERSION ":" << SchemaVersion << "\n"
+		   << SCMP_PROTO_REPLY_CONNECT_HEADER_BINARY_VERSION ":" << IO::VBinaryArchive::Version << "\n"
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_CLIENT_NAME ":" << name() << "\n"
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_ACK_WINDOW ":" << ackWindow << "\n"
 		   << SCMP_PROTO_REPLY_CONNECT_HEADER_GROUPS ":";
