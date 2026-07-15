@@ -27,7 +27,6 @@
 #include <seiscomp/datamodel/version.h>
 #include <seiscomp/math/math.h>
 
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <fstream>
 #include <string.h>
