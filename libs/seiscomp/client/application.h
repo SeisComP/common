@@ -713,6 +713,7 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 				std::string  user;
 				std::string  URL{"localhost/production"};
 				std::string  primaryGroup{Protocol::LISTENER_GROUP};
+				Protocol::ContentEncoding encoding{Protocol::Deflate};
 				std::string  contentType;
 				unsigned int timeout{3};
 				std::string  certificate;

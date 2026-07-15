@@ -246,6 +246,7 @@ void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
 	& cfg(URL, "server")
 	& cfg(primaryGroup, "primaryGroup")
 	& cfg(subscriptions, "subscriptions")
+	& cfg(encoding, "encoding")
 	& cfg(contentType, "contentType")
 	& cfg(timeout, "timeout")
 	& cfg(certificate, "certificate")
@@ -273,8 +274,13 @@ void Application::AppSettings::Messaging::accept(SettingsLinker &linker) {
 		true
 	)
 	& cli(
-		contentType, "Messaging", "content-type",
-		"Sets the message content type (binary, json or xml).",
+		contentType, "Messaging", "msg-content-type",
+		"Sets the message content type: binary, json, xml.",
+		true
+	)
+	& cli(
+		encoding, "Messaging", "msg-encoding",
+		"Sets the message encoding: identity, deflate, gzip, lz4.",
 		true
 	);
 }
