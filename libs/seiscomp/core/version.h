@@ -51,6 +51,7 @@ namespace Core {
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
    - Removed Seiscomp::Gui::StationMagnitudeModel
+   - Added Seiscomp::IO::VBinaryArchive::setLegacyFormat
 
  "17.4.0"   0x110400
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
