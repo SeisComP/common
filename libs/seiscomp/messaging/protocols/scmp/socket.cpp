@@ -79,7 +79,7 @@ Socket::Socket()
 : _useSSL(false)
 , _getcount(0) {
 	_ackWindow = 20;
-	_wantMembershipInfo = false;
+	_protocolFlags &= ~WANT_MEMBERSHIP_INFO;
 	_inWait = false;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -510,7 +510,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 
 		static bool encode(std::string &blob, const Core::Message *msg,
 		                   ContentEncoding encoding, ContentType type,
-		                   int schemaVersion);
+		                   int schemaVersion, uint32_t protocolFlags = 0);
 
 
 	// ----------------------------------------------------------------------
@@ -539,7 +539,12 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 	protected:
 		using PacketQueue = std::deque<Packet*>;
 
-		bool               _wantMembershipInfo{true};
+		enum ProtocolFlags {
+			WANT_MEMBERSHIP_INFO          = 0x01,
+			SUPPORTS_DELETE_TREE          = 0x02,
+			REQUIRES_LEGACY_BINARY_FORMAT = 0x04
+		};
+
 		Groups             _groups;
 		PacketQueue        _inbox;
 		std::string        _errorMessage;
@@ -547,7 +552,7 @@ class SC_SYSTEM_CLIENT_API Protocol : public Core::InterruptibleObject {
 		std::string        _registeredClientName;
 		Core::Version      _schemaVersion{0}; //!< The schema version the
 		                                      //!< server supports
-		bool               _supportsDeleteTree{false};
+		uint32_t           _protocolFlags{WANT_MEMBERSHIP_INFO};
 		KeyValueStore      _extendedParameters;
 		std::string        _certificate;   //!< Optional client certificate
 
@@ -567,7 +572,7 @@ inline Core::Version Protocol::schemaVersion() const {
 }
 
 inline bool Protocol::isDeleteTreeSupported() const {
-	return _supportsDeleteTree;
+	return _protocolFlags & SUPPORTS_DELETE_TREE;
 }
 
 inline const Protocol::KeyValueStore &Protocol::extendedParameters() const {

@@ -275,7 +275,8 @@ Result WebsocketConnection::connect(const char *address,
 		lock_guard<mutex> lread(_readMutex);
 
 		_schemaVersion = 0;
-		_supportsDeleteTree = false;
+		_protocolFlags &= ~SUPPORTS_DELETE_TREE;
+		_protocolFlags |= REQUIRES_LEGACY_BINARY_FORMAT;
 		_extendedParameters = KeyValueStore();
 		_state = State();
 		_select.clear();
@@ -474,7 +475,8 @@ Result WebsocketConnection::connect(const char *address,
 				os << '\n';
 			}
 
-			os << SCMP_PROTO_CMD_CONNECT_HEADER_MEMBERSHIP_INFO ": " << (_wantMembershipInfo ? "1":"0") << "\n"
+			os << SCMP_PROTO_CMD_CONNECT_HEADER_MEMBERSHIP_INFO ": "
+			   << ((_protocolFlags & WANT_MEMBERSHIP_INFO) ? "1":"0") << "\n"
 			      SCMP_PROTO_CMD_CONNECT_HEADER_SELF_DISCARD ": 1\n"
 			      "\n";
 		}
@@ -556,14 +558,28 @@ Result WebsocketConnection::connect(const char *address,
 				Core::split(groups, string(headers.val_start, headers.val_len).c_str(), ",", true);
 				for ( auto &&group : groups ) _groups.insert(group);
 			}
-			// Parse DB extensions
-			else if ( headers.nameEquals("Schema-Version") ) {
-				string version(headers.val_start, headers.val_len);
-				if ( !_schemaVersion.fromString(version) ) {
-					SEISCOMP_WARNING("Invalid Schema-Version content: %s", version.c_str());
+			else if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_SCHEMA_VERSION) ) {
+				string_view sv(headers.val_start, headers.val_len);
+				if ( !_schemaVersion.fromString(sv) ) {
+					SEISCOMP_WARNING("Invalid Schema-Version content: %s", sv);
 					continue;
 				}
 			}
+			else if ( headers.nameEquals(SCMP_PROTO_REPLY_CONNECT_HEADER_BINARY_VERSION) ) {
+				uint32_t binaryVersion;
+				if ( !Core::fromString(binaryVersion, { headers.val_start, headers.val_len }) ) {
+					SEISCOMP_WARNING("Invalid Binary-Version content: %s",
+					                 string_view(headers.val_start, headers.val_len));
+					continue;
+				}
+				if ( binaryVersion < 2 ) {
+					_protocolFlags |= REQUIRES_LEGACY_BINARY_FORMAT;
+				}
+				else {
+					_protocolFlags &= ~REQUIRES_LEGACY_BINARY_FORMAT;
+				}
+			}
+			// Parse DB extensions
 			else if ( headers.nameEquals("DB-Access") ) {
 				string readParameters(headers.val_start, headers.val_len);
 
@@ -583,17 +599,17 @@ Result WebsocketConnection::connect(const char *address,
 					packet->type = Packet::Data;
 					packet->headerContentType = Protocol::ContentType(Protocol::Binary).toString();
 					packet->sender = "MASTER";
-					Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1);
+					Protocol::encode(packet->payload, &msg, Protocol::Identity, Protocol::Binary, -1, _protocolFlags);
 					queuePacket(packet);
 				}
 			}
 			else if ( headers.nameEquals("DB-Delete-Tree") ) {
 				string option(headers.val_start, headers.val_len);
 				if ( option == "1" ) {
-					_supportsDeleteTree = true;
+					_protocolFlags |= SUPPORTS_DELETE_TREE;
 				}
 				else if ( option == "0" ) {
-					_supportsDeleteTree = false;
+					_protocolFlags &= ~SUPPORTS_DELETE_TREE;
 				}
 				else {
 					_errorMessage = "Invalid DB-Delete-Tree option: " + option;
@@ -882,7 +898,7 @@ Result WebsocketConnection::sendMessage(const std::string &targetGroup,
 		BufferPtr websocketFrame = new Buffer;
 
 		string blob;
-		if ( !encode(blob, msg, *contentEncoding, *contentType, schemaVersion().packed) || blob.empty() ) {
+		if ( !encode(blob, msg, *contentEncoding, *contentType, schemaVersion().packed, _protocolFlags) || blob.empty() ) {
 			return EncodingError;
 		}
 
@@ -1235,7 +1251,7 @@ Result WebsocketConnection::disconnect() {
 	_registeredClientName = string();
 	_state.sequenceNumber = Core::None;
 	_schemaVersion = 0;
-	_supportsDeleteTree = false;
+	_protocolFlags &= ~SUPPORTS_DELETE_TREE;
 	_extendedParameters = KeyValueStore();
 	// Remove all un-ack'ed messages as we have actively disconnected
 	// the session

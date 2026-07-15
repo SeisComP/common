@@ -78,6 +78,14 @@ class ImportXMLArchive : public IO::XMLArchive {
 };
 
 
+class VLegacyBinaryArchive : public IO::VBinaryArchive {
+	public:
+		VLegacyBinaryArchive(std::streambuf* buf, bool isReading = true,
+		                     int forceWriteVersion = -1)
+		: VBinaryArchive(buf, isReading, forceWriteVersion, 1) {}
+};
+
+
 template <typename AR>
 inline void parse(Core::Message *&msg, const char *blob, size_t blob_length,
                   Protocol::ContentEncoding encoding) {
@@ -185,7 +193,12 @@ Protocol::~Protocol() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Protocol::setMembershipInfo(bool enable) {
-	_wantMembershipInfo = enable;
+	if ( enable ) {
+		_protocolFlags |= WANT_MEMBERSHIP_INFO;
+	}
+	else {
+		_protocolFlags &= ~WANT_MEMBERSHIP_INFO;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -299,10 +312,15 @@ Core::Message *Protocol::decode(const std::string &blob,
 bool Protocol::encode(std::string &blob, const Core::Message *msg,
                       ContentEncoding encoding,
                       ContentType type,
-                      int schemaVersion) {
+                      int schemaVersion, uint32_t protocolFlags) {
 	switch ( type ) {
 		case Binary:
-			return write<IO::VBinaryArchive>(blob, msg, encoding, schemaVersion);
+			if ( protocolFlags & REQUIRES_LEGACY_BINARY_FORMAT ) {
+				return write<VLegacyBinaryArchive>(blob, msg, encoding, schemaVersion);
+			}
+			else {
+				return write<IO::VBinaryArchive>(blob, msg, encoding, schemaVersion);
+			}
 		case JSON:
 			return write<IO::JSONArchive>(blob, msg, encoding, schemaVersion);
 		case XML:
