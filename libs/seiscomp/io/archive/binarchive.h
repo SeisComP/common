@@ -188,18 +188,17 @@ class SC_SYSTEM_CORE_API BinaryArchive : public Seiscomp::Core::Archive {
 
 
 	protected:
-		std::streambuf* _buf;
+		std::streambuf *_buf;
 
 	private:
-		bool _deleteOnClose;
-		bool _nullable;
-		bool _usedObject;
-		std::string _classname;
+		bool            _deleteOnClose;
+		bool            _nullable;
+		bool            _usedObject;
+		std::string     _classname;
+		int             _sequenceSize;
 
-		int _sequenceSize;
-
-		typedef std::vector<std::string> ClassList;
-		ClassList _classes;
+		using ClassList = std::vector<std::string>;
+		ClassList       _classes;
 };
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -225,6 +224,16 @@ class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
 	public:
 		void setWriteVersion(int version);
 
+		/**
+		 * @brief Sets the binary legacy format.
+		 * That only involves storing binary datetimes as tuple
+		 * of seconds and microseconds which effectively reduces the
+		 * date range to 32bit. This should only be used for compatibility
+		 * reasons. The default is false.
+		 * @param flag Enable or disable.
+		 */
+		void setLegacyFormat(bool flag);
+
 		bool open(const char* file) override;
 		bool open(std::streambuf*);
 
@@ -235,6 +244,8 @@ class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
 
 		const char *errorMsg() const;
 
+		virtual void read(Seiscomp::Core::Time &value) override;
+		virtual void write(Seiscomp::Core::Time &value) override;
 
 	// ----------------------------------------------------------------------
 	//  Implementation
@@ -245,7 +256,12 @@ class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
 
 
 	private:
+		enum FormatHint {
+			NEW_DATETIME_FORMAT = 0x01
+		};
+
 		int         _forceWriteVersion;
+		uint32_t    _formatHint{NEW_DATETIME_FORMAT};
 		std::string _error;
 };
 

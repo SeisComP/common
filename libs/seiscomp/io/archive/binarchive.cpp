@@ -91,7 +91,22 @@ T Convert(T value) {
 }
 
 
-char MAGIC[] = "SCBA";
+struct FourCC {
+	constexpr static int Size = 4;
+	FourCC() = default;
+	FourCC(char a, char b, char c, char d)
+	: cc{ a, b, c, d} {}
+
+	bool operator==(const FourCC &other) const {
+		return *reinterpret_cast<const uint32_t*>(cc) == *reinterpret_cast<const uint32_t*>(other.cc);
+	}
+
+	char cc[4];
+};
+
+
+FourCC MAGIC('S','C','B','A');
+FourCC MAGIC2('S','C','B','B');
 
 
 }
@@ -1087,6 +1102,20 @@ void VBinaryArchive::setWriteVersion(int version) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VBinaryArchive::setLegacyFormat(bool flag) {
+	if ( flag ) {
+		_formatHint &= ~NEW_DATETIME_FORMAT;
+	}
+	else {
+		_formatHint |= NEW_DATETIME_FORMAT;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool VBinaryArchive::open(const char* file) {
 	_error = "";
 
@@ -1166,21 +1195,70 @@ const char *VBinaryArchive::errorMsg() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VBinaryArchive::read(Core::Time &value) {
+	if ( _formatHint & NEW_DATETIME_FORMAT ) {
+		Core::Time::Storage tmp;
+		int size = _buf ? _buf->sgetn((char*)&tmp, sizeof(tmp)) : 0;
+		if ( size != sizeof(tmp) ) {
+			SEISCOMP_ERROR("read(datetime): expected %d bytes from stream, got %d",
+			               sizeof(tmp), size);
+			setValidity(false);
+		}
+		else {
+			value = Seiscomp::Core::Time::FromEpoch(tmp / 1000000, tmp % 1000000);
+		}
+	}
+	else {
+		BinaryArchive::read(value);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void VBinaryArchive::write(Seiscomp::Core::Time &value) {
+	if ( _formatHint & NEW_DATETIME_FORMAT ) {
+		if ( !_buf ) {
+			return;
+		}
+		Core::Time::Storage tmp = value.epochSeconds() * 1000000 + value.microseconds();
+		writeBytes(&tmp, sizeof(tmp));
+	}
+	else {
+		BinaryArchive::write(value);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void VBinaryArchive::writeHeader() {
 	if ( _forceWriteVersion == 0 ) {
-		setVersion(Core::Version(0,0));
+		setVersion({});
 		return;
 	}
 
-	if ( _forceWriteVersion == -1 )
-		setVersion(Core::Version(DataModel::Version::Major,DataModel::Version::Minor));
-	else
+	if ( _forceWriteVersion == -1 ) {
+		setVersion({ DataModel::Version::Major, DataModel::Version::Minor });
+	}
+	else {
 		_version = _forceWriteVersion;
+	}
 
-	writeBytes(MAGIC, strlen(MAGIC));
+	if ( _formatHint & NEW_DATETIME_FORMAT ) {
+		writeBytes(MAGIC2.cc, FourCC::Size);
+		_version = _version.majorMinor();
+	}
+	else {
+		writeBytes(MAGIC.cc, FourCC::Size);
+	}
 
 	uint32_t versionTag = _version.majorTag() << 0x10 | _version.minorTag();
-	write((int)versionTag);
+	BinaryArchive::write(static_cast<int32_t>(versionTag));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1189,37 +1267,42 @@ void VBinaryArchive::writeHeader() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool VBinaryArchive::readHeader() {
-	const char *magic = MAGIC;
-	while ( *magic != '\0' ) {
-		if ( _buf->sgetc() == *magic ) {
-			++magic;
-			_buf->snextc();
-			continue;
-		}
-		else {
-			_error = "invalid header, expected ";
-			_error += *magic;
-			break;
-		}
-	}
+	FourCC magic;
+	auto r = _buf->sgetn(magic.cc, FourCC::Size);
 
-	if ( !_error.empty() ) {
-		while ( magic > MAGIC ) {
-			_buf->sungetc();
-			--magic;
+	if ( r < FourCC::Size ) {
+		_error = "invalid header, expected at least 4 bytes";
+		while ( r-- ) {
+			_buf->sputbackc(magic.cc[r]);
 		}
+
 		_version = 0;
 		SEISCOMP_DEBUG("reading unversioned binary");
 		return true;
 	}
 
-	int v;
-	read(v);
+	_formatHint = 0;
 
-	uint32_t versionTag = uint32_t(v);
+	if ( magic == MAGIC ) {
+		setLegacyFormat(true);
+	}
+	else if ( magic == MAGIC2 ) {
+		setLegacyFormat(false);
+	}
+	else {
+		_error = "invalid header format, expected SCB[A|B]";
+		_version = 0;
+		SEISCOMP_DEBUG("reading unversioned binary");
+		return true;
+	}
+
+	int32_t v;
+	BinaryArchive::read(v);
+
+	uint32_t versionTag = static_cast<uint32_t>(v);
 	setVersion(Core::Version(versionTag >> 0x10, versionTag & 0xffff));
 
-	if ( v <= 0 || versionMajor() < 0 || versionMinor() < 0 ) {
+	if ( (v <= 0) || (versionMajor() < 0) || (versionMinor() < 0) ) {
 		_error = "invalid version";
 		return false;
 	}
