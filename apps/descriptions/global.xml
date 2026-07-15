@@ -420,9 +420,11 @@
 					Configure the default travel-time table interface and model to be
 					used by all modules that supports configurable ttt.
 					</description>
-					<parameter name="tableType" type="string" default="LOCSAT">
+					<parameter name="tableType" type="string" default="LOCSAT"
+						values="homogeneous,libtau,LOCSAT">
 						<description>
 						The default travel-time tables type (interface) to use.
+						Additional types may be available.
 						</description>
 					</parameter>
 					<parameter name="table" type="string" default="iasp91">
