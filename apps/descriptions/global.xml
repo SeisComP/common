@@ -244,12 +244,18 @@
 					target group is not explicitly given in the send call.
 					</description>
 				</parameter>
-				<parameter name="contentType" type="string" default="binary">
+				<parameter name="contentType" type="string" default="binary" values="binary,json,xml">
 					<description>
-					Define the message content-type for sending. Allowed values
-					are &quot;binary&quot;, &quot;json&quot; or &quot;xml&quot;.
+					Define the message content format for sending.
 					XML has more overhead in processing but is more robust when
-					schema versions between client and server are different.
+					schema versions between client and server are different. Choose
+					&quot;json&quot; or &quot;xml&quot; for
+
+					* Connecting from clients with SeisComP in version &lt;8 to
+					servers in a version &gt;=8.
+
+					* Sending objects with timestamps before 1970 or after 2037 to the
+					messaging of SeisComP in version &lt;8.
 					</description>
 				</parameter>
 				<parameter name="encoding" type="string" default="deflate" values="identity,deflate,gzip,lz4">
