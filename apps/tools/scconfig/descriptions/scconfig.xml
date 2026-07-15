@@ -5,4 +5,16 @@
 			Configuration and system management frontend.
 		</description>
 	</module>
+	<command-line>
+		<synopsis>
+			scanloc [options]
+		</synopsis>
+		<group name="Generic">
+			<optionReference>generic#help</optionReference>
+		</group>
+		<group name="Verbosity">
+			<optionReference>verbosity#debug</optionReference>
+			<optionReference>generic#version</optionReference>
+		</group>
+	</command-line>
 </seiscomp>

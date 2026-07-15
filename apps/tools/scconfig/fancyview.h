@@ -87,6 +87,17 @@ class FancyView : public QAbstractItemView {
 		void setRootIndex(const QModelIndex &index) override;
 		void setConfigStage(Seiscomp::Environment::ConfigStage);
 
+		/**
+		 * @brief Evaluate a value based on properities adding to a text string
+		 * @param value The value to evaluate
+		 * @param param The object of properties
+		 * @param eval The text string to return
+		 * @return True if issues were found, false if no issues were found
+		 */
+		static bool evaluateValue(const std::string& value,
+		                          const Seiscomp::System::Parameter *param,
+		                          QString &eval, bool verbose = false);
+
 
 	// ------------------------------------------------------------------
 	//  Signals
@@ -175,17 +186,6 @@ class FancyView : public QAbstractItemView {
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Group *group);
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Structure *struc);
 		FancyViewItem add(QLayout *layout, const QModelIndex &idx);
-
-		/**
-		 * @brief Evaluate a value based on properities adding to a text string
-		 * @param value The value to evaluate
-		 * @param param The object of properties
-		 * @param eval The text string to return
-		 * @return True if issues were found, false if no issues were found
-		 */
-		bool evaluateValue(const std::string& value,
-		                   const Seiscomp::System::Parameter *param,
-		                   QString &eval, bool verbose = false);
 
 
 	private:

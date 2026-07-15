@@ -29,13 +29,22 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QCompleter>
+#include <QClipboard>
 #include <QDialog>
+#include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QDir>
 #include <QFileInfo>
+#include <QFileDialog>
+#include <QStringList>
 
 #include <QScrollBar>
+#include <QScrollArea>
 #include <QResizeEvent>
+#include <QEvent>
+#include <QMouseEvent>
+
+#include <functional>
 
 #include <seiscomp/system/environment.h>
 #include <seiscomp/config/config.h>
@@ -232,13 +241,13 @@ class NewStructDialog : public QDialog {
 
 		void accept() {
 			if ( _name->text().isEmpty() ) {
-				QMessageBox::critical(NULL, "Empty name",
+				QMessageBox::critical(nullptr, "Empty name",
 				                      "Empty names are not allowed. ");
 				return;
 			}
 
 			if ( _container->hasStructure(qPrintable(_name->text())) ) {
-				QMessageBox::critical(NULL, "Duplicate name",
+				QMessageBox::critical(nullptr, "Duplicate name",
 				                      "The name exists already and duplicate "
 				                      "names are not allowed.");
 				return;
@@ -297,7 +306,7 @@ class NewCatBindingDialog : public QDialog {
 				alias = _name->text().toStdString();
 
 			if ( _cat->hasBinding(alias.c_str()) ) {
-				QMessageBox::critical(NULL, "Duplicate alias",
+				QMessageBox::critical(nullptr, "Duplicate alias",
 				                      "The alias exists already and duplicate "
 				                      "aliases are not allowed.");
 				return;
@@ -588,6 +597,14 @@ class StringEdit : public QLineEdit, public FancyViewItemEdit {
 			return text();
 		}
 
+		// Assigns a value programmatically and notifies listeners as if the
+		// user had finished editing it manually. This commits the value
+		// through the regular editingFinished() path.
+		void setEditedValue(const QString &value) {
+			setText(value);
+			emit editingFinished();
+		}
+
 	/*
 	protected:
 		void focusInEvent(QFocusEvent *e) {
@@ -672,6 +689,453 @@ class EvalHintWidget : public QLabel {
 			QLabel::paintEvent(e);
 		}
 };
+
+
+// Rewrites an absolute path using SeisComP's path variables (e.g.
+// @SYSTEMCONFIGDIR@, @DATADIR@) so the stored value stays portable across
+// installations. The variable whose expanded directory is the longest matching
+// path-boundary prefix is used, e.g. @KEYDIR@ in favour of @SYSTEMCONFIGDIR@.
+// If the path is not located below any known directory it is returned
+// unchanged. The result resolves back to the original path via
+// Environment::absolutePath().
+QString seiscompVariablePath(const QString &path) {
+	Environment *env = Environment::Instance();
+
+	struct Mapping {
+		const char  *variable;
+		std::string  directory;
+	};
+
+	// The order is irrelevant: the longest matching directory always wins,
+	// which resolves the nesting (e.g. @DATADIR@ below @ROOTDIR@).
+	const Mapping mappings[] = {
+		{ "@KEYDIR@",           env->appConfigDir() + "/key" },
+		{ "@SYSTEMCONFIGDIR@",  env->appConfigDir() },
+		{ "@DEFAULTCONFIGDIR@", env->globalConfigDir() },
+		{ "@CONFIGDIR@",        env->configDir() },
+		{ "@DATADIR@",          env->shareDir() },
+		{ "@LOGDIR@",           env->logDir() },
+		{ "@ROOTDIR@",          env->installDir() },
+		{ "@HOMEDIR@",          env->homeDir() }
+	};
+
+	const QString target = QDir::cleanPath(path);
+
+	QString bestValue;
+	int bestLength = -1;
+
+	for ( const auto &mapping : mappings ) {
+		if ( mapping.directory.empty() ) {
+			continue;
+		}
+
+		const QString base = QDir::cleanPath(QString::fromStdString(mapping.directory));
+		// Skip empty bases and any candidate that cannot beat the current best.
+		if ( base.isEmpty() || (base.length() <= bestLength) ) {
+			continue;
+		}
+
+		if ( target == base ) {
+			bestValue = mapping.variable;
+			bestLength = base.length();
+		}
+		else if ( target.startsWith(base + '/') ) {
+			// mid() keeps the leading separator, yielding "@VAR@/sub/file".
+			bestValue = mapping.variable + target.mid(base.length());
+			bestLength = base.length();
+		}
+	}
+
+	// Path is outside any known SeisComP directory: keep it absolute.
+	return bestValue.isEmpty() ? target : bestValue;
+}
+
+
+// Mirrors the enabled state of a watched widget onto a companion widget. Used
+// to keep the file/directory browse button active only while its path input
+// field is active for input. The mirror installs itself on the watched widget
+// and is owned by (and therefore destroyed together with) the companion.
+class EnabledMirror : public QObject {
+	public:
+		EnabledMirror(QWidget *watched, QWidget *companion)
+		: QObject(companion), _companion(companion) {
+			_companion->setEnabled(watched->isEnabled());
+			watched->installEventFilter(this);
+		}
+
+	protected:
+		bool eventFilter(QObject *watched, QEvent *event) override {
+			if ( event->type() == QEvent::EnabledChange ) {
+				_companion->setEnabled(static_cast<QWidget*>(watched)->isEnabled());
+			}
+			return QObject::eventFilter(watched, event);
+		}
+
+	private:
+		QWidget *_companion;
+};
+
+
+// A QLabel that invokes a callback when clicked while enabled. Used to make a
+// parameter name open the value editor.
+class ClickableLabel : public QLabel {
+	public:
+		using QLabel::QLabel;
+
+		std::function<void()> onClick;
+
+	protected:
+		void mouseReleaseEvent(QMouseEvent *event) override {
+			if ( isEnabled() && onClick
+			  && (event->button() == Qt::LeftButton)
+			  && rect().contains(event->pos()) ) {
+				onClick();
+			}
+			QLabel::mouseReleaseEvent(event);
+		}
+};
+
+
+// Builds the composite editor shared by the path and value-editor buttons: the
+// given line edit plus a frameless tool button, kept active only while the line
+// edit is active for input. Returns the container; 'button' receives the created
+// tool button so the caller can connect its clicked() signal.
+QWidget *makeButtonEditor(StringEdit *edit, const QString &iconName,
+                          const QString &tooltip, QToolButton *&button) {
+	QWidget *container = new QWidget;
+	QHBoxLayout *layout = new QHBoxLayout;
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setSpacing(layoutPadding() / 2);
+	container->setLayout(layout);
+
+	button = new QToolButton;
+	button->setIcon(icon(iconName));
+	button->setToolTip(tooltip);
+	button->setAutoRaise(true);
+	// Show only the icon, without any button frame.
+	button->setStyleSheet("QToolButton { border: none; }");
+
+	layout->addWidget(edit);
+	layout->addWidget(button);
+
+	// Keep the button active only while the input field is active for input.
+	// Owned by 'button', so it is destroyed together with it.
+	new EnabledMirror(edit, button);
+
+	return container;
+}
+
+
+// Builds the file dialog name filter from the parameter's "fileTypeFilter="
+// options.
+// Each such option provides one file-type filter in Qt's native format, e.g.
+// options="read, fileTypeFilter=XML (*.xml);;Config (*.cfg)" or
+// options="read, fileTypeFilter=XML (*.xml), fileTypeFilter=Config (*.cfg)"
+// Append or prepend ";;All (*.*)" or "All (*.*);;" so that any file can be
+// selected.
+QString fileTypeFilter(const Parameter *param) {
+	QStringList filters;
+
+	for ( const auto &option : param->definition->options ) {
+		const QString token = QString::fromStdString(option).trimmed();
+		if ( token.startsWith("fileTypeFilter=") ) {
+			const QString filter = token.mid(15).trimmed();
+			if ( !filter.isEmpty() ) {
+				filters << filter;
+			}
+		}
+	}
+
+	return filters.join(";;");
+}
+
+
+// Creates a composite editor for "file" and "directory" parameters: the given
+// line edit plus a button which opens a file or directory selection dialog. The
+// selected path is written back into the line edit and committed through its
+// regular editing-finished path.
+QWidget *makePathEditor(StringEdit *edit, const Parameter *param) {
+	const bool isDirectory = (param->definition->type == "directory");
+
+	QToolButton *browse = nullptr;
+	QWidget *container = makeButtonEditor(
+		edit, "folder",
+		isDirectory ? QObject::tr("Select a directory")
+		            : QObject::tr("Select a file"),
+		browse);
+
+	// For files, determine whether the parameter requires an existing file
+	// (read/execute) or may point to a not yet existing file (write or
+	// unspecified). Directories are always selected from existing ones.
+	bool mustExist = false;
+	bool isWrite = false;
+	for ( const auto &option : param->definition->options ) {
+		if ( (option == "read") || (option == "execute") ) {
+			mustExist = true;
+		}
+		else if ( option == "write" ) {
+			isWrite = true;
+		}
+	}
+
+	// 'edit' is passed as the connection context so the lambda is removed
+	// automatically when the line edit is destroyed. The dialog header names the
+	// parameter the file or directory is selected for. File parameters offer the
+	// file-type filters from the "filter=" options plus an "All (*.*)" entry.
+	const QString title = (isDirectory ? QObject::tr("Select directory for %1")
+	                                    : QObject::tr("Select file for %1"))
+	                      .arg(QString::fromStdString(param->variableName));
+	const QString nameFilter = isDirectory ? QString() : fileTypeFilter(param);
+	QObject::connect(browse, &QToolButton::clicked, edit,
+	                 [edit, title, nameFilter, isDirectory, mustExist, isWrite]() {
+		// Resolve the current value to an absolute path used as the dialog's
+		// start location. Empty or relative values are resolved against the
+		// SeisComP installation directory, matching value validation.
+		QString current = edit->value().trimmed();
+		QString startPath;
+		if ( !current.isEmpty() ) {
+			startPath = Environment::Instance()->absolutePath(
+				current.toStdString()).c_str();
+		}
+		else {
+			startPath = Environment::Instance()->installDir().c_str();
+		}
+
+		QString selection;
+		if ( isDirectory ) {
+			selection = QFileDialog::getExistingDirectory(
+				edit, title, startPath);
+		}
+		else if ( isWrite && !mustExist ) {
+			// Output file: allow selecting a not yet existing file without an
+			// overwrite confirmation. The non-native dialog is used so the file
+			// type selector shows the full filter string including the pattern
+			// (e.g. "Text (*.xml)") instead of only the description text.
+			selection = QFileDialog::getSaveFileName(
+				edit, title, startPath, nameFilter, nullptr,
+				QFileDialog::DontConfirmOverwrite | QFileDialog::DontUseNativeDialog);
+		}
+		else {
+			selection = QFileDialog::getOpenFileName(
+				edit, title, startPath, nameFilter, nullptr,
+				QFileDialog::DontUseNativeDialog);
+		}
+
+		if ( selection.isEmpty() ) {
+			// Dialog cancelled: keep the current value untouched.
+			return;
+		}
+
+		// A path was actively chosen, so unlock the parameter (mark it as
+		// edited) in case it was still showing its default value. This enables
+		// the input field for further manual editing, mirroring the regular
+		// type-in workflow.
+		FancyViewItem item = edit->property("viewItem").value<FancyViewItem>();
+		if ( item.isValid() && item.editControl && item.editControl->isChecked() ) {
+			item.editControl->setChecked(false);
+		}
+
+		// Store the path using SeisComP's path variables when possible so the
+		// configuration remains portable across installations.
+		edit->setEditedValue(seiscompVariablePath(selection));
+	});
+
+	return container;
+}
+
+
+// Opens a single-line editor dialog for the value of the given input widget.
+// The dialog title shows the full dotted parameter name and, below the editor
+// field, the parameter description together with its type, default value,
+// allowed values and options. On accept the parameter is unlocked (if it was
+// still showing its default value) and the new value is committed through the
+// input widget's regular change path.
+void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
+	QDialog dialog(input->widget());
+	dialog.setWindowTitle(QString::fromStdString(param->variableName));
+
+	auto *layout = new QVBoxLayout(&dialog);
+	auto *editor = new QLineEdit(input->value());
+	editor->setMinimumWidth(400);
+	layout->addWidget(editor);
+
+	// Copies the parameter as it would be written to the configuration file,
+	// using the value currently entered in the editor. It is disabled while the
+	// entered value does not evaluate.
+	auto *copyButton = new QPushButton(QObject::tr("Copy parameter"));
+	const QString name = QString::fromStdString(param->variableName);
+	QObject::connect(copyButton, &QPushButton::clicked, &dialog, [editor, name]() {
+		QApplication::clipboard()->setText(name + " = " + editor->text());
+	});
+
+	// Live evaluation of the entered value, mirroring the popup shown while
+	// editing the value directly in the regular parameter field, including its
+	// colors: green when fine, orange when issues are found, red on errors.
+	auto *evaluation = new QLabel;
+	evaluation->setTextFormat(Qt::RichText);
+	evaluation->setWordWrap(true);
+	evaluation->setAutoFillBackground(true);
+	evaluation->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+	// The evaluation grows with the value list but is limited to 30 lines;
+	// longer lists can be scrolled.
+	auto *evalScroll = new QScrollArea;
+	evalScroll->setWidgetResizable(true);
+	evalScroll->setFrameShape(QFrame::NoFrame);
+	evalScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	evalScroll->setWidget(evaluation);
+	layout->addWidget(evalScroll);
+
+	auto updateEvaluation = [&dialog, evaluation, evalScroll, copyButton, param](const QString &text) {
+		std::vector<std::string> values;
+		std::string errmsg;
+		QString eval;
+
+		QPalette pal = evaluation->palette();
+		pal.setColor(QPalette::Window, QColor(255, 255, 255, 192));
+
+		bool issueFound = false;
+		if ( Config::Config::Eval(text.toStdString(), values, true, nullptr, &errmsg) ) {
+			// value must not be a list, strings may contain commas and are not tested
+			if ( (param->definition->type.size() < 5)
+			     || (param->definition->type != "string"
+			         && param->definition->type != "gradient"
+			         && param->definition->type.substr(0, 5) != "list:") ) {
+				// value to test contains a comma which is not supported
+				if ( text.toStdString().find(',') != std::string::npos ) {
+					eval += "<b>Value is not described as list</b>";
+					issueFound = true;
+				}
+			}
+
+			for ( const auto &value : values ) {
+				if ( !eval.isEmpty() ) {
+					eval += "<hr/>";
+				}
+				if ( FancyView::evaluateValue(value, param, eval) ) {
+					issueFound = true;
+				}
+				eval += encodeHTML(value.c_str());
+			}
+
+			// paint text in orange if issues are found
+			pal.setColor(QPalette::WindowText,
+			             issueFound ? QColor(255, 127, 0) : QColor(32, 128, 32));
+			evaluation->setText(QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
+			                    .arg(values.size())
+			                    .arg(values.size() == 1 ? "" : "s", eval));
+			copyButton->setEnabled(true);
+		}
+		else {
+			pal.setColor(QPalette::WindowText, QColor(128, 32, 32));
+			evaluation->setText(QString("<b>Error</b><br/><br/><i>%1</i>")
+			                    .arg(QString::fromStdString(errmsg).replace('\n', "<br/>")));
+			copyButton->setEnabled(false);
+		}
+
+		evaluation->setPalette(pal);
+
+		// Limit the evaluation to at most 30 lines. Shorter content shrinks the
+		// area, longer value lists are capped and can be scrolled. The dialog
+		// grows with the area until the limit is reached.
+		int maxHeight = evaluation->fontMetrics().lineSpacing() * 30;
+		int width = evalScroll->viewport()->width();
+		if ( width <= 0 ) {
+			width = 400;
+		}
+		int contentHeight = evaluation->heightForWidth(width);
+		if ( contentHeight <= 0 ) {
+			contentHeight = evaluation->sizeHint().height();
+		}
+		evalScroll->setFixedHeight(qMin(contentHeight, maxHeight));
+
+		dialog.layout()->activate();
+		QSize hint = dialog.sizeHint();
+		dialog.resize(qMax(dialog.width(), hint.width()), hint.height());
+	};
+
+	QObject::connect(editor, &QLineEdit::textChanged, evaluation, updateEvaluation);
+
+	const SchemaParameter *def = param->definition;
+
+	QStringList fields;
+	auto addField = [&fields](const QString &label, const QString &value) {
+		if ( !value.isEmpty() ) {
+			fields << ("<b>" + label + ":</b> " + value.toHtmlEscaped());
+		}
+	};
+	auto joinList = [](const std::vector<std::string> &values) {
+		QStringList list;
+		for ( const auto &value : values ) {
+			list << QString::fromStdString(value);
+		}
+		return list.join(", ");
+	};
+
+	addField(QObject::tr("Type"), QString::fromStdString(def->type));
+	addField(QObject::tr("Default"), QString::fromStdString(def->defaultValue));
+	addField(QObject::tr("Values"), joinList(def->values));
+	addField(QObject::tr("Options"), joinList(def->options));
+
+	QString info;
+	if ( !def->description.empty() ) {
+		info = QString::fromStdString(def->description).toHtmlEscaped().replace('\n', "<br/>");
+	}
+	if ( !fields.isEmpty() ) {
+		if ( !info.isEmpty() ) {
+			info += "<br/><br/>";
+		}
+		info += fields.join("<br/>");
+	}
+
+	if ( !info.isEmpty() ) {
+		auto *details = new QLabel(info);
+		details->setTextFormat(Qt::RichText);
+		details->setWordWrap(true);
+		// Allow selecting the text with the mouse to copy it.
+		details->setTextInteractionFlags(Qt::TextSelectableByMouse |
+		                                 Qt::TextSelectableByKeyboard);
+		layout->addWidget(details);
+	}
+
+	auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
+	                                     QDialogButtonBox::Cancel);
+
+	// Copy button on the left, Ok/Cancel on the right.
+	auto *bottom = new QHBoxLayout;
+	bottom->addWidget(copyButton);
+	bottom->addStretch();
+	bottom->addWidget(buttons);
+	layout->addLayout(bottom);
+
+	QObject::connect(buttons, &QDialogButtonBox::accepted,
+	                 &dialog, &QDialog::accept);
+	QObject::connect(buttons, &QDialogButtonBox::rejected,
+	                 &dialog, &QDialog::reject);
+
+	// Evaluate the initial value once the whole dialog has been laid out, so the
+	// initial size already accounts for all widgets.
+	updateEvaluation(editor->text());
+
+	if ( dialog.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	FancyViewItem item = input->widget()->property("viewItem").value<FancyViewItem>();
+	if ( item.isValid() && item.editControl && item.editControl->isChecked() ) {
+		item.editControl->setChecked(false);
+	}
+
+	// StringEdit needs an explicit editingFinished() to commit the value; the
+	// combo box and checkbox commit through their own change signals when the
+	// value is assigned.
+	if ( auto *stringEdit = dynamic_cast<StringEdit*>(input) ) {
+		stringEdit->setEditedValue(editor->text());
+	}
+	else {
+		input->setValue(editor->text());
+	}
+}
 
 
 }
@@ -1009,7 +1473,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				}
 
 				size_t catBindingCount = cat->bindingTypes.size();
-				QComboBox *comboBox = NULL;
+				QComboBox *comboBox = nullptr;
 
 				comboBox = new QComboBox;
 				comboBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
@@ -1073,7 +1537,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				l->setContentsMargins(0, 0, 0, 0);
 
 				bool firstParameter = true;
-				QLayout *paramLayout = NULL;
+				QLayout *paramLayout = nullptr;
 
 				if ( !sec->description.empty() ) {
 					StatusLabel *desc = new StatusLabel;
@@ -1192,7 +1656,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 				if ( struc->name.empty() ) break;
 
 				bool firstParameter = true;
-				QLayout *paramLayout = NULL;
+				QLayout *paramLayout = nullptr;
 
 				for ( int i = 0; i < rows; ++i ) {
 					auto child = model()->index(i, 0, idx);
@@ -1296,7 +1760,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	/*
 	size_t catBindingCount = cat->bindingTypes.size();
-	QComboBox *comboBox = NULL;
+	QComboBox *comboBox = nullptr;
 
 	comboBox = new QComboBox;
 	comboBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
@@ -1627,17 +2091,25 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		paramLayout->addStretch();
 
 		BoolEdit *checkBox = new BoolEdit;
-		QFont f = checkBox->font();
-		f.setBold(true);
-		checkBox->setFont(f);
-		checkBox->setText(paramLabel);
 		checkBox->setValue(idx.sibling(idx.row(),2).data().toString());
 		inputWidget = checkBox;
-		textWidget = checkBox;
 
 		connect(checkBox, &BoolEdit::toggled, this, &FancyView::optionToggled);
 
+		// The checkbox toggles the value; a separate clickable name opens the
+		// value editor, consistent with the other parameter types.
+		ClickableLabel *name = new ClickableLabel;
+		QFont f = name->font();
+		f.setBold(true);
+		name->setFont(f);
+		name->setText(paramLabel);
+		name->setCursor(Qt::PointingHandCursor);
+		name->setToolTip(tr("Click to edit the value"));
+		name->onClick = [checkBox, param]() { openValueEditor(checkBox, param); };
+		textWidget = name;
+
 		nameLayout->addWidget(checkBox);
+		nameLayout->addWidget(name);
 		paramLayout->addLayout(nameLayout);
 
 		if ( isOverridden ) {
@@ -1656,7 +2128,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		}
 	}
 	else {
-		QLabel *name = new QLabel;
+		ClickableLabel *name = new ClickableLabel;
 		QFont f = name->font();
 		f.setBold(true);
 		name->setFont(f);
@@ -1664,15 +2136,27 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 		textWidget = name;
 
+		// Widget placed into the layout. For most types this is the input
+		// widget itself. The "file" type wraps the input line edit together
+		// with a button opening a file selection dialog.
+		QWidget *editorWidget = nullptr;
+
 		if ( param->definition->values.empty()
 		  || (param->definition->type.compare(0, 5, "list:") == 0)
-		  || (param->definition->type == "file") ) {
+		  || (param->definition->type == "file")
+		  || (param->definition->type == "directory") ) {
 			// No predefined values or the type is a list of some type
 			StringEdit *edit = new StringEdit;
 			edit->setValue(idx.sibling(idx.row(),2).data().toString());
 			connect(edit, SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
 			connect(edit, SIGNAL(textEdited(QString)), this, SLOT(optionTextChanged(QString)));
 			inputWidget = edit;
+
+			if ( (param->definition->type == "file")
+			  || (param->definition->type == "directory") ) {
+				// Offer a file or directory selection dialog as well.
+				editorWidget = makePathEditor(edit, param);
+			}
 		}
 		else {
 			ComboEdit *combo = new ComboEdit;
@@ -1684,6 +2168,18 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextChanged(QString)));
 			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextEdited()));
 			inputWidget = combo;
+		}
+
+		// Make the parameter name clickable to open a value editor showing the
+		// full dotted variable name and the parameter details. Available for all
+		// parameters (files and directories keep their selection button too).
+		name->setCursor(Qt::PointingHandCursor);
+		name->setToolTip(tr("Click to edit the value"));
+		FancyViewItemEdit *input = inputWidget;
+		name->onClick = [input, param]() { openValueEditor(input, param); };
+
+		if ( !editorWidget ) {
+			editorWidget = inputWidget->widget();
 		}
 
 		if ( isOverridden ) {
@@ -1704,7 +2200,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 		nameLayout->addWidget(name);
 		paramLayout->addLayout(nameLayout);
-		paramLayout->addWidget(inputWidget->widget());
+		paramLayout->addWidget(editorWidget);
 	}
 
 	nameLayout->addStretch();
@@ -2312,7 +2808,7 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param) {
 	vector<string> values;
 	QString eval;
 	string errmsg;
-	if ( Config::Config::Eval(param->symbol.content, values, true, NULL, &errmsg) ) {
+	if ( Config::Config::Eval(param->symbol.content, values, true, nullptr, &errmsg) ) {
 		// value must not be a list, strings may contain commas and are not tested
 		if ( (param->definition->type.size() < 5)
 		     || ((param->definition->type != "string")
@@ -2412,7 +2908,7 @@ void FancyView::optionTextChanged(const QString &txt) {
 	pal.setColor(QPalette::Window, QColor(255,255,255,192));
 
 	bool issueFound = false;
-	if ( Config::Config::Eval(item.input->value().toStdString(), values, true, NULL, &errmsg) ) {
+	if ( Config::Config::Eval(item.input->value().toStdString(), values, true, nullptr, &errmsg) ) {
 		// value must not be a list, strings may contain commas and are not tested
 		if ( (param->definition->type.size() < 5)
 		     || (param->definition->type != "string"
@@ -2531,7 +3027,7 @@ void FancyView::bindingCategoryChanged(int idx) {
 	if ( idx > 0 )
 		name = comboBox->itemData(idx).toString();
 
-	cat->activeBinding = NULL;
+	cat->activeBinding = nullptr;
 
 	// Update visibility state
 	for ( int i = 0; i < l->count(); ++i ) {
@@ -2561,15 +3057,15 @@ void FancyView::addCategoryBinding() {
 	QComboBox *cb = (QComboBox*)w->property("comboBox").value<void*>();
 	QString type = cb->itemData(cb->currentIndex()).toString();
 	if ( type.isEmpty() ) {
-		QMessageBox::critical(NULL, "Internal error",
+		QMessageBox::critical(nullptr, "Internal error",
 		                      "The type must not be empty.");
 		return;
 	}
 
 	BindingCategory *cat = reinterpret_cast<BindingCategory*>(item.index.data(ConfigurationTreeItemModel::Link).value<void*>());
 	Binding *typeBinding = cat->binding(type.toStdString());
-	if ( typeBinding == NULL ) {
-		QMessageBox::critical(NULL, "Internal error",
+	if ( !typeBinding ) {
+		QMessageBox::critical(nullptr, "Internal error",
 		                      "The selected type is not available.");
 		return;
 	}
@@ -2578,8 +3074,8 @@ void FancyView::addCategoryBinding() {
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	Binding *nb = cat->instantiate(typeBinding, dlg.name().c_str());
-	if ( nb == NULL ) {
-		QMessageBox::critical(NULL, "Internal error",
+	if ( !nb ) {
+		QMessageBox::critical(nullptr, "Internal error",
 		                      "Adding binding failed.");
 		return;
 	}
@@ -2780,7 +3276,7 @@ QRegion FancyView::visualRegionForSelection(const QItemSelection &selection) con
 void FancyView::currentChanged(const QModelIndex &curr, const QModelIndex &) {
 	if ( _currentItem ) {
 		static_cast<ViewItemWidget*>(_currentItem)->setSelected(false);
-		_currentItem = NULL;
+		_currentItem = nullptr;
 	}
 
 	auto it = _viewItems.find(curr);
@@ -2800,7 +3296,7 @@ void FancyView::currentChanged(const QModelIndex &curr, const QModelIndex &) {
 void FancyView::keyboardSearch(const QString &search) {
 	if ( _currentItem ) {
 		static_cast<ViewItemWidget*>(_currentItem)->setSelected(false);
-		_currentItem = NULL;
+		_currentItem = nullptr;
 	}
 
 	// TODO: implement keyboard search

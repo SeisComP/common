@@ -23,6 +23,7 @@
 #include <iostream>
 #include <seiscomp/utils/files.h>
 
+#include <seiscomp/system/commandline.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/system/schema.h>
 #include <seiscomp/system/model.h>
@@ -197,6 +198,35 @@ class SplashScreen : public QSplashScreen {
 
 
 int main(int argc, char **argv) {
+	// Add command-line help and examples
+	System::CommandLine commandline;
+	commandline.addGroup("Generic");
+	commandline.addOption("Generic", "help,h", "Produce help message.");
+	commandline.addOption("Generic", "version,V", "Show version information.");
+	commandline.addGroup("Verbosity");
+	commandline.addOption("Verbosity", "debug", "Execute in debug mode. Enables "
+	                      "logging of all messages to the console.");
+
+	commandline.parse(std::vector<std::string>(argv + 1, argv + argc));
+
+	if ( commandline.hasOption("help") ) {
+		cout << "Usage:"  << endl
+		     << "  scconfig [options]" << endl << endl
+		     << "Configuration and system management frontend." << endl;
+		commandline.printOptions();
+		cout << "Examples:"  << endl
+		     << "Print debug logging on command line" << endl
+		     << "  scconfig --debug" << endl << endl;
+		return 0;
+	}
+
+	if ( commandline.hasOption("version") ) {
+		cout << "scconfig" << endl
+		     << "Framework: " << Core::CurrentVersion.toString() << endl
+		     << Core::CurrentVersion.systemInfo() << endl;
+		return 0;
+	}
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// This is especially important for displays with a display pixel ratio
 	// greater than 1, e.g. 4k displays. Otherwise QIcon pixmaps will be scaled
@@ -242,10 +272,8 @@ int main(int argc, char **argv) {
 	enableConsoleLogging(_SCErrorChannel);
 	enableConsoleLogging(_SCWarningChannel);
 
-	for ( int i = 1; i < argc; ++i ) {
-		if ( !strcmp("--debug", argv[i]) ) {
-			Seiscomp::Logging::enableConsoleLogging(Seiscomp::Logging::getAll());
-		}
+	if ( commandline.hasOption("debug") ) {
+		Seiscomp::Logging::enableConsoleLogging(Seiscomp::Logging::getAll());
 	}
 
 	splash.showMessage(app.tr("Loading definitions"));

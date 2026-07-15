@@ -124,7 +124,7 @@ is selected.
    :align: center
    :width: 15cm
 
-   Main window of scconfig: frame title, action buttons, mode indicator (red),
+   Main window of scconfig: Frame title, action buttons, mode indicator (red),
    panel selection (yellow), panel title and information (green), panel content
    (blue).
 
@@ -178,12 +178,15 @@ also section :ref:`system-management`  for more details.
    :align: center
    :width: 15cm
 
+   System panel: Overview
+
 It is divided into 3 parts: the toolbar on the top (red), the module list (green)
 and the log window (blue).
 The log window shows the output of all external programs called such as :program:`seiscomp`.
 The standard output is colored black and standard error is colored brown.
 
 .. note::
+
    Due to the buffering of the GUI it can happen that standard output and
    standard error logs are not in perfect order.
 
@@ -262,6 +265,8 @@ log files can be directly accessed from the system panel:
    :align: center
    :width: 15cm
 
+   Right-click on a module to open log files
+
 .. hint::
 
    The logging level is configurable per module by :confval:`logging.level`.
@@ -278,6 +283,8 @@ The Modules panel allows the configuration of all registered modules.
    :align: center
    :width: 15cm
 
+   Modules panel: Overview
+
 The left/green part shows the list of available modules grouped by defined
 categories and the right/blue part shows the current active module configuration.
 The active configuration corresponds to the selected module in the list.
@@ -287,16 +294,14 @@ Adjust module configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Read section :ref:`global_modules_config` for details on module configuration.
-See also section :ref:`scconfig-editing` for further information about the
-content panel.
+See also section :ref:`scconfig-editing` for further information on editing parameters.
 
 
 Adjust module configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Read section :ref:`global_modules_config` for details on module configuration.
-See also section :ref:`scconfig-editing` for further information about the
-content panel.
+See also section :ref:`scconfig-editing` for further information on editing parameters.
 
 
 .. _scconfig-modes:
@@ -348,6 +353,7 @@ Bindings panel
 The binding panel configures a station for a module providing station-specific
 configuration such as data acquisition or processing. Read section
 :ref:`global_bindings_config` for details on bindings configuration.
+See also section :ref:`scconfig-editing` for further information on editing parameters.
 
 You may configure station
 bindings or binding profiles. The profiles are typically applied to a set of
@@ -370,6 +376,8 @@ to it.
 .. figure:: media/panel-bindings.png
    :align: center
    :width: 15cm
+
+   Bindings panel: Overview
 
 The binding panel is separated into 3 main areas:
 
@@ -413,6 +421,7 @@ profile allowing to adjust the parameters.
    :align: center
    :width: 15cm
 
+   Create a binding profile
 
 Create bindings
 ~~~~~~~~~~~~~~~
@@ -448,6 +457,8 @@ binding view will then contain all currently configured bindings.
    :align: center
    :width: 15cm
 
+   Add a station binding
+
 Clicking with the right mouse button into the free area will open a menu which
 allows to add a binding for a module which has not yet been added. Adding
 a binding will activate it and bring its content into the content panel.
@@ -460,7 +471,7 @@ profile will be converted into a station binding and activated for editing.
    :align: center
    :width: 15cm
 
-   Convert a binding profile to a station binding.
+   Convert a binding profile to a station binding
 
 Reversely, you may select a profile for binding it to a station.
 
@@ -468,7 +479,9 @@ Reversely, you may select a profile for binding it to a station.
    :align: center
    :width: 15cm
 
-   Convert a station binding to a binding profile.
+   Convert a station binding to a binding profile. The current configuration is
+   highlighted.
+
 
 Apply bindings
 ^^^^^^^^^^^^^^
@@ -524,7 +537,7 @@ like this:
       +-- database (scautopick.cfg: database)
 
 
-Figure :ref:`fig-scconfig-modules-global` describes each item in the content
+The Figure :ref:`fig-scconfig-modules-global` describes each item in the content
 panel.
 
 When configuring module configuration parameters (in contrast to bindings), the
@@ -558,18 +571,9 @@ configuration panel is easy by the advanced search function:
 Adjust values
 ^^^^^^^^^^^^^
 
-In order to adjust a parameter:
-
-#. Click on the edit button above the parameter field (pen)
-#. Enter or select the value
-#. Save the configuration (:kbd:`Ctrl+S`)
-#. To finally apply the change you need to restart the module. In case bindings
-   were changes, updating the configuration before restarting is required.
-
-Once a parameter has been changed the value may removed by pressing the remove
-button (pen with red line), effectively returning to the default. Before saving,
-you may reset the value to the previously saved state by pressing the reset
-button (blue circular arrows).
+Without further configuration, the parameters show the currently loaded value. This may
+be the default value or a value previously loaded from global configuration. The
+content panel shows information and actions for adjusting parameter values.
 
 .. _fig-scconfig-modules-global:
 
@@ -578,6 +582,62 @@ button (blue circular arrows).
    :width: 15cm
 
    Content panel layout
+
+In order to adjust a module or binding parameter:
+
+#. Click on the edit button above the parameter field (pen) to activate the value field.
+#. Enter or select the value in either way:
+
+   * Enter the value directly into the value field. While entering, the parameter is
+     evaluated.
+
+     .. _fig-scconfig-modules-global-field:
+
+     .. figure:: media/panel-modules-editing-field.png
+        :align: center
+        :width: 10cm
+
+        Value field: Enter the value into the open field
+
+   * Parameter values may be long and difficult to enter into the value field. Instead of
+     entering the value in the value field you may alternatively click on the parameter
+     name which opens a line editor for entering the parameter. Apply your changes and
+     click *OK* to accept the changes. You may copy and paste any text string from the
+     editor window. For copying the parameter along with its value elsewhere, click on
+     *Copy parameter*.
+
+     .. _fig-scconfig-modules-global-line:
+
+     .. figure:: media/panel-modules-editing-line.png
+        :align: center
+        :width: 10cm
+
+        Line editor: Enter the value into the open field
+
+   * For files and directories a selection button may be visible. Click on the button
+     to select the file or directory.
+
+     .. _fig-scconfig-modules-global-file:
+
+     .. figure:: media/panel-modules-editing-file.png
+        :align: center
+        :width: 10cm
+
+        File and directory selector
+
+#. Save the configuration: Click on the *Save* button or press :kbd:`Ctrl+S`.
+#. To finally apply the change you need to restart the module. In case bindings
+   were changed, update the configuration is required before restarting. Navigate to the
+   :ref:`System panel <scconfig-system>` for these actions.
+
+You may later revert changes:
+
+* Remove a value effectively returning to default by pressing the remove button (pen
+  with red line).
+* Before saving a changed value, you may reset this value to the previously saved state
+  by pressing the reset button (blue circular arrows).
+* Revert the changed values of all parameters to the saved stated by pressing
+  *Reset all* (:kbd:`Ctrl+R`).
 
 
 Evaluation
@@ -595,7 +655,7 @@ types and options to be tested is documented in the
    :align: center
    :width: 15cm
 
-   Examples of value syntax evaluation.
+   Examples of value syntax evaluation
 
 
 .. _scconfig-inventory:
@@ -613,6 +673,8 @@ the list is empty and contains only a README file.
 .. figure:: media/panel-inventory.png
    :align: center
    :width: 15cm
+
+   Inventory panel: List of files and actions
 
 Importing station meta data is outlined in the
 :ref:`tutorial on adding a station <tutorials_addstation>`.
@@ -704,6 +766,8 @@ The toolbar supports various actions:
     :align: center
     :width: 15cm
 
+    Synchronize inventory: Success
+
 *Sync*
  Almost identical to *Test sync* but it does send updates to the database and
  additionally synchronizes key files and resource files.
@@ -793,6 +857,8 @@ the file.
    :align: center
    :width: 15cm
 
+   Right-click on file name to select actions on the file
+
 .. hint::
 
    File names must end on *.xml*. It is recommended to use consistent file
@@ -815,7 +881,7 @@ of scconfig.
    :align: center
    :width: 15cm
 
-   Information panel.
+   Information panel showing variables and software information
 
 All |scname| variables can be used as placeholders in most of the configuration
 parameters which define directories or files. The variables are encapsulated by
