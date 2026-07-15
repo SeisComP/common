@@ -96,7 +96,7 @@ inline void parse(Core::Message *&msg, const char *blob, size_t blob_length,
 			filtered_buf.push(boost::iostreams::zlib_decompressor());
 			break;
 		case Protocol::GZip:
-			filtered_buf.push(boost::iostreams::zlib_decompressor());
+			filtered_buf.push(boost::iostreams::gzip_decompressor());
 			break;
 		case Protocol::LZ4:
 			filtered_buf.push(ext::boost::iostreams::lz4_decompressor());
@@ -130,7 +130,7 @@ inline bool write(std::string &blob, const Core::Message *&msg,
 			filtered_buf.push(boost::iostreams::zlib_compressor());
 			break;
 		case Protocol::GZip:
-			filtered_buf.push(boost::iostreams::zlib_compressor());
+			filtered_buf.push(boost::iostreams::gzip_compressor());
 			break;
 		case Protocol::LZ4:
 			filtered_buf.push(ext::boost::iostreams::lz4_compressor());
