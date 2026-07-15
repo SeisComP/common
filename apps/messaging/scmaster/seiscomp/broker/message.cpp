@@ -85,7 +85,7 @@ inline Core::Version parse(Core::BaseObjectPtr &obj, const string &blob,
 			filtered_buf.push(boost::iostreams::zlib_decompressor());
 			break;
 		case GZip:
-			filtered_buf.push(boost::iostreams::zlib_decompressor());
+			filtered_buf.push(boost::iostreams::gzip_decompressor());
 			break;
 		case LZ4:
 			filtered_buf.push(ext::boost::iostreams::lz4_decompressor());
@@ -120,7 +120,7 @@ inline bool write(std::string &blob, const Core::BaseObject *obj,
 			filtered_buf.push(boost::iostreams::zlib_compressor());
 			break;
 		case GZip:
-			filtered_buf.push(boost::iostreams::zlib_compressor());
+			filtered_buf.push(boost::iostreams::gzip_compressor());
 			break;
 		case LZ4:
 			filtered_buf.push(ext::boost::iostreams::lz4_compressor());
