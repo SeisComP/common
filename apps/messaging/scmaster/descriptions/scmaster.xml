@@ -63,12 +63,12 @@
 						SO_REUSEADDR socket option for the TCP listening socket.
 						</description>
 					</parameter>
-					<parameter name="key" type="path" default="">
+					<parameter name="key" type="file" default="">
 						<description>
 
 						</description>
 					</parameter>
-					<parameter name="certificate" type="path" default="">
+					<parameter name="certificate" type="file" default="">
 						<description>
 
 						</description>
@@ -204,7 +204,7 @@
 				</struct>
 			</group>
 			<group name="http">
-				<parameter name="filebase" type="path" default="@DATADIR@/scmaster/http/">
+				<parameter name="filebase" type="directory" default="@DATADIR@/scmaster/http/" options="read">
 					<description>
 					The directory served by the http server at staticPath.
 					</description>

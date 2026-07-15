@@ -33,7 +33,7 @@
 				comma. Add ${plugins} to consider all previously read values.
 				</description>
 			</parameter>
-			<parameter name="cityXML" type="file" values="*.xml" options="read">
+			<parameter name="cityXML" type="file" options="read, fileTypeFilter=XML (*.xml)">
 				<description>
 				Path to the cities XML file. If undefined, the data is read
 				from &quot;@CONFIGDIR@/cities.xml&quot; or
@@ -196,7 +196,7 @@
 				</group>
 			</group>
 			<group name="connection">
-				<parameter name="server" type="host-with-port" default="localhost">
+				<parameter name="server" type="host-with-port" default="localhost/production">
 					<description>
 					Define the URL of the messaging server to connect to.
 					URL format is [scheme://]host[:port][/queue].
@@ -275,14 +275,14 @@
 				is established. Override these values only if you know what you
 				are doing.
 				</description>
-				<parameter name="inventory" type="file" options="read" values="*.xml">
+				<parameter name="inventory" type="file" options="read,fileTypeFilter=XML (*.xml)">
 					<description>
 					Load the inventory database from a given XML file if set.
 					This overrides the inventory definitions loaded from the
 					database backend.
 					</description>
 				</parameter>
-				<parameter name="config" type="file" options="read" values="*.xml">
+				<parameter name="config" type="file" options="read,fileTypeFilter=XML (*.xml)">
 					<description>
 					Load the configuration database from a given XML file if set.
 					This overrides the configuration definitions loaded from the
@@ -589,7 +589,7 @@
 						interpolated but not extrapolated.
 						</description>
 					</parameter>
-					<parameter name="regionFile" type="file" options="read">
+					<parameter name="regionFile" type="file" options="read, fileTypeFilter=BNA (*.bna);;GeoJSON (*.geojson)">
 						<description>
 						Path to a geofeature file, e.g. in BNA or GeoJSON format,
 						with one or more polygons defining geographic regions.
@@ -965,7 +965,7 @@
 			</group>
 
 			<group name="Cities"  publicID="cities">
-				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml" type="file" options="read" values="*.xml">
+				<option long-flag="city-xml" argument="arg" default="" publicID="cities#city-xml" type="file" options="read, fileTypeFilter=XML (*.xml)">
 					<description>
 					The path to the cities XML file. This overrides the default
 					paths. Compare with the global parameter &quot;citiesXML&quot;.

@@ -1935,7 +1935,9 @@
 					</description>
 				</parameter>
 				<group name="origin">
-					<parameter name="visibleColumns" type="list:string" default="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID" values="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID">
+					<parameter name="visibleColumns" type="list:string"
+						default="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID"
+						values="Phases,Lat,Lon,Depth,DType,RMS,AzGap,Stat,Method,Agency,Author,Region,ID">
 						<description>
 						Configure the columns of the event edit origin table
 						that are visible initially. Origin creation time and
@@ -1982,7 +1984,9 @@
 					</group>
 				</group>
 				<group name="fm">
-					<parameter name="visibleColumns" type="list:string" default="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author" values="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author">
+					<parameter name="visibleColumns" type="list:string"
+						default="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author"
+						values="Depth,M,Count,Misfit,STDR,AzGap,Stat,DC,CLVD,ISO,S1,D1,R1,S2,D2,R2,Agency,Author">
 						<description>
 						Configure the columns of the event edit focal mechanism
 						tab that are visible initially.
