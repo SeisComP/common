@@ -406,9 +406,9 @@ class Protocol(object):
         return _client.Protocol_decode(*args)
 
     @staticmethod
-    def encode(blob, msg, encoding, type, schemaVersion):
-        r"""encode(std::string & blob, Message msg, Seiscomp::Client::Protocol::ContentEncoding encoding, Seiscomp::Client::Protocol::ContentType type, int schemaVersion) -> bool"""
-        return _client.Protocol_encode(blob, msg, encoding, type, schemaVersion)
+    def encode(blob, msg, encoding, type, schemaVersion, protocolFlags=0):
+        r"""encode(std::string & blob, Message msg, Seiscomp::Client::Protocol::ContentEncoding encoding, Seiscomp::Client::Protocol::ContentType type, int schemaVersion, uint32_t protocolFlags=0) -> bool"""
+        return _client.Protocol_encode(blob, msg, encoding, type, schemaVersion, protocolFlags)
 
 # Register Protocol in _client:
 _client.Protocol_swigregister(Protocol)

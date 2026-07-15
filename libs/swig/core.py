@@ -462,8 +462,8 @@ class Version(object):
     def toString(self):
         return _core.Version_toString(self)
 
-    def fromString(self, str):
-        return _core.Version_fromString(self, str)
+    def fromString(self, sv):
+        return _core.Version_fromString(self, sv)
 
     @staticmethod
     def pack(major, minor, patch=0):

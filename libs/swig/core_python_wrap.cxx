@@ -9931,10 +9931,10 @@ fail:
 SWIGINTERN PyObject *_wrap_Version_fromString(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Core::Version *arg1 = 0 ;
-  std::string *arg2 = 0 ;
+  std::string_view arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 = SWIG_OLDOBJ ;
+  PyObject *bytes2 = NULL ;
   PyObject *swig_obj[2] ;
   bool result;
   
@@ -9946,19 +9946,27 @@ SWIGINTERN PyObject *_wrap_Version_fromString(PyObject *self, PyObject *args) {
   }
   arg1 = reinterpret_cast< Seiscomp::Core::Version * >(argp1);
   {
-    std::string *ptr = (std::string *)0;
-    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Version_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
+    Py_ssize_t len;
+#ifdef SWIG_PYTHON_STRICT_BYTE_CHAR
+    const char *p = PyBytes_AsString(swig_obj[1]);
+    if (!p) SWIG_fail;
+    len = PyBytes_Size(swig_obj[1]);
+#else
+    const char *p;
+    if (PyUnicode_Check(swig_obj[1])) {
+      p = SWIG_PyUnicode_AsUTF8AndSize(swig_obj[1], &len, &bytes2);
+      if (!p) SWIG_fail;
+    } else {
+      p = PyBytes_AsString(swig_obj[1]);
+      if (!p) SWIG_fail;
+      len = PyBytes_Size(swig_obj[1]);
     }
-    if (!ptr) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Version_fromString" "', argument " "2"" of type '" "std::string const &""'"); 
-    }
-    arg2 = ptr;
+#endif
+    arg2 = std::string_view(p, len);
   }
   {
     try {
-      result = (bool)(arg1)->fromString((std::string const &)*arg2);
+      result = (bool)(arg1)->fromString(SWIG_STD_MOVE(arg2));
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9971,10 +9979,14 @@ SWIGINTERN PyObject *_wrap_Version_fromString(PyObject *self, PyObject *args) {
     }
   }
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (SWIG_IsNewObj(res2)) delete arg2;
+  
+  SWIG_Py_XDECREF(bytes2);
+  
   return resultobj;
 fail:
-  if (SWIG_IsNewObj(res2)) delete arg2;
+  
+  SWIG_Py_XDECREF(bytes2);
+  
   return NULL;
 }
 
@@ -55418,7 +55430,7 @@ SWIGINTERN int SWIG_mod_exec(PyObject *m) {
     return -1;
   }
   PyDict_SetItemString(md, "cvar", globals);
-  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x110100)));
+  SWIG_Python_SetConstant(d, "SC_API_VERSION",SWIG_From_int(static_cast< int >(0x120000)));
   SWIG_Python_SetConstant(d, "GenericArchive_NONE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::NONE)));
   SWIG_Python_SetConstant(d, "GenericArchive_STATIC_TYPE",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::STATIC_TYPE)));
   SWIG_Python_SetConstant(d, "GenericArchive_IGNORE_CHILDS",SWIG_From_int(static_cast< int >(Seiscomp::Core::Generic::Archive< Seiscomp::Core::BaseObject >::IGNORE_CHILDS)));

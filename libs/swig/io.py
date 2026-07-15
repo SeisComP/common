@@ -1375,17 +1375,23 @@ class VBinaryArchive(BinaryArchive):
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
+    Version = _io.VBinaryArchive_Version
+    
 
     def __init__(self, *args):
         r"""
         __init__(VBinaryArchive self, int forceWriteVersion=-1) -> VBinaryArchive
-        __init__(VBinaryArchive self, std::streambuf * buf, bool isReading=True, int forceWriteVersion=-1) -> VBinaryArchive
+        __init__(VBinaryArchive self, std::streambuf * buf, bool isReading=True, int forceWriteVersion=-1, int formatVersion=-1) -> VBinaryArchive
         """
         _io.VBinaryArchive_swiginit(self, _io.new_VBinaryArchive(*args))
 
     def setWriteVersion(self, version):
         r"""setWriteVersion(VBinaryArchive self, int version)"""
         return _io.VBinaryArchive_setWriteVersion(self, version)
+
+    def setLegacyFormat(self, flag):
+        r"""setLegacyFormat(VBinaryArchive self, bool flag)"""
+        return _io.VBinaryArchive_setLegacyFormat(self, flag)
 
     def open(self, *args):
         r"""
@@ -1408,6 +1414,14 @@ class VBinaryArchive(BinaryArchive):
     def errorMsg(self):
         r"""errorMsg(VBinaryArchive self) -> char const *"""
         return _io.VBinaryArchive_errorMsg(self)
+
+    def read(self, value):
+        r"""read(VBinaryArchive self, Time value)"""
+        return _io.VBinaryArchive_read(self, value)
+
+    def write(self, value):
+        r"""write(VBinaryArchive self, Time value)"""
+        return _io.VBinaryArchive_write(self, value)
     __swig_destroy__ = _io.delete_VBinaryArchive
 
 # Register VBinaryArchive in _io:
@@ -1524,6 +1538,10 @@ class MSeedRecord(seiscomp.core.Record):
     def endTime(self):
         r"""endTime(MSeedRecord self) -> Time"""
         return _io.MSeedRecord_endTime(self)
+
+    def format(self):
+        r"""format(MSeedRecord self) -> Seiscomp::IO::MSeedRecord::Format"""
+        return _io.MSeedRecord_format(self)
 
     def recordLength(self):
         r"""recordLength(MSeedRecord self) -> int"""

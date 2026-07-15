@@ -526,6 +526,11 @@ class PublicObject(Object):
         return _datamodel.PublicObject_SetIdPattern(pattern)
 
     @staticmethod
+    def GetIdPattern():
+        r"""GetIdPattern() -> std::string const &"""
+        return _datamodel.PublicObject_GetIdPattern()
+
+    @staticmethod
     def GenerateId(*args):
         r"""
         GenerateId(PublicObject object) -> PublicObject
@@ -553,6 +558,23 @@ class PublicObject(Object):
 
 # Register PublicObject in _datamodel:
 _datamodel.PublicObject_swigregister(PublicObject)
+class PublicIDPatternResolver(object):
+    r"""Proxy of C++ Seiscomp::DataModel::PublicIDPatternResolver class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def __init__(self, po):
+        r"""__init__(PublicIDPatternResolver self, PublicObject po) -> PublicIDPatternResolver"""
+        _datamodel.PublicIDPatternResolver_swiginit(self, _datamodel.new_PublicIDPatternResolver(po))
+
+    def resolve(self, variable):
+        r"""resolve(PublicIDPatternResolver self, std::string & variable) -> bool"""
+        return _datamodel.PublicIDPatternResolver_resolve(self, variable)
+    __swig_destroy__ = _datamodel.delete_PublicIDPatternResolver
+
+# Register PublicIDPatternResolver in _datamodel:
+_datamodel.PublicIDPatternResolver_swigregister(PublicIDPatternResolver)
 class DatabaseIterator(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::DataModel::DatabaseIterator class."""
 
@@ -1365,6 +1387,18 @@ class Diff4(Diff3):
 
 # Register Diff4 in _datamodel:
 _datamodel.Diff4_swigregister(Diff4)
+class Diff5(Diff3):
+    r"""Proxy of C++ Seiscomp::DataModel::Diff5 class."""
+
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+
+    def __init__(self, *args, **kwargs):
+        raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _datamodel.delete_Diff5
+
+# Register Diff5 in _datamodel:
+_datamodel.Diff5_swigregister(Diff5)
 class PublicObjectCacheIterator(object):
     r"""Proxy of C++ PublicObjectCacheIterator class."""
 
@@ -19902,6 +19936,14 @@ class DatabaseQuery(DatabaseReader):
         getPicks(DatabaseQuery self, Time startTime, Time endTime, WaveformStreamID waveformID) -> DatabaseIterator
         """
         return _datamodel.DatabaseQuery_getPicks(self, *args)
+
+    def getPickComments(self, *args):
+        r"""
+        getPickComments(DatabaseQuery self, std::string const & originID) -> DatabaseIterator
+        getPickComments(DatabaseQuery self, Time startTime, Time endTime) -> DatabaseIterator
+        getPickComments(DatabaseQuery self, Time startTime, Time endTime, WaveformStreamID waveformID) -> DatabaseIterator
+        """
+        return _datamodel.DatabaseQuery_getPickComments(self, *args)
 
     def getWaveformQuality(self, *args):
         r"""

@@ -5340,6 +5340,13 @@ SWIG_AsVal_float (PyObject * obj, float *val)
 }
 
 
+SWIGINTERNINLINE PyObject*
+  SWIG_From_unsigned_SS_int  (unsigned int value)
+{
+  return PyInt_FromSize_t((size_t) value);
+}
+
+
 SWIGINTERNINLINE PyObject *
 SWIG_From_signed_SS_char  (signed char value)
 {    
@@ -25271,6 +25278,65 @@ SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_2(PyObject *self, Py_ssize_t
   std::streambuf *arg1 = 0 ;
   bool arg2 ;
   int arg3 ;
+  int arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  Seiscomp::IO::VBinaryArchive *result = 0 ;
+  
+  (void)self;
+  if ((nobjs < 4) || (nobjs > 4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__streambuf, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_VBinaryArchive" "', argument " "1"" of type '" "std::streambuf *""'"); 
+  }
+  arg1 = reinterpret_cast< std::streambuf * >(argp1);
+  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_VBinaryArchive" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_VBinaryArchive" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  ecode4 = SWIG_AsVal_int(swig_obj[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_VBinaryArchive" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  {
+    try {
+      result = (Seiscomp::IO::VBinaryArchive *)new Seiscomp::IO::VBinaryArchive(arg1,arg2,arg3,arg4);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__IO__VBinaryArchive, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  std::streambuf *arg1 = 0 ;
+  bool arg2 ;
+  int arg3 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   bool val2 ;
@@ -25317,7 +25383,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_3(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   std::streambuf *arg1 = 0 ;
   bool arg2 ;
@@ -25360,7 +25426,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_4(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_VBinaryArchive__SWIG_5(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0;
   std::streambuf *arg1 = 0 ;
   void *argp1 = 0 ;
@@ -25397,11 +25463,11 @@ fail:
 
 SWIGINTERN PyObject *_wrap_new_VBinaryArchive(PyObject *self, PyObject *args) {
   Py_ssize_t argc;
-  PyObject *argv[4] = {
+  PyObject *argv[5] = {
     0
   };
   
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_VBinaryArchive", 0, 3, argv))) SWIG_fail;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_VBinaryArchive", 0, 4, argv))) SWIG_fail;
   --argc;
   if (argc == 0) {
     return _wrap_new_VBinaryArchive__SWIG_1(self, argc, argv);
@@ -25412,7 +25478,7 @@ SWIGINTERN PyObject *_wrap_new_VBinaryArchive(PyObject *self, PyObject *args) {
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_std__streambuf, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_new_VBinaryArchive__SWIG_4(self, argc, argv);
+      return _wrap_new_VBinaryArchive__SWIG_5(self, argc, argv);
     }
   }
   if (argc == 1) {
@@ -25436,7 +25502,7 @@ SWIGINTERN PyObject *_wrap_new_VBinaryArchive(PyObject *self, PyObject *args) {
         _v = SWIG_CheckState(res);
       }
       if (_v) {
-        return _wrap_new_VBinaryArchive__SWIG_3(self, argc, argv);
+        return _wrap_new_VBinaryArchive__SWIG_4(self, argc, argv);
       }
     }
   }
@@ -25456,7 +25522,34 @@ SWIGINTERN PyObject *_wrap_new_VBinaryArchive(PyObject *self, PyObject *args) {
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          return _wrap_new_VBinaryArchive__SWIG_2(self, argc, argv);
+          return _wrap_new_VBinaryArchive__SWIG_3(self, argc, argv);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_std__streambuf, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_bool(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_new_VBinaryArchive__SWIG_2(self, argc, argv);
+          }
         }
       }
     }
@@ -25467,6 +25560,7 @@ fail:
     "  Possible C/C++ prototypes are:\n"
     "    Seiscomp::IO::VBinaryArchive::VBinaryArchive(int)\n"
     "    Seiscomp::IO::VBinaryArchive::VBinaryArchive()\n"
+    "    Seiscomp::IO::VBinaryArchive::VBinaryArchive(std::streambuf *,bool,int,int)\n"
     "    Seiscomp::IO::VBinaryArchive::VBinaryArchive(std::streambuf *,bool,int)\n"
     "    Seiscomp::IO::VBinaryArchive::VBinaryArchive(std::streambuf *,bool)\n"
     "    Seiscomp::IO::VBinaryArchive::VBinaryArchive(std::streambuf *)\n");
@@ -25499,6 +25593,49 @@ SWIGINTERN PyObject *_wrap_VBinaryArchive_setWriteVersion(PyObject *self, PyObje
   {
     try {
       (arg1)->setWriteVersion(arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VBinaryArchive_setLegacyFormat(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::VBinaryArchive *arg1 = 0 ;
+  bool arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool val2 ;
+  int ecode2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "VBinaryArchive_setLegacyFormat", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__VBinaryArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VBinaryArchive_setLegacyFormat" "', argument " "1"" of type '" "Seiscomp::IO::VBinaryArchive *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::VBinaryArchive * >(argp1);
+  ecode2 = SWIG_AsVal_bool(swig_obj[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VBinaryArchive_setLegacyFormat" "', argument " "2"" of type '" "bool""'");
+  } 
+  arg2 = static_cast< bool >(val2);
+  {
+    try {
+      (arg1)->setLegacyFormat(arg2);
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25852,6 +25989,98 @@ SWIGINTERN PyObject *_wrap_VBinaryArchive_errorMsg(PyObject *self, PyObject *arg
     }
   }
   resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VBinaryArchive_read(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::VBinaryArchive *arg1 = 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "VBinaryArchive_read", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__VBinaryArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VBinaryArchive_read" "', argument " "1"" of type '" "Seiscomp::IO::VBinaryArchive *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::VBinaryArchive * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "VBinaryArchive_read" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "VBinaryArchive_read" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      (arg1)->read(*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VBinaryArchive_write(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::VBinaryArchive *arg1 = 0 ;
+  Seiscomp::Core::Time *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "VBinaryArchive_write", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__VBinaryArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VBinaryArchive_write" "', argument " "1"" of type '" "Seiscomp::IO::VBinaryArchive *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::VBinaryArchive * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Core__Time,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "VBinaryArchive_write" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "VBinaryArchive_write" "', argument " "2"" of type '" "Seiscomp::Core::Time &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Time * >(argp2);
+  {
+    try {
+      (arg1)->write(*arg2);
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
   return NULL;
@@ -27269,6 +27498,43 @@ SWIGINTERN PyObject *_wrap_MSeedRecord_endTime(PyObject *self, PyObject *args) {
     }
   }
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Core__Time, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_MSeedRecord_format(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::MSeedRecord *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::IO::MSeedRecord::Format result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_format" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  {
+    try {
+      result = (Seiscomp::IO::MSeedRecord::Format)((Seiscomp::IO::MSeedRecord const *)arg1)->format();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -37316,9 +37582,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "BinaryArchive_swiginit", BinaryArchive_swiginit, METH_VARARGS, NULL},
 	 { "new_VBinaryArchive", _wrap_new_VBinaryArchive, METH_VARARGS, "\n"
 		"VBinaryArchive(int forceWriteVersion=-1)\n"
-		"VBinaryArchive(std::streambuf * buf, bool isReading=True, int forceWriteVersion=-1)\n"
+		"VBinaryArchive(std::streambuf * buf, bool isReading=True, int forceWriteVersion=-1, int formatVersion=-1)\n"
 		""},
 	 { "VBinaryArchive_setWriteVersion", _wrap_VBinaryArchive_setWriteVersion, METH_VARARGS, "VBinaryArchive_setWriteVersion(VBinaryArchive self, int version)"},
+	 { "VBinaryArchive_setLegacyFormat", _wrap_VBinaryArchive_setLegacyFormat, METH_VARARGS, "VBinaryArchive_setLegacyFormat(VBinaryArchive self, bool flag)"},
 	 { "VBinaryArchive_open", _wrap_VBinaryArchive_open, METH_VARARGS, "\n"
 		"VBinaryArchive_open(VBinaryArchive self, char const * file) -> bool\n"
 		"VBinaryArchive_open(VBinaryArchive self, std::streambuf * arg2) -> bool\n"
@@ -37329,6 +37596,8 @@ static PyMethodDef SwigMethods[] = {
 		""},
 	 { "VBinaryArchive_close", _wrap_VBinaryArchive_close, METH_O, "VBinaryArchive_close(VBinaryArchive self)"},
 	 { "VBinaryArchive_errorMsg", _wrap_VBinaryArchive_errorMsg, METH_O, "VBinaryArchive_errorMsg(VBinaryArchive self) -> char const *"},
+	 { "VBinaryArchive_read", _wrap_VBinaryArchive_read, METH_VARARGS, "VBinaryArchive_read(VBinaryArchive self, Time value)"},
+	 { "VBinaryArchive_write", _wrap_VBinaryArchive_write, METH_VARARGS, "VBinaryArchive_write(VBinaryArchive self, Time value)"},
 	 { "delete_VBinaryArchive", _wrap_delete_VBinaryArchive, METH_O, "delete_VBinaryArchive(VBinaryArchive self)"},
 	 { "VBinaryArchive_swigregister", VBinaryArchive_swigregister, METH_O, NULL},
 	 { "VBinaryArchive_swiginit", VBinaryArchive_swiginit, METH_VARARGS, NULL},
@@ -37367,6 +37636,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "MSeedRecord_byteOrder", _wrap_MSeedRecord_byteOrder, METH_O, "MSeedRecord_byteOrder(MSeedRecord self) -> int8_t"},
 	 { "MSeedRecord_encoding", _wrap_MSeedRecord_encoding, METH_O, "MSeedRecord_encoding(MSeedRecord self) -> int8_t"},
 	 { "MSeedRecord_endTime", _wrap_MSeedRecord_endTime, METH_O, "MSeedRecord_endTime(MSeedRecord self) -> Time"},
+	 { "MSeedRecord_format", _wrap_MSeedRecord_format, METH_O, "MSeedRecord_format(MSeedRecord self) -> Seiscomp::IO::MSeedRecord::Format"},
 	 { "MSeedRecord_recordLength", _wrap_MSeedRecord_recordLength, METH_O, "MSeedRecord_recordLength(MSeedRecord self) -> int"},
 	 { "MSeedRecord_data", _wrap_MSeedRecord_data, METH_O, "MSeedRecord_data(MSeedRecord self) -> Array"},
 	 { "MSeedRecord_raw", _wrap_MSeedRecord_raw, METH_O, "MSeedRecord_raw(MSeedRecord self) -> Array"},
@@ -40131,6 +40401,7 @@ SWIGINTERN int SWIG_mod_exec(PyObject *m) {
   SWIG_Python_SetConstant(d, "MSeedEncoder_Steim2",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedEncoder::Steim2)));
   SWIG_Python_SetConstant(d, "XMLArchive_ZIP",SWIG_From_int(static_cast< int >(Seiscomp::IO::XMLArchive::ZIP)));
   SWIG_Python_SetConstant(d, "XMLArchive_GZIP",SWIG_From_int(static_cast< int >(Seiscomp::IO::XMLArchive::GZIP)));
+  SWIG_Python_SetConstant(d, "VBinaryArchive_Version",SWIG_From_unsigned_SS_int(static_cast< unsigned int >(Seiscomp::IO::VBinaryArchive::Version)));
   SWIG_Python_SetConstant(d, "MSeedRecord_V2",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedRecord::V2)));
   SWIG_Python_SetConstant(d, "MSeedRecord_V3",SWIG_From_int(static_cast< int >(Seiscomp::IO::MSeedRecord::V3)));
   SWIG_Python_SetConstant(d, "FileRecordStream_Begin",SWIG_From_int(static_cast< int >(Seiscomp::RecordStream::File::Begin)));
