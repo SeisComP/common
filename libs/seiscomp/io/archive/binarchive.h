@@ -206,6 +206,10 @@ class SC_SYSTEM_CORE_API BinaryArchive : public Seiscomp::Core::Archive {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
+	public:
+		static constexpr unsigned Version = 2;
+
+
 	// ----------------------------------------------------------------------
 	//  Xstruction
 	// ----------------------------------------------------------------------
@@ -215,7 +219,7 @@ class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
 
 		//! Constructor with predefined buffer and mode
 		VBinaryArchive(std::streambuf* buf, bool isReading = true,
-		               int forceWriteVersion = -1);
+		               int forceWriteVersion = -1, int formatVersion = -1);
 
 
 	// ----------------------------------------------------------------------
@@ -254,14 +258,13 @@ class SC_SYSTEM_CORE_API VBinaryArchive : public BinaryArchive {
 		void writeHeader();
 		bool readHeader();
 
-
 	private:
 		enum FormatHint {
-			NEW_DATETIME_FORMAT = 0x01
+			LEGACY_FORMAT = 0x01
 		};
 
 		int         _forceWriteVersion;
-		uint32_t    _formatHint{NEW_DATETIME_FORMAT};
+		uint32_t    _formatHint{0};
 		std::string _error;
 };
 

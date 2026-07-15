@@ -1079,10 +1079,17 @@ VBinaryArchive::VBinaryArchive(int forceWriteVersion)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 VBinaryArchive::VBinaryArchive(std::streambuf* buf, bool isReading,
-                               int forceWriteVersion)
-: BinaryArchive(buf, isReading),  _forceWriteVersion(forceWriteVersion) {
+                               int forceWriteVersion, int formatVersion)
+: BinaryArchive(buf, isReading)
+, _forceWriteVersion(forceWriteVersion) {
+	if ( (formatVersion > 0) && (formatVersion < 2) ) {
+		_formatHint |= LEGACY_FORMAT;
+	}
+
 	if ( isReading ) {
-		if ( !readHeader() ) throw Core::StreamException(errorMsg());
+		if ( !readHeader() ) {
+			throw Core::StreamException(errorMsg());
+		}
 	}
 	else
 		writeHeader();
@@ -1104,10 +1111,10 @@ void VBinaryArchive::setWriteVersion(int version) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void VBinaryArchive::setLegacyFormat(bool flag) {
 	if ( flag ) {
-		_formatHint &= ~NEW_DATETIME_FORMAT;
+		_formatHint |= LEGACY_FORMAT;
 	}
 	else {
-		_formatHint |= NEW_DATETIME_FORMAT;
+		_formatHint &= ~LEGACY_FORMAT;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1196,7 +1203,10 @@ const char *VBinaryArchive::errorMsg() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void VBinaryArchive::read(Core::Time &value) {
-	if ( _formatHint & NEW_DATETIME_FORMAT ) {
+	if ( _formatHint & LEGACY_FORMAT ) {
+		BinaryArchive::read(value);
+	}
+	else {
 		Core::Time::Storage tmp;
 		int size = _buf ? _buf->sgetn((char*)&tmp, sizeof(tmp)) : 0;
 		if ( size != sizeof(tmp) ) {
@@ -1208,9 +1218,6 @@ void VBinaryArchive::read(Core::Time &value) {
 			value = Seiscomp::Core::Time::FromEpoch(tmp / 1000000, tmp % 1000000);
 		}
 	}
-	else {
-		BinaryArchive::read(value);
-	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1219,15 +1226,15 @@ void VBinaryArchive::read(Core::Time &value) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void VBinaryArchive::write(Seiscomp::Core::Time &value) {
-	if ( _formatHint & NEW_DATETIME_FORMAT ) {
+	if ( _formatHint & LEGACY_FORMAT ) {
+		BinaryArchive::write(value);
+	}
+	else {
 		if ( !_buf ) {
 			return;
 		}
 		Core::Time::Storage tmp = value.epochSeconds() * 1000000 + value.microseconds();
 		writeBytes(&tmp, sizeof(tmp));
-	}
-	else {
-		BinaryArchive::write(value);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1249,12 +1256,12 @@ void VBinaryArchive::writeHeader() {
 		_version = _forceWriteVersion;
 	}
 
-	if ( _formatHint & NEW_DATETIME_FORMAT ) {
-		writeBytes(MAGIC2.cc, FourCC::Size);
-		_version = _version.majorMinor();
+	if ( _formatHint & LEGACY_FORMAT ) {
+		writeBytes(MAGIC.cc, FourCC::Size);
 	}
 	else {
-		writeBytes(MAGIC.cc, FourCC::Size);
+		writeBytes(MAGIC2.cc, FourCC::Size);
+		_version = _version.majorMinor();
 	}
 
 	uint32_t versionTag = _version.majorTag() << 0x10 | _version.minorTag();

@@ -105,29 +105,33 @@ std::string Version::toString() const {
 }
 
 
-bool Version::fromString(const std::string &str) {
-	size_t pos = str.find('.'), pos2;
+bool Version::fromString(std::string_view sv) {
+	size_t pos = sv.find('.'), pos2;
 	if ( pos == std::string::npos ) return false;
 
 	int maj, min, patch = 0;
-	if ( !Core::fromString(maj, str.substr(0, pos)) )
+	if ( !Core::fromString(maj, sv.substr(0, pos)) )
 		return false;
 
-	pos2 = str.find('.', pos + 1);
+	pos2 = sv.find('.', pos + 1);
 	if ( pos2 == std::string::npos ) {
-		if ( !Core::fromString(min, str.substr(pos + 1)) )
+		if ( !Core::fromString(min, sv.substr(pos + 1)) ) {
 			return false;
+		}
 	}
 	else {
-		if ( !Core::fromString(min, str.substr(pos + 1, pos2 - pos - 1)) )
+		if ( !Core::fromString(min, sv.substr(pos + 1, pos2 - pos - 1)) ) {
 			return false;
+		}
 
-		if ( !Core::fromString(patch, str.substr(pos2 + 1)) )
+		if ( !Core::fromString(patch, sv.substr(pos2 + 1)) ) {
 			return false;
+		}
 	}
 
-	if ( (maj & 0xFFFF0000) || (min & 0xFFFFFF00) || (patch & 0xFFFFFF00) )
+	if ( (maj & 0xFFFF0000) || (min & 0xFFFFFF00) || (patch & 0xFFFFFF00) ) {
 		return false;
+	}
 
 	packed = pack(maj, min, patch);
 	return true;

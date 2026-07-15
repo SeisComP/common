@@ -23,6 +23,7 @@
 
 
 #include <string>
+#include <string_view>
 #include <cstdint>
 #include <seiscomp/core.h>
 
@@ -51,7 +52,7 @@ namespace Core {
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
    - Removed Seiscomp::Gui::StationMagnitudeModel
-   - Added Seiscomp::IO::VBinaryArchive::setLegacyFormat
+   - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
 
  "17.4.0"   0x110400
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
@@ -780,7 +781,7 @@ class SC_SYSTEM_CORE_API Version {
 		PackType majorMinor() const { return packed & ~0xff; }
 
 		std::string toString() const;
-		bool fromString(const std::string &str);
+		bool fromString(std::string_view sv);
 
 		static PackType pack(MajorType major, MinorType minor, PatchType patch = 0) {
 			return (major << 0x10) | (minor << 0x08) | patch;
