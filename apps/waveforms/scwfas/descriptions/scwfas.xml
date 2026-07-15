@@ -44,7 +44,7 @@
 				If not given, an internal implementation will be used.
 				</description>
 			</parameter>
-			<parameter name="filebase" type="string" default="@ROOTDIR@/var/lib/archive">
+			<parameter name="filebase" type="directory" default="@ROOTDIR@/var/lib/archive">
 				<description>
 				The filebase of the SDS archive. If an alternative archive
 				handler is defined by &quot;handlerSDS&quot;, this value serves
@@ -67,7 +67,7 @@
 				<parameter name="maxTimeWindow" type="int" unit="s" default="0">
 					<description>
 					The aggregated maximum time window (seconds)
-					for all requested streams. A value of 0 will deactive
+					for all requested streams. A value of 0 will deactivate
 					any restriction.
 					</description>
 				</parameter>

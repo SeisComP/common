@@ -20,8 +20,7 @@
 					<struct type="stdloc profile" link = "StdLoc.profiles">
 						<parameter name="method" type="string" default="LeastSquares" values="LeastSquares,GridSearch,OctTree,GridSearch+LeastSquares,OctTree+LeastSquares">
 							<description>
-							The location method to use: LeastSquares, GridSearch,
-							OctTree, GridSearch+LeastSquares or OctTree+LeastSquares.
+							The location method to use.
 							</description>
 						</parameter>
 						<parameter name="tableType" type="string" default="LOCSAT" values="homogeneous,libtau,LOCSAT">
