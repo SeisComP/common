@@ -136,7 +136,7 @@ struct Settings : Seiscomp::System::Application::AbstractSettings {
 		& cfg(defaultGroups, "defaultGroups")
 		& cfg(queues, "queues", [this](Queue &queue) { queue.groups = defaultGroups; })
 		& cfg(interface, "interface")
-		& cfgAsPath(http, "http");
+		& cfg(http, "http");
 	}
 };
 
