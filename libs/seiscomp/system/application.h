@@ -71,6 +71,25 @@ bool convertString(Core::Optional<T> &value, const std::string &str) {
 template <typename T>
 T getConfig(const Application *app, const std::string &symbol, bool asPath);
 
+// Resolve a value to an absolute path in place. Only strings are affected;
+// for any other type this is a no-op so path-flagged bindings of unrelated
+// types still compile.
+template <typename T>
+void resolvePath(T &) {}
+
+void resolvePath(std::string &value);
+
+// Path bindings (cfgAsPath / cliAsPath) may only bind std::string or
+// std::vector<std::string>; any other type is rejected at compile time.
+template <typename T>
+struct IsPathBindable : std::false_type {};
+
+template <>
+struct IsPathBindable<std::string> : std::true_type {};
+
+template <>
+struct IsPathBindable< std::vector<std::string> > : std::true_type {};
+
 std::string join(const std::string &prefix, const char *relativeName);
 
 
@@ -898,8 +917,13 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 							else
 								hasOption = proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol);
 
-							if ( hasOption )
-								return Detail::convertString(visitedItem.value, proc._proxyValueStore[&visitedItem.value]);
+							if ( hasOption ) {
+								std::string &raw = proc._proxyValueStore[&visitedItem.value];
+								if ( visitedItem.flags & OptionBinding<T>::InterpretAsPath ) {
+									Detail::resolvePath(raw);
+								}
+								return Detail::convertString(visitedItem.value, raw);
+							}
 							else
 								return true;
 						}
@@ -913,19 +937,29 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				struct CliGetHelper<T,1> {
 					template <typename P>
 					static bool process(P &proc, OptionBinding<T> &visitedItem) {
-						if ( visitedItem.cliAbsoluteSymbol && visitedItem.isSwitch() ) {
-							const char *s = strchr(visitedItem.cliAbsoluteSymbol, ',');
-							if ( s ) {
-								size_t len = static_cast<size_t>(s - visitedItem.cliAbsoluteSymbol);
-								s = visitedItem.cliAbsoluteSymbol;
-								Core::trim(s, len);
-								if ( proc._external.constCli->hasOption(std::string(s, len)) ) {
-									visitedItem.value = !visitedItem.isInverseSwitch();
-								}
-							}
-							else if ( proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol) ) {
+						if ( !visitedItem.cliAbsoluteSymbol ) {
+							return true;
+						}
+
+						bool hasOption;
+						const char *s = strchr(visitedItem.cliAbsoluteSymbol, ',');
+						if ( s ) {
+							size_t len = static_cast<size_t>(s - visitedItem.cliAbsoluteSymbol);
+							s = visitedItem.cliAbsoluteSymbol;
+							Core::trim(s, len);
+							hasOption = proc._external.constCli->hasOption(std::string(s, len));
+						}
+						else {
+							hasOption = proc._external.constCli->hasOption(visitedItem.cliAbsoluteSymbol);
+						}
+
+						if ( visitedItem.isSwitch() ) {
+							if ( hasOption ) {
 								visitedItem.value = !visitedItem.isInverseSwitch();
 							}
+						}
+						else if ( hasOption && (visitedItem.flags & OptionBinding<T>::InterpretAsPath) ) {
+							Detail::resolvePath(visitedItem.value);
 						}
 
 						return true;
@@ -935,7 +969,12 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				struct CliGetHelper<std::vector<T>,1> {
 					template <typename P>
-					static bool process(P &, OptionBinding< std::vector<T> > &) {
+					static bool process(P &, OptionBinding< std::vector<T> > &visitedItem) {
+						if ( visitedItem.flags & OptionBinding< std::vector<T> >::InterpretAsPath ) {
+							for ( auto &item : visitedItem.value ) {
+								Detail::resolvePath(item);
+							}
+						}
 						return true;
 					}
 				};
@@ -1147,6 +1186,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 
 				template <typename T>
 				static OptionBinding<T> cfgAsPath(T &boundValue, const char *name) {
+					static_assert(Detail::IsPathBindable<T>::value,
+					              "cfgAsPath may only bind a std::string or std::vector<std::string>");
 					return OptionBinding<T>(boundValue, OptionBinding<T>::InterpretAsPath, name);
 				}
 
@@ -1162,6 +1203,8 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 				template <typename T>
 				static OptionBinding<T> cliAsPath(T &boundValue, const char *group, const char *option,
 				                                  const char *desc, bool default_ = false, bool switch_ = false) {
+					static_assert(Detail::IsPathBindable<T>::value,
+					              "cliAsPath may only bind a std::string or std::vector<std::string>");
 					int flags = OptionBinding<T>::InterpretAsPath;
 					if ( default_ ) flags |= OptionBinding<T>::CLIPrintDefault;
 					if ( switch_ ) flags |= OptionBinding<T>::CLIIsSwitch;

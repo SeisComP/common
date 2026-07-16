@@ -1869,63 +1869,69 @@ const char *Application::frameworkVersion() const {
 namespace Detail {
 
 template <>
-bool getConfig(const Application *app, const string &symbol, bool) {
+bool getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetBool(symbol);
 }
 
 template <>
-int getConfig(const Application *app, const string &symbol, bool) {
+int getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetInt(symbol);
 }
 
 template <>
-uint32_t getConfig(const Application *app, const string &symbol, bool) {
+uint32_t getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return static_cast<uint32_t>(app->configGetInt(symbol));
 }
 
 template <>
-uint64_t getConfig(const Application *app, const string &symbol, bool) {
+uint64_t getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return static_cast<uint64_t>(app->configGetInt(symbol));
 }
 
 template <>
-double getConfig(const Application *app, const string &symbol, bool) {
+double getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetDouble(symbol);
 }
 
 template <>
-vector<bool> getConfig(const Application *app, const string &symbol, bool) {
+vector<bool> getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetBools(symbol);
 }
 
 template <>
-vector<int> getConfig(const Application *app, const string &symbol, bool) {
+vector<int> getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetInts(symbol);
 }
 
 template <>
-vector<double> getConfig(const Application *app, const string &symbol, bool) {
+vector<double> getConfig(const Application *app, const string &symbol, bool /*asPath*/) {
 	return app->configGetDoubles(symbol);
 }
 
 template <>
 string getConfig(const Application *app, const string &symbol, bool asPath) {
-	if ( asPath )
-		return Environment::Instance()->absolutePath(app->configGetString(symbol));
-	else
-		return app->configGetString(symbol);
+	auto value = app->configGetString(symbol);
+	if ( asPath ) {
+		resolvePath(value);
+	}
+
+	return value;
 }
 
 template <>
 vector<string> getConfig(const Application *app, const string &symbol, bool asPath) {
-	if ( !asPath )
-		return app->configGetStrings(symbol);
-
 	vector<string> items = app->configGetStrings(symbol);
-	for ( size_t i = 0; i < items.size(); ++i )
-		items[i] = Environment::Instance()->absolutePath(items[i]);
+	if ( asPath ) {
+		for ( auto &item : items ) {
+			resolvePath(item);
+		}
+	}
 
 	return items;
+}
+
+void resolvePath(string &value) {
+	value = Environment::Instance()->absolutePath(value);
 }
 
 string join(const string &prefix, const char *relativeName) {
