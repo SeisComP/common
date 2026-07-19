@@ -82,6 +82,17 @@ void Coord<T>::serialize(Archive& ar) {
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+// AdminRegion implementation
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AdminRegion::serialize(Core::BaseObject::Archive& ar) {
+	ar & NAMED_OBJECT("abbr", abbr);
+	ar & NAMED_OBJECT_HINT("name", name, Core::BaseObject::Archive::XML_ELEMENT);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
 // NamedCoord<T> implementation
 
 
@@ -231,6 +242,26 @@ const std::string &City<T>::countryID() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
+void City<T>::setCountry(const std::string &c) {
+	_country = c;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
+const std::string &City<T>::country() const {
+	return _country;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
 void City<T>::setCategory(std::string &c) {
 	_category = c;
 }
@@ -251,10 +282,54 @@ const std::string &City<T>::category() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 template<typename T>
+void City<T>::setType(CityType t) {
+	_type = t;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
+CityType City<T>::type() const {
+	return _type.value_or(CityType{});
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
+void City<T>::setAdminRegion(const AdminRegion &r) {
+	_adminRegion = r;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
+const AdminRegion &City<T>::adminRegion() const {
+	static const AdminRegion empty{};
+	return _adminRegion ? *_adminRegion : empty;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+template<typename T>
 void City<T>::serialize(Core::BaseObject::Archive& ar) {
 	NamedCoord<T>::serialize(ar);
 	ar & NAMED_OBJECT("countryID", _countryID);
 	ar & NAMED_OBJECT("category", _category);
+	ar & NAMED_OBJECT("type", _type);
+	ar & NAMED_OBJECT_HINT("country", _country, Core::BaseObject::Archive::XML_ELEMENT);
+	ar & NAMED_OBJECT_HINT("state", _adminRegion, Core::BaseObject::Archive::XML_ELEMENT);
 	ar & NAMED_OBJECT_HINT("population", _population, Core::BaseObject::Archive::XML_ELEMENT);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
