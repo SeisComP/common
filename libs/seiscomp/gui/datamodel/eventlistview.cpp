@@ -3892,7 +3892,6 @@ void EventListView::setEventModificationsEnabled(bool e) {
 
 
 
-
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::initTree() {
 	SC_D._treeWidget->clear();

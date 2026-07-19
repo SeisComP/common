@@ -771,6 +771,17 @@ void EventSummaryView::init() {
 	QRectF displayRect;
 	displayRect.setRect(lonmin, latmin, lonmax-lonmin, latmax-latmin);
 
+	// Store bounds for reuse when recentering on an event, so that
+	// display.lonmin/max/latmin/max are honored beyond initial startup.
+	// Takes priority over display.defaultEventRadius.
+	bool hasCustomBounds = lonmin != -180 || lonmax != 180 || latmin != -90 || latmax != 90;
+	_displayRect = hasCustomBounds ? displayRect : QRectF();
+
+	// Configurable event radius (like olv.map.event.defaultRadius in scolv).
+	// Only used when no custom bounds are set.
+	try { _defaultEventRadius = SCApp->configGetDouble("display.defaultEventRadius"); }
+	catch ( ... ) { _defaultEventRadius = -1; }
+
 	_uiHypocenter->labelVDistance->setText(QString());
 	_uiHypocenter->labelVDistanceAutomatic->setText(QString());
 	_uiHypocenter->labelFrameInfoSpacer->setText(QString());
@@ -2384,10 +2395,16 @@ void EventSummaryView::updateMap(bool realignView){
 	_map->setOrigin(_currentOrigin.get());
 
 	if ( _currentOrigin && realignView ) {
-		if ( _recenterMap && _recenterMapConfig ) {
-			double radius = 30;
-			try { radius = std::min(radius, _currentOrigin->quality().maximumDistance()+0.1); }
-			catch ( ... ) {}
+		if ( !_displayRect.isNull() ) {
+			// Anchored region: always show the configured bounds
+			_map->canvas().displayRect(_displayRect);
+		}
+		else if ( _recenterMap && _recenterMapConfig ) {
+			double radius = _defaultEventRadius > 0 ? _defaultEventRadius : 30;
+			if ( _defaultEventRadius <= 0 ) {
+				try { radius = std::min(radius, _currentOrigin->quality().maximumDistance()+0.1); }
+				catch ( ... ) {}
+			}
 			_map->canvas().displayRect(QRectF(_currentOrigin->longitude()-radius, _currentOrigin->latitude()-radius, radius*2, radius*2));
 		}
 		else {

@@ -35,6 +35,7 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mwp : public MagnitudeProcessor {
 
 	public:
 		void setDefaults() override {}
+		bool setup(const Settings &settings) override;
 		Status computeMagnitude(double amplitude, const std::string &unit,
 		                        double period, double snr,
 		                        double delta, double depth,
@@ -46,6 +47,12 @@ class SC_SYSTEM_CLIENT_API MagnitudeProcessor_Mwp : public MagnitudeProcessor {
 
 		Status estimateMw(const Config::Config *config, double magnitude,
 		                  double &estimation, double &stdError) override;
+
+	private:
+		// Whitmore et al. (2002) defaults; overridable via global.cfg
+		double _mwA{1.186};
+		double _mwB{-1.222};
+		double _mwStdError{0.4};
 };
 
 

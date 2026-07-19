@@ -20,6 +20,8 @@
 
 #include <seiscomp/processing/magnitudes/Mwp.h>
 #include <seiscomp/seismology/magnitudes.h>
+#include <seiscomp/config/config.h>
+#include <seiscomp/logging/log.h>
 #include <math.h>
 
 namespace Seiscomp {
@@ -44,6 +46,32 @@ MagnitudeProcessor_Mwp::MagnitudeProcessor_Mwp()
  : MagnitudeProcessor("Mwp") {
 	_minimumDistanceDeg = 5.0;
 	_maximumDistanceDeg = 105.0;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MagnitudeProcessor_Mwp::setup(const Settings &settings) {
+	if ( !MagnitudeProcessor::setup(settings) ) {
+		return false;
+	}
+
+	const Seiscomp::Config::Config *cfg = settings.localConfiguration;
+	auto readDouble = [&](const std::string &key, double &val) {
+		if ( !cfg ) return;
+		cfg->getDouble(val, key);
+	};
+
+	readDouble("magnitudes.Mwp.estimateMw.a",        _mwA);
+	readDouble("magnitudes.Mwp.estimateMw.b",        _mwB);
+	readDouble("magnitudes.Mwp.estimateMw.stdError", _mwStdError);
+
+	SEISCOMP_DEBUG("Mwp estimateMw: a=%.4f  b=%.4f  stdError=%.4f",
+	               _mwA, _mwB, _mwStdError);
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -86,10 +114,8 @@ MagnitudeProcessor::Status MagnitudeProcessor_Mwp::estimateMw(
 	double &estimation,
 	double &stdError)
 {
-	const double a=1.186, b=-1.222; // Whitmore et al. (2002)
-	estimation = a * magnitude + b;
-
-	stdError = 0.4; // Fixme
+	estimation = _mwA * magnitude + _mwB;
+	stdError = _mwStdError;
 
 	return OK;
 }
