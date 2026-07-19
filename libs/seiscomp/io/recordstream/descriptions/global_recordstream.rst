@@ -247,6 +247,10 @@ This process is repeated for each requested channel individually. It always
 starts to search data from the first given SDS to the last one, for each data
 channel.
 
+Optional URL encoded parameters are:
+
+- `format` - miniSEED format to read (2,3), default: any
+
 
 Examples
 ^^^^^^^^
