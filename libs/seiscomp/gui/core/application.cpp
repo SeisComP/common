@@ -919,7 +919,9 @@ bool Application::validateParameters() {
 		return false;
 	}
 
-	_logManager = new LogManager();
+	if ( _type == GuiClient ) {
+		_logManager = new LogManager();
+	}
 
 	if ( _settings.mapsDesc.format == "mercator" ) {
 		_settings.mapsDesc.isMercatorProjected = true;
