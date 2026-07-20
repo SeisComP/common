@@ -115,6 +115,7 @@ struct CommitOptions {
 	OPT(string)                  magnitudeType;
 	string                       eventName;
 	string                       eventComment;
+	string                       feltReport;
 
 	struct OriginCommentProfile {
 		string         id;
@@ -268,6 +269,8 @@ QString toString(const CommitOptions &opts) {
 		s += QString("\nEvent name: %1").arg(opts.eventName.c_str());
 	if ( !opts.eventComment.empty() )
 		s += QString("\nEvent comment: %1").arg(opts.eventComment.c_str());
+	if ( !opts.feltReport.empty() )
+		s += QString("\nFelt report: %1").arg(opts.feltReport.c_str());
 
 	return s;
 }
@@ -871,6 +874,9 @@ class OriginCommitOptions : public QDialog {
 			if ( !options.eventName.empty() )
 				ui.editEQName->setText(options.eventName.c_str());
 
+			if ( !options.feltReport.empty() )
+				ui.editFeltReport->setText(options.feltReport.c_str());
+
 			// Fill operator's comment
 			if ( !options.eventComment.empty() ) {
 				if ( commentOptions.empty() ) {
@@ -1004,6 +1010,7 @@ class OriginCommitOptions : public QDialog {
 			}
 
 			options.eventName = ui.editEQName->text().toStdString();
+			options.feltReport = ui.editFeltReport->toPlainText().toStdString();
 
 			if ( commentOptions.empty() ) {
 				options.eventComment = ui.editEQComment->toPlainText().toStdString();
@@ -3695,6 +3702,11 @@ void OriginLocatorView::init() {
 
 		try {
 			customOptions.eventComment = SCApp->configGetString(prefix + "eventComment");
+		}
+		catch ( ... ) {}
+
+		try {
+			customOptions.feltReport = SCApp->configGetString(prefix + "feltReport");
 		}
 		catch ( ... ) {}
 
@@ -7846,7 +7858,9 @@ void OriginLocatorView::commitWithOptions() {
 		for ( size_t i = 0; i < SC_D.baseEvent->eventDescriptionCount(); ++i ) {
 			if ( SC_D.baseEvent->eventDescription(i)->type() == EARTHQUAKE_NAME ) {
 				options.eventName = SC_D.baseEvent->eventDescription(i)->text().c_str();
-				break;
+			}
+			else if ( SC_D.baseEvent->eventDescription(i)->type() == FELT_REPORT ) {
+				options.feltReport = SC_D.baseEvent->eventDescription(i)->text().c_str();
 			}
 		}
 
@@ -7966,7 +7980,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 	// Do event specific things
 	if ( SC_D.baseEvent ) {
 		string type, newType, typeCertainty, newTypeCertainty;
-		string name, comment;
+		string name, comment, feltReport;
 
 		if ( options.eventType ) {
 			newType = options.eventType->toString();
@@ -7982,9 +7996,14 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 		try { typeCertainty = SC_D.baseEvent->typeCertainty().toString(); }
 		catch ( ... ) {}
 
-		EventDescription *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
+		auto *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
 		if ( desc ) {
 			name = desc->text();
+		}
+
+		desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(FELT_REPORT));
+		if ( desc ) {
+			feltReport = desc->text();
 		}
 
 		Comment *cmt = SC_D.baseEvent->comment(CommentIndex("Operator"));
@@ -8000,6 +8019,10 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 		if ( name != options.eventName ) {
 			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvName", options.eventName));
+		}
+
+		if ( feltReport != options.feltReport ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvFeltReport", options.feltReport));
 		}
 
 		if ( type != newType ) {
@@ -8122,8 +8145,7 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 		if ( !nm->empty() ) {
 			if ( SCApp->sendMessage(SCApp->messageGroups().event.c_str(), nm.get()) ) {
-				NotifierMessage::iterator it;
-				for ( it = nm->begin(); it != nm->end(); ++ it )
+				for ( auto it = nm->begin(); it != nm->end(); ++ it )
 					SCApp->emitNotifier(it->get());
 			}
 		}
@@ -8185,8 +8207,8 @@ OriginLocatorView::createJournal(const std::string &objectID,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::sendJournal(const std::string &objectID,
-									const std::string &action,
-									const std::string &params) {
+                                    const std::string &action,
+                                    const std::string &params) {
 	NotifierPtr n = createJournal(objectID, action, params);
 	NotifierMessagePtr nm = new NotifierMessage;
 	nm->attach(n.get());

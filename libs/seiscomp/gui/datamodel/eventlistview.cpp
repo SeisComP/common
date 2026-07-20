@@ -112,6 +112,7 @@ MAKEENUM(
 		COL_AGENCY,
 		COL_AUTHOR,
 		COL_REGION,
+		COL_FELT,
 		COL_ID
 	),
 	ENAMES(
@@ -134,6 +135,7 @@ MAKEENUM(
 		"Agency",
 		"Author",
 		"Region",
+		"FeltReport",
 		"ID"
 	)
 );
@@ -159,6 +161,7 @@ bool colVisibility[EventListColumns::Quantity] = {
 	true,
 	true,
 	true,
+	false,
 	true
 };
 
@@ -172,11 +175,11 @@ do {\
 		if ( it != SCScheme.colors.agencies.end() )\
 			setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, it.value());\
 		else \
-			setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, QVariant());\
+			setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, {});\
 	}\
 	catch ( Seiscomp::Core::ValueException& ) {\
 		setText(config.columnMap[COL_AGENCY], QString());\
-		setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, QVariant());\
+		setData(config.columnMap[COL_AGENCY], Qt::ForegroundRole, {});\
 	}\
 } while (0)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -901,6 +904,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_TIME_AGO], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_FM], Qt::AlignCenter);
+			setTextAlignment(config.columnMap[COL_FELT], Qt::AlignLeft);
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_ORIGINS], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_RMS], Qt::AlignCenter);
@@ -935,7 +939,7 @@ class SchemeTreeItem : public TreeItem {
 
 			if ( !ok ) {
 				setText(config.columnMap[COL_TIME_AGO], "");
-				setData(config.columnMap[COL_TIME_AGO], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_TIME_AGO], Qt::UserRole, {});
 				return;
 			}
 
@@ -1078,7 +1082,7 @@ class OriginTreeItem : public SchemeTreeItem {
 			}
 			catch ( ... ) {
 				setText(config.columnMap[COL_PHASES], "-");
-				setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_PHASES], Qt::UserRole, {});
 			}
 
 			try {
@@ -1087,7 +1091,7 @@ class OriginTreeItem : public SchemeTreeItem {
 			}
 			catch ( ... ) {
 				setText(config.columnMap[COL_RMS], "-");
-				setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_RMS], Qt::UserRole, {});
 			}
 
 			try {
@@ -1096,7 +1100,7 @@ class OriginTreeItem : public SchemeTreeItem {
 			}
 			catch ( ... ) {
 				setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
-				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, {});
 			}
 
 			double lat = ori->latitude();
@@ -1113,7 +1117,7 @@ class OriginTreeItem : public SchemeTreeItem {
 			}
 			catch ( ... ) {
 				setText(config.columnMap[COL_DEPTH], "-"); // Depth
-				setData(config.columnMap[COL_DEPTH], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_DEPTH], Qt::UserRole, {});
 			}
 
 			try {
@@ -1513,7 +1517,7 @@ class EventTreeItem : public SchemeTreeItem {
 			_published = p;
 
 			/*
-			setData(TYPE, Qt::BackgroundRole, _published?Qt::green:QVariant());
+			setData(TYPE, Qt::BackgroundRole, _published?Qt::green:{});
 			QFont f = font(TYPE);
 			f.setBold(_published);
 			setFont(TYPE, f);
@@ -1733,9 +1737,9 @@ class EventTreeItem : public SchemeTreeItem {
 			}
 
 			if ( ev->preferredFocalMechanismID().empty() && !ev->focalMechanismReferenceCount() ) {
-				setData(config.columnMap[COL_FM], Qt::DisplayRole, QVariant());
-				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QVariant());
-				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant());
+				setData(config.columnMap[COL_FM], Qt::DisplayRole, {});
+				setData(config.columnMap[COL_FM], Qt::ToolTipRole, {});
+				setData(config.columnMap[COL_FM], Qt::UserRole + 1, {});
 			}
 			else if ( treeWidget() && view ) {
 				if ( ev->focalMechanismReferenceCount() > 0 ) {
@@ -1750,10 +1754,20 @@ class EventTreeItem : public SchemeTreeItem {
 					setData(config.columnMap[COL_FM], Qt::FontRole, f);
 				}
 				else {
-					setData(config.columnMap[COL_FM], Qt::FontRole, QVariant());
+					setData(config.columnMap[COL_FM], Qt::FontRole, {});
 				}
 				setData(config.columnMap[COL_FM], Qt::ToolTipRole, QObject::tr("Load event and open the focal mechanism tab"));
 				setData(config.columnMap[COL_FM], Qt::UserRole + 1, QVariant::fromValue<void*>(ev));
+			}
+
+			{
+				auto desc = ev->eventDescription(EventDescriptionIndex(FELT_REPORT));
+				if ( desc ) {
+					setText(config.columnMap[COL_FELT], desc->text().c_str());
+				}
+				else {
+					setText(config.columnMap[COL_FELT], {});
+				}
 			}
 
 			if ( !_preferredOrigin ) {
@@ -1834,7 +1848,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 				catch ( ValueException& ) {
 					setText(column, "-");
-					setData(column, Qt::UserRole, QVariant());
+					setData(column, Qt::UserRole, {});
 				}
 
 				column = config.columnMap[COL_DEPTH_TYPE];
@@ -1875,7 +1889,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 				catch ( ValueException& ) {
 					setText(config.columnMap[COL_PHASES], "-");
-					setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
+					setData(config.columnMap[COL_PHASES], Qt::UserRole, {});
 				}
 
 				try {
@@ -1885,7 +1899,7 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 				catch ( ValueException& ) {
 					setText(config.columnMap[COL_RMS], "-");
-					setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+					setData(config.columnMap[COL_RMS], Qt::UserRole, {});
 				}
 
 				try {
@@ -1895,11 +1909,11 @@ class EventTreeItem : public SchemeTreeItem {
 				}
 				catch ( ValueException& ) {
 					setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
-					setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
+					setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, {});
 				}
 
 				if ( config.customColumn != -1 ) {
-					setData(config.customColumn, Qt::ForegroundRole, QVariant());
+					setData(config.customColumn, Qt::ForegroundRole, {});
 					setText(config.customColumn, config.customDefaultText);
 					setToolTip(config.customColumn, config.customDefaultText);
 					if ( !config.originCommentID.empty() ) {
@@ -1947,13 +1961,13 @@ class EventTreeItem : public SchemeTreeItem {
 				setText(config.columnMap[COL_OTIME], "no preferred origin");
 
 				setText(config.columnMap[COL_LAT], "");
-				setData(config.columnMap[COL_LAT], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_LAT], Qt::UserRole, {});
 
 				setText(config.columnMap[COL_LON], "");
-				setData(config.columnMap[COL_LON], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_LON], Qt::UserRole, {});
 
 				setText(config.columnMap[COL_DEPTH], "-");
-				setData(config.columnMap[COL_DEPTH], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_DEPTH], Qt::UserRole, {});
 
 				setText(config.columnMap[COL_DEPTH_TYPE], "-");
 
@@ -1961,18 +1975,18 @@ class EventTreeItem : public SchemeTreeItem {
 				setForeground(config.columnMap[COL_TYPE], SCScheme.colors.originStatus.automatic);
 
 				setText(config.columnMap[COL_PHASES], "-");
-				setData(config.columnMap[COL_PHASES], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_PHASES], Qt::UserRole, {});
 
 				setText(config.columnMap[COL_RMS], "-");
-				setData(config.columnMap[COL_RMS], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_RMS], Qt::UserRole, {});
 
 				setText(config.columnMap[COL_AZIMUTHAL_GAP], "-");
-				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, QVariant());
+				setData(config.columnMap[COL_AZIMUTHAL_GAP], Qt::UserRole, {});
 
 				if ( config.customColumn != -1 ) {
 					setText(config.customColumn, config.customDefaultText);
 					setToolTip(config.customColumn, config.customDefaultText);
-					setData(config.customColumn, Qt::ForegroundRole, QVariant());
+					setData(config.customColumn, Qt::ForegroundRole, {});
 				}
 			}
 
@@ -3474,8 +3488,8 @@ void EventListView::applyHighlight(QTreeWidgetItem *item,
 				item->setForeground(c, matched->foreground);
 		}
 		else {
-			item->setData(c, Qt::BackgroundRole, QVariant());
-			item->setData(c, Qt::ForegroundRole, QVariant());
+			item->setData(c, Qt::BackgroundRole, {});
+			item->setData(c, Qt::ForegroundRole, {});
 		}
 	}
 }
@@ -5443,6 +5457,26 @@ void EventListView::notifierAvailable(Seiscomp::DataModel::Notifier *n) {
 								eventItem->update(this);
 							}
 						}
+					}
+				}
+				break;
+			default:
+				break;
+		}
+
+		SC_D._treeWidget->setUpdatesEnabled(true);
+		return;
+	}
+
+	auto *desc = EventDescription::Cast(n->object());
+	if ( desc ) {
+		switch ( n->operation() ) {
+			case OP_ADD:
+			case OP_UPDATE:
+				{
+					auto *eventItem = static_cast<EventTreeItem*>(findEvent(n->parentID()));
+					if ( eventItem ) {
+						eventItem->update(this);
 					}
 				}
 				break;
