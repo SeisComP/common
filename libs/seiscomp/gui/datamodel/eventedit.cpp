@@ -2753,7 +2753,7 @@ void EventEdit::insertOriginRow(Origin *org) {
 		}
 
 		PublicObjectEvaluator::Instance().prepend(this, org->publicID().c_str(),
-		                                          org->typeInfo().className(), scripts);
+		                                          org->typeInfo(), scripts);
 	}
 
 	_originTree->insertTopLevelItem(0, item);
