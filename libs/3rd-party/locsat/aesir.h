@@ -90,13 +90,27 @@ extern void	nap();
 #define UALLOC(type, count)	(type *) malloc ((unsigned) (count) * (sizeof (type)))
 #define UALLOCA(type, count)	(type *) alloca (count * sizeof (type))
 #define UREALLOC(ptr,type,count) (type *) realloc ((char *)ptr, (unsigned) sizeof (type) * count)
-#define STRALLOC(string)	strcpy (UALLOC (char, strlen (string)+1), string)
+#define STRALLOC(string)	sc_locsat_stralloc(string)
+
+static inline char *sc_locsat_stralloc(const char *s) {
+	char *p;
+	if ( !s ) {
+		return 0;
+	}
+	p = UALLOC(char, strlen(s) + 1);
+	if ( p ) {
+		strcpy(p, s);
+	}
+	return p;
+}
 #define STRALLOCA(string)	strcpy (UALLOCA (char, strlen (string)+1), string)
-#define UFREE(ptr)		if (!(ptr));\
-				else {\
-					(void) free ((char *) (ptr));\
-					(ptr) = 0;\
-				}
+#define UFREE(ptr) \
+	do {\
+		if ((ptr)) {\
+			(void) free ((char *) (ptr));\
+			(ptr) = 0;\
+		}\
+	} while (0)
 
 /* Return the number of elements in an array. */
 #define DIM(ar)		(sizeof (ar) / sizeof (*(ar)))
