@@ -32,7 +32,13 @@ void sc_locsat_slocal(
 	tbtt_offset = 1 + tbtt_dim1 * 1;
 	tbtt -= tbtt_offset;
 	--tbz;
-	--atx;
+
+	atx[0] = 0.0;
+	atx[1] = 0.0;
+	atx[2] = 0.0;
+	atx[3] = 0.0;
+	*dcalx = 0.f;
+	*iterr = 0;
 
 	ihole = 0;
 	idist = 0;
@@ -177,12 +183,12 @@ void sc_locsat_slocal(
 		sinazi = sin(azir);
 		cosazi = cos(azir);
 		// Axis 1
-		atx[1] = (float)0.;
+		atx[0] = (float)0.;
 		// Axis 2 points east
-		atx[2] = -dslddel * sinazi;
+		atx[1] = -dslddel * sinazi;
 		// Axis 3 points north
-		atx[3] = -dslddel * cosazi;
+		atx[2] = -dslddel * cosazi;
 		// Axis 4 points up
-		atx[4] = -dsldz;
+		atx[3] = -dsldz;
 	}
 }

@@ -129,6 +129,13 @@ void sc_locsat_solve_via_svd(
 	double *tmp, *u, *v, *work;
 	double applied_damping, dscale, frob, gtrnorm, rnorm;
 
+	// *ierr was only ever assigned on the failure path and *rank only
+	// under icov >= 2, so both were left to the caller's stack. This worked
+	// by accident because hypinv pre-seeds *ierr; it is not a contract any
+	// other caller could rely on.
+	*ierr = LOCSAT_NoError;
+	*rank = 0.0;
+
 	e = UALLOC(double, nd);
 	g = UALLOC(double, MAX_PARAM * nd);
 	u = UALLOC(double, MAX_PARAM * MAX_PARAM);
@@ -139,21 +146,24 @@ void sc_locsat_solve_via_svd(
 	gtr = UALLOC(double, MAX_PARAM);
 	sval = UALLOC(double, MAX_PARAM + 1);
 
-	/*
-	 *  Variable, norder, limits the maximum possible number of singular
-	 *  values.  Variable, job, controls the singular values sent back
-	 *  from dsvdc.  Current job setting tells dsvdc to ignore bogus
-	 *  values and pass both left and right singular vectors back.
-	 */
+	// None of the nine allocations above were checked; GCC's -fanalyzer
+	// flags possible-NULL dereferences on gscale, g and gtr. 6 is the
+	// documented "SVD routine can't decompose matrix" code, which is the
+	// closest available meaning for "no solution produced".
+	if ( !e || !g || !u || !v || !work || !tmp || !gscale || !gtr || !sval ) {
+		*ierr = LOCSAT_ERR_SVDCantDecompose;
+		goto done;
+	}
 
+	// Variable, norder, limits the maximum possible number of singular
+	// values.  Variable, job, controls the singular values sent back
+	// from dsvdc.  Current job setting tells dsvdc to ignore bogus
+	// values and pass both left and right singular vectors back.
 	norder = MIN(np, nd);
 	job = 21;
 
-	/*
-	 *  Unit-column normalize at[] matrix and stuff it into g[], since
-	 *  subr. dsvdc overwrites original matrix upon its return.
-	 */
-
+	// Unit-column normalize at[] matrix and stuff it into g[], since
+	// subr. dsvdc overwrites original matrix upon its return.
 	for ( j = 0; j < np; ++j ) {
 		gscale[j] = 0.0;
 	}
@@ -169,12 +179,9 @@ void sc_locsat_solve_via_svd(
 		gscale[j] = 1.0 / sqrt(gscale[j]);
 	}
 
-	/*
-	 *  Scale origin terms of similar dimension to spatial terms,
-	 *  assuming a medium velocity of 8 km./sec.
-	 */
-
-	/* gscale[0] = 0.125*gscale[0]; */
+	// Scale origin terms of similar dimension to spatial terms,
+	// assuming a medium velocity of 8 km./sec.
+	// gscale[0] = 0.125*gscale[0];
 
 	for ( i = 0; i < nd; ++i ) {
 		for ( j = 0; j < np; ++j ) {
@@ -182,10 +189,7 @@ void sc_locsat_solve_via_svd(
 		}
 	}
 
-	/*
-	 *  Compute norms and undertake convergence test.
-	 */
-
+	// Compute norms and undertake convergence test.
 	frob = 0.0;
 	rnorm = 0.0;
 	gtrnorm = 0.0;
@@ -205,16 +209,11 @@ void sc_locsat_solve_via_svd(
 		gtrnorm = gtrnorm + gtr[j] * gtr[j];
 	}
 	*cnvgtst = gtrnorm / (frob * rnorm);
-	/* printf ("gtrnorm = %g  frob = %g\n", gtrnorm, frob); */
-	/* printf ("rnorm = %g  cnvgtst = %g\n", rnorm, *cnvgtst); */
 
-	/*
-	 *  Decompose the matrix into its right and left singular vectors,
-	 *  u[] and v[], respectively, as well as the diagonal matrix of
-	 *  singular values, sval.  That is, perform an SVD.  LINPACK routine,
-	 *  dsvdc, of John Dongarra is chosen here.
-	 */
-
+	// Decompose the matrix into its right and left singular vectors,
+	// u[] and v[], respectively, as well as the diagonal matrix of
+	// singular values, sval. That is, perform an SVD. LINPACK routine,
+	// dsvdc, of John Dongarra is chosen here.
 	sc_locsat_dsvdc(g, MAX_PARAM, np, nd, sval, e, u, MAX_PARAM, v, nd, work, &job, &info);
 
 	if ( info >= norder ) {
@@ -222,51 +221,48 @@ void sc_locsat_solve_via_svd(
 		goto done;
 	}
 
-	/*
-	 *  Adjust variable, neig, to control singular value cutoff,
-	 *  effectively determining which singular values to keep and/or
-	 *  ignore.
-	 *      Note:	The good singular values are stored at the end of
-	 *		sval(), not the beginning.  smax is always sval(info+1)
-	 *		with the descending values immediately following.
-	 */
-
+	// Adjust variable, neig, to control singular value cutoff,
+	// effectively determining which singular values to keep and/or
+	// ignore.
+	//     Note:	The good singular values are stored at the end of
+	// sval(), not the beginning.  smax is always sval(info+1)
+	// with the descending values immediately following.
 	neig = norder - info;
 
-	/*
-	 *  Avoid small singular values (limit condition number to ctol)
-	 *  That is, set a singular value cutoff (i.e., singular values
-	 *  < pre-set limit, in order to obtain an effective condition number).
-	 */
-
+	// Avoid small singular values (limit condition number to ctol)
+	// That is, set a singular value cutoff (i.e., singular values
+	// < pre-set limit, in order to obtain an effective condition number).
 	smax = sval[info];
 	for ( j = info + 1; j < norder; ++j ) {
 		if ( smax / sval[j] > COND_NUM_LIMIT ) {
-			neig = j - 1;
+			// This used to be "neig = j - 1", an *index*, while the
+			// fall-through above sets neig = norder - info, a *count*.
+			// Everything downstream -- condit[1] and the icnt bounds of
+			// the damping and back-substitution loops -- reads neig as a
+			// count via "info + 1 + (neig - 1)". With the old value and
+			// j == info + 1 that evaluated to sval[-1].
+			//
+			// Singular values sval[info .. j-1] are retained, so the
+			// count is j - info.
+			neig = j - info;
 			goto rank_of_matrix;
 		}
 	}
 
-	/*
-	 *  Construct the real (condit[0]) and effective (condit[1])
-	 *  condition numbers from the given singular values
-	 */
-
+	// Construct the real (condit[0]) and effective (condit[1])
+	// condition numbers from the given singular values.
 rank_of_matrix:
 	condit[0] = sval[info] / sval[norder - 1];
 	condit[1] = sval[info] / sval[info + 1 + (neig - 1) - 1];
 
-	/* Apply damping, if necessary */
+	// Apply damping, if necessary.
 
 	if ( damp < 0.0 ) {
 		if ( condit[0] > 30.0 ) {
-			/*
-			 *  Apply damping of 1% largest singular value for
-			 *  moderately ill-conditioned system.  Make this
-			 *  5% for more severely ill-conditioned system and
-			 *  10% for highly ill-conditioned problems.
-			 */
-
+			// Apply damping of 1% largest singular value for
+			// moderately ill-conditioned system.  Make this
+			// 5% for more severely ill-conditioned system and
+			// 10% for highly ill-conditioned problems.
 			icnt = info + 1 + (neig - 1);
 			applied_damping = 0.01;
 			if ( condit[0] > 300.0 ) {
@@ -288,8 +284,7 @@ rank_of_matrix:
 		}
 	}
 
-	/* Find solution vector -- First, compute (1/sval) * V-trans * d, */
-
+	// Find solution vector -- First, compute (1/sval) * V-trans * d,
 	icnt = info + 1 + (neig - 1);
 	for ( j = info; j < icnt; ++j ) {
 		sum = 0.0;
@@ -299,11 +294,8 @@ rank_of_matrix:
 		tmp[j] = sum / sval[j];
 	}
 
-	/*
-	 *  then multiply by U, which yields the desired solution vector,
-	 *  (i.e.,  xsol = U * (1/sval) * V-trans*d) = U * tmp
-	 */
-
+	// then multiply by U, which yields the desired solution vector,
+	// (i.e.,  xsol = U * (1/sval) * V-trans*d) = U * tmp
 	for ( j = 0; j < np; ++j ) {
 		sum = 0.0;
 		icnt = info + 1 + (neig - 1);
@@ -313,8 +305,7 @@ rank_of_matrix:
 		xsol[j] = sum * gscale[j];
 	}
 
-	/* Construct the parameter (model) covariance matrix, if requested */
-
+	// Construct the parameter (model) covariance matrix, if requested
 	if ( icov < 2 ) {
 		goto done;
 	}
@@ -336,11 +327,8 @@ rank_of_matrix:
 		}
 	}
 
-	/*
-	 *  and then, the data importances (i.e., the diagonal elements of
-	 *  the data resolution matrix)
-	 */
-
+	// and then, the data importances (i.e., the diagonal elements of
+	// the data resolution matrix).
 	*rank = 0.0;
 	for ( i = 0; i < nd; ++i ) {
 		sum = 0.0;

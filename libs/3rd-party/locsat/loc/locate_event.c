@@ -29,31 +29,30 @@ void bzero(char *s, int n) {
 #define VALID_SLOW(x) ((x) >= 0.0)
 #define DEG_TO_RAD 0.017453293
 
+/**
+ * copy into a fixed-size char field and guarantee termination. The old
+ * code memcpy'd exactly sizeof(dest) bytes out of the source, which both
+ * over-read a shorter source and left dest unterminated for a full one --
+ * and hypcut/elpcor then run strcmp over it.
+ */
+#define FX_COPY_STR(dst, src) \
+	do { \
+		strncpy((dst), (src), sizeof(dst) - 1); \
+		(dst)[sizeof(dst) - 1] = '\0'; \
+	}\
+	while (0)
+
 #define MAXTBD_ 210
 #define MAXTBZ_ 50
-
-
-void sc_locsat_rdtttab(
-	const char *froot,                  /* Size [ca. 1024] */
-	const char **phase_type_ptr,        /* Size [nwav][8] */
-	int nwav,                           /* Array lengths */
-	int maxtbd,                         /* Array lengths */
-	int maxtbz,                         /* Array lengths */
-	int *ntbd,                          /* Array lengths */
-	int *ntbz,                          /* Array lengths */
-	float *tbd,                         /* Size [nwav][maxtbd] */
-	float *tbz,                         /* Size [nwav][maxtbz] */
-	float *tbtt,                        /* Size [nwav][maxtbz][maxtbd] */
-	int *ierr,                          /* Error flag */
-	int verbose                         /* Verbose mode */
-);
 
 
 void sc_locsat_init_ttt(LOCSAT_TTT *ttt) {
 	ttt->dir = NULL;
 	ttt->num_phases = 0;
 	ttt->phases = NULL;
-	ttt->tbd = NULL;
+	ttt->len_dir = 0;
+	ttt->lentbd = 0;
+	ttt->lentbz = 0;
 	ttt->tbd = NULL;
 	ttt->tbz = NULL;
 	ttt->tbtt = NULL;
@@ -303,10 +302,13 @@ int sc_locsat_locate_event(
 	max_data = 3 * num_obs;
 
 	LOCSAT_Data *data = (LOCSAT_Data*)malloc(sizeof(LOCSAT_Data) * max_data);
+	if ( !data ) {
+		return LOCSAT_TTerror6;
+	}
 
-	for ( i = 0; (!VALID_TIME(arrival[i].time)) && i < num_obs; i++ );
+	for ( i = 0; i < num_obs && !VALID_TIME(arrival[i].time); i++ );
 
-	if ( i < num_obs ) { /* Find offset time */
+	if ( i < num_obs ) { // Find offset time
 		time_offset = arrival[i].time;
 	}
 	else {
@@ -323,10 +325,10 @@ int sc_locsat_locate_event(
 	// Assume that these are stored in same order in both structures
 	for ( i = 0, num_data = 0; i < num_obs; i++ ) {
 		{
-			memcpy(data[num_data].sta, arrival[i].sta, sizeof(((LOCSAT_Data*)0)->sta));
+			FX_COPY_STR(data[num_data].sta, arrival[i].sta);
 			data[num_data].type = 't';
 			data[num_data].defining = assoc[i].timedef;
-			memcpy(data[num_data].phase_type, assoc[i].phase, sizeof(((LOCSAT_Data*)0)->phase_type));
+			FX_COPY_STR(data[num_data].phase_type, assoc[i].phase);
 
 			data[num_data].obs = (float)(arrival[i].time - time_offset);
 			data[num_data].std_err = arrival[i].deltim;
@@ -334,10 +336,10 @@ int sc_locsat_locate_event(
 			num_data++;
 		}
 		if ( VALID_SEAZ(arrival[i].azimuth) ) {
-			memcpy(data[num_data].sta, arrival[i].sta, sizeof(((LOCSAT_Data*)0)->sta));
+			FX_COPY_STR(data[num_data].sta, arrival[i].sta);
 			data[num_data].type = 'a';
 			data[num_data].defining = assoc[i].azdef;
-			memcpy(data[num_data].phase_type, assoc[i].phase, sizeof(((LOCSAT_Data*)0)->phase_type));
+			FX_COPY_STR(data[num_data].phase_type, assoc[i].phase);
 
 			data[num_data].obs = arrival[i].azimuth;
 			data[num_data].std_err = arrival[i].delaz;
@@ -345,10 +347,10 @@ int sc_locsat_locate_event(
 			num_data++;
 		}
 		if ( VALID_SLOW(arrival[i].slow) ) {
-			memcpy(data[num_data].sta, arrival[i].sta, sizeof(((LOCSAT_Data*)0)->sta));
+			FX_COPY_STR(data[num_data].sta, arrival[i].sta);
 			data[num_data].type = 's';
 			data[num_data].defining = assoc[i].slodef;
-			memcpy(data[num_data].phase_type, assoc[i].phase, sizeof(((LOCSAT_Data*)0)->phase_type));
+			FX_COPY_STR(data[num_data].phase_type, assoc[i].phase);
 
 			data[num_data].obs = arrival[i].slow;
 			data[num_data].std_err = arrival[i].delslo;
@@ -475,6 +477,19 @@ int sc_locsat_locate_event(
 		for ( i = 0; i < num_data; i++ ) {
 			j = data[i].obs_data_index;
 			k = data[i].sta_index;
+
+			// check_data leaves sta_index at -1 for any datum whose
+			// station is not in the caller's site list -- an ordinary
+			// situation (stale pick, station dropped from the inventory).
+			// This loop covers every datum, so it used to read sites[-1]
+			// and segfault even though the solution itself succeeded.
+			if ( k < 0 || k >= num_sites ) {
+				assoc[j].delta = -1.0f;
+				assoc[j].seaz = -1.0f;
+				assoc[j].esaz = -1.0f;
+				continue;
+			}
+
 			assoc[j].delta = sites[k].distance;
 			assoc[j].seaz = sites[k].backazimuth;
 			assoc[j].esaz = sites[k].azimuth;

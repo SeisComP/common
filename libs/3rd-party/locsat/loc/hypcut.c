@@ -58,6 +58,27 @@ void sc_locsat_hypcut(
 		stations[i].slowsd = 19.16;
 		stations[i].bestslow = (float)-888888.;
 		stations[i].bestazim = (float)-888888.;
+		// comprtime/sheartime were only initialised inside the
+		// "itimeyet == 0" block below, which needs at least one defining
+		// arrival-time datum. An azimuth/slowness-only solution left them
+		// -- and iwave and dis -- holding whatever the caller's site array
+		// happened to contain, which then steered goodcompr/goodsminusp
+		// and was used as a travel-time table index.
+		//
+		// 888888.0 is the same "no time seen" sentinel the itimeyet block
+		// uses, so goodcompr/goodsminusp come out FALSE as intended.
+		stations[i].comprtime = (float)888888.;
+		stations[i].sheartime = (float)888888.;
+		stations[i].iwave = -1;
+		stations[i].dis = 0.;
+		stations[i].ordercompr = (float)888888.;
+		stations[i].ordersminusp = (float)888888.;
+		stations[i].orderdsd = 40.;
+		stations[i].orderdsd2 = 19.16;
+		stations[i].indexcompr = 0;
+		stations[i].indexsminusp = 0;
+		stations[i].indexdsd = 0;
+		stations[i].indexdsd2 = 0;
 		stations[i].goodcompr = FALSE;
 		stations[i].goodsminusp = FALSE;
 		stations[i].goodazim = FALSE;

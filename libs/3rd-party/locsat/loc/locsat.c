@@ -194,8 +194,20 @@ void sc_locsat(
 	// Check that each travel-time curve contains valid data. For arrival
 	// time or slowness data with empty curves, set iderr = 2
 	for ( n = 0; n < ndata; ++n ) {
-		if ( (data[n].idtyp == 1 || data[n].idtyp == 3) &&
-		     (ntbd[data[n].ipwav] <= 0 || ntbz[data[n].ipwav] <= 0) ) {
+		if ( data[n].idtyp != 1 && data[n].idtyp != 3 ) {
+			continue;
+		}
+
+		// check_data() sets idtyp = 1 (or 3) but leaves ipwav at its
+		// -1 default on the "phase ID is invalid" path, so the table
+		// lookup below used to read ntbd[-1] / ntbz[-1]. A datum with no
+		// phase index has, by definition, no travel-time table.
+		if ( data[n].ipwav < 0 || data[n].ipwav >= ttt->num_phases ) {
+			data[n].err_code = 2;
+			continue;
+		}
+
+		if ( ntbd[data[n].ipwav] <= 0 || ntbz[data[n].ipwav] <= 0 ) {
 			data[n].err_code = 2;
 		}
 	}

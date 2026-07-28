@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "loc.h"
+#include <locsat/loc.h>
 
 
 void sc_locsat_check_data(
@@ -16,9 +16,13 @@ void sc_locsat_check_data(
 		data[n].sta_index = -1;
 		data[n].ipwav = -1;
 		data[n].idtyp = 0;
+		// err_code used to be assigned only inside the station loop
+		// below, so num_sta == 0 left it holding malloc garbage. 1 is the
+		// documented "no station information for this datum" code, which is
+		// exactly the situation when the loop finds nothing.
+		data[n].err_code = 1;
 
-		/* Check that the datum's station is valid */
-
+		// Check that the datum's station is valid.
 		for ( i = 0; i < num_sta; i++ ) {
 			if ( !strncmp(data[n].sta, stations[i].sta, sta_len) ) {
 				data[n].err_code = 0;
@@ -43,8 +47,7 @@ void sc_locsat_check_data(
 					if ( !strncmp(data[n].phase_type, phase_type[j], longer) ) {
 						data[n].ipwav = j;
 
-						/* Check for valid datum type */
-
+						// Check for valid datum type.
 						if ( data[n].type == 't' ) {
 							data[n].idtyp = 1;
 						}
@@ -65,8 +68,7 @@ void sc_locsat_check_data(
 					}
 				}
 
-				/* The phase ID is invalid ! */
-
+				// The phase ID is invalid!
 				if ( data[n].type == 't' ) {
 					data[n].idtyp = 1;
 					data[n].err_code = 2;
@@ -83,9 +85,8 @@ void sc_locsat_check_data(
 					data[n].idtyp = 0;
 					data[n].err_code = 3;
 				}
-				/* Check that datum's a priori
-				   standard deviation is vaild */
 
+				// Check that datum's a priori standard deviation is vaild.
 				if ( data[n].std_err < 0.0 ) {
 					data[n].err_code = 4;
 				}

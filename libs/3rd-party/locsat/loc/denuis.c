@@ -1,4 +1,4 @@
-#include "loc.h"
+#include <locsat/loc.h>
 
 
 void sc_locsat_denuis(LOCSAT_Data *data, const int nd, const int np, double *dmean, int *inerr) {
@@ -16,7 +16,7 @@ void sc_locsat_denuis(LOCSAT_Data *data, const int nd, const int np, double *dme
 	// Compute weighted sums
 	for ( n = 0; n < nd; n++ ) {
 		dacc = 1.0 / (data[n].dsd2 * data[n].dsd2);
-		if ( data[n].idtyp == 1 ) {
+		if ( data[n].idtyp2 == 1 ) {
 			for ( m = 1; m < np; ++m ) {
 				amean[m] = amean[m] + dacc * data[n].at[m];
 			}
@@ -37,7 +37,7 @@ void sc_locsat_denuis(LOCSAT_Data *data, const int nd, const int np, double *dme
 		*dmean = *dmean / asum;
 
 		for ( n = 0; n < nd; n++ ) {
-			if ( data[n].idtyp == 1 ) {
+			if ( data[n].idtyp2 == 1 ) {
 				for ( m = 1; m < np; m++ ) {
 					data[n].at[m] = data[n].at[m] - amean[m];
 				}
