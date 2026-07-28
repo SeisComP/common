@@ -202,11 +202,32 @@ void sc_locsat_rdtttab(
 		/* Read travel-time tables */
 
 		for ( j = 0; j < ntbzx && !err; j++ ) {
-			/* skip the comment line */
-			while ( getc(opf) != '#' )
-				;
-			while ( getc(opf) != '\n' )
-				;
+			int ch;
+
+			/* Skip the comment line. */
+			while ( (ch = getc(opf)) != '#' ) {
+				if ( ch == EOF ) {
+					READ_E1("travel-time block header");
+					err = 2;
+					break;
+				}
+			}
+
+			if ( err ) {
+				break;
+			}
+
+			while ( (ch = getc(opf)) != '\n' ) {
+				if ( ch == EOF ) {
+					READ_E1("travel-time block header");
+					err = 2;
+					break;
+				}
+			}
+
+			if ( err ) {
+				break;
+			}
 
 			for ( tflt = temp_tt, i = 0; i < ntbdx && !err; ++i ) {
 				if ( fgets(readtemp, 127, opf) == NULL ) {
@@ -219,8 +240,8 @@ void sc_locsat_rdtttab(
 					err = 2;
 				}
 
-				/* Skip, if necessary */
-				if ( j < ntbd[k] ) {
+				/* Skip, if necessary. */
+				if ( i < ntbd[k] ) {
 					*tflt++ = tempval;
 				}
 			}
