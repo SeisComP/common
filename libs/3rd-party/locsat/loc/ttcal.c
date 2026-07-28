@@ -83,6 +83,17 @@ int sc_locsat_ttcal(
 	tbtt -= tbtt_offset;
 	--tbz;
 
+	// The partials below are computed only under "if (ibad == 0)", so a
+	// point in a hole used to leave atx holding the caller's stack contents
+	// -- in hypinv, a single atx[4] shared by every datum in the loop, i.e.
+	// the partials of some earlier station. Define them up front.
+	atx[0] = 0.0;
+	atx[1] = 0.0;
+	atx[2] = 0.0;
+	atx[3] = 0.0;
+	*dcalx = 0.f;
+	*iterr = 0;
+
 	do_extrap = 0;
 
 	// Find relevant range of table depths

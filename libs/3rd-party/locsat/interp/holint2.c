@@ -36,11 +36,29 @@ void sc_locsat_holint2(int do_extrapolate,
 	*ihole = 0;
 	*ix = 0;
 	*iy = 0;
-	num_samples = ldf;
+
+	*f0 = -1.f;
+	*fx0 = 0.f;
+	*fy0 = 0.f;
+	*fxy0 = 0.f;
+
+	// This used to be "num_samples = ldf". ldf is the leading dimension
+	// of func (maxtbd == 210 for the IASPEI tables), not the number of
+	// distance samples. The hole-filling scans below use num_samples to
+	// bound indices into x[], which only holds nx entries.
+	num_samples = nx;
+
+	// With nx < 1 or ny < 1 the bracketing below produces jmin = 1,
+	// jmax = ny = 0, and the code went on to read y[jmax - 1] == y[-1] and
+	// to call holint()/quaint() with a zero sample count. A table with no
+	// samples cannot be interpolated; report it as a hole.
+	if ( nx < 1 || ny < 1 ) {
+		*ihole = 1;
+		return;
+	}
 
 	// Should we extrapolate ?
 	if ( (x0 > x[nx - 1] || x0 < x[0]) && do_extrapolate != 1 ) {
-		*f0 = -1.f;
 		return;
 	}
 
@@ -89,7 +107,6 @@ void sc_locsat_holint2(int do_extrapolate,
 		for ( i = imin; i <= imax; ++i ) {
 			if ( func[i + j * f_dim1] == -1.f ) {
 				if ( do_extrapolate != 1 ) {
-					*f0 = -1.f;
 					return;
 				}
 
@@ -99,6 +116,15 @@ void sc_locsat_holint2(int do_extrapolate,
 				for ( min_idx = 1; min_idx <= num_samples; ++min_idx ) {
 					if ( func[min_idx + j * f_dim1] != -1.f )
 						break;
+				}
+
+				// If this depth row holds no valid sample at all
+				// there is nothing to extrapolate from, and min_idx is
+				// now num_samples + 1. Report the point as being in a
+				// hole rather than indexing past x[].
+				if ( min_idx > num_samples ) {
+					*ihole = 1;
+					return;
 				}
 
 				dist_min = x[min_idx - 1];
@@ -118,7 +144,11 @@ void sc_locsat_holint2(int do_extrapolate,
 					}
 				}
 
-				max_idx = ichk;
+				// ichk stays 0 when the first valid run ends
+				// immediately, which used to give max_idx == 0 and a
+				// read of x[-1]. The lowest meaningful upper bound is
+				// the first valid sample itself.
+				max_idx = ichk < min_idx ? min_idx : ichk;
 				dist_max = x[max_idx - 1];
 
 				// Off the high end ?
@@ -201,8 +231,8 @@ void sc_locsat_holint2(int do_extrapolate,
 	sc_locsat_holint(nuse, &y[jmin - 1], f0s, fbad, y0, f0, fy0, &jext, &ibad);
 	sc_locsat_quaint(nuse, &y[jmin - 1], fx0s, y0, fx0, fxy0, &jext);
 
-	iext = *ix;
-	jext = *iy;
-	ibad = *ihole;
+	*ix = iext;
+	*iy = jext;
+	*ihole = ibad;
 }
 

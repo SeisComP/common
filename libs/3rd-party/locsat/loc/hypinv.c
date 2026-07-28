@@ -57,7 +57,7 @@ void sc_locsat_hypinv(
 	double fac;
 	double azi;
 	int nds[3];
-	double atx[4], ssq, cnvgold = 0.0;
+	double ssq, cnvgold = 0.0;
 	int ndftemp;
 	float correct;
 	boolean ldenuis;
@@ -166,6 +166,13 @@ L1020:
 	nslows = 0;
 
 	for ( n = 0; n < ndata; ++n ) {
+		// atx used to be a single uninitialised double[4] declared at
+		// the top of the function and reused for every datum, so any path
+		// that skipped writing it silently reused the previous station's
+		// partials. ttcal/slocal now always define it, but scoping it here
+		// makes the leak structurally impossible.
+		double atx[4] = { 0.0, 0.0, 0.0, 0.0 };
+
 		if ( (data[n].err_code < 1) || (data[n].err_code > 3) ) {
 			i = data[n].sta_index;
 			k = data[n].ipwav;
