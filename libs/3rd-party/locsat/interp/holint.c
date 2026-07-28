@@ -16,12 +16,25 @@ void sc_locsat_holint(int n, const float *x, const float *f, const float fbad, c
 	imax = min(n, ileft + 2);
 	nuse = imax - imin + 1;
 
+	*f0 = fbad;
+	*fp0 = 0.f;
+	*iext = 0;
+	*ibad = 1;
+
+	if ( nuse < 1 ) {
+		/* No samples to interpolate between: the point is in a hole. */
+		return;
+	}
+
 	sc_locsat_fixhol(nuse, &x[imin - 1], &f[imin - 1], fbad, &nh, xh, fh);
 
 	// Interpolate fixed function
-	if ( nh <= 1 ) {
+	if ( nh < 1 ) {
+		/* fixhol produced nothing usable. */
+		return;
+	}
+	else if ( nh == 1 ) {
 		*f0 = fh[0];
-		*fp0 = 0.f;
 	}
 	else {
 		sc_locsat_quaint(nh, xh, fh, x0, f0, fp0, iext);
