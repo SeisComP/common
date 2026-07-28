@@ -44,6 +44,24 @@
 #define LOCSAT_TTerror6 17
 
 
+/**
+ * @brief Reads the travel-time tables for a list of phases.
+ */
+void sc_locsat_rdtttab(
+	const char *froot,                  /* Size [ca. 1024] */
+	const char *const *phase_type_ptr,  /* Size [nwav][8] */
+	int nwav,                           /* Array lengths */
+	int maxtbd,                         /* Array lengths */
+	int maxtbz,                         /* Array lengths */
+	int *ntbd,                          /* Array lengths */
+	int *ntbz,                          /* Array lengths */
+	float *tbd,                         /* Size [nwav][maxtbd] */
+	float *tbz,                         /* Size [nwav][maxtbz] */
+	float *tbtt,                        /* Size [nwav][maxtbz][maxtbd] */
+	int *ierr,                          /* Error flag */
+	int verbose                         /* Verbose mode */
+);
+
 void sc_locsat_init_ttt(LOCSAT_TTT *ttt);
 void sc_locsat_free_ttt(LOCSAT_TTT *ttt);
 
