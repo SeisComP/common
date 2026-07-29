@@ -191,10 +191,10 @@ struct TestInstance {
 			}
 
 
-			sd::OriginPtr origin;
-			ar >> origin;
+			sd::EventParametersPtr ep;
+			ar >> ep;
 
-			refData[publicID] = ar.success() ? origin : nullptr;
+			refData[publicID] = ar.success() ? ep->origin(0) : nullptr;
 		}
 	}
 	Seiscomp::Seismology::LocatorInterfacePtr locator;
@@ -229,10 +229,10 @@ struct TestInstanceIII {
 			}
 
 
-			sd::OriginPtr origin;
-			ar >> origin;
+			sd::EventParametersPtr ep;
+			ar >> ep;
 
-			refData[publicID] = ar.success() ? origin : nullptr;
+			refData[publicID] = ar.success() ? ep->origin(0) : nullptr;
 		}
 	}
 	Seiscomp::Seismology::LocatorInterfacePtr locator;
@@ -306,9 +306,11 @@ BOOST_AUTO_TEST_CASE(NoPicks) {
 // 			auto relocatedOrigin = locator->relocate(origin);
 // 			relocatedOrigin->creationInfo().setCreationTime(sc::Time(2025, 0, 1));
 
+// 			sd::EventParametersPtr ep = new sd::EventParameters;
+// 			ep->add(relocatedOrigin);
 // 			sio::XMLArchive ar;
 // 			ar.create(filename.c_str());
-// 			ar << relocatedOrigin;
+// 			ar << ep;
 // 			ar.close();
 // 		}
 // 		catch ( const std::exception &exc ) {
@@ -443,9 +445,12 @@ BOOST_FIXTURE_TEST_SUITE(seiscomp_core_locsat_iil, TestInstanceIII)
 // 			auto relocatedOrigin = locator->relocate(origin);
 // 			relocatedOrigin->creationInfo().setCreationTime(sc::Time(2025, 0, 1));
 
+// 			sd::EventParametersPtr ep = new sd::EventParameters;
+// 			ep->add(relocatedOrigin);
+
 // 			sio::XMLArchive ar;
 // 			ar.create(filename.c_str());
-// 			ar << relocatedOrigin;
+// 			ar << ep;
 // 			ar.close();
 // 		}
 // 		catch ( const std::exception &exc ) {
