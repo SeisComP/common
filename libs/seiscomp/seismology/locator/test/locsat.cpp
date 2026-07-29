@@ -58,13 +58,15 @@ bool readEventParameters(Seiscomp::DataModel::EventParameters &ep,
 
 template<typename T>
 void checkUncertainties(const T &first, const T &second) {
-	OPT(double) firstLower, secondLower;
+	OPT(double) firstLower;
+	OPT(double) secondLower;
 	try { firstLower = first.lowerUncertainty(); } catch ( ...) {}
 	try { secondLower = second.lowerUncertainty(); } catch ( ...) {}
 
 	BOOST_CHECK(firstLower == secondLower);
 
-	OPT(double) firstUpper, secondUpper;
+	OPT(double) firstUpper;
+	OPT(double) secondUpper;
 	try { firstUpper = first.upperUncertainty(); } catch ( ...) {}
 	try { secondUpper = second.upperUncertainty(); } catch ( ...) {}
 
@@ -101,7 +103,8 @@ bool cmpOptDouble(const OPT(double) &first, const OPT(double) &second, double fr
 void cmpIntMember(const sd::OriginQuality &first,
                   const sd::OriginQuality &second,
                   int (sd::OriginQuality::*func)() const) {
-	OPT(int) firstValue, secondValue;
+	OPT(int) firstValue;
+	OPT(int) secondValue;
 	try { firstValue = (first.*func)(); } catch ( ... ) {};
 	try { secondValue = (second.*func)(); } catch ( ... ) {};
 
@@ -112,7 +115,8 @@ void cmpDoubleMember(const sd::OriginQuality &first,
                      const sd::OriginQuality &second,
                      double epsilon,
                      double (sd::OriginQuality::*func)() const) {
-	OPT(double) firstValue, secondValue;
+	OPT(double) firstValue;
+	OPT(double) secondValue;
 	try { firstValue = (first.*func)(); } catch ( ... ) {};
 	try { secondValue = (second.*func)(); } catch ( ... ) {};
 
@@ -121,7 +125,8 @@ void cmpDoubleMember(const sd::OriginQuality &first,
 
 void checkQuality(const sd::Origin* firstOrigin, const sd::Origin *secondOrigin,
                   double epsilon) {
-	OPT(sd::OriginQuality) first, second;
+	OPT(sd::OriginQuality) first;
+	OPT(sd::OriginQuality) second;
 	try { first = firstOrigin->quality();} catch ( ... ) {}
 	try { second = secondOrigin->quality();} catch ( ... ) {}
 
@@ -244,7 +249,7 @@ struct TestInstanceIII {
 void process(const std::vector<sd::OriginPtr> &origins, int start, int end,
              const RefData &refData, Seiscomp::Seismology::LocatorInterface *locator) {
 	for (int i = start; i < end; ++i) {
-		auto origin = origins[i];
+		const auto *origin = origins[i].get();
 
 		auto publicID = origin->publicID();
 		boost::replace_all(publicID, "/", "-");
@@ -252,7 +257,7 @@ void process(const std::vector<sd::OriginPtr> &origins, int start, int end,
 
 		try {
 			//std::scoped_lock lock(m);
-			sd::OriginPtr relocatedOrigin = locator->relocate(origin.get());
+			sd::OriginPtr relocatedOrigin = locator->relocate(origin);
 			BOOST_CHECK(relocatedOrigin);
 			checkRealQuantity(it->second->latitude(), relocatedOrigin->latitude(), 0.0000001);
 			checkRealQuantity(it->second->longitude(), relocatedOrigin->longitude(), 0.0000001);
@@ -303,7 +308,7 @@ BOOST_AUTO_TEST_CASE(NoPicks) {
 // 		auto filename = (baseDir / (publicID + ".xml")).string();
 
 // 		try {
-// 			auto relocatedOrigin = locator->relocate(origin);
+// 			auto *relocatedOrigin = locator->relocate(origin);
 // 			relocatedOrigin->creationInfo().setCreationTime(sc::Time(2025, 0, 1));
 
 // 			sd::EventParametersPtr ep = new sd::EventParameters;
@@ -333,7 +338,7 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 		sd::EventParameters ep;
 		readEventParameters(ep, entry.path());
 
-		auto origin = ep.origin(0);
+		auto *origin = ep.origin(0);
 
 		auto publicID = origin->publicID();
 		boost::replace_all(publicID, "/", "-");
@@ -351,8 +356,8 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 			checkQuality(it->second.get(), relocatedOrigin.get(), epsilon);
 			BOOST_CHECK_EQUAL(it->second->arrivalCount(), relocatedOrigin->arrivalCount());
 			for ( size_t i = 0; i < it->second->arrivalCount(); ++i ) {
-				auto arr1 = it->second->arrival(i);
-				auto arr2 = relocatedOrigin->arrival(i);
+				auto *arr1 = it->second->arrival(i);
+				auto *arr2 = relocatedOrigin->arrival(i);
 				BOOST_CHECK_EQUAL(arr1->phase().code(), arr2->phase().code());
 				BOOST_CHECK_CLOSE_FRACTION(arr1->distance(), arr2->distance(), epsilon);
 				BOOST_CHECK_CLOSE_FRACTION(arr1->azimuth(), arr2->azimuth(), epsilon);
@@ -378,9 +383,9 @@ BOOST_AUTO_TEST_CASE(RelocateMultiThreaded) {
 		sd::EventParameters ep;
 		readEventParameters(ep, entry.path());
 
-		origins.push_back(ep.origin(0));
+		origins.emplace_back(ep.origin(0));
 		for ( size_t i = 0; i < ep.pickCount(); ++i ) {
-			picks.push_back(ep.pick(i));
+			picks.emplace_back(ep.pick(i));
 		}
 	}
 
@@ -390,7 +395,7 @@ BOOST_AUTO_TEST_CASE(RelocateMultiThreaded) {
 		auto *loc = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
 		loc->init(getConfig());
 		loc->setProfile("iasp91");
-		locators.push_back(loc);
+		locators.emplace_back(loc);
 	}
 
 	std::vector<std::thread> threads;
@@ -441,7 +446,7 @@ BOOST_FIXTURE_TEST_SUITE(seiscomp_core_locsat_iil, TestInstanceIII)
 // 		auto filename = (baseDir / (publicID + ".xml")).string();
 
 // 		try {
-// 			auto relocatedOrigin = locator->relocate(origin);
+// 			auto *relocatedOrigin = locator->relocate(origin);
 // 			relocatedOrigin->creationInfo().setCreationTime(sc::Time(2025, 0, 1));
 
 // 			sd::EventParametersPtr ep = new sd::EventParameters;
@@ -472,7 +477,7 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 		sd::EventParameters ep;
 		readEventParameters(ep, entry.path());
 
-		auto origin = ep.origin(0);
+		auto *origin = ep.origin(0);
 
 		auto publicID = origin->publicID();
 		boost::replace_all(publicID, "/", "-");
@@ -490,8 +495,8 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 			checkQuality(it->second.get(), relocatedOrigin.get(), epsilon);
 			BOOST_CHECK_EQUAL(it->second->arrivalCount(), relocatedOrigin->arrivalCount());
 			for ( size_t i = 0; i < it->second->arrivalCount(); ++i ) {
-				auto arr1 = it->second->arrival(i);
-				auto arr2 = relocatedOrigin->arrival(i);
+				auto *arr1 = it->second->arrival(i);
+				auto *arr2 = relocatedOrigin->arrival(i);
 				BOOST_CHECK_EQUAL(arr1->phase().code(), arr2->phase().code());
 				BOOST_CHECK_CLOSE_FRACTION(arr1->distance(), arr2->distance(), epsilon);
 				BOOST_CHECK_CLOSE_FRACTION(arr1->azimuth(), arr2->azimuth(), epsilon);
