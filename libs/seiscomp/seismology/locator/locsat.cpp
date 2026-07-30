@@ -413,9 +413,8 @@ dm::Origin* LOCSAT::fromPicks(PickList &picks){
 		P(fix_depth) = 'n';
 	}
 
-	size_t i = 0;
-
-	for ( auto &pickItem : picks ) {
+	for ( size_t i = 0; i < picks.size(); ++i ) {
+		auto &pickItem = picks[i];
 		auto pick = pickItem.pick.get();
 		auto sloc = getSensorLocation(pick);
 
@@ -437,7 +436,7 @@ dm::Origin* LOCSAT::fromPicks(PickList &picks){
 			catch (...) { phase = "P"; }
 
 			double cor = stationCorrection(stationID, pick->waveformID().stationCode(), phase);
-			addArrival(i++, stationID.c_str(), phase.c_str(),
+			addArrival(i, stationID.c_str(), phase.c_str(),
 			           pick->time().value().epoch() - cor,
 			           getTimeError(pick, _defaultPickUncertainty, _usePickUncertainties),
 			           pickItem.flags & F_TIME);
@@ -498,12 +497,13 @@ dm::Origin* LOCSAT::fromPicks(PickList &picks){
 		std::set<std::string> stationsUsed;
 		std::set<std::string> stationsAssociated;
 
-		for ( auto &arrival : _arrivals ) {
+		for ( size_t i = 0; i < _arrivals.size(); ++i ) {
+			auto &arrival = _arrivals[i];
 			size_t arid = arrival.arid;
 			if ( arid >= picks.size() ) {
 				continue;
 			}
-			dm::Pick* p = picks[arid].pick.get();
+			auto *p = picks[arid].pick.get();
 
 			if ( i < origin->arrivalCount() ) {
 				origin->arrival(i)->setPickID(p->publicID());
@@ -1278,7 +1278,7 @@ DataModel::Origin *LOCSAT::locate() {
 	}
 
 	dm::CreationInfo ci;
-	ci.setCreationTime(Core::Time().gmt());
+	ci.setCreationTime(Core::Time::UTC());
 	origin->setCreationInfo(ci);
 
 	origin->setMethodID(_name);
