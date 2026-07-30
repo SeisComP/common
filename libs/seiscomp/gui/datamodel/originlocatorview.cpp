@@ -73,6 +73,8 @@
 #include "ui_originlocatorview_commit.h"
 #include "ui_originlocatorview_comment.h"
 
+#include <QDoubleSpinBox>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPair>
 #include <QProgressDialog>
@@ -1151,6 +1153,68 @@ class NodalPlaneDialog : public QDialog {
 };
 
 
+// Generic min/max prompt used by the arrival table's "Set active by..."
+// and "Set inactive by..." actions (distance, azimuth). infoText should
+// describe what happens to arrivals inside vs. outside the range.
+class RangeDialog : public QDialog {
+	public:
+		RangeDialog(const QString &title, const QString &infoText,
+		            const QString &unit, double lowerBound, double upperBound,
+		            double defaultMin, double defaultMax,
+		            int decimals, QWidget *parent = 0)
+		: QDialog(parent) {
+			setWindowTitle(title);
+
+			QVBoxLayout *vboxLayout = new QVBoxLayout(this);
+
+			QLabel *info = new QLabel(infoText, this);
+			info->setWordWrap(true);
+			vboxLayout->addWidget(info);
+
+			QGridLayout *gridLayout = new QGridLayout();
+
+			gridLayout->addWidget(new QLabel(QString("Min (%1)").arg(unit), this), 0, 0);
+			sbMin = new QDoubleSpinBox(this);
+			sbMin->setDecimals(decimals);
+			sbMin->setRange(lowerBound, upperBound);
+			sbMin->setValue(defaultMin);
+			sbMin->setAlignment(Qt::AlignRight);
+			gridLayout->addWidget(sbMin, 0, 1);
+
+			gridLayout->addWidget(new QLabel(QString("Max (%1)").arg(unit), this), 1, 0);
+			sbMax = new QDoubleSpinBox(this);
+			sbMax->setDecimals(decimals);
+			sbMax->setRange(lowerBound, upperBound);
+			sbMax->setValue(defaultMax);
+			sbMax->setAlignment(Qt::AlignRight);
+			gridLayout->addWidget(sbMax, 1, 1);
+
+			vboxLayout->addLayout(gridLayout);
+
+			QHBoxLayout *hboxLayout = new QHBoxLayout();
+			QSpacerItem *spacerItem = new QSpacerItem(131, 31, QSizePolicy::Expanding, QSizePolicy::Minimum);
+			hboxLayout->addItem(spacerItem);
+
+			QPushButton *okButton = new QPushButton(this);
+			okButton->setText(QApplication::translate("", "OK", 0));
+			hboxLayout->addWidget(okButton);
+
+			QPushButton *cancelButton = new QPushButton(this);
+			cancelButton->setText(QApplication::translate("", "Cancel", 0));
+			hboxLayout->addWidget(cancelButton);
+
+			vboxLayout->addLayout(hboxLayout);
+
+			QObject::connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+			QObject::connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+		}
+
+	public:
+		QDoubleSpinBox *sbMin;
+		QDoubleSpinBox *sbMax;
+};
+
+
 class PlotWidget : public OriginLocatorPlot {
 	public:
 		enum ShapeType {
@@ -1510,6 +1574,24 @@ class PlotWidget : public OriginLocatorPlot {
 
 	protected:
 		void updateContextMenu(QMenu &menu) {
+			menu.addSeparator();
+
+			QMenu *subSetActive = menu.addMenu("Set active by...");
+			QAction *actSetActiveDistance = subSetActive->addAction("Distance range...");
+			actSetActiveDistance->setData(2001);
+			QAction *actSetActiveResidual = subSetActive->addAction("Residual threshold...");
+			actSetActiveResidual->setData(2003);
+			QAction *actSetActiveAzimuth = subSetActive->addAction("Azimuth range...");
+			actSetActiveAzimuth->setData(2005);
+
+			QMenu *subSetInactive = menu.addMenu("Set inactive by...");
+			QAction *actSetInactiveDistance = subSetInactive->addAction("Distance range...");
+			actSetInactiveDistance->setData(2002);
+			QAction *actSetInactiveResidual = subSetInactive->addAction("Residual threshold...");
+			actSetInactiveResidual->setData(2004);
+			QAction *actSetInactiveAzimuth = subSetInactive->addAction("Azimuth range...");
+			actSetInactiveAzimuth->setData(2006);
+
 			if ( !_customDraw ) return;
 			menu.addSeparator();
 			QMenu *subShowStations = menu.addMenu("Draw station names");
@@ -1543,6 +1625,17 @@ class PlotWidget : public OriginLocatorPlot {
 		void handleContextMenuAction(QAction *action) {
 			OriginLocatorPlot::handleContextMenuAction(action);
 			if ( action == nullptr ) return;
+
+			switch ( action->data().toInt() ) {
+				case 2001: emit setActiveByDistanceRequested(); return;
+				case 2002: emit setInactiveByDistanceRequested(); return;
+				case 2003: emit setActiveByResidualRequested(); return;
+				case 2004: emit setInactiveByResidualRequested(); return;
+				case 2005: emit setActiveByAzimuthRequested(); return;
+				case 2006: emit setInactiveByAzimuthRequested(); return;
+				default: break;
+			}
+
 			if ( action->data().toInt() == 1000 ) {
 				_drawStationNames = SNM_OFF;
 				update();
@@ -3398,6 +3491,12 @@ void OriginLocatorView::init() {
 	        this, SLOT(commitFocalMechanism(bool)));
 	connect(SC_D.residuals, SIGNAL(autoInversionRequested()),
 	        this, SLOT(autoInvertFocalMechanism()));
+	connect(SC_D.residuals, SIGNAL(setActiveByDistanceRequested()), this, SLOT(setActiveByDistance()));
+	connect(SC_D.residuals, SIGNAL(setInactiveByDistanceRequested()), this, SLOT(setInactiveByDistance()));
+	connect(SC_D.residuals, SIGNAL(setActiveByAzimuthRequested()), this, SLOT(setActiveByAzimuth()));
+	connect(SC_D.residuals, SIGNAL(setInactiveByAzimuthRequested()), this, SLOT(setInactiveByAzimuth()));
+	connect(SC_D.residuals, SIGNAL(setActiveByResidualRequested()), this, SLOT(setActiveByResidual()));
+	connect(SC_D.residuals, SIGNAL(setInactiveByResidualRequested()), this, SLOT(setInactiveByResidual()));
 
 	connect(SC_D.map, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
 	connect(SC_D.map, SIGNAL(hoverArrival(int)), this, SLOT(hoverArrival(int)));
@@ -8353,6 +8452,16 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 		actionDeactivate->setEnabled(false);
 	}
 
+	QMenu *subSetActive = menu.addMenu("Set active by...");
+	QAction *actionSetActiveDistance = subSetActive->addAction("Distance range...");
+	QAction *actionSetActiveResidual = subSetActive->addAction("Residual threshold...");
+	QAction *actionSetActiveAzimuth = subSetActive->addAction("Azimuth range...");
+
+	QMenu *subSetInactive = menu.addMenu("Set inactive by...");
+	QAction *actionSetInactiveDistance = subSetInactive->addAction("Distance range...");
+	QAction *actionSetInactiveResidual = subSetInactive->addAction("Residual threshold...");
+	QAction *actionSetInactiveAzimuth = subSetInactive->addAction("Azimuth range...");
+
 	menu.addSeparator();
 
 	QAction *actionRename = menu.addAction("Rename selected arrivals");
@@ -8390,6 +8499,18 @@ void OriginLocatorView::tableArrivalsContextMenuRequested(const QPoint &pos) {
 		activateSelectedArrivals(Seismology::LocatorInterface::F_BACKAZIMUTH, false);
 	else if ( result == actionDeactivateSlow )
 		activateSelectedArrivals(Seismology::LocatorInterface::F_SLOWNESS, false);
+	else if ( result == actionSetActiveDistance )
+		setActiveByDistance();
+	else if ( result == actionSetInactiveDistance )
+		setInactiveByDistance();
+	else if ( result == actionSetActiveResidual )
+		setActiveByResidual();
+	else if ( result == actionSetInactiveResidual )
+		setInactiveByResidual();
+	else if ( result == actionSetActiveAzimuth )
+		setActiveByAzimuth();
+	else if ( result == actionSetInactiveAzimuth )
+		setInactiveByAzimuth();
 
 	else if ( result == actionInvertSelection )
 		selectArrivals(InvertFilter(SC_D.ui.tableArrivals->selectionModel()));
@@ -8566,6 +8687,378 @@ void OriginLocatorView::activateSelectedArrivals(Seismology::LocatorInterface::F
 
 	if ( changed )
 		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setActiveByDistance() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	// Match the unit already shown in the DISTANCE column so the entered
+	// values mean what the analyst sees in the table.
+	bool distanceInKM = SCScheme.unit.distanceInKM;
+	QString unit = distanceInKM ? "km" : QString::fromUtf8("\xC2\xB0");
+	double upperBound = distanceInKM ? 20000.0 : 180.0;
+
+	RangeDialog dlg(
+		tr("Set active by distance"),
+		tr("Arrivals within the range are activated, arrivals outside "
+		   "the range are deactivated."),
+		unit, 0.0, upperBound,
+		SC_D.lastArrivalDistanceMin, SC_D.lastArrivalDistanceMax,
+		SCScheme.precision.distance, this
+	);
+
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	double min = dlg.sbMin->value();
+	double max = dlg.sbMax->value();
+	if ( min > max ) {
+		std::swap(min, max);
+	}
+
+	SC_D.lastArrivalDistanceMin = min;
+	SC_D.lastArrivalDistanceMax = max;
+
+	double minDeg = distanceInKM ? Math::Geo::km2deg(min) : min;
+	double maxDeg = distanceInKM ? Math::Geo::km2deg(max) : max;
+
+	bool changed = false;
+
+	// Same mechanism as dragging a rectangle on the Distance plot tab
+	// (see residualsSelected()): RestoreRole activates/deactivates while
+	// preserving the arrival's time/backazimuth/slowness flags where
+	// possible.
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double distance;
+		try {
+			distance = arr->distance();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		bool inRange = distance >= minDeg && distance <= maxDeg;
+		int row = static_cast<int>(i);
+
+		if ( inRange != SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED),
+		                           inRange ? 1 : 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setInactiveByDistance() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	bool distanceInKM = SCScheme.unit.distanceInKM;
+	QString unit = distanceInKM ? "km" : QString::fromUtf8("\xC2\xB0");
+	double upperBound = distanceInKM ? 20000.0 : 180.0;
+
+	RangeDialog dlg(
+		tr("Set inactive by distance"),
+		tr("Arrivals within the range are deactivated. Arrivals outside "
+		   "the range are left untouched."),
+		unit, 0.0, upperBound,
+		SC_D.lastArrivalDistanceMin, SC_D.lastArrivalDistanceMax,
+		SCScheme.precision.distance, this
+	);
+
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	double min = dlg.sbMin->value();
+	double max = dlg.sbMax->value();
+	if ( min > max ) {
+		std::swap(min, max);
+	}
+
+	SC_D.lastArrivalDistanceMin = min;
+	SC_D.lastArrivalDistanceMax = max;
+
+	double minDeg = distanceInKM ? Math::Geo::km2deg(min) : min;
+	double maxDeg = distanceInKM ? Math::Geo::km2deg(max) : max;
+
+	bool changed = false;
+
+	// Surgical: only touches arrivals inside the range (deactivates them);
+	// arrivals outside are left exactly as they were.
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double distance;
+		try {
+			distance = arr->distance();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		if ( distance < minDeg || distance > maxDeg ) {
+			continue;
+		}
+
+		int row = static_cast<int>(i);
+
+		if ( SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED), 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setActiveByAzimuth() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	RangeDialog dlg(
+		tr("Set active by azimuth"),
+		tr("Arrivals within the range are activated, arrivals outside "
+		   "the range are deactivated."),
+		QString::fromUtf8("\xC2\xB0"), 0.0, 360.0,
+		SC_D.lastArrivalAzimuthMin, SC_D.lastArrivalAzimuthMax,
+		1, this
+	);
+
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	double min = dlg.sbMin->value();
+	double max = dlg.sbMax->value();
+	if ( min > max ) {
+		std::swap(min, max);
+	}
+
+	SC_D.lastArrivalAzimuthMin = min;
+	SC_D.lastArrivalAzimuthMax = max;
+
+	bool changed = false;
+
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double azimuth;
+		try {
+			azimuth = arr->azimuth();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		bool inRange = azimuth >= min && azimuth <= max;
+		int row = static_cast<int>(i);
+
+		if ( inRange != SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED),
+		                           inRange ? 1 : 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setInactiveByAzimuth() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	RangeDialog dlg(
+		tr("Set inactive by azimuth"),
+		tr("Arrivals within the range are deactivated. Arrivals outside "
+		   "the range are left untouched."),
+		QString::fromUtf8("\xC2\xB0"), 0.0, 360.0,
+		SC_D.lastArrivalAzimuthMin, SC_D.lastArrivalAzimuthMax,
+		1, this
+	);
+
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	double min = dlg.sbMin->value();
+	double max = dlg.sbMax->value();
+	if ( min > max ) {
+		std::swap(min, max);
+	}
+
+	SC_D.lastArrivalAzimuthMin = min;
+	SC_D.lastArrivalAzimuthMax = max;
+
+	bool changed = false;
+
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double azimuth;
+		try {
+			azimuth = arr->azimuth();
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		if ( azimuth < min || azimuth > max ) {
+			continue;
+		}
+
+		int row = static_cast<int>(i);
+
+		if ( SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED), 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setActiveByResidual() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	bool ok;
+	double threshold = QInputDialog::getDouble(
+		this, tr("Set active by residual"),
+		tr("Activate arrivals with |time residual| within this many seconds, "
+		   "deactivate the rest:"),
+		SC_D.lastArrivalResidualThreshold, 0.0, 120.0, 2, &ok
+	);
+	if ( !ok ) {
+		return;
+	}
+
+	SC_D.lastArrivalResidualThreshold = threshold;
+
+	bool changed = false;
+
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double residual;
+		try {
+			residual = fabs(arr->timeResidual());
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		bool inRange = residual <= threshold;
+		int row = static_cast<int>(i);
+
+		if ( inRange != SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED),
+		                           inRange ? 1 : 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::setInactiveByResidual() {
+	if ( !SC_D.currentOrigin ) return;
+	if ( SC_D.currentOrigin->arrivalCount() == 0 ) return;
+
+	bool ok;
+	double threshold = QInputDialog::getDouble(
+		this, tr("Set inactive by residual"),
+		tr("Deactivate arrivals with |time residual| beyond this many "
+		   "seconds. Arrivals within the threshold are left untouched:"),
+		SC_D.lastArrivalResidualThreshold, 0.0, 120.0, 2, &ok
+	);
+	if ( !ok ) {
+		return;
+	}
+
+	SC_D.lastArrivalResidualThreshold = threshold;
+
+	bool changed = false;
+
+	// Surgical: only deactivates outliers beyond the threshold; arrivals
+	// within it are left exactly as they were.
+	for ( size_t i = 0; i < SC_D.currentOrigin->arrivalCount(); ++i ) {
+		Arrival *arr = SC_D.currentOrigin->arrival(i);
+
+		double residual;
+		try {
+			residual = fabs(arr->timeResidual());
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		if ( residual <= threshold ) {
+			continue;
+		}
+
+		int row = static_cast<int>(i);
+
+		if ( SC_D.modelArrivals.useArrival(row) ) {
+			changed = true;
+		}
+
+		SC_D.modelArrivals.setData(SC_D.modelArrivals.index(row, USED), 0, RestoreRole);
+	}
+
+	if ( changed ) {
+		startBlinking(QColor(255,128,0), SC_D.ui.btnRelocate);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

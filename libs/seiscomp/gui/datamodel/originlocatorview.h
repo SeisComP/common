@@ -206,6 +206,17 @@ class SC_GUI_API OriginLocatorPlot : public DiagramWidget {
 		                             QPoint pos = QPoint(0, 0));
 		void autoInversionRequested();
 
+		// Forwarded from the plot's own right-click menu; OriginLocatorView
+		// connects these to its identically named arrival table actions
+		// (Set active by.../Set inactive by...) so the same functionality
+		// is reachable from any plot tab, not just the arrival table.
+		void setActiveByDistanceRequested();
+		void setInactiveByDistanceRequested();
+		void setActiveByAzimuthRequested();
+		void setInactiveByAzimuthRequested();
+		void setActiveByResidualRequested();
+		void setInactiveByResidualRequested();
+
 
 	protected slots:
 		virtual void linkClicked();
@@ -392,6 +403,13 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void changeArrival(int,bool);
 		void changeArrivalEnableState(int,bool);
 		void artificialOriginRequested(double lat, double lon, double depth, Seiscomp::Core::Time time);
+
+		void setActiveByDistance();
+		void setInactiveByDistance();
+		void setActiveByAzimuth();
+		void setInactiveByAzimuth();
+		void setActiveByResidual();
+		void setInactiveByResidual();
 
 		void updateBlinkState();
 
