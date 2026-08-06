@@ -107,7 +107,7 @@ required bindings.
 
 The calibration function is considered in one of the forms
 
-* Parametric when :confval:`magnitudes.MLc.calibrationType` = "parametric"`:
+* Parametric when :confval:`magnitudes.MLc.calibrationType` = "parametric":
 
   .. math::
 
@@ -128,7 +128,7 @@ The calibration function is considered in one of the forms
   :cite:t:`rhoades-2020`)
   and *c7*, *c8* for observations at short distances (:cite:t:`luckett2019`).
 
-* log10(A0)-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0"`:
+* log10(A0)-based non-parametric when :confval:`magnitudes.MLc.calibrationType` = "A0":
 
   .. math::
 
