@@ -120,13 +120,13 @@
 						empty, 'map.location' is used with minLevel/maxLevel.
 						</description>
 					</parameter>
-					<parameter name="minLevel" type="uint" default="0" range="0:29">
+					<parameter name="minLevel" type="uint" default="0" range="0..29">
 						<description>
 						Minimum zoom level requested from the single-source
 						'map.location'. Ignored when 'map.xyz.sources' is set.
 						</description>
 					</parameter>
-					<parameter name="maxLevel" type="uint" default="19" range="0:29">
+					<parameter name="maxLevel" type="uint" default="19" range="0..29">
 						<description>
 						Maximum zoom level requested from the single-source
 						'map.location'. Ignored when 'map.xyz.sources' is set.
@@ -400,7 +400,7 @@
 						Minimum screen distance to plot a polygon or polyline line segment.
 						</description>
 					</parameter>
-					<parameter name="maxZoom" type="float" default="24" range="1:24">
+					<parameter name="maxZoom" type="float" default="24" range="1..24">
 						<description>
 						Maximum allowed zoom level.
 						</description>
