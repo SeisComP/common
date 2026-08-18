@@ -1347,20 +1347,16 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 			}
 			else {
 				if ( mutex ) {
-					if ( !wait(mutex, &_waitMutex) ) {
-						return SystemError;
-					}
-					else if ( _select.timedOut() ) {
+					wait(mutex, &_waitMutex);
+					if ( _select.timedOut() ) {
 						return TimeoutError;
 					}
 					continue;
 				}
 				else if ( forceBlock ) {
 					if ( !_inWait ) {
-						if ( !wait(nullptr, &_waitMutex) ) {
-							return SystemError;
-						}
-						else if ( _select.timedOut() ) {
+						wait(nullptr, &_waitMutex);
+						if ( _select.timedOut() ) {
 							return TimeoutError;
 						}
 					}
@@ -1892,8 +1888,8 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			}
 		}
 
-		string errorMessage;
-		errorMessage.assign(headers.getptr(), frame.data.data() + frame.data.size() - headers.getptr());
+		string_view errorMessage(headers.getptr(), frame.data.data() + frame.data.size() - headers.getptr());
+		errorMessage = Core::trim(errorMessage);
 
 		size_t p = errorMessage.find(' ');
 		if ( p != string::npos ) {
@@ -1911,14 +1907,14 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 				}
 				*/
 
-				errorMessage.erase(0, p+1);
+				errorMessage = errorMessage.substr(p + 1);
 				if ( !errorMessage.empty() ) {
-					SEISCOMP_ERROR("Received peer error: %s", errorMessage.c_str());
+					SEISCOMP_ERROR("Received peer error: %s", errorMessage);
 				}
 			}
 		}
 
-		closeSocket(errorMessage.c_str(), int(errorMessage.size()));
+		closeSocket(errorMessage.data(), int(errorMessage.length()));
 	}
 
 	return false;
