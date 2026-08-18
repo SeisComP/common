@@ -56,6 +56,7 @@ namespace Core {
 
  "17.4.0"   0x110400
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
+   - Added Seiscomp::Core::Flags
    - Added Seiscomp::IO::HTTPClient
 
  "17.3.0"   0x110300
