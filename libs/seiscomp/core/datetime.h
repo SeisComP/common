@@ -74,7 +74,6 @@ class TimeSpan {
 	// ----------------------------------------------------------------------
 	public:
 		TimeSpan() = default;
-		TimeSpan(const TimeSpan &other) = default;
 		constexpr TimeSpan(Storage secs, Storage usecs = 0);
 		TimeSpan(double ts);
 
