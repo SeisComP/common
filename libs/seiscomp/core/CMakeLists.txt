@@ -37,6 +37,7 @@ SET(CORE_HEADERS
 	factory.h
 	factory.inl
 	factory.ipp
+	flags.h
 	interfacefactory.h
 	interfacefactory.ipp
 	io.h
