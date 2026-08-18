@@ -73,7 +73,7 @@ MAKEENUM(
 
 
 class SC_SYSTEM_CLIENT_API ApplicationStatusMessage : public Core::Message {
-	DECLARE_SC_CLASS(ApplicationStatusMessage);
+	DECLARE_SC_CLASS(ApplicationStatusMessage)
 	DECLARE_SERIALIZATION;
 
 	public:
