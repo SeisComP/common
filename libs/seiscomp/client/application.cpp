@@ -2471,5 +2471,19 @@ const string &Application::messagingCertificate() const {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DataModel::CreationInfo Application::generateCreationInfo() const {
+	DataModel::CreationInfo ci;
+	ci.setAgencyID(agencyID());
+	ci.setAuthor(author());
+	ci.setCreationTime(Core::Time::UTC());
+	ci.setVersion(Core::CurrentVersion.api().toString());
+	return ci;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 }
