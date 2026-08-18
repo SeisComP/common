@@ -272,7 +272,6 @@ class Time {
 	// ----------------------------------------------------------------------
 	public:
 		Time() = default;
-		Time(const Time &other) = default;
 		explicit constexpr Time(const TimePoint &tp);
 		explicit constexpr Time(Storage epochSeconds, Storage microSeconds = 0);
 		explicit Time(double);
