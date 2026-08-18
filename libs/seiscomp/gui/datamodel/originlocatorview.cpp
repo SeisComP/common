@@ -6232,8 +6232,8 @@ void OriginLocatorView::importArrivals() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
-							  bool checkDuplicates, bool associateOnly,
-							  bool failOnNoNewPhases) {
+                              bool checkDuplicates, bool associateOnly,
+                              bool failOnNoNewPhases) {
 	PickedPhases *sourcePhasesPtr, *targetPhasesPtr;
 	set<string> usedPickIDs;
 
@@ -6246,13 +6246,13 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 	sourcePhasesPtr = reinterpret_cast<PickedPhases*>(sourcePhases);
 	targetPhasesPtr = reinterpret_cast<PickedPhases*>(targetPhases);
 
-	for ( PickedPhases::iterator it = targetPhasesPtr->begin(); it != targetPhasesPtr->end(); ++it ) {
+	for ( auto it = targetPhasesPtr->begin(); it != targetPhasesPtr->end(); ++it ) {
 		PickPtr p = it->second.first;
 		usedPickIDs.insert(p->publicID());
 	}
 
 	// Merge source phases with target phases
-	for ( PickedPhases::iterator it = sourcePhasesPtr->begin(); it != sourcePhasesPtr->end(); ++it ) {
+	for ( auto it = sourcePhasesPtr->begin(); it != sourcePhasesPtr->end(); ++it ) {
 		PickPtr p = it->second.first;
 
 		// Do we have the same phase already in the target?
@@ -6266,16 +6266,16 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		// with current origin
 		if ( usedPickIDs.find(p->publicID()) != usedPickIDs.end() ) {
 			SEISCOMP_INFO("- pick %s as phase %s for stream %s (pick already in target)",
-						  p->publicID().c_str(), it->first.second.c_str(),
-						  it->first.first.c_str());
+			              p->publicID().c_str(), it->first.second.c_str(),
+			              it->first.first.c_str());
 			continue;
 		}
 
 		usedPickIDs.insert(p->publicID());
 
 		SEISCOMP_INFO("+ pick %s as phase %s for stream %s",
-					  p->publicID().c_str(), it->first.second.c_str(),
-					  it->first.first.c_str());
+		              p->publicID().c_str(), it->first.second.c_str(),
+		              it->first.first.c_str());
 
 		PhaseStream ps(it->first);
 		PickWithFlags newPick = newPhases[ps];
@@ -6283,8 +6283,9 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		if ( newPick.first ) {
 			try {
 				// Pick is older than the already inserted one: skip it
-				if ( p->creationInfo().creationTime() < newPick.first->creationInfo().creationTime() )
+				if ( p->creationInfo().creationTime() < newPick.first->creationInfo().creationTime() ) {
 					continue;
+				}
 			}
 			catch ( ... ) {
 				// No creationTime set: take the first one
@@ -6300,6 +6301,7 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 	SEISCOMP_DEBUG("*** Prepare merged origin ***");
 	OriginPtr org = Origin::Create();
 	org->assign(SC_D.currentOrigin.get());
+
 	for ( PickedPhases::iterator it = targetPhasesPtr->begin(); it != targetPhasesPtr->end(); ++it ) {
 		ArrivalPtr arrival = new Arrival;
 		arrival->setPickID(it->second.first->publicID());
@@ -6308,26 +6310,28 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 		arrival->setPhase(Phase(it->first.second));
 		org->add(arrival.get());
 		SEISCOMP_DEBUG("! pick %s as phase %s for stream %s with flags %d",
-					   it->second.first->publicID().c_str(), it->first.second.c_str(),
-					   it->first.first.c_str(), it->second.second);
+		               it->second.first->publicID().c_str(), it->first.second.c_str(),
+		               it->first.first.c_str(), it->second.second);
 	}
 
-	for ( NewPhases::iterator it = newPhases.begin(); it != newPhases.end(); ++it ) {
+	for ( auto it = newPhases.begin(); it != newPhases.end(); ++it ) {
 		PhasePickWithFlags ppwf;
 		ppwf.pick = it->second.first;
 		ppwf.phase = it->first.second;
 		ppwf.flags = it->second.second;
 		additionalPicks.push_back(ppwf);
 		SEISCOMP_DEBUG("A pick %s as phase %s for stream %s with flags %d",
-					   it->second.first->publicID().c_str(), it->first.second.c_str(),
-					   wfid2str(it->second.first->waveformID()).c_str(),
-					   it->second.second);
+		               it->second.first->publicID().c_str(), it->first.second.c_str(),
+		               wfid2str(it->second.first->waveformID()).c_str(),
+		               it->second.second);
 	}
 
 	if ( org->arrivalCount() == 0 ) {
 		for ( size_t i = 0; i < additionalPicks.size(); ++i ) {
 			SensorLocation *sloc = SC_D.locator->getSensorLocation(Pick::Find(additionalPicks[i].pick->publicID()));
-			if ( sloc == nullptr ) continue;
+			if ( !sloc ) {
+				continue;
+			}
 
 			ArrivalPtr arrival = new Arrival();
 			arrival->setPickID(additionalPicks[i].pick->publicID());
@@ -6336,16 +6340,18 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 			double az, baz, dist;
 			Math::Geo::delazi(org->latitude().value(), org->longitude().value(),
-							  sloc->latitude(), sloc->longitude(), &dist, &az, &baz);
+			                  sloc->latitude(), sloc->longitude(), &dist, &az, &baz);
 
 			arrival->setDistance(dist);
 			arrival->setAzimuth(az);
 
 			try {
-				if ( additionalPicks[i].phase != "" )
+				if ( additionalPicks[i].phase != "" ) {
 					arrival->setPhase(additionalPicks[i].phase);
-				else
+				}
+				else {
 					arrival->setPhase(Phase("P"));
+				}
 			}
 			catch ( ... ) {
 				arrival->setPhase(Phase("P"));
@@ -6374,8 +6380,9 @@ bool OriginLocatorView::merge(void *sourcePhases, void *targetPhases,
 
 		applyNewOrigin(org.get(), true);
 	}
-	else
+	else {
 		relocate(org.get(), &additionalPicks, associateOnly, false, false);
+	}
 
 	return true;
 }
@@ -6463,7 +6470,7 @@ void OriginLocatorView::relocate() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate(std::vector<PhasePickWithFlags>* additionalPicks,
-								 bool associateOnly, bool replaceExistingPhases) {
+                                 bool associateOnly, bool replaceExistingPhases) {
 	relocate(SC_D.currentOrigin.get(), additionalPicks, associateOnly, replaceExistingPhases);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6473,9 +6480,9 @@ void OriginLocatorView::relocate(std::vector<PhasePickWithFlags>* additionalPick
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::relocate(DataModel::Origin *org,
-								 std::vector<PhasePickWithFlags>* additionalPicks,
-								 bool associateOnly, bool replaceExistingPhases,
-								 bool useArrivalTable) {
+                                 vector<PhasePickWithFlags>* additionalPicks,
+                                 bool associateOnly, bool replaceExistingPhases,
+                                 bool useArrivalTable) {
 	OriginPtr oldOrigin;
 	OriginPtr origin;
 
@@ -6586,10 +6593,12 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 	bool distanceCutOff = SC_D.ui.cbDistanceCutOff->isEnabled() && SC_D.ui.cbDistanceCutOff->isChecked();
 	bool ignoreInitialLocation = SC_D.ui.cbIgnoreInitialLocation->isEnabled() && SC_D.ui.cbIgnoreInitialLocation->isChecked();
 
-	if ( distanceCutOff )
+	if ( distanceCutOff ) {
 		SC_D.locator->setDistanceCutOff(SC_D.ui.editDistanceCutOff->text().toDouble());
-	else
+	}
+	else {
 		SC_D.locator->releaseDistanceCutOff();
+	}
 
 	SC_D.locator->setIgnoreInitialLocation(ignoreInitialLocation);
 
@@ -6603,8 +6612,9 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 
 			SEISCOMP_DEBUG("setting depth to %.2f km", depth);
 		}
-		else
+		else {
 			SC_D.locator->releaseDepth();
+		}
 
 		try {
 			origin = Gui::relocate(SC_D.locator.get(), oldOrigin.get());
@@ -6674,11 +6684,13 @@ void OriginLocatorView::relocate(DataModel::Origin *org,
 			origin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 	}
 
-	if ( distanceCutOff )
+	if ( distanceCutOff ) {
 		SC_D.ui.cbDistanceCutOff->setChecked(true);
+	}
 
-	if ( ignoreInitialLocation )
+	if ( ignoreInitialLocation ) {
 		SC_D.ui.cbIgnoreInitialLocation->setChecked(true);
+	}
 
 	applyNewOrigin(origin.get(), true);
 }
@@ -6735,7 +6747,6 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 	emit newOriginSet(origin, SC_D.baseEvent.get(), SC_D.localOrigin, relocated);
 
 	SC_D.ui.btnCommit->setText("Commit");
-//	SC_D.ui.btnCommit->setMenu(SC_D.baseEvent?_commitMenu:nullptr);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6756,7 +6767,9 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 
 	ui.labelInfo->setText(ui.labelInfo->text().arg(orgs.size()));
 
-	if ( dlg.exec() != QDialog::Accepted ) return;
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
 
 	qApp->setOverrideCursor(Qt::WaitCursor);
 
@@ -6778,13 +6791,21 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 			// Pick already exists
 			if ( itp.second == false ) {
 				SEISCOMP_DEBUG("Ignoring pick %s from Origin %s: pick already added to merge list",
-							   ar->pickID().c_str(), o->publicID().c_str());
+				               ar->pickID().c_str(), o->publicID().c_str());
 				continue;
 			}
 
-			double weight = 1.0; try { weight = ar->weight(); } catch ( ... ) {}
-			try { itp.first->second = PhaseWithWeight(ar->phase().code(), weight); }
-			catch ( ... ) { itp.first->second = PhaseWithWeight("P", weight); }
+			double weight = 1.0;
+			try {
+				weight = ar->weight();
+			}
+			catch ( ... ) {}
+			try {
+				itp.first->second = PhaseWithWeight(ar->phase().code(), weight);
+			}
+			catch ( ... ) {
+				itp.first->second = PhaseWithWeight("P", weight);
+			}
 		}
 	}
 
@@ -6799,8 +6820,9 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 		}
 
 		// Filter agency
-		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) )
+		if ( !importAllPicks && (objectAgencyID(pick.get()) != SCApp->agencyID()) ) {
 			continue;
+		}
 
 		sourcePhases[PickPhase(wfid2str(pick->waveformID()), it->second.first)] = PickWithFlags(pick, it->second.second);
 	}
@@ -6811,7 +6833,9 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 
 	merge(&sourcePhases, &targetPhases, true, false, false);
 
-	if ( oldCurrent != SC_D.currentOrigin ) emit locatorRequested();
+	if ( oldCurrent != SC_D.currentOrigin ) {
+		emit locatorRequested();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -6820,13 +6844,15 @@ void OriginLocatorView::mergeOrigins(QList<DataModel::Origin*> orgs) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::setLocalAmplitudes(Seiscomp::DataModel::Origin *org,
-										   AmplitudeSet *amps, StringSet *ampIDs) {
-	if ( org != SC_D.currentOrigin ) return;
+                                           AmplitudeSet *amps, StringSet *ampIDs) {
+	if ( org != SC_D.currentOrigin ) {
+		return;
+	}
 
-	for ( AmplitudeSet::iterator it = SC_D.changedAmplitudes.begin();
-		  it != SC_D.changedAmplitudes.end(); ++it ) {
-		if ( ampIDs->find(it->first->publicID()) != ampIDs->end() )
+	for ( auto it = SC_D.changedAmplitudes.begin(); it != SC_D.changedAmplitudes.end(); ++it ) {
+		if ( ampIDs->find(it->first->publicID()) != ampIDs->end() ) {
 			amps->insert(*it);
+		}
 	}
 
 	// Store new amplitudes in current set
@@ -6857,13 +6883,15 @@ void OriginLocatorView::computeMagnitudes() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::magnitudeRemoved(const QString &id, Seiscomp::DataModel::Object *obj) {
-	if ( id != SC_D.currentOrigin->publicID().c_str() ) return;
+	if ( id != SC_D.currentOrigin->publicID().c_str() ) {
+		return;
+	}
 
 	SC_D.ui.btnMagnitudes->setEnabled(SC_D.currentOrigin->magnitudeCount() == 0);
 
 	if ( SC_D.currentOrigin->magnitudeCount() > 0 ) {
 		evaluateOrigin(SC_D.currentOrigin.get(), SC_D.baseEvent.get(),
-					   SC_D.localOrigin, false);
+		               SC_D.localOrigin, false);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6956,7 +6984,9 @@ bool OriginLocatorView::undo() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool OriginLocatorView::redo() {
-	if ( SC_D.redoList.isEmpty() ) return false;
+	if ( SC_D.redoList.isEmpty() ) {
+		return false;
+	}
 
 	SC_D.undoList.push(
 		OriginLocatorViewPrivate::OriginMemento(
@@ -7037,7 +7067,8 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 			}
 			dialog.setMagTypes(magList);
 		}
-	} catch ( Seiscomp::Config::Exception& ) {}
+	}
+	catch ( Seiscomp::Config::Exception& ) {}
 
 	dialog.loadSettings();
 	dialog.setLongitude(epicenter.x());
@@ -7045,8 +7076,9 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 	dialog.setDepth(depth);
 	dialog.setTime(time);
 
-	if ( !dialogPos.isNull() )
+	if ( !dialogPos.isNull() ) {
 		dialog.move(dialogPos.x(), dialogPos.y());
+	}
 
 	if ( dialog.exec() == QDialog::Accepted ) {
 		dialog.saveSettings();
@@ -7111,7 +7143,9 @@ void OriginLocatorView::setScript1(const std::string &script) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::editComment() {
-	if ( !SC_D.baseEvent ) return;
+	if ( !SC_D.baseEvent ) {
+		return;
+	}
 
 	CommentEdit dlg;
 
@@ -7145,7 +7179,7 @@ void OriginLocatorView::editComment() {
 
 	if ( oldComment != dlg.ui.editComment->toPlainText() ) {
 		sendJournal(SC_D.baseEvent->publicID(), "EvOpComment",
-					dlg.ui.editComment->toPlainText().toStdString());
+		            dlg.ui.editComment->toPlainText().toStdString());
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -7161,8 +7195,9 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		OPT(EvaluationStatus) newStatus;
 
 		try {
-			if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC )
+			if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC ) {
 				newStatus = SC_D.newOriginStatus;
+			}
 		}
 		catch ( ... ) {
 			// if evaluationMode isn't set yet we asume AUTOMATIC
@@ -7174,13 +7209,15 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 
 			if ( newStatus ) {
 				try {
-					if ( SC_D.currentOrigin->evaluationStatus() == *newStatus )
+					if ( SC_D.currentOrigin->evaluationStatus() == *newStatus ) {
 						needConfirmation = true;
+					}
 				}
 				catch ( ... ) {}
 			}
-			else
+			else {
 				needConfirmation = true;
+			}
 
 			if ( needConfirmation ) {
 				// This origin has not been changed
@@ -7191,8 +7228,9 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 					QMessageBox::Yes, QMessageBox::No
 				);
 
-				if ( result != QMessageBox::Yes )
+				if ( result != QMessageBox::Yes ) {
 					return;
+				}
 			}
 		}
 
@@ -7208,7 +7246,7 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	}
 
 	CreationInfo &ci = SC_D.currentOrigin->creationInfo();
-	ci.setAuthor( SCApp->author() );
+	ci.setAuthor(SCApp->author());
 	ci.setModificationTime(Core::Time::UTC());
 	SC_D.ui.labelUser->setText(ci.author().c_str());
 	SC_D.ui.labelUser->setToolTip(ci.author().c_str());
@@ -7232,12 +7270,15 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 	}
 
 	try {
-		if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC )
+		if ( SC_D.currentOrigin->evaluationMode() == AUTOMATIC ) {
 			evalMode += " (A)";
-		else if ( SC_D.currentOrigin->evaluationMode() == MANUAL )
+		}
+		else if ( SC_D.currentOrigin->evaluationMode() == MANUAL ) {
 			evalMode += " (M)";
-		else
+		}
+		else {
 			evalMode += " (-)";
+		}
 	}
 	catch ( ... ) {
 		evalMode += " (-)";
@@ -7255,8 +7296,9 @@ void OriginLocatorView::commit(bool associate, bool ignoreDefaultEventType) {
 		SC_D.ui.labelAgency->setToolTip("");
 	}
 
-	if ( SC_D.recordView )
+	if ( SC_D.recordView ) {
 		SC_D.recordView->applyPicks();
+	}
 
 	ObjectChangeList<DataModel::Pick> pickCommitList;
 	std::vector<AmplitudePtr> amplitudeCommitList;
@@ -7408,11 +7450,13 @@ void OriginLocatorView::customCommit() {
 			);
 		}
 
-		if ( res == QMessageBox::Cancel )
+		if ( res == QMessageBox::Cancel ) {
 			return;
+		}
 
-		if ( res == QMessageBox::Yes )
+		if ( res == QMessageBox::Yes ) {
 			customOptions.magnitudeType = fixedMagnitudeType.toStdString();
+		}
 	}
 
 	if ( customOptions.valid ) {
@@ -7444,12 +7488,17 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	if ( withMT && SC_D.currentOrigin ) {
 		OriginDialog dialog(SC_D.currentOrigin->longitude().value(),
 		                    SC_D.currentOrigin->latitude().value(), this);
-		try { dialog.setDepth(SC_D.currentOrigin->depth().value()); }
-		catch ( ValueException &e ) {}
+
+		try {
+			dialog.setDepth(SC_D.currentOrigin->depth().value());
+		}
+		catch ( ValueException & ) {}
+
 		dialog.setTime(SC_D.currentOrigin->time().value());
 
 		dialog.enableAdvancedOptions(true, false);
 		dialog.setPhaseCount(SC_D.residuals->count());
+
 		// search for preferred magnitude value
 		if ( SC_D.baseEvent ) {
 			Magnitude *m = Magnitude::Find(SC_D.baseEvent->preferredMagnitudeID());
@@ -7479,8 +7528,12 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 		derived->setCreationInfo(ci);
 		derived->setEvaluationMode(EvaluationMode(MANUAL));
 
-		try { derived->quality(); } // ensure existing quality object
-		catch ( ValueException &e ) { derived->setQuality(OriginQuality()); }
+		try {
+			derived->quality();
+		} // ensure existing quality object
+		catch ( ValueException & ) {
+			derived->setQuality(OriginQuality());
+		}
 
 		derived->setTime(Time(dialog.getTime_t(), 0));
 		derived->setLatitude(dialog.latitude());
@@ -7511,8 +7564,9 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	FocalMechanismPtr fm = FocalMechanism::Create();
 	fm->setTriggeringOriginID(SC_D.currentOrigin->publicID());
-	if ( mt )
+	if ( mt ) {
 		fm->add(mt.get());
+	}
 	NodalPlanes nps;
 	NodalPlane np;
 	np.setStrike(np1.str);
@@ -7550,9 +7604,10 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 
 	fm->setCreationInfo(ci);
 
-	if ( fm )
+	if ( fm ) {
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
 		                             derived?derived.get():nullptr);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
