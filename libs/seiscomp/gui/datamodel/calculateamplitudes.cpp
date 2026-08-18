@@ -871,10 +871,6 @@ void CalculateAmplitudes::setSilentMode(bool f) {
 void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
                                         const Processing::AmplitudeProcessor::Result &res) {
 	AmplitudePtr amp = Amplitude::Create();
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
 	amp->setAmplitude(
 		RealQuantity(
 			res.amplitude.value, Core::None,
@@ -882,10 +878,13 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 			Core::None
 		)
 	);
-
-	amp->setCreationInfo(ci);
-	if ( res.period > 0 ) amp->setPeriod(RealQuantity(res.period));
-	if ( res.snr >= 0 ) amp->setSnr(res.snr);
+	amp->setCreationInfo(SCApp->generateCreationInfo());
+	if ( res.period > 0 ) {
+		amp->setPeriod(RealQuantity(res.period));
+	}
+	if ( res.snr >= 0 ) {
+		amp->setSnr(res.snr);
+	}
 	amp->setType(proc->type());
 	amp->setTimeWindow(
 		TimeWindow(res.time.reference, res.time.begin, res.time.end)

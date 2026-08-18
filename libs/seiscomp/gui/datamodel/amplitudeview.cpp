@@ -2902,11 +2902,7 @@ RecordMarker* AmplitudeView::updatePhaseMarker(Seiscomp::Gui::RecordViewItem *it
 	a->setFilterID(label->data.filterID);
 	a->setEvaluationMode(EvaluationMode(MANUAL));
 
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
-	a->setCreationInfo(ci);
+	a->setCreationInfo(SCApp->generateCreationInfo());
 
 	proc->finalizeAmplitude(a.get());
 
@@ -6155,12 +6151,7 @@ void AmplitudeView::commit() {
 		               static_cast<int>(SC_D.magnitude->stationMagnitudeContributionCount()));
 	}
 
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
-
-	SC_D.magnitude->setCreationInfo(ci);
+	SC_D.magnitude->setCreationInfo(SCApp->generateCreationInfo());
 	SC_D.magnitude->setType(SC_D.magnitudeType);
 	SC_D.magnitude->setEvaluationStatus(EvaluationStatus(CONFIRMED));
 	SC_D.magnitude->setOriginID("");
@@ -6214,12 +6205,8 @@ void AmplitudeView::commit() {
 		azimuths.push_back(item->value(ITEM_AZIMUTH_INDEX));
 
 		StationMagnitudePtr staMag = StationMagnitude::Create();
-		CreationInfo ci;
-		ci.setAgencyID(SCApp->agencyID());
-		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::UTC());
 		staMag->setType(SC_D.magnitude->type());
-		staMag->setCreationInfo(ci);
+		staMag->setCreationInfo(SCApp->generateCreationInfo());
 		staMag->setWaveformID(amp->waveformID());
 		staMag->setMagnitude(magValue);
 		staMag->setAmplitudeID(amp->publicID());
