@@ -6485,10 +6485,6 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 		dialog.setSendButtonText("Apply");
 		if ( dialog.exec() == QDialog::Accepted ) {
 			OriginPtr tmpOrigin = Origin::Create();
-			CreationInfo ci;
-			ci.setAgencyID(SCApp->agencyID());
-			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::UTC());
 			//tmpOrigin->assign(SC_D.origin.get());
 			tmpOrigin->setLatitude(dialog.latitude());
 			tmpOrigin->setLongitude(dialog.longitude());
@@ -6496,7 +6492,7 @@ void PickerView::openRecordContextMenu(const QPoint &p) {
 			tmpOrigin->setDepth(RealQuantity(dialog.depth()));
 			tmpOrigin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 			tmpOrigin->setEvaluationMode(EvaluationMode(MANUAL));
-			tmpOrigin->setCreationInfo(ci);
+			tmpOrigin->setCreationInfo(SCApp->generateCreationInfo());
 			for ( size_t i = 0; i < SC_D.origin->arrivalCount(); ++i ) {
 				ArrivalPtr ar = new Arrival(*SC_D.origin->arrival(i));
 				tmpOrigin->add(ar.get());
@@ -8817,11 +8813,7 @@ void PickerView::fetchManualPicks(std::vector<RecordMarker*>* markers) const {
 				p->setBackazimuth(marker->backazimuth());
 				p->setHorizontalSlowness(marker->horizontalSlowness());
 				p->setOnset(marker->onset());
-				CreationInfo ci;
-				ci.setAgencyID(SCApp->agencyID());
-				ci.setAuthor(SCApp->author());
-				ci.setCreationTime(Core::Time::UTC());
-				p->setCreationInfo(ci);
+				p->setCreationInfo(SCApp->generateCreationInfo());
 
 				SC_D.changedPicks.push_back(ObjectChangeList<DataModel::Pick>::value_type(p,true));
 				SEISCOMP_DEBUG("   - created new pick");
@@ -9184,12 +9176,8 @@ void PickerView::relocate() {
 	QMap<QString, PickerMarker*> pick2Marker;
 
 	OriginPtr tmpOrigin = Origin::Create();
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
 	tmpOrigin->assign(SC_D.origin.get());
-	tmpOrigin->setCreationInfo(ci);
+	tmpOrigin->setCreationInfo(SCApp->generateCreationInfo());
 
 	double rms = 0.0;
 	size_t rmsCount = 0;
@@ -9320,10 +9308,6 @@ void PickerView::modifyOrigin() {
 	dialog.setSendButtonText("Apply");
 	if ( dialog.exec() == QDialog::Accepted ) {
 		OriginPtr tmpOrigin = Origin::Create();
-		CreationInfo ci;
-		ci.setAgencyID(SCApp->agencyID());
-		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::UTC());
 		//tmpOrigin->assign(SC_D.origin.get());
 		tmpOrigin->setLatitude(dialog.latitude());
 		tmpOrigin->setLongitude(dialog.longitude());
@@ -9331,7 +9315,7 @@ void PickerView::modifyOrigin() {
 		tmpOrigin->setDepth(RealQuantity(dialog.depth()));
 		tmpOrigin->setDepthType(OriginDepthType(OPERATOR_ASSIGNED));
 		tmpOrigin->setEvaluationMode(EvaluationMode(MANUAL));
-		tmpOrigin->setCreationInfo(ci);
+		tmpOrigin->setCreationInfo(SCApp->generateCreationInfo());
 		for ( size_t i = 0; i < SC_D.origin->arrivalCount(); ++i ) {
 			ArrivalPtr ar = new Arrival(*SC_D.origin->arrival(i));
 			tmpOrigin->add(ar.get());

@@ -1764,10 +1764,6 @@ void MagnitudeView::recalculateMagnitude() {
 			else {
 				MagnitudePtr magMw;
 
-				CreationInfo ci;
-				ci.setAgencyID(SCApp->agencyID());
-				ci.setAuthor(SCApp->author());
-				ci.setCreationTime(Core::Time::UTC());
 				stdev = stdev > MwError ? stdev : MwError;
 
 				for ( size_t m = 0; m < _origin->magnitudeCount(); ++m ) {
@@ -1782,7 +1778,7 @@ void MagnitudeView::recalculateMagnitude() {
 					_origin->add(magMw.get());
 				}
 
-				magMw->setCreationInfo(ci);
+				magMw->setCreationInfo(SCApp->generateCreationInfo());
 				magMw->setType(proc->typeMw());
 				magMw->setMagnitude(RealQuantity(Mw, stdev, Core::None, Core::None, Core::None));
 
@@ -2142,11 +2138,8 @@ void MagnitudeView::computeMagnitudes() {
 					}
 					catch ( ... ) {}
 
-					CreationInfo ci;
-					ci.setAgencyID(SCApp->agencyID());
-					ci.setAuthor(SCApp->author());
-					ci.setCreationTime(Core::Time::UTC());
 					stddev = stddev > MwError ? stddev : MwError;
+
 					MagnitudePtr MagMw;
 
 					for ( size_t m = 0; m < _origin->magnitudeCount(); ++m ) {
@@ -2158,7 +2151,7 @@ void MagnitudeView::computeMagnitudes() {
 
 					if ( !MagMw ) MagMw = Magnitude::Create();
 
-					MagMw->setCreationInfo(ci);
+					MagMw->setCreationInfo(SCApp->generateCreationInfo());
 					MagMw->setType(proc->typeMw());
 					MagMw->setMagnitude(RealQuantity(Mw, stddev, Core::None, Core::None, Core::None));
 					try {
@@ -2177,13 +2170,7 @@ void MagnitudeView::computeMagnitudes() {
 			mag->setType(magnitudeTypes[i]);
 			mag->setEvaluationStatus(EvaluationStatus(REJECTED));
 			mag->setMagnitude(RealQuantity(INVALID_MAG));
-
-			CreationInfo ci;
-			ci.setAgencyID(SCApp->agencyID());
-			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::UTC());
-
-			mag->setCreationInfo(ci);
+			mag->setCreationInfo(SCApp->generateCreationInfo());
 
 			_origin->add(mag.get());
 		}
@@ -2488,12 +2475,7 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 		               (int)mag->stationMagnitudeContributionCount());
 	}
 
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
-
-	mag->setCreationInfo(ci);
+	mag->setCreationInfo(SCApp->generateCreationInfo());
 	mag->setEvaluationStatus(Core::None);
 	mag->setOriginID("");
 
@@ -2719,13 +2701,9 @@ MagnitudeView::computeStationMagnitudes(const string &magType,
 			}
 
 			StationMagnitudePtr staMag = StationMagnitude::Create();
-			CreationInfo ci;
-			ci.setAgencyID(SCApp->agencyID());
-			ci.setAuthor(SCApp->author());
-			ci.setCreationTime(Core::Time::UTC());
 			staMag->setPassedQC(passedQC);
 			staMag->setType(mag->type());
-			staMag->setCreationInfo(ci);
+			staMag->setCreationInfo(SCApp->generateCreationInfo());
 			staMag->setWaveformID(amp->waveformID());
 			staMag->setMagnitude(magValue);
 			staMag->setAmplitudeID(amp->publicID());
