@@ -6686,11 +6686,7 @@ void OriginLocatorView::applyNewOrigin(DataModel::Origin *origin, bool relocated
 
 	origin->setEvaluationMode(EvaluationMode(MANUAL));
 	origin->setEvaluationStatus(EvaluationStatus(CONFIRMED));
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
-	origin->setCreationInfo(ci);
+	origin->setCreationInfo(SCApp->generateCreationInfo());
 
 	pushUndo();
 
@@ -7064,10 +7060,7 @@ void OriginLocatorView::createArtificialOrigin(const QPointF &epicenter,
 	if ( dialog.exec() == QDialog::Accepted ) {
 		dialog.saveSettings();
 		OriginPtr origin = Origin::Create();
-		CreationInfo ci;
-		ci.setAgencyID(SCApp->agencyID());
-		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::UTC());
+		CreationInfo ci = SCApp->generateCreationInfo();
 		origin->setCreationInfo(ci);
 		origin->setLongitude(dialog.longitude());
 		origin->setLatitude(dialog.latitude());
@@ -7497,10 +7490,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 			return; // commit aborted
 		}
 
-		CreationInfo ci;
-		ci.setAgencyID(SCApp->agencyID());
-		ci.setAuthor(SCApp->author());
-		ci.setCreationTime(Core::Time::UTC());
+		CreationInfo ci = SCApp->generateCreationInfo();
 
 		// derive origin
 		derived = Origin::Create();
@@ -7562,13 +7552,7 @@ void OriginLocatorView::commitFocalMechanism(bool withMT, QPoint pos) {
 	fm->setMethodID("first motion");
 	fm->setEvaluationMode(EvaluationMode(MANUAL));
 	fm->setEvaluationStatus(EvaluationStatus(CONFIRMED));
-
-	CreationInfo ci;
-	ci.setAgencyID(SCApp->agencyID());
-	ci.setAuthor(SCApp->author());
-	ci.setCreationTime(Core::Time::UTC());
-
-	fm->setCreationInfo(ci);
+	fm->setCreationInfo(SCApp->generateCreationInfo());
 
 	if ( fm ) {
 		emit committedFocalMechanism(fm.get(), SC_D.baseEvent.get(),
