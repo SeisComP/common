@@ -42,8 +42,6 @@ namespace sd = Seiscomp::DataModel;
 // systems with SSE3 support enabled (e.g., RHEL 10) due to differences
 // in the floating-point computation.
 
-#if defined(__SSE2__)  && !defined(__SSE3__)
-
 bool readEventParameters(Seiscomp::DataModel::EventParameters &ep,
                          const std::string &filename) {
 	Seiscomp::IO::XMLArchive ar;
@@ -56,7 +54,6 @@ bool readEventParameters(Seiscomp::DataModel::EventParameters &ep,
 	ar >> NAMED_OBJECT("EventParameters", ep);
 	return ar.success();
 }
-
 
 
 template<typename T>
@@ -329,6 +326,7 @@ BOOST_AUTO_TEST_CASE(NoPicks) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#if defined(__SSE2__)  && !defined(__SSE3__)
 BOOST_AUTO_TEST_CASE(Relocate) {
 	double epsilon = 0.0000001;
 
@@ -506,16 +504,13 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 		}
 	}
 }
+#else
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_SUITE_END()
-
-#else
-
 BOOST_AUTO_TEST_CASE(Test) {
 	BOOST_TEST_MESSAGE("The reference data for the locsat unit tests was "
 	                   "generated on an x86_64 system with SSE2 support enabled. "
@@ -523,5 +518,47 @@ BOOST_AUTO_TEST_CASE(Test) {
 	                   "supported enabled (e.g., RHEL 10) due to differences in "
 	                   "the floating-point computation.");
 }
-
 #endif
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(FromPicks) {
+	sd::EventParameters ep;
+	readEventParameters(ep, "data/events/gempa2025hevu.xml");
+	BOOST_CHECK(ep.pickCount() > 0);
+	BOOST_CHECK(ep.originCount() > 0);
+	auto *loc = Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
+	loc->init(getConfig());
+	loc->setProfile("iasp91");
+	Seiscomp::Seismology::LocatorInterface::PickList picks;
+
+	auto baseOrg = ep.origin(0);
+	for ( size_t i = 0; i < baseOrg->arrivalCount(); ++i ) {
+		auto arrival = baseOrg->arrival(i);
+		try {
+			if ( arrival->weight() <= 0 ) {
+				continue;
+			}
+		}
+		catch ( ... ) {}
+
+		picks.push_back({ ep.findPick(arrival->pickID()) });
+	}
+
+	sd::OriginPtr org = loc->locate(picks);
+	BOOST_REQUIRE(org);
+
+	for ( size_t i = 0; i < org->arrivalCount(); ++i ) {
+		BOOST_CHECK(!org->arrival(i)->pickID().compare(0, 18, "de.gempa.tb1.Pick/"));
+	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_SUITE_END()
