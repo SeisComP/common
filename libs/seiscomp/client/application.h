@@ -462,6 +462,13 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 
 
 	// ----------------------------------------------------------------------
+	//  Public helpers
+	// ----------------------------------------------------------------------
+	public:
+		DataModel::CreationInfo generateCreationInfo() const;
+
+
+	// ----------------------------------------------------------------------
 	//  Static public members
 	// ----------------------------------------------------------------------
 	public:
