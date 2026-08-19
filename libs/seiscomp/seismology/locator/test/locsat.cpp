@@ -81,7 +81,7 @@ void checkTimeQuantity(const sd::TimeQuantity &first, const sd::TimeQuantity &se
 	checkUncertainties(first, second);
 }
 
-template<typename T> bool cmpOptDouble(const T &first, const T &second, double frac) {
+bool cmpOptDouble(const OPT(double) &first, const OPT(double) &second, double frac) {
 	if ( first ) {
 		if ( !second ) {
 			BOOST_CHECK(0);
@@ -326,7 +326,6 @@ BOOST_AUTO_TEST_CASE(NoPicks) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#if defined(__SSE2__)  && !defined(__SSE3__)
 BOOST_AUTO_TEST_CASE(Relocate) {
 	double epsilon = 0.0000001;
 
@@ -504,21 +503,6 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 		}
 	}
 }
-#else
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-BOOST_AUTO_TEST_CASE(Test) {
-	BOOST_TEST_MESSAGE("The reference data for the locsat unit tests was "
-	                   "generated on an x86_64 system with SSE2 support enabled. "
-	                   "However, these tests fail on ARM64 and systems with SSE3 "
-	                   "supported enabled (e.g., RHEL 10) due to differences in "
-	                   "the floating-point computation.");
-}
-#endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
