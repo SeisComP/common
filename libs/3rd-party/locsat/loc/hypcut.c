@@ -48,7 +48,7 @@ void sc_locsat_hypcut(
 	int icompr, ic2;
 	double azisav = 0.0;
 	int icross;
-	int i1s, i2s;
+	int i1s = 0, i2s = 0;
 	double baz, azi, tmp;
 	int iusesta;
 	double useazim, res1 = 0.0, res2 = 0.0, sta1, sta2, sta3, sta4, useslow;
@@ -460,7 +460,6 @@ L1230:
 			if ( j == n1 ) {
 				goto L1270;
 			}
-			++icross;
 			n = stations[j - 1].iwave;
 			// Calculate distance from station to the origin and then
 			// find the crossing points
@@ -468,6 +467,7 @@ L1230:
 			if ( ttt->tbtt[n * ttt->lentbz * ttt->lentbd] > tcalc ) {
 				goto L1270;
 			}
+			++icross;
 			i__2 = ttt->ntbd[n];
 			for ( i = 0; i < i__2; ++i ) {
 				if ( ttt->tbtt[i + n * ttt->lentbz * ttt->lentbd] > tcalc ) {
