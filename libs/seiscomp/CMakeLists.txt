@@ -249,6 +249,14 @@ IF(LIBRT)
 	SC_LIB_LINK_LIBRARIES(core ${LIBRT})
 ENDIF()
 
+# Disable floating expression contraction. This would utilize fmadd operations
+# on SSE3 and ARM architectures which will lead to different results with e.g.
+# LocSAT. Since there is no noticable speed penalty, this compiler feature
+# will be disbled.
+IF(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+	TARGET_COMPILE_OPTIONS(seiscomp_core PRIVATE "-ffp-contract=off")
+ENDIF()
+
 
 # ------------------------------------------------------------------------------
 # CLIENT LIBRARY
