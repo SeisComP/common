@@ -208,12 +208,10 @@ DataModel::Origin *ExternalLocator::relocate(const DataModel::Origin *origin) {
 	close(outPipe[1]);
 
 	IO::XMLArchive ar;
-	DataModel::Origin *tmp;
 
 	{
 		// TODO: Append picks and wrap it in EventParameters
-		bool wasEnabled = DataModel::PublicObject::IsRegistrationEnabled();
-		DataModel::PublicObject::SetRegistrationEnabled(false);
+		DataModel::RegistrationDisableGuard guard;
 
 		DataModel::EventParametersPtr ep = new DataModel::EventParameters();
 
@@ -241,17 +239,29 @@ DataModel::Origin *ExternalLocator::relocate(const DataModel::Origin *origin) {
 
 		ostringstream oss;
 		ar.create(oss.rdbuf());
-		tmp = const_cast<DataModel::Origin*>(origin);
 		ar << ep;
 		ar.close();
-		tmp = nullptr;
 		string content = oss.str();
-		write(inPipe[1], content.c_str(), content.size());
-		DataModel::PublicObject::SetRegistrationEnabled(wasEnabled);
+		if ( write(inPipe[1], content.c_str(), content.size()) != static_cast<ssize_t>(content.size()) ) {
+			close(inPipe[1]);
+			close(outPipe[0]);
+			throw LocatorException("could not write complete document to input of script");
+		}
 	}
 
 	// Done with writing
 	close(inPipe[1]);
+
+	string content;
+
+	char buf[512];
+	int r;
+	while ( (r = read(outPipe[0], buf, 512)) > 0 ) {
+		content += string(buf, r);
+	}
+
+	// Close parent channel
+	close(outPipe[0]);
 
 	// Wait for script
 	int status = 0;
@@ -265,23 +275,15 @@ DataModel::Origin *ExternalLocator::relocate(const DataModel::Origin *origin) {
 	if ( WIFEXITED(status) ) {
 		int exit = WEXITSTATUS(status);
 		if ( exit == EXIT_SUCCESS ) {
-			string content;
-			char buf[512];
-			int r;
-			while ( (r = read(outPipe[0], buf, 512)) > 0 ) {
-				content += string(buf, r);
-			}
-
-			// Close parent channel
-			close(outPipe[0]);
-
 			istringstream iss(content);
+			DataModel::Origin *tmp;
 			ar.open(iss.rdbuf());
 			ar >> tmp;
 			ar.close();
 
-			if ( !tmp )
+			if ( !tmp ) {
 				throw LocatorException("no origin in result document");
+			}
 
 			if ( tmp->publicID() == origin->publicID() ) {
 				DataModel::PublicObject::GenerateId(tmp);
@@ -290,9 +292,6 @@ DataModel::Origin *ExternalLocator::relocate(const DataModel::Origin *origin) {
 			return tmp;
 		}
 	}
-
-	// Close parent channel
-	close(outPipe[0]);
 
 	throw LocatorException("external script exited with error");
 }
