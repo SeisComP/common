@@ -2132,7 +2132,6 @@ bool Application::readMessages() {
 		// We should never step into this case
 		if ( _connection->isConnected() ) {
 			SEISCOMP_ERROR("Internal error: still connected");
-			return true;
 		}
 
 		SEISCOMP_WARNING("Connection lost, trying to reconnect");
