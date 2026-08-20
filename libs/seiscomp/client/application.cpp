@@ -1549,7 +1549,10 @@ void Application::done() {
 	}
 
 	_connection = nullptr;
-	_query = nullptr;
+	if ( _query ) {
+		_query->setDriver(nullptr);
+		_query = nullptr;
+	}
 	_database = nullptr;
 
 	Inventory::Reset();
@@ -1559,7 +1562,7 @@ void Application::done() {
 
 	System::Application::done();
 
-	SEISCOMP_DEBUG("Leaving ::done");
+	SEISCOMP_DEBUG("Done");
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
