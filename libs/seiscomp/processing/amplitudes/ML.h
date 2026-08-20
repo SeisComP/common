@@ -42,6 +42,7 @@ class SC_SYSTEM_CLIENT_API AbstractAmplitudeProcessor_ML : public AmplitudeProce
 		std::string parameter(Capability cap) const override;
 
 		bool setup(const Settings &settings) override;
+		void finalizeAmplitude(DataModel::Amplitude *amplitude) const override;
 
 
 	protected:

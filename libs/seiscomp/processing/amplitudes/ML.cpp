@@ -21,6 +21,7 @@
 #define SEISCOMP_COMPONENT AmplitudeML
 
 #include <seiscomp/logging/log.h>
+#include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/processing/regions.h>
 #include <seiscomp/processing/amplitudes/ML.h>
 #include <seiscomp/math/mean.h>
@@ -440,6 +441,18 @@ void AbstractAmplitudeProcessor_ML::setDefaultConfiguration() {
 	_amplitudeMeasureType = AbsMax;
 	_preFilter = string();
 	_applyWA = true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AbstractAmplitudeProcessor_ML::finalizeAmplitude(DataModel::Amplitude *amp) const {
+	AmplitudeProcessor::finalizeAmplitude(amp);
+	if ( amp && !_preFilter.empty() ) {
+		amp->setFilterID(_preFilter);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
