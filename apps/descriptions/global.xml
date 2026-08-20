@@ -27,6 +27,17 @@
 				on which it runs.
 				</description>
 			</parameter>
+			<parameter name="populateCIVersionAttribute" type="boolean" default="false">
+				<description>
+				Whether to populate creationInfo.version with the current framework
+				version or not. Even if this flag is activated it is not guaranteed that
+				every application will populate the version attribute. Applications and
+				components can still create and populate creationInfo objects as they
+				think what is the correct way.
+				It is nevertheless implemented in all SeisComP processing and
+				GUI applications.
+				</description>
+			</parameter>
 			<parameter name="plugins" type="list:string">
 				<description>
 				List of plugins loaded at startup. Separate multiple names by
