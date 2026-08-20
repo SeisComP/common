@@ -50,6 +50,7 @@ namespace Core {
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
    - Added Seiscomp::Core::Flags
    - Added Seiscomp::IO::HTTPClient
+   - Added Seiscomp::Client::Application::generateCreationInfo
 
  "17.3.0"   0x110300
    - Added Seiscomp::Utils::V2::LeExpression
