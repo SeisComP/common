@@ -405,6 +405,7 @@ Result WebsocketConnection::connect(const char *address,
 
 		_getcount = 0;
 		_getp = _buffer;
+		_recvFrame.reset();
 
 		HttpResponse resp;
 		while ( true ) {
@@ -1305,6 +1306,11 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 				if ( len <= 0 ) {
 					SEISCOMP_ERROR("WS::readFrame consume error: %d -> %d",
 					               _getcount, len);
+					if ( len < 0 ) {
+						closeSocket("Websocket protocol error");
+						frame.reset();
+						return NetworkProtocolError;
+					}
 					return Error;
 				}
 
