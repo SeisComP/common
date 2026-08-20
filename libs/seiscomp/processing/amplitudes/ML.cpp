@@ -364,7 +364,7 @@ bool AbstractAmplitudeProcessor_ML::computeAmplitude(
 		}
 
 		case PeakTrough:
-			if ( _config.iaspeiAmplitudes ) {
+			if ( _config.behavior.check(Config::Behavior::IASPEIConformance) ) {
 				IASPEI::AmplitudePeriodMeasurement amp;
 
 				auto offset = Math::Statistics::mean(si2 - si1, data.typedData() + si1);

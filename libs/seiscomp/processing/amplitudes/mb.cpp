@@ -165,7 +165,7 @@ bool AmplitudeProcessor_mb::computeAmplitude(
 	double amax, pmax;
 	int imax;
 
-	if ( _config.iaspeiAmplitudes ) {
+	if ( _config.behavior.check(Config::Behavior::IASPEIConformance) ) {
 		IASPEI::AmplitudePeriodMeasurement m;
 
 		bool OK = IASPEI::measureAmplitudePeriod(n, f, offset, si1, si2, m);
@@ -266,7 +266,7 @@ void AmplitudeProcessor_mb::finalizeAmplitude(DataModel::Amplitude *amplitude) c
 	catch ( ... ) {
 	}
 
-	if (_config.iaspeiAmplitudes) {
+	if ( _config.behavior.check(Config::Behavior::IASPEIConformance) ) {
 		amplitude->setMethodID("IASPEI mb amplitude");
 	}
 }

@@ -20,6 +20,7 @@
 
 #define SEISCOMP_COMPONENT AmplitudeProcessor
 
+#include <seiscomp/datamodel/amplitude.h>
 #include <seiscomp/datamodel/pick.h>
 #include <seiscomp/processing/amplitudeprocessor.h>
 #include <seiscomp/processing/regions.h>
@@ -2374,10 +2375,14 @@ bool AmplitudeProcessor::setup(const Settings &settings) {
 		}
 	}
 
-	try { _config.iaspeiAmplitudes = cfg->getBool("amplitudes.iaspei"); }
+	try {
+		if ( cfg->getBool("amplitudes.iaspei") ) {
+			_config.behavior.set(Config::Behavior::IASPEIConformance);
+		}
+	}
 	catch ( ... ) {}
 
-	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.iaspeiAmplitudes);
+	SEISCOMP_DEBUG("  + IASPEI mode = %i", _config.behavior.check(Config::Behavior::IASPEIConformance));
 
 	if ( targetComponent() >= VerticalComponent && targetComponent() <= SecondHorizontalComponent ) {
 		SignalUnit unit;
@@ -2616,9 +2621,7 @@ void AmplitudeProcessor::emitAmplitude(const Result &res) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void AmplitudeProcessor::finalizeAmplitude(DataModel::Amplitude *) const {
-	// Do nothing
-}
+void AmplitudeProcessor::finalizeAmplitude(DataModel::Amplitude *amp) const {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

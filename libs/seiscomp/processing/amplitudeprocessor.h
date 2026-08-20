@@ -22,6 +22,7 @@
 #define SEISCOMP_PROCESSING_AMPLITUDEPROCESSOR_H
 
 
+#include <seiscomp/core/flags.h>
 #include <seiscomp/core/interfacefactory.h>
 #include <seiscomp/processing/timewindowprocessor.h>
 #include <seiscomp/math/filter/seismometers.h>
@@ -158,9 +159,15 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 
 			Math::SeismometerResponse::WoodAnderson::Config woodAndersonResponse;
 
-			// If true, compute amplitudes according to the recommendations of the
-			// IASPEI CoSOI Magnitude Working Group. Currently only affects mb.
-			bool       iaspeiAmplitudes{false};
+			enum class Behavior {
+				NothingSpecial    = 0x00,
+				IASPEIConformance = 0x01  //!< If set, compute amplitudes according
+				                          //!< to the recommendations of the IASPEI CoSOI
+				                          //!< Magnitude Working Group. Currently only
+				                          //!< affects mb and ML*.
+			};
+
+			Core::Flags<Behavior> behavior{Behavior::NothingSpecial};
 		};
 
 		struct Locale : Config {
@@ -387,7 +394,7 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 		 * @brief Allows to finalize an amplitude object as created by
 		 *        client code.
 		 *
-		 * This method will usually be called right before the amplitude will
+		 * This method will be called right before the amplitude will
 		 * be stored or sent and inside the emit handler. It allows processors
 		 * to set specific attributes or to add comments.
 		 * The default implementation does nothing.
@@ -529,16 +536,16 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			FilterCreated   = 0x02  // The unit conversion filter has been created
 		};
 
-		void set(State flag) {
-			_state |= static_cast<unsigned>(flag);
+		constexpr void set(State flag) {
+			_state.set(flag);
 		}
 
-		void clear(State flag) {
-			_state &= ~static_cast<unsigned>(flag);
+		constexpr void clear(State flag) {
+			_state.clear(flag);
 		}
 
-		bool check(State flag) const {
-			return _state & static_cast<unsigned>(flag);
+		constexpr bool check(State flag) const {
+			return _state.check(flag);
 		}
 
 
@@ -546,8 +553,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 	//  Private Members
 	// ----------------------------------------------------------------------
 	private:
-		unsigned    _state{static_cast<unsigned>(State::Empty)};
-		PublishFunc _func;
+		Core::Flags<State> _state{State::Empty};
+		PublishFunc        _func;
 
 
 	friend class AmplitudeProcessorAliasFactory;

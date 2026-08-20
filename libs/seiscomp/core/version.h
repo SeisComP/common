@@ -49,6 +49,7 @@ namespace Core {
  ******************************************************************************
  "18.0.0"   0x120000
    - Changed Seiscomp::Gui::EventLayer::SymbolMap
+   - Added Seiscomp::Core::Flags
    - Added Seiscomp::Gui::Ruler::setSelectionHandleColor
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
    - Removed Seiscomp::Gui::StationMagnitudeModel
