@@ -89,6 +89,9 @@ using namespace Seiscomp::IO;
 namespace {
 
 
+bool populateCreationInfoVersionAttribute = false;
+
+
 struct AppResolver : public Util::VariableResolver {
 	AppResolver(const std::string& name)
 	 : _name(name) {}
@@ -1599,6 +1602,11 @@ bool Application::initConfiguration() {
 		return false;
 	}
 
+	try {
+		populateCreationInfoVersionAttribute = configGetBool("populateCIVersionAttribute");
+	}
+	catch ( ... ) {}
+
 	copy(
 		_settings.processing.agencyBlocklist.begin(),
 		_settings.processing.agencyBlocklist.end(),
@@ -2476,7 +2484,9 @@ DataModel::CreationInfo Application::generateCreationInfo() const {
 	ci.setAgencyID(agencyID());
 	ci.setAuthor(author());
 	ci.setCreationTime(Core::Time::UTC());
-	ci.setVersion(Core::CurrentVersion.api().toString());
+	if ( populateCreationInfoVersionAttribute ) {
+		ci.setVersion(Core::CurrentVersion.api().toString());
+	}
 	return ci;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
