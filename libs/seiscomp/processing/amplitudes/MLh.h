@@ -78,6 +78,8 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor_ML2h : public AmplitudeProcessor {
 		const AmplitudeProcessor *componentProcessor(Component comp) const override;
 		const DoubleArray *processedData(Component comp) const override;
 
+		void finalizeAmplitude(DataModel::Amplitude *amp) const override;
+
 		void reprocess(OPT(double) searchBegin, OPT(double) searchEnd) override;
 
 
