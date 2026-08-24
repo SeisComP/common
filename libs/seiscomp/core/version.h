@@ -60,6 +60,8 @@ namespace Core {
    - Added Seiscomp::Core::Flags
    - Added Seiscomp::IO::HTTPClient
    - Added Seiscomp::Client::Application::generateCreationInfo
+   - Added Seiscomp::IO::DatabaseInterface::Query
+   - Added Seiscomp::IO::DatabaseInterface::Parse
 
  "17.3.0"   0x110300
    - Added Seiscomp::Utils::V2::LeExpression
