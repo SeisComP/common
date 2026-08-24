@@ -318,13 +318,21 @@ DatabaseIterator getEventOriginReferences(DatabaseArchive *ar, const EventListVi
 	std::ostringstream oss;
 	oss << "select OriginReference.* "
 	    << "from PublicObject as POrigin, Origin, "
-	    << "OriginReference, Event ";
+	    << "OriginReference, Event";
 
-	if ( filterMagnitude ) {
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
 	}
 
-	oss << "where POrigin._oid = Origin._oid";
+	if ( filterMagnitude ) {
+		oss << ", PublicObject as PMagnitude,  Magnitude";
+	}
+
+	oss << " where POrigin._oid = Origin._oid";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid = Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -360,13 +368,21 @@ DatabaseIterator getEventFocalMechanismReferences(DatabaseArchive *ar, const Eve
 	std::ostringstream oss;
 	oss << "select FocalMechanismReference.* "
 	    << "from PublicObject as POrigin, Origin, "
-	    << "FocalMechanismReference, Event ";
+	    << "FocalMechanismReference, Event";
 
-	if ( filterMagnitude ) {
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
 	}
 
-	oss << "where POrigin._oid = Origin._oid";
+	if ( filterMagnitude ) {
+		oss << ", PublicObject as PMagnitude,  Magnitude";
+	}
+
+	oss << " where POrigin._oid = Origin._oid";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -403,13 +419,21 @@ DatabaseIterator getEventOrigins(DatabaseArchive *ar, const EventListView::Filte
 	oss << "select PAssocOrigin." << _T("publicID") << ", AssocOrigin.* "
 	    << "from PublicObject as PAssocOrigin, Origin as AssocOrigin, "
 	    <<      "Event, OriginReference, "
-	    <<      "PublicObject as POrigin, Origin ";
+	    <<      "PublicObject as POrigin, Origin";
 
-	if ( filterMagnitude ) {
-		oss << ", PublicObject as PMagnitude,  Magnitude ";
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
 	}
 
-	oss << "where PAssocOrigin._oid = AssocOrigin._oid and POrigin._oid = Origin._oid";
+	if ( filterMagnitude ) {
+		oss << ", PublicObject as PMagnitude,  Magnitude";
+	}
+
+	oss << " where PAssocOrigin._oid = AssocOrigin._oid and POrigin._oid = Origin._oid";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -444,10 +468,19 @@ DatabaseIterator getEventMagnitudes(DatabaseArchive *ar, const EventListView::Fi
 	std::ostringstream oss;
 	oss << "select PMagnitude." << _T("publicID") << ", Magnitude.* "
 	    << "from PublicObject as PMagnitude, Magnitude, "
-	    <<      "Event, PublicObject as POrigin, Origin "
-	    << "where PMagnitude._oid = Magnitude._oid and POrigin._oid = Origin._oid and "
-	    <<       "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and "
-	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
+	    <<      "Event, PublicObject as POrigin, Origin";
+
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
+	oss << " where PMagnitude._oid = Magnitude._oid and POrigin._oid = Origin._oid and "
+	    <<        "Event." << _T("preferredMagnitudeID") << " = PMagnitude." << _T("publicID") << " and "
+	    <<        "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	addFilterConstraints(oss, ar, filter);
 
@@ -474,12 +507,20 @@ DatabaseIterator getEventPreferredOrigins(DatabaseArchive *ar, const EventListVi
 	oss << "select POrigin." << _T("publicID") << ", Origin.* "
 	    << "from PublicObject as POrigin, Origin, Event";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude";
 	}
 
 	oss << " where POrigin._oid = Origin._oid and "
 	    <<       "Event." << _T("preferredOriginID") << " = POrigin." << _T("publicID");
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -514,12 +555,19 @@ DatabaseIterator getEventFocalMechanisms(DatabaseArchive *ar, const EventListVie
 	    <<      "Event, FocalMechanismReference, "
 	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude";
 	}
 
 	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PPrefOrigin._oid = PrefOrigin._oid";
 
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -560,6 +608,10 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 	    <<      "Event, FocalMechanismReference, "
 	    <<      "PublicObject as PPrefOrigin, Origin as PrefOrigin";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss << ", PublicObject as PMagnitude,  Magnitude";
 	}
@@ -567,6 +619,9 @@ DatabaseIterator getEventMomentTensors(DatabaseArchive *ar, const EventListView:
 	oss << " where PFocalMechanism._oid = FocalMechanism._oid and PMomentTensor._oid = MomentTensor._oid and "
 	    <<       "PPrefOrigin._oid = PrefOrigin._oid";
 
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -692,12 +747,20 @@ DatabaseIterator getComments4Events(DatabaseArchive *ar, const EventListView::Fi
 		<<      "PublicObject as POrigin, "
 		<<      "Comment";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -734,12 +797,20 @@ DatabaseIterator getComments4PrefOrigins(DatabaseArchive *ar, const EventListVie
 		<<      "PublicObject as POrigin, "
 		<<      "Comment";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
@@ -776,12 +847,20 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 		<<      "PublicObject as POrigin, "
 		<<      "EventDescription";
 
+	if ( !filter.eventID.empty() ) {
+		oss << ", PublicObject as PEvent";
+	}
+
 	if ( filterMagnitude ) {
 		oss <<  ", PublicObject as PMagnitude,  Magnitude";
 	}
 
 	oss	<< " where Origin." << _T("time_value") << " >= '" << ar->driver()->timeToString(filter.startTime) << "' and "
 		<<       "Origin." << _T("time_value") << " <= '" << ar->driver()->timeToString(filter.endTime)   << "'";
+
+	if ( !filter.eventID.empty() ) {
+		oss << " and PEvent._oid=Event._oid";
+	}
 
 	if ( filterMagnitude ) {
 		oss << " and "
