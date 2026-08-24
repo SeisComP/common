@@ -230,7 +230,7 @@ size_t GeoFeatureSet::readBNADir(const string& dirPath) {
 	              (Core::Time::UTC()-start).length());
 
 	// Sort the features according to their rank
- 	sort(_features.begin(), _features.end(), compareByRank);
+	stable_sort(_features.begin(), _features.end(), compareByRank);
 
 	return fileCount;
 }
@@ -261,7 +261,7 @@ size_t GeoFeatureSet::readDir(const std::string &dirPath) {
 	              (Core::Time::UTC()-start).length());
 
 	// Sort the features according to their rank
- 	sort(_features.begin(), _features.end(), compareByRank);
+ 	stable_sort(_features.begin(), _features.end(), compareByRank);
 
 	return fileCount;
 }
