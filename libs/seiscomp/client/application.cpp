@@ -1202,10 +1202,6 @@ bool Application::init() {
 
 	showMessage("");
 
-	if ( _connection ) {
-		startMessageThread();
-	}
-
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1366,6 +1362,10 @@ bool Application::reloadBindings() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Application::run() {
+	if ( _connection ) {
+		startMessageThread();
+	}
+
 	_sohLastUpdate = Time::Now();
 
 	if ( _settings.soh.interval > 0 ) {
