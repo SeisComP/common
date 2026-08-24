@@ -1289,6 +1289,10 @@ class Application(seiscomp.system.SystemApplication):
         r"""handleNotifier(Application self, Notifier notifier)"""
         return _client.Application_handleNotifier(self, notifier)
 
+    def generateCreationInfo(self):
+        r"""generateCreationInfo(Application self) -> CreationInfo"""
+        return _client.Application_generateCreationInfo(self)
+
     @staticmethod
     def Instance():
         r"""Instance() -> Application"""
