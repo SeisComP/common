@@ -2520,7 +2520,7 @@ class EventFilterWidget : public QWidget {
 				f.maxPhaseCount = _ui.toPhase->value();
 			}
 
-			f.eventID = _ui.editEventID->text().toStdString();
+			f.eventID = _ui.editEventID->text().trimmed().toStdString();
 
 			return f;
 		}
