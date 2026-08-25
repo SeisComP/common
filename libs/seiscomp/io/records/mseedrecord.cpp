@@ -353,6 +353,17 @@ void MSeedRecord::setDataQuality(char qual) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const Array *MSeedRecord::encode() {
+	boost::iostreams::stream<Core::ContainerSink<CharArray::DataArray>> os(_raw.impl());
+	write(os);
+	return raw();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const Array *MSeedRecord::raw() const {
 	return &_raw;
 }

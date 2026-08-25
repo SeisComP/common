@@ -53,6 +53,7 @@ namespace Core {
    - Added Seiscomp::Client::Application::generateCreationInfo
    - Added Seiscomp::IO::DatabaseInterface::Query
    - Added Seiscomp::IO::DatabaseInterface::Parse
+   - Added Seiscomp::IO::MSeedRecord::encode
 
  "17.3.0"   0x110300
    - Added Seiscomp::Utils::V2::LeExpression
