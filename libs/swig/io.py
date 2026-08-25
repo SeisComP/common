@@ -1575,6 +1575,10 @@ class MSeedRecord(seiscomp.core.Record):
         r"""setOutputRecordLength(MSeedRecord self, int reclen)"""
         return _io.MSeedRecord_setOutputRecordLength(self, reclen)
 
+    def encode(self):
+        r"""encode(MSeedRecord self) -> Array"""
+        return _io.MSeedRecord_encode(self)
+
     def read(self, _in):
         r"""read(MSeedRecord self, std::istream & _in)"""
         return _io.MSeedRecord_read(self, _in)

@@ -27855,6 +27855,43 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_MSeedRecord_encode(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::IO::MSeedRecord *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::Array *result = 0 ;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__IO__MSeedRecord, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "MSeedRecord_encode" "', argument " "1"" of type '" "Seiscomp::IO::MSeedRecord *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::IO::MSeedRecord * >(argp1);
+  {
+    try {
+      result = (Seiscomp::Array *)(arg1)->encode();
+    }
+    catch ( const Seiscomp::Core::ValueException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Seiscomp__Array, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_MSeedRecord_read(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::IO::MSeedRecord *arg1 = 0 ;
@@ -37645,6 +37682,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "MSeedRecord_useEncoding", _wrap_MSeedRecord_useEncoding, METH_VARARGS, "MSeedRecord_useEncoding(MSeedRecord self, bool flag)"},
 	 { "MSeedRecord_setLittleEndian", _wrap_MSeedRecord_setLittleEndian, METH_VARARGS, "MSeedRecord_setLittleEndian(MSeedRecord self, bool flag)"},
 	 { "MSeedRecord_setOutputRecordLength", _wrap_MSeedRecord_setOutputRecordLength, METH_VARARGS, "MSeedRecord_setOutputRecordLength(MSeedRecord self, int reclen)"},
+	 { "MSeedRecord_encode", _wrap_MSeedRecord_encode, METH_O, "MSeedRecord_encode(MSeedRecord self) -> Array"},
 	 { "MSeedRecord_read", _wrap_MSeedRecord_read, METH_VARARGS, "MSeedRecord_read(MSeedRecord self, std::istream & _in)"},
 	 { "MSeedRecord_write", _wrap_MSeedRecord_write, METH_VARARGS, "MSeedRecord_write(MSeedRecord self, std::ostream & out)"},
 	 { "delete_MSeedRecord", _wrap_delete_MSeedRecord, METH_O, "delete_MSeedRecord(MSeedRecord self)"},

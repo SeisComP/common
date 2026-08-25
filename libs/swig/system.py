@@ -311,6 +311,9 @@ class PluginRegistry(object):
 # Register PluginRegistry in _system:
 _system.PluginRegistry_swigregister(PluginRegistry)
 
+def resolvePath(value):
+    return _system.resolvePath(value)
+
 def join(prefix, relativeName):
     return _system.join(prefix, relativeName)
 class SystemApplication(object):

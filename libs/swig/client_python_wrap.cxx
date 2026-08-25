@@ -24207,6 +24207,46 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Application_generateCreationInfo(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  Seiscomp::DataModel::CreationInfo result;
+  
+  (void)self;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_generateCreationInfo" "', argument " "1"" of type '" "Seiscomp::Client::Application const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  {
+    try {
+      result = ((Seiscomp::Client::Application const *)arg1)->generateCreationInfo();
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_NewPointerObj((new Seiscomp::DataModel::CreationInfo(result)), SWIGTYPE_p_Seiscomp__DataModel__CreationInfo, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Application_Instance(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Swig::Director *director = 0;
@@ -32979,6 +33019,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "Application_reloadBindings", _wrap_Application_reloadBindings, METH_O, "Application_reloadBindings(Application self) -> bool"},
 	 { "Application_injectMessage", _wrap_Application_injectMessage, METH_VARARGS, "Application_injectMessage(Application self, Message msg, Packet pkt=None)"},
 	 { "Application_handleNotifier", _wrap_Application_handleNotifier, METH_VARARGS, "Application_handleNotifier(Application self, Notifier notifier)"},
+	 { "Application_generateCreationInfo", _wrap_Application_generateCreationInfo, METH_O, "Application_generateCreationInfo(Application self) -> CreationInfo"},
 	 { "Application_Instance", _wrap_Application_Instance, METH_NOARGS, "Application_Instance() -> Application"},
 	 { "Application_validateParameters", _wrap_Application_validateParameters, METH_O, "Application_validateParameters(Application self) -> bool"},
 	 { "Application_handlePreFork", _wrap_Application_handlePreFork, METH_O, "Application_handlePreFork(Application self) -> bool"},
