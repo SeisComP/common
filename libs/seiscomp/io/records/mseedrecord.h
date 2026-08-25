@@ -137,6 +137,14 @@ class SC_SYSTEM_CORE_API MSeedRecord: public Record {
 		//! Sets the record length used for the output
 		void setOutputRecordLength(int reclen);
 
+		/**
+		 * @brief Encodes the current state as MiniSEED.
+		 * This method overwrites the possibly read raw data with the updated
+		 * encoding state. It takes the currently set encoding and output
+		 * record length into account.
+		 */
+		const Array *encode();
+
 		//! Extract the packed MSeedRecord attributes from the given stream
 		void read(std::istream &in) override;
 
