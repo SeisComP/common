@@ -1238,7 +1238,13 @@ Result WebsocketConnection::disconnect() {
 	_backlog.clear();
 	_outbox.clear();
 
-	return Socket::close();
+	// We close the socket before we clear the select device group
+	// to avoid concurrency issues
+	auto res = Socket::close();
+
+	_select.clear();
+
+	return res;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
