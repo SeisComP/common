@@ -9,39 +9,49 @@
 			<extend-struct type="ttt profile" match-name="homogeneous">
 				<struct type="table profile">
 					<description>
-					Parameters defining the area where the profile applies
-					and the P/S velocities. Once defined, the profile can
-					be registered in ttt.homogeneous.tables
+					Parameters defining the source area where the profiles applies
+					and the velocities. Once defined, the profile can
+					be registered in &quot;ttt.homogeneous.tables&quot;.
 					</description>
 					<parameter name="origin" type="list:double" unit="deg">
 						<description>
-						Geographic origin of the region. Expects 2 values:
+						Geographic origin of the region. Expects 2 values as:
 						latitude, longitude.
 						</description>
 					</parameter>
 					<parameter name="radius" type="double" unit="km">
 						<description>
-						Radius validity of the region.
+						Maximum radius around &quot;origin&quot;.
 						</description>
 					</parameter>
 					<parameter name="minDepth" type="double" unit="km">
 						<description>
-						Min Depth validity of the region.
+						Minimum source depth.
 						</description>
 					</parameter>
 					<parameter name="maxDepth" type="double" unit="km">
 						<description>
-						Max Depth validity of the region.
+						Maximum depth source.
+						</description>
+					</parameter>
+					<parameter name="velocities" type="list:string" unit="phase:km/s">
+						<description>
+						List of tuples of phase type and velocity. Example:
+
+						P:5.5,S:3.8,Is:0.3
+
+						Overrides &quot;P-velocity&quot; and and
+						&quot;S-velocity&quot;.
 						</description>
 					</parameter>
 					<parameter name="P-velocity" type="double" unit="km/s">
 						<description>
-						P wave velocity.
+						P wave velocity. Overridden by &quot;velocities&quot;.
 						</description>
 					</parameter>
 					<parameter name="S-velocity" type="double" unit="km/s">
 						<description>
-						S wave velocity.
+						S wave velocity. Overridden by &quot;velocities&quot;.
 						</description>
 					</parameter>
 				</struct>
