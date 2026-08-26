@@ -22,6 +22,8 @@
 #include <seiscomp/system/application.h>
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/geo/coordinate.h>
+#include <seiscomp/logging/log.h>
 #include <seiscomp/math/geo.h>
 #include <seiscomp/datamodel/config.h>
 #include <seiscomp/system/environment.h>
@@ -29,6 +31,7 @@
 
 #include <string>
 #include <cmath>
+#include <map>
 #include <vector>
 
 
@@ -82,20 +85,19 @@ class Homogeneous : public TravelTimeTableInterface {
 		double
 		computeTime(const char *phase,
 		            double lat1, double lon1, double dep1,
-		            double lat2, double lon2, double elev2=0.,
+		            double lat2, double lon2, double alt2=0.,
 		            int ellc = 1) override;
 
 		bool isInside(double lat, double lon, double dep);
 
 	private:
 		std::string _model;
-		double _pVel = 1; // [km/s]
-		double _sVel = 1; // [km/s]
-		double _centerLat = 0; // [degree]
-		double _centerLon = 0; // [degree]
-		double _radius = 0; // [km]
-		double _minDepth = 0; // [km]
-		double _maxDepth = 0; // [km]
+		std::map<string, double> _velocities;
+		double _centerLat{0}; // [degree]
+		double _centerLon{0}; // [degree]
+		double _radius{0}; // [km]
+		double _minDepth{0}; // [km]
+		double _maxDepth{0}; // [km]
 };
 
 
@@ -116,7 +118,8 @@ double computeDistance(double lat1, double lon1,
 
 
 bool Homogeneous::setModel(const string &model) {
-
+	_velocities.clear();
+	std::map<string, double> velocitiesModel;
 	// load global configuration
 	auto app = Seiscomp::System::Application::Instance();
 	const Config::Config *cfg;
@@ -137,24 +140,78 @@ bool Homogeneous::setModel(const string &model) {
 	string base = "ttt.homogeneous." + model + ".";
 	vector<string> origin;
 	try {
-		_pVel      = cfg->getDouble(base + "P-velocity");
-		_sVel      = cfg->getDouble(base + "S-velocity");
-		_radius    = cfg->getDouble(base + "radius");
-		_minDepth  = cfg->getDouble(base + "minDepth");
-		_maxDepth  = cfg->getDouble(base + "maxDepth");
+		vector<string> velocities = cfg->getStrings(base + "velocities");
+		for ( const auto &velocity : velocities ) {
+			vector<string> toks;
+			if ( Core::split(toks, velocity.c_str(), ":") != 2 ) {
+				SEISCOMP_ERROR("Invalid configuration of '%svelocities'", base);
+				return false;
+			}
+
+			double vel;
+			if ( !Core::fromString(vel, toks[1]) ) {
+				SEISCOMP_ERROR("Invalid configuration of '%svelocities': '%s'",
+				               base, velocity);
+			    return false;
+			}
+			velocitiesModel[toks[0]] = vel;
+		}
+		SEISCOMP_DEBUG("Found configuration of '%svelocities': Ignoring "
+		               "'P-velocity', 'S-velocity'", base);
+	}
+	catch ( ... ) {
+		try {
+			velocitiesModel["P"] = cfg->getDouble(base + "P-velocity");
+			velocitiesModel["S"] = cfg->getDouble(base + "S-velocity");
+		}
+		catch ( ... ) {
+			return false;
+		}
+	}
+
+	for ( const auto &velocity : velocitiesModel ) {
+		if ( velocity.second <= 0 ) {
+			SEISCOMP_ERROR("%svelocities: Found invalid %s velocity = %.3f",
+			               base, velocity.first, velocity.second);
+			return false;
+		}
+	}
+
+	double radius;
+	double minDepth;
+	double maxDepth;
+	try {
+		radius    = cfg->getDouble(base + "radius");
+		minDepth  = cfg->getDouble(base + "minDepth");
+		maxDepth  = cfg->getDouble(base + "maxDepth");
 		origin = cfg->getStrings(base + "origin");
 	}
 	catch ( ... ) {
+		SEISCOMP_ERROR("Incomplete configuration of source region for homogeneous model %s",
+		               model);
+		return false;
+	}
+
+	if ( (radius <= 0) || minDepth > maxDepth ) {
+		SEISCOMP_ERROR("Inconsistent configuration of source region for homogeneous model %s",
+		               model);
 		return false;
 	}
 
 	if ( origin.size() != 2                         ||
 	   ! Core::fromString(_centerLat, origin.at(0)) ||
 	   ! Core::fromString(_centerLon, origin.at(1)) ) {
+		SEISCOMP_ERROR("Incomplete configuration of %sorigin for homogeneous model",
+		               base);
 		return false;
 	}
+	Seiscomp::Geo::GeoCoordinate::normalizeLatLon(_centerLat, _centerLon);
 
+	_radius = radius;
+	_minDepth = minDepth;
+	_maxDepth = maxDepth;
 	_model = model;
+	_velocities = velocitiesModel;
 	return true;
 }
 
@@ -170,14 +227,20 @@ Homogeneous::compute(double lat1, double lon1, double dep1,
 	TravelTimeList *ttlist = new TravelTimeList;
 	ttlist->delta = computeDistance(lat1, lon1, lat2, lon2);
 	ttlist->depth = dep1;
-	try {
-		ttlist->push_back(compute("P", lat1, lon1, dep1, lat2, lon2,  alt2, ellc));
+
+	// tolerate missing travel time and except whatever is available
+	for ( const auto &velocityMap : _velocities ) {
+			try {
+				ttlist->push_back(compute(velocityMap.first.c_str(), lat1, lon1, dep1,
+				                          lat2, lon2, alt2, ellc));
+			}
+			catch ( ... ) {}
+		}
+
+	if ( ttlist->empty() ) {
+		throw NoPhaseError();
 	}
-	catch (const NoPhaseError& e ) { }
-	try {
-		ttlist->push_back(compute("S", lat1, lon1, dep1, lat2, lon2,  alt2, ellc));
-	}
-	catch (const NoPhaseError& e ) { }
+
 	ttlist->sortByTime();
 	return ttlist;
 }
@@ -203,20 +266,42 @@ Homogeneous::compute(const char *phase,
                      double lat1, double lon1, double dep1,
                      double lat2, double lon2, double alt2, int ellc) {
 	double velocity;
-	if ( phase[0] == 'P' || phase[0] == 'p' ) {
-		velocity = _pVel;
+	bool found = false;
+	for ( const auto &velocityMap : _velocities ) {
+		if ( phase == velocityMap.first ) {
+			found = true;
+			velocity = velocityMap.second;
+			break;
+		}
 	}
-	else if ( phase[0] == 'S' || phase[0] == 's' ) {
-		velocity = _sVel;
+
+	if ( !found ) {
+		if ( phase[0] == 'P' || phase[0] == 'p' ) {
+			auto it = _velocities.find("P");
+			if ( it == _velocities.end() ) {
+				throw NoPhaseError();
+			}
+			velocity = it->second;
+			found = true;
+		}
+		else if ( phase[0] == 'S' || phase[0] == 's' ) {
+			auto it = _velocities.find("S");
+			if ( it == _velocities.end() ) {
+				throw NoPhaseError();
+			}
+			velocity = it->second;
+			found = true;
+		}
 	}
-	else {
+
+	if ( !found ) {
 		throw NoPhaseError();
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
 		throw std::out_of_range(
 			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
-			                _model.c_str(), lat1, lon1, dep1)
+			                _model, lat1, lon1, dep1)
 		);
 	}
 
@@ -245,20 +330,42 @@ Homogeneous::computeTime(const char *phase,
                          double lat2, double lon2, double alt2,
                          int ellc) {
 	double velocity;
-	if ( phase[0] == 'P' || phase[0] == 'p' ) {
-		velocity = _pVel;
+	bool found = false;
+	for ( const auto &velocityMap : _velocities ) {
+		if ( phase == velocityMap.first ) {
+			found = true;
+			velocity = velocityMap.second;
+			break;
+		}
 	}
-	else if ( phase[0] == 'S' || phase[0] == 's' ) {
-		velocity = _sVel;
+
+	if ( !found ) {
+		if ( phase[0] == 'P' || phase[0] == 'p' ) {
+			auto it = _velocities.find("P");
+			if ( it == _velocities.end() ) {
+				throw NoPhaseError();
+			}
+			velocity = it->second;
+			found = true;
+		}
+		else if ( phase[0] == 'S' || phase[0] == 's' ) {
+			auto it = _velocities.find("P");
+			if ( it == _velocities.end() ) {
+				throw NoPhaseError();
+			}
+			velocity = it->second;
+			found = true;
+		}
 	}
-	else {
+
+	if ( !found ) {
 		throw NoPhaseError();
 	}
 
 	if ( !isInside(lat1, lon1, dep1) ) {
 		throw std::out_of_range(
 			Core::stringify("Source out of model %s range (lat %f lon %f depth %f)",
-			                _model.c_str(), lat1, lon1, dep1)
+			                _model, lat1, lon1, dep1)
 		);
 	}
 
@@ -276,12 +383,16 @@ Homogeneous::computeTime(const char *phase,
 TravelTime
 Homogeneous::computeFirst(double lat1, double lon1, double dep1,
                           double lat2, double lon2, double alt2, int ellc) {
-	if ( _pVel >= _sVel ) {
-		return compute("P", lat1, lon1, dep1, lat2, lon2,  alt2, ellc);
+	string firstPhase = "P";
+	double firstPhaseVelocity = -1;
+	for ( const auto &velocity : _velocities ) {
+		if ( velocity.second > firstPhaseVelocity ) {
+			firstPhaseVelocity = velocity.second;
+			firstPhase = velocity.first;
+		}
 	}
-	else {
-		return compute("S", lat1, lon1, dep1, lat2, lon2,  alt2, ellc);
-	}
+
+	return compute(firstPhase.c_str(), lat1, lon1, dep1, lat2, lon2,  alt2, ellc);
 }
 
 
