@@ -230,6 +230,11 @@ void ModulesPanel::setModel(ConfigurationTreeItemModel *model) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::applyModel() {
+	// Remember the selected module to restore it after the rebuild
+	auto *currentItem = _moduleTree->currentItem();
+	QString currentModule = currentItem && (currentItem->type() == 1) ?
+	                            currentItem->text(0) : QString();
+
 	((FancyView*)_moduleView)->setConfigStage(_model->configStage());
 	_moduleView->setModel(_model);
 
@@ -313,12 +318,47 @@ void ModulesPanel::applyModel() {
 		}
 	}
 
-	if ( firstModule ) {
+	// Keep the selected module, otherwise prefer the global module and fall
+	// back to the first one in the list
+	bool restored = !currentModule.isEmpty() && setCurrentModule(currentModule);
+
+	if ( !restored && !setCurrentModule("global") && firstModule ) {
 		_moduleTree->setCurrentItem(firstModule);
 		moduleSelected(firstModule, 0);
 	}
 
 	_modified = false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ModulesPanel::setCurrentModule(const QString &name) {
+	auto items = _moduleTree->findItems(name, Qt::MatchFixedString | Qt::MatchRecursive);
+
+	for ( auto *item : items ) {
+		// Skip category folders
+		if ( item->type() != 1 ) {
+			continue;
+		}
+
+		_moduleTree->setCurrentItem(item);
+		_moduleTree->scrollToItem(item);
+		return true;
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool ModulesPanel::setCurrentParameter(const QString &name) {
+	return static_cast<FancyView*>(_moduleView)->showParameter(name);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

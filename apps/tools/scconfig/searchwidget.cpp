@@ -18,9 +18,12 @@
  ***************************************************************************/
 
 
+#include "fancyview.h"
 #include "gui.h"
 #include "icon.h"
 #include "searchwidget.h"
+
+#include <seiscomp/system/model.h>
 
 #include <QCheckBox>
 #include <QFocusEvent>
@@ -31,11 +34,59 @@
 #include <QStyle>
 
 
+using namespace Seiscomp::System;
+
+
 namespace {
+
+
+// The parameters of the global module are shown either as the "global" section
+// of a binding or as the sections imported into a module configuration.
+bool isGlobalSection(const QModelIndex &idx) {
+	if ( idx.data(ConfigurationTreeItemModel::Type).toInt()
+	     != ConfigurationTreeItemModel::TypeSection ) {
+		return false;
+	}
+
+	auto *sec = reinterpret_cast<Section*>(
+	                idx.data(ConfigurationTreeItemModel::Link).value<void*>());
+	if ( !sec ) {
+		return false;
+	}
+
+	return (sec->name == "global")
+	    || (sec->description.compare(0, 27, "Import of global parameters") == 0);
+}
+
+
+// True if the shown module or binding is the global one, its parameters cannot
+// be excluded from the search then.
+bool showsGlobalModule(const QModelIndex &root) {
+	switch ( root.data(ConfigurationTreeItemModel::Type).toInt() ) {
+		case ConfigurationTreeItemModel::TypeModule: {
+			auto *mod = reinterpret_cast<Module*>(
+			                root.data(ConfigurationTreeItemModel::Link).value<void*>());
+			return mod && (mod->definition->name == "global");
+		}
+
+		case ConfigurationTreeItemModel::TypeBinding: {
+			auto *binding = reinterpret_cast<ModuleBinding*>(
+			                    root.data(ConfigurationTreeItemModel::Link).value<void*>());
+			auto *mod = binding ? static_cast<Module*>(binding->parent) : nullptr;
+			return mod && (mod->definition->name == "global");
+		}
+
+		default:
+			break;
+	}
+
+	return false;
+}
 
 
 void findMatch(QModelIndexList &hits, QModelIndex start, const QString &text,
                bool withNames, bool withValues, bool withHelp,
+               bool excludeGlobal,
                Qt::CaseSensitivity cs, bool fullMatch) {
 	const int rows = start.model()->rowCount(start);
 
@@ -55,23 +106,20 @@ void findMatch(QModelIndexList &hits, QModelIndex start, const QString &text,
 
 		if ( !hit && withNames ) {
 			hit = fullMatch ?
-				idx.data(Qt::DisplayRole).toString().compare(text, cs) == 0
-				:
-				idx.data(Qt::DisplayRole).toString().contains(text, cs);
+			          idx.data(Qt::DisplayRole).toString().compare(text, cs) == 0 :
+			          idx.data(Qt::DisplayRole).toString().contains(text, cs);
 		}
 
 		if ( !hit && withValues ) {
 			hit = fullMatch ?
-				idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().compare(text, cs) == 0
-				:
-				idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().contains(text, cs);
+			          idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().compare(text, cs) == 0 :
+			          idx.sibling(idx.row(), 2).data(Qt::DisplayRole).toString().contains(text, cs);
 		}
 
 		if ( !hit && withHelp ) {
 			hit = fullMatch ?
-				idx.data(Qt::ToolTipRole).toString().compare(text, cs) == 0
-				:
-				idx.data(Qt::ToolTipRole).toString().contains(text, cs);
+			          idx.data(Qt::ToolTipRole).toString().compare(text, cs) == 0 :
+			          idx.data(Qt::ToolTipRole).toString().contains(text, cs);
 		}
 
 		if ( hit ) {
@@ -91,29 +139,30 @@ void findMatch(QModelIndexList &hits, QModelIndex start, const QString &text,
 			continue;
 		}
 
+		if ( excludeGlobal && isGlobalSection(idx) ) {
+			continue;
+		}
+
 		bool hit = false;
 
 		if ( !hit && withNames ) {
 			hit = fullMatch ?
-				idx.data(Qt::DisplayRole).toString().compare(text, cs) == 0
-				:
-				idx.data(Qt::DisplayRole).toString().contains(text, cs)
-			;
+			          idx.data(Qt::DisplayRole).toString().compare(text, cs) == 0 :
+			          idx.data(Qt::DisplayRole).toString().contains(text, cs);
 		}
 
 		if ( !hit && withHelp ) {
 			hit = fullMatch ?
-				idx.data(Qt::ToolTipRole).toString().compare(text, cs) == 0
-				:
-				idx.data(Qt::ToolTipRole).toString().contains(text, cs)
-			;
+			          idx.data(Qt::ToolTipRole).toString().compare(text, cs) == 0 :
+			          idx.data(Qt::ToolTipRole).toString().contains(text, cs);
 		}
 
 		if ( hit ) {
 			hits.append(idx);
 		}
 
-		findMatch(hits, idx, text, withNames, withValues, withHelp, cs, fullMatch);
+		findMatch(hits, idx, text, withNames, withValues, withHelp, excludeGlobal,
+		          cs, fullMatch);
 	}
 }
 
@@ -181,6 +230,16 @@ SearchWidget::SearchWidget(QAbstractItemView *view, QWidget *parent)
 		intermediateSearch(_edit->text());
 	});
 
+	_excludeGlobal = new QCheckBox;
+	_excludeGlobal->setText(tr("Exclude &global"));
+	_excludeGlobal->setChecked(_excludeGlobalValue);
+	_excludeGlobal->setToolTip(tr("Skip the parameters inherited from the "
+	                              "global module"));
+	connect(_excludeGlobal, &QCheckBox::toggled, this, [this](bool state) {
+		_excludeGlobalValue = state;
+		intermediateSearch(_edit->text());
+	});
+
 	auto sep1 = new QFrame();
 	sep1->setForegroundRole(QPalette::Mid);
 	sep1->setFrameShape(QFrame::VLine);
@@ -197,9 +256,19 @@ SearchWidget::SearchWidget(QAbstractItemView *view, QWidget *parent)
 	searchLayout->addWidget(withNames);
 	searchLayout->addWidget(withValues);
 	searchLayout->addWidget(withHelp);
+	searchLayout->addWidget(_excludeGlobal);
 
 	searchLayout->addStretch();
 	searchLayout->addWidget(searchClose);
+
+	// The option depends on what is shown, this may change while the search
+	// is open.
+	if ( auto *fancyView = qobject_cast<FancyView*>(_view) ) {
+		connect(fancyView, &FancyView::rootIndexChanged,
+		        this, &SearchWidget::updateGlobalOption);
+	}
+
+	updateGlobalOption();
 
 	setTabOrder(_edit, searchPrev);
 	setTabOrder(searchPrev, searchNext);
@@ -214,7 +283,26 @@ SearchWidget::SearchWidget(QAbstractItemView *view, QWidget *parent)
 void SearchWidget::reset() {
 	_hits = {};
 	_labelCount->setText(QString::number(_hits.size()));
+	updateGlobalOption();
 	showCurrent();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SearchWidget::updateGlobalOption() {
+	// Nothing can be excluded if the global parameters are the ones shown
+	const bool available = !showsGlobalModule(_view->rootIndex());
+
+	_excludeGlobal->setEnabled(available);
+
+	if ( !available ) {
+		// Leaves the option unchecked when it becomes available again
+		_excludeGlobalValue = false;
+		_excludeGlobal->setChecked(false);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -285,11 +373,10 @@ void SearchWidget::match(QString text) {
 			_view->scrollTo(_view->rootIndex());
 		}
 		else {
-			findMatch(
-				_hits, _view->rootIndex(), text,
-				_withNames, _withValues, _withHelp,
-				cs, fullMatch
-			);
+			findMatch(_hits, _view->rootIndex(), text,
+			            _withNames, _withValues, _withHelp,
+			            _excludeGlobalValue,
+			            cs, fullMatch);
 			_currentSearchIndex = _hits.isEmpty() ? -1 : 0;
 		}
 	}

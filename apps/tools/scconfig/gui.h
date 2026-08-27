@@ -159,6 +159,37 @@ class ConfiguratorPanel : public QWidget {
 
 		QIcon icon() const { return _icon; }
 
+		/**
+		 * @brief Selects the configuration of a particular module.
+		 * @param name The module name, case insensitive.
+		 * @return Whether the module was found or not. The default
+		 *         implementation returns false as panels do not
+		 *         necessarily manage modules.
+		 */
+		virtual bool setCurrentModule(const QString &name) { return false; }
+
+		/**
+		 * @brief Selects the bindings of a particular station.
+		 * @param networkCode The network code, case insensitive.
+		 * @param stationCode The station code, case insensitive.
+		 * @return Whether the station was found or not. The default
+		 *         implementation returns false as panels do not
+		 *         necessarily manage stations.
+		 */
+		virtual bool setCurrentStation(const QString &networkCode,
+		                               const QString &stationCode) { return false; }
+
+		/**
+		 * @brief Navigates to a parameter or a section of the shown
+		 *        configuration.
+		 * @param name The full name of the parameter or the section, case
+		 *        insensitive.
+		 * @return Whether it was found or not. The default implementation
+		 *         returns false as panels do not necessarily show
+		 *         parameters.
+		 */
+		virtual bool setCurrentParameter(const QString &name) { return false; }
+
 
 	signals:
 		void reloadRequested();
@@ -208,6 +239,52 @@ class Configurator : public QMainWindow {
 
 		bool setModel(Seiscomp::System::Model *model);
 
+		//! Returns the titles of all panels in display order.
+		QStringList panelTitles() const;
+
+		/**
+		 * @brief Activates a panel either by its one-based index or by its
+		 *        title, e.g. "2" or "Modules".
+		 * @param panel The index or the title, case insensitive.
+		 * @return Whether the panel was found or not.
+		 */
+		bool setPanel(const QString &panel);
+
+		//! Returns the title of the currently active panel.
+		QString currentPanelTitle() const;
+
+		/**
+		 * @brief Selects the configuration of a particular module in the
+		 *        currently active panel.
+		 * @param module The module name, case insensitive.
+		 * @return Whether the module was found or not. False is also
+		 *         returned if the active panel does not manage modules.
+		 * @see ConfiguratorPanel::setCurrentModule
+		 */
+		bool setModule(const QString &module);
+
+		/**
+		 * @brief Selects the bindings of a particular station in the
+		 *        currently active panel.
+		 * @param networkCode The network code, case insensitive.
+		 * @param stationCode The station code, case insensitive.
+		 * @return Whether the station was found or not. False is also
+		 *         returned if the active panel does not manage stations.
+		 * @see ConfiguratorPanel::setCurrentStation
+		 */
+		bool setStation(const QString &networkCode, const QString &stationCode);
+
+		/**
+		 * @brief Navigates to a parameter or a section in the currently
+		 *        active panel.
+		 * @param name The full name of the parameter or the section, case
+		 *        insensitive.
+		 * @return Whether it was found or not. False is also returned if the
+		 *         active panel does not show parameters.
+		 * @see ConfiguratorPanel::setCurrentParameter
+		 */
+		bool setParameter(const QString &name);
+
 
 	protected:
 		void changeEvent(QEvent *event) override;
@@ -217,6 +294,14 @@ class Configurator : public QMainWindow {
 	private:
 		void applyTheme();
 		void updateModeLabel();
+
+		/**
+		 * @brief Asks the user to save pending modifications.
+		 * @param revertOnDiscard Reloads the configuration from disk if the
+		 *        user discards the modifications.
+		 * @return False if the user cancelled the operation, true otherwise.
+		 */
+		bool querySaveChanges(bool revertOnDiscard = false);
 
 	private slots:
 		void wizard();

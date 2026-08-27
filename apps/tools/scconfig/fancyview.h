@@ -28,6 +28,9 @@
 #endif
 
 #include <QAbstractItemView>
+#include <QHash>
+
+#include <functional>
 #include <QScrollArea>
 
 
@@ -85,7 +88,27 @@ class FancyView : public QAbstractItemView {
 
 		void setModel(QAbstractItemModel * model) override;
 		void setRootIndex(const QModelIndex &index) override;
+
+		/**
+		 * @brief Selects a parameter or a section of the shown configuration
+		 *        and scrolls to it.
+		 * @param name The full name of the parameter or the section, case
+		 *        insensitive.
+		 * @return Whether it was found or not.
+		 */
+		bool showParameter(const QString &name);
 		void setConfigStage(Seiscomp::Environment::ConfigStage);
+
+		/**
+		 * @brief Evaluate a value based on properities adding to a text string
+		 * @param value The value to evaluate
+		 * @param param The object of properties
+		 * @param eval The text string to return
+		 * @return True if issues were found, false if no issues were found
+		 */
+		static bool evaluateValue(const std::string& value,
+		                          const Seiscomp::System::Parameter *param,
+		                          QString &eval, bool verbose = false);
 
 
 	// ------------------------------------------------------------------
@@ -93,6 +116,9 @@ class FancyView : public QAbstractItemView {
 	// ------------------------------------------------------------------
 	signals:
 		void searchRequested();
+
+		//! Emitted when another module, binding or section is shown
+		void rootIndexChanged();
 
 
 	// ------------------------------------------------------------------
@@ -108,8 +134,6 @@ class FancyView : public QAbstractItemView {
 	protected slots:
 		void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
 		                 const QVector<int> &roles = QVector<int>()) override;
-		void rowsInserted(const QModelIndex &parent, int start, int end) override;
-		void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
 
 
 	// ------------------------------------------------------------------
@@ -162,9 +186,23 @@ class FancyView : public QAbstractItemView {
 	//  Private interface
 	// ------------------------------------------------------------------
 	private:
-		void updateToolTip(QWidget *w, Seiscomp::System::Parameter *param);
+		//! Evaluates the current value of an input widget and shows the result
+		void evaluateInput(QWidget *w);
+		void updateToolTip(QWidget *w, Seiscomp::System::Parameter *param,
+		                   bool verbose = true);
 		void updateContentGeometry();
 		QWidget *createWidgetFromIndex(const QModelIndex &idx, const QString &);
+
+		//! Creates the parameters and the sub sections of a container
+		void populateChildren(QBoxLayout *l, const QModelIndex &idx,
+		                      const QString &rootSecName,
+		                      const QString &emptyText);
+
+		//! Creates the content of a section which was deferred, if any
+		void realizeSection(const QModelIndex &idx);
+
+		//! Creates the deferred content of an index and all its ancestors
+		void realizePath(const QModelIndex &idx);
 
 		bool add(QBoxLayout *&layout, FancyViewItem &item,
 		         Seiscomp::System::BindingCategory *cat, bool collapsed);
@@ -175,17 +213,6 @@ class FancyView : public QAbstractItemView {
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Group *group);
 		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Structure *struc);
 		FancyViewItem add(QLayout *layout, const QModelIndex &idx);
-
-		/**
-		 * @brief Evaluate a value based on properities adding to a text string
-		 * @param value The value to evaluate
-		 * @param param The object of properties
-		 * @param eval The text string to return
-		 * @return True if issues were found, false if no issues were found
-		 */
-		bool evaluateValue(const std::string& value,
-		                   const Seiscomp::System::Parameter *param,
-		                   QString &eval, bool verbose = false);
 
 
 	private:
@@ -199,6 +226,9 @@ class FancyView : public QAbstractItemView {
 		QWidget      *_currentItem{nullptr};
 		QLabel       *_optionEditHint{nullptr};
 		void         *_blockPopulate{nullptr};
+
+		//! Content of collapsed sections, created when they are opened
+		QHash<QPersistentModelIndex, std::function<void ()>> _pendingSections;
 };
 
 

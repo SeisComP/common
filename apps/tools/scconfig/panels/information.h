@@ -32,8 +32,15 @@ class InformationPanel : public ConfiguratorPanel {
 	public:
 		InformationPanel(QWidget *parent = 0);
 
+	private slots:
+		//! Copies the content of the current cell to the clipboard
+		void copyCell();
+
 	private:
 		void addRow(QTableWidget *, const QString &name, const QString &value);
+
+	private:
+		QTableWidget *_table{nullptr};
 };
 
 

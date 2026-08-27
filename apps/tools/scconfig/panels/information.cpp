@@ -24,6 +24,9 @@
 #include <seiscomp/datamodel/version.h>
 #include <seiscomp/system/environment.h>
 
+#include <QAction>
+#include <QApplication>
+#include <QClipboard>
 #include <QHeaderView>
 #include <QTableWidget>
 #include <QVBoxLayout>
@@ -49,7 +52,15 @@ InformationPanel::InformationPanel(QWidget *parent)
 	table->horizontalHeader()->setVisible(false);
 	table->horizontalHeader()->setStretchLastSection(true);
 	table->setAlternatingRowColors(true);
-	table->setSelectionMode(QAbstractItemView::NoSelection);
+	table->setSelectionMode(QAbstractItemView::SingleSelection);
+	table->setContextMenuPolicy(Qt::ActionsContextMenu);
+	_table = table;
+
+	auto *copyAction = new QAction(tr("Copy"), table);
+	copyAction->setShortcut(QKeySequence::Copy);
+	copyAction->setShortcutContext(Qt::WidgetShortcut);
+	connect(copyAction, &QAction::triggered, this, &InformationPanel::copyCell);
+	table->addAction(copyAction);
 
 	l->addWidget(table);
 
@@ -116,6 +127,20 @@ InformationPanel::InformationPanel(QWidget *parent)
 	#endif
 
 	table->resizeColumnsToContents();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void InformationPanel::copyCell() {
+	auto *item = _table->currentItem();
+	if ( !item ) {
+		return;
+	}
+
+	QApplication::clipboard()->setText(item->text());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
