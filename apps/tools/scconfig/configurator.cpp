@@ -1796,6 +1796,99 @@ bool Configurator::setModel(System::Model *model) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QStringList Configurator::panelTitles() const {
+	QStringList titles;
+	for ( const auto &panel : _panels ) {
+		titles.append(panel.second->title());
+	}
+	return titles;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Configurator::setPanel(const QString &panel) {
+	bool isIndex;
+	int index = panel.toInt(&isIndex);
+
+	if ( isIndex ) {
+		if ( (index < 1) || (index > _panels.count()) ) {
+			return false;
+		}
+
+		_listWidget->setCurrentRow(index - 1);
+		return true;
+	}
+
+	for ( int row = 0; row < _panels.count(); ++row ) {
+		if ( !_panels[row].second->title().compare(panel, Qt::CaseInsensitive) ) {
+			_listWidget->setCurrentRow(row);
+			return true;
+		}
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QString Configurator::currentPanelTitle() const {
+	auto row = _listWidget->currentRow();
+	return row < 0 ? QString() : _panels[row].second->title();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Configurator::setModule(const QString &module) {
+	auto row = _listWidget->currentRow();
+	if ( row < 0 ) {
+		return false;
+	}
+
+	return _panels[row].second->setCurrentModule(module);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Configurator::setStation(const QString &networkCode,
+                              const QString &stationCode) {
+	auto row = _listWidget->currentRow();
+	if ( row < 0 ) {
+		return false;
+	}
+
+	return _panels[row].second->setCurrentStation(networkCode, stationCode);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Configurator::setParameter(const QString &name) {
+	auto row = _listWidget->currentRow();
+	if ( row < 0 ) {
+		return false;
+	}
+
+	return _panels[row].second->setCurrentParameter(name);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Configurator::applyTheme() {
 	auto p = qApp->palette();
 	p.setColor(QPalette::Dark, blend(p.color(QPalette::Base), p.color(QPalette::Text), 25));
@@ -1864,20 +1957,37 @@ void Configurator::showEvent(QShowEvent *event) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Configurator::querySaveChanges(bool revertOnDiscard) {
+	if ( !_model->isModified() ) {
+		return true;
+	}
+
+	auto r = QMessageBox::question(
+	             this, "Configuration changed",
+	             "The configuration is modified. Do you want to save it?",
+	             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel
+	);
+
+	if ( r == QMessageBox::Yes ) {
+		save();
+	}
+	else if ( (r == QMessageBox::No) && revertOnDiscard ) {
+		// Drop the modifications and continue with the state on disk
+		resetAll();
+	}
+
+	return r != QMessageBox::Cancel;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Configurator::closeEvent(QCloseEvent *event) {
-	if ( _model->isModified() ) {
-		auto r = QMessageBox::question(
-			this, "Configuration changed",
-			"The configuration is modified. Do you want to save it?",
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel
-		);
-		if ( r == QMessageBox::Yes ) {
-			save();
-		}
-		else if ( r == QMessageBox::Cancel ) {
-			event->ignore();
-			return;
-		}
+	if ( !querySaveChanges() ) {
+		event->ignore();
+		return;
 	}
 
 	QMainWindow::closeEvent(event);
@@ -1909,6 +2019,10 @@ void Configurator::panelDescriptionChanged(const QString &text) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Configurator::switchToSystemMode() {
 	if ( _configurationStage == Environment::CS_CONFIG_APP ) {
+		return;
+	}
+
+	if ( !querySaveChanges(true) ) {
 		return;
 	}
 
@@ -1945,6 +2059,10 @@ void Configurator::switchToUserMode() {
 	);
 
 	if ( r != QMessageBox::Yes ) {
+		return;
+	}
+
+	if ( !querySaveChanges(true) ) {
 		return;
 	}
 

@@ -198,14 +198,47 @@ class SplashScreen : public QSplashScreen {
 
 
 int main(int argc, char **argv) {
-	// Add command-line help and examples
+	string panel;
+	string module;
+	string station;
+	string parameter;
+
+	// Add command-line options, help and examples
 	System::CommandLine commandline;
 	commandline.addGroup("Generic");
 	commandline.addOption("Generic", "help,h", "Produce help message.");
 	commandline.addOption("Generic", "version,V", "Show version information.");
+
 	commandline.addGroup("Verbosity");
 	commandline.addOption("Verbosity", "debug", "Execute in debug mode. Enables "
 	                      "logging of all messages to the console.");
+
+	commandline.addGroup("Options");
+	commandline.addOption("Options", "module,m",
+	                      "Name of module for which to open the configuration "
+	                      "at startup given by the module name, e.g. scautopick. "
+	                      "Requires --panel and is supported by the Modules and "
+	                      "Bindings panels. In the Bindings panel all profiles of "
+	                      "the module are shown and, when used with --station, "
+	                      "the parameters for that station also show.",
+	                      &module, false);
+	commandline.addOption("Options", "panel,p", "Panel to open at startup given "
+	                      "by its number, e.g. 2, or its name, e.g. Modules. "
+	                      "The number corresponds to the panel shortcut key.",
+	                      &panel, false);
+	commandline.addOption("Options", "parameter",
+	                      "Name of parameter or parameter section to navigate "
+	                      "to at startup given by its full name, e.g. "
+	                      "connection.server or database. Requires --panel and "
+	                      "--module for Modules panel or --panel, --module and "
+	                      "--station for Bindings panel.",
+	                      &parameter, false);
+	commandline.addOption("Options", "station,s", "Station to show the bindings "
+	                      "of at startup given as NET.STA, e.g. GE.APE. Requires "
+	                      "--panel and is supported by the Bindings panel. If "
+	                      "combined with --module, the parameters of the module "
+	                      "binding at that station also show.",
+	                      &station, false);
 
 	commandline.parse(std::vector<std::string>(argv + 1, argv + argc));
 
@@ -216,7 +249,21 @@ int main(int argc, char **argv) {
 		commandline.printOptions();
 		cout << "Examples:"  << endl
 		     << "Print debug logging on command line" << endl
-		     << "  scconfig --debug" << endl << endl;
+		     << "  scconfig --debug" << endl << endl
+		     << "Start with the Modules panel opened" << endl
+		     << "  scconfig -p 2" << endl << endl
+		     << "Start with the configuration of scautopick opened" << endl
+		     << "  scconfig -p 2 -m scautopick" << endl << endl
+		     << "Start with the binding profiles of scautopick listed" << endl
+		     << "  scconfig -p 3 -m scautopick" << endl << endl
+		     << "Start with the bindings of station GE.APE listed" << endl
+		     << "  scconfig -p 3 -s GE.APE" << endl << endl
+		     << "Start with the scautopick binding of station GE.APE opened" << endl
+		     << "  scconfig -p 3 -m scautopick -s GE.APE" << endl << endl
+		     << "Start at the connection.server module configuration parameter of scautopick" << endl
+		     << "  scconfig -p 2 -m scautopick --parameter connection.server" << endl << endl
+		     << "Start at the detecStream global bindings parameter for station GE.APE" << endl
+		     << "  scconfig -p 3 -m global -s GE.APE --parameter detecStream" << endl << endl;
 		return 0;
 	}
 
@@ -302,6 +349,77 @@ int main(int argc, char **argv) {
 	app.processEvents();
 	c.resize(800, 600);
 	c.show();
+
+	if ( !panel.empty() && !c.setPanel(panel.c_str()) ) {
+		auto msg = app.tr("scconfig called with invalid panel: %1\nAvailable panels: 1, ..., 6 or %2")
+		           .arg(panel.c_str(), c.panelTitles().join(", "));
+		cerr << msg.toStdString() << endl;
+		QMessageBox::warning(&c, "scconfig", msg, QMessageBox::Ok);
+	}
+
+	// --panel takes priority, --module only selects the module within the
+	// panel requested with --panel.
+	if ( !module.empty() ) {
+		QString msg;
+
+		if ( panel.empty() ) {
+			msg = app.tr("Option --module requires --panel");
+		}
+		else if ( !c.setModule(module.c_str()) ) {
+			msg = app.tr("%1 panel opened with invalid module name: %2")
+			      .arg(c.currentPanelTitle(), module.c_str());
+		}
+
+		if ( !msg.isEmpty() ) {
+			cerr << msg.toStdString() << endl;
+			QMessageBox::warning(&c, "scconfig", msg, QMessageBox::Ok);
+		}
+	}
+
+	if ( !station.empty() ) {
+		QString msg;
+		auto code = QString(station.c_str()).split('.');
+
+		if ( panel.empty() ) {
+			msg = app.tr("Option --station requires --panel");
+		}
+		else if ( panel != "3" ) {
+			msg = app.tr("%1 panel opened: Ignoring given station %2")
+			      .arg(c.currentPanelTitle(), station.c_str());
+		}
+		else if ( (code.size() != 2) || code[0].isEmpty() || code[1].isEmpty() ) {
+			msg = app.tr("%1 panel opened with invalid station code: %2 Expected: NET.STA")
+			      .arg(c.currentPanelTitle(), station.c_str());
+		}
+		else if ( !c.setStation(code[0], code[1]) ) {
+			msg = app.tr("%1 panel opened with unknown station: %2")
+			      .arg(c.currentPanelTitle(), station.c_str());
+		}
+
+		if ( !msg.isEmpty() ) {
+			cerr << msg.toStdString() << endl;
+			QMessageBox::warning(&c, "scconfig", msg, QMessageBox::Ok);
+		}
+	}
+
+	// The parameter is looked up in the module or binding selected before
+	if ( !parameter.empty() ) {
+		QString msg;
+
+		if ( panel.empty() || (module.empty() && station.empty()) ) {
+			msg = app.tr("Option --parameter requires --panel and "
+			             "--module or --station");
+		}
+		else if ( !c.setParameter(parameter.c_str()) ) {
+			msg = app.tr("%1 panel opened with unknown parameter: %2")
+			      .arg(c.currentPanelTitle(), parameter.c_str());
+		}
+
+		if ( !msg.isEmpty() ) {
+			cerr << msg.toStdString() << endl;
+			QMessageBox::warning(&c, "scconfig", msg, QMessageBox::Ok);
+		}
+	}
 
 	return app.exec();
 }

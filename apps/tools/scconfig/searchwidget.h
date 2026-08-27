@@ -23,6 +23,7 @@
 
 
 #include <QAbstractItemView>
+#include <QCheckBox>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -45,6 +46,8 @@ class SearchWidget : public QWidget {
 
 
 	private slots:
+		//! Enables the global option unless global parameters are shown
+		void updateGlobalOption();
 		void intermediateSearch(const QString &);
 		void prevSearch();
 		void nextSearch();
@@ -64,9 +67,11 @@ class SearchWidget : public QWidget {
 		QLineEdit         *_edit;
 		QLabel            *_labelCurrent;
 		QLabel            *_labelCount;
+		QCheckBox         *_excludeGlobal{nullptr};
 		bool               _withNames{true};
 		bool               _withValues{false};
 		bool               _withHelp{false};
+		bool               _excludeGlobalValue{false};
 		int                _currentSearchIndex{-1};
 		QModelIndexList    _hits;
 };

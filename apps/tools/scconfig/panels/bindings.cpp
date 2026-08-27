@@ -25,9 +25,11 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QCollator>
 #include <QDebug>
 #include <QDialog>
 #include <QDragEnterEvent>
+#include <QHelpEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
@@ -40,6 +42,8 @@
 #include <QVBoxLayout>
 
 #include <seiscomp/gui/core/compat.h>
+
+#include <algorithm>
 
 
 using namespace std;
@@ -70,6 +74,21 @@ enum Type {
 template <typename T>
 T *getLink(const QModelIndex &idx) {
 	return static_cast<T*>(idx.data(Link).value<void*>());
+}
+
+
+//! Returns the first child of parent with the given type and display text.
+QModelIndex findItem(const QAbstractItemModel *model, const QModelIndex &parent,
+                     int type, const QString &text) {
+	for ( int row = 0; row < model->rowCount(parent); ++row ) {
+		auto idx = model->index(row, 0, parent);
+		if ( (idx.data(Type).toInt() == type)
+		     && !idx.data().toString().compare(text, Qt::CaseInsensitive) ) {
+			return idx;
+		}
+	}
+
+	return {};
 }
 
 class NameValidator : public QValidator {
@@ -194,10 +213,60 @@ class NewNameDialog : public QDialog {
 };
 
 
+// Returns the description configured for a station, an empty string if there
+// is none.
+QString stationDescription(const QString &networkCode, const QString &stationCode) {
+	std::string rcFile = Seiscomp::Environment::Instance()->installDir();
+	rcFile += "/var/lib/rc/station_";
+	rcFile += networkCode.toStdString() + "_" + stationCode.toStdString();
+
+	Seiscomp::Config::Config cfg;
+	if ( !cfg.readConfig(rcFile) ) {
+		return {};
+	}
+
+	try {
+		return cfg.getString("description").c_str();
+	}
+	catch ( ... ) {}
+
+	return {};
+}
+
+
 class StationTreeView : public QTreeView {
 	public:
 		StationTreeView(BindingsPanel *panel) : _panel(panel) {
 			setAcceptDrops(true);
+		}
+
+	protected:
+		//! Loads the description of a station when it is asked for
+		bool viewportEvent(QEvent *event) override {
+			if ( event->type() != QEvent::ToolTip ) {
+				return QTreeView::viewportEvent(event);
+			}
+
+			auto idx = indexAt(static_cast<QHelpEvent*>(event)->pos());
+
+			// Reading the rc file of every station while the tree is created
+			// is expensive, in particular for large inventories.
+			if ( idx.isValid()
+			     && (idx.data(Type).toInt() == TypeStation)
+			     && idx.data(Qt::ToolTipRole).isNull() ) {
+				auto *m = qobject_cast<QStandardItemModel*>(model());
+				auto *item = m ? m->itemFromIndex(idx) : nullptr;
+
+				if ( item ) {
+					// An empty text marks the station as read
+					item->setData(stationDescription(
+					                  idx.parent().data().toString(),
+					                  idx.data().toString()),
+					              Qt::ToolTipRole);
+				}
+			}
+
+			return QTreeView::viewportEvent(event);
 		}
 
 		[[nodiscard]]
@@ -648,6 +717,15 @@ void BindingView::setModel(ConfigurationTreeItemModel *base,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool BindingView::showParameter(const QString &name) {
+	return static_cast<FancyView*>(_view)->showParameter(name);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BindingView::setRootIndex(const QModelIndex &index) {
 	clear();
 
@@ -998,6 +1076,9 @@ void BindingsPanel::setModel(ConfigurationTreeItemModel *model) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BindingsPanel::applyModel() {
+	// Remember the current view to restore it after the rebuild
+	auto state = currentViewState();
+
 	_bindingView->setModel(nullptr, nullptr);
 	_stationsTreeView->setModel(nullptr);
 	_stationsFolderView->setModel(nullptr);
@@ -1054,8 +1135,6 @@ void BindingsPanel::applyModel() {
 	rootItem->setData(TypeRoot, Type);
 	root->appendRow(rootItem);
 
-	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
-
 	for ( nit = networks.begin(); nit != networks.end(); ++nit ) {
 		const QString &networkCode = nit.key();
 		auto *netItem = new QStandardItem(networkCode);
@@ -1072,17 +1151,8 @@ void BindingsPanel::applyModel() {
 			staItem->setData(TypeStation, Type);
 			staItem->setData(icons().station, Qt::DecorationRole);
 
-			string rcFile = env->installDir();
-			rcFile += "/var/lib/rc/station_";
-			rcFile += networkCode.toStdString() + "_" + stationCode.toStdString();
-			Seiscomp::Config::Config cfg;
-			if ( cfg.readConfig(rcFile) ) {
-				try {
-					staItem->setData(cfg.getString("description").c_str(),
-					                 Qt::ToolTipRole);
-				}
-				catch ( ... ) {}
-			}
+			// The description is read when the tooltip is requested, see
+			// StationTreeView::viewportEvent
 
 			staItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled/* | Qt::ItemIsDropEnabled*/);
 			netItem->appendRow(staItem);
@@ -1138,6 +1208,10 @@ void BindingsPanel::applyModel() {
 	rootItem->setData(TypeRoot, Type);
 	root->appendRow(rootItem);
 
+	QCollator collator;
+	collator.setNumericMode(true);
+	collator.setCaseSensitivity(Qt::CaseInsensitive);
+
 	for ( const auto &mod : base->modules ) {
 		if ( !mod->supportsBindings() ) {
 			continue;
@@ -1150,7 +1224,13 @@ void BindingsPanel::applyModel() {
 		modItem->setData(icons().profileFolder, Qt::DecorationRole);
 		rootItem->appendRow(modItem);
 
-		for ( const auto &profile : mod->profiles ) {
+		auto profiles = mod->profiles;
+		std::sort(profiles.begin(), profiles.end(),
+		          [&collator](const ModuleBindingPtr &lhs, const ModuleBindingPtr &rhs) {
+		          	return collator.compare(lhs->name.c_str(), rhs->name.c_str()) < 0;
+		          });
+
+		for ( const auto &profile : profiles ) {
 			auto *profItem = new QStandardItem(profile->name.c_str());
 			profItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 			profItem->setData(TypeProfile, Type);
@@ -1171,6 +1251,8 @@ void BindingsPanel::applyModel() {
 	_bindingView->clear();
 	_currentBinding = nullptr;
 	updateIndication();
+
+	restoreViewState(state);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1180,6 +1262,176 @@ void BindingsPanel::applyModel() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BindingsPanel::saved() {
 	_bindingView->saved();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BindingsPanel::ViewState BindingsPanel::currentViewState() const {
+	ViewState state;
+
+	auto modIdx = _modulesView->currentIndex();
+	switch ( modIdx.data(Type).toInt() ) {
+		case TypeProfile:
+			state.module = modIdx.parent().data().toString();
+			state.profile = modIdx.data().toString();
+			break;
+		case TypeModule:
+			state.module = modIdx.data().toString();
+			break;
+		default:
+			break;
+	}
+
+	auto folderIdx = _stationsFolderView->rootIndex();
+	if ( folderIdx.data(Type).toInt() == TypeStation ) {
+		state.station = folderIdx.data().toString();
+		state.network = folderIdx.parent().data().toString();
+	}
+
+	// A station binding is a child of the station folder, a profile binding
+	// is the selected profile itself.
+	auto bindingIdx = _bindingView->rootIndex();
+	switch ( bindingIdx.data(Type).toInt() ) {
+		case TypeModule:
+			state.bindingModule = bindingIdx.data().toString();
+			break;
+		case TypeProfile:
+			state.profileBinding = true;
+			break;
+		default:
+			break;
+	}
+
+	return state;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BindingsPanel::restoreViewState(const ViewState &state) {
+	// The module tree has no current index yet, so the station binding is
+	// not opened here but below according to the remembered state.
+	if ( !state.station.isEmpty() ) {
+		setCurrentStation(state.network, state.station);
+	}
+
+	if ( state.module.isEmpty() || !setCurrentModule(state.module) ) {
+		return;
+	}
+
+	if ( !state.profile.isEmpty() ) {
+		auto profIdx = findItem(_modulesView->model(), _modulesView->currentIndex(),
+		                        TypeProfile, state.profile);
+		if ( profIdx.isValid() ) {
+			if ( state.profileBinding ) {
+				profileDoubleClicked(profIdx);
+			}
+			else {
+				_modulesView->setCurrentIndex(profIdx);
+				_modulesFolderView->setCurrentIndex(profIdx);
+			}
+		}
+	}
+
+	if ( !state.bindingModule.isEmpty() ) {
+		auto bindIdx = findItem(_stationsFolderView->model(),
+		                        _stationsFolderView->rootIndex(),
+		                        TypeModule, state.bindingModule);
+		if ( bindIdx.isValid() ) {
+			// Not via bindingDoubleClicked: a reload must not raise the
+			// confirmation dialog for profile based bindings
+			_stationsFolderView->setCurrentIndex(bindIdx);
+			_bindingView->setModel(_model, _bindingsModel);
+			_bindingView->setRootIndex(bindIdx);
+			_currentBinding = getLink<ModuleBinding>(bindIdx);
+			updateIndication();
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool BindingsPanel::setCurrentModule(const QString &name) {
+	auto *model = _modulesView->model();
+	if ( !model ) {
+		return false;
+	}
+
+	auto root = _modulesView->rootIndex();
+
+	for ( int row = 0; row < model->rowCount(root); ++row ) {
+		auto idx = model->index(row, 0, root);
+		if ( idx.data(Type).toInt() != TypeModule ) {
+			continue;
+		}
+
+		if ( idx.data().toString().compare(name, Qt::CaseInsensitive) ) {
+			continue;
+		}
+
+		// Selecting the module populates the folder view with all its
+		// profiles, see moduleTreeCurrentChanged.
+		_modulesView->setCurrentIndex(idx);
+		_modulesView->scrollTo(idx);
+		return true;
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool BindingsPanel::setCurrentParameter(const QString &name) {
+	return _bindingView->showParameter(name);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool BindingsPanel::setCurrentStation(const QString &networkCode,
+                                      const QString &stationCode) {
+	auto *model = _stationsTreeView->model();
+	if ( !model ) {
+		return false;
+	}
+
+	auto rootIdx = findItem(model, _stationsTreeView->rootIndex(), TypeRoot, "Networks");
+	auto netIdx = findItem(model, rootIdx, TypeNetwork, networkCode);
+	auto staIdx = findItem(model, netIdx, TypeStation, stationCode);
+
+	if ( !staIdx.isValid() ) {
+		return false;
+	}
+
+	// Opening the station folder shows all its bindings.
+	static_cast<QTreeView*>(_stationsTreeView)->expand(netIdx);
+	changeFolder(staIdx);
+	_stationsTreeView->scrollTo(staIdx);
+
+	// If a module is selected as well then show the parameters of its
+	// binding at that station.
+	auto modIdx = _modulesView->currentIndex();
+	if ( modIdx.data(Type).toInt() == TypeModule ) {
+		auto bindIdx = findItem(model, staIdx, TypeModule, modIdx.data().toString());
+		if ( bindIdx.isValid() ) {
+			openBinding(bindIdx);
+		}
+	}
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1283,6 +1535,15 @@ void BindingsPanel::bindingDoubleClicked(const QModelIndex &tmp) {
 	}
 
 	_stationsTreeView->setCurrentIndex(idx);
+	openBinding(idx);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BindingsPanel::openBinding(const QModelIndex &idx) {
 	_stationsFolderView->setCurrentIndex(idx);
 
 	if ( _stationsFolderView->rootIndex() != idx.parent() ) {

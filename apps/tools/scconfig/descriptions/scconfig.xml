@@ -2,19 +2,52 @@
 <seiscomp>
 	<module name="scconfig" category="GUI" standalone="true">
 		<description>
-			Configuration and system management frontend.
+		Configuration and system management frontend.
 		</description>
+		<command-line>
+			<synopsis>
+			scconfig [options]
+			</synopsis>
+			<group name="Generic">
+				<optionReference>generic#help</optionReference>
+			</group>
+			<group name="Verbosity">
+				<optionReference>verbosity#debug</optionReference>
+				<optionReference>generic#version</optionReference>
+			</group>
+			<group name="Options">
+				<option flag="m" long-flag="module" argument="arg" type="string">
+					<description>
+					Name of module for which to open the configuration at startup given by
+					the module name, e.g. scautopick. Requires --panel and is supported by
+					the Modules and Bindings panels. In the Bindings panel all profiles of
+					the module are shown and, when used with --station, the parameters for
+					that station also show.
+					</description>
+				</option>
+				<option flag="p" long-flag="panel" argument="arg" type="string">
+					<description>
+					Panel to open at startup given by its number, e.g. 2, or its name, e.g.
+					Modules. The number corresponds to the panel shortcut key.
+					</description>
+				</option>
+				<option flag="" long-flag="parameter" argument="arg" type="string">
+					<description>
+					Name of parameter or parameter section to navigate to at startup
+					given by its full name, e.g., connection.server or database.
+					Requires --panel and -module for Modules panel or --panel, --module
+					and --station for Bindings panel.
+					</description>
+				</option>
+				<option flag="s" long-flag="station" argument="arg" type="string">
+					<description>
+					Station to show the bindings of at startup given as NET.STA, e.g.
+					GE.APE. Requires --panel and is supported by the Bindings panel. If
+					combined with --module, the parameters of the module binding at that
+					station also show.
+					</description>
+				</option>
+			</group>
+		</command-line>
 	</module>
-	<command-line>
-		<synopsis>
-			scanloc [options]
-		</synopsis>
-		<group name="Generic">
-			<optionReference>generic#help</optionReference>
-		</group>
-		<group name="Verbosity">
-			<optionReference>verbosity#debug</optionReference>
-			<optionReference>generic#version</optionReference>
-		</group>
-	</command-line>
 </seiscomp>

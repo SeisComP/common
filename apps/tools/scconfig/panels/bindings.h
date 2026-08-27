@@ -42,6 +42,9 @@ class BindingView : public QWidget {
 		void setModel(ConfigurationTreeItemModel *base, QAbstractItemModel *model);
 		void setRootIndex(const QModelIndex & index);
 		QModelIndex rootIndex() const { return _rootIndex; }
+
+		//! Navigates to a parameter or a section of the shown binding
+		bool showParameter(const QString &name);
 		void saved();
 
 	signals:
@@ -74,11 +77,27 @@ class BindingsPanel : public ConfiguratorPanel {
 	public:
 		BindingsPanel(QWidget *parent = 0);
 
+	private:
+		//! The part of the panel state which survives a model rebuild
+		struct ViewState {
+			QString module;         //!< Selected module
+			QString profile;        //!< Selected profile, empty if none
+			QString network;        //!< Network of the opened station folder
+			QString station;        //!< Station of the opened station folder
+			QString bindingModule;  //!< Station binding shown in the binding view
+			bool    profileBinding{false}; //!< The binding view shows the profile
+		};
+
+		ViewState currentViewState() const;
+		void restoreViewState(const ViewState &state);
+
 	protected:
 		void setModel(ConfigurationTreeItemModel *model) override;
 		void saved() override;
 
 	private:
+		//! Shows the parameters of the binding at idx in the binding view.
+		void openBinding(const QModelIndex &idx);
 		void deleteStation(const QModelIndex &idx);
 		void deleteProfile(const QModelIndex &idx);
 		void selectBindings(QItemSelectionModel *, void*, const QModelIndex &parent = QModelIndex());
@@ -91,6 +110,29 @@ class BindingsPanel : public ConfiguratorPanel {
 		void collectModuleBindings(ModuleBindingMap &, const QModelIndex &idx);
 
 	public:
+		/**
+		 * @brief Selects a module and shows all its profiles.
+		 * @param name The module name, case insensitive.
+		 * @return Whether the module was found or not.
+		 */
+		bool setCurrentModule(const QString &name) override;
+
+		/**
+		 * @brief Selects a station and shows all its bindings.
+		 * @param networkCode The network code, case insensitive.
+		 * @param stationCode The station code, case insensitive.
+		 * @return Whether the station was found or not.
+		 */
+		bool setCurrentStation(const QString &networkCode,
+		                       const QString &stationCode) override;
+
+		/**
+		 * @brief Navigates to a parameter or a section of the shown binding.
+		 * @param name The full name, case insensitive.
+		 * @return Whether it was found or not.
+		 */
+		bool setCurrentParameter(const QString &name) override;
+
 		void updateIndication();
 		bool assignProfile(const QModelIndex &, const QString &module,
 		                   const QString &profile);

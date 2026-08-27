@@ -26,7 +26,7 @@
 
    </div>
 
-   scconfig is a graphical user interface which allows to
+scconfig is a graphical user interface which allows to
 
 * :ref:`Control modules <scconfig-system>` (start/stop/check/enable/disable) and
   access logging file,
@@ -39,6 +39,8 @@
 * Retrieve :ref:`information <scconfig-information>` about the installed |scname|
   system,
 * Access the :ref:`documentation and the changelog <scconfig-documentation>`.
+
+These actions are available in separate panels which are described below.
 
 The modules are usually programs part of the |scname| system and have two
 distinct types of configuration (see section :ref:`concepts_configuration` for
@@ -108,6 +110,20 @@ message is printed upon complete setup.
    :width: 10cm
 
 Pressing **Close** will launch the main configuration window.
+
+
+.. _scconfig-first-cmd:
+
+Options
+-------
+
+By command-line options scconfig supports you in quickly navigating to panels, modules
+and stations. Read the :ref:`documentation of command-line options <scconfig-cmd-options>`
+to learn about your options or call:
+
+.. code-block:: sh
+
+   scconfig -h
 
 
 .. _scconfig-mainwindow:
@@ -937,3 +953,6 @@ Shortcuts / Hotkeys
    Del     ; Delete selected file
    F2      ; Rename selected file
    F3      ; Check the selected file executing *scinv check*
+
+
+.. _scconfig-cmd-options:

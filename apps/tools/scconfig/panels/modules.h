@@ -40,6 +40,20 @@ class ModulesPanel : public ConfiguratorPanel {
 		void setModel(ConfigurationTreeItemModel *model) override;
 		void aboutToClose();
 
+		/**
+		 * @brief Selects the configuration of a particular module.
+		 * @param name The module name, case insensitive.
+		 * @return Whether the module was found or not.
+		 */
+		bool setCurrentModule(const QString &name) override;
+
+		/**
+		 * @brief Navigates to a parameter or a section of the module.
+		 * @param name The full name, case insensitive.
+		 * @return Whether it was found or not.
+		 */
+		bool setCurrentParameter(const QString &name) override;
+
 
 	private slots:
 		void applyModel();
