@@ -1292,8 +1292,8 @@ Result WebsocketConnection::readFrame(Wired::Websocket::Frame &frame,
 					SEISCOMP_ERROR("WS::readFrame consume error: %d -> %d",
 					               _getcount, len);
 					if ( len < 0 ) {
-						closeSocket("Websocket protocol error");
 						frame.reset();
+						closeSocket("Websocket protocol error");
 						return NetworkProtocolError;
 					}
 					return Error;
@@ -1504,6 +1504,32 @@ void WebsocketConnection::updateReceiveBuffer() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void WebsocketConnection::ackOutbox(uint64_t sn) {
+	_writeMutex.lock();
+	_readMutex.unlock();
+
+	if ( sn > _state.localSequenceNumber ) {
+		SEISCOMP_ERROR("acknowledge: %llu > %llu",
+		               static_cast<unsigned long long>(sn),
+		               static_cast<unsigned long long>(_state.localSequenceNumber));
+	}
+	else {
+		uint64_t remainingBuffers = _state.localSequenceNumber - sn;
+		while ( _outbox.size() > remainingBuffers ) {
+			_state.bytesBuffered -= _outbox.front()->data.size();
+			_outbox.pop_front();
+		}
+	}
+
+	_writeMutex.unlock();
+	_readMutex.lock();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Result WebsocketConnection::fetchAndQueuePacket() {
 	Result r;
 
@@ -1621,29 +1647,7 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 					               headers.val_start);
 				}
 
-				uint64_t sn = (uint64_t)ssn;
-
-				_writeMutex.lock();
-				_readMutex.unlock();
-
-				if ( sn > _state.localSequenceNumber ) {
-					SEISCOMP_ERROR("acknowledge: %ld > %ld", sn, _state.localSequenceNumber);
-				}
-				else {
-					uint64_t remainingBuffers = _state.localSequenceNumber-sn;
-					while ( _outbox.size() > remainingBuffers ) {
-						_state.bytesBuffered -= _outbox.front()->data.size();
-						_outbox.pop_front();
-					}
-					/*
-					SEISCOMP_DEBUG("Received ack, %d remaining messages in buffer",
-					               int(_outbox.size()));
-					*/
-				}
-
-				_writeMutex.unlock();
-				_readMutex.lock();
-
+				ackOutbox(static_cast<uint64_t>(ssn));
 				break;
 			}
 		}
@@ -1855,6 +1859,9 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 			*r = ConnectionClosedByPeer;
 		}
 
+		bool gotSequenceNumber = false;
+		uint64_t sn = 0;
+
 		while ( headers.next() ) {
 			if ( !headers.name_len ) {
 				break;
@@ -1869,38 +1876,19 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 					               headers.val_start, errno, strerror(errno));
 				}
 
-				uint64_t sn = (uint64_t)ssn;
-
-				_writeMutex.lock();
-				_readMutex.unlock();
-
-				if ( sn > _state.localSequenceNumber ) {
-					SEISCOMP_ERROR("acknowledge: %ld > %ld", sn, _state.localSequenceNumber);
-				}
-				else {
-					uint64_t remainingBuffers = _state.localSequenceNumber-sn;
-					while ( _outbox.size() > remainingBuffers ) {
-						_state.bytesBuffered -= _outbox.front()->data.size();
-						_outbox.pop_front();
-					}
-					SEISCOMP_DEBUG("Received sequence number on error, %d remaining messages in buffer",
-					               int(_outbox.size()));
-				}
-
-				_writeMutex.unlock();
-				_readMutex.lock();
-
+				sn = (uint64_t)ssn;
+				gotSequenceNumber = true;
 				break;
 			}
 		}
 
-		string_view errorMessage(headers.getptr(), frame.data.data() + frame.data.size() - headers.getptr());
-		errorMessage = Core::trim(errorMessage);
+		string_view view(headers.getptr(), frame.data.data() + frame.data.size() - headers.getptr());
+		view = Core::trim(view);
 
-		size_t p = errorMessage.find(' ');
+		size_t p = view.find(' ');
 		if ( p != string::npos ) {
 			int code;
-			if ( Core::fromString(code, errorMessage.substr(0, p)) ) {
+			if ( Core::fromString(code, view.substr(0, p)) ) {
 				/*
 				if ( r ) {
 					switch ( code ) {
@@ -1913,11 +1901,18 @@ bool WebsocketConnection::handleFrame(Wired::Websocket::Frame &frame,
 				}
 				*/
 
-				errorMessage = errorMessage.substr(p + 1);
-				if ( !errorMessage.empty() ) {
-					SEISCOMP_ERROR("Received peer error: %s", errorMessage);
+				view = view.substr(p + 1);
+				if ( !view.empty() ) {
+					SEISCOMP_ERROR("Received peer error: %s", view);
 				}
 			}
+		}
+
+		// Copy the message out of the receive frame before releasing the
+		// read mutex: another thread may recycle frame.data in between.
+		string errorMessage(view);
+		if ( gotSequenceNumber ) {
+			ackOutbox(sn);
 		}
 
 		closeSocket(errorMessage.data(), int(errorMessage.length()));
