@@ -5680,11 +5680,11 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		}
 		catch ( std::out_of_range &e ) {
 			SEISCOMP_ERROR("%s", e.what());
-			if ( edep < 0.001 ) {
+			if ( edep < 0.01 ) {
 				// Fallback to compute with depth 1m.
-				SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
+				SEISCOMP_WARNING("Compute travel times with depth of 10m", e.what());
 				try {
-					ttt = SC_D.ttTable->compute(elat, elon, 0.001, slat, slon, salt);
+					ttt = SC_D.ttTable->compute(elat, elon, 0.01, slat, slon, salt);
 					fallback = true;
 				}
 				catch ( std::exception &e ) {

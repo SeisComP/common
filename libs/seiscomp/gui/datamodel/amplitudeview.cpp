@@ -967,10 +967,10 @@ TravelTime computeFirst(TravelTimeTableInterfacePtr ttt,
 	}
 	catch ( std::out_of_range &e ) {
 		SEISCOMP_ERROR("%s", e.what());
-		if ( edep < 0.001 ) {
+		if ( edep < 0.01 ) {
 			// Fallback to compute with depth 1m.
-			SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
-			return ttt->computeFirst(elat, elon, 0.001, slat, slon, salt);
+			SEISCOMP_WARNING("Compute travel times with depth of 10m", e.what());
+			return ttt->computeFirst(elat, elon, 0.01, slat, slon, salt);
 		}
 
 		throw;
