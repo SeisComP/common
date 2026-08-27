@@ -283,6 +283,13 @@ Result WebsocketConnection::connect(const char *address,
 		_groups.clear();
 		_errorMessage = string();
 
+		for ( auto &&msg : _outbox ) {
+			_backlog.push_back(msg);
+		}
+
+		SEISCOMP_INFO("Keep %d messages in the backlog", static_cast<int>(_backlog.size()));
+		_outbox.clear();
+
 		_sockMutex.lock();
 
 		if ( _useSSL ) {
@@ -1978,12 +1985,6 @@ void WebsocketConnection::closeSocketWithoutLock(const char *errorMessage,
 	}
 	_socket->close();
 
-	for ( auto &&msg : _outbox ) {
-		_backlog.push_back(msg);
-	}
-
-	SEISCOMP_INFO("Keep %d messages in the backlog", static_cast<int>(_backlog.size()));
-	_outbox.clear();
 	_registeredClientName = string();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
