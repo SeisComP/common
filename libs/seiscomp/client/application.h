@@ -119,6 +119,10 @@ struct SC_SYSTEM_CLIENT_API Notification {
 	Notification(int t) : object(nullptr), type(t) {}
 	Notification(int t, Core::BaseObject * o) : object(o), type(t) {}
 
+	bool operator==(const Notification &other) const {
+		return (object == other.object) && (type == other.type);
+	}
+
 	Core::BaseObject *object;
 	int type;
 };
@@ -256,6 +260,30 @@ class SC_SYSTEM_CLIENT_API Application : public System::Application {
 		//! classes to send custom notifications use negative notification
 		//! types and reimplement dispatchNotification(...).
 		void sendNotification(const Notification &);
+
+		/**
+		 * @brief Sends a message to the current running messaging to the primary group.
+		 * If there is no messaging (connection() == nullptr) then this method will
+		 * return false. Otherwise this method will block as long as required to
+		 * send the message successfully. This includes waiting for reconnects if the
+		 * messaging server is currently not available.
+		 * @param msg The message to be sent.
+		 * @return Success flag
+		 */
+		bool send(const Core::Message *msg);
+
+		/**
+		 * @brief Sends a message to the current running messaging to a given group.
+		 * If there is no messaging (connection() == nullptr) then this method will
+		 * return false. If the target group does not exist, this method will return false.
+		 * Otherwise this method will block as long as required to send the message
+		 * successfully. This includes waiting for reconnects if the messaging server is
+		 * currently not available.
+		 * @targetGroup The group to send the message to.
+		 * @param msg The message to be sent.
+		 * @return Success flag
+		 */
+		bool send(const std::string &targetGroup, const Core::Message *msg);
 
 		bool waitEvent();
 
