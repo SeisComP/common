@@ -3516,7 +3516,8 @@ void AmplitudeView::loadNextStations(float distance) {
 					try {
 						TravelTime ttime =
 							computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-						                 SC_D.origin->depth(), s->latitude(), s->longitude());
+						                 SC_D.origin->depth(), s->latitude(), s->longitude(),
+						                 elevation(stream->sensorLocation()));
 
 						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
@@ -3812,7 +3813,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			try {
 				TravelTime ttime =
 					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                 SC_D.origin->depth(), loc->latitude(), loc->longitude());
+				                 SC_D.origin->depth(), loc->latitude(), loc->longitude(),
+				                 elevation(loc));
 
 				reference = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 			}
@@ -6571,7 +6573,8 @@ void AmplitudeView::addStations() {
 			try {
 				TravelTime ttime =
 					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                 SC_D.origin->depth(), s->latitude(), s->longitude());
+				                 SC_D.origin->depth(), s->latitude(), s->longitude(),
+				                 elevation(stream->sensorLocation()));
 
 				Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
