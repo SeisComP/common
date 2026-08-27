@@ -5678,7 +5678,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 		try {
 			ttt = SC_D.ttTable->compute(elat, elon, edep, slat, slon, salt);
 		}
-		catch ( std::exception &e ) {
+		catch ( std::out_of_range &e ) {
 			SEISCOMP_ERROR("%s", e.what());
 			if ( edep < 0.001 ) {
 				// Fallback to compute with depth 1m.
