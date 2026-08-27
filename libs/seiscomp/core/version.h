@@ -56,6 +56,7 @@ namespace Core {
    - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
 
  "17.4.0"   0x110400
+   - Added Seiscomp::Client::Application::send
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
    - Added Seiscomp::Core::Flags
    - Added Seiscomp::IO::HTTPClient
