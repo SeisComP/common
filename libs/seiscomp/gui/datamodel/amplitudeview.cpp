@@ -4506,7 +4506,7 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
 		double slat, slon;
-		double salt = loc->elevation();
+		double salt = elevation(loc);
 
 		try {
 			slat = loc->latitude(); slon = loc->longitude();
@@ -4561,7 +4561,24 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 			depth = 0.0;
 		}
 
-		TravelTimeList *ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		TravelTimeList *ttt = nullptr;
+
+		try {
+			ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		}
+		catch ( std::out_of_range &e ) {
+			SEISCOMP_ERROR("%s", e.what());
+			if ( depth < 0.01 ) {
+				// Fallback to compute with a source depth of 1m.
+				SEISCOMP_WARNING("Compute travel times with depth of 10m");
+				try {
+					ttt = SC_D.ttTable->compute(elat, elon, 0.01, slat, slon, salt);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_ERROR("Fallback: %s", e.what());
+				}
+			}
+		}
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;
