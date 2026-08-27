@@ -1105,6 +1105,13 @@ class Application(seiscomp.system.SystemApplication):
         r"""sendNotification(Application self, Notification arg2)"""
         return _client.Application_sendNotification(self, arg2)
 
+    def send(self, *args):
+        r"""
+        send(Application self, Message msg) -> bool
+        send(Application self, std::string const & targetGroup, Message msg) -> bool
+        """
+        return _client.Application_send(self, *args)
+
     def waitEvent(self):
         r"""waitEvent(Application self) -> bool"""
         return _client.Application_waitEvent(self)

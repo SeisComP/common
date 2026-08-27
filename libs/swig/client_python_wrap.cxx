@@ -21684,6 +21684,163 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Application_send__SWIG_0(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = 0 ;
+  Seiscomp::Core::Message *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  bool result;
+  
+  (void)self;
+  if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_send" "', argument " "1"" of type '" "Seiscomp::Client::Application *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__Core__Message, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Application_send" "', argument " "2"" of type '" "Seiscomp::Core::Message const *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Core::Message * >(argp2);
+  {
+    try {
+      result = (bool)(arg1)->send((Seiscomp::Core::Message const *)arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Application_send__SWIG_1(PyObject *self, Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Application *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  Seiscomp::Core::Message *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  bool result;
+  
+  (void)self;
+  if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Application, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Application_send" "', argument " "1"" of type '" "Seiscomp::Client::Application *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Application * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Application_send" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Application_send" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  res3 = SWIG_ConvertPtr(swig_obj[2], &argp3,SWIGTYPE_p_Seiscomp__Core__Message, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Application_send" "', argument " "3"" of type '" "Seiscomp::Core::Message const *""'"); 
+  }
+  arg3 = reinterpret_cast< Seiscomp::Core::Message * >(argp3);
+  {
+    try {
+      result = (bool)(arg1)->send((std::string const &)*arg2,(Seiscomp::Core::Message const *)arg3);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Application_send(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Application_send", 0, 3, argv))) SWIG_fail;
+  --argc;
+  if (argc == 2) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Client__Application, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_Seiscomp__Core__Message, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_Application_send__SWIG_0(self, argc, argv);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v = 0;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_Seiscomp__Client__Application, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0));
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_Seiscomp__Core__Message, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_Application_send__SWIG_1(self, argc, argv);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Application_send'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Seiscomp::Client::Application::send(Seiscomp::Core::Message const *)\n"
+    "    Seiscomp::Client::Application::send(std::string const &,Seiscomp::Core::Message const *)\n");
+  return 0;
+}
+
+
 SWIGINTERN PyObject *_wrap_Application_waitEvent(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Client::Application *arg1 = 0 ;
@@ -32973,6 +33130,10 @@ static PyMethodDef SwigMethods[] = {
 	 { "Application_enableTimer", _wrap_Application_enableTimer, METH_VARARGS, "Application_enableTimer(Application self, unsigned int seconds)"},
 	 { "Application_disableTimer", _wrap_Application_disableTimer, METH_O, "Application_disableTimer(Application self)"},
 	 { "Application_sendNotification", _wrap_Application_sendNotification, METH_VARARGS, "Application_sendNotification(Application self, Notification arg2)"},
+	 { "Application_send", _wrap_Application_send, METH_VARARGS, "\n"
+		"Application_send(Application self, Message msg) -> bool\n"
+		"Application_send(Application self, std::string const & targetGroup, Message msg) -> bool\n"
+		""},
 	 { "Application_waitEvent", _wrap_Application_waitEvent, METH_O, "Application_waitEvent(Application self) -> bool"},
 	 { "Application_setPrimaryMessagingGroup", _wrap_Application_setPrimaryMessagingGroup, METH_VARARGS, "Application_setPrimaryMessagingGroup(Application self, std::string const & arg2)"},
 	 { "Application_primaryMessagingGroup", _wrap_Application_primaryMessagingGroup, METH_O, "Application_primaryMessagingGroup(Application self) -> std::string const &"},
