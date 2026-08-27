@@ -101,6 +101,16 @@ class WebsocketConnection : public Socket {
 		void closeSocketWithoutLock(const char *errorMessage = nullptr,
 		                            int errorMessageLen = -1);
 
+		/**
+		 * @brief Removes acknowledged messages from the outbox.
+		 * @pre _readMutex is locked, _writeMutex is not locked
+		 * @post _readMutex is locked, _writeMutex is not locked
+		 *
+		 * The read mutex is released while the outbox is modified. No
+		 * pointer into the receive frame may be used afterwards.
+		 */
+		void ackOutbox(uint64_t sn);
+
 		// This requires the read mutex to be locked
 		Result fetchAndQueuePacket();
 
