@@ -1231,6 +1231,44 @@ void Application::sendNotification(const Notification &n) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool Application::send(const Core::Message *msg) {
+	return send(_settings.messaging.primaryGroup, msg);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+inline bool Application::send(const std::string &targetGroup, const Core::Message *msg) {
+	while ( _connection && !_exitRequested ) {
+		auto r = _connection->sendMessage(targetGroup, msg);
+		if ( r == OK ) {
+			return true;
+		}
+
+		if ( (r == NotConnected) || (r == ConnectionClosedByPeer) || (r == SystemError) ||
+		     (r == TimeoutError) || (r == NetworkError) ) {
+			// Wait until connection recovered.
+			SEISCOMP_WARNING("Sending message to group %s failed due to network errors, retry",
+			                 targetGroup);
+			Core::sleep(2);
+		}
+		else {
+			SEISCOMP_ERROR("Sending message to group %s failed: %s: message is lost",
+			               targetGroup, r.toString());
+			break;
+		}
+	}
+
+	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Application::handleEndAcquisition() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
