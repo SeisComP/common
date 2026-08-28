@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp>
+	<plugin name="FilterPicker">
+		<extends>global</extends>
+		<description>
+		The FilterPicker plugin implements a robust, broadband picker for real-time
+		seismic monitoring based on the FilterPicker algorithm by Lomax et al. (2012).
+		It operates on multiple frequency bands using characteristic functions to detect
+		and pick seismic phases. The algorithm is particularly well suited for
+		earthquake early warning applications and real-time seismic monitoring.
+		Reference: Lomax, A., Satriano, C., &amp; Vassallo, M. (2012). Automatic picker
+		developments and optimization: FilterPicker - a robust, broadband picker for
+		real-time seismic monitoring and earthquake early-warning. Seismological
+		Research Letters, 83(3), 531-540.
+		</description>
+	</plugin>
+	<binding name="FilterPicker" module="global">
+		<configuration>
+			<group name="picker">
+				<group name="FilterPicker">
+					<description>
+					FilterPicker P-phase picking parameters. This picker implements
+					a multi-band approach with characteristic function computation
+					for robust broadband phase detection.
+					</description>
+					<parameter name="numBands" type="int" default="5">
+						<description>
+						Number of frequency bands for the filter bank. More bands
+						provide better frequency coverage but increase computational
+						cost. Recommended range: 4-8 bands.
+						</description>
+					</parameter>
+					<parameter name="minFreq" type="double" default="0.5" unit="Hz">
+						<description>
+						Minimum frequency of the filter bank in Hz. The bands are
+						logarithmically spaced between minFreq and maxFreq.
+						Typical: 0.5 Hz for P-phase (broadband).
+						</description>
+					</parameter>
+					<parameter name="maxFreq" type="double" default="20.0" unit="Hz">
+						<description>
+						Maximum frequency of the filter bank in Hz. The bands are
+						logarithmically spaced between minFreq and maxFreq.
+						Automatically limited to 95% of Nyquist. Typical: 20 Hz.
+						</description>
+					</parameter>
+					<parameter name="windowSize" type="int" default="2" unit="s">
+						<description>
+						Integration window size in seconds. The characteristic
+						function is integrated over this window to enhance detection.
+						Fast response: 1s, Default: 2s, Noisy: 3-5s.
+						</description>
+					</parameter>
+					<parameter name="threshold" type="double" default="2.0">
+						<description>
+						Detection threshold for the characteristic function ratio.
+						Lower values increase sensitivity but may produce more
+						false picks. Sensitive: 1.5-2.0, Default: 2.0, Conservative: 2.5-3.5.
+						</description>
+					</parameter>
+					<parameter name="thresholdOff" type="double" default="1.5">
+						<description>
+						Threshold for resetting the detector after a pick. The
+						detector will reset when the characteristic function falls
+						below this value.
+						</description>
+					</parameter>
+					<parameter name="adaptiveThreshold" type="boolean" default="true">
+						<description>
+						Enable adaptive thresholding based on noise level. When
+						enabled, the detection threshold is automatically scaled based
+						on the background noise level. Recommended for most installations.
+						</description>
+					</parameter>
+					<parameter name="noiseBegin" type="double" default="-10.0" unit="s">
+						<description>
+						Start of noise window relative to trigger time in seconds.
+						This window is used to compute noise statistics for SNR
+						calculation and pick uncertainty estimation.
+						</description>
+					</parameter>
+					<parameter name="signalBegin" type="double" default="-5.0" unit="s">
+						<description>
+						Start of signal window relative to trigger time in seconds.
+						The pick search begins at this time relative to trigger.
+						</description>
+					</parameter>
+					<parameter name="signalEnd" type="double" default="20.0" unit="s">
+						<description>
+						End of signal window relative to trigger time in seconds.
+						The pick search ends at this time.
+						</description>
+					</parameter>
+					<parameter name="minSNR" type="double" default="2.0">
+						<description>
+						Minimum signal-to-noise ratio required for a valid pick.
+						Picks with SNR below this threshold are rejected.
+						Accept more: 1.5-2.0, Default: 2.0, High quality: 3.0-5.0.
+						</description>
+					</parameter>
+				</group>
+			</group>
+		</configuration>
+	</binding>
+</seiscomp>
