@@ -128,6 +128,9 @@ bool Master::init() {
 
 		for ( size_t p = 0; p < queue.messageProcessors.size(); ++p ) {
 			string interface = queue.messageProcessors[p];
+			if ( interface.empty() ) {
+				continue;
+			}
 			Broker::MessageProcessorPtr proc = Broker::MessageProcessorFactory::Create(interface);
 			if ( !proc ) {
 				SEISCOMP_ERROR("Could not create message processor interface '%s'",
