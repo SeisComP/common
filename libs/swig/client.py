@@ -978,6 +978,10 @@ class Notification(object):
         __init__(Notification self, int t, BaseObject o) -> Notification
         """
         _client.Notification_swiginit(self, _client.new_Notification(*args))
+
+    def __eq__(self, other):
+        r"""__eq__(Notification self, Notification other) -> bool"""
+        return _client.Notification___eq__(self, other)
     object = property(_client.Notification_object_get, _client.Notification_object_set, doc=r"""object : p.Seiscomp::Core::BaseObject""")
     type = property(_client.Notification_type_get, _client.Notification_type_set, doc=r"""type : int""")
     __swig_destroy__ = _client.delete_Notification
@@ -1104,6 +1108,13 @@ class Application(seiscomp.system.SystemApplication):
     def sendNotification(self, arg2):
         r"""sendNotification(Application self, Notification arg2)"""
         return _client.Application_sendNotification(self, arg2)
+
+    def send(self, *args):
+        r"""
+        send(Application self, Message msg) -> bool
+        send(Application self, std::string const & targetGroup, Message msg) -> bool
+        """
+        return _client.Application_send(self, *args)
 
     def waitEvent(self):
         r"""waitEvent(Application self) -> bool"""
