@@ -820,6 +820,10 @@ inline bool Application::waitEvent() {
 	return processEvent();
 }
 
+inline bool Application::send(const Core::Message *msg) {
+	return send(_settings.messaging.primaryGroup, msg);
+}
+
 
 }
 }

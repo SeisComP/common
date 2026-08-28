@@ -1237,16 +1237,7 @@ void Application::sendNotification(const Notification &n) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool Application::send(const Core::Message *msg) {
-	return send(_settings.messaging.primaryGroup, msg);
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-inline bool Application::send(const std::string &targetGroup, const Core::Message *msg) {
+bool Application::send(const std::string &targetGroup, const Core::Message *msg) {
 	while ( _connection && !_exitRequested ) {
 		auto r = _connection->sendMessage(targetGroup, msg);
 		if ( r == OK ) {
