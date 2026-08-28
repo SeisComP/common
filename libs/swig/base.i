@@ -28,6 +28,9 @@
 %newobject Seiscomp::Core::MetaProperty::createClass;
 %newobject Seiscomp::Core::MetaProperty::arrayObject;
 
+%copyctor Seiscomp::Core::TimeSpan;
+%copyctor Seiscomp::Core::Time;
+
 %include "seiscomp/core.h"
 %import "seiscomp/core/factory.h"
 %include stdint.i
