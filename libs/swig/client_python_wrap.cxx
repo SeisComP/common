@@ -20335,6 +20335,61 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_Notification___eq__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::Client::Notification *arg1 = 0 ;
+  Seiscomp::Client::Notification *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject *swig_obj[2] ;
+  bool result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "Notification___eq__", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__Client__Notification, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Notification___eq__" "', argument " "1"" of type '" "Seiscomp::Client::Notification const *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::Client::Notification * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2, SWIGTYPE_p_Seiscomp__Client__Notification,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Notification___eq__" "', argument " "2"" of type '" "Seiscomp::Client::Notification const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "Notification___eq__" "', argument " "2"" of type '" "Seiscomp::Client::Notification const &""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::Client::Notification * >(argp2);
+  {
+    try {
+      result = (bool)((Seiscomp::Client::Notification const *)arg1)->operator ==((Seiscomp::Client::Notification const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+    return NULL;
+  }
+  PyErr_Clear();
+  SWIG_Py_INCREF(Py_NotImplemented);
+  return Py_NotImplemented;
+}
+
+
 SWIGINTERN PyObject *_wrap_Notification_object_set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::Client::Notification *arg1 = 0 ;
@@ -33098,6 +33153,7 @@ static PyMethodDef SwigMethods[] = {
 		"Notification(int t)\n"
 		"new_Notification(int t, BaseObject o) -> Notification\n"
 		""},
+	 { "Notification___eq__", _wrap_Notification___eq__, METH_VARARGS, "Notification___eq__(Notification self, Notification other) -> bool"},
 	 { "Notification_object_set", _wrap_Notification_object_set, METH_VARARGS, "Notification_object_set(Notification self, BaseObject object)"},
 	 { "Notification_object_get", _wrap_Notification_object_get, METH_O, "Notification_object_get(Notification self) -> BaseObject"},
 	 { "Notification_type_set", _wrap_Notification_type_set, METH_VARARGS, "Notification_type_set(Notification self, int type)"},

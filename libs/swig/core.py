@@ -520,9 +520,6 @@ class TimeSpan(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self, *args):
-        _core.TimeSpan_swiginit(self, _core.new_TimeSpan(*args))
-
     def __eq__(self, other):
         return _core.TimeSpan___eq__(self, other)
 
@@ -622,6 +619,9 @@ class TimeSpan(object):
     def __float__(self):
             return self.length()
 
+
+    def __init__(self, *args):
+        _core.TimeSpan_swiginit(self, _core.new_TimeSpan(*args))
     __swig_destroy__ = _core.delete_TimeSpan
 
 # Register TimeSpan in _core:
@@ -635,9 +635,6 @@ class Time(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
     Null = property(_core.Time_Null_get, _core.Time_Null_set)
-
-    def __init__(self, *args):
-        _core.Time_swiginit(self, _core.new_Time(*args))
 
     def __eq__(self, other):
         return _core.Time___eq__(self, other)
@@ -785,6 +782,9 @@ class Time(object):
     def datetime(self):
             return datetime.datetime(*self.get()[1:])
 
+
+    def __init__(self, *args):
+        _core.Time_swiginit(self, _core.new_Time(*args))
     __swig_destroy__ = _core.delete_Time
 
 # Register Time in _core:
