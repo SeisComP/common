@@ -3382,6 +3382,21 @@ void PickerView::init() {
 		for ( it = pickers->begin(); it != pickers->end(); ++it )
 			SC_D.comboPicker->addItem(it->c_str());
 
+		// Secondary pickers (e.g. S-V, S-L2) refine a phase relative to an
+		// existing P pick instead of the cursor position. They are appended
+		// to the same combo box, separated visually, so any algorithm can be
+		// selected regardless of the phase currently being picked.
+		Processing::SecondaryPickerFactory::ServiceNames *spickers = Processing::SecondaryPickerFactory::Services();
+		if ( spickers ) {
+			if ( !spickers->empty() ) {
+				std::sort(spickers->begin(), spickers->end());
+				SC_D.comboPicker->insertSeparator(SC_D.comboPicker->count());
+				for ( auto &name : *spickers )
+					SC_D.comboPicker->addItem(name.c_str());
+			}
+			delete spickers;
+		}
+
 		SC_D.ui.toolBarPicking->addSeparator();
 		SC_D.ui.toolBarPicking->addWidget(SC_D.comboPicker);
 		delete pickers;
@@ -8475,6 +8490,42 @@ void PickerView::scrollFineRight() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+int PickerView::feedRepickerComponents(Processing::WaveformProcessor *proc) {
+	int count = 0;
+
+	auto feedSlot = [&](int slot) -> RecordSequence* {
+		RecordSequence *seq =
+			SC_D.currentRecord->isFilteringEnabled()
+				?
+				SC_D.currentRecord->filteredRecords(slot)
+				:
+				SC_D.currentRecord->records(slot);
+		if ( seq )
+			count += proc->feedSequence(seq);
+		return seq;
+	};
+
+	if ( proc->usedComponent() == Processing::WaveformProcessor::Vertical ||
+	     proc->usedComponent() == Processing::WaveformProcessor::FirstHorizontal ||
+	     proc->usedComponent() == Processing::WaveformProcessor::SecondHorizontal ) {
+		// In case a single component is requested then feed the currently
+		// selected component.
+		if ( !feedSlot(SC_D.currentSlot) ) {
+			statusBar()->showMessage(tr("No data on current component"));
+			return -1;
+		}
+	}
+	else if ( proc->usedComponent() == Processing::WaveformProcessor::Horizontal ) {
+		for ( int i = 1; i < 3; ++i ) feedSlot(i);
+	}
+	else if ( proc->usedComponent() == Processing::WaveformProcessor::Any ) {
+		for ( int i = 0; i < 3; ++i ) feedSlot(i);
+	}
+
+	return count;
+}
+
+
 void PickerView::automaticRepick() {
 	if ( SC_D.comboPicker == nullptr ) {
 		statusBar()->showMessage("Automatic picking: no picker available", 2000);
@@ -8488,14 +8539,7 @@ void PickerView::automaticRepick() {
 
 	if ( !SC_D.currentRecord->cursorText().isEmpty() ) {
 		Core::Time cp = SC_D.currentRecord->cursorPos();
-
-		Processing::PickerPtr picker =
-			Processing::PickerFactory::Create(SC_D.comboPicker->currentText().toStdString().c_str());
-
-		if ( !picker ) {
-			statusBar()->showMessage(QString("Automatic picking: unable to create picker '%1'").arg(SC_D.comboPicker->currentText()), 2000);
-			return;
-		}
+		QString name = SC_D.comboPicker->currentText();
 
 		WaveformStreamID wid = SC_D.recordView->streamID(SC_D.recordView->currentItem()->row());
 		KeyValues params;
@@ -8529,15 +8573,113 @@ void PickerView::automaticRepick() {
 		}
 
 		auto label = static_cast<PickerRecordLabel*>(SC_D.recordView->currentItem()->label());
+
+		// Primary pickers (e.g. AIC, BK, GFZ) refine the cursor position directly.
+		Processing::PickerPtr picker = Processing::PickerFactory::Create(name.toStdString());
+		if ( picker ) {
+			for ( size_t i = 0; i < 3; ++i ) {
+				picker->streamConfig(static_cast<Processing::WaveformProcessor::Component>(i)).init(
+					wid.networkCode(), wid.stationCode(),
+					wid.locationCode(), label->data.traces[i].channelCode,
+					cp
+				);
+			}
+
+			if ( !picker->setup(Processing::Settings(SCApp->configModuleName(),
+			                    wid.networkCode(), wid.stationCode(),
+			                    wid.locationCode(), wid.channelCode(), &SCApp->configuration(),
+			                    &params)) ) {
+				statusBar()->showMessage("Automatic picking: unable to inialize picker");
+				return;
+			}
+
+			if ( SC_D.config.repickerSignalStart ) {
+				picker->setSignalStart(*SC_D.config.repickerSignalStart);
+				SEISCOMP_DEBUG("Set repick start to %.2f", *SC_D.config.repickerSignalStart);
+			}
+			if ( SC_D.config.repickerSignalEnd ) {
+				picker->setSignalEnd(*SC_D.config.repickerSignalEnd);
+				SEISCOMP_DEBUG("Set repick end to %.2f", *SC_D.config.repickerSignalEnd);
+			}
+
+			picker->setTrigger(cp);
+			picker->setPublishFunction(bind(&PickerView::emitPick, this, placeholders::_1, placeholders::_2));
+			picker->computeTimeWindow();
+
+			SEISCOMP_DEBUG("%s: ns=%f, ss=%f, se=%f", picker->methodID().c_str(),
+			               picker->config().noiseBegin,
+			               picker->config().signalBegin,
+			               picker->config().signalEnd);
+			SEISCOMP_DEBUG("%s: tw = %s ~ %s", picker->methodID().c_str(),
+			               picker->timeWindow().startTime().iso().c_str(),
+			               picker->timeWindow().endTime().iso().c_str());
+
+			int count = feedRepickerComponents(picker.get());
+			if ( count < 0 ) return;
+
+			statusBar()->showMessage(QString("Fed %1 records: state = %2(%3)")
+			                         .arg(count)
+			                         .arg(picker->status().toString())
+			                         .arg(picker->statusValue()), 2000);
+			return;
+		}
+
+		// Secondary pickers (e.g. S-V, S-L2) refine a phase relative to an
+		// existing P pick rather than the raw cursor position.
+		Processing::SecondaryPickerPtr spicker = Processing::SecondaryPickerFactory::Create(name.toStdString());
+		if ( !spicker ) {
+			statusBar()->showMessage(QString("Automatic picking: unable to create picker '%1'").arg(name), 2000);
+			return;
+		}
+
+		// Resolve the reference P onset required by the S picker using an
+		// existing P pick belonging to this origin. The P pick may be named "P" or
+		// any P-type phase (e.g. "Pg", "Pn", "PmP"). Depth phases like "pP"/"sP",
+		// which start with a lowercase leg prefix, are excluded.
+		// We consider only "P" that are either already associated to SC_D.origin,
+		// or a pick just made manually in this session, even before being sent/
+		// committed. If several qualifying "P" exist, the earliest in time is used.
+		RecordWidget *rowWidget = SC_D.recordView->currentItem()->widget();
+
+		PickerMarker *refMarker = nullptr;
+		for ( int i = 0; i < rowWidget->markerCount(); ++i ) {
+			auto m = static_cast<PickerMarker*>(rowWidget->marker(i));
+			if ( !m->isArrival() ) continue;
+			if ( !m->text().trimmed().startsWith('P') ) continue;
+			if ( !refMarker || m->correctedTime() < refMarker->correctedTime() )
+				refMarker = m;
+		}
+
+		if ( !refMarker ) {
+			statusBar()->showMessage(QString("Automatic picking: no P pick on %1.%2 yet, pick P first")
+			                         .arg(wid.networkCode().c_str())
+			                         .arg(wid.stationCode().c_str()), 2000);
+			return;
+		}
+
+		Processing::SecondaryPicker::Trigger trigger;
+		std::string referencingPickID;
+
+		trigger.onset = refMarker->correctedTime();
+		if ( refMarker->hasUncertainty() ) {
+			trigger.onsetLowerUncertainty = refMarker->lowerUncertainty();
+			trigger.onsetUpperUncertainty = refMarker->upperUncertainty();
+		}
+		if ( refMarker->pick() ) {
+			referencingPickID = refMarker->pick()->publicID();
+		}
+
 		for ( size_t i = 0; i < 3; ++i ) {
-			picker->streamConfig(static_cast<Processing::WaveformProcessor::Component>(i)).init(
+			spicker->streamConfig(static_cast<Processing::WaveformProcessor::Component>(i)).init(
 				wid.networkCode(), wid.stationCode(),
 				wid.locationCode(), label->data.traces[i].channelCode,
-				SC_D.currentRecord->cursorPos()
+				cp
 			);
 		}
 
-		if ( !picker->setup(Processing::Settings(SCApp->configModuleName(),
+		spicker->setReferencingPickID(referencingPickID);
+
+		if ( !spicker->setup(Processing::Settings(SCApp->configModuleName(),
 		                    wid.networkCode(), wid.stationCode(),
 		                    wid.locationCode(), wid.channelCode(), &SCApp->configuration(),
 		                    &params)) ) {
@@ -8545,89 +8687,22 @@ void PickerView::automaticRepick() {
 			return;
 		}
 
-		if ( SC_D.config.repickerSignalStart ) {
-			picker->setSignalStart(*SC_D.config.repickerSignalStart);
-			SEISCOMP_DEBUG("Set repick start to %.2f", *SC_D.config.repickerSignalStart);
-		}
-		if ( SC_D.config.repickerSignalEnd ) {
-			picker->setSignalEnd(*SC_D.config.repickerSignalEnd);
-			SEISCOMP_DEBUG("Set repick end to %.2f", *SC_D.config.repickerSignalEnd);
-		}
+		if ( SC_D.config.repickerSignalStart )
+			spicker->setSignalStart(*SC_D.config.repickerSignalStart);
+		if ( SC_D.config.repickerSignalEnd )
+			spicker->setSignalEnd(*SC_D.config.repickerSignalEnd);
 
-		picker->setTrigger(cp);
-		picker->setPublishFunction(bind(&PickerView::emitPick, this, placeholders::_1, placeholders::_2));
-		picker->computeTimeWindow();
+		spicker->setTrigger(trigger);
+		spicker->setPublishFunction(bind(&PickerView::emitSecondaryPick, this, placeholders::_1, placeholders::_2));
+		spicker->computeTimeWindow();
 
-		SEISCOMP_DEBUG("%s: ns=%f, ss=%f, se=%f", picker->methodID().c_str(),
-		               picker->config().noiseBegin,
-		               picker->config().signalBegin,
-		               picker->config().signalEnd);
-		SEISCOMP_DEBUG("%s: tw = %s ~ %s", picker->methodID().c_str(),
-		               picker->timeWindow().startTime().iso().c_str(),
-		               picker->timeWindow().endTime().iso().c_str());
+		int count = feedRepickerComponents(spicker.get());
+		if ( count < 0 ) return;
 
-		int count = 0;
-		size_t ocount = 0;
-
-		if ( picker->usedComponent() == Processing::WaveformProcessor::Vertical ||
-		     picker->usedComponent() == Processing::WaveformProcessor::FirstHorizontal ||
-		     picker->usedComponent() == Processing::WaveformProcessor::SecondHorizontal ) {
-			// In case a single component is requested then feed the currently
-			// selected component.
-			RecordSequence *seq =
-				SC_D.currentRecord->isFilteringEnabled()
-					?
-					SC_D.currentRecord->filteredRecords(SC_D.currentSlot)
-					:
-					SC_D.currentRecord->records(SC_D.currentSlot);
-			if ( seq ) {
-				count += picker->feedSequence(seq);
-				ocount += seq->size();
-			}
-			else {
-				statusBar()->showMessage(tr("No data on current component"));
-				return;
-			}
-		}
-		else if ( picker->usedComponent() == Processing::WaveformProcessor::Horizontal ) {
-			RecordSequence *seq;
-
-			for ( size_t i = 1; i < 3; ++i ) {
-				seq = SC_D.currentRecord->isFilteringEnabled()
-					?
-					SC_D.currentRecord->filteredRecords(i)
-					:
-					SC_D.currentRecord->records(i)
-				;
-
-				if ( seq ) {
-					count += picker->feedSequence(seq);
-					ocount += seq->size();
-				}
-			}
-		}
-		else if ( picker->usedComponent() == Processing::WaveformProcessor::Any ) {
-			RecordSequence *seq;
-
-			for ( size_t i = 0; i < 3; ++i ) {
-				seq = SC_D.currentRecord->isFilteringEnabled()
-					?
-					SC_D.currentRecord->filteredRecords(i)
-					:
-					SC_D.currentRecord->records(i)
-				;
-
-				if ( seq ) {
-					count += picker->feedSequence(seq);
-					ocount += seq->size();
-				}
-			}
-		}
-
-		statusBar()->showMessage(QString("Fed %1 of %2 records: state = %3(%4)")
-		                         .arg(count).arg(ocount)
-		                         .arg(picker->status().toString())
-		                         .arg(picker->statusValue()), 2000);
+		statusBar()->showMessage(QString("Fed %1 records: state = %2(%3)")
+		                         .arg(count)
+		                         .arg(spicker->status().toString())
+		                         .arg(spicker->statusValue()), 2000);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -9539,6 +9614,31 @@ void PickerView::abortSearchStation() {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::emitPick(const Processing::Picker *picker,
                           const Processing::Picker::Result &res) {
+	PickerTimeWindowDecorator *d;
+	d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
+	if ( !d ) {
+		d = new PickerTimeWindowDecorator(this);
+		SC_D.currentRecord->setDecorator(d);
+	}
+
+	// First set the cursor position otherwise the decorator would be
+	// hidden immediately.
+	setCursorPos(res.time);
+
+	// Set up the decorator. It will be hidden on cursor move.
+	d->setTimeWindowAndSNR(picker->signalWindow(), res.snr);
+	d->setVisible(true);
+
+	SC_D.currentRecord->update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::emitSecondaryPick(const Processing::SecondaryPicker *picker,
+                                    const Processing::SecondaryPicker::Result &res) {
 	PickerTimeWindowDecorator *d;
 	d = static_cast<PickerTimeWindowDecorator*>(SC_D.currentRecord->decorator());
 	if ( !d ) {
