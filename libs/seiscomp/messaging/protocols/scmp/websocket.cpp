@@ -1266,11 +1266,11 @@ Result WebsocketConnection::disconnect() {
 	_backlog.clear();
 	_outbox.clear();
 
-	// We close the socket before we clear the select device group
-	// to avoid concurrency issues
 	auto res = Socket::close();
 
-	_select.clear();
+	// Closing the socket does not generate an epoll event. We signal the
+	// group's interrupt fd so a reader blocked in DeviceGroup::wait() returns.
+	_select.interrupt();
 
 	return res;
 }
