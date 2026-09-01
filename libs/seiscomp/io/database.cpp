@@ -208,12 +208,12 @@ std::string DatabaseInterface::Parse(
 	auto n = s.length();
 	*tail = string::npos;
 
-	for ( size_t i = 0; (s[i] != '\0') && (i < n); ) {
+	for ( size_t i = 0; (i < n) && (s[i] != '\0'); ) {
 		switch ( s[i] ) {
 			case '\\':
 				++i;
 				sql += s.substr(lastOut, i - lastOut - 1);
-				if ( (s[i] != '\0') && (i < n) ) {
+				if ( (i < n) && (s[i] != '\0') ) {
 					sql += s[i];
 					lastOut = i + 1;
 				}
