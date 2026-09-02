@@ -421,8 +421,11 @@
 				</description>
 				<group name="default">
 					<description>
-					Configure the default travel-time table interface and model to be
-					used by all modules that supports configurable ttt.
+					Configure the default travel-time table interface and table (model)
+					to be used by modules supporting configurable ttt, currently
+					scolv. scolv considers the defaults unless origins provide
+					applicable information on locator. For amplitude-time windows
+					configure global bindings.
 					</description>
 					<parameter name="tableType" type="string" default="LOCSAT">
 						<description>
