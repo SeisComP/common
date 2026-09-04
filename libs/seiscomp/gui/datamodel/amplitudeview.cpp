@@ -967,10 +967,10 @@ TravelTime computeFirst(TravelTimeTableInterfacePtr ttt,
 	}
 	catch ( std::out_of_range &e ) {
 		SEISCOMP_ERROR("%s", e.what());
-		if ( edep < 0.001 ) {
+		if ( edep < 0.01 ) {
 			// Fallback to compute with depth 1m.
-			SEISCOMP_WARNING("Compute travel times with depth of 1m", e.what());
-			return ttt->computeFirst(elat, elon, 0.001, slat, slon, salt);
+			SEISCOMP_WARNING("Compute travel times with depth of 10m", e.what());
+			return ttt->computeFirst(elat, elon, 0.01, slat, slon, salt);
 		}
 
 		throw;
@@ -3508,7 +3508,8 @@ void AmplitudeView::loadNextStations(float distance) {
 					try {
 						TravelTime ttime =
 							computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-						                 SC_D.origin->depth(), s->latitude(), s->longitude());
+						                 SC_D.origin->depth(), s->latitude(), s->longitude(),
+						                 elevation(stream->sensorLocation()));
 
 						Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
@@ -3804,7 +3805,8 @@ bool AmplitudeView::setOrigin(Seiscomp::DataModel::Origin* origin,
 			try {
 				TravelTime ttime =
 					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                 SC_D.origin->depth(), loc->latitude(), loc->longitude());
+				                 SC_D.origin->depth(), loc->latitude(), loc->longitude(),
+				                 elevation(loc));
 
 				reference = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 			}
@@ -4498,7 +4500,7 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 		double elat = SC_D.origin->latitude();
 		double elon = SC_D.origin->longitude();
 		double slat, slon;
-		double salt = loc->elevation();
+		double salt = elevation(loc);
 
 		try {
 			slat = loc->latitude(); slon = loc->longitude();
@@ -4553,7 +4555,24 @@ bool AmplitudeView::addTheoreticalArrivals(RecordViewItem *item,
 			depth = 0.0;
 		}
 
-		TravelTimeList *ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		TravelTimeList *ttt = nullptr;
+
+		try {
+			ttt = SC_D.ttTable->compute(elat, elon, depth, slat, slon, salt);
+		}
+		catch ( std::out_of_range &e ) {
+			SEISCOMP_ERROR("%s", e.what());
+			if ( depth < 0.01 ) {
+				// Fallback to compute with a source depth of 1m.
+				SEISCOMP_WARNING("Compute travel times with depth of 10m");
+				try {
+					ttt = SC_D.ttTable->compute(elat, elon, 0.01, slat, slon, salt);
+				}
+				catch ( std::exception &e ) {
+					SEISCOMP_ERROR("Fallback: %s", e.what());
+				}
+			}
+		}
 
 		if ( ttt ) {
 			QMap<QString, RecordMarker*> currentPhases;
@@ -6546,7 +6565,8 @@ void AmplitudeView::addStations() {
 			try {
 				TravelTime ttime =
 					computeFirst(SC_D.ttTable, SC_D.origin->latitude(), SC_D.origin->longitude(),
-				                 SC_D.origin->depth(), s->latitude(), s->longitude());
+				                 SC_D.origin->depth(), s->latitude(), s->longitude(),
+				                 elevation(stream->sensorLocation()));
 
 				Core::Time referenceTime = SC_D.origin->time().value() + Core::TimeSpan(ttime.time);
 
