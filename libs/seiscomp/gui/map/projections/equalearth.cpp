@@ -658,32 +658,46 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 			          * double(Coord::fraction_half_max));
 		}
 
-		// lambda = Kx * x_raw   (linear along the row)
-		const double Kx = (3.0 * eeDenomP(t2, t6)) / (2.0 * SQRT3 * cosT);
+		// Longitude is linear in the pixel column x:
+		//   lonRad(x) = dLambda * (x - _halfWidth) + _lam0
+		// and the texture U coordinate is linear in lonRad, so U is stepped
+		// across the row with a single add per pixel - as
+		// RectangularProjection does - instead of a divide plus fmod. The
+		// outline |lonRad| <= pi bounds the visible columns; getTexel()'s
+		// fractional masking takes care of the longitude wrap.
+		const double Kx      = (3.0 * eeDenomP(t2, t6)) / (2.0 * SQRT3 * cosT);
+		const double dLambda = (Kx * Y_POLE) / _scale;   // lonRad per pixel (> 0)
+		const double span    = M_PI / dLambda;           // pixels: centre -> rim
 
-		for ( int ix = 0; ix < w; ++ix ) {
-			const double nx     = (double(ix) - _halfWidth) / _scale;
-			const double lambda = Kx * (nx * Y_POLE);
+		int xl = int(std::ceil (_halfWidth - span));
+		int xr = int(std::floor(_halfWidth + span));
+		if ( xl < 0 ) xl = 0;
+		if ( xr > w - 1 ) xr = w - 1;
 
-			if ( lambda > M_PI || lambda < -M_PI ) {
-				scan[ix] = transparent;      // outside the outline
-				continue;
+		int ix = 0;
+		for ( ; ix < xl; ++ix ) scan[ix] = transparent;
+
+		if ( xl <= xr ) {
+			const double fh    = double(Coord::fraction_half_max);
+			const double uStep = (dLambda / M_PI) * fh;
+			double       uu    = ((dLambda * (xl - _halfWidth) + _lam0) / M_PI
+			                      + 1.0) * fh;
+
+			for ( ; ix <= xr; ++ix, uu += uStep ) {
+				Coord u;
+				u.value = Coord::value_type(uu);
+
+				QRgb c;
+				if ( highQuality )
+					cache->getTexelBilinear(c, u, v, level);
+				else
+					cache->getTexel(c, u, v, level);
+
+				scan[ix] = c | 0xff000000u;   // force opaque inside the map
 			}
-
-			const double lonDeg = wrapLonDeg(eeR2D(lambda + _lam0));
-
-			Coord u;
-			u.value = Coord::value_type((lonDeg / 180.0 + 1.0)
-			          * double(Coord::fraction_half_max));
-
-			QRgb c;
-			if ( highQuality )
-				cache->getTexelBilinear(c, u, v, level);
-			else
-				cache->getTexel(c, u, v, level);
-
-			scan[ix] = c | 0xff000000u;      // force opaque inside the map
 		}
+
+		for ( ; ix < w; ++ix ) scan[ix] = transparent;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
