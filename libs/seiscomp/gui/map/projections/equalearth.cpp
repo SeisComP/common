@@ -267,7 +267,44 @@ void EqualEarthProjection::centerOn(const QPointF &geoCoords) {
 	_center        = QPointF(lon / 180.0, lat / 90.0);
 	_visibleCenter = _center;
 
+	clampVerticalCenter();
 	updateCenter();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Keep the centre latitude within the range that still shows the map on
+// both the top and bottom viewport edges. Applied from centerOn() and
+// render() so the value the canvas reads back with Projection::center()
+// while dragging matches what is drawn - otherwise the over-panned excess
+// has to be dragged back before the map starts moving again.
+void EqualEarthProjection::clampVerticalCenter() {
+	if ( _scale <= 0.0 || _halfHeight <= 0 )
+		return;
+
+	const double vHalf = _halfHeight / _scale;   // viewport half-height, normalized
+
+	double latLim;                               // as (latitude / 90)
+	if ( vHalf >= 1.0 ) {
+		latLim = 0.0;
+	}
+	else {
+		const double thetaLim = eeSolveTheta((1.0 - vHalf) * Y_POLE);
+		double sinLat = std::sin(thetaLim) * INV_M;
+		if ( sinLat >  1.0 ) sinLat =  1.0;
+		else if ( sinLat < -1.0 ) sinLat = -1.0;
+		latLim = std::asin(sinLat) / (M_PI / 2.0);
+	}
+
+	double cy = _center.y();
+	if ( cy >  latLim ) cy =  latLim;
+	else if ( cy < -latLim ) cy = -latLim;
+
+	_center.setY(cy);
+	_visibleCenter.setY(cy);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -568,29 +605,7 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 
 	setVisibleRadius(radius / _screenRadius); // -> _scale == radius
 
-	// Clamp vertical panning so the map cannot be scrolled past its top or
-	// bottom border (consistent with RectangularProjection). The graticule
-	// spans normalized Y in [-1, +1]; the viewport spans _halfHeight/_scale.
-	{
-		const double vHalf = _halfHeight / _scale;
-		if ( vHalf >= 1.0 ) {
-			_visibleCenter.setY(0.0);
-		}
-		else {
-			// Largest |centre latitude| that keeps both borders on the map.
-			const double thetaLim = eeSolveTheta((1.0 - vHalf) * Y_POLE);
-			double sinLat = std::sin(thetaLim) * INV_M;
-			if ( sinLat >  1.0 ) sinLat =  1.0;
-			else if ( sinLat < -1.0 ) sinLat = -1.0;
-			const double latLim = std::asin(sinLat) / (M_PI / 2.0);
-
-			double cy = _visibleCenter.y();
-			if ( cy >  latLim ) cy =  latLim;
-			else if ( cy < -latLim ) cy = -latLim;
-			_visibleCenter.setY(cy);
-		}
-	}
-
+	clampVerticalCenter();                    // keep both borders on the map
 	updateCenter();
 
 	const int  w = img.width();

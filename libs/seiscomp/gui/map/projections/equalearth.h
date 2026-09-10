@@ -86,6 +86,13 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 		//! projection centre (central meridian / parallel).
 		void updateCenter();
 
+		//! Clamps the centre latitude (both _center and _visibleCenter) so
+		//! neither map border can be scrolled into the viewport. Applied in
+		//! centerOn() as well as render() so Projection::center() - which
+		//! the canvas reads back while dragging - stays consistent with
+		//! what is displayed (no panning dead zone).
+		void clampVerticalCenter();
+
 		//! Forward projection without longitude wrapping. lonDeg is a running
 		//! longitude that may exceed +/-180 deg; the caller keeps the vertex
 		//! longitudes continuous so an edge never jumps 360 deg.
