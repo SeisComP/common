@@ -68,6 +68,11 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 		                     const Geo::GeoCoordinate *poly, bool closed,
 		                     uint minPixelDist, ClipHint hint = NoClip) const;
 
+		//! Parallels are straight horizontal segments here, so draw one span
+		//! between the two rims instead of the base class longitude sweep
+		//! (which wraps across the map at the antimeridian).
+		virtual bool drawLonCircle(QPainter &p, qreal lat);
+
 		virtual void updateBoundingBox();
 
 

@@ -20,6 +20,8 @@
 #include <seiscomp/gui/map/texturecache.ipp>
 #include <seiscomp/geo/coordinate.h>
 
+#include <QPainter>
+
 #include <algorithm>
 #include <cmath>
 #include <math.h>
@@ -200,6 +202,25 @@ inline double wrapLonDeg(double lon) {
 	lon = std::fmod(lon + 180.0, 360.0);
 	if ( lon < 0.0 ) lon += 360.0;
 	return lon - 180.0;
+}
+
+
+// Latitude grid label, same formatting as RectangularProjection.
+QString lat2String(qreal lat) {
+	int nlat = (lat * 100000) + (lat < 0 ? -0.5 : +0.5);
+
+	if ( nlat % 10 )
+		return QString("%1%2").arg(fabs(lat), 0, 'f', 5).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	else if ( nlat % 100 )
+		return QString("%1%2").arg(fabs(lat), 0, 'f', 4).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	else if ( nlat % 1000 )
+		return QString("%1%2").arg(fabs(lat), 0, 'f', 3).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	else if ( nlat % 10000 )
+		return QString("%1%2").arg(fabs(lat), 0, 'f', 2).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	else if ( nlat % 100000 )
+		return QString("%1%2").arg(fabs(lat), 0, 'f', 1).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	else
+		return QString("%1%2").arg(abs((int)lat)).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
 }
 
 
@@ -390,8 +411,17 @@ void EqualEarthProjection::projectContinuous(QPointF &screen,
 	if ( latDeg >  90.0 ) latDeg =  90.0;
 	else if ( latDeg < -90.0 ) latDeg = -90.0;
 
+	// Clamp the longitude offset to +/- pi: a running longitude may leave
+	// the [-180, 180] window of this world copy, and beyond the antimeridian
+	// there is no map. Placing the vertex on the rim clips the polygon to
+	// the projection outline; the part that wrapped around is drawn by the
+	// neighbouring world copy at the opposite rim.
+	double lambda = eeD2R(lonDeg) - _lam0;
+	if ( lambda >  M_PI ) lambda =  M_PI;
+	else if ( lambda < -M_PI ) lambda = -M_PI;
+
 	double x, y;
-	eeForward(eeD2R(lonDeg) - _lam0, eeD2R(latDeg), x, y);
+	eeForward(lambda, eeD2R(latDeg), x, y);
 
 	const double nx = x / Y_POLE;
 	const double ny = y / Y_POLE - _y0Norm;
@@ -495,8 +525,13 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 	for ( int k = kMin; k <= kMax; ++k ) {
 		const double off = k * 360.0;
 
-		if ( maxLon + off < centerLon - 180.0 - 1.0 ) continue;
-		if ( minLon + off > centerLon + 180.0 + 1.0 ) continue;
+		// Draw this world copy only if the polygon's longitude span really
+		// overlaps the visible [-180, 180] window. projectContinuous() then
+		// clips whatever part still pokes past a rim; without the strict
+		// test a copy whose polygon lies just outside the window would
+		// otherwise collapse onto the rim as a spurious sliver.
+		if ( maxLon + off < centerLon - 180.0 ) continue;
+		if ( minLon + off > centerLon + 180.0 ) continue;
 
 		QPointF p, first;
 		projectContinuous(first, gc.front().x() + off, gc.front().y());
@@ -554,6 +589,45 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 	}
 
 	return any && !screenPath.isEmpty();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// A parallel is a straight horizontal segment between the two rims. Drawing
+// it as one line avoids the base class' longitude sweep, which projects
+// each sample independently and therefore jumps across the whole map when
+// it passes the antimeridian.
+bool EqualEarthProjection::drawLonCircle(QPainter &painter, qreal lat) {
+	if ( _scale <= 0.0 )
+		return false;
+
+	if ( lat >  90.0 ) lat =  90.0;
+	else if ( lat < -90.0 ) lat = -90.0;
+
+	// Rim points at this latitude: lambda = +/- pi. Easting is odd in
+	// lambda, so the two rims are symmetric about the centre column.
+	double x, y;
+	eeForward(M_PI, eeD2R(lat), x, y);
+	const double dx = (x / Y_POLE) * _scale;
+	const double sy = (y / Y_POLE - _y0Norm) * _scale;
+
+	const int py = int(std::lround(_halfHeight - sy));
+	if ( py < 0 || py >= _height )
+		return false;                       // off screen -> stop the grid loop
+
+	const int xl = int(std::lround(_halfWidth - dx));
+	const int xr = int(std::lround(_halfWidth + dx));
+
+	painter.drawLine(xl, py, xr, py);
+	painter.drawText(
+		QRect(std::max(0, xl) + painter.fontMetrics().height() / 4, py,
+		      _width, _height),
+		Qt::AlignLeft | Qt::AlignTop | Qt::TextSingleLine, lat2String(lat));
+
+	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
