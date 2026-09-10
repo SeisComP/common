@@ -380,14 +380,16 @@
 						option.
 						</description>
 					</parameter>
-					<parameter name="projection" type="string" default="Rectangular" values="Rectangular,Mercator">
+					<parameter name="projection" type="string" default="Rectangular" values="Rectangular,Mercator,EqualEarth">
 						<description>
 						The projection for showing maps. SeisComP ships with
-						Rectangular and Mercator.
+						Rectangular, Mercator and EqualEarth.
 						Other projections may be provided through plugins.
 
 						The visible latitude range of maps shown with Mercator
-						is limited to -85 - +85 deg.
+						is limited to -85 - +85 deg. EqualEarth is an equal-area
+						pseudocylindrical projection showing the full latitude
+						range.
 						</description>
 					</parameter>
 					<parameter name="toBGR" type="boolean" default="false">
