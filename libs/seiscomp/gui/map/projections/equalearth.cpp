@@ -878,6 +878,19 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 			v.value = static_cast<Coord::value_type>((1.0 - latDeg / 90.0) * fh);
 		}
 
+		// V runs across the texture as [0, fraction_max). The south edge
+		// evaluates to exactly fraction_max, whose bit 32 getTexel() masks
+		// off - that would wrap the bottom scan line back onto the north
+		// edge (visible as a swapped strip of pixels at the poles). Keep it
+		// in range; MercatorProjection::render() guards its bottom row the
+		// same way.
+		if ( v.value < 0 ) {
+			v.value = 0;
+		}
+		else if ( v.value >= static_cast<Coord::value_type>(Coord::fraction_max) ) {
+			v.value = static_cast<Coord::value_type>(Coord::fraction_max) - 1;
+		}
+
 		// Longitude is linear in the pixel column x:
 		//   lonRad(x) = dLambda * (x - _halfWidth) + _lam0
 		// and the texture U coordinate is linear in lonRad, so U is stepped
