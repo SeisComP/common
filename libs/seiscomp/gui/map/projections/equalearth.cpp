@@ -567,6 +567,30 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 		radius = minRadius;
 
 	setVisibleRadius(radius / _screenRadius); // -> _scale == radius
+
+	// Clamp vertical panning so the map cannot be scrolled past its top or
+	// bottom border (consistent with RectangularProjection). The graticule
+	// spans normalized Y in [-1, +1]; the viewport spans _halfHeight/_scale.
+	{
+		const double vHalf = _halfHeight / _scale;
+		if ( vHalf >= 1.0 ) {
+			_visibleCenter.setY(0.0);
+		}
+		else {
+			// Largest |centre latitude| that keeps both borders on the map.
+			const double thetaLim = eeSolveTheta((1.0 - vHalf) * Y_POLE);
+			double sinLat = std::sin(thetaLim) * INV_M;
+			if ( sinLat >  1.0 ) sinLat =  1.0;
+			else if ( sinLat < -1.0 ) sinLat = -1.0;
+			const double latLim = std::asin(sinLat) / (M_PI / 2.0);
+
+			double cy = _visibleCenter.y();
+			if ( cy >  latLim ) cy =  latLim;
+			else if ( cy < -latLim ) cy = -latLim;
+			_visibleCenter.setY(cy);
+		}
+	}
+
 	updateCenter();
 
 	const int  w = img.width();
