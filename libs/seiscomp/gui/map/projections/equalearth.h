@@ -1,6 +1,6 @@
 /***************************************************************************
  * Copyright (C) 2026 by Mustafa Comoglu                                    *
- *                                                                         *
+ *                                                                          *
  * GNU Affero General Public License Usage                                  *
  * This file may be used under the terms of the GNU Affero                  *
  * Public License version 3.0 as published by the Free Software Foundation  *
@@ -23,9 +23,7 @@
 #include <seiscomp/gui/map/projection.h>
 
 
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 
 /**
@@ -54,33 +52,35 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 	// Public projection interface
 	// ----------------------------------------------------------------------
 	public:
-		virtual bool isRectangular() const;
-		virtual bool wantsGridAntialiasing() const;
+		bool isRectangular() const override;
+		bool wantsGridAntialiasing() const override;
 
-		virtual bool project(QPoint &screenCoords, const QPointF &geoCoords) const;
-		virtual bool unproject(QPointF &geoCoords, const QPoint &screenCoords) const;
+		bool project(QPoint &screenCoords,
+		             const QPointF &geoCoords) const override;
+		bool unproject(QPointF &geoCoords,
+		               const QPoint &screenCoords) const override;
 
-		virtual void centerOn(const QPointF &geoCoords);
+		void centerOn(const QPointF &geoCoords) override;
 
-		virtual int lineSteps(const QPointF &p0, const QPointF &p1);
+		int lineSteps(const QPointF &p0, const QPointF &p1) override;
 
-		virtual bool project(QPainterPath &screenPath, size_t n,
-		                     const Geo::GeoCoordinate *poly, bool closed,
-		                     uint minPixelDist, ClipHint hint = NoClip) const;
+		bool project(QPainterPath &screenPath, size_t n,
+		             const Geo::GeoCoordinate *poly, bool closed,
+		             uint minPixelDist, ClipHint hint = NoClip) const override;
 
 		//! Parallels are straight horizontal segments here, so draw one span
 		//! between the two rims instead of the base class longitude sweep
 		//! (which wraps across the map at the antimeridian).
-		virtual bool drawLonCircle(QPainter &p, qreal lat);
+		bool drawLonCircle(QPainter &p, qreal lat) override;
 
-		virtual void updateBoundingBox();
+		void updateBoundingBox() override;
 
 
 	// ----------------------------------------------------------------------
 	// Protected interface
 	// ----------------------------------------------------------------------
 	protected:
-		void render(QImage &img, bool highQuality, TextureCache *cache);
+		void render(QImage &img, bool highQuality, TextureCache *cache) override;
 
 
 	// ----------------------------------------------------------------------
@@ -92,10 +92,10 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 		void updateCenter();
 
 		//! Clamps the centre latitude (both _center and _visibleCenter) so
-		//! neither map border can be scrolled into the viewport. Applied in
-		//! centerOn() as well as render() so Projection::center() - which
-		//! the canvas reads back while dragging - stays consistent with
-		//! what is displayed (no panning dead zone).
+		//! neither map border can be scrolled into the viewport. Applied from
+		//! centerOn() as well as render() so Projection::center() - which the
+		//! canvas reads back while dragging - stays consistent with what is
+		//! displayed (no panning dead zone).
 		void clampVerticalCenter();
 
 		//! Forward projection without longitude wrapping. lonDeg is a running
@@ -108,14 +108,12 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 	// Private members
 	// ----------------------------------------------------------------------
 	private:
-		double _lam0;    //!< central meridian [rad]
-		double _phi0;    //!< central parallel [rad]
-		double _y0Norm;  //!< normalized projected Y of the projection centre
+		double _lam0{0.0};    //!< central meridian [rad]
+		double _phi0{0.0};    //!< central parallel [rad]
+		double _y0Norm{0.0};  //!< normalized projected Y of the projection centre
 };
 
 
-}
-}
 }
 
 

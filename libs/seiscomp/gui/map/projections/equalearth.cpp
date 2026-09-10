@@ -24,17 +24,11 @@
 
 #include <algorithm>
 #include <cmath>
-#include <math.h>
+#include <cstdlib>
 #include <vector>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
-
-namespace Seiscomp {
-namespace Gui {
-namespace Map {
+namespace Seiscomp::Gui::Map {
 
 
 REGISTER_PROJECTION_INTERFACE(EqualEarthProjection, "EqualEarth");
@@ -42,6 +36,8 @@ REGISTER_PROJECTION_INTERFACE(EqualEarthProjection, "EqualEarth");
 
 namespace {
 
+
+const double PI = 3.14159265358979323846;
 
 // Equal Earth polynomial coefficients (Savric et al., 2018, eq. 1).
 const double A1 =  1.340264;
@@ -56,11 +52,22 @@ const double INV_M  = 1.1547005383792515;  // 2 / sqrt(3)
 
 // Parametric latitude at the geographic pole:
 //   theta = asin( (sqrt(3)/2) * sin(90 deg) ) = asin(sqrt(3)/2) = pi/3
-const double THETA_MAX = M_PI / 3.0;
+const double THETA_MAX = PI / 3.0;
+
+// Small tolerances used for outline / domain tests.
+const double EPS_LON = 1.0e-9;
+const double EPS_Y   = 1.0e-9;
+
 
 // Degree <-> radian helpers (seiscomp/math/math.h #defines deg2rad/rad2deg).
-inline double eeD2R(double d) { return d * (M_PI / 180.0); }
-inline double eeR2D(double r) { return r * (180.0 / M_PI); }
+inline double eeD2R(double d) {
+	return d * (PI / 180.0);
+}
+
+
+inline double eeR2D(double r) {
+	return r * (180.0 / PI);
+}
 
 
 // y(theta) = theta * (A1 + A2*theta^2 + A3*theta^6 + A4*theta^8)
@@ -93,16 +100,12 @@ inline double eeDenomP(double t2, double t6) {
 // vertical extent of the map becomes [-1, +1] - the same convention
 // RectangularProjection uses for latitude - which keeps the zoom behaviour
 // consistent when the user switches projections.
-const double Y_POLE = eePolyY(THETA_MAX);                        // ~1.3174
+const double Y_POLE = eePolyY(THETA_MAX);                       // ~1.3174
 
 // Half width of the projected graticule, normalized like everything else.
 //   easting at (lat = 0, lon = 180 deg): x = 2*sqrt(3)*pi / (3*A1)
 const double HALF_WIDTH_NORM =
-	(2.0 * SQRT3 * M_PI / (3.0 * A1)) / Y_POLE;                  // ~2.0546
-
-// Small tolerances used for outline / domain tests.
-const double EPS_LON = 1.0e-9;
-const double EPS_Y   = 1.0e-9;
+	(2.0 * SQRT3 * PI / (3.0 * A1)) / Y_POLE;                   // ~2.0546
 
 
 // Forward transform, unit sphere, central meridian already subtracted
@@ -118,9 +121,14 @@ const double EPS_Y   = 1.0e-9;
 // not applicable here). Inputs / outputs are radians / projection units.
 inline void eeForward(double lambda, double phi, double &x, double &y) {
 	double s = M_COEF * std::sin(phi);
+
 	// Guard the asin() domain against round-off (|sqrt(3)/2 * sin| <= 0.8661).
-	if ( s >  1.0 ) s =  1.0;
-	else if ( s < -1.0 ) s = -1.0;
+	if ( s > 1.0 ) {
+		s = 1.0;
+	}
+	else if ( s < -1.0 ) {
+		s = -1.0;
+	}
 
 	const double theta = std::asin(s);
 	const double t2 = theta * theta;
@@ -139,8 +147,12 @@ inline void eeForward(double lambda, double phi, double &x, double &y) {
 // so the iteration is well conditioned and converges to double precision
 // in a handful of steps.
 inline double eeSolveTheta(double y) {
-	if ( y >=  Y_POLE ) return  THETA_MAX;
-	if ( y <= -Y_POLE ) return -THETA_MAX;
+	if ( y >= Y_POLE ) {
+		return THETA_MAX;
+	}
+	if ( y <= -Y_POLE ) {
+		return -THETA_MAX;
+	}
 
 	// First guess: near the equator y ~= A1*theta.
 	double theta = y / A1;
@@ -150,14 +162,20 @@ inline double eeSolveTheta(double y) {
 		const double t6 = t2 * t2 * t2;
 		const double t8 = t6 * t2;
 
-		const double f  = theta * (A1 + A2 * t2 + A3 * t6 + A4 * t8) - y;
+		const double f = theta * (A1 + A2 * t2 + A3 * t6 + A4 * t8) - y;
 		const double dt = f / eeDenomP(t2, t6);
 		theta -= dt;
-		if ( std::fabs(dt) < 1.0e-13 ) break;
+		if ( std::fabs(dt) < 1.0e-13 ) {
+			break;
+		}
 	}
 
-	if ( theta >  THETA_MAX ) theta =  THETA_MAX;
-	else if ( theta < -THETA_MAX ) theta = -THETA_MAX;
+	if ( theta > THETA_MAX ) {
+		theta = THETA_MAX;
+	}
+	else if ( theta < -THETA_MAX ) {
+		theta = -THETA_MAX;
+	}
 	return theta;
 }
 
@@ -166,8 +184,12 @@ inline double eeSolveTheta(double y) {
 // Returns false if (x, y) is outside the projection outline, i.e. does not
 // correspond to any location on the globe.
 inline bool eeInverse(double x, double y, double &lambda, double &phi) {
-	if ( y >  Y_POLE + EPS_Y ) return false;
-	if ( y < -Y_POLE - EPS_Y ) return false;
+	if ( y > Y_POLE + EPS_Y ) {
+		return false;
+	}
+	if ( y < -Y_POLE - EPS_Y ) {
+		return false;
+	}
 
 	const double theta = eeSolveTheta(y);
 	const double t2 = theta * theta;
@@ -175,8 +197,12 @@ inline bool eeInverse(double x, double y, double &lambda, double &phi) {
 
 	// Recover geographic latitude:  sin(theta) = (sqrt(3)/2) * sin(phi)
 	double sinPhi = std::sin(theta) * INV_M;
-	if ( sinPhi >  1.0 ) sinPhi =  1.0;
-	else if ( sinPhi < -1.0 ) sinPhi = -1.0;
+	if ( sinPhi > 1.0 ) {
+		sinPhi = 1.0;
+	}
+	else if ( sinPhi < -1.0 ) {
+		sinPhi = -1.0;
+	}
 	phi = std::asin(sinPhi);
 
 	// Recover longitude by inverting the easting equation.
@@ -190,51 +216,48 @@ inline bool eeInverse(double x, double y, double &lambda, double &phi) {
 	lambda = (3.0 * eeDenomP(t2, t6) * x) / (2.0 * SQRT3 * cosT);
 
 	// Antimeridian clipping: |lambda| > pi is beyond the left / right rim.
-	if ( lambda >  M_PI + EPS_LON ) return false;
-	if ( lambda < -M_PI - EPS_LON ) return false;
+	if ( lambda > PI + EPS_LON ) {
+		return false;
+	}
+	if ( lambda < -PI - EPS_LON ) {
+		return false;
+	}
 
 	return true;
 }
 
 
-// Wrap a longitude in degrees into (-180, 180].
-inline double wrapLonDeg(double lon) {
-	lon = std::fmod(lon + 180.0, 360.0);
-	if ( lon < 0.0 ) lon += 360.0;
-	return lon - 180.0;
-}
-
-
 // Latitude grid label, same formatting as RectangularProjection.
 QString lat2String(qreal lat) {
-	int nlat = (lat * 100000) + (lat < 0 ? -0.5 : +0.5);
+	const int nlat = static_cast<int>(lat * 100000 + (lat < 0 ? -0.5 : 0.5));
+	const char *hemi = lat < 0 ? " S" : lat > 0 ? " N" : "";
 
-	if ( nlat % 10 )
-		return QString("%1%2").arg(fabs(lat), 0, 'f', 5).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
-	else if ( nlat % 100 )
-		return QString("%1%2").arg(fabs(lat), 0, 'f', 4).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
-	else if ( nlat % 1000 )
-		return QString("%1%2").arg(fabs(lat), 0, 'f', 3).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
-	else if ( nlat % 10000 )
-		return QString("%1%2").arg(fabs(lat), 0, 'f', 2).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
-	else if ( nlat % 100000 )
-		return QString("%1%2").arg(fabs(lat), 0, 'f', 1).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
-	else
-		return QString("%1%2").arg(abs((int)lat)).arg(lat < 0 ? " S" : lat > 0 ? " N" : "");
+	if ( nlat % 10 ) {
+		return QString("%1%2").arg(std::fabs(lat), 0, 'f', 5).arg(hemi);
+	}
+	if ( nlat % 100 ) {
+		return QString("%1%2").arg(std::fabs(lat), 0, 'f', 4).arg(hemi);
+	}
+	if ( nlat % 1000 ) {
+		return QString("%1%2").arg(std::fabs(lat), 0, 'f', 3).arg(hemi);
+	}
+	if ( nlat % 10000 ) {
+		return QString("%1%2").arg(std::fabs(lat), 0, 'f', 2).arg(hemi);
+	}
+	if ( nlat % 100000 ) {
+		return QString("%1%2").arg(std::fabs(lat), 0, 'f', 1).arg(hemi);
+	}
+	return QString("%1%2").arg(std::abs(static_cast<int>(lat))).arg(hemi);
 }
 
 
-} // anonymous namespace
+}  // anonymous namespace
 
 
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-EqualEarthProjection::EqualEarthProjection()
-: Projection()
-, _lam0(0.0)
-, _phi0(0.0)
-, _y0Norm(0.0) {
+EqualEarthProjection::EqualEarthProjection() {
 	updateCenter();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -265,10 +288,11 @@ bool EqualEarthProjection::wantsGridAntialiasing() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EqualEarthProjection::updateCenter() {
 	// _visibleCenter is stored by the base class as (lon/180, lat/90).
-	_lam0 = _visibleCenter.x() * M_PI;
-	_phi0 = _visibleCenter.y() * (M_PI / 2.0);
+	_lam0 = _visibleCenter.x() * PI;
+	_phi0 = _visibleCenter.y() * (PI / 2.0);
 
-	double x, y;
+	double x;
+	double y;
 	eeForward(0.0, _phi0, x, y);
 	_y0Norm = y / Y_POLE;
 }
@@ -279,13 +303,17 @@ void EqualEarthProjection::updateCenter() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EqualEarthProjection::centerOn(const QPointF &geoCoords) {
-	double lon = wrapLonDeg(geoCoords.x());
+	const double lon = Geo::GeoCoordinate::normalizeLon(geoCoords.x());
 	double lat = geoCoords.y();
 
-	if ( lat >  90.0 ) lat =  90.0;
-	else if ( lat < -90.0 ) lat = -90.0;
+	if ( lat > 90.0 ) {
+		lat = 90.0;
+	}
+	else if ( lat < -90.0 ) {
+		lat = -90.0;
+	}
 
-	_center        = QPointF(lon / 180.0, lat / 90.0);
+	_center = QPointF(lon / 180.0, lat / 90.0);
 	_visibleCenter = _center;
 
 	clampVerticalCenter();
@@ -303,26 +331,32 @@ void EqualEarthProjection::centerOn(const QPointF &geoCoords) {
 // while dragging matches what is drawn - otherwise the over-panned excess
 // has to be dragged back before the map starts moving again.
 void EqualEarthProjection::clampVerticalCenter() {
-	if ( _scale <= 0.0 || _halfHeight <= 0 )
+	if ( _scale <= 0.0 || _halfHeight <= 0 ) {
 		return;
+	}
 
 	const double vHalf = _halfHeight / _scale;   // viewport half-height, normalized
 
-	double latLim;                               // as (latitude / 90)
-	if ( vHalf >= 1.0 ) {
-		latLim = 0.0;
-	}
-	else {
+	double latLim = 0.0;                         // as (latitude / 90)
+	if ( vHalf < 1.0 ) {
 		const double thetaLim = eeSolveTheta((1.0 - vHalf) * Y_POLE);
 		double sinLat = std::sin(thetaLim) * INV_M;
-		if ( sinLat >  1.0 ) sinLat =  1.0;
-		else if ( sinLat < -1.0 ) sinLat = -1.0;
-		latLim = std::asin(sinLat) / (M_PI / 2.0);
+		if ( sinLat > 1.0 ) {
+			sinLat = 1.0;
+		}
+		else if ( sinLat < -1.0 ) {
+			sinLat = -1.0;
+		}
+		latLim = std::asin(sinLat) / (PI / 2.0);
 	}
 
 	double cy = _center.y();
-	if ( cy >  latLim ) cy =  latLim;
-	else if ( cy < -latLim ) cy = -latLim;
+	if ( cy > latLim ) {
+		cy = latLim;
+	}
+	else if ( cy < -latLim ) {
+		cy = -latLim;
+	}
 
 	_center.setY(cy);
 	_visibleCenter.setY(cy);
@@ -338,20 +372,31 @@ void EqualEarthProjection::clampVerticalCenter() {
 // expectations of Projection::updateBoundingBox()).
 bool EqualEarthProjection::project(QPoint &screenCoords,
                                    const QPointF &geoCoords) const {
-	if ( _scale <= 0.0 ) return false;
+	if ( _scale <= 0.0 ) {
+		return false;
+	}
 
 	double lat = geoCoords.y();
-	if ( lat >  90.0 ) lat =  90.0;
-	else if ( lat < -90.0 ) lat = -90.0;
+	if ( lat > 90.0 ) {
+		lat = 90.0;
+	}
+	else if ( lat < -90.0 ) {
+		lat = -90.0;
+	}
 
 	// Longitude relative to the central meridian, wrapped to [-pi, pi] in
 	// O(1) (fmod, not a loop, so a pathological input cannot stall the GUI).
 	// This is where the antimeridian seam is placed.
-	double lambda = std::fmod(eeD2R(geoCoords.x()) - _lam0, 2.0 * M_PI);
-	if ( lambda >  M_PI ) lambda -= 2.0 * M_PI;
-	else if ( lambda < -M_PI ) lambda += 2.0 * M_PI;
+	double lambda = std::fmod(eeD2R(geoCoords.x()) - _lam0, 2.0 * PI);
+	if ( lambda > PI ) {
+		lambda -= 2.0 * PI;
+	}
+	else if ( lambda < -PI ) {
+		lambda += 2.0 * PI;
+	}
 
-	double x, y;
+	double x;
+	double y;
 	eeForward(lambda, eeD2R(lat), x, y);
 
 	// Normalize so that latitude +/-90 deg -> +/-1, then apply the same
@@ -359,8 +404,8 @@ bool EqualEarthProjection::project(QPoint &screenCoords,
 	const double nx = x / Y_POLE;
 	const double ny = y / Y_POLE - _y0Norm;
 
-	screenCoords.setX(int(std::lround(_halfWidth  + nx * _scale)));
-	screenCoords.setY(int(std::lround(_halfHeight - ny * _scale)));
+	screenCoords.setX(static_cast<int>(std::lround(_halfWidth + nx * _scale)));
+	screenCoords.setY(static_cast<int>(std::lround(_halfHeight - ny * _scale)));
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -374,24 +419,36 @@ bool EqualEarthProjection::project(QPoint &screenCoords,
 // positions that are not on the globe.
 bool EqualEarthProjection::unproject(QPointF &geoCoords,
                                      const QPoint &screenCoords) const {
-	if ( _scale <= 0.0 ) return false;
+	if ( _scale <= 0.0 ) {
+		return false;
+	}
 
-	const double nx = (double(screenCoords.x()) - _halfWidth) / _scale;
-	const double ny = (double(_halfHeight) - screenCoords.y()) / _scale + _y0Norm;
+	const double nx = (static_cast<double>(screenCoords.x()) - _halfWidth) / _scale;
+	const double ny = (static_cast<double>(_halfHeight) - screenCoords.y()) / _scale
+	                  + _y0Norm;
 
 	// Cheap rejection against the normalized bounding rectangle.
-	if ( ny >  1.0 + EPS_Y || ny < -1.0 - EPS_Y ) return false;
-	if ( nx >  HALF_WIDTH_NORM + EPS_Y || nx < -HALF_WIDTH_NORM - EPS_Y )
+	if ( ny > 1.0 + EPS_Y || ny < -1.0 - EPS_Y ) {
 		return false;
-
-	double lambda, phi;
-	if ( !eeInverse(nx * Y_POLE, ny * Y_POLE, lambda, phi) )
+	}
+	if ( nx > HALF_WIDTH_NORM + EPS_Y || nx < -HALF_WIDTH_NORM - EPS_Y ) {
 		return false;
+	}
 
-	double lon = wrapLonDeg(eeR2D(lambda + _lam0));
+	double lambda;
+	double phi;
+	if ( !eeInverse(nx * Y_POLE, ny * Y_POLE, lambda, phi) ) {
+		return false;
+	}
+
+	const double lon = Geo::GeoCoordinate::normalizeLon(eeR2D(lambda + _lam0));
 	double lat = eeR2D(phi);
-	if ( lat >  90.0 ) lat =  90.0;
-	else if ( lat < -90.0 ) lat = -90.0;
+	if ( lat > 90.0 ) {
+		lat = 90.0;
+	}
+	else if ( lat < -90.0 ) {
+		lat = -90.0;
+	}
 
 	geoCoords.setX(lon);
 	geoCoords.setY(lat);
@@ -408,8 +465,12 @@ bool EqualEarthProjection::unproject(QPointF &geoCoords,
 // antimeridian stays a short segment.
 void EqualEarthProjection::projectContinuous(QPointF &screen,
                                              double lonDeg, double latDeg) const {
-	if ( latDeg >  90.0 ) latDeg =  90.0;
-	else if ( latDeg < -90.0 ) latDeg = -90.0;
+	if ( latDeg > 90.0 ) {
+		latDeg = 90.0;
+	}
+	else if ( latDeg < -90.0 ) {
+		latDeg = -90.0;
+	}
 
 	// Clamp the longitude offset to +/- pi: a running longitude may leave
 	// the [-180, 180] window of this world copy, and beyond the antimeridian
@@ -417,16 +478,21 @@ void EqualEarthProjection::projectContinuous(QPointF &screen,
 	// the projection outline; the part that wrapped around is drawn by the
 	// neighbouring world copy at the opposite rim.
 	double lambda = eeD2R(lonDeg) - _lam0;
-	if ( lambda >  M_PI ) lambda =  M_PI;
-	else if ( lambda < -M_PI ) lambda = -M_PI;
+	if ( lambda > PI ) {
+		lambda = PI;
+	}
+	else if ( lambda < -PI ) {
+		lambda = -PI;
+	}
 
-	double x, y;
+	double x;
+	double y;
 	eeForward(lambda, eeD2R(latDeg), x, y);
 
 	const double nx = x / Y_POLE;
 	const double ny = y / Y_POLE - _y0Norm;
 
-	screen.setX(_halfWidth  + nx * _scale);
+	screen.setX(_halfWidth + nx * _scale);
 	screen.setY(_halfHeight - ny * _scale);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -449,12 +515,15 @@ void EqualEarthProjection::projectContinuous(QPointF &screen,
 //     the polar area fills instead of leaving an open ribbon.
 bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
                                    const Geo::GeoCoordinate *poly, bool closed,
-                                   uint minPixelDist, ClipHint) const {
-	if ( n < 2 || !poly || _scale <= 0.0 )
-		return false;
+                                   uint minPixelDist, ClipHint hint) const {
+	(void)hint;
 
-	const double minDeg = (minPixelDist > 0)
-	                      ? double(minPixelDist) / pixelPerDegree()
+	if ( n < 2 || !poly || _scale <= 0.0 ) {
+		return false;
+	}
+
+	const double minDeg = minPixelDist > 0
+	                      ? static_cast<double>(minPixelDist) / pixelPerDegree()
 	                      : 0.0;
 
 	// 1. Vertex list with a continuous (never-jumping) longitude.
@@ -465,60 +534,84 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 	double prevLon = poly[0].lon;
 	double latMin = poly[0].lat;
 	double latMax = poly[0].lat;
-	gc.push_back(QPointF(runLon, poly[0].lat));
+	gc.emplace_back(runLon, poly[0].lat);
 
 	for ( size_t i = 1; i < n; ++i ) {
 		double d = poly[i].lon - prevLon;
 		prevLon = poly[i].lon;
-		if ( d >  180.0 ) d -= 360.0;
-		else if ( d < -180.0 ) d += 360.0;
+		if ( d > 180.0 ) {
+			d -= 360.0;
+		}
+		else if ( d < -180.0 ) {
+			d += 360.0;
+		}
 		runLon += d;
 
-		if ( poly[i].lat < latMin ) latMin = poly[i].lat;
-		if ( poly[i].lat > latMax ) latMax = poly[i].lat;
+		if ( poly[i].lat < latMin ) {
+			latMin = poly[i].lat;
+		}
+		if ( poly[i].lat > latMax ) {
+			latMax = poly[i].lat;
+		}
 
-		const bool keepLast = !closed && (i == n - 1);
+		const bool keepLast = !closed && i == n - 1;
 		if ( !keepLast && minDeg > 0.0
 		  && std::fabs(runLon - gc.back().x()) <= minDeg
-		  && std::fabs(poly[i].lat - gc.back().y()) <= minDeg )
+		  && std::fabs(poly[i].lat - gc.back().y()) <= minDeg ) {
 			continue;
+		}
 
-		gc.push_back(QPointF(runLon, poly[i].lat));
+		gc.emplace_back(runLon, poly[i].lat);
 	}
 
-	if ( gc.size() < 2 )
+	if ( gc.size() < 2 ) {
 		return false;
+	}
 
 	double minLon = gc.front().x();
 	double maxLon = gc.front().x();
 	for ( const QPointF &c : gc ) {
-		if ( c.x() < minLon ) minLon = c.x();
-		if ( c.x() > maxLon ) maxLon = c.x();
+		if ( c.x() < minLon ) {
+			minLon = c.x();
+		}
+		if ( c.x() > maxLon ) {
+			maxLon = c.x();
+		}
 	}
 
 	// 2. Pole test: a closed ring whose longitude winds a full turn encloses
 	//    a pole. Total continuous longitude travelled, closing edge included:
 	double lonSweep = runLon - poly[0].lon;
 	double dClose = poly[0].lon - prevLon;
-	if ( dClose >  180.0 ) dClose -= 360.0;
-	else if ( dClose < -180.0 ) dClose += 360.0;
+	if ( dClose > 180.0 ) {
+		dClose -= 360.0;
+	}
+	else if ( dClose < -180.0 ) {
+		dClose += 360.0;
+	}
 	lonSweep += dClose;
 
 	bool spansNorth = false;
 	bool spansSouth = false;
 	if ( closed && std::fabs(lonSweep) > 270.0 ) {
 		// The enclosed pole is the one the ring hugs.
-		if ( (90.0 - latMax) <= (latMin + 90.0) ) spansNorth = true;
-		else                                      spansSouth = true;
+		if ( 90.0 - latMax <= latMin + 90.0 ) {
+			spansNorth = true;
+		}
+		else {
+			spansSouth = true;
+		}
 	}
 	const bool spansPole = spansNorth || spansSouth;
 
 	// 3. Emit every visible world copy.
 	const double centerLon = _visibleCenter.x() * 180.0;
 
-	int kMin = int(std::floor((centerLon - 180.0 - maxLon) / 360.0));
-	int kMax = int(std::ceil ((centerLon + 180.0 - minLon) / 360.0));
-	if ( kMax - kMin > 4 ) kMax = kMin + 4;   // guard against bad input
+	const int kMin = static_cast<int>(std::floor((centerLon - 180.0 - maxLon) / 360.0));
+	int kMax = static_cast<int>(std::ceil((centerLon + 180.0 - minLon) / 360.0));
+	if ( kMax - kMin > 4 ) {
+		kMax = kMin + 4;   // guard against bad input
+	}
 
 	bool any = false;
 
@@ -530,16 +623,21 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 		// clips whatever part still pokes past a rim; without the strict
 		// test a copy whose polygon lies just outside the window would
 		// otherwise collapse onto the rim as a spurious sliver.
-		if ( maxLon + off < centerLon - 180.0 ) continue;
-		if ( minLon + off > centerLon + 180.0 ) continue;
+		if ( maxLon + off < centerLon - 180.0 ) {
+			continue;
+		}
+		if ( minLon + off > centerLon + 180.0 ) {
+			continue;
+		}
 
-		QPointF p, first;
+		QPointF p;
+		QPointF first;
 		projectContinuous(first, gc.front().x() + off, gc.front().y());
 		screenPath.moveTo(first);
 
 		QPointF prev = first;
-		double  prevLonC = gc.front().x();
-		double  prevLatC = gc.front().y();
+		double prevLonC = gc.front().x();
+		double prevLatC = gc.front().y();
 
 		for ( size_t j = 1; j < gc.size(); ++j ) {
 			const double curLon = gc[j].x();
@@ -554,12 +652,14 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 			if ( dLat > 0.5
 			  && std::hypot(p.x() - prev.x(), p.y() - prev.y()) > 6.0 ) {
 				const double dLon = std::fabs(curLon - prevLonC);
-				steps = 1 + int(dLat / 1.5 + dLon / 12.0);
-				if ( steps > 64 ) steps = 64;
+				steps = 1 + static_cast<int>(dLat / 1.5 + dLon / 12.0);
+				if ( steps > 64 ) {
+					steps = 64;
+				}
 			}
 
 			for ( int s = 1; s < steps; ++s ) {
-				const double t = double(s) / steps;
+				const double t = static_cast<double>(s) / steps;
 				QPointF ip;
 				projectContinuous(ip,
 				                  prevLonC + t * (curLon - prevLonC) + off,
@@ -575,9 +675,10 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 
 		if ( closed && spansPole ) {
 			// Route back along the map edge to close off the polar cap.
-			const double edgeY = spansNorth ? -10.0 : double(_height) + 10.0;
+			const double edgeY = spansNorth ? -10.0
+			                                : static_cast<double>(_height) + 10.0;
 			const QPointF last = screenPath.currentPosition();
-			screenPath.lineTo(last.x(),  edgeY);
+			screenPath.lineTo(last.x(), edgeY);
 			screenPath.lineTo(first.x(), edgeY);
 			screenPath.closeSubpath();
 		}
@@ -601,25 +702,32 @@ bool EqualEarthProjection::project(QPainterPath &screenPath, size_t n,
 // each sample independently and therefore jumps across the whole map when
 // it passes the antimeridian.
 bool EqualEarthProjection::drawLonCircle(QPainter &painter, qreal lat) {
-	if ( _scale <= 0.0 )
+	if ( _scale <= 0.0 ) {
 		return false;
+	}
 
-	if ( lat >  90.0 ) lat =  90.0;
-	else if ( lat < -90.0 ) lat = -90.0;
+	if ( lat > 90.0 ) {
+		lat = 90.0;
+	}
+	else if ( lat < -90.0 ) {
+		lat = -90.0;
+	}
 
 	// Rim points at this latitude: lambda = +/- pi. Easting is odd in
 	// lambda, so the two rims are symmetric about the centre column.
-	double x, y;
-	eeForward(M_PI, eeD2R(lat), x, y);
-	const double dx = (x / Y_POLE) * _scale;
+	double x;
+	double y;
+	eeForward(PI, eeD2R(lat), x, y);
+	const double dx = x / Y_POLE * _scale;
 	const double sy = (y / Y_POLE - _y0Norm) * _scale;
 
-	const int py = int(std::lround(_halfHeight - sy));
-	if ( py < 0 || py >= _height )
+	const int py = static_cast<int>(std::lround(_halfHeight - sy));
+	if ( py < 0 || py >= _height ) {
 		return false;                       // off screen -> stop the grid loop
+	}
 
-	const int xl = int(std::lround(_halfWidth - dx));
-	const int xr = int(std::lround(_halfWidth + dx));
+	const int xl = static_cast<int>(std::lround(_halfWidth - dx));
+	const int xr = static_cast<int>(std::lround(_halfWidth + dx));
 
 	painter.drawLine(xl, py, xr, py);
 	painter.drawText(
@@ -637,12 +745,18 @@ bool EqualEarthProjection::drawLonCircle(QPainter &painter, qreal lat) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int EqualEarthProjection::lineSteps(const QPointF &p0, const QPointF &p1) {
 	double dLon = std::fabs(p1.x() - p0.x());
-	if ( dLon > 180.0 ) dLon = 360.0 - dLon;
+	if ( dLon > 180.0 ) {
+		dLon = 360.0 - dLon;
+	}
 	const double dLat = std::fabs(p1.y() - p0.y());
 
-	int steps = int((dLon + dLat) / 2.0);
-	if ( steps < 2 )   steps = 2;
-	if ( steps > 100 ) steps = 100;
+	int steps = static_cast<int>((dLon + dLat) / 2.0);
+	if ( steps < 2 ) {
+		steps = 2;
+	}
+	if ( steps > 100 ) {
+		steps = 100;
+	}
 	return steps;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -661,10 +775,9 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 	// 1. Pixel scale: a normalized projection radius of 1.0 maps to
 	//    _screenRadius pixels, chosen so the whole Equal Earth outline fits
 	//    the viewport at zoom == 1.
-	_screenRadius = std::min(_width  * 0.5 / HALF_WIDTH_NORM,
-	                         _height * 0.5);
+	_screenRadius = std::min(_width * 0.5 / HALF_WIDTH_NORM, _height * 0.5);
 
-	if ( _screenRadius <= 0.0 ) {            // zero-sized canvas
+	if ( _screenRadius <= 0.0 ) {   // zero-sized canvas
 		img.fill(qRgba(0, 0, 0, 0));
 		return;
 	}
@@ -672,18 +785,18 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 	qreal radius = _screenRadius * _radius;   // _radius == zoom factor
 
 	// Do not allow the map to shrink below the viewport size.
-	const qreal minRadius = std::max(_width  * 0.5 / HALF_WIDTH_NORM,
-	                                 _height * 0.5);
-	if ( radius < minRadius )
+	const qreal minRadius = std::max(_width * 0.5 / HALF_WIDTH_NORM, _height * 0.5);
+	if ( radius < minRadius ) {
 		radius = minRadius;
+	}
 
-	setVisibleRadius(radius / _screenRadius); // -> _scale == radius
+	setVisibleRadius(radius / _screenRadius);   // -> _scale == radius
 
-	clampVerticalCenter();                    // keep both borders on the map
+	clampVerticalCenter();                      // keep both borders on the map
 	updateCenter();
 
-	const int  w = img.width();
-	const int  h = img.height();
+	const int w = img.width();
+	const int h = img.height();
 	const QRgb transparent = qRgba(0, 0, 0, 0);
 
 	if ( cache == nullptr ) {
@@ -694,57 +807,75 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 	// 2. Texture pyramid level (same heuristic as RectangularProjection).
 	qreal pixelRatio = 2.0 * _scale / cache->tileHeight();
 	const bool mercatorTiles = cache->isMercatorProjected();
-	if ( mercatorTiles )
+	if ( mercatorTiles ) {
 		pixelRatio *= 2;
-	if ( pixelRatio < 1.0 ) pixelRatio = 1.0;
+	}
+	if ( pixelRatio < 1.0 ) {
+		pixelRatio = 1.0;
+	}
 
-	int level = int(std::log(pixelRatio) / std::log(2.0) + 0.7);
-	if ( level < 0 ) level = 0;
-	if ( level > cache->maxLevel() ) level = cache->maxLevel();
+	int level = static_cast<int>(std::log(pixelRatio) / std::log(2.0) + 0.7);
+	if ( level < 0 ) {
+		level = 0;
+	}
+	if ( level > cache->maxLevel() ) {
+		level = cache->maxLevel();
+	}
 
 	// Mercator tile stores only cover roughly +/-85 deg.
-	const double MERC_LAT_LIMIT = eeD2R(85.05113);
+	const double mercLatLimit = eeD2R(85.05113);
 
 	// 3. Scan-line loop.
 	for ( int iy = 0; iy < h; ++iy ) {
 		QRgb *scan = reinterpret_cast<QRgb*>(img.scanLine(iy));
 
-		const double ny = (double(_halfHeight) - iy) / _scale + _y0Norm;
+		const double ny = (static_cast<double>(_halfHeight) - iy) / _scale + _y0Norm;
 		if ( ny > 1.0 || ny < -1.0 ) {
-			for ( int ix = 0; ix < w; ++ix ) scan[ix] = transparent;
+			for ( int ix = 0; ix < w; ++ix ) {
+				scan[ix] = transparent;
+			}
 			continue;
 		}
 
 		const double theta = eeSolveTheta(ny * Y_POLE);
-		const double t2   = theta * theta;
-		const double t6   = t2 * t2 * t2;
+		const double t2 = theta * theta;
+		const double t6 = t2 * t2 * t2;
 		const double cosT = std::cos(theta);
 
-		if ( cosT < 1.0e-9 ) {          // degenerate pole row
-			for ( int ix = 0; ix < w; ++ix ) scan[ix] = transparent;
+		if ( cosT < 1.0e-9 ) {   // degenerate pole row
+			for ( int ix = 0; ix < w; ++ix ) {
+				scan[ix] = transparent;
+			}
 			continue;
 		}
 
 		// Geographic latitude of this row.
 		double sinPhi = std::sin(theta) * INV_M;
-		if ( sinPhi >  1.0 ) sinPhi =  1.0;
-		else if ( sinPhi < -1.0 ) sinPhi = -1.0;
-		const double phi    = std::asin(sinPhi);
+		if ( sinPhi > 1.0 ) {
+			sinPhi = 1.0;
+		}
+		else if ( sinPhi < -1.0 ) {
+			sinPhi = -1.0;
+		}
+		const double phi = std::asin(sinPhi);
 		const double latDeg = eeR2D(phi);
 
 		// Constant texture V coordinate for the whole row.
+		const auto fh = static_cast<double>(Coord::fraction_half_max);
 		Coord v;
 		if ( mercatorTiles ) {
 			double p = phi;
-			if ( p >  MERC_LAT_LIMIT ) p =  MERC_LAT_LIMIT;
-			else if ( p < -MERC_LAT_LIMIT ) p = -MERC_LAT_LIMIT;
-			const double my = std::asinh(std::tan(p)) / M_PI;   // [-1, 1]
-			v.value = Coord::value_type((1.0 - my)
-			          * double(Coord::fraction_half_max));
+			if ( p > mercLatLimit ) {
+				p = mercLatLimit;
+			}
+			else if ( p < -mercLatLimit ) {
+				p = -mercLatLimit;
+			}
+			const double my = std::asinh(std::tan(p)) / PI;   // [-1, 1]
+			v.value = static_cast<Coord::value_type>((1.0 - my) * fh);
 		}
 		else {
-			v.value = Coord::value_type((1.0 - latDeg / 90.0)
-			          * double(Coord::fraction_half_max));
+			v.value = static_cast<Coord::value_type>((1.0 - latDeg / 90.0) * fh);
 		}
 
 		// Longitude is linear in the pixel column x:
@@ -754,39 +885,47 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 		// RectangularProjection does - instead of a divide plus fmod. The
 		// outline |lonRad| <= pi bounds the visible columns; getTexel()'s
 		// fractional masking takes care of the longitude wrap.
-		const double Kx      = (3.0 * eeDenomP(t2, t6)) / (2.0 * SQRT3 * cosT);
-		const double dLambda = (Kx * Y_POLE) / _scale;   // lonRad per pixel (> 0)
-		const double span    = M_PI / dLambda;           // pixels: centre -> rim
+		const double Kx = 3.0 * eeDenomP(t2, t6) / (2.0 * SQRT3 * cosT);
+		const double dLambda = Kx * Y_POLE / _scale;   // lonRad per pixel (> 0)
+		const double span = PI / dLambda;              // pixels: centre -> rim
 
-		int xl = int(std::ceil (_halfWidth - span));
-		int xr = int(std::floor(_halfWidth + span));
-		if ( xl < 0 ) xl = 0;
-		if ( xr > w - 1 ) xr = w - 1;
+		int xl = static_cast<int>(std::ceil(_halfWidth - span));
+		int xr = static_cast<int>(std::floor(_halfWidth + span));
+		if ( xl < 0 ) {
+			xl = 0;
+		}
+		if ( xr > w - 1 ) {
+			xr = w - 1;
+		}
 
 		int ix = 0;
-		for ( ; ix < xl; ++ix ) scan[ix] = transparent;
+		for ( ; ix < xl; ++ix ) {
+			scan[ix] = transparent;
+		}
 
 		if ( xl <= xr ) {
-			const double fh    = double(Coord::fraction_half_max);
-			const double uStep = (dLambda / M_PI) * fh;
-			double       uu    = ((dLambda * (xl - _halfWidth) + _lam0) / M_PI
-			                      + 1.0) * fh;
+			const double uStep = dLambda / PI * fh;
+			double uu = ((dLambda * (xl - _halfWidth) + _lam0) / PI + 1.0) * fh;
 
 			for ( ; ix <= xr; ++ix, uu += uStep ) {
 				Coord u;
-				u.value = Coord::value_type(uu);
+				u.value = static_cast<Coord::value_type>(uu);
 
 				QRgb c;
-				if ( highQuality )
+				if ( highQuality ) {
 					cache->getTexelBilinear(c, u, v, level);
-				else
+				}
+				else {
 					cache->getTexel(c, u, v, level);
+				}
 
-				scan[ix] = c | 0xff000000u;   // force opaque inside the map
+				scan[ix] = c | 0xff000000U;   // force opaque inside the map
 			}
 		}
 
-		for ( ; ix < w; ++ix ) scan[ix] = transparent;
+		for ( ; ix < w; ++ix ) {
+			scan[ix] = transparent;
+		}
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -800,66 +939,87 @@ void EqualEarthProjection::render(QImage &img, bool highQuality,
 // sampled longitude range collapses.
 void EqualEarthProjection::updateBoundingBox() {
 	_mapBoundingBox.reset();
-	if ( _width <= 0 || _height <= 0 || _scale <= 0.0 )
+	if ( _width <= 0 || _height <= 0 || _scale <= 0.0 ) {
 		return;
+	}
 
 	const double centerLon = _visibleCenter.x() * 180.0;
-	const int    step      = std::max(1, std::min(_width, _height) / 64);
+	const int step = std::max(1, std::min(_width, _height) / 64);
 
-	bool   have = false;
-	double west = 0.0, east = 0.0, north = 0.0, south = 0.0;
+	bool have = false;
+	double west = 0.0;
+	double east = 0.0;
+	double north = 0.0;
+	double south = 0.0;
 
 	QPointF g;
 	for ( int y = 0; y < _height; y += step ) {
 		for ( int x = 0; x < _width; x += step ) {
-			if ( !unproject(g, QPoint(x, y)) )
+			if ( !unproject(g, QPoint(x, y)) ) {
 				continue;
+			}
 
 			// Longitude relative to the centre, in [-180, 180].
 			const double dLon = Geo::GeoCoordinate::distanceLon(g.x(), centerLon);
 
 			if ( !have ) {
-				west = east = dLon;
-				north = south = g.y();
+				west = dLon;
+				east = dLon;
+				north = g.y();
+				south = g.y();
 				have = true;
 			}
 			else {
-				if ( dLon  < west  ) west  = dLon;
-				if ( dLon  > east  ) east  = dLon;
-				if ( g.y() > north ) north = g.y();
-				if ( g.y() < south ) south = g.y();
+				if ( dLon < west ) {
+					west = dLon;
+				}
+				if ( dLon > east ) {
+					east = dLon;
+				}
+				if ( g.y() > north ) {
+					north = g.y();
+				}
+				if ( g.y() < south ) {
+					south = g.y();
+				}
 			}
 		}
 	}
 
 	if ( !have ) {
 		// Should not happen (screen centre is always on the map), fallback.
-		_mapBoundingBox.west  = -180.0; _mapBoundingBox.east  = 180.0;
-		_mapBoundingBox.south =  -90.0; _mapBoundingBox.north =  90.0;
+		_mapBoundingBox.west = -180.0;
+		_mapBoundingBox.east = 180.0;
+		_mapBoundingBox.south = -90.0;
+		_mapBoundingBox.north = 90.0;
 		return;
 	}
 
 	QPoint p;
-	project(p, QPointF(0.0,  90.0));
-	const bool northPole = p.x() >= 0 && p.x() < _width &&
-	                       p.y() >= 0 && p.y() < _height;
+	project(p, QPointF(0.0, 90.0));
+	const bool northPole = p.x() >= 0 && p.x() < _width
+	                    && p.y() >= 0 && p.y() < _height;
 	project(p, QPointF(0.0, -90.0));
-	const bool southPole = p.x() >= 0 && p.x() < _width &&
-	                       p.y() >= 0 && p.y() < _height;
+	const bool southPole = p.x() >= 0 && p.x() < _width
+	                    && p.y() >= 0 && p.y() < _height;
 
-	if ( northPole ) north =  90.0;
-	if ( southPole ) south = -90.0;
+	if ( northPole ) {
+		north = 90.0;
+	}
+	if ( southPole ) {
+		south = -90.0;
+	}
 
-	if ( northPole || southPole || (east - west) >= 359.0 ) {
+	if ( northPole || southPole || east - west >= 359.0 ) {
 		_mapBoundingBox.west = -180.0;
-		_mapBoundingBox.east =  180.0;
+		_mapBoundingBox.east = 180.0;
 	}
 	else {
 		_mapBoundingBox.west = Geo::GeoCoordinate::normalizeLon(west + centerLon);
 		_mapBoundingBox.east = Geo::GeoCoordinate::normalizeLon(east + centerLon);
 	}
 
-	_mapBoundingBox.north = std::min( 90.0, north);
+	_mapBoundingBox.north = std::min(90.0, north);
 	_mapBoundingBox.south = std::max(-90.0, south);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -867,6 +1027,4 @@ void EqualEarthProjection::updateBoundingBox() {
 
 
 
-}
-}
-}
+}  // namespace Seiscomp::Gui::Map
