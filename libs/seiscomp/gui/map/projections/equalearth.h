@@ -64,6 +64,14 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 
 		int lineSteps(const QPointF &p0, const QPointF &p1) override;
 
+		void moveTo(const QPointF &p) override;
+
+		//! Splits a segment that crosses the antimeridian (relative to the
+		//! current centre) into the two rim-to-rim pieces
+		//! RectangularProjection::lineTo() also draws, instead of the base
+		//! class default of a single chord straight across the map.
+		bool lineTo(QPainter &p, const QPointF &to) override;
+
 		bool project(QPainterPath &screenPath, size_t n,
 		             const Geo::GeoCoordinate *poly, bool closed,
 		             uint minPixelDist, ClipHint hint = NoClip) const override;
@@ -111,6 +119,12 @@ class SC_GUI_API EqualEarthProjection : public Projection {
 		double _lam0{0.0};    //!< central meridian [rad]
 		double _phi0{0.0};    //!< central parallel [rad]
 		double _y0Norm{0.0};  //!< normalized projected Y of the projection centre
+
+		//! Running (never-wrapping) longitude [deg] of the cursor set by
+		//! moveTo() / lineTo(), analogous to the vertex list
+		//! project(QPainterPath&) builds, so a segment that crosses the
+		//! antimeridian can be told apart from an ordinary step.
+		double _cursorLonDeg{0.0};
 };
 
 

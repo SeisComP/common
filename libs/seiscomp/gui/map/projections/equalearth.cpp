@@ -765,6 +765,101 @@ int EqualEarthProjection::lineSteps(const QPointF &p0, const QPointF &p1) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void EqualEarthProjection::moveTo(const QPointF &p) {
+	Projection::moveTo(p);
+	_cursorLonDeg = p.x();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Every geographic point projects somewhere on this map (project() always
+// succeeds), so unlike the azimuthal / hemisphere case the base class never
+// gets a chance to lift the pen at the graticule edge. What it also never
+// does is notice an antimeridian crossing: project() wraps longitude into
+// [-pi, pi] around the centre, so a segment that continues past the rim
+// reappears projected onto the *opposite* rim, and the base implementation
+// would connect the two with a chord straight across the map (the long
+// horizontal lines reported for station-to-origin / back-azimuth lines).
+//
+// This mirrors RectangularProjection::lineTo(): detect the wrap by
+// comparing the screen-space step direction with the geographic longitude
+// step direction, and if they disagree, draw up to the rim the path leaves
+// through and continue from the corresponding point on the opposite rim
+// (the map is left-right symmetric about the centre, so that point is
+// just the horizontal mirror of the exit point around _halfWidth).
+bool EqualEarthProjection::lineTo(QPainter &painter, const QPointF &to) {
+	QPoint pp;
+	const bool visible = project(pp, to);
+	const double lonDeg = to.x();
+
+	if ( !_cursorVisible || !visible ) {
+		_cursorLonDeg = lonDeg;
+		_cursor = pp;
+		_cursorVisible = visible;
+		return false;
+	}
+
+	// Work in longitude offset from the central meridian, continuous (not
+	// wrapped into (-180, 180]) across this one step. The cursor's offset
+	// is exactly what project() used to place it - project() wraps into
+	// (-180, 180], which is the same range std::fmod + the adjustment below
+	// produce - so re-deriving it here reproduces _cursor's own placement.
+	// Adding the shortest-path delta to the new point may then carry the
+	// offset outside (-180, 180]: that is the rim crossing, regardless of
+	// which of the two raw longitudes is the one that "wrapped".
+	const double centerLonDeg = eeR2D(_lam0);
+
+	double fromOff = std::fmod(_cursorLonDeg - centerLonDeg, 360.0);
+	if ( fromOff > 180.0 ) {
+		fromOff -= 360.0;
+	}
+	else if ( fromOff <= -180.0 ) {
+		fromOff += 360.0;
+	}
+
+	double d = lonDeg - _cursorLonDeg;
+	if ( d > 180.0 ) {
+		d -= 360.0;
+	}
+	else if ( d < -180.0 ) {
+		d += 360.0;
+	}
+
+	const double toOff = fromOff + d;
+
+	if ( toOff > 180.0 || toOff < -180.0 ) {
+		QPointF exitScreen;
+		// projectContinuous() re-adds centerLonDeg and subtracts _lam0, so
+		// this reconstructs exactly toOff and clamps it onto the rim it
+		// left through.
+		projectContinuous(exitScreen, centerLonDeg + toOff, to.y());
+
+		const QPoint exitPt(static_cast<int>(std::lround(exitScreen.x())),
+		                    static_cast<int>(std::lround(exitScreen.y())));
+		const QPoint entryPt(static_cast<int>(std::lround(2.0 * _halfWidth - exitScreen.x())),
+		                     exitPt.y());
+
+		painter.drawLine(_cursor, exitPt);
+		painter.drawLine(entryPt, pp);
+	}
+	else {
+		painter.drawLine(_cursor, pp);
+	}
+
+	_cursorLonDeg = lonDeg;
+	_cursor = pp;
+	_cursorVisible = visible;
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // For a fixed screen row the projected Y (hence the parametric latitude
 // theta, the geographic latitude and the longitude scale factor) is
 // constant, so those are evaluated once per row and the longitude then
