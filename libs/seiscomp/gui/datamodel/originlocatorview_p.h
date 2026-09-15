@@ -130,6 +130,17 @@ class OriginLocatorViewPrivate {
 		// Last auto-inversion result (used to populate FM fields on commit)
 		Seismology::FMInversionResult         lastFMResult;
 
+		// Last values entered in the arrival table's "Set active by..." /
+		// "Set inactive by..." dialogs. Session-local, not persisted.
+		// Distance is in whatever unit the DISTANCE column currently shows
+		// (deg or km, see SCScheme.unit.distanceInKM); azimuth is always
+		// degrees; residual threshold is |time residual| in seconds.
+		double                                lastArrivalDistanceMin{0.0};
+		double                                lastArrivalDistanceMax{10.0};
+		double                                lastArrivalAzimuthMin{0.0};
+		double                                lastArrivalAzimuthMax{360.0};
+		double                                lastArrivalResidualThreshold{2.0};
+
 	friend class OriginLocatorView;
 };
 
