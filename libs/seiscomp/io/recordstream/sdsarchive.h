@@ -123,6 +123,9 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 		bool                      _closeRequested;
 		std::ifstream             _file;
 
+		//! 2: mseed2, 3: mseed3, 0: any
+		int                       _format{0};
+
 		int getDoy(const Seiscomp::Core::Time &time);
 		void resolveRequest();
 		bool setStart(const std::string &fname, bool bsearch);
@@ -140,11 +143,13 @@ class SDSArchive : public Seiscomp::IO::RecordStream {
 		bool resolveLoc(std::string &path,
 		                const std::string &net, const std::string &sta,
 		                const std::string &loc, const std::string &cha,
+		                const std::string &ext,
 		                const Seiscomp::Core::Time &requestStartTime,
 		                int doy, int year, bool first);
 		bool resolveCha(std::string &path,
 		                const std::string &net, const std::string &sta,
 		                const std::string &loc, const std::string &cha,
+		                const std::string &ext,
 		                const Seiscomp::Core::Time &requestStartTime,
 		                int doy, int year, bool first);
 
