@@ -98,6 +98,8 @@ class SQLiteDatabase : public Seiscomp::IO::DatabaseInterface {
 		sqlite3_stmt *_stmt{nullptr};
 		int           _columnCount{0};
 		int           _sync{1};
+		int           _busyTimeout{0};
+		std::string   _journalMode;
 };
 
 
