@@ -488,7 +488,9 @@ void DatabaseArchive::setDriver(Seiscomp::IO::DatabaseInterface *db) {
 	_db = db;
 	_errorMsg = "";
 
-	if ( !fetchVersion() ) close();
+	if ( !fetchVersion() ) {
+		close();
+	}
 
 	if ( _db ) {
 		_publicIDColumn = _db->convertColumnName("publicID");
@@ -2306,16 +2308,14 @@ void DatabaseArchive::onObjectDestroyed(Object *object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 DatabaseArchive::OID DatabaseArchive::getCachedId(const Object *o) const {
-	_objectIdMutex.lock();
+	std::scoped_lock l(_objectIdMutex);
 
-	ObjectIdMap::const_iterator it = _objectIdCache.find(o);
+	auto it = _objectIdCache.find(o);
 	if ( it == _objectIdCache.end() ) {
-		_objectIdMutex.unlock();
 		return IO::DatabaseInterface::INVALID_OID;
 	}
 
 	OID oid = it->second;
-	_objectIdMutex.unlock();
 	return oid;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2325,9 +2325,8 @@ DatabaseArchive::OID DatabaseArchive::getCachedId(const Object *o) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::registerId(const Object *o, OID id) {
-	_objectIdMutex.lock();
+	std::scoped_lock l(_objectIdMutex);
 	_objectIdCache[o] = id;
-	_objectIdMutex.unlock();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2336,10 +2335,8 @@ void DatabaseArchive::registerId(const Object *o, OID id) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int DatabaseArchive::getCacheSize() const {
-	_objectIdMutex.lock();
-	size_t n = _objectIdCache.size();
-	_objectIdMutex.unlock();
-	return n;
+	std::scoped_lock l(_objectIdMutex);
+	return _objectIdCache.size();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2348,7 +2345,9 @@ int DatabaseArchive::getCacheSize() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::serializeObject(Object *obj) {
-	if ( obj == nullptr ) return;
+	if ( !obj ) {
+		return;
+	}
 
 	resetAttributePrefix();
 
@@ -2371,14 +2370,12 @@ void DatabaseArchive::serializeObject(Object *obj) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void DatabaseArchive::removeId(Object *o) {
-	_objectIdMutex.lock();
+	std::scoped_lock l(_objectIdMutex);
 
-	ObjectIdMap::iterator it = _objectIdCache.find(o);
+	auto it = _objectIdCache.find(o);
 	if ( it != _objectIdCache.end() ) {
 		_objectIdCache.erase(it);
 	}
-
-	_objectIdMutex.unlock();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

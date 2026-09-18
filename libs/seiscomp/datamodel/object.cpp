@@ -23,11 +23,14 @@
 #include <seiscomp/datamodel/object.h>
 #include <seiscomp/datamodel/notifier.h>
 
+#include <mutex>
+
 
 namespace Seiscomp {
 namespace DataModel {
 
 
+std::mutex observerMutex;
 Object::ObserverList Object::_observers;
 IMPLEMENT_SC_ABSTRACT_CLASS(Object, "Object");
 IMPLEMENT_SC_ABSTRACT_CLASS(Observer, "Observer");
@@ -50,9 +53,10 @@ Object::Object(const Object &other)
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Object::~Object() {
-	for ( ObserverList::iterator it = _observers.begin();
-	      it != _observers.end(); ++it )
-		(*it)->onObjectDestroyed(this);
+	std::scoped_lock l(observerMutex);
+	for ( auto *observer : _observers ) {
+		observer->onObjectDestroyed(this);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -117,9 +121,10 @@ const Core::Time &Object::lastModifiedInArchive() const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Object::childAdded(Object* child) {
-	for ( ObserverList::iterator it = _observers.begin();
-	      it != _observers.end(); ++it )
-		(*it)->onObjectAdded(this, child);
+	std::scoped_lock l(observerMutex);
+	for ( auto *observer : _observers ) {
+		observer->onObjectAdded(this, child);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -128,9 +133,10 @@ void Object::childAdded(Object* child) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Object::childRemoved(Object* child) {
-	for ( ObserverList::iterator it = _observers.begin();
-	      it != _observers.end(); ++it )
-		(*it)->onObjectRemoved(this, child);
+	std::scoped_lock l(observerMutex);
+	for ( auto *observer : _observers ) {
+		observer->onObjectRemoved(this, child);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -139,9 +145,10 @@ void Object::childRemoved(Object* child) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Object::modified() {
-	for ( ObserverList::iterator it = _observers.begin();
-	      it != _observers.end(); ++it )
-		(*it)->onObjectModified(this);
+	std::scoped_lock l(observerMutex);
+	for ( auto *observer : _observers ) {
+		observer->onObjectModified(this);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -150,11 +157,11 @@ void Object::modified() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Object::RegisterObserver(Observer* observer) {
-	ObserverList::iterator it = std::find(_observers.begin(),
-	                                      _observers.end(),
-	                                      observer);
-	if ( it != _observers.end() )
+	std::scoped_lock l(observerMutex);
+	auto it = std::find(_observers.begin(), _observers.end(), observer);
+	if ( it != _observers.end() ) {
 		return false;
+	}
 
 	_observers.push_back(observer);
 	return true;
@@ -166,11 +173,11 @@ bool Object::RegisterObserver(Observer* observer) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Object::UnregisterObserver(Observer* observer) {
-	ObserverList::iterator it = std::find(_observers.begin(),
-	                                      _observers.end(),
-	                                      observer);
-	if ( it == _observers.end() )
+	std::scoped_lock l(observerMutex);
+	auto it = std::find(_observers.begin(), _observers.end(), observer);
+	if ( it == _observers.end() ) {
 		return false;
+	}
 
 	_observers.erase(it);
 	return true;
@@ -181,8 +188,7 @@ bool Object::UnregisterObserver(Observer* observer) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Observer::Observer() {
-}
+Observer::Observer() {}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
