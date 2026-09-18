@@ -1,4 +1,4 @@
-Router is a meta locator which selects an actual
+*Router* is a meta locator which selects (routes) an actual
 :ref:`locator <concepts_locators>` based on region profiles configured in
 GeoJSON or BNA files.
 
@@ -11,26 +11,15 @@ relocation configured through region profiles.
 Setup
 =====
 
-The Router locator offers configuration by global module parameters.
-
-
-Plugin
-------
-
-Add the plugin ``locrouter`` to :confval:`plugins` for activating the Router
-locator. Example:
-
-.. code-block:: sh
-
-   plugins = ${plugins},locrouter
+The *Router* locator offers configuration by global module parameters.
 
 
 Initial locator
 ---------------
 
-For routing, an initial source location is required. When only picks but no
-origins are provided, the initial location is unknown but it can be defined by
-an initial locator independent of location. Set
+For routing locators, an initial source location is required. When only picks
+but no origins are provided, the initial location is unknown but it can be
+defined by an initial locator independent of location. Set
 :confval:`RouterLocator.initial.locator` and
 :confval:`RouterLocator.initial.profile` for defining the initial locator.
 
@@ -64,7 +53,6 @@ degrees independent of the latitude and will be overestimated with increasing
 distance from the equator.
 
 Example :ref:`GeoJSON file<sec-gui_layers-vector-format-geojson>`:
-
 
 .. code-block:: json
 
@@ -171,5 +159,54 @@ Example :ref:`BNA file<sec-gui_layers-vector-format-bna>`:
 Application
 ===========
 
-Once configured, the Router locator may be used by other |scname| modules such
-as :ref:`scolv` or :ref:`screloc`. Refer to the locator as "Router".
+Once configured, the *Router* locator may be used with other |scname| modules
+such as :ref:`scolv` or :ref:`screloc`. Refer to the locator as *Router*.
+
+
+Global configuration
+--------------------
+
+Add the plugin ``locrouter`` to :confval:`plugins` in global module
+configuration for activating *Router*. Example:
+
+.. code-block:: sh
+
+   plugins = ${plugins},locrouter
+
+
+screloc
+-------
+
+For using with :ref:`screloc`, :confval:`reloc.locator` must be configured with
+*Router* as a minimum. The configuration of :confval:`reloc.profile` is ignored
+
+.. code-block:: properties
+
+   plugins = locrouter
+   reloc.locator = Router
+
+You may test *screloc* along with *Router* on the command line like:
+
+.. code-block:: sh
+
+   screloc --locator=Router -H localhost --plugins=locrouter --debug
+
+
+scolv
+-----
+
+Similar to *screloc* you may configure :scolv: with *Router* for the locator
+interface, :confval:`olv.locator.interface` while the default profile,
+:confval:`olv.locator.interface` is optional:
+
+.. code-block:: properties
+
+   plugins = locrouter
+   olv.locator.interface = Router
+   olv.locator.defaultProfile= [abc]
+
+You may test *scolv* along with *Router* on the command line like:
+
+.. code-block:: sh
+
+   scolv --olv.locator.interface=Router -H localhost --plugins=locrouter --debug
