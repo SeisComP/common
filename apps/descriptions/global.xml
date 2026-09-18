@@ -707,8 +707,7 @@
 							<parameter name="check" type="string" default="source" values="raypath,source,source-receiver">
 								<description>
 								Define how the region check is performed to accept
-								a source receiver pair for further processing.
-								Allowed values are:
+								a source receiver pair for further processing:
 
 								source: Only the source/origin must be within
 								the region.

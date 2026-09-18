@@ -11,11 +11,6 @@
 					<parameter name="distMode" type="string" values="epicentral,hypocentral">
 						<description>
 						Considered distance measure between source and receiver.
-						Possible values are
-
-						hypocentral: hypocentral distance
-
-						epicentral: epicentral distance
 						</description>
 					</parameter>
 					<parameter name="calibrationType" type="string" values="parametric,A0">
@@ -214,10 +209,6 @@
 				<parameter name="distMode" type="string" default="hypocentral" values="epicentral,hypocentral">
 					<description>
 					Considered distance measure between source and receiver.
-
-					hypocentral: hypocentral distance
-
-					epicentral: epicentral distance
 					</description>
 				</parameter>
 				<parameter name="calibrationType" type="string" default="parametric" values="parametric,A0">
