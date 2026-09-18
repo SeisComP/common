@@ -168,10 +168,10 @@ Notifier* Notifier::Create(const std::string& parentId,
 			// current one
 			if ( res == CR_EQUAL ) {
 				SEISCOMP_DEBUG("equal notifiers found => discarding the given (%s(%s, %s), %s(%s, %s))",
-				               (*it)->parentID().c_str(),
+				               (*it)->parentID(),
 				               (*it)->operation().toString(),
 				               (*it)->object()->className(),
-				               notifier->parentID().c_str(),
+				               notifier->parentID(),
 				               notifier->operation().toString(),
 				               notifier->object()->className());
 				return nullptr;
