@@ -96,6 +96,8 @@
 				The format is: service://user:pwd@host/database.
 				&quot;service&quot; is the name of the database driver which
 				can be queried with &quot;--db-driver-list&quot;.
+				Backend specific connection parameters may be appended to
+				the URL, see :ref:`concepts_database_url`.
 					IMPORTANT: This parameter replaces former
 					&quot;database.type&quot; and &quot;database.parameters&quot;
 					which have been removed.

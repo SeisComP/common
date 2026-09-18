@@ -159,6 +159,15 @@ bool SQLiteDatabase::handleURIParameter(const std::string &name,
 			return false;
 		}
 	}
+	else if ( name == "busy_timeout" ) {
+		if ( !Core::fromString(_busyTimeout, value) || _busyTimeout < 0 ) {
+			SEISCOMP_ERROR("Invalid busy_timeout value: %s", value.c_str());
+			return false;
+		}
+	}
+	else if ( name == "journal" ) {
+		_journalMode = value;
+	}
 
 	return true;
 }
@@ -221,6 +230,16 @@ bool SQLiteDatabase::open() {
 		}
 	}
 
+	if ( _busyTimeout > 0 ) {
+		SEISCOMP_DEBUG("Set busy timeout to %dms", _busyTimeout);
+		sqlite3_busy_timeout(_handle, _busyTimeout);
+	}
+
+	if ( !_journalMode.empty() ) {
+		SEISCOMP_DEBUG("Set journal mode to '%s'", _journalMode.c_str());
+		execute(("PRAGMA journal_mode = " + _journalMode).c_str());
+	}
+
 	return true;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -242,6 +261,8 @@ bool SQLiteDatabase::connect(const char *con) {
 	_host = con;
 	_columnPrefix = "";
 	_sync = 1;
+	_busyTimeout = 0;
+	_journalMode.clear();
 
 	string params;
 	size_t pos = _host.find('?');
