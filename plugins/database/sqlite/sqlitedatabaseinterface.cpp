@@ -192,7 +192,7 @@ bool SQLiteDatabase::open() {
 
 	int res = sqlite3_open(uri.c_str(), &_handle);
 	if ( res != SQLITE_OK ) {
-		SEISCOMP_ERROR("sqlite3 open error: %d", res);
+		SEISCOMP_ERROR("sqlite3 open error (%d): %s", res, sqlite3_errmsg(_handle));
 		sqlite3_close(_handle);
 		return false;
 	}
@@ -200,44 +200,62 @@ bool SQLiteDatabase::open() {
 	if ( _debugUMask ) {
 #if SQLITE_VERSION_NUMBER < 3014000
 		if ( _debugUMask & SQLITE_TRACE_STMT ) {
-			sqlite3_trace(_handle, &sqliteTraceFunc, nullptr);
+			res = sqlite3_trace(_handle, &sqliteTraceFunc, nullptr);
 		}
 		else if ( _debugUMask & SQLITE_TRACE_PROFILE ) {
-			sqlite3_profile(_handle, &sqliteProfileFunc, nullptr);
+			res = sqlite3_profile(_handle, &sqliteProfileFunc, nullptr);
 		}
 #else
-		sqlite3_trace_v2(_handle, _debugUMask, &sqliteCallbackFunc, nullptr);
+		res = sqlite3_trace_v2(_handle, _debugUMask, &sqliteCallbackFunc, nullptr);
 #endif
+		if ( res != SQLITE_OK ) {
+			SEISCOMP_ERROR("Error setting debug callback (%d): %s",
+			               res, sqlite3_errmsg(_handle));
+			return false;
+		}
 	}
 
 	if ( _sync != 1 ) {
 		switch ( _sync ) {
 			case 0:
 				SEISCOMP_DEBUG("Disable disc synchronization");
-				execute("PRAGMA synchronous = OFF");
+				if ( !execute("PRAGMA synchronous = OFF") ) {
+					return false;
+				}
 				break;
 			case 2:
 				SEISCOMP_DEBUG("Set disc synchronization to 'full'");
-				execute("PRAGMA synchronous = FULL");
+				if ( !execute("PRAGMA synchronous = FULL") ) {
+					return false;
+				}
 				break;
 			case 3:
 				SEISCOMP_DEBUG("Set disc synchronization to 'extra'");
-				execute("PRAGMA synchronous = EXTRA");
+				if ( !execute("PRAGMA synchronous = EXTRA") ) {
+					return false;
+				}
 				break;
 			default:
 				SEISCOMP_WARNING("Unknown sync mode: %d", _sync);
-				break;
+				return false;
 		}
 	}
 
 	if ( _busyTimeout > 0 ) {
 		SEISCOMP_DEBUG("Set busy timeout to %dms", _busyTimeout);
-		sqlite3_busy_timeout(_handle, _busyTimeout);
+		res = sqlite3_busy_timeout(_handle, _busyTimeout);
+		if ( res != SQLITE_OK ) {
+			SEISCOMP_ERROR("Error setting busy timeout (%d): %s",
+			               res, sqlite3_errmsg(_handle));
+			return false;
+		}
 	}
 
 	if ( !_journalMode.empty() ) {
 		SEISCOMP_DEBUG("Set journal mode to '%s'", _journalMode.c_str());
-		execute(("PRAGMA journal_mode = " + _journalMode).c_str());
+		if ( !execute(("PRAGMA journal_mode = " + _journalMode).c_str() ) ) {
+			return false;
+		}
 	}
 
 	return true;
