@@ -461,8 +461,7 @@
 							</parameter>
 							<parameter name="style" type="string" default="DotLine" values="NoPen, SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>
-								The style of the pen. Supported values are:
-								NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+								The style of the pen.
 								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1" unit="px">
@@ -478,9 +477,7 @@
 							</parameter>
 							<parameter name="style" type="string" default="DotLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 								<description>
-								The style of the pen. Supported values are:
-								NoPen, SolidLine, DashLine, DotLine, DashDotLine,
-								DashDotDotLine.
+								The style of the pen.
 								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1" unit="px">
@@ -528,8 +525,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-									The style of the pen. Supported values are:
-									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -545,8 +541,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-									The style of the pen. Supported values are:
-									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -562,9 +557,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="solid" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 									<description>
-										The style of the brush. Supported values are, e.g.:
-										solid, dense1, dense7, horizontal, vertical,
-										cross, bdiag, fdiag, diagcross.
+										The style of the brush.
 									</description>
 								</parameter>
 							</group>
@@ -577,8 +570,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-									The style of the pen. Supported values are:
-									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -594,8 +586,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 									<description>
-									The style of the pen. Supported values are:
-									NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+									The style of the pen.
 									</description>
 								</parameter>
 								<parameter name="width" type="double" default="1" unit="px">
@@ -611,9 +602,7 @@
 								</parameter>
 								<parameter name="style" type="string" default="solid" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 									<description>
-									The style of the brush. Supported values are, e.g.:
-									solid, dense1, dense7, horizontal, vertical,
-									cross, bdiag, fdiag, diagcross.
+									The style of the brush.
 									</description>
 								</parameter>
 							</group>
@@ -665,8 +654,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
-											The style of the pen. Supported values are:
-											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+											The style of the pen.
 										</description>
 									</parameter>
 									<parameter name="width" type="double" default="" unit="px">
@@ -682,9 +670,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
-										The style of the brush. Supported values are, e.g.:
-										solid, dense1, dense7, horizontal, vertical,
-										cross, bdiag, fdiag, diagcross.
+										The style of the brush.
 										</description>
 									</parameter>
 								</group>
@@ -700,8 +686,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
-											The style of the pen. Supported values are:
-											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+											The style of the pen.
 										</description>
 									</parameter>
 									<parameter name="width" type="double" default="" unit="px">
@@ -717,9 +702,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
-											The style of the pen. Supported values are, e.g.:
-											solid, dense1, dense7, horizontal, vertical,
-											cross, bdiag, fdiag, diagcross.
+											The style of the pen.
 										</description>
 									</parameter>
 								</group>
@@ -735,8 +718,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
 										<description>
-											The style of the pen. Supported values are:
-											NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.
+											The style of the pen.
 										</description>
 									</parameter>
 									<parameter name="width" type="double" default="" unit="px">
@@ -752,9 +734,7 @@
 									</parameter>
 									<parameter name="style" type="string" default="" values="solid,dense1,dense2,dense3,dense4,dense5,dense6,dense7,nobrush,horizontal,vertical,cross,bdiag,fdiag,diagcross">
 										<description>
-											The style of the pen. Supported values are, e.g.:
-											solid, dense1, dense7, horizontal, vertical,
-											cross, bdiag, fdiag, diagcross.
+											The style of the pen.
 										</description>
 									</parameter>
 								</group>
@@ -768,7 +748,9 @@
 								<description>The color of the pen.</description>
 							</parameter>
 							<parameter name="style" type="string" default="SolidLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
-								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+								<description>
+								The style of the pen.
+								</description>
 							</parameter>
 							<parameter name="width" type="double" default="0.0" unit="px">
 								<description>The width of the pen.</description>
@@ -782,7 +764,9 @@
 								<description>The color of the pen.</description>
 							</parameter>
 							<parameter name="style" type="string" default="DashLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
-								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+								<description>
+								The style of the pen.
+								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1.0" unit="px">
 								<description>The width of the pen.</description>
@@ -796,7 +780,9 @@
 								<description>The color of the pen.</description>
 							</parameter>
 							<parameter name="style" type="string" default="DotLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
-								<description>The style of the pen. Supported values are: NoPen, SolidLine, DashLine, DotLine, DashDotLine, DashDotDotLine.</description>
+								<description>
+								The style of the pen.
+								</description>
 							</parameter>
 							<parameter name="width" type="double" default="1.0" unit="px">
 								<description>The width of the pen.</description>
@@ -1128,8 +1114,6 @@
 							<description>
 							Mode for drawing record borders as box or line on top or
 							bottom.
-
-							Supported values: &quot;topline&quot;,&quot;box&quot;,&quot;bottomline&quot;
 							</description>
 						</parameter>
 					</group>
@@ -1660,10 +1644,9 @@
 								Column name shown in header of event list table.
 								</description>
 							</parameter>
-							<parameter name="types" type="list:string">
+							<parameter name="types" type="list:string" values="Event,Origin">
 								<description>
 								Object types passed to the script.
-								Supported values are 'Event' and 'Origin'.
 								Mandatory parameter.
 								</description>
 							</parameter>
@@ -1944,9 +1927,6 @@
 						Configure the columns of the event edit origin table
 						that are visible initially. Origin creation time and
 						origin time are always visible.
-						Possible values are:
-
-						Phases, Lat, Lon, Depth, DType, RMS, AzGap, Stat, Method, Agency, Author, Region, ID
 						</description>
 					</parameter>
 					<group name="customColumn">
@@ -1992,10 +1972,6 @@
 						<description>
 						Configure the columns of the event edit focal mechanism
 						tab that are visible initially.
-
-						Possible values are: Depth, M, Count, Misfit, STDR,
-						AzGap, Stat, DC, CLVD, ISO, S1,
-						D1, R1, S2, D2, R2, Agency, Author
 						</description>
 					</parameter>
 				</group>
