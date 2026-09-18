@@ -148,6 +148,12 @@ bool Homogeneous::setModel(const string &model) {
 				return false;
 			}
 
+			if ( velocitiesModel.count(toks[0]) ) {
+				SEISCOMP_ERROR("Multiple configuration of %s phase in '%svelocities': '%s'",
+				               toks[0], base, velocity);
+				return false;
+			}
+
 			double vel;
 			if ( !Core::fromString(vel, toks[1]) ) {
 				SEISCOMP_ERROR("Invalid configuration of '%svelocities': '%s'",
@@ -157,7 +163,7 @@ bool Homogeneous::setModel(const string &model) {
 			velocitiesModel[toks[0]] = vel;
 		}
 		SEISCOMP_DEBUG("Found configuration of '%svelocities': Ignoring "
-		               "'P-velocity', 'S-velocity'", base);
+		               "'P-velocity', 'S-velocity' if configured", base);
 	}
 	catch ( ... ) {
 		try {
