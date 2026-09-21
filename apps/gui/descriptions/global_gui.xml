@@ -1757,6 +1757,17 @@
 							</description>
 						</parameter>
 					</group>
+					<group name="fx">
+						<description>
+						Filter the loaded event list by final (F)/rejected (X) status.
+						</description>
+						<parameter name="enabled" type="boolean" default="false">
+							<description>
+							Sets the default state of the &quot;Hide F/X events&quot;
+							option.
+							</description>
+						</parameter>
+					</group>
 					<group name="database">
 						<description>
 						Pre-set options to filter a database request to load events

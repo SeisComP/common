@@ -2771,6 +2771,9 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	try { SC_D._ui->cbFilterRegions->setChecked(SCApp->configGetBool("eventlist.filter.regions.enabled")); }
 	catch ( ... ) {}
 
+	try { SC_D._ui->cbHideFinalRejected->setChecked(SCApp->configGetBool("eventlist.filter.fx.enabled")); }
+	catch ( ... ) {}
+
 	try {
 		SC_D._itemConfig.customColumn = SCApp->configGetInt("eventlist.customColumn.pos");
 	}
