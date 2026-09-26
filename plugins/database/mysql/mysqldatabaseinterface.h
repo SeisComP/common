@@ -96,12 +96,29 @@ class MySQLDatabase : public Seiscomp::IO::DatabaseInterface {
 	//  Implementation
 	// ------------------------------------------------------------------
 	private:
+		enum class SSLMode {
+			Default,
+			Disabled,
+			Preferred,
+			Required,
+			VerifyCA,
+			VerifyIdentity
+		};
+
+		bool applySSLOptions();
+		bool checkSSL() const;
 		bool ping() const;
 		bool query(const char *c, const char *comp);
 
 
 	private:
 		MYSQL                 *_handle{nullptr};
+		SSLMode                _sslMode{SSLMode::Default};
+		std::string            _sslCA;
+		std::string            _sslCAPath;
+		std::string            _sslCert;
+		std::string            _sslKey;
+		std::string            _sslCipher;
 		MYSQL_RES*             _result{nullptr};
 		MYSQL_ROW              _row{nullptr};
 		bool                   _debug{false};

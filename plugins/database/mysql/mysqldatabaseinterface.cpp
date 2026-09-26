@@ -25,8 +25,10 @@
 #include "mysqldatabaseinterface.h"
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/plugin.h>
+#include <seiscomp/core/strings.h>
 #include <seiscomp/core/system.h>
 #include <string.h>
+#include <utility>
 #if defined(WIN32)
 #include <errmsg.h>
 #else
@@ -70,6 +72,167 @@ bool MySQLDatabase::handleURIParameter(const std::string &name,
 			_debug = true;
 		}
 	}
+	else if ( name == "ssl_mode" ) {
+		if ( !Core::compareNoCase(value, "disabled") ) {
+			_sslMode = SSLMode::Disabled;
+		}
+		else if ( !Core::compareNoCase(value, "preferred") ) {
+			_sslMode = SSLMode::Preferred;
+		}
+		else if ( !Core::compareNoCase(value, "required") ) {
+			_sslMode = SSLMode::Required;
+		}
+		else if ( !Core::compareNoCase(value, "verify_ca") ) {
+			_sslMode = SSLMode::VerifyCA;
+		}
+		else if ( !Core::compareNoCase(value, "verify_identity") ) {
+			_sslMode = SSLMode::VerifyIdentity;
+		}
+		else {
+			SEISCOMP_ERROR("Invalid ssl_mode '%s', expected one of: disabled, "
+			               "preferred, required, verify_ca, verify_identity",
+			               value.c_str());
+			return false;
+		}
+	}
+	else if ( name == "ssl_ca" ) {
+		_sslCA = value;
+	}
+	else if ( name == "ssl_capath" ) {
+		_sslCAPath = value;
+	}
+	else if ( name == "ssl_cert" ) {
+		_sslCert = value;
+	}
+	else if ( name == "ssl_key" ) {
+		_sslKey = value;
+	}
+	else if ( name == "ssl_cipher" ) {
+		_sslCipher = value;
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MySQLDatabase::applySSLOptions() {
+	bool hasSSLParameters = !_sslCA.empty() || !_sslCAPath.empty() ||
+	                        !_sslCert.empty() || !_sslKey.empty() ||
+	                        !_sslCipher.empty();
+
+	if ( _sslMode == SSLMode::Default ) {
+		// TLS parameters without an explicit mode ask for an encrypted
+		// connection. Never fall back to plain text silently. Otherwise use
+		// TLS if the server supports it with all client libraries:
+		// libmysqlclient does it by default, libmariadb < 3.4 does not.
+		_sslMode = hasSSLParameters ? SSLMode::Required : SSLMode::Preferred;
+	}
+
+	if ( (_sslMode == SSLMode::Disabled) && hasSSLParameters ) {
+		SEISCOMP_WARNING("ssl_mode=disabled: ignoring the other ssl_* parameters");
+	}
+
+	// libmysqlclient refuses to verify without a CA and libmariadb >= 3.4
+	// silently skips the verification for local connections. Require it
+	// always to get the same behavior with all client libraries.
+	if ( ((_sslMode == SSLMode::VerifyCA) || (_sslMode == SSLMode::VerifyIdentity))
+	  && _sslCA.empty() && _sslCAPath.empty() ) {
+		SEISCOMP_ERROR("ssl_mode=verify_ca and verify_identity require ssl_ca "
+		               "or ssl_capath");
+		return false;
+	}
+
+	if ( _sslMode != SSLMode::Disabled ) {
+		const std::pair<mysql_option, const std::string*> files[] = {
+			{ MYSQL_OPT_SSL_CA, &_sslCA },
+			{ MYSQL_OPT_SSL_CAPATH, &_sslCAPath },
+			{ MYSQL_OPT_SSL_CERT, &_sslCert },
+			{ MYSQL_OPT_SSL_KEY, &_sslKey },
+			{ MYSQL_OPT_SSL_CIPHER, &_sslCipher }
+		};
+
+		for ( const auto &[option, value] : files ) {
+			if ( !value->empty() && mysql_options(_handle, option, value->c_str()) ) {
+				SEISCOMP_ERROR("Failed to set TLS option: %s", mysql_error(_handle));
+				return false;
+			}
+		}
+	}
+
+#if defined(MARIADB_PACKAGE_VERSION_ID) || defined(MARIADB_BASE_VERSION)
+	// MariaDB Connector/C has no ssl mode. TLS is switched on with
+	// MYSQL_OPT_SSL_ENFORCE and certificate verification (chain and host
+	// name) with MYSQL_OPT_SSL_VERIFY_SERVER_CERT. Both are set explicitly
+	// to not depend on the library defaults which changed with version 3.4.
+	// Without verification the library falls back to an unencrypted
+	// connection if the server does not support TLS. This matches
+	// "preferred", checkSSL() rejects it for "required".
+	my_bool enforce = _sslMode != SSLMode::Disabled;
+	my_bool verify = (_sslMode == SSLMode::VerifyCA) || (_sslMode == SSLMode::VerifyIdentity);
+
+	if ( _sslMode == SSLMode::VerifyCA ) {
+		SEISCOMP_INFO("ssl_mode=verify_ca: MariaDB client library also "
+		              "verifies the server host name");
+	}
+
+	if ( mysql_options(_handle, MYSQL_OPT_SSL_ENFORCE, &enforce)
+	  || mysql_options(_handle, MYSQL_OPT_SSL_VERIFY_SERVER_CERT, &verify) ) {
+		SEISCOMP_ERROR("Failed to set TLS mode: %s", mysql_error(_handle));
+		return false;
+	}
+#elif LIBMYSQL_VERSION_ID >= 50711
+	unsigned int mode;
+	switch ( _sslMode ) {
+		case SSLMode::Disabled:
+			mode = SSL_MODE_DISABLED;
+			break;
+		case SSLMode::Preferred:
+			mode = SSL_MODE_PREFERRED;
+			break;
+		case SSLMode::VerifyCA:
+			mode = SSL_MODE_VERIFY_CA;
+			break;
+		case SSLMode::VerifyIdentity:
+			mode = SSL_MODE_VERIFY_IDENTITY;
+			break;
+		default:
+			mode = SSL_MODE_REQUIRED;
+			break;
+	}
+
+	if ( mysql_options(_handle, MYSQL_OPT_SSL_MODE, &mode) ) {
+		SEISCOMP_ERROR("Failed to set TLS mode: %s", mysql_error(_handle));
+		return false;
+	}
+#else
+	SEISCOMP_ERROR("ssl_mode is not supported by this MySQL client library");
+	return false;
+#endif
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool MySQLDatabase::checkSSL() const {
+	// Do not rely on the client library to refuse unencrypted connections
+	// if encryption was requested.
+	if ( (_sslMode == SSLMode::Disabled) || (_sslMode == SSLMode::Preferred) ) {
+		return true;
+	}
+
+	if ( !mysql_get_ssl_cipher(_handle) ) {
+		SEISCOMP_ERROR("Connection to %s:%d is not encrypted but TLS is "
+		               "required", _host.c_str(), _port);
+		return false;
+	}
 
 	return true;
 }
@@ -97,8 +260,18 @@ bool MySQLDatabase::open() {
 		                 "name other than 'localhost' to force the creation of "
 		                 "a TCP connection.");
 	}
+
+	if ( !applySSLOptions() ) {
+		mysql_close(_handle);
+		_handle = nullptr;
+		return false;
+	}
+
+	// CLIENT_REMEMBER_OPTIONS keeps the options (e.g. TLS) for reconnects
+	// in ping() if a connection attempt failed.
 	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
-	                         _database.c_str(), _port, nullptr, 0) ) {
+	                         _database.c_str(), _port, nullptr,
+	                         CLIENT_REMEMBER_OPTIONS) ) {
 		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
 		               _host.c_str(), _port, _database.c_str(),
 		               mysql_error(_handle));
@@ -107,9 +280,16 @@ bool MySQLDatabase::open() {
 		return false;
 	}
 
-	SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s (%s)", _user.c_str(),
+	if ( !checkSSL() ) {
+		mysql_close(_handle);
+		_handle = nullptr;
+		return false;
+	}
+
+	const char *cipher = mysql_get_ssl_cipher(_handle);
+	SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s (%s, TLS: %s)", _user.c_str(),
 	               _host.c_str(), _port, _database.c_str(),
-	               _handle->host_info);
+	               _handle->host_info, cipher ? cipher : "none");
 
 	return true;
 }
@@ -135,6 +315,12 @@ bool MySQLDatabase::connect(const char *con) {
 	_database = "seiscomp";
 	_port = 3306;
 	_columnPrefix = "";
+	_sslMode = SSLMode::Default;
+	_sslCA.clear();
+	_sslCAPath.clear();
+	_sslCert.clear();
+	_sslKey.clear();
+	_sslCipher.clear();
 	return DatabaseInterface::connect(con);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -187,10 +373,18 @@ bool MySQLDatabase::ping() const {
 	SEISCOMP_ERROR("ping() = %d (%s)", mysql_errno(_handle), mysql_error(_handle));
 	// Try to reconnect
 	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
-	                         _database.c_str(), _port, nullptr, 0) ) {
+	                         _database.c_str(), _port, nullptr,
+	                         CLIENT_REMEMBER_OPTIONS) ) {
 		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
 		               _host.c_str(), _port, _database.c_str(),
 		               mysql_error(_handle));
+		return false;
+	}
+
+	if ( !checkSSL() ) {
+		// Do not keep an unencrypted connection open. It would be used by
+		// the next query otherwise.
+		const_cast<MySQLDatabase*>(this)->disconnect();
 		return false;
 	}
 
@@ -234,7 +428,8 @@ bool MySQLDatabase::query(const char *c, const char *comp) {
 	if ( !_handle || !c ) return false;
 
 	unsigned int err;
-	const char *err_msg;
+	// Copy the message, ping() may close the handle which owns the buffer
+	std::string err_msg;
 	bool firstTry = true;
 
 	do {
@@ -264,14 +459,15 @@ bool MySQLDatabase::query(const char *c, const char *comp) {
 		}
 		else {
 			err = 0;
-			err_msg = nullptr;
+			err_msg.clear();
 			break;
 		}
 	}
 	while ( true );
 
 	if ( err > 0 ) {
-		SEISCOMP_ERROR("%s(\"%s\") = %d (%s)", comp, c, err, err_msg?err_msg:"unknown");
+		SEISCOMP_ERROR("%s(\"%s\") = %d (%s)", comp, c, err,
+		               err_msg.empty() ? "unknown" : err_msg.c_str());
 		return false;
 	}
 	else if ( _debug )
