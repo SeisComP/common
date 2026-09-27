@@ -24,10 +24,12 @@
 #define SEISCOMP_COMPONENT POSTGRESQL
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/plugin.h>
+#include <seiscomp/core/strings.h>
 #include "postgresqldatabaseinterface.h"
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 
 namespace Seiscomp {
@@ -81,6 +83,44 @@ bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
 	if ( name == "options" ) {
 		_options = value;
 	}
+	else if ( name == "ssl_mode" ) {
+		// Use the same values as the MySQL plugin and map them to libpq
+		if ( !Core::compareNoCase(value, "disabled") ) {
+			_sslMode = "disable";
+		}
+		else if ( !Core::compareNoCase(value, "preferred") ) {
+			_sslMode = "prefer";
+		}
+		else if ( !Core::compareNoCase(value, "required") ) {
+			_sslMode = "require";
+		}
+		else if ( !Core::compareNoCase(value, "verify_ca") ) {
+			_sslMode = "verify-ca";
+		}
+		else if ( !Core::compareNoCase(value, "verify_identity") ) {
+			_sslMode = "verify-full";
+		}
+		else {
+			SEISCOMP_ERROR("Invalid ssl_mode '%s', expected one of: disabled, "
+			               "preferred, required, verify_ca, verify_identity",
+			               value.c_str());
+			return false;
+		}
+	}
+	else if ( name == "ssl_ca" ) {
+		_sslCA = value;
+	}
+	else if ( name == "ssl_cert" ) {
+		_sslCert = value;
+	}
+	else if ( name == "ssl_key" ) {
+		_sslKey = value;
+	}
+	else if ( (name == "ssl_capath") || (name == "ssl_cipher") ) {
+		SEISCOMP_ERROR("%s is not supported by the PostgreSQL client library",
+		               name.c_str());
+		return false;
+	}
 
 	return true;
 }
@@ -91,18 +131,50 @@ bool PostgreSQLDatabase::handleURIParameter(const std::string &name,
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool PostgreSQLDatabase::open() {
-	std::stringstream ss;
+	std::string port;
 	if ( _port ) {
-		ss << _port;
+		port = std::to_string(_port);
 	}
 
-	auto options = _options.empty() ? nullptr : _options.c_str();
-	_handle = PQsetdbLogin(_host.c_str(), ss.str().c_str(),
-	                       options,
-	                       nullptr,
-	                       _database.c_str(),
-	                       _user.c_str(),
-	                       _password.c_str());
+	auto sslMode = _sslMode;
+	if ( sslMode.empty() && (!_sslCA.empty() || !_sslCert.empty() || !_sslKey.empty()) ) {
+		// TLS parameters without an explicit mode ask for an encrypted
+		// connection. Never fall back to plain text silently.
+		sslMode = "require";
+	}
+
+	if ( ((sslMode == "verify-ca") || (sslMode == "verify-full")) && _sslCA.empty() ) {
+		SEISCOMP_ERROR("ssl_mode=verify_ca and verify_identity require ssl_ca");
+		return false;
+	}
+
+	// Parameters which are not given fall back to the libpq defaults
+	// including the PG* environment variables, e.g. PGSSLMODE.
+	std::vector<const char*> keywords;
+	std::vector<const char*> values;
+	auto add = [&keywords, &values](const char *keyword, const std::string &value) {
+		if ( !value.empty() ) {
+			keywords.push_back(keyword);
+			values.push_back(value.c_str());
+		}
+	};
+
+	add("host", _host);
+	add("port", port);
+	add("dbname", _database);
+	add("user", _user);
+	add("password", _password);
+	add("options", _options);
+	add("sslmode", sslMode);
+	add("sslrootcert", _sslCA);
+	add("sslcert", _sslCert);
+	add("sslkey", _sslKey);
+	keywords.push_back(nullptr);
+	values.push_back(nullptr);
+
+	// expand_dbname=1: a database name containing '=' is used as a connection
+	// string, like PQsetdbLogin did before.
+	_handle = PQconnectdbParams(keywords.data(), values.data(), 1);
 
 	// Check to see that the backend connection was successfully made
 	if ( PQstatus(_handle) != CONNECTION_OK ) {
@@ -119,11 +191,14 @@ bool PostgreSQLDatabase::open() {
 		return false;
 	}
 
+	auto cipher = PQsslInUse(_handle) ? PQsslAttribute(_handle, "cipher") : nullptr;
 	if ( _port ) {
-		SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s", _user, _host, _port, _database);
+		SEISCOMP_DEBUG("Connected to %s:******@%s:%d/%s (TLS: %s)", _user, _host,
+		               _port, _database, cipher ? cipher : "none");
 	}
 	else {
-		SEISCOMP_DEBUG("Connected to %s:******@%s/%s", _user, _host, _database);
+		SEISCOMP_DEBUG("Connected to %s:******@%s/%s (TLS: %s)", _user, _host,
+		               _database, cipher ? cipher : "none");
 	}
 
 	return true;
@@ -150,6 +225,10 @@ bool PostgreSQLDatabase::connect(const char *con) {
 	_database = "seiscomp";
 	_port = 0;
 	_columnPrefix = "m_";
+	_sslMode.clear();
+	_sslCA.clear();
+	_sslCert.clear();
+	_sslKey.clear();
 	return DatabaseInterface::connect(con);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
