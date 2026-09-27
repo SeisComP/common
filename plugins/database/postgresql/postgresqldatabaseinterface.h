@@ -104,6 +104,10 @@ class PostgreSQLDatabase : public Seiscomp::IO::DatabaseInterface {
 		void        *_unescapeBuffer{nullptr};
 		size_t      _unescapeBufferSize{0};
 		std::string _options;
+		std::string _sslMode;
+		std::string _sslCA;
+		std::string _sslCert;
+		std::string _sslKey;
 };
 
 
