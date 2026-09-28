@@ -97,6 +97,10 @@ bool MySQLDatabase::open() {
 		                 "name other than 'localhost' to force the creation of "
 		                 "a TCP connection.");
 	}
+
+	// Attempt a secure TLS connection if possible, but do not require it:
+	mysql_ssl_set(_handle, NULL, NULL, NULL, NULL, NULL);
+
 	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
 	                         _database.c_str(), _port, nullptr, 0) ) {
 		SEISCOMP_ERROR("Connect to %s:******@%s:%d/%s failed: %s", _user.c_str(),
