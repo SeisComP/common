@@ -98,8 +98,32 @@ bool MySQLDatabase::open() {
 		                 "a TCP connection.");
 	}
 
-	// Attempt a secure TLS connection if possible, but do not require it:
-	mysql_ssl_set(_handle, NULL, NULL, NULL, NULL, NULL);
+	// Enable secure connections.
+	// mysqlclient does this by default, but libmariadb does not.
+#ifdef LIBMARIADB
+	// Despite the name, in libmariadb SSL_ENFORCE=1 means try TLS but allow falling
+	// back to plaintext. (In libmysqlclient it genuinely means enforce, thus the
+	// need for the ifdef.)
+	unsigned char requestTLS = 1;
+	if ( mysql_optionsv(_handle, MYSQL_OPT_SSL_ENFORCE, &requestTLS) != 0 ) {
+		SEISCOMP_ERROR("Setting MYSQL_OPT_SSL_ENFORCE for %s:%d failed: %s",
+		               _host.c_str(), _port, mysql_error(_handle));
+		mysql_close(_handle);
+		_handle = nullptr;
+		return false;
+	}
+
+	// But don't enable server certificate verification - this is enabled by default
+	// when using secure connections in libmariadb.
+	unsigned char verifyServerCert = 0;
+	if (mysql_optionsv(_handle, MYSQL_OPT_SSL_VERIFY_SERVER_CERT, &verifyServerCert) != 0 ) {
+		SEISCOMP_ERROR("Setting MYSQL_OPT_SSL_VERIFY_SERVER_CERT for %s:%d failed: %s",
+		               _host.c_str(), _port, mysql_error(_handle));
+		mysql_close(_handle);
+		_handle = nullptr;
+		return false;
+	}
+#endif
 
 	if ( !mysql_real_connect(_handle, _host.c_str(), _user.c_str(), _password.c_str(),
 	                         _database.c_str(), _port, nullptr, 0) ) {
