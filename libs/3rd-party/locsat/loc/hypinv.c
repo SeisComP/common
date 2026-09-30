@@ -17,7 +17,7 @@ void sc_locsat_hypinv(
 	float *epmin, float *epstr, float *zfint, float *toint, float *sxx,
 	float *syy, float *szz, float *stt, float *sxy, float *sxz, float *syz,
 	float *stx, float *sty, float *stz, double *rank,
-	int *niter, int *nd, int *ierr
+	int *niter, int *nd, int *ierr, LOCSAT_Diagnostics *diag
 ) {
 	int i__1;
 	double d__1, d__2;
@@ -62,6 +62,7 @@ void sc_locsat_hypinv(
 	float correct;
 	boolean ldenuis;
 	double cnvgtst, sta3, sta4, sta5;
+	double unwtrms;
 
 	*alat = alat0;
 	*alon = alon0;
@@ -310,8 +311,10 @@ L1020:
 	// Also normalize matrix and residuals w.r.t. data standard deviations
 	// and apply weights to azimuth and slowness data, as necessary.
 	wtrms = (float)0.;
+	unwtrms = 0.;
 	for ( n = 0; n < *nd; ++n ) {
 		data[n].resid3 = data[n].resid2;
+		unwtrms += data[n].resid3 * data[n].resid3;
 
 		if ( data[n].idtyp2 == 1 ) {
 			data[n].resid2 /= data[n].dsd2;
@@ -340,6 +343,7 @@ L1020:
 		}
 	}
 	wtrms = sqrt(wtrms / *nd);
+	unwtrms = sqrt(unwtrms / *nd);
 	if ( cnvrg ) {
 		goto L1200;
 	}
@@ -407,6 +411,25 @@ L1020:
 			xsol[m] *= scale;
 		}
 		dxnorm = dxmax;
+	}
+
+	// Record the state of this iteration, this is what the Fortran
+	// version printed in verbose mode
+	if ( diag && diag->iterations && diag->num_iterations < diag->max_iterations ) {
+		LOCSAT_Iteration *it = &diag->iterations[diag->num_iterations++];
+		it->iteration = *niter;
+		it->num_data = *nd;
+		it->num_params = np;
+		it->lat = *alat;
+		it->lon = *alon;
+		it->depth = *zfoc;
+		it->torg = *torg;
+		it->unwt_rms = unwtrms;
+		it->wt_rms = wtrms;
+		it->cnvgtst = cnvgtst;
+		it->dxnorm = dxnorm;
+		it->condition = condit[0];
+		it->sighat = *sighat;
 	}
 	// Store the convergence test information from the 2 previous iterations
 	// Computing MIN
@@ -624,5 +647,17 @@ L1210:
 
 	if ( *toint <= -888.f ) {
 		*ierr = LOCSAT_ERR_TooFewDataToConstraintOT;
+	}
+
+	if ( diag ) {
+		diag->rank = *rank;
+		diag->condition[0] = condit[0];
+		diag->condition[1] = condit[1];
+		diag->sighat = *sighat;
+		diag->snssd = *snssd;
+		diag->ndf = *ndf;
+		diag->num_params = np;
+		diag->num_data = *nd;
+		diag->niter = *niter;
 	}
 }

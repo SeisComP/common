@@ -69,6 +69,26 @@
 					Compute the confidence ellipsoid from covariance matrix in 3D.
 					</description>
 				</parameter>
+				<parameter name="enableDebugOutput" type="boolean" default="false">
+					<description>
+					Log the inversion diagnostics of each location at info
+					level: the state of each iteration including the
+					convergence test value, the residuals and data importances
+					of all observations and a summary with the effective rank
+					and the condition number. This is the same as setting the
+					locator parameter VERBOSE, e.g. in scolv.
+					</description>
+				</parameter>
+				<parameter name="enableDiagnosticComments" type="boolean" default="false">
+					<description>
+					Add the comments &quot;locsat/importance&quot; and
+					&quot;locsat/diagnostics&quot; to each origin. The first
+					lists per arrival the pick ID and the data importances of
+					the time, backazimuth and slowness observation. The second
+					contains the number of iterations, the effective rank, the
+					condition numbers and the a posteriori standard error.
+					</description>
+				</parameter>
 			</group>
 		</configuration>
 	</plugin>

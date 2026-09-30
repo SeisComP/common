@@ -19,6 +19,7 @@
 
 
 #define SEISCOMP_COMPONENT LOCSAT
+#include <seiscomp/datamodel/comment.h>
 #include <seiscomp/logging/log.h>
 #include <seiscomp/core/strings.h>
 #include <seiscomp/core/system.h>
@@ -236,6 +237,11 @@ bool LOCSAT::init(const Config::Config &config) {
 
 	try {
 		P(depth_init) = config.getDouble("LOCSAT.depthInit");
+	}
+	catch ( ... ) {}
+
+	try {
+		_enableDiagnosticComments = config.getBool("LOCSAT.enableDiagnosticComments");
 	}
 	catch ( ... ) {}
 
@@ -531,6 +537,10 @@ dm::Origin* LOCSAT::fromPicks(PickList &picks){
 			oq.setAssociatedStationCount(stationsAssociated.size());
 			origin->setQuality(oq);
 		}
+
+		if ( _enableDiagnosticComments ) {
+			addDiagnosticComments(origin);
+		}
 	}
 
 	return origin;
@@ -621,6 +631,10 @@ dm::Origin *LOCSAT::relocate(const dm::Origin *origin) {
 			oq.setUsedStationCount(stationsUsed.size());
 			oq.setAssociatedStationCount(stationsAssociated.size());
 			result->setQuality(oq);
+		}
+
+		if ( _enableDiagnosticComments ) {
+			addDiagnosticComments(result);
 		}
 	}
 
@@ -1217,14 +1231,28 @@ DataModel::Origin *LOCSAT::locate() {
 	std::cerr << _params << std::endl;
 #endif
 
+	// Room for every iteration plus the initial and the final pass
+	_iterations.resize((P(max_iterations) > 0 ? P(max_iterations) : 0) + 2);
+	_importances.resize(_arrivals.size());
+	_diagnostics.iterations = _iterations.data();
+	_diagnostics.max_iterations = static_cast<int>(_iterations.size());
+	_diagnostics.importances = _importances.data();
+
 	int ierr = sc_locsat_locate_event(
 		&_ttt, _sites.data(), static_cast<int>(_sites.size()),
 		_arrivals.data(), _assocs.data(),
 		&_origin, &_origerr, &_params,
-		_errors.data(), static_cast<int>(_arrivals.size())
+		_errors.data(), static_cast<int>(_arrivals.size()),
+		&_diagnostics
 	);
 
 	//std::cerr << "ierr = locate_event: " <<  ierr << std::endl;
+
+	// Log before evaluating ierr so that failed inversions can be inspected
+	// as well
+	if ( P(verbose) == 'y' ) {
+		logDiagnostics();
+	}
 
 	switch ( ierr ) {
 		case LOCSAT_NoError:
@@ -1738,6 +1766,108 @@ DataModel::Origin *LOCSAT::locate() {
 	origin->setQuality(originQuality);
 
 	return origin;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void LOCSAT::logDiagnostics() const {
+	const auto &diag = _diagnostics;
+
+	SEISCOMP_INFO("LOCSAT iterations:");
+	SEISCOMP_INFO(" Iter  Nd Np      Lat       Lon   Depth        To  Unwt.RMS    Wt.RMS      CNVGTST     dXnorm   Condition");
+	for ( int i = 0; i < diag.num_iterations; ++i ) {
+		const auto &it = diag.iterations[i];
+		SEISCOMP_INFO("%5d %3d %2d %8.3f %9.3f %7.2f %9.3f %9.4f %9.4f %12.5e %10.3f %11.2f",
+		              it.iteration, it.num_data, it.num_params,
+		              it.lat, it.lon, it.depth, it.torg,
+		              it.unwt_rms, it.wt_rms, it.cnvgtst, it.dxnorm,
+		              it.condition);
+	}
+
+	// One row per datum like the final table of the Fortran version.
+	// Importance is the diagonal element of the data resolution matrix,
+	// -1 if the datum was not defining.
+	SEISCOMP_INFO("LOCSAT data:");
+	SEISCOMP_INFO("Sta      Phase    Type Def   Residual Normalized  Distance   Azimuth Importance  Err");
+
+	auto logDatum = [](const char *sta, const char *phase, char type,
+	                   char def, float res, float stdErr, float dist,
+	                   float azi, float imp, int err) {
+		float norm = -999.0f;
+		if ( res > -990.0f && stdErr > 0 ) {
+			norm = res / stdErr;
+		}
+		SEISCOMP_INFO("%-8s %-8s %c    %c   %9.3f  %9.3f %9.3f %9.3f  %9.3f  %3d",
+		              sta, phase, type, def, res, norm, dist, azi, imp, err);
+	};
+
+	for ( size_t i = 0; i < _arrivals.size(); ++i ) {
+		const auto &arr = _arrivals[i];
+		const auto &assoc = _assocs[i];
+		const auto &imp = _importances[i];
+		const auto &err = _errors[i];
+
+		logDatum(arr.sta, assoc.phase, 't', assoc.timedef, assoc.timeres,
+		         arr.deltim, assoc.delta, assoc.esaz, imp.time, err.time);
+		if ( arr.azimuth >= 0 && arr.azimuth <= 360 ) {
+			logDatum(arr.sta, assoc.phase, 'a', assoc.azdef, assoc.azres,
+			         arr.delaz, assoc.delta, assoc.esaz, imp.az, err.az);
+		}
+		if ( arr.slow >= 0 ) {
+			logDatum(arr.sta, assoc.phase, 's', assoc.slodef, assoc.slores,
+			         arr.delslo, assoc.delta, assoc.esaz, imp.slow, err.slow);
+		}
+	}
+
+	SEISCOMP_INFO("LOCSAT summary: iterations=%d data=%d parameters=%d "
+	              "rank=%.3f condition=%.2f effectiveCondition=%.2f "
+	              "sighat=%.4f snssd=%.4f ndf=%d",
+	              diag.niter, diag.num_data, diag.num_params, diag.rank,
+	              diag.condition[0], diag.condition[1], diag.sighat,
+	              diag.snssd, diag.ndf);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void LOCSAT::addDiagnosticComments(dm::Origin *origin) const {
+	// The arrivals of the result origin are created in the order of
+	// _arrivals, hence the importances map by index.
+	if ( origin->arrivalCount() != _importances.size() ) {
+		return;
+	}
+
+	std::string text;
+	for ( size_t i = 0; i < origin->arrivalCount(); ++i ) {
+		const auto &imp = _importances[i];
+		if ( !text.empty() ) {
+			text += '\n';
+		}
+		text += Core::stringify("%s %.3f %.3f %.3f",
+		                        origin->arrival(i)->pickID().c_str(),
+		                        imp.time, imp.az, imp.slow);
+	}
+
+	dm::CommentPtr comment = new dm::Comment;
+	comment->setId("locsat/importance");
+	comment->setText(text);
+	origin->add(comment.get());
+
+	const auto &diag = _diagnostics;
+	comment = new dm::Comment;
+	comment->setId("locsat/diagnostics");
+	comment->setText(
+		Core::stringify("iterations=%d rank=%.3f condition=%.2f "
+		                "effectiveCondition=%.2f sighat=%.4f snssd=%.4f ndf=%d",
+		                diag.niter, diag.rank, diag.condition[0],
+		                diag.condition[1], diag.sighat, diag.snssd, diag.ndf)
+	);
+	origin->add(comment.get());
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
