@@ -378,6 +378,33 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(YesNoParameters) {
+	Seiscomp::Seismology::LocatorInterfacePtr loc =
+		Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
+	loc->init(getConfig());
+
+	for ( const char *name : { "VERBOSE", "USE_PICK_UNCERTAINTY" } ) {
+		for ( const char *yes : { "y", "Y", "yes", "YES", "true", "True", "1", " y " } ) {
+			BOOST_CHECK(loc->setParameter(name, "n"));
+			BOOST_CHECK(loc->setParameter(name, yes));
+			BOOST_CHECK_MESSAGE(loc->parameter(name) == "y",
+			                    name << "=\"" << yes << "\" should enable");
+		}
+
+		for ( const char *no : { "n", "N", "no", "false", "0", "", "maybe" } ) {
+			BOOST_CHECK(loc->setParameter(name, "y"));
+			BOOST_CHECK(loc->setParameter(name, no));
+			BOOST_CHECK_MESSAGE(loc->parameter(name) == "n",
+			                    name << "=\"" << no << "\" should disable");
+		}
+	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(DiagnosticComments) {
 	Seiscomp::Config::Config cfg;
 	cfg.setBool("LOCSAT.usePickBackazimuth", true);

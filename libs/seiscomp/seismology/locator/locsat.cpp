@@ -89,6 +89,31 @@ enum LOCSATParams {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Interprets a yes/no locator parameter. Besides the classic "y" this
+// accepts "yes", "true" and non-zero numbers, case-insensitive and with
+// surrounding whitespace, so that e.g. typing "Y" or "true" in the scolv
+// locator settings does not silently disable the option.
+bool isYes(const char *value) {
+	if ( !value ) {
+		return false;
+	}
+
+	std::string v(value);
+	Core::trim(v);
+
+	if ( !Core::compareNoCase(v, "y") || !Core::compareNoCase(v, "yes") ) {
+		return true;
+	}
+
+	bool flag;
+	return Core::fromString(flag, v) && flag;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 float getTimeError(const dm::Pick *pick,
                    double defaultTimeError,
                    bool useUncertainties) {
@@ -1037,7 +1062,7 @@ std::string LOCSAT::getLocatorParams(int param) const {
 void LOCSAT::setLocatorParams(int param, const char* value){
 	switch ( param ) {
 		case LP_USE_LOCATION:
-			if ( !strcmp(value, "y") ) {
+			if ( isYes(value) ) {
 				P(use_location) = TRUE;
 			}
 			else {
@@ -1054,7 +1079,7 @@ void LOCSAT::setLocatorParams(int param, const char* value){
 			break;
 
 		case LP_VERBOSE:
-			if ( !strcmp(value, "y") ) {
+			if ( isYes(value) ) {
 				P(verbose) = 'y';
 			}
 			else {
@@ -1092,7 +1117,7 @@ void LOCSAT::setLocatorParams(int param, const char* value){
 			break;
 
 		case LP_USE_PICK_UNCERTAINTY:
-			if ( !strcmp(value, "y") ) {
+			if ( isYes(value) ) {
 				_usePickUncertainties = true;
 			}
 			else {
@@ -1101,7 +1126,7 @@ void LOCSAT::setLocatorParams(int param, const char* value){
 			break;
 
 		case LP_USE_PICK_BACKAZIMUTH:
-			if ( !strcmp(value, "y") ) {
+			if ( isYes(value) ) {
 				_usePickBackazimuth = true;
 			}
 			else {
@@ -1110,7 +1135,7 @@ void LOCSAT::setLocatorParams(int param, const char* value){
 			break;
 
 		case LP_USE_PICK_SLOWNESS:
-			if ( !strcmp(value, "y") ) {
+			if ( isYes(value) ) {
 				_usePickSlowness = true;
 			}
 			else {
@@ -1791,7 +1816,7 @@ void LOCSAT::logDiagnostics() const {
 	// Importance is the diagonal element of the data resolution matrix,
 	// -1 if the datum was not defining.
 	SEISCOMP_INFO("LOCSAT data:");
-	SEISCOMP_INFO("Sta      Phase    Type Def   Residual Normalized  Distance   Azimuth Importance  Err");
+	SEISCOMP_INFO("Sta          Phase    Type Def   Residual Normalized  Distance   Azimuth Importance  Err");
 
 	auto logDatum = [](const char *sta, const char *phase, char type,
 	                   char def, float res, float stdErr, float dist,
@@ -1800,7 +1825,7 @@ void LOCSAT::logDiagnostics() const {
 		if ( res > -990.0f && stdErr > 0 ) {
 			norm = res / stdErr;
 		}
-		SEISCOMP_INFO("%-8s %-8s %c    %c   %9.3f  %9.3f %9.3f %9.3f  %9.3f  %3d",
+		SEISCOMP_INFO("%-12s %-8s %c    %c   %9.3f  %9.3f %9.3f %9.3f  %9.3f  %3d",
 		              sta, phase, type, def, res, norm, dist, azi, imp, err);
 	};
 
