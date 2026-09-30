@@ -63,20 +63,37 @@ class SC_SYSTEM_CORE_API Observer : public Seiscomp::Core::BaseObject {
 	//  Interface
 	// ------------------------------------------------------------------
 	public:
-		//! This method is called when a new child has been
-		//! added to an object
+		/**
+		 * \brief This method is called when a new child has been
+		 *        added to an object.
+		 * \important Never call Object::RegisterObserver or
+		 *            Object::UnregisterObserver within that callback.
+		 */
 		virtual void onObjectAdded(Object* parent,
 		                           Object* newChild);
 
-		//! This method is triggered when a child has been
-		//! removed from an object
+		/**
+		 * \brief This method is triggered when a child has been removed
+		 *        from an object.
+		 * \important Never call Object::RegisterObserver or
+		 *            Object::UnregisterObserver within that callback.
+		 */
 		virtual void onObjectRemoved(Object* parent,
 		                             Object* oldChild);
 
-		//! Whenever an objects gets updated this method will be called
+		/**
+		 * \brief Whenever an objects gets updated this method will be
+		 *        called.
+		 * \important Never call Object::RegisterObserver or
+		 *            Object::UnregisterObserver within that callback.
+		 */
 		virtual void onObjectModified(Object* object);
 
-		//! Destruction callback
+		/**
+		 * \brief Destruction callback.
+		 * \important Never call Object::RegisterObserver or
+		 *            Object::UnregisterObserver within that callback.
+		 */
 		virtual void onObjectDestroyed(Object* object);
 };
 
