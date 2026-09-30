@@ -314,7 +314,9 @@ L1020:
 	unwtrms = 0.;
 	for ( n = 0; n < *nd; ++n ) {
 		data[n].resid3 = data[n].resid2;
-		unwtrms += data[n].resid3 * data[n].resid3;
+		if ( diag ) {
+			unwtrms += data[n].resid3 * data[n].resid3;
+		}
 
 		if ( data[n].idtyp2 == 1 ) {
 			data[n].resid2 /= data[n].dsd2;
@@ -343,7 +345,9 @@ L1020:
 		}
 	}
 	wtrms = sqrt(wtrms / *nd);
-	unwtrms = sqrt(unwtrms / *nd);
+	if ( diag ) {
+		unwtrms = sqrt(unwtrms / *nd);
+	}
 	if ( cnvrg ) {
 		goto L1200;
 	}

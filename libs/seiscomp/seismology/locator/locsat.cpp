@@ -1256,19 +1256,30 @@ DataModel::Origin *LOCSAT::locate() {
 	std::cerr << _params << std::endl;
 #endif
 
-	// Room for every iteration plus the initial and the final pass
-	_iterations.resize((P(max_iterations) > 0 ? P(max_iterations) : 0) + 2);
-	_importances.resize(_arrivals.size());
-	_diagnostics.iterations = _iterations.data();
-	_diagnostics.max_iterations = static_cast<int>(_iterations.size());
-	_diagnostics.importances = _importances.data();
+	// Collect diagnostics only if they are going to be logged or stored.
+	// Otherwise no memory is allocated and the inversion does no extra work.
+	LOCSAT_Diagnostics *diagnostics = nullptr;
+	if ( P(verbose) == 'y' || _enableDiagnosticComments ) {
+		// Room for every iteration plus the initial and the final pass
+		_iterations.resize((P(max_iterations) > 0 ? P(max_iterations) : 0) + 2);
+		_importances.resize(_arrivals.size());
+		_diagnostics.iterations = _iterations.data();
+		_diagnostics.max_iterations = static_cast<int>(_iterations.size());
+		_diagnostics.importances = _importances.data();
+		diagnostics = &_diagnostics;
+	}
+	else if ( !_iterations.empty() || !_importances.empty() ) {
+		// Release buffers of an earlier verbose run
+		std::vector<LOCSAT_Iteration>().swap(_iterations);
+		std::vector<LOCSAT_Importance>().swap(_importances);
+	}
 
 	int ierr = sc_locsat_locate_event(
 		&_ttt, _sites.data(), static_cast<int>(_sites.size()),
 		_arrivals.data(), _assocs.data(),
 		&_origin, &_origerr, &_params,
 		_errors.data(), static_cast<int>(_arrivals.size()),
-		&_diagnostics
+		diagnostics
 	);
 
 	//std::cerr << "ierr = locate_event: " <<  ierr << std::endl;
