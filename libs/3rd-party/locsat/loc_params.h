@@ -66,6 +66,58 @@ typedef struct {
 } LOCSAT_Errors;
 
 
+/*
+ * State of one iteration of the inversion, recorded after the least squares
+ * step has been computed but before the hypocenter is perturbed.
+ */
+typedef struct {
+	int    iteration;	/* iteration number, starting with 0         */
+	int    num_data;	/* number of defining data used              */
+	int    num_params;	/* number of free parameters (3 or 4)        */
+	float  lat;		/* trial latitude (deg)                      */
+	float  lon;		/* trial longitude (deg)                     */
+	float  depth;		/* trial depth (km)                          */
+	float  torg;		/* trial origin time relative to first arr.  */
+	double unwt_rms;	/* RMS of the raw residuals                  */
+	double wt_rms;		/* RMS of the residuals normalized by std err */
+	double cnvgtst;		/* convergence test value                    */
+	double dxnorm;		/* norm of the hypocenter perturbation (km)  */
+	double condition;	/* condition number of the system matrix     */
+	float  sighat;		/* a posteriori standard error               */
+} LOCSAT_Iteration;
+
+
+/*
+ * Epicenter importances of the time, azimuth and slowness datum of one
+ * observation. -1 means the datum was absent or not defining.
+ */
+typedef struct {
+	float time;
+	float az;
+	float slow;
+} LOCSAT_Importance;
+
+
+/*
+ * Optional diagnostics filled by sc_locsat_locate_event. The caller owns
+ * the arrays and sets their capacities; NULL arrays are skipped.
+ */
+typedef struct {
+	LOCSAT_Iteration  *iterations;	/* in: array, out: filled entries   */
+	int                max_iterations;	/* in: capacity of iterations      */
+	int                num_iterations;	/* out: number of entries written  */
+	LOCSAT_Importance *importances;	/* in: array of num_obs entries     */
+	double             rank;		/* effective rank of the matrix     */
+	double             condition[2];	/* true and effective condition num */
+	float              sighat;		/* a posteriori standard error      */
+	float              snssd;		/* normalized sample std deviation  */
+	int                ndf;		/* degrees of freedom of sighat     */
+	int                num_params;	/* number of free parameters        */
+	int                num_data;	/* number of defining data used     */
+	int                niter;		/* number of iterations performed   */
+} LOCSAT_Diagnostics;
+
+
 typedef struct {
 	char  phase_type[sizeof(((LOCSAT_Assoc*)0)->phase)];
 	char  sta[sizeof(((LOCSAT_Arrival*)0)->sta)];

@@ -23,6 +23,7 @@
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/client/inventory.h>
+#include <seiscomp/datamodel/comment.h>
 #include <seiscomp/datamodel/eventparameters.h>
 #include <seiscomp/io/archive/xmlarchive.h>
 #include <seiscomp/seismology/locatorinterface.h>
@@ -30,6 +31,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <filesystem>
+#include <sstream>
 #include <thread>
 
 namespace fs = std::filesystem;
@@ -369,6 +371,132 @@ BOOST_AUTO_TEST_CASE(Relocate) {
 			continue;
 		}
 	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(YesNoParameters) {
+	Seiscomp::Seismology::LocatorInterfacePtr loc =
+		Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
+	loc->init(getConfig());
+
+	for ( const char *name : { "VERBOSE", "USE_PICK_UNCERTAINTY" } ) {
+		for ( const char *yes : { "y", "Y", "yes", "YES", "true", "True", "1", " y " } ) {
+			BOOST_CHECK(loc->setParameter(name, "n"));
+			BOOST_CHECK(loc->setParameter(name, yes));
+			BOOST_CHECK_MESSAGE(loc->parameter(name) == "y",
+			                    name << "=\"" << yes << "\" should enable");
+		}
+
+		for ( const char *no : { "n", "N", "no", "false", "0", "", "maybe" } ) {
+			BOOST_CHECK(loc->setParameter(name, "y"));
+			BOOST_CHECK(loc->setParameter(name, no));
+			BOOST_CHECK_MESSAGE(loc->parameter(name) == "n",
+			                    name << "=\"" << no << "\" should disable");
+		}
+	}
+}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BOOST_AUTO_TEST_CASE(DiagnosticComments) {
+	Seiscomp::Config::Config cfg;
+	cfg.setBool("LOCSAT.usePickBackazimuth", true);
+	cfg.setBool("LOCSAT.usePickSlowness", true);
+	cfg.setBool("LOCSAT.enableDiagnosticComments", true);
+
+	Seiscomp::Seismology::LocatorInterfacePtr diagLocator =
+		Seiscomp::Seismology::LocatorInterface::Create("LOCSAT");
+	diagLocator->init(cfg);
+	diagLocator->setProfile("iasp91");
+	// Exercise the logging path as well
+	BOOST_CHECK(diagLocator->setParameter("VERBOSE", "y"));
+
+	size_t checkedOrigins = 0;
+
+	for ( const auto &entry : fs::directory_iterator("data/events") ) {
+		sd::EventParameters ep;
+		readEventParameters(ep, entry.path());
+
+		auto *origin = ep.origin(0);
+
+		sd::OriginPtr plain;
+		sd::OriginPtr diag;
+		try {
+			plain = locator->relocate(origin);
+			diag = diagLocator->relocate(origin);
+		}
+		catch ( ... ) {
+			continue;
+		}
+
+		BOOST_REQUIRE(plain);
+		BOOST_REQUIRE(diag);
+
+		// Disabled by default
+		BOOST_CHECK_EQUAL(plain->commentCount(), 0);
+
+		// Diagnostics must not change the solution
+		BOOST_CHECK_EQUAL(plain->latitude().value(), diag->latitude().value());
+		BOOST_CHECK_EQUAL(plain->longitude().value(), diag->longitude().value());
+		BOOST_CHECK_EQUAL(plain->depth().value(), diag->depth().value());
+		BOOST_CHECK_EQUAL(plain->time().value(), diag->time().value());
+
+		auto *impComment = diag->comment(sd::CommentIndex("locsat/importance"));
+		auto *diagComment = diag->comment(sd::CommentIndex("locsat/diagnostics"));
+		BOOST_REQUIRE(impComment);
+		BOOST_REQUIRE(diagComment);
+
+		double rank = -1;
+		std::vector<std::string> toks;
+		boost::split(toks, diagComment->text(), boost::is_any_of(" "));
+		for ( const auto &tok : toks ) {
+			if ( boost::starts_with(tok, "rank=") ) {
+				rank = std::stod(tok.substr(5));
+			}
+		}
+		BOOST_CHECK(rank > 0);
+
+		std::vector<std::string> lines;
+		boost::split(lines, impComment->text(), boost::is_any_of("\n"));
+		BOOST_REQUIRE_EQUAL(lines.size(), diag->arrivalCount());
+
+		double sum = 0;
+		for ( size_t i = 0; i < lines.size(); ++i ) {
+			std::istringstream iss(lines[i]);
+			std::string pickID;
+			double imp[3];
+			iss >> pickID >> imp[0] >> imp[1] >> imp[2];
+			BOOST_REQUIRE(!iss.fail());
+			BOOST_CHECK_EQUAL(pickID, diag->arrival(i)->pickID());
+
+			for ( double v : imp ) {
+				// Diagonal of a projection matrix or -1 if not defining
+				BOOST_CHECK(v == -1.0 || (v >= 0.0 && v <= 1.0));
+				if ( v > 0 ) {
+					sum += v;
+				}
+			}
+
+			if ( !diag->arrival(i)->timeUsed() ) {
+				BOOST_CHECK_EQUAL(imp[0], -1.0);
+			}
+		}
+
+		// The importances sum up to the effective rank, allow for the
+		// rounding of the printed values
+		BOOST_CHECK_SMALL(sum - rank, 0.0005 * (lines.size() * 3 + 1));
+
+		++checkedOrigins;
+	}
+
+	BOOST_CHECK(checkedOrigins > 0);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

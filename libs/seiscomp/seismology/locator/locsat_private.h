@@ -102,6 +102,9 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		void setOrigin(float lat_init, float lon_init, float depth_init);
 		void setOriginTime(double epoch);
 
+		void logDiagnostics() const;
+		void addDiagnosticComments(DataModel::Origin *origin) const;
+
 
 	private:
 		using PhaseCorrectionMap = std::map<std::string, double>;
@@ -120,6 +123,7 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		bool                        _usePickSlowness{false};
 
 		bool                        _enableDebugOutput;
+		bool                        _enableDiagnosticComments{false};
 
 		IDList                      _profiles;
 
@@ -131,6 +135,9 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		LOCSAT_Params               _params;
 		LOCSAT_TTT                  _ttt;
 		std::vector<LOCSAT_Errors>  _errors;
+		std::vector<LOCSAT_Iteration>  _iterations;
+		std::vector<LOCSAT_Importance> _importances;
+		LOCSAT_Diagnostics          _diagnostics{};
 };
 
 

@@ -28,6 +28,44 @@ Use "LOCSAT" as a value for the locator interface along with a profile when
 configurable, e.g., by :ref:`scolv`, :ref:`scautoloc` or :ref:`screloc`.
 
 
+.. _locsat_diagnostics:
+
+Inversion diagnostics
+---------------------
+
+LOCSAT inverts the observations iteratively by singular value decomposition
+of the system matrix of partial derivatives. Each row of the matrix is
+normalized by the uncertainty of the observation. When the locator parameter
+*VERBOSE* is set, e.g., in the LOCSAT settings of :ref:`scolv`, or when
+:confval:`LOCSAT.enableDebugOutput` is true, the diagnostics are logged at info
+level:
+
+* **Iterations**: trial hypocenter, number of defining data and free
+  parameters, unweighted and weighted RMS residual, the convergence test
+  value, the size of the hypocenter perturbation and the condition number.
+  The convergence test value is
+  :math:`\|G^T r\|^2 / (\|G\|_F^2 \|r\|^2)` with the normalized system matrix
+  :math:`G` and residual vector :math:`r`. It approaches zero at the least
+  squares solution.
+* **Data**: residual, residual normalized by the uncertainty, distance,
+  azimuth, data importance and error code of each time (t), backazimuth (a)
+  and slowness (s) observation.
+* **Summary**: number of iterations, effective rank, condition numbers and the
+  a posteriori standard error.
+
+The **data importance** is the diagonal element of the data resolution matrix
+of the final iteration. It ranges from 0 to 1 and does not depend on the
+residuals. Values close to 1 indicate observations the solution depends on
+strongly, e.g., the only station in a certain azimuth range. Values close to 0
+indicate observations which are redundant with others. Non-defining
+observations have the value -1. The importances of all defining observations
+add up to the effective rank, i.e., the number of resolved parameters.
+
+With :confval:`LOCSAT.enableDiagnosticComments` the importances and the summary
+are stored with the origin as the comments *locsat/importance* and
+*locsat/diagnostics*, respectively.
+
+
 .. _locsat_tti:
 
 Travel-Time Interface
