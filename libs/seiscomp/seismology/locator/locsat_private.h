@@ -110,34 +110,34 @@ class SC_SYSTEM_CORE_API LOCSAT : public Seismology::LocatorInterface {
 		using PhaseCorrectionMap = std::map<std::string, double>;
 		using StationCorrectionMap = std::map<std::string, PhaseCorrectionMap>;
 
-		static const std::string    _defaultTablePrefix;
-		static const IDList         _allowedParameters;
+		static const std::string       _defaultTablePrefix;
+		static const IDList            _allowedParameters;
 
-		StationCorrectionMap        _stationCorrection;
-		std::string                 _tablePrefix;
-		bool                        _computeConfidenceEllipsoid;
-		double                      _minArrivalWeight{0.5};
-		double                      _defaultPickUncertainty;
-		bool                        _usePickUncertainties{false};
-		bool                        _usePickBackazimuth{false};
-		bool                        _usePickSlowness{false};
+		StationCorrectionMap           _stationCorrection;
+		std::string                    _tablePrefix;
+		bool                           _computeConfidenceEllipsoid;
+		double                         _minArrivalWeight{0.5};
+		double                         _defaultPickUncertainty;
+		bool                           _usePickUncertainties{false};
+		bool                           _usePickBackazimuth{false};
+		bool                           _usePickSlowness{false};
 
-		bool                        _enableDebugOutput;
-		bool                        _enableDiagnosticComments{false};
+		bool                           _enableDebugOutput;
+		bool                           _enableDiagnosticComments{false};
 
-		IDList                      _profiles;
+		IDList                         _profiles;
 
-		std::vector<LOCSAT_Arrival> _arrivals;
-		std::vector<LOCSAT_Assoc>   _assocs;
-		std::vector<LOCSAT_Site>    _sites;
-		LOCSAT_Origerr              _origerr;
-		LOCSAT_Origin               _origin;
-		LOCSAT_Params               _params;
-		LOCSAT_TTT                  _ttt;
-		std::vector<LOCSAT_Errors>  _errors;
+		std::vector<LOCSAT_Arrival>    _arrivals;
+		std::vector<LOCSAT_Assoc>      _assocs;
+		std::vector<LOCSAT_Site>       _sites;
+		LOCSAT_Origerr                 _origerr;
+		LOCSAT_Origin                  _origin;
+		LOCSAT_Params                  _params;
+		LOCSAT_TTT                     _ttt;
+		std::vector<LOCSAT_Errors>     _errors;
 		std::vector<LOCSAT_Iteration>  _iterations;
 		std::vector<LOCSAT_Importance> _importances;
-		LOCSAT_Diagnostics          _diagnostics{};
+		LOCSAT_Diagnostics             _diagnostics{};
 };
 
 
