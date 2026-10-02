@@ -227,7 +227,7 @@ int sc_locsat_locate_event(
 	LOCSAT_Arrival *arrival, LOCSAT_Assoc *assoc,
 	LOCSAT_Origin *origin, LOCSAT_Origerr *origerr,
 	LOCSAT_Params *params, LOCSAT_Errors *errors,
-	int num_obs
+	int num_obs, LOCSAT_Diagnostics *diag
 ) {
 	int num_data;
 
@@ -296,6 +296,25 @@ int sc_locsat_locate_event(
 
 	if ( params->fix_depth == 'y' ) {
 		depth_init = params->fixing_depth;
+	}
+
+	if ( diag ) {
+		diag->num_iterations = 0;
+		diag->rank = -1.;
+		diag->condition[0] = diag->condition[1] = -1.;
+		diag->sighat = -1.f;
+		diag->snssd = -1.f;
+		diag->ndf = -1;
+		diag->num_params = 0;
+		diag->num_data = 0;
+		diag->niter = 0;
+		if ( diag->importances ) {
+			for ( i = 0; i < num_obs; i++ ) {
+				diag->importances[i].time = -1.f;
+				diag->importances[i].az = -1.f;
+				diag->importances[i].slow = -1.f;
+			}
+		}
 	}
 
 	// Allocate a bunch of space for data
@@ -368,7 +387,7 @@ int sc_locsat_locate_event(
 		&depth, &torg, &sighat, &snssd, &ndf, &semi_major_axis,
 		&semi_minor_axis, &strike, &depth_error, &origin_time_error, &sxx, &syy,
 		&szz, &stt, &sxy, &sxz, &syz, &stx, &sty, &stz,
-		&niter, &ierr
+		&niter, &ierr, diag
 	);
 
 	// Check the return codes from locsat
@@ -466,6 +485,18 @@ int sc_locsat_locate_event(
 					assoc[j].slodef = 'n';
 				}
 			}
+			if ( diag && diag->importances ) {
+				if ( data[i].type == 't' ) {
+					diag->importances[j].time = data[i].epimp;
+				}
+				else if ( data[i].type == 'a' ) {
+					diag->importances[j].az = data[i].epimp;
+				}
+				else if ( data[i].type == 's' ) {
+					diag->importances[j].slow = data[i].epimp;
+				}
+			}
+
 			// If there's been an error fill-in the arid
 			if ( error_found ) {
 				errors[j].arid = assoc[j].arid;

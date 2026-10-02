@@ -542,6 +542,7 @@ void sc_locsat_hypcut(
  *                 however, a valid location was obtained
  *             5 = Insufficient data for a solution
  *             6 = SVD routine cannot decompose matrix
+ * @param[out] diag Optional diagnostics, may be NULL.
  */
 void sc_locsat_hypinv(
 	LOCSAT_TTT *ttt,
@@ -555,7 +556,7 @@ void sc_locsat_hypinv(
 	float *epmin, float *epstr, float *zfint, float *toint, float *sxx,
 	float *syy, float *szz, float *stt, float *sxy, float *sxz, float *syz,
 	float *stx, float *sty, float *stz, double *rank,
-	int *niter, int *nd, int *ierr
+	int *niter, int *nd, int *ierr, LOCSAT_Diagnostics *diag
 );
 
 
@@ -571,17 +572,22 @@ void sc_locsat(
 	int *ndf, float *epmaj, float *epmin, float *epstr, float *zfint,
 	float *toint, float *sxx, float *syy, float *szz, float *stt, float *sxy,
 	float *sxz, float *syz, float *stx, float *sty, float *stz,
-	int *niter, int *ierr
+	int *niter, int *ierr, LOCSAT_Diagnostics *diag
 );
 
 
+/**
+ * @brief Locates an event.
+ * @param diag Optional diagnostics output, may be NULL.
+ */
 int sc_locsat_locate_event(
 	LOCSAT_TTT *ttt,
 	LOCSAT_Site *sites, int num_sites,
 	LOCSAT_Arrival *arrival, LOCSAT_Assoc *assoc,
 	LOCSAT_Origin *origin, LOCSAT_Origerr *origerr,
 	LOCSAT_Params *locator_params,
-	LOCSAT_Errors *locator_errors, int num_obs
+	LOCSAT_Errors *locator_errors, int num_obs,
+	LOCSAT_Diagnostics *diag
 );
 
 

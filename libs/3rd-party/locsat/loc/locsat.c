@@ -167,9 +167,9 @@ void sc_locsat(
 	int *ndf, float *epmaj, float *epmin, float *epstr, float *zfint,
 	float *toint, float *sxx, float *syy, float *szz, float *stt, float *sxy,
 	float *sxz, float *syz, float *stx, float *sty, float *stz,
-	int *niter, int *ierr
+	int *niter, int *ierr, LOCSAT_Diagnostics *diag
 ) {
-	double rank;
+	double rank = -1.;
 	int i, n;
 	int nd;
 
@@ -236,6 +236,6 @@ void sc_locsat(
 		damp, maxit,
 		fxdflg, alat, alon, zfoc, torg, sighat, snssd,
 		ndf, epmaj, epmin, epstr, zfint, toint, sxx, syy, szz, stt, sxy, sxz,
-		syz, stx, sty, stz,  &rank, niter, &nd, ierr
+		syz, stx, sty, stz,  &rank, niter, &nd, ierr, diag
 	);
 }
