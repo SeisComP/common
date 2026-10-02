@@ -18,7 +18,8 @@
  ***************************************************************************/
 
 
-#include <signal.h>
+#include <csignal>
+#include <mutex>
 
 #include "interruptible.h"
 
@@ -26,6 +27,16 @@
 using namespace std;
 
 
+namespace {
+
+
+mutex RegisterMutex;
+
+
+}
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 namespace Seiscomp {
 namespace Core {
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -42,6 +53,7 @@ std::list<InterruptibleObject*> InterruptibleObject::_registered;
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 InterruptibleObject::InterruptibleObject() {
+	lock_guard l(RegisterMutex);
 	_link = _registered.insert(_registered.end(), this);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -51,6 +63,7 @@ InterruptibleObject::InterruptibleObject() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 InterruptibleObject::~InterruptibleObject() {
+	lock_guard l(RegisterMutex);
 	_registered.erase(_link);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -60,9 +73,10 @@ InterruptibleObject::~InterruptibleObject() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void InterruptibleObject::Interrupt(int sig) {
-	list<InterruptibleObject*>::iterator it;
-	for ( it = _registered.begin(); it != _registered.end(); ++it )
-		(*it)->handleInterrupt(sig);
+	lock_guard l(RegisterMutex);
+	for ( auto *interruptible : _registered ) {
+		interruptible->handleInterrupt(sig);
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -72,3 +86,4 @@ void InterruptibleObject::Interrupt(int sig) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 } // namespace Core
 } // namespace Seiscomp
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
