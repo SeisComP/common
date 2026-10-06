@@ -3212,9 +3212,8 @@ void OriginLocatorView::init() {
 
 	// add fix depth presets read from configuration
 	try {
-		auto precision = std::max(3, SCScheme.precision.depth);
 		for ( auto d : SCApp->configGetDoubles("olv.fixedDepths") ) {
-			SC_D.ui.editFixedDepth->addItem(depthToString(d, precision));
+			SC_D.ui.editFixedDepth->addItem(QString("%1").arg(d));
 		}
 	}
 	catch ( ... ) {}
