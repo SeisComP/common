@@ -4863,7 +4863,7 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 		}
 
 		if ( !updateHideState(item) and !item->isHidden() ) {
-			emit eventAddedToList(event, false);
+			emit eventAddedToList(event, fromNotification);
 			if ( !SC_D._blockCountSignal ) {
 				emit visibleEventCountChanged();
 			}
