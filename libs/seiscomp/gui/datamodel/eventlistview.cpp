@@ -4868,6 +4868,10 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 				emit visibleEventCountChanged();
 			}
 		}
+
+		if ( fromNotification ) {
+			emit eventAdded(event, !item->isHidden());
+		}
 	}
 
 	int fixedItems = 0;
