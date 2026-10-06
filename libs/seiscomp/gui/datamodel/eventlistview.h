@@ -167,6 +167,7 @@ class SC_GUI_API EventListView : public QWidget {
 
 		//! Emitted when the event list is cleared
 		void reset();
+		void eventAdded(Seiscomp::DataModel::Event*, bool visible);
 		void eventAddedToList(Seiscomp::DataModel::Event*, bool fromNotification);
 		void eventUpdatedInList(Seiscomp::DataModel::Event*);
 		void eventRemovedFromList(Seiscomp::DataModel::Event*);
