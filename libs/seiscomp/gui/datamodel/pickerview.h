@@ -33,6 +33,7 @@
 #include <seiscomp/seismology/ttt.h>
 #include <seiscomp/math/matrix3.h>
 #include <seiscomp/processing/picker.h>
+#include <seiscomp/processing/secondarypicker.h>
 #endif
 #include <QActionGroup>
 #include <QComboBox>
@@ -658,6 +659,13 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void searchByText(const QString &text);
 
 		void emitPick(const Processing::Picker *, const Processing::Picker::Result &res);
+		void emitSecondaryPick(const Processing::SecondaryPicker *, const Processing::SecondaryPicker::Result &res);
+
+		//! Feeds the waveform data required by proc's usedComponent() from
+		//! the zoom trace, using the currently active component for single
+		//! component processors and fixed slots (N/E or Z/N/E) otherwise.
+		//! Returns the number of records fed.
+		int feedRepickerComponents(Processing::WaveformProcessor *proc);
 
 
 	private:
