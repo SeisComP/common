@@ -45,6 +45,9 @@
 #include <seiscomp/core/strings.h>
 #include <seiscomp/utils/misc.h>
 #include <seiscomp/math/mean.h>
+#include <seiscomp/math/fft.h>
+#include <seiscomp/math/windows/hann.h>
+#include <seiscomp/processing/spectraldiagnostics.h>
 #include <seiscomp/logging/log.h>
 
 #include <QMessageBox>
@@ -132,6 +135,11 @@ class TraceList : public RecordView {
 };
 
 
+//! Whether the traces show the time windows of the spectral diagnostics,
+//! set while the spectrum view is open
+bool s_showSpectralWindows = false;
+
+
 class TraceDecorator : public RecordWidgetDecorator {
 	public:
 		TraceDecorator(QObject *parent, AmplitudeRecordLabel *itemLabel)
@@ -156,6 +164,31 @@ class TraceDecorator : public RecordWidgetDecorator {
 				painter->fillRect(nend,0,sbegin-nend,widget->height(), QColor(0,0,0,92));
 				// Draw signal area
 				painter->fillRect(send,0,widget->width()-send,widget->height(), QColor(0,0,0,92));
+
+				// The windows the spectra were actually computed from
+				auto *provider = dynamic_cast<const Processing::SpectralDiagnosticsProvider*>(_itemLabel->processor.get());
+				const Processing::SpectralDiagnostics *diag = provider ? provider->spectralDiagnostics() : nullptr;
+				if ( s_showSpectralWindows && diag ) {
+					QSet<QString> drawn;
+					for ( const auto &w : diag->windows ) {
+						int x0 = widget->mapTime(w.window.startTime());
+						int x1 = widget->mapTime(w.window.endTime());
+						QString key = QString("%1:%2").arg(x0).arg(x1);
+						if ( drawn.contains(key) ) continue;
+						drawn.insert(key);
+
+						bool signal = w.role == Processing::SpectralCurve::Signal;
+						QColor c = signal ? QColor(31, 119, 180) : QColor(230, 120, 20);
+						painter->setPen(QPen(c, 2));
+						c.setAlpha(30);
+						painter->setBrush(c);
+						painter->drawRect(x0, 1, x1 - x0, widget->height() - 3);
+						painter->setPen(signal ? QColor(31, 119, 180) : QColor(230, 120, 20));
+						painter->drawText(x0 + 4, widget->fontMetrics().ascent() + 2,
+						                  signal ? QObject::tr("spectrum signal") : QObject::tr("spectrum noise"));
+					}
+					painter->setBrush(Qt::NoBrush);
+				}
 
 				if ( !_itemLabel->infoText.isEmpty() ) {
 					QRect boundingRect =
@@ -333,6 +366,14 @@ class AmplitudeViewMarker : public RecordMarker {
 				setDescription(QString("%1: %2").arg(text()).arg(*_magnitude, 0, 'f', 2));
 			else
 				setDescription("");
+		}
+
+		const OPT(double) &magnitude() const {
+			return _magnitude;
+		}
+
+		const QString &magnitudeError() const {
+			return _magnitudeError;
 		}
 
 		void setAmplitude(DataModel::Amplitude *a) {
@@ -2227,6 +2268,14 @@ void AmplitudeView::init() {
 	connect(SC_D.ui.actionRecalculateAmplitudes, SIGNAL(triggered()),
 	        this, SLOT(recalculateAmplitudes()));
 
+	SC_D.actionShowSpectrum = new QAction(tr("Spectrum"), this);
+	SC_D.actionShowSpectrum->setShortcut(QKeySequence("Shift+S"));
+	SC_D.actionShowSpectrum->setToolTip(tr("Show the spectra of the current station (Shift+S)"));
+	addAction(SC_D.actionShowSpectrum);
+	SC_D.ui.toolBarSetup->addSeparator();
+	SC_D.ui.toolBarSetup->addAction(SC_D.actionShowSpectrum);
+	connect(SC_D.actionShowSpectrum, SIGNAL(triggered()), this, SLOT(showSpectrum()));
+
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboFilter);
 	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, SC_D.checkOverrideSNR);
 	SC_D.ui.toolBarSetup->insertWidget(SC_D.ui.actionPickAmplitude, new QLabel("Min SNR:"));
@@ -3251,6 +3300,7 @@ void AmplitudeView::recalculateAmplitude() {
 
 	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
+	updateSpectrum();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3321,6 +3371,7 @@ void AmplitudeView::recalculateAmplitudes() {
 
 	SC_D.currentRecord->update();
 	QApplication::restoreOverrideCursor();
+	updateSpectrum();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5317,6 +5368,7 @@ void AmplitudeView::itemSelected(RecordViewItem* item, RecordViewItem* lastItem)
 	SC_D.currentRecord->update();
 
 	updateCurrentRowState();
+	updateSpectrum();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -7033,6 +7085,541 @@ bool AmplitudeView::setArrivalState(RecordWidget* w, int arrivalId, bool state) 
 	}
 
 	return false;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+namespace {
+
+
+/**
+ * Fourier amplitude spectrum |X(f)|*dt of one time window, gain corrected,
+ * demeaned and tapered (Hann, 5% at either side), averaged into log-spaced
+ * frequency bins so that it plots smoothly on log-log axes.
+ */
+bool windowSpectrum(const RecordSequence *seq, const Core::TimeWindow &tw,
+                    double gain, std::vector<double> &freq,
+                    std::vector<double> &amp, double *length) {
+	freq.clear();
+	amp.clear();
+	if ( !seq || seq->empty() ) {
+		return false;
+	}
+
+	GenericRecordPtr rec = seq->contiguousRecord<double>(&tw);
+	if ( !rec || !rec->data() || rec->samplingFrequency() <= 0 ) {
+		return false;
+	}
+
+	auto *arr = static_cast<DoubleArray*>(rec->data());
+	std::vector<double> data(arr->impl());
+	if ( data.size() < 32 ) {
+		return false;
+	}
+
+	double mean = 0;
+	for ( double v : data ) mean += v;
+	mean /= data.size();
+	for ( double &v : data ) {
+		v -= mean;
+		if ( gain != 0 ) v /= gain;
+	}
+
+	Math::HannWindow<double>().apply(data, 0.05);
+
+	Math::ComplexArray spec;
+	Math::fft(spec, data);
+
+	const double fs = rec->samplingFrequency();
+	const double dt = 1.0 / fs;
+	const int fftn = Math::Filtering::next_power_of_2(static_cast<int>(data.size()));
+	const double df = fs / fftn;
+	*length = data.size() * dt;
+
+	// Log-spaced bins from the lowest resolvable frequency to Nyquist
+	const double fmin = std::max(df, 1.0 / *length);
+	const double fmax = fs * 0.5;
+	const int nbins = 120;
+	if ( fmax <= fmin ) {
+		return false;
+	}
+
+	const double lmin = log10(fmin), lmax = log10(fmax);
+	std::vector<double> sum(nbins, 0.0);
+	std::vector<int> cnt(nbins, 0);
+	for ( size_t k = 1; k < spec.size(); ++k ) {
+		double f = k * df;
+		if ( f < fmin || f > fmax ) continue;
+		int b = static_cast<int>((log10(f) - lmin) / (lmax - lmin) * nbins);
+		if ( b < 0 || b >= nbins ) continue;
+		sum[b] += std::abs(spec[k]) * dt;
+		++cnt[b];
+	}
+
+	for ( int b = 0; b < nbins; ++b ) {
+		if ( !cnt[b] ) continue;
+		freq.push_back(pow(10.0, lmin + (b + 0.5) * (lmax - lmin) / nbins));
+		amp.push_back(sum[b] / cnt[b]);
+	}
+
+	return !freq.empty();
+}
+
+
+}
+
+
+/**
+ * Generic diagnostics for processors which do not provide their own: the
+ * spectra of the processor's signal and noise windows of each loaded
+ * component. The noise spectrum is scaled to the length of the signal
+ * window assuming stationary noise.
+ */
+static void signalNoiseSpectra(PrivateAmplitudeView::AmplitudeRecordLabel *label,
+                               RecordViewItem *item,
+                               Processing::SpectralDiagnostics &diag) {
+	diag.clear();
+
+	const auto *proc = label->processor.get();
+	Core::Time trigger;
+	try {
+		trigger = proc->trigger();
+	}
+	catch ( ... ) {
+		diag.status = "no trigger time";
+		return;
+	}
+
+	const auto &cfg = proc->config();
+	Core::TimeWindow signalWindow(trigger + Core::TimeSpan(static_cast<double>(cfg.signalBegin)),
+	                              trigger + Core::TimeSpan(static_cast<double>(cfg.signalEnd)));
+	Core::TimeWindow noiseWindow(trigger + Core::TimeSpan(static_cast<double>(cfg.noiseBegin)),
+	                             trigger + Core::TimeSpan(static_cast<double>(cfg.noiseEnd)));
+
+	const auto &sid = item->streamID();
+
+	for ( int i = 0; i < 3; ++i ) {
+		const auto &trace = label->data.traces[i];
+		if ( !trace.raw || trace.raw->empty() || trace.channelCode.empty() ) {
+			continue;
+		}
+
+		Processing::Stream stream;
+		stream.init(sid.networkCode(), sid.stationCode(), sid.locationCode(),
+		            trace.channelCode, trigger);
+		std::string unit = stream.gainUnit.empty() ? "counts" : stream.gainUnit;
+		unit += "*s";
+		char comp = *trace.channelCode.rbegin();
+
+		Processing::SpectralCurve signal;
+		double sigLength = 0;
+		if ( !windowSpectrum(trace.raw, signalWindow, stream.gain,
+		                     signal.freq, signal.value, &sigLength) ) {
+			continue;
+		}
+		signal.role = Processing::SpectralCurve::Signal;
+		signal.component = comp;
+		signal.unit = unit;
+		signal.label = trace.channelCode + " signal";
+		diag.curves.push_back(signal);
+
+		Processing::SpectralCurve noise;
+		double noiseLength = 0;
+		if ( windowSpectrum(trace.raw, noiseWindow, stream.gain,
+		                    noise.freq, noise.value, &noiseLength) ) {
+			double scale = sqrt(sigLength / noiseLength);
+			for ( double &v : noise.value ) v *= scale;
+			noise.role = Processing::SpectralCurve::Noise;
+			noise.component = comp;
+			noise.unit = unit;
+			noise.label = trace.channelCode + " noise";
+			diag.curves.push_back(noise);
+		}
+	}
+
+	if ( diag.curves.empty() ) {
+		diag.status = "no data in the signal window";
+		return;
+	}
+
+	Processing::SpectralParameter p;
+	p.id = "signal window";
+	p.value = static_cast<double>(signalWindow.length());
+	p.unit = "s";
+	diag.parameters.push_back(p);
+	p.id = "noise window";
+	p.value = static_cast<double>(noiseWindow.length());
+	diag.parameters.push_back(p);
+
+	// The period of the measured amplitude as frequency marker
+	for ( int m = 0; m < item->widget()->markerCount(); ++m ) {
+		auto *marker = dynamic_cast<AmplitudeViewMarker*>(item->widget()->marker(m));
+		if ( !marker || marker->type() != AmplitudeViewMarker::Amplitude
+		  || !marker->amplitude() ) {
+			continue;
+		}
+
+		try {
+			double period = marker->amplitude()->period().value();
+			if ( period > 0 ) {
+				p.id = "f(period)";
+				p.value = 1.0 / period;
+				p.unit = "Hz";
+				p.frequencyMarker = true;
+				diag.parameters.push_back(p);
+				p.frequencyMarker = false;
+			}
+		}
+		catch ( ... ) {}
+
+		try {
+			p.id = "SNR";
+			p.value = marker->amplitude()->snr();
+			p.unit = "";
+			diag.parameters.push_back(p);
+		}
+		catch ( ... ) {}
+		break;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//! The marker of the measured amplitude of a row or nullptr
+static AmplitudeViewMarker *amplitudeMarker(RecordViewItem *item) {
+	for ( int m = 0; m < item->widget()->markerCount(); ++m ) {
+		auto *marker = dynamic_cast<AmplitudeViewMarker*>(item->widget()->marker(m));
+		if ( marker && marker->type() == AmplitudeViewMarker::Amplitude
+		  && marker->amplitude() ) {
+			return marker;
+		}
+	}
+	return nullptr;
+}
+
+
+/**
+ * The spectral diagnostics of a row: those of the processor if it provides
+ * them, otherwise the signal/noise spectra computed into @p generic.
+ */
+static const Processing::SpectralDiagnostics *
+rowDiagnostics(RecordViewItem *item, Processing::SpectralDiagnostics &generic,
+               bool computeGeneric) {
+	auto *label = static_cast<PrivateAmplitudeView::AmplitudeRecordLabel*>(item->label());
+	if ( !label->processor ) {
+		return nullptr;
+	}
+
+	auto *provider = dynamic_cast<const Processing::SpectralDiagnosticsProvider*>(label->processor.get());
+	if ( provider ) {
+		return provider->spectralDiagnostics();
+	}
+
+	if ( !computeGeneric ) {
+		return nullptr;
+	}
+
+	signalNoiseSpectra(label, item, generic);
+	return &generic;
+}
+
+
+//! The largest (worst) or smallest value of a parameter, matching
+//! component suffixes like "residual.N"
+static OPT(double) parameterValue(const Processing::SpectralDiagnostics *diag,
+                                  const std::string &id, bool largest) {
+	OPT(double) value;
+	if ( !diag ) return value;
+	for ( const auto &p : diag->parameters ) {
+		if ( p.id != id && p.id.compare(0, id.size() + 1, id + ".") != 0 ) continue;
+		if ( !value || (largest ? p.value > *value : p.value < *value) ) {
+			value = p.value;
+		}
+	}
+	return value;
+}
+
+
+/**
+ * The visible rows in the order in which the spectrum view steps through
+ * them. Rows without a value for the sort key go last.
+ */
+static QVector<RecordViewItem*> spectrumOrder(RecordView *view,
+                                              SpectralDiagnosticsView::Order order) {
+	QVector<RecordViewItem*> items;
+	for ( int r = 0; r < view->rowCount(); ++r ) {
+		RecordViewItem *item = view->itemAt(r);
+		if ( item->isVisible() ) items.append(item);
+	}
+
+	if ( order == SpectralDiagnosticsView::ListOrder ) {
+		return items;
+	}
+
+	// Median of the used station magnitudes
+	double median = 0;
+	if ( order == SpectralDiagnosticsView::MagnitudeDeviation ) {
+		std::vector<double> mags;
+		for ( auto *item : items ) {
+			auto *m = amplitudeMarker(item);
+			if ( m && m->isEnabled() && m->magnitude() ) mags.push_back(*m->magnitude());
+		}
+		if ( !mags.empty() ) {
+			std::sort(mags.begin(), mags.end());
+			size_t n = mags.size();
+			median = n % 2 ? mags[n / 2] : 0.5 * (mags[n / 2 - 1] + mags[n / 2]);
+		}
+	}
+
+	// Sort key, larger first
+	QVector<QPair<OPT(double), RecordViewItem*>> keys;
+	for ( auto *item : items ) {
+		OPT(double) key;
+		Processing::SpectralDiagnostics generic;
+		auto *marker = amplitudeMarker(item);
+
+		switch ( order ) {
+			case SpectralDiagnosticsView::MagnitudeDeviation:
+				if ( marker && marker->magnitude() ) {
+					key = std::fabs(*marker->magnitude() - median);
+				}
+				break;
+			case SpectralDiagnosticsView::FitResidual:
+				key = parameterValue(rowDiagnostics(item, generic, false), "residual", true);
+				break;
+			case SpectralDiagnosticsView::LowestSNR: {
+				auto snr = parameterValue(rowDiagnostics(item, generic, false), "SNR", false);
+				if ( !snr && marker ) {
+					try { snr = marker->amplitude()->snr(); } catch ( ... ) {}
+				}
+				if ( snr ) key = -*snr;
+				break;
+			}
+			default:
+				break;
+		}
+
+		keys.append(qMakePair(key, item));
+	}
+
+	std::stable_sort(keys.begin(), keys.end(), [](const auto &a, const auto &b) {
+		if ( !a.first ) return false;
+		if ( !b.first ) return true;
+		return *a.first > *b.first;
+	});
+
+	items.clear();
+	for ( const auto &k : keys ) items.append(k.second);
+	return items;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::showSpectrum() {
+	if ( !SC_D.spectrumView ) {
+		// Kept when closed so that it reopens where the user left it
+		SC_D.spectrumView = new SpectralDiagnosticsView(this, Qt::Tool);
+
+		auto step = [this](int direction) {
+			auto items = spectrumOrder(SC_D.recordView, SC_D.spectrumView->order());
+			int idx = items.indexOf(SC_D.recordView->currentItem());
+			idx = idx < 0 ? 0 : idx + direction;
+			if ( idx >= 0 && idx < items.size() ) {
+				SC_D.recordView->setCurrentItem(items[idx]);
+			}
+		};
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::previousRequested,
+		        this, [step]() { step(-1); });
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::nextRequested,
+		        this, [step]() { step(1); });
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::orderChanged,
+		        this, &AmplitudeView::updateSpectrum);
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::overlayToggled,
+		        this, &AmplitudeView::updateSpectrum);
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::stationUseChanged,
+		        this, [this](bool used) {
+			if ( SC_D.recordView->currentItem() ) {
+				setCurrentRowDisabled(!used);
+				updateSpectrum();
+			}
+		});
+
+		auto setBand = [this](double fmin, double fmax) {
+			RecordViewItem *item = SC_D.recordView->currentItem();
+			if ( !item ) return;
+			auto *label = static_cast<AmplitudeRecordLabel*>(item->label());
+			auto *provider = dynamic_cast<Processing::SpectralDiagnosticsProvider*>(label->processor.get());
+			if ( provider && provider->setSpectralBand(fmin, fmax) ) {
+				// Reprocesses the current station and refreshes the view
+				recalculateAmplitude();
+			}
+		};
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::spectralBandChanged,
+		        this, setBand);
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::spectralBandReset,
+		        this, [setBand]() { setBand(0, 0); });
+
+		// Show the spectral windows in the traces only while it is open
+		connect(SC_D.spectrumView, &SpectralDiagnosticsView::visibilityChanged,
+		        this, [this](bool visible) {
+			s_showSpectralWindows = visible;
+			SC_D.recordView->update();
+			SC_D.currentRecord->update();
+		});
+	}
+
+	SC_D.spectrumView->show();
+	SC_D.spectrumView->raise();
+	updateSpectrum();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void AmplitudeView::updateSpectrum() {
+	if ( !SC_D.spectrumView || !SC_D.spectrumView->isVisible() ) {
+		return;
+	}
+
+	RecordViewItem *item = SC_D.recordView->currentItem();
+
+	// Position of the current station in the selected order
+	auto items = spectrumOrder(SC_D.recordView, SC_D.spectrumView->order());
+	SC_D.spectrumView->setNavigation(items.indexOf(item) + 1, items.size());
+
+	if ( !item ) {
+		SC_D.spectrumView->setStationInfo(QString());
+		SC_D.spectrumView->setStationUsed(false, false);
+		SC_D.spectrumView->setBandEditable(false);
+		SC_D.spectrumView->setOverlay({});
+		SC_D.spectrumView->clear(tr("No station"), tr("Select a station"));
+		return;
+	}
+
+	auto *label = static_cast<AmplitudeRecordLabel*>(item->label());
+	// The station and the channels the processor uses, e.g. NET.STA..HHZ
+	// or NET.STA..HHN/HHE instead of the row's wildcard NET.STA..HH?
+	QStringList channels;
+	for ( int i = 0; i < 3; ++i ) {
+		const auto &trace = label->data.traces[i];
+		if ( trace.recordSlot >= 0 && !trace.channelCode.empty() ) {
+			channels << trace.channelCode.c_str();
+		}
+	}
+	QString title = QString("%1.%2.%3.%4")
+	                .arg(item->streamID().networkCode().c_str(),
+	                     item->streamID().stationCode().c_str(),
+	                     item->streamID().locationCode().c_str(),
+	                     channels.isEmpty() ? item->streamID().channelCode().c_str()
+	                                        : channels.join("/"));
+
+	// Distance, station magnitude and whether it is used
+	QStringList info;
+	double delta = item->value(ITEM_SCHEME_DISTANCE_INDEX);
+	if ( delta >= 0 ) {
+		if ( SCScheme.unit.distanceInKM ) {
+			info << QString("%1 km").arg(Math::Geo::deg2km(delta), 0, 'f', SCScheme.precision.distance);
+		}
+		else {
+			info << QString("%1%2").arg(delta, 0, 'f', 1).arg(degrees);
+		}
+	}
+
+	AmplitudeViewMarker *ampMarker = amplitudeMarker(item);
+	bool used = false;
+	if ( ampMarker ) {
+		used = item->widget()->isEnabled() && ampMarker->isEnabled();
+		if ( ampMarker->magnitude() ) {
+			info << QString("%1 %2").arg(SC_D.magnitudeType.c_str())
+			        .arg(*ampMarker->magnitude(), 0, 'f', SCScheme.precision.magnitude);
+		}
+		else if ( !ampMarker->magnitudeError().isEmpty() ) {
+			info << QString("%1: %2").arg(SC_D.magnitudeType.c_str(), ampMarker->magnitudeError());
+		}
+		info << (used ? tr("used") : tr("not used"));
+	}
+	else {
+		info << tr("no amplitude");
+	}
+
+	SC_D.spectrumView->setStationInfo(info.join("  ·  "));
+	SC_D.spectrumView->setStationUsed(ampMarker != nullptr, used);
+
+	if ( !label->processor ) {
+		SC_D.spectrumView->setBandEditable(false);
+		SC_D.spectrumView->setOverlay({});
+		SC_D.spectrumView->clear(title, tr("No amplitude processor"));
+		return;
+	}
+
+	auto *provider = dynamic_cast<const Processing::SpectralDiagnosticsProvider*>(label->processor.get());
+	SC_D.spectrumView->setBandEditable(provider && provider->canSetSpectralBand());
+
+	// The signal spectra of all other stations, scaled with the hypocentral
+	// distance (1/R) to the one of this station
+	QVector<SpectralDiagnosticsView::OverlayCurve> overlay;
+	if ( SC_D.spectrumView->overlayEnabled() ) {
+		double depth = 0;
+		try { depth = SC_D.origin->depth().value(); } catch ( ... ) {}
+		auto hypDist = [depth](RecordViewItem *i) {
+			double epi = Math::Geo::deg2km(i->value(ITEM_EPICENTRAL_DISTANCE_INDEX));
+			return sqrt(epi * epi + depth * depth);
+		};
+		double r0 = hypDist(item);
+
+		for ( auto *other : items ) {
+			if ( other == item ) continue;
+			Processing::SpectralDiagnostics generic;
+			auto *diag = rowDiagnostics(other, generic, true);
+			if ( !diag ) continue;
+			double scale = r0 > 0 ? hypDist(other) / r0 : 1.0;
+			for ( const auto &c : diag->curves ) {
+				if ( c.role != Processing::SpectralCurve::Signal ) continue;
+				SpectralDiagnosticsView::OverlayCurve oc;
+				oc.station = QString("%1 %2").arg(other->streamID().stationCode().c_str(), c.label.c_str());
+				oc.curve = c;
+				for ( double &v : oc.curve.value ) v *= scale;
+				overlay.append(oc);
+			}
+		}
+	}
+	SC_D.spectrumView->setOverlay(overlay);
+
+	// Processors exposing their own spectral diagnostics. A combining
+	// processor may implement the interface itself or delegate to its
+	// component processors.
+	if ( provider ) {
+		const Processing::SpectralDiagnostics *diag = provider->spectralDiagnostics();
+		if ( diag && !diag->empty() ) {
+			SC_D.spectrumView->setDiagnostics(
+				title, tr("%1 processor").arg(SC_D.amplitudeType.c_str()), *diag);
+		}
+		else {
+			SC_D.spectrumView->clear(title, tr("%1: no spectral result yet (waiting for data "
+			                                   "or recalculate)").arg(SC_D.amplitudeType.c_str()));
+		}
+	}
+	else {
+		Processing::SpectralDiagnostics diag;
+		signalNoiseSpectra(label, item, diag);
+		SC_D.spectrumView->setDiagnostics(
+			title, tr("%1 signal/noise windows").arg(SC_D.amplitudeType.c_str()), diag);
+	}
+
+	// The spectral windows in the traces may have changed
+	SC_D.recordView->update();
+	SC_D.currentRecord->update();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
