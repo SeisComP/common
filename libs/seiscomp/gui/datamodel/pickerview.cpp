@@ -4478,19 +4478,9 @@ void PickerView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignByState() {
-	if ( !SC_D.origin ) {
-		return;
-	}
-
-	if ( SC_D.ui.actionAlignOnOriginTime->isChecked() ) {
-		alignOnOriginTime();
-	}
-	else if ( SC_D.ui.actionAlignOnPArrival->isChecked() ) {
-		alignOnPhase("P", false);
-	}
-	else if ( SC_D.ui.actionAlignOnSArrival->isChecked() ) {
-		alignOnPhase("S", false);
-	}
+	// Also restores alignments on favourite and group phases which are not
+	// represented by a checkable action
+	alignBySpec(SC_D.alignment);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
