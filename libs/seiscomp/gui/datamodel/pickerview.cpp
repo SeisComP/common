@@ -4293,6 +4293,8 @@ void PickerView::setCursorText(const QString &text) {
 void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 	int used = 0;
 
+	SC_D.alignment = theoretical ? phase + ":ttt" : phase;
+
 	if ( (phase == "P") && !theoretical ) {
 		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
 		SC_D.ui.actionAlignOnPArrival->setChecked(true);
@@ -4495,6 +4497,32 @@ void PickerView::alignByState() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::alignBySpec(const QString &spec) {
+	if ( !SC_D.origin ) {
+		return;
+	}
+
+	QString phase = spec.trimmed();
+	bool theoretical = false;
+
+	if ( phase.endsWith(":ttt", Qt::CaseInsensitive) ) {
+		phase.chop(4);
+		theoretical = true;
+	}
+
+	if ( phase.isEmpty() || !phase.compare("OT", Qt::CaseInsensitive) ) {
+		alignOnOriginTime();
+	}
+	else {
+		alignOnPhase(phase, theoretical);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::componentByState() {
 	if ( SC_D.ui.actionShowZComponent->isChecked() ) {
 		showComponent('Z');
@@ -4518,7 +4546,7 @@ void PickerView::resetState() {
 	}
 
 	showComponent('Z');
-	alignOnOriginTime();
+	alignBySpec(SC_D.config.initialAlignment);
 	pickNone(true);
 	sortByDistance();
 	SC_D.ui.actionShowUsedStations->setChecked(false);
@@ -8209,6 +8237,8 @@ void PickerView::alignOnOriginTime() {
 	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
 	SC_D.ui.actionAlignOnPArrival->setChecked(false);
 	SC_D.ui.actionAlignOnSArrival->setChecked(false);
+
+	SC_D.alignment = "OT";
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8902,8 +8932,7 @@ void PickerView::getChangedPicks(ObjectChangeList<DataModel::Pick> &list) const 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setDefaultDisplay() {
 	SC_D.recordView->setDefaultDisplay();
-	//alignByState();
-	alignOnOriginTime();
+	alignBySpec(SC_D.config.initialAlignment);
 	selectFirstVisibleItem(SC_D.recordView);
 	scaleReset();
 }

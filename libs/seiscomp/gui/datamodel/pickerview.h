@@ -325,6 +325,12 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 			double alignmentPosition{0.5};
 
+			// The alignment applied when the picker is opened or the default
+			// view is restored: "OT" for origin time, "<phase>" for the
+			// picked, automatic or theoretical arrival time of a phase or
+			// "<phase>:ttt" for the theoretical arrival time of a phase only.
+			QString initialAlignment{"OT"};
+
 			QColor timingQualityLow{Qt::darkRed};
 			QColor timingQualityMedium{Qt::yellow};
 			QColor timingQualityHigh{Qt::darkGreen};
@@ -604,6 +610,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 
 		void resetState();
 		void alignOnPhase(const QString&, bool theoretical);
+		void alignBySpec(const QString &spec);
 
 		void diffStreamState(Seiscomp::DataModel::Origin* oldOrigin,
 		                     Seiscomp::DataModel::Origin* newOrigin);

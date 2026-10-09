@@ -54,6 +54,7 @@ namespace Core {
    - Added Seiscomp::Gui::Ruler::setSelectionHandleTitle
    - Removed Seiscomp::Gui::StationMagnitudeModel
    - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
+   - Added Seiscomp::Gui::PickerView::Config::initialAlignment
 
  "17.4.0"   0x110400
    - Added Seiscomp::Client::Application::send
