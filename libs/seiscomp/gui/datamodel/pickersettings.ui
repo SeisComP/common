@@ -975,6 +975,68 @@
            </item>
           </layout>
          </item>
+         <item>
+          <layout class="QHBoxLayout">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="labelInitialAlignment">
+             <property name="text">
+              <string>Initial alignment</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbInitialAlignment">
+             <property name="toolTip">
+              <string>The alignment applied when the picker is opened or the default view is restored: OT (origin time), a phase code such as P, S or Pn (picked, automatic or theoretical arrival) or &lt;phase&gt;:ttt (theoretical arrival only).</string>
+             </property>
+             <property name="editable">
+              <bool>true</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>OT</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>P</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>S</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>P:ttt</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>S:ttt</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbRememberAlignment">
+           <property name="toolTip">
+            <string>Open the picker with the alignment that was active when it was closed last instead of the initial alignment.</string>
+           </property>
+           <property name="text">
+            <string>Remember last alignment</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -1459,6 +1521,8 @@
   <tabstop>minimumLengthTimeEdit</tabstop>
   <tabstop>slWaveformAlignment</tabstop>
   <tabstop>waveformAlignmentEdit</tabstop>
+  <tabstop>cbInitialAlignment</tabstop>
+  <tabstop>cbRememberAlignment</tabstop>
   <tabstop>tableFilter</tabstop>
   <tabstop>btnAddPickFilter</tabstop>
   <tabstop>btnRemovePickFilter</tabstop>

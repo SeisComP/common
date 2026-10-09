@@ -283,6 +283,8 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 
 	_ui.slWaveformAlignment->setValue(_pickerConfig.alignmentPosition*100);
 	_ui.waveformAlignmentEdit->setValue(_pickerConfig.alignmentPosition*100);
+	_ui.cbInitialAlignment->setEditText(_pickerConfig.initialAlignment);
+	_ui.cbRememberAlignment->setChecked(_pickerConfig.rememberAlignment);
 
 	_ui.editIntegrationPreFilter->setText(_pickerConfig.integrationFilter);
 	_ui.checkIntegrationPreFilterOnce->setChecked(_pickerConfig.onlyApplyIntegrationFilterOnce);
@@ -560,6 +562,12 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	else if ( _pickerConfig.alignmentPosition > 1 ) {
 		_pickerConfig.alignmentPosition = 1;
 	}
+
+	_pickerConfig.initialAlignment = _ui.cbInitialAlignment->currentText().trimmed();
+	if ( _pickerConfig.initialAlignment.isEmpty() ) {
+		_pickerConfig.initialAlignment = "OT";
+	}
+	_pickerConfig.rememberAlignment = _ui.cbRememberAlignment->isChecked();
 
 	_pickerConfig.defaultAddStationsDistance = _ui.spinAddStationsDistance->value();
 	_pickerConfig.hideStationsWithoutData = _ui.cbHideStationsWithoutData->isChecked();

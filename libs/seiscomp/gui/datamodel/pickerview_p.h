@@ -114,6 +114,8 @@ class PickerViewPrivate {
 		float                               zoom;
 		float                               currentAmplScale;
 		QString                             currentPhase;
+		// The current alignment: "OT", "<phase>" or "<phase>:ttt"
+		QString                             alignment{"OT"};
 		QString                             lastRecordURL;
 		TravelTimeTableInterfacePtr         ttTable;
 		bool                                centerSelection;
