@@ -2659,6 +2659,7 @@ PickerView::~PickerView() {
 
 		SCApp->settings().setValue("geometry", saveGeometry());
 		SCApp->settings().setValue("state", saveState());
+		SCApp->settings().setValue("alignment", SC_D.alignment);
 
 		if ( sizes.count() >= 2 ) {
 			SCApp->settings().setValue("splitter/upper", sizes[0]);
@@ -4292,6 +4293,10 @@ void PickerView::setCursorText(const QString &text) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 	int used = 0;
+	int unmatched = 0;
+	QString phaseLabel = theoretical ? QString("%1 (ttt)").arg(phase) : phase;
+
+	SC_D.alignment = theoretical ? phase + ":ttt" : phase;
 
 	if ( (phase == "P") && !theoretical ) {
 		SC_D.ui.actionAlignOnOriginTime->setChecked(false);
@@ -4363,9 +4368,39 @@ void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 
 			++used;
 		}
+		else if ( SC_D.origin ) {
+			// Do not keep a stale alignment of a previous phase but fall
+			// back to origin time
+			w1->setAlignment(SC_D.origin->time());
+			if ( w2 ) w2->setAlignment(SC_D.origin->time());
+			++unmatched;
+		}
 	}
 
-	if ( !used ) return;
+	if ( !used ) {
+		if ( !SC_D.origin ) {
+			return;
+		}
+
+		// Keep the requested alignment to apply it again as soon as
+		// arrivals become available, e.g. after relocation
+		QString requested = SC_D.alignment;
+		alignOnOriginTime();
+		SC_D.alignment = requested;
+		statusBar()->showMessage(
+			tr("No %1 arrivals found: aligned on origin time").arg(phaseLabel),
+			5000
+		);
+		return;
+	}
+
+	if ( unmatched ) {
+		statusBar()->showMessage(
+			tr("%1 traces without %2 arrival aligned on origin time")
+			.arg(unmatched).arg(phaseLabel),
+			5000
+		);
+	}
 
 	SC_D.checkVisibility = false;
 
@@ -4475,18 +4510,34 @@ void PickerView::sortByState() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignByState() {
+	// Also restores alignments on favourite and group phases which are not
+	// represented by a checkable action
+	alignBySpec(SC_D.alignment);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::alignBySpec(const QString &spec) {
 	if ( !SC_D.origin ) {
 		return;
 	}
 
-	if ( SC_D.ui.actionAlignOnOriginTime->isChecked() ) {
+	QString phase = spec.trimmed();
+	bool theoretical = false;
+
+	if ( phase.endsWith(":ttt", Qt::CaseInsensitive) ) {
+		phase.chop(4);
+		theoretical = true;
+	}
+
+	if ( phase.isEmpty() || !phase.compare("OT", Qt::CaseInsensitive) ) {
 		alignOnOriginTime();
 	}
-	else if ( SC_D.ui.actionAlignOnPArrival->isChecked() ) {
-		alignOnPhase("P", false);
-	}
-	else if ( SC_D.ui.actionAlignOnSArrival->isChecked() ) {
-		alignOnPhase("S", false);
+	else {
+		alignOnPhase(phase, theoretical);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4518,7 +4569,15 @@ void PickerView::resetState() {
 	}
 
 	showComponent('Z');
-	alignOnOriginTime();
+
+	QString alignment = SC_D.config.initialAlignment;
+	if ( SC_D.config.rememberAlignment && SCApp ) {
+		SCApp->settings().beginGroup(objectName());
+		alignment = SCApp->settings().value("alignment", alignment).toString();
+		SCApp->settings().endGroup();
+	}
+	alignBySpec(alignment);
+
 	pickNone(true);
 	sortByDistance();
 	SC_D.ui.actionShowUsedStations->setChecked(false);
@@ -8209,6 +8268,8 @@ void PickerView::alignOnOriginTime() {
 	SC_D.ui.actionAlignOnOriginTime->setChecked(true);
 	SC_D.ui.actionAlignOnPArrival->setChecked(false);
 	SC_D.ui.actionAlignOnSArrival->setChecked(false);
+
+	SC_D.alignment = "OT";
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -8902,8 +8963,7 @@ void PickerView::getChangedPicks(ObjectChangeList<DataModel::Pick> &list) const 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::setDefaultDisplay() {
 	SC_D.recordView->setDefaultDisplay();
-	//alignByState();
-	alignOnOriginTime();
+	alignBySpec(SC_D.config.initialAlignment);
 	selectFirstVisibleItem(SC_D.recordView);
 	scaleReset();
 }
