@@ -4293,6 +4293,8 @@ void PickerView::setCursorText(const QString &text) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 	int used = 0;
+	int unmatched = 0;
+	QString phaseLabel = theoretical ? QString("%1 (ttt)").arg(phase) : phase;
 
 	SC_D.alignment = theoretical ? phase + ":ttt" : phase;
 
@@ -4366,9 +4368,39 @@ void PickerView::alignOnPhase(const QString &phase, bool theoretical) {
 
 			++used;
 		}
+		else if ( SC_D.origin ) {
+			// Do not keep a stale alignment of a previous phase but fall
+			// back to origin time
+			w1->setAlignment(SC_D.origin->time());
+			if ( w2 ) w2->setAlignment(SC_D.origin->time());
+			++unmatched;
+		}
 	}
 
-	if ( !used ) return;
+	if ( !used ) {
+		if ( !SC_D.origin ) {
+			return;
+		}
+
+		// Keep the requested alignment to apply it again as soon as
+		// arrivals become available, e.g. after relocation
+		QString requested = SC_D.alignment;
+		alignOnOriginTime();
+		SC_D.alignment = requested;
+		statusBar()->showMessage(
+			tr("No %1 arrivals found: aligned on origin time").arg(phaseLabel),
+			5000
+		);
+		return;
+	}
+
+	if ( unmatched ) {
+		statusBar()->showMessage(
+			tr("%1 traces without %2 arrival aligned on origin time")
+			.arg(unmatched).arg(phaseLabel),
+			5000
+		);
+	}
 
 	SC_D.checkVisibility = false;
 
