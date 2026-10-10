@@ -293,6 +293,10 @@ channel. An alternative to searching the archives sequentially is to organize
 the different archives by unique time windows and then access them by the
 :ref:`combined RecordStream<rs-combined>` using the `splitTime` parameter.
 
+Optional URL encoded parameters are:
+
+- `format` - miniSEED format to read (2,3), default: any
+
 
 Examples
 ^^^^^^^^
