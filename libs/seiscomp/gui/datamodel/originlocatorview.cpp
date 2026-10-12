@@ -3294,12 +3294,9 @@ void OriginLocatorView::init() {
 	SC_D.map->setMouseTracking(true);
 	SC_D.map->setOriginCreationEnabled(true);
 
-	try {
-		SC_D.map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
-	}
-	catch ( ... ) {
-		SC_D.map->setStationsMaxDist(360);
-	}
+	UnassociatedStations unassociatedStations;
+	unassociatedStations.readConfig();
+	SC_D.map->setUnassociatedStations(unassociatedStations);
 
 	// Read custom column configuration
 	try {
@@ -4455,6 +4452,7 @@ void OriginLocatorView::zoomMap() {
 	connect(SC_D.toolMap, SIGNAL(keyPressed(QKeyEvent*)), this, SLOT(mapKeyPressed(QKeyEvent*)));
 	connect(SC_D.toolMap, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
 	connect(SC_D.toolMap, SIGNAL(arrivalChanged(int,bool)), this, SLOT(changeArrival(int,bool)));
+	SC_D.toolMap->setUnassociatedStations(SC_D.map->unassociatedStations());
 	if ( SC_D.currentOrigin ) {
 		SC_D.toolMap->setOrigin(SC_D.currentOrigin.get());
 		SC_D.toolMap->canvas().displayRect(QRectF(SC_D.currentOrigin->longitude()-20, SC_D.currentOrigin->latitude()-20, 40, 40));

@@ -38,6 +38,8 @@
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/map/layers/annotationlayer.h>
 
+#include <QMenu>
+
 #include <algorithm>
 
 
@@ -61,8 +63,13 @@ namespace {
 
 
 struct StationLayer : Map::Layer {
+	struct Symbol;
+
 	StationLayer(MagnitudeMap *map)
-	: Map::Layer(map) {}
+	: Map::Layer(map) {
+		// No unassociated stations unless a maximum distance is set
+		unassociated.maxDistance = -1;
+	}
 
 	~StationLayer() override {
 		clear();
@@ -77,10 +84,7 @@ struct StationLayer : Map::Layer {
 			}
 		}
 		else {
-			for ( auto entry : stations ) {
-				if ( entry->annotation )
-					entry->annotation->visible = entry->isVisible();
-			}
+			updateAnnotations();
 		}
 	}
 
@@ -93,18 +97,63 @@ struct StationLayer : Map::Layer {
 				entry->setVisible(true);
 				entry->calculateMapPosition(canvas);
 			}
+		}
 
-			if ( entry->annotation ) {
-				entry->annotation->visible = entry->isVisible();
+		updateAnnotations();
+	}
+
+	// Computes the distance of the farthest station with an active
+	// station magnitude
+	void updateUsedDistance() {
+		usedDistance = -1;
+		for ( auto s : stations ) {
+			if ( s->isMagnitude && s->isActive && s->validLocation ) {
+				usedDistance = std::max(usedDistance, s->distance);
 			}
 		}
+	}
+
+	bool isFiltered(const Symbol *s) const {
+		return s->isUnassociated && !s->isMagnitude;
+	}
+
+	bool isShown(const Symbol *s) const {
+		return !isFiltered(s)
+		    || unassociated.isVisible(s->distance, usedDistance,
+		                              s->isEnabled, s->isConfigured);
+	}
+
+	void updateAnnotations() {
+		for ( auto entry : stations ) {
+			if ( entry->annotation ) {
+				entry->annotation->visible = entry->isVisible() && isShown(entry);
+			}
+		}
+	}
+
+	// Returns the number of shown and enabled unassociated stations within
+	// the used distance or -1 if no station is used
+	int inRangeCount() const {
+		if ( usedDistance < 0 ) {
+			return -1;
+		}
+
+		int count = 0;
+		for ( auto s : stations ) {
+			if ( isFiltered(s) && s->isActive && s->isEnabled && isShown(s)
+			  && unassociated.isInRange(s->distance, usedDistance) ) {
+				++count;
+			}
+		}
+
+		return count;
 	}
 
 	bool isInside(const QMouseEvent *event, const QPointF &) override {
 		int tmpHoverId = -1;
 
 		for ( int i = 0; i < stations.count(); ++i ) {
-			if ( !stations[i]->isVisible() ) {
+			if ( !stations[i]->isVisible() || !isShown(stations[i]) ) {
 				continue;
 			}
 
@@ -117,9 +166,14 @@ struct StationLayer : Map::Layer {
 		if ( tmpHoverId != hoverId ) {
 			hoverId = tmpHoverId;
 			if ( hoverId != -1 ) {
-				if ( !stations[hoverId]->net.empty()
-				  && !stations[hoverId]->code.empty() ) {
-					setToolTip((stations[hoverId]->net + "." + stations[hoverId]->code).c_str());
+				auto s = stations[hoverId];
+				if ( isFiltered(s) && !s->net.empty() && !s->code.empty() ) {
+					setToolTip(unassociated.toolTip(s->net, s->code, s->distance,
+					                                usedDistance, s->isEnabled,
+					                                s->isConfigured));
+				}
+				else if ( !s->net.empty() && !s->code.empty() ) {
+					setToolTip((s->net + "." + s->code).c_str());
 				}
 				else {
 					setToolTip(QString());
@@ -137,6 +191,10 @@ struct StationLayer : Map::Layer {
 		int size = SCScheme.map.stationSize;
 
 		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 4);
+
+		// The used stations might have changed interactively
+		updateUsedDistance();
+		updateAnnotations();
 
 		if ( canvas->symbolCollection()->count() > 0 ) {
 			const Map::Symbol *originSymbol = (*canvas->symbolCollection()->begin());
@@ -177,6 +235,13 @@ struct StationLayer : Map::Layer {
 				p.setClipping(false);
 		}
 
+		if ( canvas->symbolCollection()->count() > 0 ) {
+			unassociated.drawCircles(
+				canvas, p, (*canvas->symbolCollection()->begin())->location(),
+				usedDistance
+			);
+		}
+
 		p.setPen(SCScheme.colors.map.outlines);
 		for ( int i = stations.count()-1; i >= 0; --i ) {
 			if ( stations[i]->isClipped() || !stations[i]->isVisible() ) {
@@ -187,13 +252,28 @@ struct StationLayer : Map::Layer {
 				continue;
 			}
 
-			stations[i]->setColor(
-				stations[i]->isMagnitude
-				?
-				stations[i]->isActive ? stations[i]->color : SCScheme.colors.magnitudes.disabled
-				:
-				stations[i]->isActive ? SCScheme.colors.stations.idle : Qt::gray
-			);
+			if ( !isShown(stations[i]) ) {
+				continue;
+			}
+
+			if ( stations[i]->isMagnitude ) {
+				stations[i]->setColor(
+					stations[i]->isActive ? stations[i]->color : SCScheme.colors.magnitudes.disabled
+				);
+			}
+			else if ( !stations[i]->isActive ) {
+				stations[i]->setColor(Qt::gray);
+			}
+			else if ( isFiltered(stations[i]) && !stations[i]->isEnabled ) {
+				stations[i]->setColor(SCScheme.colors.stations.disabled);
+			}
+			else if ( isFiltered(stations[i]) && unassociated.highlightInRange
+			       && unassociated.isInRange(stations[i]->distance, usedDistance) ) {
+				stations[i]->setColor(SCScheme.colors.stations.unassociatedInRange);
+			}
+			else {
+				stations[i]->setColor(SCScheme.colors.stations.idle);
+			}
 
 			stations[i]->draw(canvas, p);
 
@@ -235,17 +315,34 @@ struct StationLayer : Map::Layer {
 		bool                 validLocation{false};
 		bool                 isActive{false};
 		bool                 isMagnitude{false};
+		// Added from inventory and not because of an arrival
+		bool                 isUnassociated{false};
+		// The state in the configuration module, only used for
+		// unassociated stations
+		bool                 isEnabled{true};
+		bool                 isConfigured{true};
 		std::string          net;
 		std::string          code;
 		double               residual;
+		double               distance{0.0};
 		int                  magnitudeId{-1};
 		Map::AnnotationItem *annotation{nullptr};
 	};
 
-	QVector<Symbol*> stations;
-	bool             interactive{true};
-	int              hoverId{-1};
+	QVector<Symbol*>     stations;
+	UnassociatedStations unassociated;
+	double               usedDistance{-1};
+	bool                 interactive{true};
+	int                  hoverId{-1};
 };
+
+
+double epicentralDistance(const Origin *origin, double lat, double lon) {
+	double dist, azi1, azi2;
+	Math::Geo::delazi(lat, lon, origin->latitude(), origin->longitude(),
+	                  &dist, &azi1, &azi2);
+	return dist;
+}
 
 
 #define SYMBOLLAYER static_cast<StationLayer*>(_symbolLayer)
@@ -296,7 +393,55 @@ MagnitudeMap::~MagnitudeMap() {}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void MagnitudeMap::setStationsMaxDist(double maxDist) {
-	_stationsMaxDist = maxDist;
+	SYMBOLLAYER->unassociated.maxDistance = maxDist;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeMap::setUnassociatedStations(const UnassociatedStations &config) {
+	SYMBOLLAYER->unassociated = config;
+	SYMBOLLAYER->updateAnnotations();
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const UnassociatedStations &MagnitudeMap::unassociatedStations() const {
+	return SYMBOLLAYER->unassociated;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void MagnitudeMap::contextMenuEvent(QContextMenuEvent *event) {
+	if ( canvas().filterContextMenuEvent(event, this) ) {
+		return;
+	}
+
+	QMenu menu(this);
+
+	updateContextMenu(&menu);
+
+	QMenu *unassociatedMenu = SYMBOLLAYER->unassociated.addMenu(&menu, [this]() {
+		SYMBOLLAYER->updateAnnotations();
+		SYMBOLLAYER->update(Gui::Map::Layer::Redraw);
+	}, SYMBOLLAYER->inRangeCount());
+
+	QAction *action = menu.exec(event->globalPos());
+	if ( action && (action->parent() == unassociatedMenu) ) {
+		// Already handled by the menu
+		return;
+	}
+
+	executeContextMenuAction(action);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -368,7 +513,8 @@ void MagnitudeMap::setMagnitude(DataModel::Magnitude* nm) {
 	_magnitudes.clear();
 
 	for ( int i = 0; i < SYMBOLLAYER->stations.size(); ++i ) {
-		SYMBOLLAYER->stations[i]->isActive = false;
+		// Unassociated stations stay active to be drawn as idle stations
+		SYMBOLLAYER->stations[i]->isActive = SYMBOLLAYER->stations[i]->isUnassociated;
 		SYMBOLLAYER->stations[i]->isMagnitude = false;
 		SYMBOLLAYER->stations[i]->magnitudeId = -1;
 	}
@@ -467,6 +613,8 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 						_annotationLayer->annotations()->add(stationCode.c_str())
 					)
 				);
+				SYMBOLLAYER->stations.back()->distance =
+					epicentralDistance(_origin.get(), loc.latitude, loc.longitude);
 				foundStation = true;
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size() - 1;
 			}
@@ -498,6 +646,7 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 				SYMBOLLAYER->stations.push_back(
 					new StationLayer::Symbol(QPointF(lon,lat), "", "", true)
 				);
+				SYMBOLLAYER->stations.back()->distance = arrival->distance();
 			}
 			catch ( ... ) {
 				SYMBOLLAYER->stations.push_back(
@@ -506,6 +655,9 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 			}
 		}
 	}
+
+	UnassociatedStations::StationStates states;
+	states.read(SYMBOLLAYER->unassociated.requiredBinding);
 
 	auto inv = Client::Inventory::Instance()->inventory();
 	if ( inv ) {
@@ -546,8 +698,7 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					continue;
 				}
 
-				// Limit to 20 degrees
-				if ( dist > _stationsMaxDist ) {
+				if ( dist > SYMBOLLAYER->unassociated.maxDistance ) {
 					continue;
 				}
 
@@ -558,16 +709,19 @@ void MagnitudeMap::setOrigin(DataModel::Origin* o) {
 					continue;
 				}
 
-				SYMBOLLAYER->stations.push_back(
-					new StationLayer::Symbol(
-						QPointF(sta->longitude(),sta->latitude()),
-						net->code(), sta->code().c_str(),
-						true,
-						_annotationLayer->annotations()->add(stationCode.c_str())
-					)
+				auto symbol = new StationLayer::Symbol(
+					QPointF(sta->longitude(),sta->latitude()),
+					net->code(), sta->code().c_str(),
+					true,
+					_annotationLayer->annotations()->add(stationCode.c_str())
 				);
 
-				SYMBOLLAYER->stations.back()->isActive = true;
+				symbol->isActive = true;
+				symbol->isUnassociated = true;
+				symbol->distance = dist;
+				states.get(net->code(), sta->code(), symbol->isEnabled, symbol->isConfigured);
+
+				SYMBOLLAYER->stations.push_back(symbol);
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size() - 1;
 			}
 		}
@@ -699,6 +853,8 @@ int MagnitudeMap::addStation(const std::string &netCode, const std::string &staC
 
 			int stationId = SYMBOLLAYER->stations.size() - 1;
 			SYMBOLLAYER->stations.back()->isActive = true;
+			SYMBOLLAYER->stations.back()->distance =
+				epicentralDistance(_origin.get(), sta->latitude(), sta->longitude());
 			_stationCodes[stationCode] = stationId;
 			return stationId;
 		}

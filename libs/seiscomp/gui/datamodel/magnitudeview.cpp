@@ -1484,10 +1484,9 @@ void MagnitudeView::init(Seiscomp::DataModel::DatabaseQuery *) {
 		SC_D.map->setMouseTracking(true);
 		hboxLayout->addWidget(SC_D.map);
 
-		try {
-			SC_D.map->setStationsMaxDist(SCApp->configGetDouble("olv.map.stations.unassociatedMaxDist"));
-		}
-		catch ( ... ) {}
+		UnassociatedStations unassociatedStations;
+		unassociatedStations.readConfig();
+		SC_D.map->setUnassociatedStations(unassociatedStations);
 	}
 
 	hboxLayout = new QHBoxLayout(SC_D.ui.frameMagnitudeTypes);

@@ -55,6 +55,14 @@ namespace Core {
    - Removed Seiscomp::Gui::StationMagnitudeModel
    - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
    - Added Seiscomp::Gui::PickerView::Config::initialAlignment
+   - Added Seiscomp::Gui::UnassociatedStations
+   - Added Seiscomp::Gui::OriginLocatorMap::setUnassociatedStations
+   - Added Seiscomp::Gui::OriginLocatorMap::unassociatedStations
+   - Added Seiscomp::Gui::MagnitudeMap::setUnassociatedStations
+   - Added Seiscomp::Gui::MagnitudeMap::unassociatedStations
+   - Added Seiscomp::Gui::Scheme::Colors::Stations::unassociatedInRange
+   - Added Seiscomp::Gui::Scheme::Colors::Map::usedDistance
+   - Added Seiscomp::Gui::Scheme::Colors::Map::distanceLimit
 
  "17.4.0"   0x110400
    - Added Seiscomp::Client::Application::send

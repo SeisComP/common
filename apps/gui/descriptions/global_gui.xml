@@ -484,6 +484,43 @@
 								<description>The width of the pen.</description>
 							</parameter>
 						</group>
+						<group name="usedDistance">
+							<description>
+								Defines the pen of the circle around the epicenter
+								at the distance of the farthest used station in the
+								origin and magnitude maps.
+							</description>
+							<parameter name="color" type="color" default="FF00FFC8">
+								<description>The color of the pen.</description>
+							</parameter>
+							<parameter name="style" type="string" default="DashLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
+								<description>
+								The style of the pen.
+								</description>
+							</parameter>
+							<parameter name="width" type="double" default="1" unit="px">
+								<description>The width of the pen.</description>
+							</parameter>
+						</group>
+						<group name="distanceLimit">
+							<description>
+								Defines the pen of the circle around the epicenter
+								up to which unassociated stations are shown in the
+								origin and magnitude maps if
+								olv.map.stations.unassociated is "auto".
+							</description>
+							<parameter name="color" type="color" default="FFFFFF80">
+								<description>The color of the pen.</description>
+							</parameter>
+							<parameter name="style" type="string" default="DotLine" values="NoPen,SolidLine,DashLine,DotLine,DashDotLine,DashDotDotLine">
+								<description>
+								The style of the pen.
+								</description>
+							</parameter>
+							<parameter name="width" type="double" default="1" unit="px">
+								<description>The width of the pen.</description>
+							</parameter>
+						</group>
 						<parameter name="stationAnnotations" type="color">
 							<description>
 							The color of station annotations.
@@ -900,6 +937,13 @@
 						</parameter>
 						<parameter name="idle" type="color">
 							<description>The color of idle stations.</description>
+						</parameter>
+						<parameter name="unassociatedInRange" type="color" default="FF00FFC8">
+							<description>
+							The color of unassociated stations in the origin and
+							magnitude maps which are not farther from the
+							epicenter than the farthest used station.
+							</description>
 						</parameter>
 					</group>
 

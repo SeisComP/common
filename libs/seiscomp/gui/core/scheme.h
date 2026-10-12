@@ -126,6 +126,7 @@ class SC_GUI_API Scheme {
 				QColor triggered2{0, 0, 128};
 				QColor disabled{102, 102, 102, 100};
 				QColor idle{102, 102, 102, 128};
+				QColor unassociatedInRange{255, 0, 255, 200};
 			};
 
 			struct QC {
@@ -182,6 +183,8 @@ class SC_GUI_API Scheme {
 				QColor outlines{255, 255, 255};
 				QPen   directivity{{255 ,160, 0}};
 				QPen   grid{Qt::white, 1, Qt::DotLine};
+				QPen   usedDistance{{{255, 0, 255, 200}}, 1, Qt::DashLine};
+				QPen   distanceLimit{{{255, 255, 255, 128}}, 1, Qt::DotLine};
 				QColor stationAnnotations{Qt::red};
 				QColor cityLabels{Qt::black};
 				QColor cityOutlines{Qt::black};

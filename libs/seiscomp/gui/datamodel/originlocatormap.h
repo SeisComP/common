@@ -28,6 +28,7 @@
 #include <seiscomp/datamodel/origin.h>
 #include <seiscomp/datamodel/publicobjectcache.h>
 #endif
+#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/qt.h>
 
 
@@ -66,6 +67,11 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 		//! Sets the maximum distance for stations to be displayed
 		//! if they are not part of the origin
 		void setStationsMaxDist(double);
+
+		//! Sets which unassociated stations are displayed. The maximum
+		//! distance takes effect with the next origin.
+		void setUnassociatedStations(const UnassociatedStations &);
+		const UnassociatedStations &unassociatedStations() const;
 
 		//! Make the station state changeable interactively
 		//! The default is TRUE
@@ -127,7 +133,6 @@ class SC_GUI_API OriginLocatorMap : public MapWidget {
 		bool                          _enabledCreateOrigin{false};
 		QVector<int>                  _arrivals;
 		std::map<std::string, int>    _stationCodes;
-		double                        _stationsMaxDist{-1};
 };
 
 
