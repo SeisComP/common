@@ -267,6 +267,8 @@ int StdLoc::capabilities() const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const IDList StdLoc::_allowedParameters = {
     "method",
+    "methodID",
+    "earthModelID",
     "tttType",
     "tttModel",
     "PSTableOnly",
@@ -364,6 +366,12 @@ bool StdLoc::init(const Config::Config &config) {
 				return false;
 			}
 		}
+		catch ( ... ) {}
+
+		try { prof.methodID = config.getString(prefix + "methodID"); }
+		catch ( ... ) {}
+
+		try { prof.earthModelID = config.getString(prefix + "earthModelID"); }
 		catch ( ... ) {}
 
 		try { prof.tttType = config.getString(prefix + "tableType"); }
@@ -617,6 +625,12 @@ string StdLoc::parameter(const string &name) const {
 			return "OctTree+LeastSquares";
 		}
 	}
+	else if ( name == "methodID" ) {
+		return _currentProfile.methodID;
+	}
+	else if ( name == "earthModelID" ) {
+		return _currentProfile.earthModelID;
+	}
 	else if ( name == "tttType" ) {
 		return _currentProfile.tttType;
 	}
@@ -724,6 +738,14 @@ bool StdLoc::setParameter(const string &name, const string &value) {
 			SEISCOMP_ERROR("Unrecognized method %s", value.c_str());
 			return false;
 		}
+	}
+	else if ( name == "methodID" ) {
+		_currentProfile.methodID = value;
+		return true;
+	}
+	else if ( name == "earthModelID" ) {
+		_currentProfile.earthModelID = value;
+		return true;
 	}
 	else if ( name == "tttType" ) {
 		_currentProfile.tttType = value;
@@ -2531,7 +2553,10 @@ Origin *StdLoc::createOrigin(
 	Origin *origin = Origin::Create();
 	SEISCOMP_DEBUG("New origin publicID: %s", origin->publicID().c_str());
 
-	if ( _currentProfile.name.empty() ) {
+	if ( !_currentProfile.methodID.empty() ) {
+		origin->setMethodID(_currentProfile.methodID);
+	}
+	else if ( _currentProfile.name.empty() ) {
 		if ( _currentProfile.method == Profile::Method::LeastSquares ) {
 			origin->setMethodID("StdLoc:LeastSquares");
 		}
@@ -2553,7 +2578,12 @@ Origin *StdLoc::createOrigin(
 	}
 
 	origin->setCreationInfo(ci);
-	origin->setEarthModelID(_tttType + ":" + _tttModel);
+	if ( !_currentProfile.earthModelID.empty() ) {
+		origin->setEarthModelID(_currentProfile.earthModelID);
+	}
+	else {
+		origin->setEarthModelID(_tttType + ":" + _tttModel);
+	}
 	origin->setTime(DataModel::TimeQuantity(originTime));
 	origin->setLatitude(DataModel::RealQuantity(originLat));
 	origin->setLongitude(DataModel::RealQuantity(originLon));

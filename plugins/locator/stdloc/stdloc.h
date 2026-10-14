@@ -198,6 +198,8 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 			  OctTreeAndLsqr
 			} method;
 
+			std::string methodID;
+			std::string earthModelID;
 			std::string tttType;
 			std::string tttModel;
 			bool PSTableOnly;
