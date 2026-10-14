@@ -752,6 +752,7 @@
     <addaction name="actionShowTraceValuesInNmS"/>
     <addaction name="actionShowUnassociatedPicks"/>
     <addaction name="actionShowTheoreticalArrivals"/>
+    <addaction name="actionShowArrivalResiduals"/>
     <addaction name="actionShowSpectrogram"/>
     <addaction name="separator"/>
     <addaction name="menu_Zoomtrace"/>
@@ -1446,6 +1447,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionShowArrivalResiduals">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show arrival residuals</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the time residuals of the locator next to the arrivals</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionShowUnassociatedPicks">

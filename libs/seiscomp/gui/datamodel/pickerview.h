@@ -443,6 +443,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void limitFilterToZoomTrace(bool);
 
 		void showTheoreticalArrivals(bool);
+		void showArrivalResiduals(bool);
 		void showUnassociatedPicks(bool);
 		void showSpectrogram(bool);
 		void showSpectrum();
@@ -601,6 +602,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 		                            const std::string& locCode);
 
 		bool addRawPick(Seiscomp::DataModel::Pick*);
+
+		//! Updates the residual sort value of an item from its arrivals
+		void updateItemResidual(RecordViewItem *item);
 
 		void resetState();
 		void alignOnPhase(const QString&, bool theoretical);
