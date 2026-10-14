@@ -23,6 +23,18 @@
 							The location method to use.
 							</description>
 						</parameter>
+						<parameter name="methodID" type="string" default="">
+							<description>
+							The methodID to be stored in the created origins.
+							If empty, it defaults to &quot;StdLoc:[profile name]&quot;.
+							</description>
+						</parameter>
+						<parameter name="earthModelID" type="string" default="">
+							<description>
+							The earthModelID to be stored in the created origins.
+							If empty, it defaults to &quot;[tableType]:[tableModel]&quot;.
+							</description>
+						</parameter>
 						<parameter name="tableType" type="string" default="LOCSAT" values="homogeneous,libtau,LOCSAT">
 							<description>
 							Type of travel-time interface. Also consider
