@@ -206,8 +206,8 @@ class SC_GUI_API Ruler : public QFrame {
 		bool            _leftToRight{true}; // Or bottomToTop
 		bool            _emitRangeChangeWhileDragging{false};
 		bool            _hover{false};
-		bool            _wheelScale{true};
-		bool            _wheelTranslate{true};
+		bool            _wheelScale{false};
+		bool            _wheelTranslate{false};
 		bool            _autoScale{false};
 };
 

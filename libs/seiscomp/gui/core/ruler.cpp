@@ -330,6 +330,7 @@ void Ruler::setRangeSelectionEnabled(bool enable,
                                      bool emitRangeChangeWhileDragging) {
 	_enableRangeSelection = enable;
 	_emitRangeChangeWhileDragging = emitRangeChangeWhileDragging;
+	setWheelEnabled(enable, enable);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1097,8 +1098,9 @@ void Ruler::mouseMoveEvent(QMouseEvent *e) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Ruler::wheelEvent(QWheelEvent *event) {
-	if ( !event || (!_wheelScale && !_wheelTranslate) )
+	if ( !event || (!_wheelScale && !_wheelTranslate) ) {
 		return;
+	}
 
 	// shift modifier works as an amplifier
 	int delta = event->modifiers() & Qt::ShiftModifier ?
