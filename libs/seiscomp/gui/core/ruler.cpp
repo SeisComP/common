@@ -755,7 +755,9 @@ void Ruler::leaveEvent(QEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Ruler::mousePressEvent(QMouseEvent *e) {
 	// Already in a drag mode?
-	if ( _dragMode != 0 ) return;
+	if ( _dragMode != 0 ) {
+		return;
+	}
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QPointF rp = w2rPos(e->x(), e->y());
@@ -768,16 +770,16 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
 	_dragStart = (_pos+rx)/_scl + _min;
 
 	if ( e->button() == Qt::LeftButton ) {
-		if ( _enableSelection && _currentSelectionHandle >= 0 )
+		if ( _enableSelection && _currentSelectionHandle >= 0 ) {
 			_dragMode = _currentSelectionHandle + 1;
+			update();
+		}
 		else {
 			_dragMode = -1;
 			emit dragStarted();
 			QFrame::mousePressEvent(e);
 			return;
 		}
-
-		update();
 	}
 	else if ( e->button() == Qt::RightButton ) {
 		if ( _enableRangeSelection ) {
@@ -798,32 +800,38 @@ void Ruler::mousePressEvent(QMouseEvent *e) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void Ruler::mouseReleaseEvent(QMouseEvent *e) {
 	if ( e->button() == Qt::LeftButton ) {
-		if ( _dragMode == -1 )
+		if ( _dragMode == -1 ) {
 			emit dragFinished();
-		else if ( _dragMode > 0 )
+		}
+		else if ( _dragMode > 0 ) {
 			emit selectionHandleMoveFinished();
+		}
 		_dragMode = 0;
 	}
 	else if ( e->button() == Qt::RightButton ) {
-		// Reset range selection
-		if ( _rangeValid ) {
-			double smin = (_pos+_rangemin) / _scl + _min;
-			double smax = (_pos+_rangemax) / _scl + _min;
+		if ( _enableRangeSelection ) {
+			// Reset range selection
+			if ( _rangeValid ) {
+				double smin = (_pos+_rangemin) / _scl + _min;
+				double smax = (_pos+_rangemax) / _scl + _min;
 
-			if ( smin < smax )
-				changeRange(smin, smax);
-			else {
-				std::swap(smin, smax);
-				double max = rulerWidth() / _scl + _min;
-				double s = (max-_min) / (smax-smin);
-				double tmin = s * (_min-smin) + _min;
-				double tmax = s * (max-smax) + max;
-				changeRange(tmin, tmax);
+				if ( smin < smax ) {
+					changeRange(smin, smax);
+				}
+				else {
+					std::swap(smin, smax);
+					double max = rulerWidth() / _scl + _min;
+					double s = (max-_min) / (smax-smin);
+					double tmin = s * (_min-smin) + _min;
+					double tmax = s * (max-smax) + max;
+					changeRange(tmin, tmax);
+				}
 			}
+
+			_rangemin = _rangemax = 0;
+			update();
+			_dragMode = 0;
 		}
-		_rangemin = _rangemax = 0;
-		update();
-		_dragMode = 0;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
