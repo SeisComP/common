@@ -304,6 +304,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 			bool hideStationsWithoutData{false};
 			bool hideDisabledStations{false};
 			bool showDataInSensorUnit{false};
+			// Show the time residuals of the arrivals next to their phase
+			// labels when the picker is opened
+			bool showArrivalResiduals{false};
 			bool limitFilterToZoomTrace{false};
 
 			RotationType initialRotation{RT_123};
@@ -449,6 +452,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void limitFilterToZoomTrace(bool);
 
 		void showTheoreticalArrivals(bool);
+		void showArrivalResiduals(bool);
 		void showUnassociatedPicks(bool);
 		void showSpectrogram(bool);
 		void showSpectrum();
@@ -572,6 +576,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void applyThemeColors();
 		void announceAmplitude();
 		void figureOutTravelTimeTable();
+		void loadDataImportances();
 		void updateTransformations(PrivatePickerView::PickerRecordLabel *label);
 
 		void init();
@@ -607,6 +612,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 		                            const std::string& locCode);
 
 		bool addRawPick(Seiscomp::DataModel::Pick*);
+
+		//! Updates the residual sort value of an item from its arrivals
+		void updateItemResidual(RecordViewItem *item);
 
 		void resetState();
 		void alignOnPhase(const QString&, bool theoretical);

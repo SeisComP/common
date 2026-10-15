@@ -29,6 +29,7 @@
 #include <seiscomp/gui/datamodel/origindialog.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
@@ -653,6 +654,10 @@ class PickerMarker : public RecordMarker {
 		, _onset(m._onset)
 		, _backAzimuth(m._backAzimuth)
 		, _slowness(m._slowness)
+		, _timeResidual(m._timeResidual)
+		, _weight(m._weight)
+		, _importance(m._importance)
+		, _drawTimeResidual(m._drawTimeResidual)
 		, _type(m._type)
 		, _slot(m._slot)
 		, _rot(m._rot)
@@ -733,6 +738,8 @@ class PickerMarker : public RecordMarker {
 		void setType(Type t) {
 			_type = t;
 			if ( _type == Pick ) {
+				// The locator results are only valid for the arrival
+				clearArrivalResult();
 				setPhaseCode("");
 				setEnabled(true);
 			}
@@ -832,6 +839,40 @@ class PickerMarker : public RecordMarker {
 
 		const OPT(RealQuantity) &horizontalSlowness() const {
 			return _slowness;
+		}
+
+		//! Sets the time residual and weight of the arrival as computed
+		//! by the locator
+		void setArrivalResult(OPT(double) timeResidual, OPT(double) weight) {
+			_timeResidual = timeResidual;
+			_weight = weight;
+		}
+
+		const OPT(double) &timeResidual() const {
+			return _timeResidual;
+		}
+
+		const OPT(double) &weight() const {
+			return _weight;
+		}
+
+		void setDataImportance(const DataImportance &importance) {
+			_importance = importance;
+		}
+
+		const DataImportance &dataImportance() const {
+			return _importance;
+		}
+
+		//! Removes the locator results, e.g. if the pick time changed
+		void clearArrivalResult() {
+			_timeResidual = Core::None;
+			_weight = Core::None;
+			_importance = DataImportance();
+		}
+
+		void setDrawTimeResidual(bool e) {
+			_drawTimeResidual = e;
 		}
 
 		void setUncertainty(double lower, double upper) {
@@ -1055,6 +1096,47 @@ class PickerMarker : public RecordMarker {
 			if ( _backAzimuth ) {
 				painter.drawText(x - em - 2, y1, em, em, Qt::AlignRight | Qt::AlignTop, "B");
 			}
+
+			if ( _drawTimeResidual && _timeResidual && isArrival() ) {
+				// Render the residual behind the phase label which is drawn
+				// by the RecordWidget at the same baseline
+				int fontSize = painter.font().pixelSize();
+				if ( fontSize < 0 ) {
+					fontSize = painter.fontMetrics().ascent();
+				}
+
+				QString text = QString("%1s").arg(*_timeResidual, 0, 'f', 2)
+				               .prepend(*_timeResidual >= 0 ? "+" : "");
+				if ( _importance.time >= 0 ) {
+					text += QString(" I=%1").arg(_importance.time, 0, 'f', 2);
+				}
+
+				int textX = x + 2 + painter.fontMetrics().horizontalAdvance(renderText() + " ");
+
+				// Do not overlap the label of the next marker to the right,
+				// the values are still available in the tool tip. Markers
+				// aligned to the bottom, e.g. theoretical arrivals, render
+				// their label at the bottom and are not considered.
+				bool fits = true;
+				int textRight = textX + painter.fontMetrics().horizontalAdvance(text);
+				for ( int i = 0; i < context->markerCount(); ++i ) {
+					auto m = context->marker(i);
+					if ( m == this || m->isHidden()
+					  || (m->alignment() & Qt::AlignBottom) ) {
+						continue;
+					}
+
+					int mx = context->mapCanvasTime(m->correctedTime());
+					if ( mx > x && mx - 2 < textRight ) {
+						fits = false;
+						break;
+					}
+				}
+
+				if ( fits ) {
+					painter.drawText(textX, y1 + fontSize + 1, text);
+				}
+			}
 		}
 
 		QString toolTip() const {
@@ -1144,6 +1226,24 @@ class PickerMarker : public RecordMarker {
 
 			text += QString("\narrival: %1").arg(isArrival()?"yes":"no");
 
+			if ( isArrival() ) {
+				if ( _timeResidual ) {
+					text += QString("\ntime residual: %1 s").arg(*_timeResidual, 0, 'f', 2);
+				}
+				if ( _weight ) {
+					text += QString("\nweight: %1").arg(*_weight, 0, 'f', 2);
+				}
+				if ( _importance.time >= 0 ) {
+					text += QString("\ntime importance: %1").arg(_importance.time, 0, 'f', 3);
+				}
+				if ( _importance.backazimuth >= 0 ) {
+					text += QString("\nbackazimuth importance: %1").arg(_importance.backazimuth, 0, 'f', 3);
+				}
+				if ( _importance.slowness >= 0 ) {
+					text += QString("\nslowness importance: %1").arg(_importance.slowness, 0, 'f', 3);
+				}
+			}
+
 			return text;
 		}
 
@@ -1218,6 +1318,10 @@ class PickerMarker : public RecordMarker {
 		OPT(PickOnset)    _onset;
 		OPT(RealQuantity) _backAzimuth;
 		OPT(RealQuantity) _slowness;
+		OPT(double)       _timeResidual;
+		OPT(double)       _weight;
+		DataImportance    _importance;
+		bool              _drawTimeResidual{false};
 		TimeQuantity      _time;
 		QString           _filter;
 		Type              _type;
@@ -2695,6 +2799,7 @@ void PickerView::init() {
 
 	SC_D.ui.setupUi(this);
 	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
+	SC_D.ui.actionShowArrivalResiduals->setChecked(SC_D.config.showArrivalResiduals);
 
 	QFont f(font());
 	f.setBold(true);
@@ -3111,6 +3216,8 @@ void PickerView::init() {
 
 	connect(SC_D.ui.actionShowTheoreticalArrivals, SIGNAL(triggered(bool)),
 	        this, SLOT(showTheoreticalArrivals(bool)));
+	connect(SC_D.ui.actionShowArrivalResiduals, SIGNAL(triggered(bool)),
+	        this, SLOT(showArrivalResiduals(bool)));
 	connect(SC_D.ui.actionShowUnassociatedPicks, SIGNAL(triggered(bool)),
 	        this, SLOT(showUnassociatedPicks(bool)));
 	connect(SC_D.ui.actionShowSpectrogram, SIGNAL(triggered(bool)),
@@ -3865,6 +3972,10 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 	SC_D.ui.actionLimitFilterToZoomTrace->setChecked(SC_D.config.limitFilterToZoomTrace);
 
 	showTraceScaleToggled(SC_D.config.showDataInSensorUnit);
+
+	SC_D.ui.actionShowArrivalResiduals->setChecked(SC_D.config.showArrivalResiduals);
+	showArrivalResiduals(SC_D.config.showArrivalResiduals);
+
 	initPhases();
 	acquireStreams();
 
@@ -4019,6 +4130,11 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 	if ( marker ) {
 		marker->setType(PickerMarker::Arrival);
 
+		// The locator residual is not valid anymore for the new time
+		if ( marker->correctedTime() != time ) {
+			marker->clearArrivalResult();
+		}
+
 		// Set the marker time to the new picked time
 		marker->setCorrectedTime(time);
 		// and set its component to the currently displayed component
@@ -4124,12 +4240,9 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 		}
 	}
 
-	if ( SC_D.recordView->currentItem()->widget() == widget &&
-	     widget->cursorText() == "P" && marker ) {
-		RecordMarker* marker2 = widget->marker("P" THEORETICAL_POSTFIX);
-		if ( marker2 )
-			SC_D.recordView->currentItem()->setValue(ITEM_RESIDUAL_INDEX,
-				-fabs((double)(marker->correctedTime() - marker2->correctedTime())));
+	auto item = SC_D.recordView->currentItem();
+	if ( item && item->widget() == widget ) {
+		updateItemResidual(item);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4161,12 +4274,9 @@ void PickerView::declareArrival(RecordMarker *m_, const QString &phase,
 
 	if ( !updateResidual ) return;
 
-	if ( SC_D.recordView->currentItem()->widget() == w &&
-	     w->cursorText() == "P" && m ) {
-		RecordMarker* marker2 = w->marker("P" THEORETICAL_POSTFIX);
-		if ( marker2 )
-			SC_D.recordView->currentItem()->setValue(ITEM_RESIDUAL_INDEX,
-				-fabs((double)(m->correctedTime() - marker2->correctedTime())));
+	auto item = SC_D.recordView->currentItem();
+	if ( item && item->widget() == w ) {
+		updateItemResidual(item);
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5093,6 +5203,18 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
 			                       .arg((char)toupper(pick->methodID()[0])));
 		}
 
+		OPT(double) timeResidual, weight;
+		try { timeResidual = arrival->timeResidual(); } catch ( ... ) {}
+		try { weight = arrival->weight(); } catch ( ... ) {}
+		marker->setArrivalResult(timeResidual, weight);
+
+		auto it = SC_D.importances.constFind(arrival->pickID().c_str());
+		if ( it != SC_D.importances.constEnd() ) {
+			marker->setDataImportance(*it);
+		}
+
+		marker->setDrawTimeResidual(SC_D.ui.actionShowArrivalResiduals->isChecked());
+
 		try {
 			if ( arrival->weight() <= 0.5 ) {
 				marker->setEnabled(false);
@@ -5100,6 +5222,55 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
 			}
 		}
 		catch ( ... ) {}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::loadDataImportances() {
+	SC_D.importances.clear();
+
+	if ( !SC_D.origin ) {
+		return;
+	}
+
+	if ( !SC_D.origin->commentCount() && SC_D.reader ) {
+		SC_D.reader->loadComments(SC_D.origin.get());
+	}
+
+	// LOCSAT stores one line per arrival: the pick ID followed by the data
+	// importances of the time, backazimuth and slowness datum
+	for ( size_t i = 0; i < SC_D.origin->commentCount(); ++i ) {
+		auto comment = SC_D.origin->comment(i);
+		if ( comment->id() != "locsat/importance" ) {
+			continue;
+		}
+
+		auto lines = QString(comment->text().c_str()).split('\n', QT_SKIP_EMPTY_PARTS);
+		for ( const auto &line : lines ) {
+			auto toks = line.split(' ', QT_SKIP_EMPTY_PARTS);
+			if ( toks.size() != 4 ) {
+				continue;
+			}
+
+			DataImportance importance;
+			bool ok[3];
+			importance.time = toks[1].toDouble(&ok[0]);
+			importance.backazimuth = toks[2].toDouble(&ok[1]);
+			importance.slowness = toks[3].toDouble(&ok[2]);
+			if ( !ok[0] || !ok[1] || !ok[2] ) {
+				SEISCOMP_WARNING("Invalid data importance of %s",
+				                 qPrintable(toks[0]));
+				continue;
+			}
+
+			SC_D.importances[toks[0]] = importance;
+		}
+
+		break;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5179,6 +5350,7 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 	SC_D.origin = origin;
 	figureOutTravelTimeTable();
+	loadDataImportances();
 
 	updateOriginInformation();
 	if ( SC_D.comboFilter->currentIndex() == 0 && SC_D.lastFilterIndex > 0 ) {
@@ -5448,6 +5620,7 @@ void PickerView::updateTransformations(PickerRecordLabel *label) {
 bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	SC_D.origin = o;
 	figureOutTravelTimeTable();
+	loadDataImportances();
 
 	// Remove picks and arrivals from all traces and update the ones
 	// from the new origin
@@ -5809,16 +5982,7 @@ bool PickerView::addTheoreticalArrivals(RecordViewItem* item,
 			delete ttt;
 		}
 
-		for ( int i = 0; i < item->widget()->markerCount(); ++i ) {
-			PickerMarker* m = static_cast<PickerMarker*>(item->widget()->marker(i));
-			if ( m->text() == "P" && m->isArrival() ) {
-				RecordMarker* m2 = item->widget()->marker("P" THEORETICAL_POSTFIX);
-				if ( m2 ) {
-					item->setValue(ITEM_RESIDUAL_INDEX, -fabs((double)(m->correctedTime() - m2->correctedTime())));
-					break;
-				}
-			}
-		}
+		updateItemResidual(item);
 
 		return true;
 	}
@@ -5844,6 +6008,10 @@ bool PickerView::fillTheoreticalArrivals() {
 		RecordViewItem* item = SC_D.recordView->itemAt(i);
 		if ( addTheoreticalArrivals(item, stream_id.networkCode(), stream_id.stationCode(), stream_id.locationCode()) )
 			stationSet = true;
+		else
+			// Residuals of the locator are available without theoretical
+			// arrivals
+			updateItemResidual(item);
 	}
 
 	SC_D.currentRecord->update();
@@ -8196,6 +8364,66 @@ void PickerView::sortByResidual() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::updateItemResidual(RecordViewItem *item) {
+	// The sort value is the largest absolute residual of all enabled
+	// arrivals of a trace. The residual of the locator is used if
+	// available, otherwise the residual with respect to the theoretical
+	// arrival of the same phase, e.g. for new picks. The value is
+	// negated to sort the largest residuals first.
+	RecordWidget *w = item->widget();
+	double maxResidual = 0;
+
+	for ( int i = 0; i < w->markerCount(); ++i ) {
+		auto m = static_cast<PickerMarker*>(w->marker(i));
+		if ( !m->isArrival() || !m->isEnabled() ) {
+			continue;
+		}
+
+		double residual;
+
+		if ( m->timeResidual() ) {
+			residual = *m->timeResidual();
+		}
+		else {
+			auto tm = w->marker(m->text() + THEORETICAL_POSTFIX);
+			if ( !tm ) {
+				continue;
+			}
+
+			residual = static_cast<double>(m->correctedTime() - tm->correctedTime());
+		}
+
+		maxResidual = std::max(maxResidual, fabs(residual));
+	}
+
+	item->setValue(ITEM_RESIDUAL_INDEX, -maxResidual);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showArrivalResiduals(bool show) {
+	for ( int r = 0; r < SC_D.recordView->rowCount(); ++r ) {
+		RecordWidget *w = SC_D.recordView->itemAt(r)->widget();
+
+		for ( int i = 0; i < w->markerCount(); ++i ) {
+			static_cast<PickerMarker*>(w->marker(i))->setDrawTimeResidual(show);
+		}
+
+		w->update();
+	}
+
+	// The zoom trace shows the markers of the current trace
+	SC_D.currentRecord->update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void PickerView::sortByPhase(const QString& phase) {
 	SC_D.recordView->sortByMarkerTime(phase);
 
@@ -9729,6 +9957,7 @@ void PickerView::resetPick() {
 	else
 		delete m;
 
+	updateItemResidual(item);
 	item->widget()->update();
 	SC_D.currentRecord->update();
 }
@@ -9754,6 +9983,7 @@ void PickerView::deletePick() {
 				else
 					m->setType(PickerMarker::Pick);
 
+				updateItemResidual(item);
 				item->widget()->update();
 				SC_D.currentRecord->update();
 			}
@@ -10073,7 +10303,7 @@ void PickerView::changeRotation(int index) {
 	else {
 		SC_D.ui.actionShowZComponent->setIcon(icon("component_1", colorTheme->orange));
 		SC_D.ui.actionShowZComponent->setText(QString::fromUtf8("First"));
-		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show First Component (N)"));
+		SC_D.ui.actionShowZComponent->setToolTip(QString::fromUtf8("Show First Component (Z)"));
 		SC_D.ui.actionShowNComponent->setIcon(icon("component_2", colorTheme->orange));
 		SC_D.ui.actionShowNComponent->setText(QString::fromUtf8("Second"));
 		SC_D.ui.actionShowNComponent->setToolTip(QString::fromUtf8("Show Second Component (N)"));
@@ -10459,6 +10689,7 @@ void PickerView::setArrivalState(int arrivalId, bool state) {
 			if ( state ) {
 				item->label()->setEnabled(true);
 			}
+			updateItemResidual(item);
 			break;
 		}
 	}
