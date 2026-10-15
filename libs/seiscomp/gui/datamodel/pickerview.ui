@@ -1457,7 +1457,7 @@
     <string>Show arrival residuals</string>
    </property>
    <property name="toolTip">
-    <string>Shows the time residuals of the locator next to the arrivals</string>
+    <string>Shows the time residuals of the locator and, if available, the data importances next to the arrivals</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>

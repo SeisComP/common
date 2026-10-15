@@ -29,6 +29,7 @@
 #include <seiscomp/gui/datamodel/origindialog.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
@@ -655,6 +656,7 @@ class PickerMarker : public RecordMarker {
 		, _slowness(m._slowness)
 		, _timeResidual(m._timeResidual)
 		, _weight(m._weight)
+		, _importance(m._importance)
 		, _drawTimeResidual(m._drawTimeResidual)
 		, _type(m._type)
 		, _slot(m._slot)
@@ -737,8 +739,7 @@ class PickerMarker : public RecordMarker {
 			_type = t;
 			if ( _type == Pick ) {
 				// The locator results are only valid for the arrival
-				_timeResidual = Core::None;
-				_weight = Core::None;
+				clearArrivalResult();
 				setPhaseCode("");
 				setEnabled(true);
 			}
@@ -853,6 +854,21 @@ class PickerMarker : public RecordMarker {
 
 		const OPT(double) &weight() const {
 			return _weight;
+		}
+
+		void setDataImportance(const DataImportance &importance) {
+			_importance = importance;
+		}
+
+		const DataImportance &dataImportance() const {
+			return _importance;
+		}
+
+		//! Removes the locator results, e.g. if the pick time changed
+		void clearArrivalResult() {
+			_timeResidual = Core::None;
+			_weight = Core::None;
+			_importance = DataImportance();
 		}
 
 		void setDrawTimeResidual(bool e) {
@@ -1091,6 +1107,9 @@ class PickerMarker : public RecordMarker {
 
 				QString text = QString("%1s").arg(*_timeResidual, 0, 'f', 2)
 				               .prepend(*_timeResidual >= 0 ? "+" : "");
+				if ( _importance.time >= 0 ) {
+					text += QString(" I=%1").arg(_importance.time, 0, 'f', 2);
+				}
 
 				int textX = x + 2 + painter.fontMetrics().horizontalAdvance(renderText() + " ");
 
@@ -1214,6 +1233,15 @@ class PickerMarker : public RecordMarker {
 				if ( _weight ) {
 					text += QString("\nweight: %1").arg(*_weight, 0, 'f', 2);
 				}
+				if ( _importance.time >= 0 ) {
+					text += QString("\ntime importance: %1").arg(_importance.time, 0, 'f', 3);
+				}
+				if ( _importance.backazimuth >= 0 ) {
+					text += QString("\nbackazimuth importance: %1").arg(_importance.backazimuth, 0, 'f', 3);
+				}
+				if ( _importance.slowness >= 0 ) {
+					text += QString("\nslowness importance: %1").arg(_importance.slowness, 0, 'f', 3);
+				}
 			}
 
 			return text;
@@ -1292,6 +1320,7 @@ class PickerMarker : public RecordMarker {
 		OPT(RealQuantity) _slowness;
 		OPT(double)       _timeResidual;
 		OPT(double)       _weight;
+		DataImportance    _importance;
 		bool              _drawTimeResidual{false};
 		TimeQuantity      _time;
 		QString           _filter;
@@ -4098,7 +4127,7 @@ void PickerView::updatePhaseMarker(Seiscomp::Gui::RecordWidget* widget,
 
 		// The locator residual is not valid anymore for the new time
 		if ( marker->correctedTime() != time ) {
-			marker->setArrivalResult(Core::None, Core::None);
+			marker->clearArrivalResult();
 		}
 
 		// Set the marker time to the new picked time
@@ -5173,6 +5202,12 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
 		try { timeResidual = arrival->timeResidual(); } catch ( ... ) {}
 		try { weight = arrival->weight(); } catch ( ... ) {}
 		marker->setArrivalResult(timeResidual, weight);
+
+		auto it = SC_D.importances.constFind(arrival->pickID().c_str());
+		if ( it != SC_D.importances.constEnd() ) {
+			marker->setDataImportance(*it);
+		}
+
 		marker->setDrawTimeResidual(SC_D.ui.actionShowArrivalResiduals->isChecked());
 
 		try {
@@ -5182,6 +5217,55 @@ void PickerView::addArrival(Seiscomp::Gui::RecordWidget *widget,
 			}
 		}
 		catch ( ... ) {}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::loadDataImportances() {
+	SC_D.importances.clear();
+
+	if ( !SC_D.origin ) {
+		return;
+	}
+
+	if ( !SC_D.origin->commentCount() && SC_D.reader ) {
+		SC_D.reader->loadComments(SC_D.origin.get());
+	}
+
+	// LOCSAT stores one line per arrival: the pick ID followed by the data
+	// importances of the time, backazimuth and slowness datum
+	for ( size_t i = 0; i < SC_D.origin->commentCount(); ++i ) {
+		auto comment = SC_D.origin->comment(i);
+		if ( comment->id() != "locsat/importance" ) {
+			continue;
+		}
+
+		auto lines = QString(comment->text().c_str()).split('\n', QT_SKIP_EMPTY_PARTS);
+		for ( const auto &line : lines ) {
+			auto toks = line.split(' ', QT_SKIP_EMPTY_PARTS);
+			if ( toks.size() != 4 ) {
+				continue;
+			}
+
+			DataImportance importance;
+			bool ok[3];
+			importance.time = toks[1].toDouble(&ok[0]);
+			importance.backazimuth = toks[2].toDouble(&ok[1]);
+			importance.slowness = toks[3].toDouble(&ok[2]);
+			if ( !ok[0] || !ok[1] || !ok[2] ) {
+				SEISCOMP_WARNING("Invalid data importance of %s",
+				                 qPrintable(toks[0]));
+				continue;
+			}
+
+			SC_D.importances[toks[0]] = importance;
+		}
+
+		break;
 	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5261,6 +5345,7 @@ bool PickerView::setOrigin(Seiscomp::DataModel::Origin* origin,
 
 	SC_D.origin = origin;
 	figureOutTravelTimeTable();
+	loadDataImportances();
 
 	updateOriginInformation();
 	if ( SC_D.comboFilter->currentIndex() == 0 && SC_D.lastFilterIndex > 0 ) {
@@ -5530,6 +5615,7 @@ void PickerView::updateTransformations(PickerRecordLabel *label) {
 bool PickerView::setOrigin(Seiscomp::DataModel::Origin* o) {
 	SC_D.origin = o;
 	figureOutTravelTimeTable();
+	loadDataImportances();
 
 	// Remove picks and arrivals from all traces and update the ones
 	// from the new origin
