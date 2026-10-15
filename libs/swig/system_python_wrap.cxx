@@ -8858,6 +8858,12 @@ SWIGINTERN PyObject *_wrap_new_CommandLine(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -8905,6 +8911,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addGroup(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -8974,6 +8986,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addOption(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9030,6 +9048,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_parse__SWIG_0(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9099,6 +9123,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_parse__SWIG_1(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9189,6 +9219,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_printOptions(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9241,6 +9277,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_hasOption(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9282,6 +9324,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_unrecognizedOptions(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9334,6 +9382,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionInt(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9389,6 +9443,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionInts(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9442,6 +9502,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionBool(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9497,6 +9563,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionBools(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9550,6 +9622,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionDouble(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9605,6 +9683,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionDoubles(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9659,6 +9743,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionString(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -9712,6 +9802,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_optionStrings(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9778,6 +9874,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addIntOption__SWIG_0(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9856,6 +9958,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addIntOption__SWIG_1(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -9994,6 +10102,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addIntsOption(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -10063,6 +10177,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addDoubleOption__SWIG_0(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10141,6 +10261,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addDoubleOption__SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10279,6 +10405,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addDoublesOption(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -10348,6 +10480,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addBoolOption__SWIG_0(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10426,6 +10564,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addBoolOption__SWIG_1(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10564,6 +10708,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addBoolsOption(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -10633,6 +10783,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addStringOption__SWIG_0(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10716,6 +10872,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addStringOption__SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10854,6 +11016,12 @@ SWIGINTERN PyObject *_wrap_CommandLine_addStringsOption(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -10898,6 +11066,12 @@ SWIGINTERN PyObject *_wrap_delete_CommandLine(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -10949,6 +11123,12 @@ SWIGINTERN PyObject *_wrap_delete_Environment(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -10978,6 +11158,12 @@ SWIGINTERN PyObject *_wrap_Environment_Instance(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11019,6 +11205,12 @@ SWIGINTERN PyObject *_wrap_Environment_homeDir(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11058,6 +11250,12 @@ SWIGINTERN PyObject *_wrap_Environment_configDir(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11099,6 +11297,12 @@ SWIGINTERN PyObject *_wrap_Environment_appConfigDir(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11138,6 +11342,12 @@ SWIGINTERN PyObject *_wrap_Environment_globalConfigDir(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11179,6 +11389,12 @@ SWIGINTERN PyObject *_wrap_Environment_installDir(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11219,6 +11435,12 @@ SWIGINTERN PyObject *_wrap_Environment_shareDir(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11258,6 +11480,12 @@ SWIGINTERN PyObject *_wrap_Environment_logDir(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11310,6 +11538,12 @@ SWIGINTERN PyObject *_wrap_Environment_configFileName(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11365,6 +11599,12 @@ SWIGINTERN PyObject *_wrap_Environment_appConfigFileName(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11418,6 +11658,12 @@ SWIGINTERN PyObject *_wrap_Environment_globalConfigFileName(PyObject *self, PyOb
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11473,6 +11719,12 @@ SWIGINTERN PyObject *_wrap_Environment_logFile(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11527,6 +11779,12 @@ SWIGINTERN PyObject *_wrap_Environment_absolutePath(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11580,6 +11838,12 @@ SWIGINTERN PyObject *_wrap_Environment_resolvePath(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11642,6 +11906,12 @@ SWIGINTERN PyObject *_wrap_Environment_configFileLocation(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -11728,6 +11998,12 @@ SWIGINTERN PyObject *_wrap_Environment_initConfig__SWIG_0(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11805,6 +12081,12 @@ SWIGINTERN PyObject *_wrap_Environment_initConfig__SWIG_1(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11874,6 +12156,12 @@ SWIGINTERN PyObject *_wrap_Environment_initConfig__SWIG_2(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -11934,6 +12222,12 @@ SWIGINTERN PyObject *_wrap_Environment_initConfig__SWIG_3(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12111,6 +12405,12 @@ SWIGINTERN PyObject *_wrap_delete_PluginRegistry(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12141,6 +12441,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_Instance(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12169,6 +12475,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_Reset(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12220,6 +12532,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_addPluginName(PyObject *self, PyObject
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12274,6 +12592,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_addPluginPath(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12327,6 +12651,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_addPackagePath(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12368,6 +12698,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_loadPlugins(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12416,6 +12752,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_loadConfiguredPlugins(PyObject *self, 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12454,6 +12796,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_freePlugins(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12495,6 +12843,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_pluginCount(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12534,6 +12888,12 @@ SWIGINTERN PyObject *_wrap_PluginRegistry_errors(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12583,6 +12943,12 @@ SWIGINTERN PyObject *_wrap_resolvePath(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12636,6 +13002,12 @@ SWIGINTERN PyObject *_wrap_join(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12713,6 +13085,12 @@ SWIGINTERN PyObject *_wrap_new_SystemApplication(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12759,6 +13137,12 @@ SWIGINTERN PyObject *_wrap_delete_SystemApplication(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12797,6 +13181,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication___call__(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12838,6 +13228,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_arguments(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12876,6 +13272,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_commandline__SWIG_0(PyObject *self,
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -12913,6 +13315,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_commandline__SWIG_1(PyObject *self,
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -12990,6 +13398,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configuration(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13030,6 +13444,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_path(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13069,6 +13489,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_name(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13121,6 +13547,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_addPluginPackagePath(PyObject *self
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13163,6 +13595,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_frameworkVersion(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13202,6 +13640,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_execute(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13249,6 +13693,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_exit(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13287,6 +13737,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_quit(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13327,6 +13783,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_isExitRequested(PyObject *self, PyO
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13376,6 +13838,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_printUsage(PyObject *self, PyObject
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -13418,6 +13886,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_crashHandler(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13465,6 +13939,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_setDaemonEnabled(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13504,6 +13984,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_logVerbosity(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13551,6 +14037,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_setLoggingContext(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13590,6 +14082,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_logContext(PyObject *self, PyObject
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13637,6 +14135,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_setLoggingComponent(PyObject *self,
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13676,6 +14180,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_logComponent(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13722,6 +14232,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_setLoggingToStdErr(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13774,6 +14290,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_addLoggingComponentSubscription(PyO
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -13814,6 +14336,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_closeLogging(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13864,6 +14392,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_version(PyObject *self, PyObject *a
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -13900,6 +14434,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_Instance(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -13952,6 +14492,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_HandleSignals(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -14006,6 +14552,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_createBaseCommandLineDescription(Py
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14063,6 +14615,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_createCommandLineDescription(PyObje
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14122,6 +14680,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_handleCommandLineOptions(PyObject *
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14179,6 +14743,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_handlePreFork(PyObject *self, PyObj
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14238,6 +14808,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_validateParameters(PyObject *self, 
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14295,6 +14871,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_init(PyObject *self, PyObject *args
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14354,6 +14936,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_run(PyObject *self, PyObject *args)
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14410,6 +14998,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_done(PyObject *self, PyObject *args
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14469,6 +15063,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_forkProcess(PyObject *self, PyObjec
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14526,6 +15126,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_initConfiguration(PyObject *self, P
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14585,6 +15191,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_initPlugins(PyObject *self, PyObjec
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14642,6 +15254,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_printVersion(PyObject *self, PyObje
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14698,6 +15316,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_printConfigVariables(PyObject *self
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14777,6 +15401,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_schemaValidationNames(PyObject *sel
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14834,6 +15464,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_validateSchemaParameters(PyObject *
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -14900,6 +15536,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_handleInitializationError(PyObject 
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -14964,6 +15606,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_showMessage(PyObject *self, PyObjec
       }
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
+      }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
       }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
@@ -15032,6 +15680,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_showWarning(PyObject *self, PyObjec
       catch ( const Swig::DirectorException &e ) {
         SWIG_fail;
       }
+      catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+        SWIG_exception(SWIG_ValueError, e.what());
+      }
+      catch ( const Seiscomp::Config::TypeConversionException &e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+      }
       catch ( const Seiscomp::Core::ValueException &e) {
         SWIG_exception(SWIG_ValueError, e.what());
       }
@@ -15089,6 +15743,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetBool(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15142,6 +15802,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetInt(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15197,6 +15863,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetDouble(PyObject *self, PyO
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15250,6 +15922,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetString(PyObject *self, PyO
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15305,6 +15983,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetPath(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15358,6 +16042,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetBools(PyObject *self, PyOb
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15413,6 +16103,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetInts(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15467,6 +16163,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetDoubles(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15520,6 +16222,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configGetStrings(PyObject *self, Py
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15582,6 +16290,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetBool(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15643,6 +16357,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetInt(PyObject *self, PyObje
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15703,6 +16423,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetDouble(PyObject *self, PyO
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15769,6 +16495,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetString(PyObject *self, PyO
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15838,6 +16570,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetBools(PyObject *self, PyOb
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -15905,6 +16643,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetInts(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -15974,6 +16718,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetDoubles(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16042,6 +16792,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configSetStrings(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16097,6 +16853,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_configUnset(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16138,6 +16900,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_saveConfiguration(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16184,6 +16952,12 @@ SWIGINTERN PyObject *_wrap_SystemApplication_bindSettings(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16253,6 +17027,12 @@ SWIGINTERN PyObject *_wrap_new_HostInfo(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16291,6 +17071,12 @@ SWIGINTERN PyObject *_wrap_delete_HostInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16332,6 +17118,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_pid(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16371,6 +17163,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_name(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16412,6 +17210,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_login(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16451,6 +17255,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_programName(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16492,6 +17302,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_totalMemory(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16531,6 +17347,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_getCurrentMemoryUsage(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16578,6 +17400,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_getCurrentCpuUsage__SWIG_0(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16615,6 +17443,12 @@ SWIGINTERN PyObject *_wrap_HostInfo_getCurrentCpuUsage__SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16699,6 +17533,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_ClassName(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16728,6 +17568,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_TypeInfo(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16769,6 +17615,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_className(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16809,6 +17661,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_typeInfo(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -16846,6 +17704,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_Cast__SWIG_0(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16885,6 +17749,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_ConstCast__SWIG_0(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -16931,6 +17801,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_Cast__SWIG_1(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -17014,6 +17890,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_ConstCast__SWIG_1(PyObject *self, Py_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17079,6 +17961,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaParameter(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17128,6 +18016,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameter_serialize(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -17696,6 +18590,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaParameter(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17737,6 +18637,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_ClassName(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17766,6 +18672,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_TypeInfo(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -17807,6 +18719,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_className(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17847,6 +18765,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_typeInfo(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -17884,6 +18808,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_Cast__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -17923,6 +18853,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_ConstCast__SWIG_0(PyObject *self, Py
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -17969,6 +18905,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_Cast__SWIG_1(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18052,6 +18994,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_ConstCast__SWIG_1(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18117,6 +19065,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaParameters(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18157,6 +19111,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_parameterCount(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18205,6 +19165,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_parameter(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18251,6 +19217,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_add__SWIG_0(PyObject *self, Py_ssize
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18290,6 +19262,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_groupCount(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18338,6 +19316,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_group(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18384,6 +19368,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_add__SWIG_1(PyObject *self, Py_ssize
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18423,6 +19413,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_structureCount(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18471,6 +19467,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_structure(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18516,6 +19518,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_add__SWIG_2(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18618,6 +19626,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_isEmpty(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18663,6 +19677,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_accept(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18712,6 +19732,12 @@ SWIGINTERN PyObject *_wrap_SchemaParameters_serialize(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18806,6 +19832,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaParameters(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18847,6 +19879,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_ClassName(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18876,6 +19914,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_TypeInfo(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -18917,6 +19961,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_className(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18957,6 +20007,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_typeInfo(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -18994,6 +20050,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_Cast__SWIG_0(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19033,6 +20095,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_ConstCast__SWIG_0(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19079,6 +20147,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_Cast__SWIG_1(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19161,6 +20235,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_ConstCast__SWIG_1(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19245,6 +20325,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructExtent_serialize(PyObject *self, PyObject
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19398,6 +20484,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaStructExtent(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19437,6 +20529,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaStructExtent(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19479,6 +20577,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_ClassName(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19508,6 +20612,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_TypeInfo(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19549,6 +20659,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_className(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19589,6 +20705,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_typeInfo(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19626,6 +20748,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_Cast__SWIG_0(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19665,6 +20793,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_ConstCast__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19711,6 +20845,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_Cast__SWIG_1(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -19794,6 +20934,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_ConstCast__SWIG_1(PyObject *self, Py_ssiz
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19859,6 +21005,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaGroup(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -19908,6 +21060,12 @@ SWIGINTERN PyObject *_wrap_SchemaGroup_serialize(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20070,6 +21228,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaGroup(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20111,6 +21275,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_ClassName(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20140,6 +21310,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_TypeInfo(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20181,6 +21357,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_className(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20221,6 +21403,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_typeInfo(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20258,6 +21446,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_Cast__SWIG_0(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20297,6 +21491,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_ConstCast__SWIG_0(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20343,6 +21543,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_Cast__SWIG_1(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20426,6 +21632,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_ConstCast__SWIG_1(PyObject *self, Py_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20491,6 +21703,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaStructure(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20540,6 +21758,12 @@ SWIGINTERN PyObject *_wrap_SchemaStructure_serialize(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20885,6 +22109,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaStructure(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20926,6 +22156,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_ClassName(PyObject *self, PyOb
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -20955,6 +22191,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_TypeInfo(PyObject *self, PyObj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -20996,6 +22238,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_className(PyObject *self, PyOb
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21036,6 +22284,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_typeInfo(PyObject *self, PyObj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21073,6 +22327,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_Cast__SWIG_0(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21112,6 +22372,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_ConstCast__SWIG_0(PyObject *se
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21158,6 +22424,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_Cast__SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21241,6 +22513,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_ConstCast__SWIG_1(PyObject *se
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21306,6 +22584,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaSetupInputOption(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21355,6 +22639,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInputOption_serialize(PyObject *self, PyOb
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21571,6 +22861,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaSetupInputOption(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21612,6 +22908,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_ClassName(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21641,6 +22943,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_TypeInfo(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21682,6 +22990,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_className(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21722,6 +23036,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_typeInfo(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21759,6 +23079,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_Cast__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21798,6 +23124,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_ConstCast__SWIG_0(PyObject *self, Py
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21844,6 +23176,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_Cast__SWIG_1(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -21927,6 +23265,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_ConstCast__SWIG_1(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -21992,6 +23336,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaSetupInput(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22041,6 +23391,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupInput_serialize(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22257,6 +23613,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaSetupInput(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22298,6 +23660,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_ClassName(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22327,6 +23695,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_TypeInfo(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22368,6 +23742,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_className(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22408,6 +23788,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_typeInfo(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22445,6 +23831,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_Cast__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22484,6 +23876,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_ConstCast__SWIG_0(PyObject *self, Py
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22530,6 +23928,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_Cast__SWIG_1(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22613,6 +24017,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_ConstCast__SWIG_1(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22678,6 +24088,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaSetupGroup(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22727,6 +24143,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetupGroup_serialize(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22882,6 +24304,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaSetupGroup(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22923,6 +24351,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_ClassName(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -22952,6 +24386,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_TypeInfo(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -22993,6 +24433,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_className(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23033,6 +24479,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_typeInfo(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23070,6 +24522,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_Cast__SWIG_0(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23109,6 +24567,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_ConstCast__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23155,6 +24619,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_Cast__SWIG_1(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23238,6 +24708,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_ConstCast__SWIG_1(PyObject *self, Py_ssiz
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23303,6 +24779,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaSetup(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23352,6 +24834,12 @@ SWIGINTERN PyObject *_wrap_SchemaSetup_serialize(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23446,6 +24934,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaSetup(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23487,6 +24981,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_ClassName(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23516,6 +25016,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_TypeInfo(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23557,6 +25063,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_className(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23597,6 +25109,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_typeInfo(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23634,6 +25152,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_Cast__SWIG_0(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23673,6 +25197,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_ConstCast__SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23719,6 +25249,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_Cast__SWIG_1(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23802,6 +25338,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_ConstCast__SWIG_1(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23867,6 +25409,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaModule(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -23907,6 +25455,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_isStandalone(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -23953,6 +25507,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_accept(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24002,6 +25562,12 @@ SWIGINTERN PyObject *_wrap_SchemaModule_serialize(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24556,6 +26122,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaModule(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -24597,6 +26169,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_ClassName(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -24626,6 +26204,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_TypeInfo(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24667,6 +26251,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_className(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -24707,6 +26297,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_typeInfo(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -24744,6 +26340,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_Cast__SWIG_0(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24783,6 +26385,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_ConstCast__SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24829,6 +26437,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_Cast__SWIG_1(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -24912,6 +26526,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_ConstCast__SWIG_1(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -24977,6 +26597,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaPlugin(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25026,6 +26652,12 @@ SWIGINTERN PyObject *_wrap_SchemaPlugin_serialize(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25350,6 +26982,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaPlugin(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25391,6 +27029,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_ClassName(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25420,6 +27064,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_TypeInfo(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25461,6 +27111,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_className(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25501,6 +27157,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_typeInfo(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25538,6 +27200,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_Cast__SWIG_0(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25577,6 +27245,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_ConstCast__SWIG_0(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25623,6 +27297,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_Cast__SWIG_1(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -25706,6 +27386,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_ConstCast__SWIG_1(PyObject *self, Py_ss
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25771,6 +27457,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaBinding(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -25820,6 +27512,12 @@ SWIGINTERN PyObject *_wrap_SchemaBinding_serialize(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26158,6 +27856,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaBinding(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26198,6 +27902,12 @@ SWIGINTERN PyObject *_wrap_new_SchemaDefinitions(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26257,6 +27967,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_createAlias(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26309,6 +28025,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_removeAlias(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26350,6 +28072,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_moduleCount(PyObject *self, PyObjec
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26397,6 +28125,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_module__SWIG_0(PyObject *self, Py_s
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26443,6 +28177,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_module__SWIG_1(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26496,6 +28236,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_module__SWIG_2(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26605,6 +28351,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_add__SWIG_0(PyObject *self, Py_ssiz
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26644,6 +28396,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_pluginCount(PyObject *self, PyObjec
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26691,6 +28449,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_plugin__SWIG_0(PyObject *self, Py_s
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26737,6 +28501,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_plugin__SWIG_1(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26790,6 +28560,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_plugin__SWIG_2(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26899,6 +28675,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_add__SWIG_1(PyObject *self, Py_ssiz
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -26938,6 +28720,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_bindingCount(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -26985,6 +28773,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_binding__SWIG_0(PyObject *self, Py_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27031,6 +28825,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_binding__SWIG_1(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27084,6 +28884,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_binding__SWIG_2(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27193,6 +28999,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_add__SWIG_2(PyObject *self, Py_ssiz
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27301,6 +29113,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_pluginsForModule__SWIG_0(PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27353,6 +29171,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_pluginsForModule__SWIG_1(PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27447,6 +29271,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_bindingsForModule__SWIG_0(PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27499,6 +29329,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_bindingsForModule__SWIG_1(PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27595,6 +29431,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_serialize(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27643,6 +29485,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_load(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27685,6 +29533,12 @@ SWIGINTERN PyObject *_wrap_SchemaDefinitions_reload(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27723,6 +29577,12 @@ SWIGINTERN PyObject *_wrap_delete_SchemaDefinitions(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27789,6 +29649,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_aboutToRead(PyObject *self, PyObject *
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27837,6 +29703,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_finishedReading(PyObject *self, PyObje
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27888,6 +29760,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_handleReadError(PyObject *self, PyObje
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -27936,6 +29814,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_aboutToWrite(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -27997,6 +29881,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_finishedWriting(PyObject *self, PyObje
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28045,6 +29935,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_hasWriteError(PyObject *self, PyObject
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28107,6 +30003,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_handleWriteTimeMismatch(PyObject *self
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28158,6 +30060,12 @@ SWIGINTERN PyObject *_wrap_ConfigDelegate_caseSensitivityConflict(PyObject *self
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28187,6 +30095,12 @@ SWIGINTERN PyObject *_wrap_new_ConfigDelegate(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28226,6 +30140,12 @@ SWIGINTERN PyObject *_wrap_delete_ConfigDelegate(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28268,6 +30188,12 @@ SWIGINTERN PyObject *_wrap_new_SymbolMapItem__SWIG_0(PyObject *self, Py_ssize_t 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28309,6 +30235,12 @@ SWIGINTERN PyObject *_wrap_new_SymbolMapItem__SWIG_1(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28487,6 +30419,12 @@ SWIGINTERN PyObject *_wrap_delete_SymbolMapItem(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28536,6 +30474,12 @@ SWIGINTERN PyObject *_wrap_Container_Cast__SWIG_0(PyObject *self, Py_ssize_t nob
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28574,6 +30518,12 @@ SWIGINTERN PyObject *_wrap_Container_ConstCast__SWIG_0(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28620,6 +30570,12 @@ SWIGINTERN PyObject *_wrap_Container_Cast__SWIG_1(PyObject *self, Py_ssize_t nob
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28703,6 +30659,12 @@ SWIGINTERN PyObject *_wrap_Container_ConstCast__SWIG_1(PyObject *self, Py_ssize_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28783,6 +30745,12 @@ SWIGINTERN PyObject *_wrap_Container_add__SWIG_0(PyObject *self, Py_ssize_t nobj
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28830,6 +30798,12 @@ SWIGINTERN PyObject *_wrap_Container_parameter(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -28869,6 +30843,12 @@ SWIGINTERN PyObject *_wrap_Container_parameterCount(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28914,6 +30894,12 @@ SWIGINTERN PyObject *_wrap_Container_add__SWIG_1(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -28962,6 +30948,12 @@ SWIGINTERN PyObject *_wrap_Container_group(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29001,6 +30993,12 @@ SWIGINTERN PyObject *_wrap_Container_groupCount(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29046,6 +31044,12 @@ SWIGINTERN PyObject *_wrap_Container_add__SWIG_2(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29155,6 +31159,12 @@ SWIGINTERN PyObject *_wrap_Container_structure(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29194,6 +31204,12 @@ SWIGINTERN PyObject *_wrap_Container_structureCount(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29241,6 +31257,12 @@ SWIGINTERN PyObject *_wrap_Container_addType(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29287,6 +31309,12 @@ SWIGINTERN PyObject *_wrap_Container_hasStructure__SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29340,6 +31368,12 @@ SWIGINTERN PyObject *_wrap_Container_hasStructure__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29443,6 +31477,12 @@ SWIGINTERN PyObject *_wrap_Container_instantiate(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29491,6 +31531,12 @@ SWIGINTERN PyObject *_wrap_Container_remove(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29543,6 +31589,12 @@ SWIGINTERN PyObject *_wrap_Container_findStructureType(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -29598,6 +31650,12 @@ SWIGINTERN PyObject *_wrap_Container_findParameter(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29652,6 +31710,12 @@ SWIGINTERN PyObject *_wrap_Container_findContainer(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -29699,6 +31763,12 @@ SWIGINTERN PyObject *_wrap_Container_accept(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30124,6 +32194,12 @@ SWIGINTERN PyObject *_wrap_delete_Container(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30161,6 +32237,12 @@ SWIGINTERN PyObject *_wrap_Parameter_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30190,6 +32272,12 @@ SWIGINTERN PyObject *_wrap_Parameter_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30231,6 +32319,12 @@ SWIGINTERN PyObject *_wrap_Parameter_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30270,6 +32364,12 @@ SWIGINTERN PyObject *_wrap_Parameter_typeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30317,6 +32417,12 @@ SWIGINTERN PyObject *_wrap_new_Parameter__SWIG_0(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30371,6 +32477,12 @@ SWIGINTERN PyObject *_wrap_new_Parameter__SWIG_1(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30465,6 +32577,12 @@ SWIGINTERN PyObject *_wrap_Parameter_copy__SWIG_0(PyObject *self, Py_ssize_t nob
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30503,6 +32621,12 @@ SWIGINTERN PyObject *_wrap_Parameter_copy__SWIG_1(PyObject *self, Py_ssize_t nob
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -30587,6 +32711,12 @@ SWIGINTERN PyObject *_wrap_Parameter_clone(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30637,6 +32767,12 @@ SWIGINTERN PyObject *_wrap_Parameter_dump(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30684,6 +32820,12 @@ SWIGINTERN PyObject *_wrap_Parameter_inherits(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30729,6 +32871,12 @@ SWIGINTERN PyObject *_wrap_Parameter_updateFinalValue__SWIG_0(PyObject *self, Py
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -30765,6 +32913,12 @@ SWIGINTERN PyObject *_wrap_Parameter_updateFinalValue__SWIG_1(PyObject *self, Py
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31246,6 +33400,12 @@ SWIGINTERN PyObject *_wrap_delete_Parameter(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -31287,6 +33447,12 @@ SWIGINTERN PyObject *_wrap_Structure_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -31316,6 +33482,12 @@ SWIGINTERN PyObject *_wrap_Structure_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31357,6 +33529,12 @@ SWIGINTERN PyObject *_wrap_Structure_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -31396,6 +33574,12 @@ SWIGINTERN PyObject *_wrap_Structure_typeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31452,6 +33636,12 @@ SWIGINTERN PyObject *_wrap_new_Structure__SWIG_0(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31521,6 +33711,12 @@ SWIGINTERN PyObject *_wrap_new_Structure__SWIG_1(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31625,6 +33821,12 @@ SWIGINTERN PyObject *_wrap_Structure_copy__SWIG_0(PyObject *self, Py_ssize_t nob
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -31663,6 +33865,12 @@ SWIGINTERN PyObject *_wrap_Structure_copy__SWIG_1(PyObject *self, Py_ssize_t nob
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31747,6 +33955,12 @@ SWIGINTERN PyObject *_wrap_Structure_clone(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -31795,6 +34009,12 @@ SWIGINTERN PyObject *_wrap_Structure_instantiate(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -31846,6 +34066,12 @@ SWIGINTERN PyObject *_wrap_Structure_dump(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32055,6 +34281,12 @@ SWIGINTERN PyObject *_wrap_delete_Structure(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32096,6 +34328,12 @@ SWIGINTERN PyObject *_wrap_Group_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32125,6 +34363,12 @@ SWIGINTERN PyObject *_wrap_Group_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32166,6 +34410,12 @@ SWIGINTERN PyObject *_wrap_Group_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32205,6 +34455,12 @@ SWIGINTERN PyObject *_wrap_Group_typeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32252,6 +34508,12 @@ SWIGINTERN PyObject *_wrap_new_Group__SWIG_0(PyObject *self, Py_ssize_t nobjs, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32306,6 +34568,12 @@ SWIGINTERN PyObject *_wrap_new_Group__SWIG_1(PyObject *self, Py_ssize_t nobjs, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32400,6 +34668,12 @@ SWIGINTERN PyObject *_wrap_Group_copy__SWIG_0(PyObject *self, Py_ssize_t nobjs, 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32438,6 +34712,12 @@ SWIGINTERN PyObject *_wrap_Group_copy__SWIG_1(PyObject *self, Py_ssize_t nobjs, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32522,6 +34802,12 @@ SWIGINTERN PyObject *_wrap_Group_clone(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32571,6 +34857,12 @@ SWIGINTERN PyObject *_wrap_Group_dump(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32665,6 +34957,12 @@ SWIGINTERN PyObject *_wrap_delete_Group(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32706,6 +35004,12 @@ SWIGINTERN PyObject *_wrap_Section_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32735,6 +35039,12 @@ SWIGINTERN PyObject *_wrap_Section_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32776,6 +35086,12 @@ SWIGINTERN PyObject *_wrap_Section_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32816,6 +35132,12 @@ SWIGINTERN PyObject *_wrap_Section_typeInfo(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -32854,6 +35176,12 @@ SWIGINTERN PyObject *_wrap_new_Section__SWIG_0(PyObject *self, Py_ssize_t nobjs,
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32900,6 +35228,12 @@ SWIGINTERN PyObject *_wrap_new_Section__SWIG_1(PyObject *self, Py_ssize_t nobjs,
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -32984,6 +35318,12 @@ SWIGINTERN PyObject *_wrap_Section_copy__SWIG_0(PyObject *self, Py_ssize_t nobjs
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33022,6 +35362,12 @@ SWIGINTERN PyObject *_wrap_Section_copy__SWIG_1(PyObject *self, Py_ssize_t nobjs
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33106,6 +35452,12 @@ SWIGINTERN PyObject *_wrap_Section_clone(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33155,6 +35507,12 @@ SWIGINTERN PyObject *_wrap_Section_dump(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33317,6 +35675,12 @@ SWIGINTERN PyObject *_wrap_delete_Section(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33358,6 +35722,12 @@ SWIGINTERN PyObject *_wrap_Binding_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33387,6 +35757,12 @@ SWIGINTERN PyObject *_wrap_Binding_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33428,6 +35804,12 @@ SWIGINTERN PyObject *_wrap_Binding_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33467,6 +35849,12 @@ SWIGINTERN PyObject *_wrap_Binding_typeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33513,6 +35901,12 @@ SWIGINTERN PyObject *_wrap_new_Binding(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33555,6 +35949,12 @@ SWIGINTERN PyObject *_wrap_Binding_clone(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33606,6 +36006,12 @@ SWIGINTERN PyObject *_wrap_Binding_dump(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33653,6 +36059,12 @@ SWIGINTERN PyObject *_wrap_Binding_section(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33692,6 +36104,12 @@ SWIGINTERN PyObject *_wrap_Binding_sectionCount(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33744,6 +36162,12 @@ SWIGINTERN PyObject *_wrap_Binding_findContainer(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -33799,6 +36223,12 @@ SWIGINTERN PyObject *_wrap_Binding_findParameter(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -33846,6 +36276,12 @@ SWIGINTERN PyObject *_wrap_Binding_accept(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34170,6 +36606,12 @@ SWIGINTERN PyObject *_wrap_delete_Binding(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34221,6 +36663,12 @@ SWIGINTERN PyObject *_wrap_new_BindingCategory(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34277,6 +36725,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_binding(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34318,6 +36772,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_clone(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34369,6 +36829,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_dump(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34416,6 +36882,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_hasBinding(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34475,6 +36947,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_instantiate(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34524,6 +37002,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_alias(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34569,6 +37053,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_removeInstance__SWIG_0(PyObject *self
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34616,6 +37106,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_removeInstance__SWIG_1(PyObject *self
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -34716,6 +37212,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_findContainer(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34770,6 +37272,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_findParameter(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -34817,6 +37325,12 @@ SWIGINTERN PyObject *_wrap_BindingCategory_accept(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35080,6 +37594,12 @@ SWIGINTERN PyObject *_wrap_delete_BindingCategory(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35129,6 +37649,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_Cast__SWIG_0(PyObject *self, Py_ssize_t
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35167,6 +37693,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_ConstCast__SWIG_0(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35213,6 +37745,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_Cast__SWIG_1(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35296,6 +37834,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_ConstCast__SWIG_1(PyObject *self, Py_ss
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35361,6 +37905,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_ClassName(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35390,6 +37940,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_TypeInfo(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35431,6 +37987,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_className(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35470,6 +38032,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_typeInfo(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35516,6 +38084,12 @@ SWIGINTERN PyObject *_wrap_new_ModuleBinding(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35558,6 +38132,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_clone(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35605,6 +38185,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_add(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35657,6 +38243,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_category(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35719,6 +38311,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_writeConfig__SWIG_0(PyObject *self, Py_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35771,6 +38369,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_writeConfig__SWIG_1(PyObject *self, Py_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35872,6 +38476,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_dump(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -35923,6 +38533,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_findContainer(PyObject *self, PyObject 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -35978,6 +38594,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_findParameter(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36025,6 +38647,12 @@ SWIGINTERN PyObject *_wrap_ModuleBinding_accept(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36180,6 +38808,12 @@ SWIGINTERN PyObject *_wrap_delete_ModuleBinding(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36220,6 +38854,12 @@ SWIGINTERN PyObject *_wrap_new_StationID__SWIG_0(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36276,6 +38916,12 @@ SWIGINTERN PyObject *_wrap_new_StationID__SWIG_1(PyObject *self, Py_ssize_t nobj
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36364,6 +39010,12 @@ SWIGINTERN PyObject *_wrap_StationID___eq__(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36418,6 +39070,12 @@ SWIGINTERN PyObject *_wrap_StationID___lt__(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36585,6 +39243,12 @@ SWIGINTERN PyObject *_wrap_delete_StationID(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36634,6 +39298,12 @@ SWIGINTERN PyObject *_wrap_Module_Cast__SWIG_0(PyObject *self, Py_ssize_t nobjs,
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36672,6 +39342,12 @@ SWIGINTERN PyObject *_wrap_Module_ConstCast__SWIG_0(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36718,6 +39394,12 @@ SWIGINTERN PyObject *_wrap_Module_Cast__SWIG_1(PyObject *self, Py_ssize_t nobjs,
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36801,6 +39483,12 @@ SWIGINTERN PyObject *_wrap_Module_ConstCast__SWIG_1(PyObject *self, Py_ssize_t n
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36866,6 +39554,12 @@ SWIGINTERN PyObject *_wrap_Module_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36895,6 +39589,12 @@ SWIGINTERN PyObject *_wrap_Module_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -36936,6 +39636,12 @@ SWIGINTERN PyObject *_wrap_Module_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -36975,6 +39681,12 @@ SWIGINTERN PyObject *_wrap_Module_typeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37016,6 +39728,12 @@ SWIGINTERN PyObject *_wrap_new_Module(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37056,6 +39774,12 @@ SWIGINTERN PyObject *_wrap_Module_hasConfiguration(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37102,6 +39826,12 @@ SWIGINTERN PyObject *_wrap_Module_add(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37150,6 +39880,12 @@ SWIGINTERN PyObject *_wrap_Module_section(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37189,6 +39925,12 @@ SWIGINTERN PyObject *_wrap_Module_sectionCount(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37241,6 +39983,12 @@ SWIGINTERN PyObject *_wrap_Module_findParameter(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37296,6 +40044,12 @@ SWIGINTERN PyObject *_wrap_Module_findContainer(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37337,6 +40091,12 @@ SWIGINTERN PyObject *_wrap_Module_supportsBindings(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37397,6 +40157,12 @@ SWIGINTERN PyObject *_wrap_Module_loadProfiles__SWIG_0(PyObject *self, Py_ssize_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37449,6 +40215,12 @@ SWIGINTERN PyObject *_wrap_Module_loadProfiles__SWIG_1(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37548,6 +40320,12 @@ SWIGINTERN PyObject *_wrap_Module_addProfile(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37599,6 +40377,12 @@ SWIGINTERN PyObject *_wrap_Module_removeProfile__SWIG_0(PyObject *self, Py_ssize
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37646,6 +40430,12 @@ SWIGINTERN PyObject *_wrap_Module_removeProfile__SWIG_1(PyObject *self, Py_ssize
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37754,6 +40544,12 @@ SWIGINTERN PyObject *_wrap_Module_bind__SWIG_0(PyObject *self, Py_ssize_t nobjs,
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37812,6 +40608,12 @@ SWIGINTERN PyObject *_wrap_Module_bind__SWIG_1(PyObject *self, Py_ssize_t nobjs,
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -37916,6 +40718,12 @@ SWIGINTERN PyObject *_wrap_Module_removeStation(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -37955,6 +40763,12 @@ SWIGINTERN PyObject *_wrap_Module_createBinding(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -38007,6 +40821,12 @@ SWIGINTERN PyObject *_wrap_Module_createProfile(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -38062,6 +40882,12 @@ SWIGINTERN PyObject *_wrap_Module_getProfile(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -38113,6 +40939,12 @@ SWIGINTERN PyObject *_wrap_Module_getBinding(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -38192,6 +41024,12 @@ SWIGINTERN PyObject *_wrap_Module_readBinding__SWIG_0(PyObject *self, Py_ssize_t
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -38264,6 +41102,12 @@ SWIGINTERN PyObject *_wrap_Module_readBinding__SWIG_1(PyObject *self, Py_ssize_t
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -38328,6 +41172,12 @@ SWIGINTERN PyObject *_wrap_Module_readBinding__SWIG_2(PyObject *self, Py_ssize_t
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -38378,6 +41228,12 @@ SWIGINTERN PyObject *_wrap_Module_readBinding__SWIG_3(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -38525,6 +41381,12 @@ SWIGINTERN PyObject *_wrap_Module_accept(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39065,6 +41927,12 @@ SWIGINTERN PyObject *_wrap_delete_Module(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39106,6 +41974,12 @@ SWIGINTERN PyObject *_wrap_Station_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39135,6 +42009,12 @@ SWIGINTERN PyObject *_wrap_Station_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39176,6 +42056,12 @@ SWIGINTERN PyObject *_wrap_Station_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39216,6 +42102,12 @@ SWIGINTERN PyObject *_wrap_Station_typeInfo(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39245,6 +42137,12 @@ SWIGINTERN PyObject *_wrap_new_Station(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39294,6 +42192,12 @@ SWIGINTERN PyObject *_wrap_Station_readConfig(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39352,6 +42256,12 @@ SWIGINTERN PyObject *_wrap_Station_writeConfig__SWIG_0(PyObject *self, Py_ssize_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39400,6 +42310,12 @@ SWIGINTERN PyObject *_wrap_Station_writeConfig__SWIG_1(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39516,6 +42432,12 @@ SWIGINTERN PyObject *_wrap_Station_setConfig(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39584,6 +42506,12 @@ SWIGINTERN PyObject *_wrap_Station_compareTag(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39736,6 +42664,12 @@ SWIGINTERN PyObject *_wrap_delete_Station(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39777,6 +42711,12 @@ SWIGINTERN PyObject *_wrap_Model_ClassName(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39806,6 +42746,12 @@ SWIGINTERN PyObject *_wrap_Model_TypeInfo(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39847,6 +42793,12 @@ SWIGINTERN PyObject *_wrap_Model_className(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39887,6 +42839,12 @@ SWIGINTERN PyObject *_wrap_Model_typeInfo(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -39916,6 +42874,12 @@ SWIGINTERN PyObject *_wrap_new_Model(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -39965,6 +42929,12 @@ SWIGINTERN PyObject *_wrap_Model_create(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40004,6 +42974,12 @@ SWIGINTERN PyObject *_wrap_Model_recreate(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40059,6 +43035,12 @@ SWIGINTERN PyObject *_wrap_Model_readConfig__SWIG_0(PyObject *self, Py_ssize_t n
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40105,6 +43087,12 @@ SWIGINTERN PyObject *_wrap_Model_readConfig__SWIG_1(PyObject *self, Py_ssize_t n
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40142,6 +43130,12 @@ SWIGINTERN PyObject *_wrap_Model_readConfig__SWIG_2(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40268,6 +43262,12 @@ SWIGINTERN PyObject *_wrap_Model_writeConfig__SWIG_0(PyObject *self, Py_ssize_t 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40322,6 +43322,12 @@ SWIGINTERN PyObject *_wrap_Model_writeConfig__SWIG_1(PyObject *self, Py_ssize_t 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40367,6 +43373,12 @@ SWIGINTERN PyObject *_wrap_Model_writeConfig__SWIG_2(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40451,6 +43463,12 @@ SWIGINTERN PyObject *_wrap_Model_writeConfig__SWIG_3(PyObject *self, Py_ssize_t 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40527,6 +43545,12 @@ SWIGINTERN PyObject *_wrap_Model_writeConfig__SWIG_4(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40730,6 +43754,12 @@ SWIGINTERN PyObject *_wrap_Model_module(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40791,6 +43821,12 @@ SWIGINTERN PyObject *_wrap_Model_systemConfigFilename(PyObject *self, PyObject *
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -40862,6 +43898,12 @@ SWIGINTERN PyObject *_wrap_Model_configFileLocation(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40923,6 +43965,12 @@ SWIGINTERN PyObject *_wrap_Model_stationConfigDir__SWIG_0(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -40970,6 +44018,12 @@ SWIGINTERN PyObject *_wrap_Model_stationConfigDir__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -41077,6 +44131,12 @@ SWIGINTERN PyObject *_wrap_Model_update(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41131,6 +44191,12 @@ SWIGINTERN PyObject *_wrap_Model_updateBinding(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41181,6 +44247,12 @@ SWIGINTERN PyObject *_wrap_Model_addStation(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41230,6 +44302,12 @@ SWIGINTERN PyObject *_wrap_Model_removeStation(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -41282,6 +44360,12 @@ SWIGINTERN PyObject *_wrap_Model_removeNetwork(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -41343,6 +44427,12 @@ SWIGINTERN PyObject *_wrap_Model_removeStationModule(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41388,6 +44478,12 @@ SWIGINTERN PyObject *_wrap_Model_accept(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -41813,6 +44909,12 @@ SWIGINTERN PyObject *_wrap_delete_Model(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41872,6 +44974,12 @@ SWIGINTERN PyObject *_wrap_new_BindingMap__SWIG_0(PyObject *self, Py_ssize_t nob
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41914,6 +45022,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_iterator(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41955,6 +45069,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___nonzero__(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -41995,6 +45115,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___bool__(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42034,6 +45160,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___len__(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42089,6 +45221,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___getitem__(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42142,6 +45280,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___delitem__(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42192,6 +45336,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_has_key(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42231,6 +45381,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_keys(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42273,6 +45429,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_values(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42313,6 +45475,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_items(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42365,6 +45533,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___contains__(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42406,6 +45580,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_key_iterator(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42449,6 +45629,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_value_iterator(PyObject *self, PyObject *a
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42498,6 +45684,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___setitem____SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42561,6 +45753,12 @@ SWIGINTERN PyObject *_wrap_BindingMap___setitem____SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42648,6 +45846,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_asdict(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42678,6 +45882,12 @@ SWIGINTERN PyObject *_wrap_new_BindingMap__SWIG_1(PyObject *self, Py_ssize_t nob
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42721,6 +45931,12 @@ SWIGINTERN PyObject *_wrap_new_BindingMap__SWIG_2(PyObject *self, Py_ssize_t nob
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42802,6 +46018,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_empty(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42841,6 +46063,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_size(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42891,6 +46119,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_swap(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -42930,6 +46164,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_begin(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -42972,6 +46212,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_end(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43012,6 +46258,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_rbegin(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43054,6 +46306,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_rend(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43094,6 +46352,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_clear(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43133,6 +46397,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_get_allocator(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43182,6 +46452,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_erase__SWIG_0(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43233,6 +46509,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_count(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43283,6 +46565,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_erase__SWIG_1(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43348,6 +46636,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_erase__SWIG_2(PyObject *self, Py_ssize_t n
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43461,6 +46755,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_find(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43511,6 +46811,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_lower_bound(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43563,6 +46869,12 @@ SWIGINTERN PyObject *_wrap_BindingMap_upper_bound(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43602,6 +46914,12 @@ SWIGINTERN PyObject *_wrap_delete_BindingMap(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43656,6 +46974,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_iterator(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43697,6 +47021,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___nonzero__(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43737,6 +47067,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___bool__(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43776,6 +47112,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___len__(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43838,6 +47180,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___getslice__(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -43896,6 +47244,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___setslice____SWIG_0(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -43968,6 +47322,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___setslice____SWIG_1(PyObject *self, Py_s
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44093,6 +47453,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___delslice__(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44144,6 +47510,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___delitem____SWIG_0(PyObject *self, Py_ss
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44194,6 +47566,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___getitem____SWIG_0(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44258,6 +47636,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___setitem____SWIG_0(PyObject *self, Py_ss
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44310,6 +47694,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___setitem____SWIG_1(PyObject *self, Py_ss
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44359,6 +47749,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___delitem____SWIG_1(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44454,6 +47850,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___getitem____SWIG_1(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44562,6 +47964,12 @@ SWIGINTERN PyObject *_wrap_GroupVector___setitem____SWIG_2(PyObject *self, Py_ss
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44674,6 +48082,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_pop(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44723,6 +48137,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_append(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44752,6 +48172,12 @@ SWIGINTERN PyObject *_wrap_new_GroupVector__SWIG_0(PyObject *self, Py_ssize_t no
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44796,6 +48222,12 @@ SWIGINTERN PyObject *_wrap_new_GroupVector__SWIG_1(PyObject *self, Py_ssize_t no
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44838,6 +48270,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_empty(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44877,6 +48315,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_size(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -44927,6 +48371,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_swap(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -44966,6 +48416,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_begin(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45008,6 +48464,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_end(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45048,6 +48510,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_rbegin(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45090,6 +48558,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_rend(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45129,6 +48603,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_clear(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45170,6 +48650,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_get_allocator(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45207,6 +48693,12 @@ SWIGINTERN PyObject *_wrap_new_GroupVector__SWIG_2(PyObject *self, Py_ssize_t no
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45246,6 +48738,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_pop_back(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45291,6 +48789,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_resize__SWIG_0(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45343,6 +48847,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_erase__SWIG_0(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45410,6 +48920,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_erase__SWIG_1(PyObject *self, Py_ssize_t 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45509,6 +49025,12 @@ SWIGINTERN PyObject *_wrap_new_GroupVector__SWIG_3(PyObject *self, Py_ssize_t no
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45614,6 +49136,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_push_back(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45653,6 +49181,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_front(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45696,6 +49230,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_back(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45757,6 +49297,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_assign(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45812,6 +49358,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_resize__SWIG_1(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -45926,6 +49478,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_insert__SWIG_0(PyObject *self, Py_ssize_t
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -45996,6 +49554,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_insert__SWIG_1(PyObject *self, Py_ssize_t
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46101,6 +49665,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_reserve(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46141,6 +49711,12 @@ SWIGINTERN PyObject *_wrap_GroupVector_capacity(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46179,6 +49755,12 @@ SWIGINTERN PyObject *_wrap_delete_GroupVector(PyObject *self, PyObject *args) {
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46233,6 +49815,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_iterator(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46274,6 +49862,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___nonzero__(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46314,6 +49908,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___bool__(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46353,6 +49953,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___len__(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46415,6 +50021,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___getslice__(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46473,6 +50085,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___setslice____SWIG_0(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46545,6 +50163,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___setslice____SWIG_1(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46670,6 +50294,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___delslice__(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46721,6 +50351,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___delitem____SWIG_0(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46771,6 +50407,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___getitem____SWIG_0(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -46835,6 +50477,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___setitem____SWIG_0(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46887,6 +50535,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___setitem____SWIG_1(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -46936,6 +50590,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___delitem____SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47031,6 +50691,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___getitem____SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47139,6 +50805,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector___setitem____SWIG_2(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47251,6 +50923,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_pop(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47300,6 +50978,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_append(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47329,6 +51013,12 @@ SWIGINTERN PyObject *_wrap_new_ParameterVector__SWIG_0(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47373,6 +51063,12 @@ SWIGINTERN PyObject *_wrap_new_ParameterVector__SWIG_1(PyObject *self, Py_ssize_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47415,6 +51111,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_empty(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47454,6 +51156,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_size(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47504,6 +51212,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_swap(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47543,6 +51257,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_begin(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47585,6 +51305,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_end(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47625,6 +51351,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_rbegin(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47667,6 +51399,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_rend(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47706,6 +51444,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_clear(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47747,6 +51491,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_get_allocator(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -47784,6 +51534,12 @@ SWIGINTERN PyObject *_wrap_new_ParameterVector__SWIG_2(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47823,6 +51579,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_pop_back(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47868,6 +51630,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_resize__SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47920,6 +51688,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_erase__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -47987,6 +51761,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_erase__SWIG_1(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48086,6 +51866,12 @@ SWIGINTERN PyObject *_wrap_new_ParameterVector__SWIG_3(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48191,6 +51977,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_push_back(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48230,6 +52022,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_front(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48273,6 +52071,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_back(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48334,6 +52138,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_assign(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48389,6 +52199,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_resize__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48503,6 +52319,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_insert__SWIG_0(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48573,6 +52395,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_insert__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48678,6 +52506,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_reserve(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48718,6 +52552,12 @@ SWIGINTERN PyObject *_wrap_ParameterVector_capacity(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48756,6 +52596,12 @@ SWIGINTERN PyObject *_wrap_delete_ParameterVector(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48810,6 +52656,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_iterator(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48851,6 +52703,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___nonzero__(PyObject *self, PyObject 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48891,6 +52749,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___bool__(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -48930,6 +52794,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___len__(PyObject *self, PyObject *arg
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -48992,6 +52862,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___getslice__(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49050,6 +52926,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___setslice____SWIG_0(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49122,6 +53004,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___setslice____SWIG_1(PyObject *self, 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49247,6 +53135,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___delslice__(PyObject *self, PyObject
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49298,6 +53192,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___delitem____SWIG_0(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49348,6 +53248,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___getitem____SWIG_0(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49412,6 +53318,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___setitem____SWIG_0(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49464,6 +53376,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___setitem____SWIG_1(PyObject *self, P
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49513,6 +53431,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___delitem____SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49608,6 +53532,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___getitem____SWIG_1(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49716,6 +53646,12 @@ SWIGINTERN PyObject *_wrap_StructureVector___setitem____SWIG_2(PyObject *self, P
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49828,6 +53764,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_pop(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49877,6 +53819,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_append(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49906,6 +53854,12 @@ SWIGINTERN PyObject *_wrap_new_StructureVector__SWIG_0(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -49950,6 +53904,12 @@ SWIGINTERN PyObject *_wrap_new_StructureVector__SWIG_1(PyObject *self, Py_ssize_
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -49992,6 +53952,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_empty(PyObject *self, PyObject *args)
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50031,6 +53997,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_size(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50081,6 +54053,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_swap(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50120,6 +54098,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_begin(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50162,6 +54146,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_end(PyObject *self, PyObject *args) {
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50202,6 +54192,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_rbegin(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50244,6 +54240,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_rend(PyObject *self, PyObject *args) 
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50283,6 +54285,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_clear(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50324,6 +54332,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_get_allocator(PyObject *self, PyObjec
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50361,6 +54375,12 @@ SWIGINTERN PyObject *_wrap_new_StructureVector__SWIG_2(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50400,6 +54420,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_pop_back(PyObject *self, PyObject *ar
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50445,6 +54471,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_resize__SWIG_0(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50497,6 +54529,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_erase__SWIG_0(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50564,6 +54602,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_erase__SWIG_1(PyObject *self, Py_ssiz
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50663,6 +54707,12 @@ SWIGINTERN PyObject *_wrap_new_StructureVector__SWIG_3(PyObject *self, Py_ssize_
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50768,6 +54818,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_push_back(PyObject *self, PyObject *a
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50807,6 +54863,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_front(PyObject *self, PyObject *args)
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50850,6 +54912,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_back(PyObject *self, PyObject *args) 
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -50911,6 +54979,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_assign(PyObject *self, PyObject *args
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -50966,6 +55040,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_resize__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -51080,6 +55160,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_insert__SWIG_0(PyObject *self, Py_ssi
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -51150,6 +55236,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_insert__SWIG_1(PyObject *self, Py_ssi
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
@@ -51255,6 +55347,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_reserve(PyObject *self, PyObject *arg
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -51295,6 +55393,12 @@ SWIGINTERN PyObject *_wrap_StructureVector_capacity(PyObject *self, PyObject *ar
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
     }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
+    }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
     }
@@ -51333,6 +55437,12 @@ SWIGINTERN PyObject *_wrap_delete_StructureVector(PyObject *self, PyObject *args
     }
     catch ( const Swig::DirectorException &e ) {
       SWIG_fail;
+    }
+    catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const Seiscomp::Config::TypeConversionException &e) {
+      SWIG_exception(SWIG_TypeError, e.what());
     }
     catch ( const Seiscomp::Core::ValueException &e) {
       SWIG_exception(SWIG_ValueError, e.what());
