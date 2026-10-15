@@ -260,21 +260,8 @@
 			<group name="scheme">
 				<description>
 				This group defines various options controlling the look and feel
-				of graphical modules. The options include symbols, units,
-				precision, color, pen, brush, font, etc. There are various
-				conventions to define colors, fonts and gradients.
-
-				Colors are defined in HTML
-				convention, e.g. as rgb values, hexadecimal numbers or color
-				keyword names defined by W3C. If rgb or rgba is used, it must
-				be quoted because the comma is handled as list separator by
-				the configuration.
-				Examples: "rgb(0,128,0)", 00800040, green.
-
-				Gradients are configured as lists of tuples where each tuple
-				is colon separated in the form value:color. Value is either
-				int or double and color is again a color definition.
-				Example: 0:yellow,10:red
+				of graphical modules such as scolv. The options include symbols, units,
+				precision, color, pen, brush, font, etc.
 				</description>
 				<parameter name="showMenu" type="boolean" default="true">
 					<description>Show menu bar.</description>
@@ -410,10 +397,19 @@
 				</group>
 
 				<group name="colors">
-				<description>
-					Colors can be configured as rgb, rgba. hexadecimal numbers or color keyword names
-					defined by W3C. If a color is unset, SeisComP applications
-					attempt to read it from your Desktop theme.
+					<description>
+					Colors can be configured as rgb, rgba, hexadecimal numbers or color
+					keyword names defined by W3C. If a color is unset, SeisComP
+					applications attempt to read it from your Desktop theme.
+
+					If rgb or rgba is used, it must be quoted because the comma is handled
+					as list separator by the configuration.
+					Examples: "rgb(0,128,0)", 00800040, green.
+
+					Gradients are configured as lists of tuples where each tuple
+					is colon separated in the form value:color. Value is either
+					int or double and color is again a color definition.
+					Example: 0:yellow,10:red
 					</description>
 					<parameter name="background" type="color">
 						<description>
@@ -440,6 +436,9 @@
 					</parameter>
 
 					<group name="map">
+						<description>
+						Define properties of maps.
+						</description>
 						<parameter name="lines" type="color">
 							<description>
 							The color of lines in the map (e.g. lines
@@ -615,6 +614,9 @@
 					</group>
 
 					<group name="records">
+						<description>
+						Define properties of records (waveform data).
+						</description>
 						<parameter name="foreground" type="color" default="808080">
 							<description>The general color of records/traces.</description>
 						</parameter>
@@ -816,6 +818,9 @@
 					</group>
 
 					<group name="picks">
+						<description>
+						Define properties of phase pick symbols.
+						</description>
 						<parameter name="manual" type="color" default="00FF00">
 							<description>The color of manual picks.</description>
 						</parameter>
@@ -831,6 +836,9 @@
 					</group>
 
 					<group name="arrivals">
+						<description>
+						Define properties of phase arrivals symbols.
+						</description>
 						<parameter name="manual" type="color" default="00A000">
 							<description>
 								The color of manual arrivals (arrivals that bind manual picks,
@@ -862,6 +870,9 @@
 					</group>
 
 					<group name="magnitudes">
+						<description>
+						Define properties of magnitude symbols.
+						</description>
 						<parameter name="set" type="color" default="00A000">
 							<description>The color of active magnitudes.</description>
 						</parameter>
@@ -877,6 +888,9 @@
 					</group>
 
 					<group name="stations">
+						<description>
+						Define properties of station symbols.
+						</description>
 						<parameter name="text" type="color" default="ffffff">
 							<description>The color of the station name.</description>
 						</parameter>
@@ -905,7 +919,7 @@
 
 					<group name="qc">
 						<description>
-							The color of QC.delay thresholds in scmv.
+						The color of QC.delay thresholds in scmvx and scmv.
 						</description>
 						<parameter name="delay0" type="color" default="00ffff">
 							<description></description>
@@ -947,7 +961,7 @@
 
 					<group name="gm">
 						<description>
-						The color of ground motion amplitudes in scmv.
+						The color of ground motion amplitudes in scmvx and scmv.
 						</description>
 						<parameter name="gm0" type="color">
 							<description></description>
@@ -993,6 +1007,9 @@
 					</group>
 
 					<group name="legend">
+						<description>
+						Define properties of shown legends.
+						</description>
 						<parameter name="background" type="color">
 							<description>
 							The map legend background color.
@@ -1065,6 +1082,9 @@
 				</group>
 
 				<group name="marker">
+						<description>
+						Define properties of shown markers.
+						</description>
 					<parameter name="lineWidth" type="int" unit="px">
 						<description>
 						The line width of the marker, e.g., picks of scolv picker).
@@ -1073,6 +1093,9 @@
 				</group>
 
 				<group name="records">
+						<description>
+						Define properties of shown records (waveforms).
+						</description>
 					<parameter name="lineWidth" type="int" default="1" unit="px">
 						<description>
 						The line width of the records/traces.
@@ -1411,6 +1434,9 @@
 					</parameter>
 				</group>
 				<group name="unit">
+						<description>
+						Define units of shown values.
+						</description>
 					<parameter name="distanceInKM" type="boolean" default="false">
 						<description>
 						Display distances in km?
@@ -1420,7 +1446,7 @@
 				<group name="dateTime">
 					<parameter name="useLocalTime" type="boolean" default="false">
 						<description>
-						Display times in localtime. If disabled all times are
+						Display times in local time. If disabled all times are
 						shown in UTC which is also the time zone of all values
 						stored in the database.
 						</description>
