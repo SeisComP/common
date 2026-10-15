@@ -224,7 +224,7 @@ bool SDSArchive::setSource(const string &src) {
 		}
 	}
 
-	string arcroots = url.path();
+	string arcroots = url.host() + url.path();
 
 	if ( arcroots.empty() ) {
 		_arcroots.push_back(Environment::Instance()->installDir() + "/var/lib/archive");
