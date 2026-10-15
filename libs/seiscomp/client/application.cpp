@@ -62,6 +62,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <functional>
 #include <sstream>
 
@@ -85,20 +86,25 @@ using namespace Seiscomp::Core;
 using namespace Seiscomp::Client;
 using namespace Seiscomp::IO;
 
+namespace fs = std::filesystem;
+
 
 namespace {
 
 
 bool populateCreationInfoVersionAttribute = false;
+string populateCreationInfoVersionAttributeTemplate = "@API@";
+string populateCreationInfoVersionAttributeValue;
 
 
 struct AppResolver : public Util::VariableResolver {
-	AppResolver(const std::string& name)
+	AppResolver(const std::string &name)
 	 : _name(name) {}
 
-	bool resolve(std::string& variable) const override {
-		if ( Util::VariableResolver::resolve(variable) )
+	bool resolve(std::string &variable) const override {
+		if ( Util::VariableResolver::resolve(variable) ) {
 			return true;
+		}
 
 		if ( variable == "appname" )
 			variable = _name;
@@ -109,6 +115,109 @@ struct AppResolver : public Util::VariableResolver {
 	}
 
 	const std::string &_name;
+};
+
+
+string fetchStdout(const char *cmd, const string &cwd) {
+	auto oldCwd = fs::current_path();
+	string out;
+
+	fs::current_path(cwd);
+
+	auto fout = popen(cmd, "r");
+
+	if ( fout ) {
+		array<char, 256> buffer;
+		while ( fgets(buffer.data(), static_cast<int>(buffer.size()), fout) ) {
+			out += buffer.data();
+		}
+		if ( pclose(fout) != 0 ) {
+			fs::current_path(oldCwd);
+			throw runtime_error("exited with error");
+		}
+	}
+	else {
+		fs::current_path(oldCwd);
+		throw runtime_error(string("invalid command: ") + cmd);
+	}
+
+	fs::current_path(oldCwd);
+	return Core::trim(out);
+}
+
+
+struct CIResolver : public Util::VariableResolver {
+	bool resolve(std::string &variable) const override {
+		if ( Util::VariableResolver::resolve(variable) ) {
+			return true;
+		}
+
+		if ( variable == "API" ) {
+			variable = CurrentVersion.api().toString();
+		}
+		else if ( variable == "VERSION" ) {
+			variable = CurrentVersion.version().toString();
+		}
+		else if ( variable.compare(0, 19, "SYSTEMCONFIGGITHASH") == 0 ) {
+			string cmd;
+			if ( variable.length() == 19 ) {
+				cmd = "git rev-parse --short HEAD";
+			}
+			else {
+				if ( (variable[19] == '(') && (variable.back() == ')') ) {
+					cmd = Core::trim(variable.substr(20, variable.length() - 20 - 1));
+					if ( cmd.empty() ) {
+						throw runtime_error("resolving SYSTEMCONFIGGITHASH: empty command");
+					}
+				}
+				else {
+					throw runtime_error("resolving SYSTEMCONFIGGITHASH: invalid definition");
+				}
+			}
+
+			try {
+				variable = fetchStdout(
+					cmd.data(),
+					Environment::Instance()->appConfigDir()
+				);
+			}
+			catch ( exception &e ) {
+				throw runtime_error(string("resolving SYSTEMCONFIGGITHASH: ") + e.what());
+			}
+		}
+		else if ( variable.compare(0, 13, "CONFIGGITHASH") == 0 ) {
+			string cmd;
+			if ( variable.length() == 13 ) {
+				cmd = "git rev-parse --short HEAD";
+			}
+			else {
+				if ( (variable[13] == '(') && (variable.back() == ')') ) {
+					cmd = Core::trim(variable.substr(14, variable.length() - 14 - 1));
+					if ( cmd.empty() ) {
+						throw runtime_error("resolving CONFIGGITHASH: empty command");
+					}
+				}
+				else {
+					throw runtime_error("resolving CONFIGGITHASH: invalid definition");
+				}
+			}
+
+			try {
+				variable = fetchStdout(
+					cmd.data(),
+					Environment::Instance()->configDir()
+				);
+			}
+			catch ( exception &e ) {
+				throw runtime_error(string("resolving CONFIGGITHASH: ") + e.what());
+			}
+		}
+		else {
+			throw runtime_error("unknown variable: " + variable);
+		}
+
+		return true;
+	}
 };
 
 
@@ -1075,6 +1184,22 @@ bool Application::init() {
 		return false;
 	}
 
+	if ( populateCreationInfoVersionAttribute ) {
+		try {
+			populateCreationInfoVersionAttributeValue = Util::replace(
+				populateCreationInfoVersionAttributeTemplate,
+				CIResolver()
+			);
+		}
+		catch ( exception &e ) {
+			SEISCOMP_ERROR("Invalid version attribute template: %s", e.what());
+			return false;
+		}
+
+		SEISCOMP_DEBUG("populateCreationInfoVersionAttributeValue = %s",
+		               populateCreationInfoVersionAttributeValue);
+	}
+
 	for ( string &item : _settings.processing.amplitudeAliases ) {
 		StringVector toks;
 		Core::split(toks, item, ":", false);
@@ -1633,6 +1758,11 @@ bool Application::initConfiguration() {
 
 	try {
 		populateCreationInfoVersionAttribute = configGetBool("populateCIVersionAttribute");
+	}
+	catch ( ... ) {}
+
+	try {
+		populateCreationInfoVersionAttributeTemplate = configGetString("populateCIVersionAttributeTemplate");
 	}
 	catch ( ... ) {}
 
@@ -2513,7 +2643,7 @@ DataModel::CreationInfo Application::generateCreationInfo() const {
 	ci.setAuthor(author());
 	ci.setCreationTime(Core::Time::UTC());
 	if ( populateCreationInfoVersionAttribute ) {
-		ci.setVersion(Core::CurrentVersion.api().toString());
+		ci.setVersion(populateCreationInfoVersionAttributeValue);
 	}
 	return ci;
 }
