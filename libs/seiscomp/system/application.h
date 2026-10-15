@@ -664,10 +664,17 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								visitor.setError(std::string("Invalid commandline value for ") + visitedItem.cliAbsoluteSymbol);
 							break;
 						case GetCfg:
-							if ( !visitedItem.isKey() && !visitedItem.configFileRelativeSymbol )
+							if ( !visitedItem.isKey() && !visitedItem.configFileRelativeSymbol ) {
 								return;
-							if ( !CfgLinkHelper<T, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
-								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
+							}
+							try {
+								if ( !CfgLinkHelper<T, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) ) {
+									visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
+								}
+							}
+							catch ( std::exception &e ) {
+								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol) + ": " + e.what());
+							}
 							break;
 						case PutCfg:
 							break;
@@ -715,10 +722,17 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								visitor.setError(std::string("Invalid commandline value for ") + visitedItem.cliAbsoluteSymbol);
 							break;
 						case GetCfg:
-							if ( !visitedItem.configFileRelativeSymbol )
+							if ( !visitedItem.configFileRelativeSymbol ) {
 								return;
-							if ( !CfgLinkHelper<std::vector<T>, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) )
-								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
+							}
+							try {
+								if ( !CfgLinkHelper<std::vector<T>, IsNativelySupported<T>::value>::process(*this, visitedItem, visitor.configPrefix) ) {
+									visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol));
+								}
+							}
+							catch ( std::exception &e ) {
+								visitor.setError("Invalid configuration value for " + Detail::join(visitor.configPrefix, visitedItem.configFileRelativeSymbol) + ": " + e.what());
+							}
 							break;
 						case PutCfg:
 							break;
@@ -789,7 +803,10 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 								visitor.pop();
 								_key = oldKey;
 							}
-							catch ( ... ) {}
+							catch ( Config::OptionNotFoundException & ) {}
+							catch ( std::exception &e ) {
+								visitor.setError(e.what());
+							}
 							break;
 						case PutCfg:
 							break;
@@ -991,17 +1008,19 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					                    const std::string &prefix) {
 						try {
 							std::string tmp;
-							if ( visitedItem.isKey() )
+							if ( visitedItem.isKey() ) {
 								tmp = proc.template key<std::string>();
-							else
+							}
+							else {
 								tmp = Detail::getConfig<std::string>(
 									proc._external.constApp,
 									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
 									visitedItem.flags & OptionBinding<T>::InterpretAsPath
 								);
+							}
 							return Detail::convertString(visitedItem.value, tmp);
 						}
-						catch ( ... ) {}
+						catch ( Config::OptionNotFoundException & ) {}
 
 						return true;
 					}
@@ -1015,21 +1034,24 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					                    const std::string &prefix) {
 						try {
 							std::vector<std::string> tmp;
-							if ( visitedItem.isKey() )
+							if ( visitedItem.isKey() ) {
 								tmp = proc.template key<std::vector<std::string> >();
-							else
+							}
+							else {
 								tmp = Detail::getConfig<std::vector<std::string> >(
 									proc._external.constApp,
 									Detail::join(prefix, visitedItem.configFileRelativeSymbol),
 									visitedItem.flags & OptionBinding< std::vector<T> >::InterpretAsPath
 								);
+							}
 							visitedItem.value.resize(tmp.size());
 							for ( size_t i = 0; i < tmp.size(); ++i ) {
-								if ( !Detail::convertString(visitedItem.value[i], tmp[i]) )
+								if ( !Detail::convertString(visitedItem.value[i], tmp[i]) ) {
 									return false;
+								}
 							}
 						}
-						catch ( ... ) {}
+						catch ( Config::OptionNotFoundException & ) {}
 
 						return true;
 					}
@@ -1041,8 +1063,9 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 					static bool process(P &proc,
 					                    OptionBinding<T> &visitedItem,
 					                    const std::string &prefix) {
-						if ( visitedItem.isKey() )
+						if ( visitedItem.isKey() ) {
 							visitedItem.value = proc.template key<T>();
+						}
 						else {
 							try {
 								visitedItem.value = Detail::getConfig<T>(
@@ -1051,11 +1074,7 @@ class SC_SYSTEM_CORE_API Application : public Core::InterruptibleObject {
 									visitedItem.flags & OptionBinding<T>::InterpretAsPath
 								);
 							}
-							catch ( Config::OptionNotFoundException &e ) {}
-							catch ( ... ) {
-								// All other exceptions are not OK.
-								return false;
-							}
+							catch ( Config::OptionNotFoundException & ) {}
 						}
 						return true;
 					}

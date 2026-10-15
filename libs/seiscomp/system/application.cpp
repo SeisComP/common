@@ -844,7 +844,7 @@ string Application::argumentStr(const string &query) const {
 		}
 	}
 
-	throw Seiscomp::Config::OptionNotFoundException(query);
+	throw Config::OptionNotFoundException(query);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -854,9 +854,14 @@ string Application::argumentStr(const string &query) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int Application::configGetInt(const string &query) const {
 	try {
-		return atoi(argumentStr(query).c_str());
+		int tmp;
+		auto opt = argumentStr(query);
+		if ( !Core::fromString(tmp, opt) ) {
+			throw Config::TypeConversionException("expected integer, got '" + opt + "'");
+		}
+		return tmp;
 	}
-	catch ( ... ) {}
+	catch ( Config::OptionNotFoundException & ) {}
 
 	return _configuration.getInt(query);
 }
@@ -868,9 +873,14 @@ int Application::configGetInt(const string &query) const {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 double Application::configGetDouble(const string &query) const {
 	try {
-		return atof(argumentStr(query).c_str());
+		double tmp;
+		auto opt = argumentStr(query);
+		if ( !Core::fromString(tmp, opt) ) {
+			throw Config::TypeConversionException("expected double, got '" + opt + "'");
+		}
+		return tmp;
 	}
-	catch ( ... ) {}
+	catch ( Config::OptionNotFoundException & ) {}
 
 	return _configuration.getDouble(query);
 }
