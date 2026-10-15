@@ -31,12 +31,12 @@ namespace Seiscomp {
 namespace Core {
 
 
-/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 3, 0)) */
+/* #if (SC_API_VERSION >= SC_API_VERSION_CHECK(17, 5, 0)) */
 #define SC_API_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
 
 /* SC_API_VERSION is (major << 16) + (minor << 8) + patch. */
-#define SC_API_VERSION 0x110400
+#define SC_API_VERSION 0x110500
 
 #define SC_API_VERSION_MAJOR(v) (v >> 16)
 #define SC_API_VERSION_MINOR(v) ((v >> 8) & 0xff)
@@ -46,6 +46,10 @@ namespace Core {
 /******************************************************************************
  API Changelog
  ******************************************************************************
+ "17.5.0"   0x110500
+   - Added signal Seiscomp::Gui::EventListView::eventAdded
+   - Added Seiscomp::Gui::Map::EqualEarthProjection
+
  "17.4.0"   0x110400
    - Added Seiscomp::Client::Application::send
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
