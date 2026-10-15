@@ -35,6 +35,9 @@
 
 
 #include "amplitudeview.h"
+#include "spectraldiagnosticsview.h"
+
+#include <QPointer>
 
 #include <seiscomp/gui/datamodel/ui_amplitudeview.h>
 
@@ -135,6 +138,9 @@ class AmplitudeViewPrivate {
 
 		::Ui::AmplitudeView                 ui;
 		bool                                settingsRestored;
+
+		QAction                            *actionShowSpectrum{nullptr};
+		QPointer<SpectralDiagnosticsView>   spectrumView;
 
 		int                                 componentMap[3];
 		int                                 slotCount;

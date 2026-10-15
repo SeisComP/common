@@ -375,6 +375,8 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 
 		void recalculateAmplitude();
 		void recalculateAmplitudes();
+		void showSpectrum();
+		void updateSpectrum();
 
 		void enableAutoScale();
 		void disableAutoScale();

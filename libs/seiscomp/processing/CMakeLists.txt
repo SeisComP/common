@@ -16,6 +16,7 @@ SET(PROC_SOURCES
 	secondarypicker.cpp
 	amplitudeprocessor.cpp
 	magnitudeprocessor.cpp
+	spectraldiagnostics.cpp
 )
 
 SET(PROC_HEADERS
@@ -35,6 +36,7 @@ SET(PROC_HEADERS
 	secondarypicker.h
 	amplitudeprocessor.h
 	magnitudeprocessor.h
+	spectraldiagnostics.h
 )
 
 SC_ADD_SUBDIR_SOURCES(PROC fx)

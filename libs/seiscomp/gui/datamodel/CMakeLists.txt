@@ -18,6 +18,7 @@ SET(GUI_DATAMODEL_SOURCES
 	pickerzoomframe.cpp
 	pickersettings.cpp
 	amplitudeview.cpp
+	spectraldiagnosticsview.cpp
 	stationsymbol.cpp
 	inventorylistview.cpp
 	tensorsymbol.cpp
@@ -54,6 +55,7 @@ SET(GUI_DATAMODEL_MOC_HEADERS
 	pickerzoomframe.h
 	pickersettings.h
 	amplitudeview.h
+	spectraldiagnosticsview.h
 	inventorylistview.h
 	calculateamplitudes.h
 	selectstation.h

@@ -64,6 +64,9 @@ class SC_SYSTEM_CLIENT_API AmplitudeProcessor : public TimeWindowProcessor {
 			//! the amplitude is measured on different
 			//! components
 			Combiner      = 0x0002,
+			//! Provides spectral diagnostics of its measurements, see
+			//! SpectralDiagnosticsProvider
+			Spectrum      = 0x0004,
 			CapQuantity
 		};
 
