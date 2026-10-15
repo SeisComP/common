@@ -1061,7 +1061,14 @@ void Ruler::wheelEvent(QWheelEvent *event) {
 	// translate
 	else {
 		double ofs = delta / _scl;
-		changeRange(_min + ofs, _max + ofs);
+		double tmin = _min + ofs;
+		double tmax = _max + ofs;
+		checkLimit(tmin, tmax);
+		emit dragged(tmin - _min);
+		if ( _enableRangeSelection && _emitRangeChangeWhileDragging ) {
+			emit rangeChangeRequested(tmin, tmax);
+		}
+		emit dragFinished();
 	}
 
 	event->accept();
