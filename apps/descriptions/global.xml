@@ -38,6 +38,23 @@
 				GUI applications.
 				</description>
 			</parameter>
+			<parameter name="populateCIVersionAttributeTemplate" type="string" default="@API@">
+				<description>
+				Defines the template of the version attribute string. Available placeholders are:
+
+				@API@: the SeisComP API version
+
+				@VERSION@: the SeisComP release version
+
+				@SYSTEMCONFIGGITHASH@: the latest commit hash of the config git in ~/seiscomp/etc, requires git
+
+				@SYSTEMCONFIGGITHASH([cmd])@: output of command executed in ~/seiscomp/etc
+
+				@CONFIGGITHASH@: the lastest commit hash of the local config git in ~/.seiscomp, required git
+
+				@CONFIGGITHASH([cmd])@: output of command executed in ~/.seiscomp
+				</description>
+			</parameter>
 			<parameter name="plugins" type="list:string">
 				<description>
 				List of plugins loaded at startup. Separate multiple names by
