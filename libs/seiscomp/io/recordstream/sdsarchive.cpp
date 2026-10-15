@@ -217,8 +217,8 @@ bool SDSArchive::setSource(const string &src) {
 	Util::Url url(src);
 
 	if ( url.hasQueryItem("format") ) {
-		if ( !Core::fromString(_format, url.queryItemValue("format")) ||
-				_format < 2 || _format > 3 ) {
+		if ( !Core::fromString(_format, url.queryItemValue("format"))
+		  || (_format < 2) || (_format > 3) ) {
 			SEISCOMP_ERROR("Invalid 'format' (must be '2' or '3')");
 			return false;
 		}
@@ -679,6 +679,7 @@ bool SDSArchive::setStart(const string &fname, bool bsearch) {
 				}
 				samprate = mseed.samplingFrequency();
 				recstime = mseed.startTime();
+
 				if ( samprate > 0. ) {
 					recetime = mseed.endTime();
 				}
@@ -793,9 +794,10 @@ Seiscomp::Record *SDSArchive::next() {
 			catch( exception &e ) {
 				// Invalid record, delete it
 				delete rec;
-				SEISCOMP_ERROR("exc: %d, %s", (int)_file.tellg(), e.what());
-				if ( !_file.good() )
+				SEISCOMP_ERROR("exc: %d, %s", static_cast<int>(_file.tellg()), e.what());
+				if ( !_file.good() ) {
 					break;
+				}
 			}
 		}
 
