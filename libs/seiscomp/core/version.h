@@ -56,6 +56,10 @@ namespace Core {
    - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
    - Added Seiscomp::Gui::PickerView::Config::initialAlignment
 
+ "17.5.0"   0x110500
+   - Added signal Seiscomp::Gui::EventListView::eventAdded
+   - Added Seiscomp::Gui::Map::EqualEarthProjection
+
  "17.4.0"   0x110400
    - Added Seiscomp::Client::Application::send
    - Added Seiscomp::DataModel::PublicObjectRegistrationGuard<T>
