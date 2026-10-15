@@ -104,20 +104,20 @@
 			</parameter>
 			<parameter name="database" type="string">
 				<description>
-				Define the database connection. If no database is configured
-				(which is the default) and a messaging connection is available,
-				the application will receive the parameters after the connection
-				is established. Override these values only if you know what you
-				are doing.
+				Define the database connection. If no database is configured and a
+				messaging connection is available, applications will receive the
+				parameters from the messaging. Override these values only if you know
+				what you are doing.
 
-				The format is: service://user:pwd@host/database.
-				&quot;service&quot; is the name of the database driver which
+				Format: service://user:pwd@host/database
+
+				&quot;service&quot;: Name of the database driver which
 				can be queried with &quot;--db-driver-list&quot;.
-				Backend specific connection parameters may be appended to
+				Backend-specific connection parameters may be appended to
 				the URL, see :ref:`concepts_database_url`.
-					IMPORTANT: This parameter replaces former
-					&quot;database.type&quot; and &quot;database.parameters&quot;
-					which have been removed.
+
+				IMPORTANT: This parameter replaces former &quot;database.type&quot; and
+				&quot;database.parameters&quot; which have been removed.
 				</description>
 			</parameter>
 			<parameter name="recordstream" type="string">
@@ -226,6 +226,9 @@
 				</group>
 			</group>
 			<group name="connection">
+				<description>
+				Control the connection of a module to the SeisComP messaging.
+				</description>
 				<parameter name="server" type="host-with-port" default="localhost/production">
 					<description>
 					Define the URL of the messaging server to connect to.
@@ -433,14 +436,13 @@
 			</group>
 			<group name="ttt">
 				<description>
-				Configure interfaces to travel-time tables (travel-time
+				Configure interfaces providing travel times (travel-time
 				interfaces). Built-in interfaces are LOCSAT, libtau and
-				homogeneous. For each loaded interface the supported tables must
-				be provided.
+				homogeneous with specific ways to compute the times.
 				</description>
 				<group name="default">
 					<description>
-					Configure the default travel-time table interface and table (model)
+					Default travel-time table interface and table (model)
 					to be used by modules supporting configurable ttt, currently
 					scolv. scolv considers the defaults unless origins provide
 					applicable information on locator. For amplitude-time windows
