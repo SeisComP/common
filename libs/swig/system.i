@@ -54,7 +54,7 @@
   catch (Swig::DirectorException &e) { SWIG_fail; }
 }
 
-// 
+//
 // typemaps
 //
 %include "stl.i"
@@ -109,6 +109,12 @@
   }
   catch ( const Swig::DirectorException &e ) {
     SWIG_fail;
+  }
+  catch ( const Seiscomp::Config::OptionNotFoundException &e) {
+    SWIG_exception(SWIG_ValueError, e.what());
+  }
+  catch ( const Seiscomp::Config::TypeConversionException &e) {
+    SWIG_exception(SWIG_TypeError, e.what());
   }
   catch ( const Seiscomp::Core::ValueException &e) {
     SWIG_exception(SWIG_ValueError, e.what());
