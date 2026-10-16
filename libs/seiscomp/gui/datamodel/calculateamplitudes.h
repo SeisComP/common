@@ -110,6 +110,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 		void finishedAcquisition();
 		void filterStateChanged(int index);
 		void filterTypeChanged(int index);
+		void sortTable(int column, Qt::SortOrder order);
 
 
 	private:
@@ -131,6 +132,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 		void checkPriority(const AmplitudeEntry &newAmp);
 
 		int addProcessingRow(const std::string &streamID, const std::string &type);
+		void scheduleResort();
 
 		void emitAmplitude(const Processing::AmplitudeProcessor *,
 		                   const Processing::AmplitudeProcessor::Result &res);
@@ -148,7 +150,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 	private:
 		typedef std::vector<Processing::AmplitudeProcessorPtr> ProcessorSlot;
 		typedef std::map<std::string, ProcessorSlot> ProcessorMap;
-		typedef std::multimap<Processing::AmplitudeProcessorCPtr, int> TableRowMap;
+		typedef std::multimap<Processing::AmplitudeProcessorCPtr, QTableWidgetItem*> TableRowMap;
 		typedef std::map<std::string, Seiscomp::Util::KeyValuesPtr> ParameterMap;
 		typedef std::map<std::string, Seiscomp::Processing::StreamPtr> StreamMap;
 
@@ -168,6 +170,7 @@ class SC_GUI_API CalculateAmplitudes : public QDialog {
 
 		bool                      _recomputeAmplitudes;
 		bool                      _computeSilently;
+		bool                      _resortScheduled{false};
 };
 
 

@@ -41,8 +41,10 @@
 #include <QProgressBar>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QTimer>
 
 #include <functional>
+#include <tuple>
 
 
 using namespace std;
@@ -55,6 +57,61 @@ namespace Seiscomp {
 namespace Gui {
 
 namespace {
+
+
+class ValueItem : public QTableWidgetItem {
+	public:
+		bool operator<(const QTableWidgetItem &other) const override {
+			return data(Qt::UserRole).toDouble() < other.data(Qt::UserRole).toDouble();
+		}
+};
+
+
+enum StateRole {
+	StateSuccess  = 0,
+	StateError    = 1,
+	StateInfo     = 2,
+	StateProgress = 3,
+	StatePending  = 4
+};
+
+
+bool isPending(const QTableWidget *table, int row) {
+	const QTableWidgetItem *item = table->item(row, 3);
+	return item && item->data(Qt::UserRole).toInt() == StatePending;
+}
+
+
+class StateItem : public QTableWidgetItem {
+	public:
+		using QTableWidgetItem::QTableWidgetItem;
+
+		bool operator<(const QTableWidgetItem &other) const override {
+			return sortKey(*this) < sortKey(other);
+		}
+
+	private:
+		static std::tuple<int, int, double, QString> sortKey(const QTableWidgetItem &item) {
+			int state = item.data(Qt::UserRole).toInt();
+			if ( state == StatePending ) {
+				return {-1, 0, 0.0, QString()};
+			}
+
+			if ( state == StateError ) {
+				return {0, 0, 0.0, item.text()};
+			}
+
+			if ( state == StateProgress ) {
+				double progress = item.data(Qt::UserRole + 1).toDouble();
+				if ( progress < 100 ) {
+					return {1, 0, progress, QString()};
+				}
+				return {2, 0, 0.0, QString()};
+			}
+
+			return {2, 1, 0.0, item.text()};
+		}
+};
 
 
 string waveformIDToStdString(const WaveformStreamID& id) {
@@ -89,6 +146,13 @@ CalculateAmplitudes::CalculateAmplitudes(Origin *origin,
 	_ui.source->setFont(font);
 	_ui.source->installEventFilter(new ElideFadeDrawer(this));
 	_ui.table->horizontalHeader()->setStretchLastSection(true);
+	_ui.table->horizontalHeader()->setSectionsClickable(true);
+	_ui.table->horizontalHeader()->setSortIndicatorShown(true);
+	_ui.table->horizontalHeader()->setSortIndicator(3, Qt::AscendingOrder);
+	_ui.table->horizontalHeader()->setHighlightSections(false);
+	_ui.table->setSelectionBehavior(QAbstractItemView::SelectRows);
+	connect(_ui.table->horizontalHeader(), &QHeaderView::sortIndicatorChanged,
+	        this, &CalculateAmplitudes::sortTable);
 
 	_origin = origin;
 	_thread = nullptr;
@@ -245,6 +309,7 @@ bool CalculateAmplitudes::process() {
 
 	_processors.clear();
 	_ui.table->setRowCount(0);
+	_rows.clear();
 
 	if ( !_origin || (_recomputeAmplitudes && !_thread) ) {
 		return false;
@@ -659,7 +724,7 @@ void CalculateAmplitudes::addProcessor(
 			&SCCoreApp->configuration(), keys)) ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setError(row_it->second, QString("Setup failed (%1: %2)")
+			setError(row_it->second->row(), QString("Setup failed (%1: %2)")
 			         .arg(proc->status().toString()).arg(proc->statusValue()));
 		return;
 	}
@@ -669,7 +734,7 @@ void CalculateAmplitudes::addProcessor(
 	if ( proc->isFinished() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+			setInfo(row_it->second->row(), QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 		return;
 	}
 
@@ -678,14 +743,14 @@ void CalculateAmplitudes::addProcessor(
 	if ( proc->isFinished() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setInfo(row_it->second, QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
+			setInfo(row_it->second->row(), QString("%1 (%2)").arg(proc->status().toString()).arg(proc->statusValue(), 0, 'f', 2));
 		return;
 	}
 
 	if ( !proc->safetyTimeWindow() ) {
 		pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(proc.get());
 		for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-			setError(row_it->second, tr("invalid time window"));
+			setError(row_it->second->row(), tr("invalid time window"));
 	}
 	else {
 		switch ( proc->usedComponent() ) {
@@ -771,7 +836,7 @@ void CalculateAmplitudes::addProcessor(Processing::AmplitudeProcessor *proc,
 	else
 		setError(row, proc->status().toString());
 
-	_rows.insert(TableRowMap::value_type(proc, row));
+	_rows.insert(TableRowMap::value_type(proc, _ui.table->item(row, 0)));
 }
 
 
@@ -813,10 +878,31 @@ int CalculateAmplitudes::addProcessingRow(const string &streamID, const string &
 	QTableWidgetItem *itemType = new QTableWidgetItem(type.c_str());
 	itemType->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+	QTableWidgetItem *itemState = new StateItem;
+	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	itemState->setData(Qt::UserRole, StatePending);
+
 	_ui.table->setItem(row, 0, itemStream);
 	_ui.table->setItem(row, 1, itemType);
+	_ui.table->setItem(row, 3, itemState);
+
+	scheduleResort();
 
 	return row;
+}
+
+
+void CalculateAmplitudes::scheduleResort() {
+	if ( _resortScheduled || _ui.table->horizontalHeader()->sortIndicatorSection() != 3 ) {
+		return;
+	}
+
+	_resortScheduled = true;
+	QTimer::singleShot(200, this, [this]() {
+		_resortScheduled = false;
+		auto *header = _ui.table->horizontalHeader();
+		sortTable(header->sortIndicatorSection(), header->sortIndicatorOrder());
+	});
 }
 
 
@@ -911,7 +997,7 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 
 	TableRowMap::const_iterator it = _rows.find(proc);
 	if ( it != _rows.end() )
-		setValue(it->second, res.amplitude.value);
+		setValue(it->second->row(), res.amplitude.value);
 
 	_amplitudes.insert(PickAmplitudeMap::value_type(proc->referencingPickID(), AmplitudeEntry(amp, true)));
 }
@@ -920,13 +1006,14 @@ void CalculateAmplitudes::emitAmplitude(const AmplitudeProcessor *proc,
 void CalculateAmplitudes::setValue(int row, double value) {
 	QTableWidgetItem *itemValue = _ui.table->item(row, 2);
 	if ( itemValue == nullptr ) {
-		itemValue = new QTableWidgetItem;
+		itemValue = new ValueItem;
 		itemValue->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		itemValue->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 		_ui.table->setItem(row, 2, itemValue);
 	}
 
 	itemValue->setText(QString::number(value));
+	itemValue->setData(Qt::UserRole, value);
 }
 
 
@@ -942,19 +1029,19 @@ void CalculateAmplitudes::receivedRecord(Seiscomp::Record *rec) {
 		if ( (*it)->status() == WaveformProcessor::InProgress ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setProgress(row_it->second, (int)(*it)->statusValue());
+				setProgress(row_it->second->row(), (int)(*it)->statusValue());
 			++it;
 		}
 		else if ( (*it)->status() == WaveformProcessor::Finished ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setProgress(row_it->second, 100);
+				setProgress(row_it->second->row(), 100);
 			it = slot_it->second.erase(it);
 		}
 		else if ( (*it)->isFinished() ) {
 			pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 			for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-				setInfo(row_it->second, QString("%1 (%2)").arg((*it)->status().toString()).arg((*it)->statusValue(), 0, 'f', 2));
+				setInfo(row_it->second->row(), QString("%1 (%2)").arg((*it)->status().toString()).arg((*it)->statusValue(), 0, 'f', 2));
 			it = slot_it->second.erase(it);
 		}
 		else
@@ -987,14 +1074,14 @@ void CalculateAmplitudes::finishedAcquisition() {
 			if ( (*it)->status() == WaveformProcessor::InProgress ) {
 				pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 				for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-					setError(row_it->second, QString("incomplete data (%1% ok)").arg((*it)->statusValue(), 0, 'f', 2));
+					setError(row_it->second->row(), QString("incomplete data (%1% ok)").arg((*it)->statusValue(), 0, 'f', 2));
 				(*it)->close();
 				it = slot_it->second.erase(it);
 			}
 			else if ( (*it)->status() == WaveformProcessor::WaitingForData ) {
 				pair<TableRowMap::iterator, TableRowMap::iterator> itp = _rows.equal_range(it->get());
 				for ( TableRowMap::iterator row_it = itp.first; row_it != itp.second; ++row_it )
-					setError(row_it->second, "no data");
+					setError(row_it->second->row(), "no data");
 				(*it)->close();
 				it = slot_it->second.erase(it);
 			}
@@ -1031,13 +1118,14 @@ void CalculateAmplitudes::setError(int row, QString text) {
 	// Remove progress bar if set
 	_ui.table->setCellWidget(row, 3, nullptr);
 
-	QTableWidgetItem *itemState = new QTableWidgetItem(text);
+	QTableWidgetItem *itemState = new StateItem(text);
 	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(QColor(Qt::red)));
 	// Signal an error state
-	itemState->setData(Qt::UserRole, 1);
+	itemState->setData(Qt::UserRole, StateError);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	_ui.table->setItem(row, 3, itemState);
 	filterView(row,1);
+	scheduleResort();
 }
 
 
@@ -1045,32 +1133,42 @@ void CalculateAmplitudes::setInfo(int row, QString text) {
 	// Remove progress bar if set
 	_ui.table->setCellWidget(row, 3, nullptr);
 
-	QTableWidgetItem *itemState = new QTableWidgetItem(text);
+	QTableWidgetItem *itemState = new StateItem(text);
 	itemState->setData(Qt::ForegroundRole, QVariant::fromValue(palette().color(QPalette::Highlight)));
 	// Signal an info state
-	itemState->setData(Qt::UserRole, 2);
+	itemState->setData(Qt::UserRole, StateInfo);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	_ui.table->setItem(row, 3, itemState);
 	filterView(row,1);
+	scheduleResort();
 }
 
 
 void CalculateAmplitudes::setMessage(int row, QString text) {
 	_ui.table->setCellWidget(row, 3, nullptr);
 
-	QTableWidgetItem *itemState = new QTableWidgetItem(text);
+	QTableWidgetItem *itemState = new StateItem(text);
 	itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	// Signal an non error state
-	itemState->setData(Qt::UserRole, 0);
+	itemState->setData(Qt::UserRole, StateSuccess);
 	_ui.table->setItem(row, 3, itemState);
 	_ui.table->showRow(row);
 	filterView(row,1);
+	scheduleResort();
 }
 
 
 void CalculateAmplitudes::setProgress(int row, int progress) {
+	QTableWidgetItem *itemState = _ui.table->item(row, 3);
+	if ( !itemState || itemState->data(Qt::UserRole).toInt() != StateProgress ) {
+		itemState = new StateItem;
+		itemState->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		itemState->setData(Qt::UserRole, StateProgress);
+		_ui.table->setItem(row, 3, itemState);
+	}
+	itemState->setData(Qt::UserRole + 1, progress);
+
 	QProgressBar *progressBar = static_cast<QProgressBar*>(_ui.table->cellWidget(row, 3));
-	_ui.table->setItem(row, 3, nullptr);
 	if ( !progressBar ) {
 		progressBar = new QProgressBar;
 		progressBar->setVisible(false);
@@ -1086,6 +1184,7 @@ void CalculateAmplitudes::setProgress(int row, int progress) {
 
 	progressBar->setValue(progress);
 	filterView(row, 1);
+	scheduleResort();
 }
 
 
@@ -1095,6 +1194,38 @@ void CalculateAmplitudes::filterStateChanged(int) {
 
 
 void CalculateAmplitudes::filterTypeChanged(int) {
+	filterView();
+}
+
+
+void CalculateAmplitudes::sortTable(int column, Qt::SortOrder order) {
+	_ui.table->sortItems(column, order);
+
+	int top = 0;
+	for ( int row = 0; row < _ui.table->rowCount(); ++row ) {
+		if ( !isPending(_ui.table, row) ) {
+			continue;
+		}
+
+		if ( row != top ) {
+			QList<QTableWidgetItem*> items;
+			for ( int col = 0; col < _ui.table->columnCount(); ++col ) {
+				items.append(_ui.table->takeItem(row, col));
+			}
+
+			_ui.table->removeRow(row);
+			_ui.table->insertRow(top);
+
+			for ( int col = 0; col < items.size(); ++col ) {
+				if ( items[col] ) {
+					_ui.table->setItem(top, col, items[col]);
+				}
+			}
+		}
+
+		++top;
+	}
+
 	filterView();
 }
 
@@ -1138,6 +1269,10 @@ void CalculateAmplitudes::filterView(int startRow, int cnt) {
 				hide = true;
 			else if ( item && item->data(Qt::UserRole) == 1 )
 				hide = true;
+		}
+
+		if ( isPending(_ui.table, i) ) {
+			hide = false;
 		}
 
 		if ( !type.isEmpty() ) {
