@@ -2558,23 +2558,23 @@ Origin *StdLoc::createOrigin(
 	}
 	else if ( _currentProfile.name.empty() ) {
 		if ( _currentProfile.method == Profile::Method::LeastSquares ) {
-			origin->setMethodID("StdLoc:LeastSquares");
+			origin->setMethodID("StdLoc/LeastSquares");
 		}
 		else if ( _currentProfile.method == Profile::Method::GridSearch ) {
-			origin->setMethodID("StdLoc:GridSearch");
+			origin->setMethodID("StdLoc/GridSearch");
 		}
 		else if ( _currentProfile.method == Profile::Method::OctTree ) {
-			origin->setMethodID("StdLoc:OctTree");
+			origin->setMethodID("StdLoc/OctTree");
 		}
 		else if ( _currentProfile.method == Profile::Method::GridAndLsqr ) {
-			origin->setMethodID("StdLoc:GridSearch+LeastSquares");
+			origin->setMethodID("StdLoc/GridSearch+LeastSquares");
 		}
 		else if ( _currentProfile.method == Profile::Method::OctTreeAndLsqr ) {
-			origin->setMethodID("StdLoc:OctTree+LeastSquares");
+			origin->setMethodID("StdLoc/OctTree+LeastSquares");
 		}
 	}
 	else {
-		origin->setMethodID("StdLoc:" + _currentProfile.name);
+		origin->setMethodID("StdLoc/" + _currentProfile.name);
 	}
 
 	origin->setCreationInfo(ci);
@@ -2582,7 +2582,7 @@ Origin *StdLoc::createOrigin(
 		origin->setEarthModelID(_currentProfile.earthModelID);
 	}
 	else {
-		origin->setEarthModelID(_tttType + ":" + _tttModel);
+		origin->setEarthModelID(_tttType + "/" + _tttModel);
 	}
 	origin->setTime(DataModel::TimeQuantity(originTime));
 	origin->setLatitude(DataModel::RealQuantity(originLat));
