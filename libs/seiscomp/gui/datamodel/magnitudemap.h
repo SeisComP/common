@@ -27,6 +27,7 @@
 #ifndef Q_MOC_RUN
 #include <seiscomp/core/baseobject.h>
 #endif
+#include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/qt.h>
 
 
@@ -63,6 +64,11 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 		//! if they are not part of the origin
 		void setStationsMaxDist(double);
 
+		//! Sets which unassociated stations are displayed. The maximum
+		//! distance takes effect with the next origin.
+		void setUnassociatedStations(const UnassociatedStations &);
+		const UnassociatedStations &unassociatedStations() const;
+
 		//! Make the station state changeable interactively
 		//! The default is TRUE
 		void setStationsInteractive(bool);
@@ -90,6 +96,7 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 	protected:
 		void mousePressEvent(QMouseEvent*);
 		void mouseDoubleClickEvent(QMouseEvent*);
+		void contextMenuEvent(QContextMenuEvent*);
 
 
 	private:
@@ -110,7 +117,6 @@ class SC_GUI_API MagnitudeMap : public MapWidget {
 		QVector<int>               _magnitudes;
 		std::map<std::string, int> _stationCodes;
 		int                        _hoverId{-1};
-		double                     _stationsMaxDist{-1};
 };
 
 

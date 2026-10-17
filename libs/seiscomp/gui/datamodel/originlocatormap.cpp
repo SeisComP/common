@@ -62,8 +62,13 @@ namespace {
 
 
 struct StationLayer : Map::Layer {
+	struct Symbol;
+
 	StationLayer(OriginLocatorMap *map)
-	: Map::Layer(map) {}
+	: Map::Layer(map) {
+		// No unassociated stations unless a maximum distance is set
+		unassociated.maxDistance = -1;
+	}
 
 	~StationLayer() override {
 		clear();
@@ -79,11 +84,7 @@ struct StationLayer : Map::Layer {
 			}
 		}
 		else {
-			for ( auto entry : std::as_const(stations) ) {
-				if ( entry->annotation ) {
-					entry->annotation->visible = entry->isVisible();
-				}
-			}
+			updateAnnotations();
 		}
 	}
 
@@ -96,11 +97,51 @@ struct StationLayer : Map::Layer {
 				entry->setVisible(true);
 				entry->calculateMapPosition(canvas);
 			}
+		}
 
-			if ( entry->annotation ) {
-				entry->annotation->visible = entry->isVisible();
+		updateAnnotations();
+	}
+
+	// Computes the distance of the farthest used station
+	void updateUsedDistance() {
+		usedDistance = -1;
+		for ( auto s : std::as_const(stations) ) {
+			if ( s->isArrival && s->isActive && s->validLocation ) {
+				usedDistance = std::max(usedDistance, s->distance);
 			}
 		}
+	}
+
+	bool isShown(const Symbol *s) const {
+		return s->isArrival
+		    || unassociated.isVisible(s->distance, usedDistance,
+		                              s->isEnabled, s->isConfigured);
+	}
+
+	void updateAnnotations() {
+		for ( auto entry : std::as_const(stations) ) {
+			if ( entry->annotation ) {
+				entry->annotation->visible = entry->isVisible() && isShown(entry);
+			}
+		}
+	}
+
+	// Returns the number of shown and enabled unassociated stations within
+	// the used distance or -1 if no station is used
+	int inRangeCount() const {
+		if ( usedDistance < 0 ) {
+			return -1;
+		}
+
+		int count = 0;
+		for ( auto s : std::as_const(stations) ) {
+			if ( !s->isArrival && s->isActive && s->isEnabled && isShown(s)
+			  && unassociated.isInRange(s->distance, usedDistance) ) {
+				++count;
+			}
+		}
+
+		return count;
 	}
 
 	bool isInside(const QMouseEvent *event, const QPointF &) override {
@@ -108,7 +149,7 @@ struct StationLayer : Map::Layer {
 		auto p = QT_EVENT_POS(event);
 
 		for ( int i = 0; i < stations.count(); ++i ) {
-			if ( !stations[i]->isVisible() ) {
+			if ( !stations[i]->isVisible() || !isShown(stations[i]) ) {
 				continue;
 			}
 
@@ -121,10 +162,16 @@ struct StationLayer : Map::Layer {
 		if ( tmpHoverId != hoverId ) {
 			hoverId = tmpHoverId;
 			if ( hoverId != -1 ) {
-				int arrivalId = stations[hoverId]->arrivalId;
+				auto s = stations[hoverId];
+				int arrivalId = s->arrivalId;
 				static_cast<OriginLocatorMap*>(parent())->hoverArrival(arrivalId);
 				setToolTip(static_cast<OriginLocatorMap*>(parent())->toolTip());
-				if ( toolTip().isEmpty() ) {
+				if ( !s->isArrival && !s->net.empty() && !s->code.empty() ) {
+					setToolTip(unassociated.toolTip(s->net, s->code, s->distance,
+					                                usedDistance, s->isEnabled,
+					                                s->isConfigured));
+				}
+				else if ( toolTip().isEmpty() ) {
 					if ( !stations[hoverId]->net.empty()
 					  && !stations[hoverId]->code.empty() ) {
 						setToolTip((stations[hoverId]->net + "." + stations[hoverId]->code).c_str());
@@ -144,6 +191,10 @@ struct StationLayer : Map::Layer {
 		int size = SCScheme.map.stationSize;
 
 		QPoint annotationOffset(0, -size - p.fontMetrics().height() / 2);
+
+		// The used stations might have changed interactively
+		updateUsedDistance();
+		updateAnnotations();
 
 		if ( drawStationsLines && canvas->symbolCollection()->count() > 0 ) {
 			const Map::Symbol *originSymbol = (*canvas->symbolCollection()->begin());
@@ -197,6 +248,13 @@ struct StationLayer : Map::Layer {
 				p.setClipping(false);
 		}
 
+		if ( canvas->symbolCollection()->count() > 0 ) {
+			unassociated.drawCircles(
+				canvas, p, (*canvas->symbolCollection()->begin())->location(),
+				usedDistance
+			);
+		}
+
 		for ( int i = stations.count()-1; i >= 0; --i ) {
 			if ( stations[i]->isClipped() || !stations[i]->isVisible() ) {
 				continue;
@@ -206,13 +264,28 @@ struct StationLayer : Map::Layer {
 				continue;
 			}
 
-			stations[i]->setColor(
-				stations[i]->isArrival
-				?
-				stations[i]->isActive ? stations[i]->color : SCScheme.colors.arrivals.disabled
-				:
-				stations[i]->isActive ? SCScheme.colors.stations.idle : Qt::gray
-			);
+			if ( !isShown(stations[i]) ) {
+				continue;
+			}
+
+			if ( stations[i]->isArrival ) {
+				stations[i]->setColor(
+					stations[i]->isActive ? stations[i]->color : SCScheme.colors.arrivals.disabled
+				);
+			}
+			else if ( !stations[i]->isActive ) {
+				stations[i]->setColor(Qt::gray);
+			}
+			else if ( !stations[i]->isEnabled ) {
+				stations[i]->setColor(SCScheme.colors.stations.disabled);
+			}
+			else if ( unassociated.highlightInRange
+			       && unassociated.isInRange(stations[i]->distance, usedDistance) ) {
+				stations[i]->setColor(SCScheme.colors.stations.unassociatedInRange);
+			}
+			else {
+				stations[i]->setColor(SCScheme.colors.stations.idle);
+			}
 
 			stations[i]->draw(canvas, p);
 
@@ -270,6 +343,10 @@ struct StationLayer : Map::Layer {
 		bool                 validLocation{false};
 		bool                 isActive{false};
 		bool                 isArrival{false};
+		// The state in the configuration module, only used for
+		// unassociated stations
+		bool                 isEnabled{true};
+		bool                 isConfigured{true};
 		std::string          net;
 		std::string          code;
 		QColor               color;
@@ -279,11 +356,13 @@ struct StationLayer : Map::Layer {
 		Map::AnnotationItem *annotation{nullptr};
 	};
 
-	QVector<Symbol*> stations;
-	bool             interactive{true};
-	bool             drawStationsLines{true};
-	bool             drawDirectivity{true};
-	int              hoverId{-1};
+	QVector<Symbol*>     stations;
+	UnassociatedStations unassociated;
+	double               usedDistance{-1};
+	bool                 interactive{true};
+	bool                 drawStationsLines{true};
+	bool                 drawDirectivity{true};
+	int                  hoverId{-1};
 };
 
 
@@ -343,10 +422,19 @@ void OriginLocatorMap::contextMenuEvent(QContextMenuEvent *e) {
 
 	actionDrawDirectivity = menu.addAction(tr("%1 directivity").arg(SYMBOLLAYER->drawDirectivity ? "Hide" : "Show"));
 
+	QMenu *unassociatedMenu = SYMBOLLAYER->unassociated.addMenu(&menu, [this]() {
+		SYMBOLLAYER->updateAnnotations();
+		SYMBOLLAYER->update(Gui::Map::Layer::Redraw);
+	}, SYMBOLLAYER->inRangeCount());
+
 	QAction *action = menu.exec(e->globalPos());
 	if ( action == nullptr ) return;
 
-	if ( action == actionDrawDirectivity ) {
+	if ( action->parent() == unassociatedMenu ) {
+		// Already handled by the menu
+		return;
+	}
+	else if ( action == actionDrawDirectivity ) {
 		SYMBOLLAYER->drawDirectivity = !SYMBOLLAYER->drawDirectivity;
 		SYMBOLLAYER->update(Gui::Map::Layer::Redraw);
 	}
@@ -430,7 +518,27 @@ void OriginLocatorMap::setCache(DataModel::PublicObjectCache *cache) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorMap::setStationsMaxDist(double d) {
-	_stationsMaxDist = d;
+	SYMBOLLAYER->unassociated.maxDistance = d;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorMap::setUnassociatedStations(const UnassociatedStations &config) {
+	SYMBOLLAYER->unassociated = config;
+	SYMBOLLAYER->updateAnnotations();
+	update();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+const UnassociatedStations &OriginLocatorMap::unassociatedStations() const {
+	return SYMBOLLAYER->unassociated;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -528,8 +636,8 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				SYMBOLLAYER->stations.push_back(symbol);
 
 				try {
-					symbol->backAzimuth = p->backazimuth().value();
 					symbol->distance = arrival->distance();
+					symbol->backAzimuth = p->backazimuth().value();
 				}
 				catch ( ... ) {}
 
@@ -569,6 +677,7 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 						QPointF(lon,lat), "", "", true
 					)
 				);
+				SYMBOLLAYER->stations.back()->distance = arrival->distance();
 				addArrival();
 			}
 			catch ( ... ) {
@@ -590,6 +699,9 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 
 		SYMBOLLAYER->stations.back()->color = itemColor;
 	}
+
+	UnassociatedStations::StationStates states;
+	states.read(SYMBOLLAYER->unassociated.requiredBinding);
 
 	DataModel::Inventory *inv = Client::Inventory::Instance()->inventory();
 	if ( inv ) {
@@ -618,8 +730,7 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 					continue;
 				}
 
-				// Limit to 20 degrees
-				if ( dist > _stationsMaxDist ) continue;
+				if ( dist > SYMBOLLAYER->unassociated.maxDistance ) continue;
 
 				std::string stationCode = net->code() + "." + sta->code();
 
@@ -627,16 +738,18 @@ void OriginLocatorMap::setOrigin(DataModel::Origin* o) {
 				if ( _stationCodes.find(stationCode) != _stationCodes.end() )
 					continue;
 
-				SYMBOLLAYER->stations.push_back(
-					new StationLayer::Symbol(
-						QPointF(sta->longitude(),sta->latitude()),
-						net->code(), sta->code(),
-						true,
-						_annotationLayer->annotations()->add(stationCode.c_str())
-					)
+				auto symbol = new StationLayer::Symbol(
+					QPointF(sta->longitude(),sta->latitude()),
+					net->code(), sta->code(),
+					true,
+					_annotationLayer->annotations()->add(stationCode.c_str())
 				);
 
-				SYMBOLLAYER->stations.back()->isActive = true;
+				symbol->isActive = true;
+				symbol->distance = dist;
+				states.get(net->code(), sta->code(), symbol->isEnabled, symbol->isConfigured);
+
+				SYMBOLLAYER->stations.push_back(symbol);
 				_stationCodes[stationCode] = SYMBOLLAYER->stations.size()-1;
 			}
 		}

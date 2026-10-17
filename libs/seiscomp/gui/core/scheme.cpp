@@ -354,6 +354,7 @@ void Scheme::fetch() {
 	READ_COLOR(colors.stations.triggered2);
 	READ_COLOR(colors.stations.disabled);
 	READ_COLOR(colors.stations.idle);
+	READ_COLOR(colors.stations.unassociatedInRange);
 
 	READ_COLOR(colors.qc.delay0);
 	READ_COLOR(colors.qc.delay1);
@@ -386,6 +387,8 @@ void Scheme::fetch() {
 	READ_COLOR(colors.map.outlines);
 	READ_PEN(colors.map.directivity);
 	READ_PEN(colors.map.grid);
+	READ_PEN(colors.map.usedDistance);
+	READ_PEN(colors.map.distanceLimit);
 	READ_COLOR(colors.map.stationAnnotations);
 	READ_COLOR(colors.map.cityLabels);
 	READ_COLOR(colors.map.cityOutlines);
