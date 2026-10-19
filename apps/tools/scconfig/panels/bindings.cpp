@@ -623,7 +623,6 @@ BindingView::BindingView(QWidget *parent) : QWidget(parent), _model(nullptr) {
 	activateSearch->setShortcut(QKeySequence("Ctrl+f"));
 	addAction(activateSearch);
 	connect(activateSearch, &QAction::triggered, this, &BindingView::openSearch);
-	connect(static_cast<FancyView*>(_view), &FancyView::searchRequested, this, &BindingView::openSearch);
 
 	auto closeSearch = new QAction(this);
 	closeSearch->setShortcut(QKeySequence("Esc"));
@@ -673,11 +672,11 @@ void BindingView::clear() {
 	_view->viewport()->setVisible(false);
 	_view->setModel(nullptr);
 	closeSearch();
-	static_cast<FancyView*>(_view)->showSearchButton(false);
 	_label->setText({});
 	_icon->setPixmap({});
 	_rootIndex = QModelIndex();
 	_closeButton->setEnabled(false);
+	emit searchAvailableChanged(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -743,6 +742,7 @@ void BindingView::setRootIndex(const QModelIndex &index) {
 	_view->setRootIndex(_bindingModel->index(0, 0));
 
 	_closeButton->setEnabled(true);
+	emit searchAvailableChanged(true);
 
 	auto icon = _rootIndex.data(Qt::DecorationRole).value<QIcon>();
 	_icon->setPixmap(icon.pixmap(24, 24));
@@ -820,6 +820,20 @@ void BindingView::rowsRemoved(const QModelIndex &parent, int start, int end) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BindingView::toggleSearch() {
+	if ( !_searchWidget->isHidden() ) {
+		closeSearch();
+	}
+	else {
+		openSearch();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void BindingView::openSearch() {
 	if ( !_view->model() ) {
 		return;
@@ -827,9 +841,7 @@ void BindingView::openSearch() {
 	_searchWidget->reset();
 	_searchWidget->show();
 	_searchWidget->setFocus(Qt::ActiveWindowFocusReason);
-	if ( _view ) {
-		static_cast<FancyView*>(_view)->showSearchButton(false);
-	}
+	emit searchActiveChanged(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -840,10 +852,10 @@ void BindingView::openSearch() {
 void BindingView::closeSearch() {
 	if ( _view ) {
 		_view->setCurrentIndex(_rootIndex);
-		static_cast<FancyView*>(_view)->showSearchButton(true);
 	}
 	_searchWidget->reset();
 	_searchWidget->hide();
+	emit searchActiveChanged(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -932,6 +944,10 @@ BindingsPanel::BindingsPanel(QWidget *parent)
 	QSizePolicy sp = _bindingView->sizePolicy();
 	sp.setHorizontalStretch(1);
 	_bindingView->setSizePolicy(sp);
+	connect(_bindingView, &BindingView::searchAvailableChanged,
+	        this, &BindingsPanel::setSearchAvailable);
+	connect(_bindingView, &BindingView::searchActiveChanged,
+	        this, &BindingsPanel::setSearchActive);
 	connect(_bindingView, &BindingView::closeRequested, this, [this] {
 		_bindingView->clear();
 		_currentBinding = nullptr;
@@ -1394,6 +1410,15 @@ bool BindingsPanel::setCurrentModule(const QString &name) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool BindingsPanel::setCurrentParameter(const QString &name) {
 	return _bindingView->showParameter(name);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void BindingsPanel::toggleSearch() {
+	_bindingView->toggleSearch();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

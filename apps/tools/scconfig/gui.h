@@ -39,6 +39,8 @@
 #include <QLayout>
 
 
+class QPushButton;
+class QSpinBox;
 class QTreeWidget;
 class QTreeWidgetItem;
 
@@ -101,7 +103,6 @@ class ConfigurationTreeItemModel : public QStandardItemModel {
 
 		void setModel(Seiscomp::System::ModuleBinding *);
 
-		//! Returns whether the model is modified or not
 		bool isModified() const { return _modified; }
 		void saved();
 
@@ -114,7 +115,6 @@ class ConfigurationTreeItemModel : public QStandardItemModel {
 
 
 	public slots:
-		//! Sets the modified state
 		void setModified(bool m = true);
 
 
@@ -190,11 +190,29 @@ class ConfiguratorPanel : public QWidget {
 		 */
 		virtual bool setCurrentParameter(const QString &name) { return false; }
 
+		bool isSearchAvailable() const { return _searchAvailable; }
+
+		bool isSearchActive() const { return _searchActive; }
+
+		/**
+		 * @brief Opens the search for parameters or closes it if it is
+		 *        open. The default implementation does nothing as panels do
+		 *        not necessarily show parameters.
+		 */
+		virtual void toggleSearch() {}
+
 
 	signals:
 		void reloadRequested();
 		void headlineChanged(QString head, QString sub);
 		void descriptionChanged(QString desc);
+		void searchAvailableChanged(bool available);
+		void searchActiveChanged(bool active);
+
+
+	protected:
+		void setSearchAvailable(bool available);
+		void setSearchActive(bool active);
 
 
 	protected:
@@ -205,6 +223,8 @@ class ConfiguratorPanel : public QWidget {
 		QString                     _description;
 		QIcon                       _icon;
 		bool                        _usesExternalConfiguration;
+		bool                        _searchAvailable{false};
+		bool                        _searchActive{false};
 };
 
 
@@ -239,7 +259,6 @@ class Configurator : public QMainWindow {
 
 		bool setModel(Seiscomp::System::Model *model);
 
-		//! Returns the titles of all panels in display order.
 		QStringList panelTitles() const;
 
 		/**
@@ -250,7 +269,6 @@ class Configurator : public QMainWindow {
 		 */
 		bool setPanel(const QString &panel);
 
-		//! Returns the title of the currently active panel.
 		QString currentPanelTitle() const;
 
 		/**
@@ -305,6 +323,7 @@ class Configurator : public QMainWindow {
 
 	private slots:
 		void wizard();
+		void showSettings();
 		void resetAll();
 		void save();
 		void showAbout();
@@ -336,6 +355,9 @@ class Configurator : public QMainWindow {
 		QWidget                    *_modeLabel;
 		QLabel                     *_headline;
 		QLabel                     *_description;
+		QWidget                    *_panelTools;
+		QPushButton                *_searchButton;
+		QSpinBox                   *_expandLevel;
 		QListWidget                *_listWidget;
 		StatusLabel                *_statusLabel;
 

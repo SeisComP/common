@@ -27,11 +27,10 @@
 #include <QLineEdit>
 #include <QAction>
 #include <QToolButton>
+#include <QToolTip>
 #include <QTimer>
 #include <QPushButton>
-#include <QColorDialog>
 #include <QComboBox>
-#include <QStandardItemModel>
 #include <QCompleter>
 #include <QClipboard>
 #include <QCalendarWidget>
@@ -44,17 +43,23 @@
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QStringList>
+#include <QStyleOptionButton>
 
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QMimeData>
+#include <QPlainTextEdit>
 #include <QResizeEvent>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+#include <algorithm>
 #include <fstream>
 #include <functional>
+#include <memory>
+#include <limits>
 #include <set>
 
 #include <seiscomp/system/environment.h>
@@ -64,6 +69,7 @@
 #include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/flowlayout.h>
 
+#include "dialogs/coloreditor.h"
 #include "fancyview.h"
 #include "gui.h"
 #include "icon.h"
@@ -94,7 +100,10 @@ QColor AlertTextColor(0, 0, 0);
 
 
 int layoutPadding() {
-	return QApplication::fontMetrics().ascent() / 2;
+	// Read on every paint and on every mouse move over a block. The metrics
+	// of the application font do not change while the views exist.
+	static const int padding = QFontMetrics(QApplication::font()).ascent() / 2;
+	return padding;
 }
 
 
@@ -370,6 +379,7 @@ class BlockWidget : public QWidget {
 		BlockWidget(QWidget *parent = 0) : QWidget(parent) {
 			_hasCustomBackground = false;
 			setContentsMargins(layoutPadding() * 3, 0, 0, 0);
+			setMouseTracking(true);
 		}
 
 		void setBackgroundColor(QColor bg) {
@@ -377,7 +387,74 @@ class BlockWidget : public QWidget {
 			_bg = bg;
 		}
 
+		std::function<void ()> onLineClicked;
+		std::function<bool ()> isLineClickable;
+
+		QString lineToolTip;
+
+		void setLineEnabled(bool enabled) {
+			_lineEnabled = enabled;
+			if ( !enabled ) {
+				unsetCursor();
+			}
+		}
+
 	protected:
+		bool isOnLine(const QPoint &p) const {
+			return onLineClicked && _lineEnabled
+			       && (!isLineClickable || isLineClickable())
+			       && (p.x() < layoutPadding() * 2);
+		}
+
+		void mouseMoveEvent(QMouseEvent *e) override {
+			setCursor(isOnLine(e->pos()) ? Qt::PointingHandCursor
+			                             : Qt::ArrowCursor);
+			QWidget::mouseMoveEvent(e);
+		}
+
+		void mousePressEvent(QMouseEvent *e) override {
+			_pressedOnLine = (e->button() == Qt::LeftButton) && isOnLine(e->pos());
+			if ( _pressedOnLine ) {
+				e->accept();
+				return;
+			}
+
+			QWidget::mousePressEvent(e);
+		}
+
+		void mouseReleaseEvent(QMouseEvent *e) override {
+			const bool clicked = _pressedOnLine && isOnLine(e->pos());
+			_pressedOnLine = false;
+
+			if ( clicked ) {
+				onLineClicked();
+				setCursor(isOnLine(e->pos()) ? Qt::PointingHandCursor
+				                             : Qt::ArrowCursor);
+				e->accept();
+				return;
+			}
+
+			QWidget::mouseReleaseEvent(e);
+		}
+
+		bool event(QEvent *e) override {
+			if ( e->type() != QEvent::ToolTip ) {
+				return QWidget::event(e);
+			}
+
+			auto *he = static_cast<QHelpEvent*>(e);
+			if ( isOnLine(he->pos()) ) {
+				QToolTip::showText(he->globalPos(), lineToolTip, this);
+			}
+			else {
+				QToolTip::hideText();
+			}
+
+			e->accept();
+
+			return true;
+		}
+
 		void paintEvent(QPaintEvent *) {
 			QPainter p(this);
 
@@ -398,8 +475,142 @@ class BlockWidget : public QWidget {
 
 	private:
 		bool   _hasCustomBackground;
+		bool   _pressedOnLine{false};
+		bool   _lineEnabled{true};
 		QColor _bg;
 };
+
+
+class UpdatesBlocker {
+	public:
+		UpdatesBlocker(QWidget *w) : _w(w) {
+			if ( _w ) {
+				_w->setUpdatesEnabled(false);
+			}
+		}
+
+		~UpdatesBlocker() {
+			if ( _w ) {
+				_w->setUpdatesEnabled(true);
+			}
+		}
+
+	private:
+		Q_DISABLE_COPY(UpdatesBlocker)
+
+		QWidget *_w;
+};
+
+
+/**
+ * @brief Hides a widget while a block of changes is applied.
+ *
+ * Showing a widget inside visible ones lays out all widgets around it. Its
+ * children shown while it is hidden are laid out once when it is shown again.
+ */
+class VisibilityBlocker {
+	public:
+		VisibilityBlocker(QWidget *w) : _w(w) {
+			_w->hide();
+		}
+
+		~VisibilityBlocker() {
+			_w->show();
+		}
+
+	private:
+		Q_DISABLE_COPY(VisibilityBlocker)
+
+		QWidget *_w;
+};
+
+void setBlockExpanded(QWidget *block, QWidget *desc, bool expanded) {
+	if ( !desc ) {
+		block->setVisible(expanded);
+		return;
+	}
+
+	block->setVisible(true);
+
+	for ( auto *child : block->findChildren<QWidget*>(
+	                        QString(), Qt::FindDirectChildrenOnly) ) {
+		if ( child != desc ) {
+			child->setVisible(expanded);
+		}
+	}
+}
+
+
+class ToggleOnClick : public QObject {
+	public:
+		ToggleOnClick(QWidget *label, QAbstractButton *toggle)
+		: QObject(label), _toggle(toggle) {
+			label->setCursor(Qt::PointingHandCursor);
+			label->installEventFilter(this);
+		}
+
+	protected:
+		bool eventFilter(QObject *watched, QEvent *event) override {
+			auto *label = static_cast<QWidget*>(watched);
+
+			switch ( event->type() ) {
+				case QEvent::MouseButtonRelease:
+				{
+					auto *me = static_cast<QMouseEvent*>(event);
+					if ( (me->button() == Qt::LeftButton)
+					     && label->rect().contains(me->pos())
+					     && _toggle->isEnabled() ) {
+						// Runs the same actions as the handle including
+						// the ones of the modifier keys
+						_toggle->click();
+						return true;
+					}
+					break;
+				}
+
+				case QEvent::ToolTip:
+					// The actions are explained by the tool tip of the handle
+					QToolTip::showText(static_cast<QHelpEvent*>(event)->globalPos(),
+					                   _toggle->toolTip(), label);
+					return true;
+
+				default:
+					break;
+			}
+
+			return QObject::eventFilter(watched, event);
+		}
+
+	private:
+		QAbstractButton *_toggle;
+};
+
+
+QBoxLayout *handleWithName(QAbstractButton *toggle, QWidget *name) {
+	auto *layout = new QHBoxLayout;
+	layout->setSpacing(0);
+	layout->setContentsMargins(0, 0, 0, 0);
+
+	name->setContentsMargins(layoutPadding(), 0, 0, 0);
+	new ToggleOnClick(name, toggle);
+
+	layout->addWidget(toggle);
+	layout->addWidget(name);
+
+	return layout;
+}
+
+
+void closeOnLineClick(BlockWidget *block, QAbstractButton *toggle,
+                      const QString &toolTip) {
+	block->onLineClicked = [toggle]() {
+		toggle->setChecked(false);
+	};
+	block->isLineClickable = [toggle]() {
+		return toggle->isChecked();
+	};
+	block->lineToolTip = toolTip;
+}
 
 
 class ViewItemWidget : public QWidget {
@@ -487,9 +698,10 @@ class HRuler : public QWidget {
 class BlockHandle : public QToolButton {
 	public:
 		BlockHandle(QWidget *parent = 0) : QToolButton(parent) {
-			setFixedWidth(layoutPadding() * 2);
-			setFixedHeight(layoutPadding() * 2);
+			setFixedSize(layoutPadding() * 2, layoutPadding() * 2);
 			setForegroundRole(QPalette::Mid);
+			setCursor(Qt::PointingHandCursor);
+			setToolTip(QObject::tr("Click to expand/collapse this group"));
 		}
 
 	protected:
@@ -539,6 +751,7 @@ class IconButton : public QAbstractButton {
 		IconButton(const QIcon &icon)
 		: QAbstractButton() {
 			setIcon(icon);
+			setCursor(Qt::PointingHandCursor);
 		}
 
 
@@ -683,7 +896,9 @@ class StringEdit : public QLineEdit, public FancyViewItemEdit {
 
 class BoolEdit : public QCheckBox, public FancyViewItemEdit {
 	public:
-		BoolEdit(QWidget *parent = 0) : QCheckBox(parent) {}
+		BoolEdit(QWidget *parent = 0) : QCheckBox(parent) {
+			updateCursor();
+		}
 
 		QWidget *widget() { return this; }
 
@@ -693,6 +908,25 @@ class BoolEdit : public QCheckBox, public FancyViewItemEdit {
 
 		QString value() const {
 			return isChecked()?"true":"false";
+		}
+
+	protected:
+		void changeEvent(QEvent *e) override {
+			if ( e->type() == QEvent::EnabledChange ) {
+				updateCursor();
+			}
+
+			QCheckBox::changeEvent(e);
+		}
+
+	private:
+		void updateCursor() {
+			if ( isEnabled() ) {
+				setCursor(Qt::PointingHandCursor);
+			}
+			else {
+				unsetCursor();
+			}
 		}
 };
 
@@ -747,10 +981,6 @@ class ComboEdit : public QComboBox, public FancyViewItemEdit {
 };
 
 
-// Input field of a list parameter. It looks and behaves like the combo box of
-// a parameter with predefined values, but its drop-down does not open a list
-// of items. Instead it opens the window in which the single values are
-// selected and ordered.
 class ListEdit : public ComboEdit {
 	public:
 		using ComboEdit::ComboEdit;
@@ -787,13 +1017,6 @@ class EvalHintWidget : public QLabel {
 };
 
 
-// Rewrites an absolute path using SeisComP's path variables (e.g.
-// @SYSTEMCONFIGDIR@, @DATADIR@) so the stored value stays portable across
-// installations. The variable whose expanded directory is the longest matching
-// path-boundary prefix is used, e.g. @KEYDIR@ in favour of @SYSTEMCONFIGDIR@.
-// If the path is not located below any known directory it is returned
-// unchanged. The result resolves back to the original path via
-// Environment::absolutePath().
 QString seiscompVariablePath(const QString &path) {
 	Environment *env = Environment::Instance();
 
@@ -847,23 +1070,10 @@ QString seiscompVariablePath(const QString &path) {
 }
 
 
-// Checks whether a module holds parameters which are not maintained by
-// scconfig: parameters named "module.trunk.*" and parameters read from a file
-// pulled in with "include". The latter are recognized by their origin, they
-// come from a file which is not one of the configuration files of the module.
-// Standalone modules neither read the global configuration nor consider
-// "module.trunk.*" parameters, so both are ignored for them. Modules which do
-// not inherit the global bindings ignore the "module.trunk.global.*"
-// parameters as well.
 class ExternalParameterFinder : public ModelVisitor {
 	public:
-		ExternalParameterFinder(const Module *mod)
-		: _standalone(mod->definition->isStandalone())
-		  // The global module is configured by the global parameters itself,
-		  // it does not inherit them from another module.
-		, _inheritGlobalBinding(mod->definition->name == "global"
-		                        || (mod->definition->inheritGlobalBinding
-		                            && *mod->definition->inheritGlobalBinding)) {
+		ExternalParameterFinder(const Module *mod):
+		    _standalone(mod->definition->isStandalone()) {
 			for ( int stage = Environment::CS_FIRST;
 			      stage <= Environment::CS_LAST; ++stage ) {
 				const std::string uri =
@@ -883,7 +1093,6 @@ class ExternalParameterFinder : public ModelVisitor {
 		bool trunk() const { return _trunk; }
 		bool included() const { return _included; }
 
-		//! Adds the file a binding is read from to the files of the module
 		void addConfigFile(const std::string &uri) {
 			_configFiles.insert(uri);
 		}
@@ -936,12 +1145,8 @@ class ExternalParameterFinder : public ModelVisitor {
 			}
 
 			// "module.trunk.*" parameters do not apply to standalone modules.
-			// Without the global bindings the module does not consider the
-			// "module.trunk.global.*" parameters either.
 			if ( !_standalone
-			     && (param->variableName.compare(0, 13, "module.trunk.") == 0)
-			     && (_inheritGlobalBinding
-			         || (param->variableName.compare(0, 20, "module.trunk.global.") != 0)) ) {
+			     && (param->variableName.compare(0, 13, "module.trunk.") == 0) ) {
 				_trunk = true;
 			}
 
@@ -954,7 +1159,6 @@ class ExternalParameterFinder : public ModelVisitor {
 		bool complete() const { return (_trunk || _standalone) && _included; }
 
 		bool                  _standalone{false};
-		bool                  _inheritGlobalBinding{false};
 		std::set<std::string> _configFiles;
 		std::set<std::string> _globalFiles;
 		bool                  _trunk{false};
@@ -962,10 +1166,6 @@ class ExternalParameterFinder : public ModelVisitor {
 };
 
 
-// Adds a note about the parameters of a module which cannot be adjusted with
-// scconfig. If a binding is given its own parameters are considered as well,
-// its file may pull in an include of its own. Does nothing if there are no
-// such parameters.
 void addExternalParameterHint(QBoxLayout *layout, const Module *mod,
                               const ModuleBinding *binding = nullptr) {
 	if ( !mod ) {
@@ -1014,11 +1214,33 @@ void addExternalParameterHint(QBoxLayout *layout, const Module *mod,
 }
 
 
-// Builds the tooltip of a widget when it is about to be shown. Evaluating the
-// value of every parameter while the panel is created is expensive, in
-// particular for file and directory parameters which are looked up on disk.
-// The issues of a value are reported on the console with the first evaluation
-// only, further ones would repeat the same messages on every hover.
+QString bindingDescription(const ModuleBinding *binding, const Section *sec) {
+	auto *mod = binding ? static_cast<const Module*>(binding->parent) : nullptr;
+	if ( !mod || !mod->definition || (mod->definition->name != sec->name)
+	     || !mod->model || !mod->model->schema ) {
+		return {};
+	}
+
+	auto *schema = mod->model->schema;
+
+	std::set<std::string> plugins;
+	for ( auto *plugin : schema->pluginsForModule(mod->definition->name) ) {
+		plugins.insert(plugin->name);
+	}
+
+	QStringList descriptions;
+
+	for ( auto *def : schema->bindingsForModule(mod->definition->name) ) {
+		if ( def->category.empty() && !def->description.empty()
+		     && !plugins.count(def->name) ) {
+			descriptions << QString::fromStdString(def->description);
+		}
+	}
+
+	return descriptions.join("\n\n");
+}
+
+
 class LazyToolTip : public QObject {
 	public:
 		LazyToolTip(QWidget *watched, const std::function<void (bool)> &build)
@@ -1042,8 +1264,6 @@ class LazyToolTip : public QObject {
 };
 
 
-// A QLabel that invokes a callback when clicked while enabled. Used to make a
-// parameter name open the value editor.
 class ClickableLabel : public QLabel {
 	public:
 		using QLabel::QLabel;
@@ -1062,10 +1282,18 @@ class ClickableLabel : public QLabel {
 };
 
 
-// Adds the button opening a selection dialog to the right hand side inside the
-// input field, in the same place as the drop-down arrow of a combo box. The
-// button is only active while the field is active for input. Returns the action
-// to connect to, null if the input widget holds no line edit.
+void showAsClickable(QWidget *label, bool clickable) {
+	if ( clickable ) {
+		label->setCursor(Qt::PointingHandCursor);
+		label->setToolTip(QObject::tr("Click to edit the value"));
+	}
+	else {
+		label->unsetCursor();
+		label->setToolTip({});
+	}
+}
+
+
 QAction *makeButtonEditor(FancyViewItemEdit *edit, const QString &iconName,
                           const QString &tooltip) {
 	auto *field = qobject_cast<QLineEdit*>(edit->widget());
@@ -1082,17 +1310,16 @@ QAction *makeButtonEditor(FancyViewItemEdit *edit, const QString &iconName,
 	auto *action = field->addAction(icon(iconName), QLineEdit::TrailingPosition);
 	action->setToolTip(tooltip);
 
+	// The button showing the action is created by the line edit and would
+	// inherit its text cursor.
+	for ( auto *button : field->findChildren<QToolButton*>() ) {
+		button->setCursor(Qt::PointingHandCursor);
+	}
+
 	return action;
 }
 
 
-// Builds the file dialog name filter from the parameter's "fileTypeFilter="
-// options.
-// Each such option provides one file-type filter in Qt's native format, e.g.
-// options="read, fileTypeFilter=XML (*.xml);;Config (*.cfg)" or
-// options="read, fileTypeFilter=XML (*.xml), fileTypeFilter=Config (*.cfg)"
-// Append or prepend ";;All (*.*)" or "All (*.*);;" so that any file can be
-// selected.
 QString fileTypeFilter(const Parameter *param) {
 	QStringList filters;
 
@@ -1110,7 +1337,6 @@ QString fileTypeFilter(const Parameter *param) {
 }
 
 
-// Removes the double quotes protecting a value
 QString unquoteValue(const QString &value) {
 	const QString text = value.trimmed();
 
@@ -1122,8 +1348,6 @@ QString unquoteValue(const QString &value) {
 }
 
 
-// Protects a value with double quotes if it contains the list separator or
-// leading or trailing blanks
 QString quoteValue(const QString &value) {
 	if ( value.contains(',') || (value != value.trimmed()) ) {
 		return '"' + value + '"';
@@ -1133,8 +1357,6 @@ QString quoteValue(const QString &value) {
 }
 
 
-// Splits a configuration value into its items. Commas within double quotes are
-// part of the value and do not separate items.
 QStringList splitValues(const QString &value) {
 	QStringList values;
 	QString current;
@@ -1159,8 +1381,6 @@ QStringList splitValues(const QString &value) {
 }
 
 
-// Removes duplicate items from a configuration value, keeping the first
-// occurrence of each
 QString removeDuplicateValues(const QString &value) {
 	QStringList values;
 
@@ -1179,6 +1399,61 @@ QString removeDuplicateValues(const QString &value) {
 }
 
 
+QStringList splitItems(const QString &value) {
+	QStringList items;
+	QString current;
+	bool quoted = false;
+
+	for ( const QChar c : value ) {
+		if ( c == '"' ) {
+			quoted = !quoted;
+		}
+		else if ( (c == ',') && !quoted ) {
+			items << current.trimmed();
+			current.clear();
+			continue;
+		}
+
+		current += c;
+	}
+
+	items << current.trimmed();
+
+	return items;
+}
+
+
+/**
+ * @brief Checks a value which must not be a list for a comma.
+ * @param type The type of the parameter or of the items of a list
+ * @param text The value as entered or read from the file
+ * @param valueCount The number of values the text evaluates to
+ * @return The issue, empty if there is none
+ */
+QString listIssue(const std::string &type, const QString &text, size_t valueCount) {
+	if ( (type.compare(0, 5, "list:") == 0) || (type == "gradient") ) {
+		return {};
+	}
+
+	// Texts may contain commas, but only if they are protected by quotes.
+	// Otherwise the value is read as a list of which only a part is used.
+	if ( (type == "string") || (type == "file") || (type == "directory") ) {
+		if ( valueCount > 1 ) {
+			return QObject::tr("Value not described as list. Protect the value by "
+			                   "\"\" or reading it from file may be incomplete.");
+		}
+
+		return {};
+	}
+
+	if ( text.contains(',') ) {
+		return QObject::tr("Value is not described as list");
+	}
+
+	return {};
+}
+
+
 // Creates the option removing duplicates from a list of values
 QCheckBox *makeUniqueOption() {
 	auto *unique = new QCheckBox(QObject::tr("Remove duplicates"));
@@ -1189,21 +1464,17 @@ QCheckBox *makeUniqueOption() {
 }
 
 
-// True if the parameter holds a list of values
 bool isListType(const Parameter *param) {
 	return param->definition->type.compare(0, 5, "list:") == 0;
 }
 
 
-// The type of a parameter without the "list:" prefix
 std::string baseType(const Parameter *param) {
 	return isListType(param) ? param->definition->type.substr(5)
 	                         : param->definition->type;
 }
 
 
-// Assigns a value selected in a dialog to the input widget. For list
-// parameters the value is appended to the values configured so far.
 void commitValue(FancyViewItemEdit *edit, const QString &value, bool append) {
 	QString text = value;
 
@@ -1225,286 +1496,6 @@ void commitValue(FancyViewItemEdit *edit, const QString &value, bool append) {
 }
 
 
-// Parses a color given as a W3C color keyword, as hexadecimal digits with an
-// optional leading '#' (RGB, RGBA, RRGGBB or RRGGBBAA) or in the functional
-// notation rgb(r,g,b) or rgba(r,g,b,a).
-bool parseColor(const QString &value, QColor &color) {
-	QString text = value.trimmed();
-	if ( text.isEmpty() ) {
-		return false;
-	}
-
-	// Color keywords and the notations known to Qt
-	QColor named(text);
-	if ( named.isValid() ) {
-		color = named;
-		return true;
-	}
-
-	if ( text.startsWith("rgb(") || text.startsWith("rgba(") ) {
-		if ( !text.endsWith(')') ) {
-			return false;
-		}
-
-		const int start = text.indexOf('(') + 1;
-		const QStringList tokens = text.mid(start, text.size() - start - 1).split(',');
-
-		if ( (tokens.size() < 3) || (tokens.size() > 4) ) {
-			return false;
-		}
-
-		int rgba[4] = { 0, 0, 0, 255 };
-		for ( int i = 0; i < tokens.size(); ++i ) {
-			bool ok = false;
-			rgba[i] = tokens[i].trimmed().toInt(&ok);
-			if ( !ok || (rgba[i] < 0) || (rgba[i] > 255) ) {
-				return false;
-			}
-		}
-
-		color = QColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-		return true;
-	}
-
-	// Hexadecimal digits without the leading '#' expected by Qt
-	if ( text.startsWith('#') ) {
-		text = text.mid(1);
-	}
-
-	switch ( text.size() ) {
-		case 3:
-		case 6:
-			named = QColor("#" + text);
-			break;
-
-		case 4:
-			// Qt expects the alpha channel first
-			named = QColor("#" + text.right(1) + text.left(3));
-			break;
-
-		case 8:
-			named = QColor("#" + text.right(2) + text.left(6));
-			break;
-
-		default:
-			return false;
-	}
-
-	if ( !named.isValid() ) {
-		return false;
-	}
-
-	color = named;
-	return true;
-}
-
-
-// The notations a color can be written in
-enum ColorFormat {
-	ColorHex = 0,
-	ColorKeyword,
-	ColorFunction
-};
-
-
-// The notation a value is written in, hexadecimal if it cannot be told
-ColorFormat colorFormatOf(const QString &value) {
-	const QString text = value.trimmed();
-
-	if ( text.startsWith("rgb(") || text.startsWith("rgba(") ) {
-		return ColorFunction;
-	}
-
-	// A keyword contains no digits and no leading '#'
-	if ( !text.isEmpty() && !text.startsWith('#') && text[0].isLetter()
-	     && QColor(text).isValid() ) {
-		return ColorKeyword;
-	}
-
-	return ColorHex;
-}
-
-
-// The W3C color keyword of a color, empty if the color has no name. The alpha
-// channel cannot be expressed by a keyword.
-QString colorKeyword(const QColor &color) {
-	if ( color.alpha() != 255 ) {
-		return {};
-	}
-
-	const QString name = color.name(QColor::HexRgb);
-	for ( const auto &keyword : QColor::colorNames() ) {
-		if ( QColor(keyword).name(QColor::HexRgb) == name ) {
-			return keyword;
-		}
-	}
-
-	return {};
-}
-
-
-// Prints a color in the functional notation, the alpha channel is only added
-// if the color is not opaque.
-QString colorFunction(const QColor &color) {
-	if ( color.alpha() != 255 ) {
-		return QString("rgba(%1,%2,%3,%4)")
-		       .arg(color.red()).arg(color.green())
-		       .arg(color.blue()).arg(color.alpha());
-	}
-
-	return QString("rgb(%1,%2,%3)")
-	       .arg(color.red()).arg(color.green()).arg(color.blue());
-}
-
-
-// Prints a color as hexadecimal digits, the alpha channel is only added if the
-// color is not opaque.
-QString formatColor(const QColor &color) {
-	QString text = QString("%1%2%3")
-	               .arg(color.red(), 2, 16, QLatin1Char('0'))
-	               .arg(color.green(), 2, 16, QLatin1Char('0'))
-	               .arg(color.blue(), 2, 16, QLatin1Char('0'));
-
-	if ( color.alpha() != 255 ) {
-		text += QString("%1").arg(color.alpha(), 2, 16, QLatin1Char('0'));
-	}
-
-	return text.toUpper();
-}
-
-
-// A square filled with the given color, shown inside the input field
-QIcon colorSwatch(const QColor &color) {
-	QPixmap pixmap(QApplication::fontMetrics().ascent(),
-	               QApplication::fontMetrics().ascent());
-	pixmap.fill(color.isValid() ? color : QColor(Qt::transparent));
-
-	QPainter p(&pixmap);
-	p.setPen(QApplication::palette().color(QPalette::Mid));
-	p.drawRect(0, 0, pixmap.width() - 1, pixmap.height() - 1);
-	p.end();
-
-	// The color in use is also shown while the parameter is locked, so the
-	// same pixmap is used for the disabled state instead of the faded one
-	// Qt would generate.
-	QIcon swatch;
-	swatch.addPixmap(pixmap, QIcon::Normal);
-	swatch.addPixmap(pixmap, QIcon::Disabled);
-	swatch.addPixmap(pixmap, QIcon::Active);
-	swatch.addPixmap(pixmap, QIcon::Selected);
-
-	return swatch;
-}
-
-
-// The colors of the scheme section of the global module. They are offered as
-// basic colors so that a configuration stays consistent with the appearance of
-// the GUI applications. The list is sorted by shades of grey first and by hue
-// afterwards. Alpha channels are not part of it, the transparency is chosen in
-// the dialog.
-const char *SchemeColors[] = {
-	"#000000", "#202020", "#666666", "#808080", "#999999",
-	"#A0A0A4", "#C0C0C0", "#CCCCCC", "#FFFFFF",
-	"#A00000", "#FF0000", "#FF6633", "#FFA000", "#FFFD00", "#FFFF00",
-	"#82AD58", "#00A000", "#00FF00", "#00FFFF",
-	"#02589E", "#C0C0FF", "#0000A0", "#FF00FF"
-};
-
-
-// Keeps the button picking a color from the screen marked as long as the
-// current color is the one which was picked. Qt offers no signal for the end
-// of the picking, it stops with the mouse button being released.
-class ScreenPickWatcher : public QObject {
-	public:
-		ScreenPickWatcher(QColorDialog *chooser, QPushButton *button)
-		: QObject(button), _button(button) {
-			chooser->installEventFilter(this);
-
-			connect(button, &QPushButton::clicked, this, [this]() {
-				_picking = true;
-				_button->setChecked(true);
-			});
-
-			// Any other way of choosing a color releases the button
-			connect(chooser, &QColorDialog::currentColorChanged, this, [this]() {
-				if ( !_picking ) {
-					_button->setChecked(false);
-				}
-			});
-		}
-
-	protected:
-		bool eventFilter(QObject *watched, QEvent *event) override {
-			if ( _picking && (event->type() == QEvent::MouseButtonRelease) ) {
-				// The color under the cursor was taken over
-				_picking = false;
-			}
-
-			return QObject::eventFilter(watched, event);
-		}
-
-	private:
-		QPushButton *_button;
-		bool         _picking{false};
-};
-
-
-// Inserts a widget into the box layout holding 'sibling', right in front of
-// it. Returns whether a layout containing the sibling was found.
-bool insertBefore(QLayout *layout, QWidget *sibling, QWidget *widget) {
-	if ( !layout ) {
-		return false;
-	}
-
-	for ( int i = 0; i < layout->count(); ++i ) {
-		auto *item = layout->itemAt(i);
-
-		if ( item->widget() == sibling ) {
-			auto *box = qobject_cast<QBoxLayout*>(layout);
-			if ( !box ) {
-				return false;
-			}
-
-			box->insertWidget(i, widget);
-			return true;
-		}
-
-		if ( insertBefore(item->layout(), sibling, widget) ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-
-// A drop-down offering the W3C color keywords, each shown with a swatch of
-// the color it stands for.
-QComboBox *makeKeywordSelector(QColorDialog *chooser) {
-	auto *keywords = new QComboBox;
-	keywords->setToolTip(QObject::tr("Select a color by its keyword"));
-
-	// The first entry is a placeholder, selecting it does not change the
-	// color.
-	keywords->addItem(QObject::tr("Color keyword..."));
-
-	for ( const auto &name : QColor::colorNames() ) {
-		keywords->addItem(colorSwatch(QColor(name)), name);
-	}
-
-	QObject::connect(keywords, QOverload<int>::of(&QComboBox::activated),
-	                 chooser, [chooser, keywords](int index) {
-		if ( index > 0 ) {
-			chooser->setCurrentColor(QColor(keywords->itemText(index)));
-		}
-	});
-
-	return keywords;
-}
-
-
-// Creates a composite editor for "color" parameters: the given input widget
-// plus a swatch inside it which opens the color selection dialog.
 QWidget *makeColorEditor(StringEdit *edit, const Parameter *param) {
 	auto *select = makeButtonEditor(edit, "add", QObject::tr("Select a color"));
 	if ( !select ) {
@@ -1522,137 +1513,12 @@ QWidget *makeColorEditor(StringEdit *edit, const Parameter *param) {
 	                 [showColor](const QString &) { showColor(); });
 	showColor();
 
-	const QString title = QObject::tr("Select the color for %1")
-	                      .arg(QString::fromStdString(param->variableName));
-
-	QObject::connect(select, &QAction::triggered, edit, [edit, title]() {
-		QColor current;
-		if ( !parseColor(edit->value(), current) ) {
-			current = Qt::white;
-		}
-
-		QDialog dialog(edit);
-		dialog.setWindowTitle(title);
-
-		auto *layout = new QVBoxLayout(&dialog);
-
-		// The dialog is embedded so that the notation to store can be
-		// chosen along with the color.
-		auto *chooser = new QColorDialog(current);
-		chooser->setWindowFlags(Qt::Widget);
-		chooser->setOptions(QColorDialog::ShowAlphaChannel |
-		                    QColorDialog::NoButtons |
-		                    QColorDialog::DontUseNativeDialog);
-
-		// Offer the colors of the scheme as basic colors. They are a global
-		// setting of the dialog, so they are set before it is shown.
-		for ( size_t i = 0; i < sizeof(SchemeColors) / sizeof(*SchemeColors); ++i ) {
-			QColorDialog::setStandardColor(i, QColor(SchemeColors[i]));
-		}
-
-		// Offer the color keywords above the button picking a color from the
-		// screen, which is the only push button left after NoButtons.
-		auto *keywords = makeKeywordSelector(chooser);
-
-		// The children exist once the layout of the dialog was created
-		chooser->ensurePolished();
-		auto *screenPicker = chooser->findChild<QPushButton*>();
-
-		if ( screenPicker ) {
-			// The button is marked while the color comes from the screen, it
-			// must not stay the highlighted default button afterwards.
-			screenPicker->setAutoDefault(false);
-			screenPicker->setCheckable(true);
-
-			// Owned by the button, so it is destroyed together with it.
-			new ScreenPickWatcher(chooser, screenPicker);
-		}
-
-		if ( !screenPicker
-		     || !insertBefore(chooser->layout(), screenPicker, keywords) ) {
-			// The dialog does not look as expected, offer the keywords below
-			// it rather than not at all.
-			layout->addWidget(keywords);
-		}
-
-		layout->addWidget(chooser);
-
-		auto *format = new QComboBox;
-		format->addItem(QObject::tr("Hexadecimal"), ColorHex);
-		format->addItem(QObject::tr("Color keyword"), ColorKeyword);
-		format->addItem(QObject::tr("rgb() or rgba()"), ColorFunction);
-		format->setCurrentIndex(colorFormatOf(edit->value()));
-
-		// A keyword is only available for a color which has one
-		auto updateFormats = [chooser, format]() {
-			const bool named = !colorKeyword(chooser->currentColor()).isEmpty();
-
-			auto *model = qobject_cast<QStandardItemModel*>(format->model());
-			if ( auto *item = model ? model->item(ColorKeyword) : nullptr ) {
-				item->setEnabled(named);
-			}
-
-			if ( !named && (format->currentIndex() == ColorKeyword) ) {
-				format->setCurrentIndex(ColorHex);
-			}
-		};
-
-		QObject::connect(chooser, &QColorDialog::currentColorChanged,
-		                 format, [updateFormats]() { updateFormats(); });
-		updateFormats();
-
-		auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
-		                                     QDialogButtonBox::Cancel);
-		QObject::connect(buttons, &QDialogButtonBox::accepted,
-		                 &dialog, &QDialog::accept);
-		QObject::connect(buttons, &QDialogButtonBox::rejected,
-		                 &dialog, &QDialog::reject);
-
-		// The notation to store shares the line with the buttons
-		auto *bottom = new QHBoxLayout;
-		bottom->setContentsMargins(0, 0, 0, 0);
-		bottom->addWidget(new QLabel(QObject::tr("Store as")));
-		bottom->addWidget(format);
-		bottom->addStretch();
-		bottom->addWidget(buttons);
-		layout->addLayout(bottom);
-
-		// Confirming the dialog is the default action
-		if ( auto *okButton = buttons->button(QDialogButtonBox::Ok) ) {
-			okButton->setAutoDefault(true);
-			okButton->setDefault(true);
-		}
-
-		if ( dialog.exec() != QDialog::Accepted ) {
-			// Dialog cancelled: keep the current value untouched.
-			return;
-		}
-
-		const QColor color = chooser->currentColor();
-		if ( !color.isValid() ) {
-			return;
-		}
-
+	QObject::connect(select, &QAction::triggered, edit, [edit, param]() {
 		QString value;
-		switch ( format->currentIndex() ) {
-			case ColorKeyword:
-				value = colorKeyword(color);
-				break;
-
-			case ColorFunction:
-				value = colorFunction(color);
-				break;
-
-			default:
-				break;
+		if ( !selectColor(edit, param, edit->value(), value) ) {
+			return;
 		}
 
-		if ( value.isEmpty() ) {
-			value = formatColor(color);
-		}
-
-		// A color was actively chosen, so unlock the parameter (mark it as
-		// edited) in case it was still showing its default value.
 		FancyViewItem item = edit->property("viewItem").value<FancyViewItem>();
 		if ( item.isValid() && item.editControl && item.editControl->isChecked() ) {
 			item.editControl->setChecked(false);
@@ -1665,20 +1531,10 @@ QWidget *makeColorEditor(StringEdit *edit, const Parameter *param) {
 }
 
 
-// Creates a composite editor for "file" and "directory" parameters: the given
-// line edit plus a button which opens a file or directory selection dialog. The
-// selected path is written back into the line edit and committed through its
-// regular editing-finished path.
-// Opens the file or directory selection dialog for a parameter. 'current' is
-// the path shown initially. Returns whether a path was selected and stores it
-// in 'value' using SeisComP's path variables when possible.
 bool selectPath(QWidget *parent, const Parameter *param, const QString &current,
                 QString &value) {
 	const bool isDirectory = (baseType(param) == "directory");
 
-	// For files, determine whether the parameter requires an existing file
-	// (read/execute) or may point to a not yet existing file (write or
-	// unspecified). Directories are always selected from existing ones.
 	bool mustExist = false;
 	bool isWrite = false;
 	for ( const auto &option : param->definition->options ) {
@@ -1690,18 +1546,11 @@ bool selectPath(QWidget *parent, const Parameter *param, const QString &current,
 		}
 	}
 
-	// 'edit' is passed as the connection context so the lambda is removed
-	// automatically when the line edit is destroyed. The dialog header names the
-	// parameter the file or directory is selected for. File parameters offer the
-	// file-type filters from the "filter=" options plus an "All (*.*)" entry.
 	const QString title = (isDirectory ? QObject::tr("Select directory for %1")
 	                                    : QObject::tr("Select file for %1"))
 	                      .arg(QString::fromStdString(param->variableName));
 	const QString nameFilter = isDirectory ? QString() : fileTypeFilter(param);
 
-	// Resolve the current value to an absolute path used as the dialog's start
-	// location. Empty or relative values are resolved against the SeisComP
-	// installation directory, matching value validation.
 	QString startPath;
 	if ( !current.trimmed().isEmpty() ) {
 		startPath = Environment::Instance()->absolutePath(
@@ -1716,10 +1565,6 @@ bool selectPath(QWidget *parent, const Parameter *param, const QString &current,
 		selection = QFileDialog::getExistingDirectory(parent, title, startPath);
 	}
 	else if ( isWrite && !mustExist ) {
-		// Output file: allow selecting a not yet existing file without an
-		// overwrite confirmation. The non-native dialog is used so the file
-		// type selector shows the full filter string including the pattern
-		// (e.g. "Text (*.xml)") instead of only the description text.
 		selection = QFileDialog::getSaveFileName(
 		                parent, title, startPath, nameFilter, nullptr,
 		                QFileDialog::DontConfirmOverwrite | QFileDialog::DontUseNativeDialog);
@@ -1731,20 +1576,15 @@ bool selectPath(QWidget *parent, const Parameter *param, const QString &current,
 	}
 
 	if ( selection.isEmpty() ) {
-		// Dialog cancelled: keep the current value untouched.
 		return false;
 	}
 
-	// Store the path using SeisComP's path variables when possible so the
-	// configuration remains portable across installations.
 	value = seiscompVariablePath(selection);
 
 	return true;
 }
 
 
-// Creates a composite editor for "file" and "directory" parameters: the given
-// input widget plus a button which opens the selection dialog.
 QWidget *makePathEditor(StringEdit *edit, const Parameter *param) {
 	const bool isDirectory = (baseType(param) == "directory");
 
@@ -1757,16 +1597,12 @@ QWidget *makePathEditor(StringEdit *edit, const Parameter *param) {
 		return edit;
 	}
 
-	// 'edit' is passed as the connection context so the lambda is removed
-	// automatically when the line edit is destroyed.
 	QObject::connect(browse, &QAction::triggered, edit, [edit, param]() {
 		QString value;
 		if ( !selectPath(edit, param, edit->value(), value) ) {
 			return;
 		}
 
-		// A path was actively chosen, so unlock the parameter (mark it as
-		// edited) in case it was still showing its default value.
 		FancyViewItem item = edit->property("viewItem").value<FancyViewItem>();
 		if ( item.isValid() && item.editControl && item.editControl->isChecked() ) {
 			item.editControl->setChecked(false);
@@ -1783,19 +1619,16 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
                 QString &value);
 
 
-// Editor for list parameters. Below the input field with the comma separated
-// value it shows one row per value: the configured ones first in their
-// configured order, followed by the predefined values which are not
-// configured. Values are activated with their check box, renamed unless they
-// are predefined and reordered by dragging their handle. Every change
-// repopulates the input field.
+bool evaluateText(const QString &text, const Parameter *param,
+                  const std::string &type, bool verbose,
+                  QString &message, QColor &color);
+
+
 class ListEditor : public QWidget {
 	public:
 		ListEditor(FancyViewItemEdit *edit, const Parameter *param, QWidget *parent = nullptr)
 		: QWidget(parent), _edit(edit), _param(param) {
 			for ( const auto &value : param->definition->values ) {
-				// The schema may deliver the values as separate entries or as
-				// one comma separated string. Quoted values are unprotected.
 				_values << splitValues(value.c_str());
 			}
 
@@ -1815,19 +1648,27 @@ class ListEditor : public QWidget {
 			_add = new QToolButton;
 			_add->setIcon(icon("add"));
 			_add->setAutoRaise(true);
+			_add->setCursor(Qt::PointingHandCursor);
 			_add->setToolTip(tr("Add a value"));
+
+			_warning = new QLabel;
+			_warning->setWordWrap(true);
+			_warning->setVisible(false);
+			auto pal = _warning->palette();
+			pal.setColor(QPalette::WindowText, QColor(255, 127, 0));
+			_warning->setPalette(pal);
 
 			auto *layout = new QVBoxLayout(this);
 			layout->setContentsMargins(0, 0, 0, 0);
 			layout->setSpacing(layoutPadding() / 2);
 			layout->addWidget(_scroll);
 			layout->addWidget(_add, 0, Qt::AlignLeft);
+			layout->addWidget(_warning);
 
 			QObject::connect(_add, &QToolButton::clicked, this, [this]() {
 				appendRow(QString(), true, false);
 				updateHeight();
 
-				// Let the new value be typed right away
 				auto *row = _rowLayout->itemAt(_rowLayout->count() - 1)->widget();
 				auto *text = row->findChild<QLineEdit*>();
 				if ( text ) {
@@ -1835,8 +1676,6 @@ class ListEditor : public QWidget {
 				}
 			});
 
-			// Values typed into the input field are mirrored into the rows.
-			// A combo box is edited through its internal line edit.
 			auto *field = qobject_cast<QLineEdit*>(_edit->widget());
 			if ( !field ) {
 				field = _edit->widget()->findChild<QLineEdit*>();
@@ -1854,7 +1693,6 @@ class ListEditor : public QWidget {
 		}
 
 	protected:
-		//! Reorders the rows while a handle is dragged
 		bool eventFilter(QObject *watched, QEvent *event) override {
 			auto *handle = qobject_cast<QWidget*>(watched);
 			if ( !handle ) {
@@ -1871,7 +1709,6 @@ class ListEditor : public QWidget {
 						break;
 					}
 
-					// The rows may have been rebuilt since the drag started
 					if ( _dragRow >= _rowLayout->count() ) {
 						_dragRow = -1;
 						break;
@@ -1906,10 +1743,9 @@ class ListEditor : public QWidget {
 		}
 
 	private:
-		//! Rebuilds the rows from the current content of the input field
 		void showValue() {
-			// The rows are replaced, any running drag refers to gone widgets
 			_dragRow = -1;
+			hideEvaluation();
 
 			while ( _rowLayout->count() ) {
 				auto *entry = _rowLayout->takeAt(0);
@@ -1918,21 +1754,22 @@ class ListEditor : public QWidget {
 			}
 
 			QStringList configured;
-			for ( const auto &value : splitValues(_edit->value()) ) {
+			for ( const auto &item : splitItems(_edit->value()) ) {
+				const auto value = unquoteValue(item);
 				if ( !value.isEmpty() ) {
+					const bool predefined = _values.contains(value);
 					configured << value;
-					appendRow(value, true, _values.contains(value));
+					appendRow(predefined ? value : item, true, predefined);
 				}
 			}
 
-			// The predefined values stay available, the ones which are not
-			// configured are appended as inactive rows.
 			for ( const auto &value : _values ) {
 				if ( !configured.contains(value) ) {
 					appendRow(value, false, true);
 				}
 			}
 
+			updateWarnings();
 			updateHeight();
 		}
 
@@ -1947,16 +1784,11 @@ class ListEditor : public QWidget {
 			handle->setCursor(Qt::SizeVerCursor);
 			handle->installEventFilter(this);
 
-			// A predefined value is taken in and out of the configuration
-			// with its check box, it is never removed from the list. An
-			// additional value is removed with its button instead.
 			auto *check = new QCheckBox;
 			check->setChecked(active);
 			check->setToolTip(tr("Add this value to the configuration"));
 			check->setVisible(predefined);
 
-			// Predefined values must stay available, only additional values
-			// can be renamed or removed.
 			auto *text = new QLineEdit(value);
 			text->setReadOnly(predefined);
 			text->setFrame(!predefined);
@@ -1964,6 +1796,7 @@ class ListEditor : public QWidget {
 			auto *remove = new QToolButton;
 			remove->setIcon(icon("delete"));
 			remove->setAutoRaise(true);
+			remove->setCursor(Qt::PointingHandCursor);
 			remove->setToolTip(tr("Remove this value"));
 			remove->setVisible(!predefined);
 
@@ -1971,20 +1804,16 @@ class ListEditor : public QWidget {
 			rowLayout->addWidget(remove);
 			rowLayout->addWidget(text, 1);
 
-			// The single values are selected with the same dialog as the
-			// value of a parameter which is not a list.
 			const std::string type = baseType(_param);
 			const bool isPath = (type == "file") || (type == "directory");
 
 			if ( (type == "time") || isPath ) {
-				// Turns the row into a value of its own, the predefined value
-				// it may have shown is offered again at the end of the list.
 				auto assign = [this, text, check, remove](const QString &value) {
 					text->setReadOnly(false);
 					text->setFrame(true);
 					check->setVisible(false);
 					remove->setVisible(true);
-					text->setText(value);
+					text->setText(quoteValue(value));
 
 					ensurePredefined();
 					commit();
@@ -1993,6 +1822,7 @@ class ListEditor : public QWidget {
 				auto *select = new QToolButton;
 				select->setIcon(icon(isPath ? "folder" : "calendar"));
 				select->setAutoRaise(true);
+				select->setCursor(Qt::PointingHandCursor);
 				select->setToolTip(isPath ?
 				                   (type == "directory" ?
 				                    tr("Select a directory") : tr("Select a file")) :
@@ -2019,11 +1849,14 @@ class ListEditor : public QWidget {
 			QObject::connect(check, &QCheckBox::toggled, this, [this]() {
 				commit();
 			});
-			QObject::connect(text, &QLineEdit::textEdited, this, [this]() {
+			QObject::connect(text, &QLineEdit::textEdited, this, [this, text]() {
 				commit();
+				updateWarnings();
+				showEvaluation(text);
 			});
 			QObject::connect(text, &QLineEdit::editingFinished, this, [this]() {
-				// A renamed row may have carried a predefined value
+				hideEvaluation();
+
 				ensurePredefined();
 			});
 			QObject::connect(remove, &QToolButton::clicked, this, [this, row]() {
@@ -2041,15 +1874,13 @@ class ListEditor : public QWidget {
 			_rowLayout->addWidget(row);
 		}
 
-		//! Predefined values stay available. Those which are not shown as a
-		//! row anymore are appended as inactive rows at the end of the list.
 		void ensurePredefined() {
 			QStringList shown;
 
 			for ( int i = 0; i < _rowLayout->count(); ++i ) {
 				auto *text = _rowLayout->itemAt(i)->widget()->findChild<QLineEdit*>();
 				if ( text ) {
-					shown << text->text().trimmed();
+					shown << unquoteValue(text->text());
 				}
 			}
 
@@ -2062,7 +1893,6 @@ class ListEditor : public QWidget {
 			updateHeight();
 		}
 
-		//! Writes the activated values back into the input field
 		void commit() {
 			QStringList values;
 
@@ -2074,21 +1904,87 @@ class ListEditor : public QWidget {
 					continue;
 				}
 
-				// Additional values have no check box, they are configured
-				// as long as they are in the list
 				if ( !check->isHidden() && !check->isChecked() ) {
 					continue;
 				}
 
-				const QString value = text->text();
-				if ( !value.trimmed().isEmpty() ) {
-					values << quoteValue(value);
+				const QString value = text->text().trimmed();
+				if ( !value.isEmpty() ) {
+					values << (check->isHidden() ? value : quoteValue(value));
 				}
 			}
 
 			_updating = true;
 			commitValue(_edit, values.join(','), false);
 			_updating = false;
+		}
+
+		void showEvaluation(QLineEdit *text) {
+			auto *win = window();
+
+			if ( !_evaluation ) {
+				_evaluation = new EvalHintWidget(win);
+				_evaluation->setContentsMargins(6, 6, 6, 6);
+			}
+
+			QString message;
+			QColor color;
+			evaluateText(text->text(), _param, baseType(_param), false, message, color);
+
+			QPalette pal = _evaluation->palette();
+			pal.setColor(QPalette::Window, QColor(255, 255, 255, 192));
+			pal.setColor(QPalette::WindowText, color);
+			_evaluation->setPalette(pal);
+			_evaluation->setText(message);
+			_evaluation->resize(_evaluation->sizeHint());
+
+			QPoint pos = text->mapTo(win, QPoint(0, text->height() + 6));
+			if ( (pos.y() + _evaluation->height() > win->height())
+			     && (pos.y() - text->height() - 12 - _evaluation->height() >= 0) ) {
+				pos.setY(pos.y() - text->height() - 12 - _evaluation->height());
+			}
+
+			pos.setX(qMax(0, qMin(pos.x(), win->width() - _evaluation->width())));
+
+			_evaluation->move(pos);
+			_evaluation->raise();
+			_evaluation->show();
+		}
+
+		void hideEvaluation() {
+			if ( _evaluation ) {
+				_evaluation->hide();
+			}
+		}
+
+		void updateWarnings() {
+			const std::string type = baseType(_param);
+			QString message;
+
+			for ( int i = 0; i < _rowLayout->count(); ++i ) {
+				auto *row = _rowLayout->itemAt(i)->widget();
+				auto *check = row->findChild<QCheckBox*>();
+				auto *text = row->findChild<QLineEdit*>();
+				if ( !check || !text || !check->isHidden() ) {
+					continue;
+				}
+
+				std::vector<std::string> items;
+				Config::Config::Eval(text->text().toStdString(), items);
+				const auto issue = listIssue(type, text->text(), items.size());
+
+				QPalette pal;
+				if ( !issue.isEmpty() ) {
+					pal.setColor(QPalette::Text, QColor(255, 127, 0));
+					message = issue;
+				}
+
+				text->setPalette(pal);
+				text->setToolTip(issue);
+			}
+
+			_warning->setText(message);
+			_warning->setVisible(!message.isEmpty());
 		}
 
 		int rowIndex(const QWidget *row) const {
@@ -2112,7 +2008,6 @@ class ListEditor : public QWidget {
 			return _rowLayout->count() - 1;
 		}
 
-		//! Shows at most 10 rows, the remaining ones are scrolled to
 		void updateHeight() {
 			_rows->adjustSize();
 
@@ -2124,19 +2019,14 @@ class ListEditor : public QWidget {
 
 			const int rowHeight = _rowLayout->itemAt(0)->widget()->sizeHint().height();
 
-			// Room for one more row than currently shown, so adding a value
-			// does not resize the list and the window stays large enough.
 			const int visible = qMin(rows + 1, 10);
 
 			_scroll->setFixedHeight(visible * rowHeight +
 			                        (visible - 1) * _rowLayout->spacing() +
 			                        layoutPadding());
 
-			// Let the window grow with the list rather than squeezing the
-			// widgets below it. It is never shrunk.
 			if ( auto *win = window() ) {
 				if ( win->layout() ) {
-					// The size hint must account for the new height
 					win->layout()->activate();
 				}
 
@@ -2149,6 +2039,8 @@ class ListEditor : public QWidget {
 		QStringList  _values;
 		QScrollArea *_scroll{nullptr};
 		QToolButton *_add{nullptr};
+		QLabel      *_warning{nullptr};
+		QLabel      *_evaluation{nullptr};
 		QWidget     *_rows{nullptr};
 		QVBoxLayout *_rowLayout{nullptr};
 		int          _dragRow{-1};
@@ -2156,9 +2048,6 @@ class ListEditor : public QWidget {
 };
 
 
-// Splits the range of a time parameter into its begin and end value. Time
-// values contain ':' themselves, so the range separator is '..' rather than
-// the ':' used for numeric ranges. Either side may be empty for an open range.
 void splitTimeRange(const QString &range, QString &begin, QString &end) {
 	const QStringList tokens = range.split("..");
 	if ( tokens.size() != 2 ) {
@@ -2170,7 +2059,6 @@ void splitTimeRange(const QString &range, QString &begin, QString &end) {
 }
 
 
-// A parsed time value, invalid if the string could not be interpreted.
 struct ParsedTime {
 	bool       valid{false};
 	Core::Time time;
@@ -2185,14 +2073,11 @@ ParsedTime parseTime(const QString &value) {
 }
 
 
-// Prints a time at microsecond precision.
 QString formatTime(const Core::Time &time) {
 	return time.toString("%FT%T.%6f").c_str();
 }
 
 
-// Prints a time with the trailing zeros of the fractional seconds removed,
-// keeping at least one decimal place.
 QString formatTimeCompact(const Core::Time &time) {
 	QString text = formatTime(time);
 
@@ -2205,15 +2090,12 @@ QString formatTimeCompact(const Core::Time &time) {
 }
 
 
-// Prints a time at microsecond precision. The fractional seconds are omitted
-// if they are zero.
 QString formatTimeValue(const Core::Time &time) {
 	return time.microseconds() ? formatTime(time)
 	                           : time.toString("%FT%T").c_str();
 }
 
 
-// The date of a parsed time, invalid if there is none.
 QDate timeDate(const ParsedTime &parsed) {
 	if ( !parsed.valid ) {
 		return {};
@@ -2224,14 +2106,10 @@ QDate timeDate(const ParsedTime &parsed) {
 }
 
 
-// Line edit for ISO times which steps the value under the cursor with the
-// mouse wheel and the up and down keys. All fields up to the seconds are
-// stepped, the fractional seconds are typed.
 class TimeEdit : public QLineEdit {
 	public:
 		TimeEdit(QWidget *parent = nullptr) : QLineEdit(parent) {}
 
-		//! Restricts the values which can be reached by stepping
 		void setLimits(const ParsedTime &min, const ParsedTime &max) {
 			_min = min;
 			_max = max;
@@ -2267,8 +2145,6 @@ class TimeEdit : public QLineEdit {
 		void step(int pos, int amount) {
 			const QString value = text().trimmed();
 
-			// The date and time part is of fixed length, everything beyond
-			// it is the fractional seconds which are kept as they are.
 			QDateTime dateTime = QDateTime::fromString(value.left(19),
 			                                           "yyyy-MM-ddTHH:mm:ss");
 			if ( !dateTime.isValid() ) {
@@ -2294,7 +2170,6 @@ class TimeEdit : public QLineEdit {
 				dateTime = dateTime.addSecs(amount);
 			}
 			else {
-				// Fractional seconds are not stepped
 				return;
 			}
 
@@ -2305,7 +2180,6 @@ class TimeEdit : public QLineEdit {
 
 			QString stepped = dateTime.toString("yyyy-MM-ddTHH:mm:ss") + fraction;
 
-			// Do not step out of the range of the parameter
 			const ParsedTime parsed = parseTime(stepped);
 			if ( parsed.valid ) {
 				if ( _min.valid && (parsed.time < _min.time) ) {
@@ -2325,9 +2199,6 @@ class TimeEdit : public QLineEdit {
 };
 
 
-// The limits of the value range as text lines, ready to be shown above an
-// editor. Times are printed at microsecond precision, other types are shown as
-// configured. Either limit may be missing for an open range.
 QStringList formatRangeLines(const Parameter *param) {
 	const QString range = QString::fromStdString(param->definition->range);
 	QString begin, end;
@@ -2341,7 +2212,6 @@ QStringList formatRangeLines(const Parameter *param) {
 		end = max.valid ? formatTime(max.time) : QString();
 	}
 	else {
-		// The limits are separated by the commonly used '..' or by ':'
 		int separator = range.indexOf("..");
 		int width = 2;
 
@@ -2370,14 +2240,6 @@ QStringList formatRangeLines(const Parameter *param) {
 }
 
 
-// Creates a composite editor for "time" parameters: the given line edit plus a
-// button which opens a date and time selection dialog. The selected time is
-// written back into the line edit as %FT%T.%6f and committed through its
-// regular editing-finished path.
-// Opens the date and time selection window for a parameter. 'current' is the
-// time shown initially, the default value of the parameter is used if it
-// cannot be parsed. Returns whether a time was selected and stores it in
-// 'value' at full precision.
 bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
                 QString &value) {
 	const QString title = QObject::tr("Select date and time for %1")
@@ -2385,8 +2247,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 
 	const QString defaultValue = QString::fromStdString(param->definition->defaultValue);
 
-	// The allowed range, if any, is shown above the input field and limits
-	// the selection.
 	QString rangeBegin, rangeEnd;
 	splitTimeRange(QString::fromStdString(param->definition->range),
 	               rangeBegin, rangeEnd);
@@ -2406,9 +2266,9 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 		timeEdit->setMinimumWidth(220);
 		timeEdit->setLimits(rangeMin, rangeMax);
 
-		// Picks the date, the time of day is kept.
 		auto *calendarButton = new QToolButton;
 		calendarButton->setIcon(::icon("calendar"));
+		calendarButton->setCursor(Qt::PointingHandCursor);
 		calendarButton->setToolTip(QObject::tr("Select date"));
 		QObject::connect(calendarButton, &QToolButton::clicked, &dialog,
 		                 [timeEdit, calendarButton, rangeMin, rangeMax]() {
@@ -2420,7 +2280,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 
 			auto *calendar = new QCalendarWidget;
 
-			// Offer only the days covered by the range of the parameter
 			const QDate minDate = timeDate(rangeMin);
 			if ( minDate.isValid() ) {
 				calendar->setMinimumDate(minDate);
@@ -2452,7 +2311,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 			popup->show();
 		});
 
-		// Fills in the current time truncated to full seconds.
 		auto *now = new QPushButton(QObject::tr("Now (UTC)"));
 		now->setToolTip(QObject::tr("Use current UTC time"));
 		QObject::connect(now, &QPushButton::clicked, &dialog, [timeEdit]() {
@@ -2468,8 +2326,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 
 		auto *form = new QFormLayout;
 
-		// One row per range line so that "Range:" is aligned with the
-		// begin time and the end time gets an empty label.
 		for ( int i = 0; i < rangeLines.size(); ++i ) {
 			form->addRow(i ? QString() : QObject::tr("Range:"),
 			             new QLabel(rangeLines[i]));
@@ -2486,9 +2342,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 		QObject::connect(buttons, &QDialogButtonBox::rejected,
 		                 &dialog, &QDialog::reject);
 
-		// Shows the given time, falling back to midnight of the current day
-		// if it cannot be parsed. Trailing zeros of the fractional seconds
-		// are dropped, one decimal place is always shown.
 		auto showValue = [timeEdit](const QString &value) {
 			const ParsedTime parsed = parseTime(value);
 			if ( parsed.valid ) {
@@ -2500,8 +2353,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 			}
 		};
 
-		// The selection starts at the given time, falling back to the
-		// default value of the parameter if there is none.
 		const QString savedValue = current.trimmed();
 		const QString initialValue = savedValue.isEmpty() ? defaultValue : savedValue;
 
@@ -2516,8 +2367,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 
 		layout->addWidget(buttons);
 
-		// The value must be a time within the range of the parameter,
-		// otherwise it cannot be accepted.
 		auto *okButton = buttons->button(QDialogButtonBox::Ok);
 		auto validate = [timeEdit, okButton, rangeMin, rangeMax]() {
 			const ParsedTime parsed = parseTime(timeEdit->text());
@@ -2538,7 +2387,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 			return false;
 		}
 
-		// Written at full precision, whole seconds without a fraction
 		value = formatTimeValue(parseTime(timeEdit->text()).time);
 	}
 
@@ -2546,8 +2394,6 @@ bool selectTime(QWidget *parent, const Parameter *param, const QString &current,
 }
 
 
-// Creates a composite editor for "time" parameters: the given input widget
-// plus a button which opens the date and time selection window.
 QWidget *makeTimeEditor(FancyViewItemEdit *edit, const Parameter *param) {
 	auto *select = makeButtonEditor(edit, "calendar",
 	                                QObject::tr("Select date and time"));
@@ -2558,8 +2404,6 @@ QWidget *makeTimeEditor(FancyViewItemEdit *edit, const Parameter *param) {
 
 	const bool append = isListType(param);
 
-	// 'edit' is passed as the connection context so the lambda is removed
-	// automatically when the input widget is destroyed.
 	QObject::connect(select, &QAction::triggered, edit->widget(),
 	                 [edit, param, append]() {
 		QString value;
@@ -2567,8 +2411,6 @@ QWidget *makeTimeEditor(FancyViewItemEdit *edit, const Parameter *param) {
 			return;
 		}
 
-		// A time was actively chosen, so unlock the parameter (mark it as
-		// edited) in case it was still showing its default value.
 		FancyViewItem item = edit->widget()->property("viewItem").value<FancyViewItem>();
 		if ( item.isValid() && item.editControl && item.editControl->isChecked() ) {
 			item.editControl->setChecked(false);
@@ -2581,10 +2423,6 @@ QWidget *makeTimeEditor(FancyViewItemEdit *edit, const Parameter *param) {
 }
 
 
-// Opens the window in which the single values of a list parameter are
-// activated, edited and ordered. The editor writes every change directly into
-// the input field, so the window restores the value it started with when the
-// changes are rejected.
 void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 	QDialog dialog(edit->widget());
 	dialog.setWindowTitle(QString::fromStdString(param->variableName));
@@ -2598,8 +2436,6 @@ void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 	hint->setWordWrap(true);
 	layout->addWidget(hint);
 
-	// One row per range line so that "Range:" is aligned with the begin
-	// value and the end value gets an empty label.
 	const QStringList rangeLines = formatRangeLines(param);
 	if ( !rangeLines.isEmpty() ) {
 		auto *form = new QFormLayout;
@@ -2612,14 +2448,12 @@ void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 
 	layout->addWidget(new ListEditor(edit, param));
 
-	// Keep the type apart from the add button of the list above it
 	layout->addSpacing(layoutPadding());
 
 	auto *type = new QLabel(QString("<b>%1:</b> %2")
 	                        .arg(QObject::tr("Type"),
 	                             QString::fromStdString(param->definition->type)));
 	type->setTextFormat(Qt::RichText);
-	// Allow selecting the text with the mouse to copy it.
 	type->setTextInteractionFlags(Qt::TextSelectableByMouse |
 	                              Qt::TextSelectableByKeyboard);
 	layout->addWidget(type);
@@ -2638,7 +2472,6 @@ void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 	const QString initialValue = edit->value();
 
 	auto *reset = buttons->button(QDialogButtonBox::Reset);
-	// Some styles decorate standard buttons with an icon
 	reset->setIcon(QIcon());
 	reset->setToolTip(QObject::tr("Restore the configured values"));
 	QObject::connect(reset, &QPushButton::clicked, &dialog, [edit, initialValue]() {
@@ -2648,7 +2481,6 @@ void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 	layout->addWidget(buttons);
 
 	if ( dialog.exec() != QDialog::Accepted ) {
-		// Dialog cancelled: drop the changes made in the editor.
 		commitValue(edit, initialValue, false);
 	}
 	else if ( unique->isChecked() ) {
@@ -2657,6 +2489,145 @@ void showListEditor(FancyViewItemEdit *edit, const Parameter *param) {
 }
 
 
+
+
+/**
+ * @brief Evaluates a value as entered for a parameter.
+ * @param type The type the value is checked against, the type of the items
+ *        when a single item of a list is evaluated
+ * @param message Set to the evaluation as rich text
+ * @param color Set to the color to show the message in: green when fine,
+ *        orange on issues or information, red on errors
+ * @param verbose Whether the issues are reported on the console as well
+ * @return Whether the value can be stored
+ */
+bool evaluateText(const QString &text, const Parameter *param,
+                  const std::string &type, bool verbose,
+                  QString &message, QColor &color) {
+	std::vector<std::string> values;
+	std::string errmsg;
+
+	if ( !Config::Config::Eval(text.toStdString(), values, true, nullptr, &errmsg) ) {
+		if ( errmsg == "Empty rvalue" ) {
+			color = QColor(255, 127, 0);
+			message = QObject::tr("<b>Information</b><br/><br/>Empty string will "
+			                      "be saved as \"\"");
+			return true;
+		}
+
+		color = QColor(128, 32, 32);
+		message = QString("<b>Error</b><br/><br/><i>%1</i>")
+		          .arg(QString::fromStdString(errmsg).replace('\n', "<br/>"));
+		return false;
+	}
+
+	QString eval;
+	bool issueFound = false;
+
+	const auto issue = listIssue(type, text, values.size());
+	if ( !issue.isEmpty() ) {
+		eval += "<b>" + issue.toHtmlEscaped() + "</b>";
+		issueFound = true;
+	}
+
+	for ( const auto &value : values ) {
+		if ( !eval.isEmpty() ) {
+			eval += "<hr/>";
+		}
+
+		if ( FancyView::evaluateValue(value, param, eval, verbose) ) {
+			issueFound = true;
+		}
+
+		eval += encodeHTML(value.c_str());
+	}
+
+	// paint text in orange if issues are found
+	color = issueFound ? QColor(255, 127, 0) : QColor(32, 128, 32);
+	message = QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
+	          .arg(values.size()).arg(values.size() == 1 ? "" : "s", eval);
+
+	return true;
+}
+
+
+bool evaluateText(const QString &text, const Parameter *param, bool verbose,
+                  QString &message, QColor &color) {
+	return evaluateText(text, param, param->definition->type, verbose,
+	                    message, color);
+}
+
+
+class FittingScrollArea : public QScrollArea {
+	public:
+		QSize sizeHint() const override {
+			auto hint = QScrollArea::sizeHint();
+			auto *content = widget();
+			if ( !content ) {
+				return hint;
+			}
+
+			int width = viewport()->width() > 0 ? viewport()->width()
+			                                    : content->sizeHint().width();
+			int height = content->hasHeightForWidth() ? content->heightForWidth(width)
+			                                          : content->sizeHint().height();
+
+			hint.setHeight(height + 2 * frameWidth());
+			return hint;
+		}
+};
+
+
+class ValueLineEdit : public QPlainTextEdit {
+	public:
+		explicit ValueLineEdit(const QString &text) {
+			setLineWrapMode(QPlainTextEdit::NoWrap);
+			setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+			setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+			setTabChangesFocus(true);
+			setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+			setPlainText(text);
+			moveCursor(QTextCursor::End);
+
+			// The field holds one line and grows by the scroll bar while it
+			// is shown, rather than letting it cover the text.
+			connect(horizontalScrollBar(), &QScrollBar::rangeChanged,
+			        this, &ValueLineEdit::updateHeight);
+			updateHeight();
+		}
+
+		QString text() const {
+			return toPlainText();
+		}
+
+	protected:
+		void keyPressEvent(QKeyEvent *event) override {
+			// Return is left to the dialog, it accepts the value
+			if ( (event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Enter) ) {
+				event->ignore();
+				return;
+			}
+
+			QPlainTextEdit::keyPressEvent(event);
+		}
+
+		void insertFromMimeData(const QMimeData *source) override {
+			// A value is a single line
+			auto text = source->text();
+			text.replace(QRegularExpression("[\\r\\n]+"), " ");
+			insertPlainText(text);
+		}
+
+	private:
+		void updateHeight() {
+			int line = fontMetrics().lineSpacing()
+			         + 2 * static_cast<int>(document()->documentMargin())
+			         + 2 * frameWidth();
+			auto *bar = horizontalScrollBar();
+			setFixedHeight(line + (bar->maximum() > 0 ? bar->sizeHint().height() : 0));
+		}
+};
 
 
 // Opens a single-line editor dialog for the value of the given input widget.
@@ -2670,7 +2641,7 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 	dialog.setWindowTitle(QString::fromStdString(param->variableName));
 
 	auto *layout = new QVBoxLayout(&dialog);
-	auto *editor = new QLineEdit(input->value());
+	auto *editor = new ValueLineEdit(input->value());
 	editor->setMinimumWidth(400);
 	layout->addWidget(editor);
 
@@ -2680,7 +2651,8 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 	auto *copyButton = new QPushButton(QObject::tr("Copy parameter"));
 	const QString name = QString::fromStdString(param->variableName);
 	QObject::connect(copyButton, &QPushButton::clicked, &dialog, [editor, name]() {
-		QApplication::clipboard()->setText(name + " = " + editor->text());
+		const auto value = editor->text().trimmed();
+		QApplication::clipboard()->setText(name + " = " + (value.isEmpty() ? "\"\"" : value));
 	});
 
 	// Live evaluation of the entered value, mirroring the popup shown while
@@ -2702,57 +2674,16 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 	layout->addWidget(evalScroll);
 
 	auto updateEvaluation = [&dialog, evaluation, evalScroll, copyButton, param](const QString &text) {
-		std::vector<std::string> values;
-		std::string errmsg;
-		QString eval;
+		QString message;
+		QColor color;
+		copyButton->setEnabled(evaluateText(text, param, false, message, color));
+		evaluation->setText(message);
 
 		QPalette pal = evaluation->palette();
 		pal.setColor(QPalette::Window, QColor(255, 255, 255, 192));
-
-		bool issueFound = false;
-		if ( Config::Config::Eval(text.toStdString(), values, true, nullptr, &errmsg) ) {
-			// value must not be a list, strings may contain commas and are not tested
-			if ( (param->definition->type.size() < 5)
-			     || (param->definition->type != "string"
-			         && param->definition->type != "gradient"
-			         && param->definition->type.substr(0, 5) != "list:") ) {
-				// value to test contains a comma which is not supported
-				if ( text.toStdString().find(',') != std::string::npos ) {
-					eval += "<b>Value is not described as list</b>";
-					issueFound = true;
-				}
-			}
-
-			for ( const auto &value : values ) {
-				if ( !eval.isEmpty() ) {
-					eval += "<hr/>";
-				}
-				if ( FancyView::evaluateValue(value, param, eval) ) {
-					issueFound = true;
-				}
-				eval += encodeHTML(value.c_str());
-			}
-
-			// paint text in orange if issues are found
-			pal.setColor(QPalette::WindowText,
-			             issueFound ? QColor(255, 127, 0) : QColor(32, 128, 32));
-			evaluation->setText(QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
-			                    .arg(values.size())
-			                    .arg(values.size() == 1 ? "" : "s", eval));
-			copyButton->setEnabled(true);
-		}
-		else {
-			pal.setColor(QPalette::WindowText, QColor(128, 32, 32));
-			evaluation->setText(QString("<b>Error</b><br/><br/><i>%1</i>")
-			                    .arg(QString::fromStdString(errmsg).replace('\n', "<br/>")));
-			copyButton->setEnabled(false);
-		}
-
+		pal.setColor(QPalette::WindowText, color);
 		evaluation->setPalette(pal);
 
-		// Limit the evaluation to at most 30 lines. Shorter content shrinks the
-		// area, longer value lists are capped and can be scrolled. The dialog
-		// grows with the area until the limit is reached.
 		int maxHeight = evaluation->fontMetrics().lineSpacing() * 30;
 		int width = evalScroll->viewport()->width();
 		if ( width <= 0 ) {
@@ -2769,7 +2700,9 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 		dialog.resize(qMax(dialog.width(), hint.width()), hint.height());
 	};
 
-	QObject::connect(editor, &QLineEdit::textChanged, evaluation, updateEvaluation);
+	QObject::connect(editor, &QPlainTextEdit::textChanged, evaluation, [editor, updateEvaluation]() {
+		updateEvaluation(editor->text());
+	});
 
 	const SchemaParameter *def = param->definition;
 
@@ -2810,14 +2743,20 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 		// Allow selecting the text with the mouse to copy it.
 		details->setTextInteractionFlags(Qt::TextSelectableByMouse |
 		                                 Qt::TextSelectableByKeyboard);
-		layout->addWidget(details);
+		details->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+		auto *detailsScroll = new FittingScrollArea;
+		detailsScroll->setWidgetResizable(true);
+		detailsScroll->setFrameShape(QFrame::NoFrame);
+		detailsScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+		detailsScroll->setWidget(details);
+		detailsScroll->setMinimumHeight(details->fontMetrics().lineSpacing() * 3);
+		layout->addWidget(detailsScroll, 1);
 	}
 
 	auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok |
 	                                     QDialogButtonBox::Cancel);
 
-	// Copy button on the left, Ok/Cancel on the right.
-	// Lists may hold the same value more than once
 	QCheckBox *unique = nullptr;
 	if ( isListType(param) ) {
 		unique = makeUniqueOption();
@@ -2835,8 +2774,6 @@ void openValueEditor(FancyViewItemEdit *input, const Parameter *param) {
 	QObject::connect(buttons, &QDialogButtonBox::rejected,
 	                 &dialog, &QDialog::reject);
 
-	// Evaluate the initial value once the whole dialog has been laid out, so the
-	// initial size already accounts for all widgets.
 	updateEvaluation(editor->text());
 
 	if ( dialog.exec() != QDialog::Accepted ) {
@@ -2904,7 +2841,40 @@ void FancyViewItem::updated() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-FancyView::FancyView(QWidget *parent) : QAbstractItemView(parent) {
+namespace {
+
+
+int defaultExpandLevel = FancyView::DefaultExpandLevel;
+
+
+}
+
+
+void FancyView::setDefaultExpandLevel(int level) {
+	defaultExpandLevel = level < 0 ? std::numeric_limits<int>::max() : level;
+}
+
+
+int FancyView::expandLevelDefault() {
+	return defaultExpandLevel;
+}
+
+
+void FancyView::applyDefaultExpandLevel(bool force) {
+	if ( !force && _expandLevel == defaultExpandLevel ) {
+		return;
+	}
+
+	_expandLevel = defaultExpandLevel;
+
+	if ( rootIndex().isValid() ) {
+		setRootIndex(rootIndex());
+	}
+}
+
+
+FancyView::FancyView(QWidget *parent)
+: QAbstractItemView(parent), _expandLevel(defaultExpandLevel) {
 	_iconEdit = icon("param_edit|param_edit_off");
 	_iconReset = icon("refresh", palette().color(QPalette::Highlight));
 	setFrameShape(QFrame::NoFrame);
@@ -2926,7 +2896,6 @@ QRect FancyView::visualRect(const QModelIndex &index) const {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::scrollTo(const QModelIndex &index, ScrollHint hint) {
-	// The target may live in a section which was not created yet
 	realizePath(index);
 
 	auto it = _viewItems.find(index);
@@ -2950,9 +2919,6 @@ void FancyView::scrollTo(const QModelIndex &index, ScrollHint hint) {
 		}
 	}
 
-	// Expanding a section or creating its content changes the geometry of
-	// the widgets. Without settling the layout first the position read below
-	// and the range of the scroll bars are the ones from before.
 	if ( _rootWidget->layout() ) {
 		_rootWidget->layout()->activate();
 	}
@@ -2997,7 +2963,6 @@ void FancyView::setModel(QAbstractItemModel *model) {
 namespace {
 
 
-// Returns the full name a tree item stands for, empty if it has none
 QString itemName(const QModelIndex &idx) {
 	auto *link = idx.data(ConfigurationTreeItemModel::Link).value<void*>();
 	if ( !link ) {
@@ -3023,17 +2988,116 @@ QString itemName(const QModelIndex &idx) {
 }
 
 
-// Depth first search for the item of a parameter or a section
-QModelIndex findByName(const QAbstractItemModel *model, const QModelIndex &parent,
-                       const QString &name) {
-	for ( int row = 0; row < model->rowCount(parent); ++row ) {
-		auto idx = model->index(row, 0, parent);
+bool isParameter(const QModelIndex &idx) {
+	return idx.data(ConfigurationTreeItemModel::Type).toInt()
+	       == ConfigurationTreeItemModel::TypeParameter;
+}
 
-		if ( !itemName(idx).compare(name, Qt::CaseInsensitive) ) {
-			return idx;
+
+bool isStructType(const QModelIndex &idx) {
+	if ( idx.data(ConfigurationTreeItemModel::Type).toInt()
+	     != ConfigurationTreeItemModel::TypeStruct ) {
+		return false;
+	}
+
+	auto *struc = reinterpret_cast<Structure*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
+	return struc && struc->name.empty();
+}
+
+
+bool hasHead(const QAbstractItemModel *model, const QModelIndex &idx) {
+	if ( idx.data(ConfigurationTreeItemModel::Type).toInt()
+	     != ConfigurationTreeItemModel::TypeGroup ) {
+		return false;
+	}
+
+	const int rows = model->rowCount(idx);
+	for ( int i = 0; i < rows; ++i ) {
+		if ( isStructType(model->index(i, 0, idx)) ) {
+			return true;
 		}
+	}
 
-		auto hit = findByName(model, idx, name);
+	return false;
+}
+
+
+bool isEmptyGroup(const QAbstractItemModel *model, const QModelIndex &idx) {
+	if ( !hasHead(model, idx) ) {
+		return false;
+	}
+
+	const int rows = model->rowCount(idx);
+	for ( int i = 0; i < rows; ++i ) {
+		const auto child = model->index(i, 0, idx);
+		if ( !isStructType(child) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+void updateStructTypeLabel(QLabel *label) {
+	auto *type = static_cast<const Structure*>(label->property("structType").value<void*>());
+	auto *container = static_cast<const Container*>(label->property("structContainer").value<void*>());
+	if ( !type ) {
+		return;
+	}
+
+	int count = 0;
+	if ( container ) {
+		for ( const auto &instance : container->structures ) {
+			if ( instance->definition == type->definition ) {
+				++count;
+			}
+		}
+	}
+
+	const std::string &name = type->definition->title.empty()
+	                          ? type->definition->type
+	                          : type->definition->title;
+
+	label->setText(QObject::tr("%1 <b>[%2]</b>")
+	               .arg(QString::fromStdString(name)).arg(count));
+}
+
+
+void updateStructTypeLabels(QWidget *root) {
+	if ( !root ) {
+		return;
+	}
+
+	for ( auto *label : root->findChildren<QLabel*>() ) {
+		if ( label->property("structType").isValid() ) {
+			updateStructTypeLabel(label);
+		}
+	}
+}
+
+
+QModelIndex findByName(const QAbstractItemModel *model, const QModelIndex &idx,
+                       const QString &name) {
+	if ( !itemName(idx).compare(name, Qt::CaseInsensitive) ) {
+		return idx;
+	}
+
+	for ( int row = 0; row < model->rowCount(idx); ++row ) {
+		auto hit = findByName(model, model->index(row, 0, idx), name);
+		if ( hit.isValid() ) {
+			return hit;
+		}
+	}
+
+	return {};
+}
+
+
+QModelIndex findInRoot(const QAbstractItemModel *model, const QModelIndex &root,
+                       const QString &name) {
+	for ( int row = model->rowCount(root) - 1; row >= 0; --row ) {
+		auto hit = findByName(model, model->index(row, 0, root), name);
 		if ( hit.isValid() ) {
 			return hit;
 		}
@@ -3052,17 +3116,14 @@ bool FancyView::showParameter(const QString &name) {
 		return false;
 	}
 
-	auto idx = findByName(model(), rootIndex(), name.trimmed());
+	auto idx = findInRoot(model(), rootIndex(), name.trimmed());
 	if ( !idx.isValid() ) {
 		return false;
 	}
 
-	// Creates the section holding the item if it was deferred
 	setCurrentIndex(idx);
 	scrollTo(idx);
 
-	// While the view is being set up the geometry is not final yet, so the
-	// position is taken again once the pending layout was processed.
 	QPersistentModelIndex target(idx);
 	QTimer::singleShot(0, this, [this, target]() {
 		if ( target.isValid() ) {
@@ -3089,6 +3150,8 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 	_viewItems = ViewItems();
 	_pendingSections.clear();
 
+	_expandLevel = defaultExpandLevel;
+
 	if ( !index.isValid() ) {
 		emit rootIndexChanged();
 		return;
@@ -3102,12 +3165,6 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 	_rootWidget->setLayout(l);
 
 	int rows = model()->rowCount(index);
-
-	if ( !_btnSearch ) {
-		_btnSearch = new QPushButton(icon("search"), {}, this);
-		_btnSearch->setVisible(true);
-		connect(_btnSearch, &QPushButton::clicked, this, &FancyView::searchRequested);
-	}
 
 	/*
 	if ( index.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeModule ) {
@@ -3133,9 +3190,8 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 		helpLayout->addWidget(new QLabel("Set/Remove value"));
 		helpLayout->addSpacing(QFontMetrics(font()).averageCharWidth());
 		helpLayout->addWidget(new IconLabel(icon("refresh", palette().color(QPalette::Highlight))));
-		helpLayout->addWidget(new QLabel("Reset to intial state"));
+		helpLayout->addWidget(new QLabel("Reset to initial state"));
 		helpLayout->addStretch();
-		// helpLayout->addWidget(_btnSearch);
 		l->addLayout(helpLayout);
 	}
 
@@ -3164,10 +3220,6 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 		addExternalParameterHint(l, mod);
 	}
 	else if ( type == ConfigurationTreeItemModel::TypeBinding ) {
-		// The module configuration of the module the binding belongs to may
-		// override binding parameters, so the same hint applies here. The
-		// model of a binding view holds no system model, the module is
-		// reached through the binding itself.
 		auto *binding = reinterpret_cast<ModuleBinding*>(
 		                    index.data(ConfigurationTreeItemModel::Link).value<void*>());
 
@@ -3185,13 +3237,22 @@ void FancyView::setRootIndex(const QModelIndex &index) {
 
 	for ( int i = 0; i < rows; ++i ) {
 		auto idx = model()->index(i, 0, index);
-		QWidget *w = createWidgetFromIndex(idx, secName);
+
+		// A category, e.g. the sources of seedlink, holds the bindings which
+		// belong to the module itself, so it opens like its own section.
+		const bool own = (idx.data().toString() == secName)
+		              || (idx.data(ConfigurationTreeItemModel::Type).toInt()
+		                  == ConfigurationTreeItemModel::TypeCategory);
+
+		QWidget *w = createWidgetFromIndex(idx, own ? _expandLevel : -1);
 		if ( w ) {
 			l->addWidget(w);
 		}
 	}
 
 	l->addStretch();
+
+	updateBlockLines();
 
 	_rootWidget->installEventFilter(this);
 	_rootWidget->setUpdatesEnabled(false);
@@ -3215,26 +3276,22 @@ void FancyView::setConfigStage(Seiscomp::Environment::ConfigStage cs) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FancyView::populateChildren(QBoxLayout *l, const QModelIndex &idx,
-                                 const QString &rootSecName,
-                                 const QString &emptyText) {
-	int rows = model()->rowCount(idx);
-
-	bool firstParameter = true;
+QWidget *FancyView::populateParameters(QBoxLayout *l, const QModelIndex &idx) {
+	const int rows = model()->rowCount(idx);
+	QFrame *paramWidget = nullptr;
 	QLayout *paramLayout = nullptr;
 
 	for ( int i = 0; i < rows; ++i ) {
 		auto child = model()->index(i, 0, idx);
-		if ( child.data(ConfigurationTreeItemModel::Type).toInt() != ConfigurationTreeItemModel::TypeParameter ) {
+		if ( !isParameter(child) ) {
 			continue;
 		}
 
-		if ( firstParameter ) {
-			QFrame *paramWidget = new QFrame;
+		if ( !paramLayout ) {
+			paramWidget = new QFrame;
 			paramLayout = new Seiscomp::Gui::FlowLayout(0, layoutPadding() * 2, layoutPadding() * 2);
 			paramWidget->setLayout(paramLayout);
 			l->addWidget(paramWidget);
-			firstParameter = false;
 		}
 
 		FancyViewItem item = add(paramLayout, child);
@@ -3243,13 +3300,31 @@ void FancyView::populateChildren(QBoxLayout *l, const QModelIndex &idx,
 		}
 	}
 
+	return paramWidget;
+}
+
+
+void FancyView::populateChildren(QBoxLayout *l, const QModelIndex &idx,
+                                 int childLevel, const QString &emptyText) {
+	int rows = model()->rowCount(idx);
+	const bool head = hasHead(model(), idx);
+
+	if ( !head ) {
+		populateParameters(l, idx);
+	}
+
 	for ( int i = 0; i < rows; ++i ) {
 		auto child = model()->index(i, 0, idx);
-		if ( child.data(ConfigurationTreeItemModel::Type).toInt() == ConfigurationTreeItemModel::TypeParameter ) {
+		const int type = child.data(ConfigurationTreeItemModel::Type).toInt();
+		if ( type == ConfigurationTreeItemModel::TypeParameter ) {
 			continue;
 		}
 
-		QWidget *cw = createWidgetFromIndex(child, rootSecName);
+		if ( head && isStructType(child) ) {
+			continue;
+		}
+
+		QWidget *cw = createWidgetFromIndex(child, childLevel);
 		if ( cw ) {
 			l->addWidget(cw);
 		}
@@ -3267,14 +3342,281 @@ void FancyView::populateChildren(QBoxLayout *l, const QModelIndex &idx,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::populateContainer(QBoxLayout *l, const QModelIndex &idx,
+                                  int level, const QString &emptyText,
+                                  QAbstractButton *toggle) {
+	setupToggle(idx, toggle);
+	if ( (level > 0) || !toggle ) {
+		populateChildren(l, idx, level - 1, emptyText);
+		return;
+	}
+
+	QPersistentModelIndex pidx(idx);
+	_pendingSections[pidx] = [this, l, pidx, emptyText]() {
+		populateChildren(l, pidx, _expandLevel - 1, emptyText);
+	};
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::setupToggle(const QModelIndex &idx, QAbstractButton *toggle) {
+	if ( !toggle ) {
+		return;
+	}
+
+	QString toolTip = tr("Click: Collapse this group or expand it as shown "
+	                     "before, the first time with all groups below\n"
+	                     "Shift + click: Expand/collapse this group alone");
+
+	toolTip += "\n" + (idx.parent() == rootIndex()
+	                   ? tr("Ctrl + click: Expand/collapse all groups of "
+	                        "this section and all groups below them")
+	                   : tr("Ctrl + click: Expand/collapse all groups of "
+	                        "the same level and all groups below them"));
+
+	toolTip += "\n" + tr("Ctrl + Shift + click: Expand/collapse those "
+	                     "groups alone");
+
+	toggle->setToolTip(toolTip);
+
+	QPersistentModelIndex pidx(idx);
+
+	connect(toggle, &QAbstractButton::toggled, this,
+	        [this, pidx, toggle](bool checked) {
+		if ( checked ) {
+			realizeSection(pidx);
+			updateBlockLines(pidx);
+		}
+		else {
+			toggle->setProperty("expandedBefore", true);
+		}
+	});
+
+	connect(toggle, &QAbstractButton::clicked, this,
+	        [this, pidx, toggle](bool checked) {
+		toggleClicked(pidx, toggle, checked);
+	});
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::toggleClicked(const QModelIndex &idx, QAbstractButton *toggle,
+                              bool checked) {
+	UpdatesBlocker blockUpdates(_rootWidget);
+
+	VisibilityBlocker blockLayout(_rootWidget);
+
+	const auto modifiers = QApplication::keyboardModifiers();
+	const bool level = modifiers.testFlag(Qt::ControlModifier);
+	const bool tree = !modifiers.testFlag(Qt::ShiftModifier);
+
+	const bool expand = level ? (checked || !isLevelExpanded(idx, tree))
+	                          : checked;
+
+	const bool restore = !level && tree;
+	const bool expandedBefore = toggle->property("expandedBefore").toBool();
+
+	toggle->setChecked(expand);
+
+	if ( restore ) {
+		if ( expand && !expandedBefore ) {
+			toggleTree(idx, true);
+		}
+	}
+	else if ( tree || expand ) {
+		toggleTree(idx, tree && expand);
+	}
+
+	if ( level ) {
+		toggleLevel(idx, expand, tree);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QAbstractButton *FancyView::toggleAt(const QModelIndex &idx) const {
+	auto it = _viewItems.find(idx);
+	return it == _viewItems.end() ? nullptr : it.value().toggle;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+QModelIndex FancyView::levelParent(const QModelIndex &idx) const {
+	return idx.parent() == rootIndex() ? idx : idx.parent();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool FancyView::isTreeExpanded(const QModelIndex &idx) const {
+	if ( _pendingSections.contains(idx) ) {
+		return false;
+	}
+
+	const int rows = model()->rowCount(idx);
+
+	for ( int i = 0; i < rows; ++i ) {
+		const auto child = model()->index(i, 0, idx);
+		if ( isParameter(child) ) {
+			continue;
+		}
+
+		auto *toggle = toggleAt(child);
+		if ( !toggle || isEmptyGroup(model(), child) ) {
+			continue;
+		}
+
+		if ( !toggle->isChecked() || !isTreeExpanded(child) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::updateBlockLines() {
+	if ( model() && rootIndex().isValid() ) {
+		updateBlockLines(rootIndex());
+	}
+}
+
+
+void FancyView::updateBlockLines(const QModelIndex &idx) {
+	const int rows = _pendingSections.contains(idx) ? 0 : model()->rowCount(idx);
+
+	for ( int i = 0; i < rows; ++i ) {
+		const auto child = model()->index(i, 0, idx);
+		if ( !isParameter(child) ) {
+			updateBlockLines(child);
+		}
+	}
+
+	auto it = _viewItems.find(idx);
+	if ( (it == _viewItems.end()) || !it.value().block ) {
+		return;
+	}
+
+	static_cast<BlockWidget*>(it.value().block)->setLineEnabled(
+		!isEmptyGroup(model(), idx)
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+bool FancyView::isLevelExpanded(const QModelIndex &idx, bool withTree) const {
+	if ( withTree && !isTreeExpanded(idx) ) {
+		return false;
+	}
+
+	const auto parent = levelParent(idx);
+	const int rows = model()->rowCount(parent);
+
+	for ( int i = 0; i < rows; ++i ) {
+		const auto sibling = model()->index(i, 0, parent);
+		if ( (sibling == idx) || isParameter(sibling) ) {
+			continue;
+		}
+
+		auto *toggle = toggleAt(sibling);
+		if ( !toggle || isEmptyGroup(model(), sibling) ) {
+			continue;
+		}
+
+		if ( !toggle->isChecked()
+		     || (withTree && !isTreeExpanded(sibling)) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::toggleTree(const QModelIndex &idx, bool expand) {
+	const int rows = model()->rowCount(idx);
+
+	for ( int i = 0; i < rows; ++i ) {
+		const auto child = model()->index(i, 0, idx);
+		if ( isParameter(child) ) {
+			continue;
+		}
+
+		auto *toggle = toggleAt(child);
+		if ( !toggle ) {
+			continue;
+		}
+
+		toggle->setChecked(expand);
+		toggleTree(child, expand);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FancyView::toggleLevel(const QModelIndex &idx, bool expand,
+                            bool withTree) {
+	const auto parent = levelParent(idx);
+	const int rows = model()->rowCount(parent);
+
+	for ( int i = 0; i < rows; ++i ) {
+		const auto sibling = model()->index(i, 0, parent);
+		if ( (sibling == idx) || isParameter(sibling) ) {
+			continue;
+		}
+
+		auto *toggle = toggleAt(sibling);
+		if ( !toggle ) {
+			continue;
+		}
+
+		toggle->setChecked(expand);
+
+		if ( withTree || expand ) {
+			toggleTree(sibling, withTree && expand);
+		}
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::realizeSection(const QModelIndex &idx) {
 	auto it = _pendingSections.find(idx);
 	if ( it == _pendingSections.end() ) {
 		return;
 	}
 
-	// Take the builder out first, creating the children may realize further
-	// sections of its own.
 	auto build = it.value();
 	_pendingSections.erase(it);
 	build();
@@ -3286,8 +3628,6 @@ void FancyView::realizeSection(const QModelIndex &idx) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::realizePath(const QModelIndex &idx) {
-	// The outermost section must be created first, its children may be
-	// deferred themselves.
 	QList<QModelIndex> path;
 	for ( auto parent = idx; parent.isValid(); parent = parent.parent() ) {
 		path.prepend(parent);
@@ -3303,8 +3643,7 @@ void FancyView::realizePath(const QModelIndex &idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
-                                          const QString &rootSecName) {
+QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx, int level) {
 	ViewItemWidget *w = new ViewItemWidget;
 	QBoxLayout *l = new QVBoxLayout;
 	l->setSpacing(layoutPadding());
@@ -3322,13 +3661,15 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			Binding *binding = reinterpret_cast<Binding*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
 			if ( binding ) {
 				FancyViewItem item(idx, w);
-				add(l, item, binding, true);
+				add(l, item, binding, level < 1);
 				l->setContentsMargins(0, 0, 0, 0);
 
 				w->setProperty("viewBinding", QVariant::fromValue((void*)binding));
 
-				populateChildren(l, idx, rootSecName,
+				setupToggle(idx, item.toggle);
+				populateChildren(l, idx, level - 1,
 				                 tr("This section does not contain a parameter to configure..."));
+				setBlockExpanded(item.block, item.description, item.toggle->isChecked());
 
 				_viewItems[idx] = item;
 			}
@@ -3339,8 +3680,10 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			BindingCategory *cat = reinterpret_cast<BindingCategory*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
 			if (cat ) {
 				FancyViewItem item(idx, w);
-				add(l, item, cat, false);
+				add(l, item, cat, level < 1);
 				l->setContentsMargins(0, 0, 0, 0);
+
+				setupToggle(idx, item.toggle);
 
 				auto alert = new AlertLabel;
 				alert->setText(QString("No binding for \"%1\" selected.").arg(cat->name.c_str()));
@@ -3355,7 +3698,7 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 					if ( type != ConfigurationTreeItemModel::TypeCategoryBinding )
 						continue;
 
-					QWidget *bw = createWidgetFromIndex(secIdx, rootSecName);
+					QWidget *bw = createWidgetFromIndex(secIdx, level);
 					bw->setProperty("statusLabel", QVariant::fromValue((void*)alert));
 					l->addWidget(bw);
 				}
@@ -3365,7 +3708,6 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 
 				comboBox = new QComboBox;
 				comboBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
-				//comboBox->addItem("- None -");
 
 				for ( size_t i = 0; i < catBindingCount; ++i ) {
 					Binding *b = cat->bindingTypes[i].get();
@@ -3420,41 +3762,14 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 		{
 			Section *sec = reinterpret_cast<Section*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
 			if ( sec ) {
-				const bool collapsed = idx.data().toString() != rootSecName;
-
 				FancyViewItem item(idx, w);
-				add(l, item, sec, collapsed);
+				add(l, item, sec, level < 1);
 				l->setContentsMargins(0, 0, 0, 0);
 
-				if ( !sec->description.empty() ) {
-					StatusLabel *desc = new StatusLabel;
-					desc->setWordWrap(true);
-					desc->setInfoText(sec->description.c_str());
-					l->addWidget(desc);
-				}
-
-				const QString emptyText =
-					tr("This section does not contain a parameter to configure...");
-
-				// The parameters of a collapsed section are not visible, so
-				// they are created when the section is opened the first time.
-				if ( collapsed && item.toggle ) {
-					QPersistentModelIndex pidx(idx);
-					_pendingSections[pidx] =
-						[this, l, pidx, rootSecName, emptyText]() {
-							populateChildren(l, pidx, rootSecName, emptyText);
-						};
-
-					connect(item.toggle, &QAbstractButton::toggled, this,
-					        [this, pidx](bool checked) {
-						if ( checked ) {
-							realizeSection(pidx);
-						}
-					});
-				}
-				else {
-					populateChildren(l, idx, rootSecName, emptyText);
-				}
+				populateContainer(
+					l, idx, level,
+					tr("This section does not contain a parameter to configure..."),
+					item.toggle);
 
 				_viewItems[idx] = item;
 			}
@@ -3465,11 +3780,13 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			Group *group = reinterpret_cast<Group*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
 			if ( group ) {
 				FancyViewItem item(idx, w);
-				add(l, item, group);
+				add(l, item, group, level < 1);
 				l->setContentsMargins(0, 0, 0, 0);
 
-				populateChildren(l, idx, rootSecName,
-				                 tr("This group does not contain a parameter to configure..."));
+				populateContainer(
+					l, idx, level,
+					tr("This group does not contain a parameter to configure..."),
+					item.toggle);
 
 				_viewItems[idx] = item;
 			}
@@ -3490,13 +3807,17 @@ QWidget *FancyView::createWidgetFromIndex(const QModelIndex &idx,
 			Structure *struc = reinterpret_cast<Structure*>(idx.data(ConfigurationTreeItemModel::Link).value<void*>());
 			if ( struc ) {
 				FancyViewItem item(idx, w);
-				add(l, item, struc);
+				add(l, item, struc, level < 1);
 				l->setContentsMargins(0, 0, 0, 0);
 
 				if ( struc->name.empty() ) break;
 
-				populateChildren(l, idx, rootSecName,
-				                 tr("This group does not contain a parameter to configure..."));
+				populateContainer(
+					l, idx, level,
+					tr("This group does not contain a parameter to configure..."),
+					item.toggle);
+
+				_viewItems[idx] = item;
 			}
 			break;
 		}
@@ -3525,8 +3846,6 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	Header *header = new Header(CategoryBgColor);
 	header->setLayout(hlayout);
 
-	hlayout->addWidget(item.toggle);
-
 	QLabel *catName = new QLabel;
 	catName->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 	QFont f = catName->font();
@@ -3541,18 +3860,19 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 	item.label = catName;
 
-	hlayout->addWidget(catName);
+	hlayout->addLayout(handleWithName(item.toggle, catName));
 
 	HRuler *hline = new HRuler(1);
 	hlayout->addWidget(hline);
 
-	//layout->addLayout(hlayout);
 	layout->addWidget(header);
 
 	BlockWidget *catWidget = new BlockWidget;
 	catWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
 	layout->addWidget(catWidget);
+
+	item.block = catWidget;
 
 	layout = new QVBoxLayout;
 	layout->setSpacing(layoutPadding());
@@ -3641,8 +3961,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	QHBoxLayout *hlayout = new QHBoxLayout;
 	hlayout->setContentsMargins(0, 0, 0, 0);
 	hlayout->setSpacing(layoutPadding());
-	hlayout->addWidget(item.toggle);
-	hlayout->addWidget(sectionName);
+	hlayout->addLayout(handleWithName(item.toggle, sectionName));
 	hlayout->addWidget(new HRuler);
 
 	hlayout->addWidget(removeButton);
@@ -3655,16 +3974,30 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	layout->addWidget(sectionWidget);
 
+	item.block = sectionWidget;
+
 	layout = new QVBoxLayout;
 	layout->setSpacing(layoutPadding());
 	sectionWidget->setLayout(layout);
 
-	if ( collapsed ) {
-		item.toggle->setChecked(false);
-		sectionWidget->setVisible(false);
+	if ( binding->definition && !binding->definition->description.empty() ) {
+		auto *desc = new DescLabel;
+		desc->setText(binding->definition->description.c_str());
+		layout->addWidget(desc);
+		item.description = desc;
 	}
 
-	connect(item.toggle, &BlockHandle::toggled, sectionWidget, &QWidget::setVisible);
+	if ( collapsed ) {
+		item.toggle->setChecked(false);
+	}
+
+	auto *desc = item.description;
+	setBlockExpanded(sectionWidget, desc, !collapsed);
+
+	connect(item.toggle, &BlockHandle::toggled, sectionWidget,
+	        [sectionWidget, desc](bool expanded) {
+		setBlockExpanded(sectionWidget, desc, expanded);
+	});
 
 	return true;
 }
@@ -3690,26 +4023,56 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	QHBoxLayout *hlayout = new QHBoxLayout;
 	hlayout->setSpacing(layoutPadding());
 	hlayout->setContentsMargins(0, 0, 0, 0);
-	hlayout->addWidget(item.toggle);
-	hlayout->addWidget(sectionName);
+	hlayout->addLayout(handleWithName(item.toggle, sectionName));
 	hlayout->addWidget(new HRuler(2));
 
 	layout->addLayout(hlayout);
 
-	QWidget *sectionWidget = new BlockWidget;
+	auto *sectionWidget = new BlockWidget;
 	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	layout->addWidget(sectionWidget);
+
+	closeOnLineClick(sectionWidget, item.toggle,
+	                 tr("Click on line to collapse this section"));
+
+	item.block = sectionWidget;
 
 	layout = new QVBoxLayout;
 	layout->setSpacing(layoutPadding());
 	sectionWidget->setLayout(layout);
 
-	if ( collapsed ) {
-		item.toggle->setChecked(false);
-		sectionWidget->setVisible(false);
+	if ( !sec->description.empty() ) {
+		auto *sectionDesc = new StatusLabel;
+		sectionDesc->setWordWrap(true);
+		sectionDesc->setInfoText(sec->description.c_str());
+		layout->addWidget(sectionDesc);
+		item.description = sectionDesc;
+	}
+	else if ( item.index.parent().data(ConfigurationTreeItemModel::Type).toInt()
+	          == ConfigurationTreeItemModel::TypeBinding ) {
+		auto *binding = reinterpret_cast<ModuleBinding*>(
+			item.index.parent().data(ConfigurationTreeItemModel::Link).value<void*>());
+		const QString description = bindingDescription(binding, sec);
+
+		if ( !description.isEmpty() ) {
+			auto *desc = new DescLabel;
+			desc->setText(description);
+			layout->addWidget(desc);
+			item.description = desc;
+		}
 	}
 
-	connect(item.toggle, &BlockHandle::toggled, sectionWidget, &QWidget::setVisible);
+	if ( collapsed ) {
+		item.toggle->setChecked(false);
+	}
+
+	auto *desc = item.description;
+	setBlockExpanded(sectionWidget, desc, !collapsed);
+
+	connect(item.toggle, &BlockHandle::toggled, sectionWidget,
+	        [sectionWidget, desc](bool expanded) {
+		setBlockExpanded(sectionWidget, desc, expanded);
+	});
 
 	return true;
 }
@@ -3719,7 +4082,8 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group) {
+bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group,
+                    bool collapsed) {
 	// layout->addSpacing(16);
 
 	// Build header
@@ -3740,14 +4104,13 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group) {
 	QHBoxLayout *hlayout = new QHBoxLayout;
 	hlayout->setSpacing(layoutPadding());
 	hlayout->setContentsMargins(0, 0, 0, 0);
-	hlayout->addWidget(item.toggle);
-	hlayout->addWidget(name);
+	hlayout->addLayout(handleWithName(item.toggle, name));
 	hlayout->addWidget(new HRuler);
 
 	layout->addLayout(hlayout);
 
 	// Build group widget
-	QWidget *groupWidget = new BlockWidget;
+	auto *groupWidget = new BlockWidget;
 	//groupWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	//groupWidget->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
@@ -3758,14 +4121,65 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group) {
 	if ( !group->definition->description.empty() ) {
 		auto desc = new DescLabel;
 		desc->setText(group->definition->description.c_str());
-		groupLayout->addWidget(desc);
 		item.description = desc;
+	}
+
+	QWidget *head = item.description;
+
+	QWidget *headParameters = nullptr;
+
+	if ( hasHead(model(), item.index) ) {
+		head = new QWidget;
+		auto *headLayout = new QVBoxLayout(head);
+		headLayout->setContentsMargins(0, 0, 0, 0);
+		headLayout->setSpacing(layoutPadding());
+
+		if ( item.description ) {
+			headLayout->addWidget(item.description);
+		}
+
+		headParameters = populateParameters(headLayout, item.index);
+
+		for ( int i = 0; i < model()->rowCount(item.index); ++i ) {
+			auto child = model()->index(i, 0, item.index);
+			if ( !isStructType(child) ) {
+				continue;
+			}
+
+			auto *row = createWidgetFromIndex(child, 0);
+			row->setProperty("structLayout", QVariant::fromValue((void*)groupLayout));
+			headLayout->addWidget(row);
+		}
+	}
+
+	if ( head ) {
+		groupLayout->addWidget(head);
 	}
 
 	layout->addWidget(groupWidget);
 	layout = groupLayout;
 
-	connect(item.toggle, &BlockHandle::toggled, groupWidget, &QWidget::setVisible);
+	closeOnLineClick(groupWidget, item.toggle,
+	                 tr("Click on line to collapse this group"));
+
+	item.block = groupWidget;
+
+	if ( collapsed ) {
+		item.toggle->setChecked(false);
+	}
+
+	setBlockExpanded(groupWidget, head, !collapsed);
+	if ( headParameters ) {
+		headParameters->setVisible(!collapsed);
+	}
+
+	connect(item.toggle, &BlockHandle::toggled, groupWidget,
+	        [groupWidget, head, headParameters](bool expanded) {
+		setBlockExpanded(groupWidget, head, expanded);
+		if ( headParameters ) {
+			headParameters->setVisible(expanded);
+		}
+	});
 
 	return true;
 }
@@ -3775,7 +4189,8 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) {
+bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc,
+                    bool collapsed) {
 	QHBoxLayout *hlayout = new QHBoxLayout;
 	hlayout->setSpacing(layoutPadding());
 	hlayout->setContentsMargins(0, 0, 0, 0);
@@ -3790,12 +4205,13 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 	// Just the definition?
 	if ( struc->name.empty() ) {
 		if ( !struc->definition->title.empty() ) {
-			type->setText(struc->definition->title.c_str());
 			type->setToolTip(struc->definition->type.c_str());
 		}
-		else {
-			type->setText(struc->definition->type.c_str());
-		}
+
+		auto *container = reinterpret_cast<Container*>(item.index.parent().data(ConfigurationTreeItemModel::Link).value<void*>());
+		type->setProperty("structType", QVariant::fromValue((void*)struc));
+		type->setProperty("structContainer", QVariant::fromValue((void*)container));
+		updateStructTypeLabel(type);
 		modify->setIcon(::icon("add"));
 		modify->setToolTip(QString("Create a new '%1' instance").arg(struc->definition->type.c_str()));
 		//add->setFlat(true);
@@ -3812,7 +4228,6 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 		// Build header
 		item.toggle = new BlockHandle;
 		item.toggle->setCheckable(true);
-		hlayout->addWidget(item.toggle);
 
 		type->setText(struc->name.c_str());
 		modify->setIcon(::icon("delete_forever"));
@@ -3825,9 +4240,9 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 		f.setItalic(true);
 		type->setFont(f);
 
-		item.toggle->setChecked(true);
+		item.toggle->setChecked(!collapsed);
 
-		hlayout->addWidget(type);
+		hlayout->addLayout(handleWithName(item.toggle, type));
 		hlayout->addWidget(new HRuler);
 		hlayout->addWidget(modify);
 	}
@@ -3836,27 +4251,42 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Structure *struc) 
 
 	item.label = type;
 
+	if ( struc->name.empty() && !struc->definition->description.empty() ) {
+		auto *desc = new DescLabel;
+		desc->setText(struc->definition->description.c_str());
+
+		auto *block = new BlockWidget;
+		auto *blockLayout = new QVBoxLayout(block);
+		blockLayout->setContentsMargins(0, 0, 0, 0);
+		blockLayout->addWidget(desc);
+
+		layout->addWidget(block);
+		item.description = desc;
+	}
+
 	if ( !struc->name.empty() ) {
 		// Build group widget
-		QWidget *groupWidget = new BlockWidget;
+		auto *groupWidget = new BlockWidget;
 
 		QVBoxLayout *groupLayout = new QVBoxLayout;
 		groupLayout->setSpacing(layoutPadding());
 		groupWidget->setLayout(groupLayout);
 
-		if ( !struc->definition->description.empty() ) {
-			auto desc = new DescLabel;
-			desc->setText(struc->definition->description.c_str());
-			groupLayout->addWidget(desc);
-			item.description = desc;
-		}
-
 		layout->addWidget(groupWidget);
 		layout = groupLayout;
 
-		groupWidget->setVisible(item.toggle->isChecked());
+		closeOnLineClick(groupWidget, item.toggle,
+		                 tr("Click on line to collapse this group"));
 
-		connect(item.toggle, &QAbstractButton::toggled, groupWidget, &QWidget::setVisible);
+		item.block = groupWidget;
+
+		auto *desc = item.description;
+		setBlockExpanded(groupWidget, desc, item.toggle->isChecked());
+
+		connect(item.toggle, &QAbstractButton::toggled, groupWidget,
+		        [groupWidget, desc](bool expanded) {
+			setBlockExpanded(groupWidget, desc, expanded);
+		});
 	}
 
 	return true;
@@ -3895,29 +4325,46 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	}
 
 	if ( param->definition->type == "boolean" ) {
-		paramLayout->addStretch();
-
 		BoolEdit *checkBox = new BoolEdit;
 		checkBox->setValue(idx.sibling(idx.row(),2).data().toString());
 		inputWidget = checkBox;
 
 		connect(checkBox, &BoolEdit::toggled, this, &FancyView::optionToggled);
 
-		// The checkbox toggles the value; a separate clickable name opens the
-		// value editor, consistent with the other parameter types.
+		for ( QWidget *watched : { static_cast<QWidget*>(paramWidget),
+		                           static_cast<QWidget*>(checkBox) } ) {
+			watched->setProperty("evaluatedInput", QVariant::fromValue((void*)checkBox));
+			watched->installEventFilter(this);
+		}
+
 		ClickableLabel *name = new ClickableLabel;
 		QFont f = name->font();
 		f.setBold(true);
 		name->setFont(f);
 		name->setText(paramLabel);
-		name->setCursor(Qt::PointingHandCursor);
-		name->setToolTip(tr("Click to edit the value"));
 		name->onClick = [checkBox, param]() { openValueEditor(checkBox, param); };
 		textWidget = name;
 
-		nameLayout->addWidget(checkBox);
+		QStyleOptionButton opt;
+		opt.initFrom(checkBox);
+		opt.rect = QRect(QPoint(), checkBox->sizeHint());
+
+		checkBox->setFixedWidth(
+			checkBox->style()->subElementRect(QStyle::SE_CheckBoxIndicator,
+			                                  &opt, checkBox).right() + 1
+		);
+
+		static const int fieldHeight = QLineEdit().sizeHint().height();
+
+		auto *boxRow = new QWidget;
+		boxRow->setFixedHeight(fieldHeight);
+		auto *boxLayout = new QHBoxLayout(boxRow);
+		setMargin(boxLayout, 0);
+		boxLayout->addWidget(checkBox, 0, Qt::AlignLeft | Qt::AlignVCenter);
+
 		nameLayout->addWidget(name);
 		paramLayout->addLayout(nameLayout);
+		paramLayout->addWidget(boxRow);
 
 		if ( isOverridden ) {
 			QPalette pal = checkBox->palette();
@@ -3943,18 +4390,13 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 		textWidget = name;
 
-		// Widget placed into the layout. For most types this is the input
-		// widget itself. The "file" type wraps the input line edit together
-		// with a button opening a file selection dialog.
 		QWidget *editorWidget = nullptr;
 
 		const std::string type = baseType(param);
 
 		if ( isListType(param) ) {
-			// The field looks like a combo box, its drop-down opens the
-			// editor for the single values. The selection dialogs of the
-			// values are offered there, not in the field itself.
 			auto *edit = new ListEdit;
+			edit->setCursor(Qt::PointingHandCursor);
 			edit->setValue(idx.sibling(idx.row(),2).data().toString());
 			connect(edit, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextChanged(QString)));
 			connect(edit->lineEdit(), SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
@@ -3966,8 +4408,6 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			});
 		}
 		else if ( param->definition->values.empty() ) {
-			// No predefined values to choose from. Lists are handled above,
-			// so the selection dialogs are offered in the field itself.
 			StringEdit *edit = new StringEdit;
 			edit->setValue(idx.sibling(idx.row(),2).data().toString());
 			connect(edit, SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
@@ -3975,40 +4415,27 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 			inputWidget = edit;
 
 			if ( (type == "file") || (type == "directory") ) {
-				// Offer a file or directory selection dialog as well.
 				editorWidget = makePathEditor(edit, param);
 			}
 			else if ( type == "time" ) {
-				// Offer a date and time selection dialog as well.
 				editorWidget = makeTimeEditor(edit, param);
 			}
 			else if ( type == "color" ) {
-				// Offer a color selection dialog as well.
 				editorWidget = makeColorEditor(edit, param);
 			}
 		}
 		else {
 			ComboEdit *combo = new ComboEdit;
-			// remove whitespaces allowing line breaks in descriptions with value list
 			for ( const auto &value : param->definition->values ) {
 				combo->addItem(QString(value.c_str()).trimmed());
 			}
 			combo->setValue(idx.sibling(idx.row(),2).data().toString());
-			// Evaluate on every change, including values assigned
-			// programmatically, but finish the editing only when the line
-			// edit is left or an item is picked. Both on currentTextChanged
-			// would hide the evaluation hint right after showing it.
 			connect(combo, SIGNAL(currentTextChanged(QString)), this, SLOT(optionTextChanged(QString)));
 			connect(combo->lineEdit(), SIGNAL(editingFinished()), this, SLOT(optionTextEdited()));
 			connect(combo, SIGNAL(activated(int)), this, SLOT(optionTextEdited()));
 			inputWidget = combo;
 		}
 
-		// Make the parameter name clickable to open a value editor showing the
-		// full dotted variable name and the parameter details. Available for all
-		// parameters (files and directories keep their selection button too).
-		name->setCursor(Qt::PointingHandCursor);
-		name->setToolTip(tr("Click to edit the value"));
 		FancyViewItemEdit *input = inputWidget;
 		name->onClick = [input, param]() { openValueEditor(input, param); };
 
@@ -4043,8 +4470,6 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 	auto btnEdit = new IconButton(_iconEdit);
 	nameLayout->addWidget(btnEdit);
 
-	// Built when the tooltip is requested, not while the panel is created.
-	// Owned by the input widget, so it is destroyed together with it.
 	QWidget *inputWidgetWidget = inputWidget->widget();
 	new LazyToolTip(inputWidgetWidget,
 	                [this, inputWidgetWidget, param](bool verbose) {
@@ -4089,8 +4514,6 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		auto help = new HelpLabel;
 		help->setText(maxSize(descText, 60).c_str());
 
-		// Wrapping and encoding the full description is only done when the
-		// tooltip is requested. Owned by 'help', so it is destroyed with it.
 		new LazyToolTip(help, [help, descText](bool) {
 			if ( !help->toolTip().isEmpty() ) {
 				return;
@@ -4113,13 +4536,18 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		item.description = nullptr;
 	}
 
-	if ( (idx.sibling(idx.row(), 2).flags() & Qt::ItemIsEnabled) == 0 ) {
+	const bool isEditable =
+		(idx.sibling(idx.row(), 2).flags() & Qt::ItemIsEnabled) != 0;
+
+	if ( !isEditable ) {
 		item.label->setEnabled(false);
 		item.input->widget()->setEnabled(false);
 		if ( item.description ) {
 			item.description->setEnabled(false);
 		}
 	}
+
+	showAsClickable(item.label, isEditable);
 
 	if ( btnEdit ) {
 		btnEdit->setCheckable(true);
@@ -4154,6 +4582,7 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 		btnReset->setVisible(false);
 		btnReset->setCheckable(false);
 		btnReset->setFixedSize(16, 16);
+		btnReset->setToolTip(tr("Reset the value to the initial state"));
 		btnReset->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
 		connect(btnReset, &QAbstractButton::clicked, this, &FancyView::resetValue);
 	}
@@ -4162,11 +4591,8 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 	layout->addWidget(paramWidget);
 
-	// Link the view item with the input widget
 	inputWidget->widget()->setProperty("viewItem", QVariant::fromValue<FancyViewItem>(item));
 
-	// An editable combo box forwards the signals of its line edit, so the item
-	// must be reachable from there as well.
 	if ( auto *combo = qobject_cast<QComboBox*>(inputWidget->widget()) ) {
 		if ( combo->lineEdit() ) {
 			combo->lineEdit()->setProperty("viewItem",
@@ -4183,22 +4609,10 @@ FancyViewItem FancyView::add(QLayout *layout, const QModelIndex &idx) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FancyView::showSearchButton(bool v) {
-	if ( _btnSearch ) {
-		_btnSearch->setVisible(v);
-		_btnSearch->setToolTip(tr("Search - Ctrl + F"));
-	}
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                             const QVector<int> &roles) {
 	auto it = _viewItems.find(topLeft.sibling(topLeft.row(),0));
-	if ( it == _viewItems.end() ) {
+	if ( (it == _viewItems.end()) || !it.value().input ) {
 		return;
 	}
 
@@ -4206,6 +4620,7 @@ void FancyView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 		auto &item = it.value();
 		bool isEnabled = model()->flags(topLeft.sibling(topLeft.row(), 2)) & Qt::ItemIsEnabled;
 		item.label->setEnabled(isEnabled);
+		showAsClickable(item.label, isEnabled);
 		item.input->widget()->setEnabled(isEnabled);
 		if ( item.description ) {
 			item.description->setEnabled(isEnabled);
@@ -4232,6 +4647,15 @@ void FancyView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 bool FancyView::eventFilter(QObject *o, QEvent *e) {
 	if ( o == _rootWidget && e->type() == QEvent::LayoutRequest ) {
 		updateContentGeometry();
+	}
+
+	if ( _optionEditHint && _optionEditHint->isVisible()
+	     && ((e->type() == QEvent::Leave) || (e->type() == QEvent::FocusOut)) ) {
+		auto *input = static_cast<QWidget*>(o->property("evaluatedInput").value<void*>());
+		if ( input
+		     && (_optionEditHint->property("evaluatedInput").value<void*>() == input) ) {
+			_optionEditHint->hide();
+		}
 	}
 
 	return false;
@@ -4722,22 +5146,17 @@ void FancyView::updateToolTip(QWidget *w, Seiscomp::System::Parameter *param,
 	QString eval;
 	string errmsg;
 	if ( Config::Config::Eval(param->symbol.content, values, true, nullptr, &errmsg) ) {
-		// value must not be a list, strings may contain commas and are not tested
-		if ( (param->definition->type.size() < 5)
-		     || ((param->definition->type != "string")
-		         && (param->definition->type != "gradient")
-		         && (param->definition->type.substr(0, 5) != "list:")) ) {
-			string valueTest = param->symbol.content;
-			// value to test contains a comma which is not supported
-			string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
-			if ( valueTest.find(',') != std::string::npos ) {
-				if ( verbose ) {
-					cerr << symbolURIString << param->variableName << " = '"
-					     << valueTest << "' is not described as list " << endl;
-				}
-
-				eval += "<b>Value is not described as list</b>";
+		const auto issue = listIssue(param->definition->type,
+		                             QString::fromStdString(param->symbol.content),
+		                             values.size());
+		if ( !issue.isEmpty() ) {
+			if ( verbose ) {
+				string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
+				cerr << symbolURIString << param->variableName << " = '"
+				     << param->symbol.content << "': " << issue.toStdString() << endl;
 			}
+
+			eval += "<b>" + issue.toHtmlEscaped() + "</b>";
 		}
 
 		for ( const auto& value : values ) {
@@ -4824,61 +5243,15 @@ void FancyView::evaluateInput(QWidget *w) {
 	Parameter *param = reinterpret_cast<Parameter*>(
 		item.index.sibling(item.index.row(),0).data(ConfigurationTreeItemModel::Link).value<void*>()
 	);
-	vector<string> values;
-	QString eval;
-	string errmsg;
+	// Report the issues of the edited value on the console as well
+	QString message;
+	QColor color;
+	evaluateText(item.input->value(), param, true, message, color);
+	_optionEditHint->setText(message);
+
 	QPalette pal = _optionEditHint->palette();
 	pal.setColor(QPalette::Window, QColor(255,255,255,192));
-
-	bool issueFound = false;
-	if ( Config::Config::Eval(item.input->value().toStdString(), values, true, nullptr, &errmsg) ) {
-		// value must not be a list, strings may contain commas and are not tested
-		if ( (param->definition->type.size() < 5)
-		     || (param->definition->type != "string"
-		         && (param->definition->type != "gradient")
-		         && param->definition->type.substr(0, 5) != "list:") ) {
-			string valueTest = item.input->value().toStdString();
-			// value to test contains a comma which is not supported
-			if ( valueTest.find(',') != std::string::npos ) {
-				eval += "<b>Value is not described as list</b>";
-				issueFound = true;
-			}
-		}
-
-		for ( const auto& value : values ) {
-			if ( !eval.isEmpty() ) {
-				eval += "<hr/>";
-			}
-
-			// Report the issues of the edited value on the console as well
-			if ( FancyView::evaluateValue(value, param, eval, true) ) {
-				issueFound = true;
-			}
-			eval += encodeHTML(value.c_str());
-		}
-
-		// paint text in orange if issues are found
-		pal.setColor(QPalette::WindowText,
-		             issueFound ? QColor(255,127,0) : QColor(32,128,32));
-
-		_optionEditHint->setText(QString("<b>Evaluation</b> (%1 item%2)<br/><br/>%3")
-		                         .arg(values.size()).arg(values.size() == 1 ? "" : "s", eval));
-	}
-	else {
-		if ( errmsg.compare("Empty rvalue") == 0 ) {
-			pal.setColor(QPalette::WindowText, QColor(255,127,0));
-			eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
-
-			_optionEditHint->setText(QString("<b>Information</b><br/><br/>Empty string will be saved as \"\""));
-		}
-		else {
-			pal.setColor(QPalette::WindowText, QColor(128,32,32));
-			eval = QString("<i>%1</i>").arg(errmsg.c_str()).replace('\n', "<br/>");
-
-			_optionEditHint->setText(QString("<b>Error</b><br/><br/>%1").arg(eval));
-		}
-	}
-
+	pal.setColor(QPalette::WindowText, color);
 	_optionEditHint->setPalette(pal);
 	QSize size = _optionEditHint->sizeHint();
 	_optionEditHint->resize(size);
@@ -4914,6 +5287,7 @@ void FancyView::evaluateInput(QWidget *w) {
 	}
 
 	_optionEditHint->move(x,y);
+	_optionEditHint->setProperty("evaluatedInput", QVariant::fromValue((void*)w));
 	_optionEditHint->show();
 
 	_blockPopulate = w;
@@ -4931,6 +5305,14 @@ void FancyView::evaluateInput(QWidget *w) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FancyView::optionToggled(bool opt) {
 	QWidget *w = static_cast<QWidget*>(sender());
+
+	// Stores the value and updates its evaluation if it is shown. A value
+	// assigned programmatically does not bring the evaluation up.
+	if ( _optionEditHint && _optionEditHint->isVisible()
+	     && (_optionEditHint->property("evaluatedInput").value<void*>() == w) ) {
+		evaluateInput(w);
+		return;
+	}
 
 	FancyViewItem item = w->property("viewItem").value<FancyViewItem>();
 	if ( !item.isValid() ) {
@@ -5027,7 +5409,7 @@ void FancyView::addCategoryBinding() {
 	if ( status ) status->setVisible(cat->bindings.empty());
 
 	QBoxLayout *l = (QBoxLayout*)w->parentWidget()->layout();
-	l->insertWidget(row+1, createWidgetFromIndex(ni, ""));
+	l->insertWidget(row+1, createWidgetFromIndex(ni, _expandLevel));
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5080,7 +5462,59 @@ void FancyView::addStruct() {
 	Structure *ns = c->instantiate(s, qPrintable(dlg.name()));
 	if ( ns ) {
 		// Propagate the new entry to the model and create new widgets
-		int row = item.index.row();//model()->rowCount(item.index.parent());
+		auto *l = static_cast<QBoxLayout*>(item.container->property("structLayout").value<void*>());
+		int pos = -1;
+
+		if ( l ) {
+			const bool pending = _pendingSections.contains(item.index.parent());
+
+			if ( auto *toggle = toggleAt(item.index.parent()) ) {
+				toggle->setChecked(true);
+			}
+
+			if ( pending ) {
+				for ( int i = 0; i < model()->rowCount(item.index.parent()); ++i ) {
+					auto sibling = model()->index(i, 0, item.index.parent());
+					if ( (sibling.data(ConfigurationTreeItemModel::Type).toInt()
+					      == ConfigurationTreeItemModel::TypeStruct)
+					     && !isStructType(sibling) ) {
+						if ( auto *toggle = toggleAt(sibling) ) {
+							toggle->setChecked(false);
+						}
+					}
+				}
+			}
+		}
+		else {
+			l = static_cast<QBoxLayout*>(item.container->parentWidget()->layout());
+			pos = l->indexOf(item.container);
+		}
+
+		// The new instance goes on top of the instances of the same type
+		int row = item.index.row();
+		for ( int i = 0; i < row; ++i ) {
+			auto sibling = model()->index(i, 0, item.index.parent());
+			auto *instance = reinterpret_cast<Structure*>(sibling.data(ConfigurationTreeItemModel::Link).value<void*>());
+
+			if ( (sibling.data(ConfigurationTreeItemModel::Type).toInt()
+			      != ConfigurationTreeItemModel::TypeStruct)
+			     || !instance || instance->name.empty()
+			     || (instance->definition != s->definition) ) {
+				continue;
+			}
+
+			auto it = _viewItems.find(sibling);
+			if ( (it != _viewItems.end()) && it->container ) {
+				const int index = l->indexOf(it->container);
+				if ( index >= 0 ) {
+					row = i;
+					pos = index;
+				}
+			}
+
+			break;
+		}
+
 		model()->insertRow(row, item.index.parent());
 		auto ni = model()->index(row, 0, item.index.parent());
 		model()->setData(ni, ns->name.c_str());
@@ -5088,8 +5522,12 @@ void FancyView::addStruct() {
 		model()->setData(ni, QVariant::fromValue((void*)ns), ConfigurationTreeItemModel::Link);
 		model()->setData(ni, ConfigurationTreeItemModel::TypeStruct, ConfigurationTreeItemModel::Type);
 
-		QBoxLayout *l = (QBoxLayout*)item.container->parentWidget()->layout();
-		l->insertWidget(row, createWidgetFromIndex(ni, ""));
+		// All levels of the new instance are expanded
+		l->insertWidget(pos, createWidgetFromIndex(ni, std::numeric_limits<int>::max()));
+
+		// The group may have been empty
+		updateBlockLines();
+		updateStructTypeLabels(_rootWidget);
 
 		if ( auto *cm = qobject_cast<ConfigurationTreeItemModel*>(model()) ) {
 			cm->setModified();
@@ -5152,6 +5590,10 @@ void FancyView::removeStruct() {
 	if ( item.container ) {
 		delete item.container;
 	}
+
+	// The group may be empty now
+	updateBlockLines();
+	updateStructTypeLabels(_rootWidget);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -5162,20 +5604,6 @@ void FancyView::removeStruct() {
 void FancyView::updateContentGeometry() {
 	if ( !_rootWidget ) {
 		return;
-	}
-
-	{
-		int top = 0, right = 0;
-		_btnSearch->resize(_btnSearch->sizeHint());
-		if ( _rootWidget->layout() ) {
-			top = _rootWidget->layout()->contentsMargins().top();
-			right = _rootWidget->layout()->contentsMargins().right();
-		}
-		_btnSearch->move(
-			width() - _btnSearch->width() -
-			(verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0) - right,
-			top
-		);
 	}
 
 	QSize p = viewport()->size();

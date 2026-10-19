@@ -26,6 +26,9 @@
 #include "ui_importfdsnws_sidebar.h"
 
 
+class QNetworkReply;
+
+
 class ImportFDSNWSDialog : public QDialog {
 	Q_OBJECT
 
@@ -38,17 +41,46 @@ class ImportFDSNWSDialog : public QDialog {
 
 
 	private:
+		// Name of the agency and the URL to query, in that order.
+		using DataCenters = QList<QPair<QString, QString>>;
+
+		void checkDates();
+		void setSaveEnabled(bool enabled);
 		void clearTable();
+		void updateConstraints();
+		void queryDataCenters();
+		void updateDataCenters(QNetworkReply *reply);
+		void setDataCenters(const DataCenters &dataCenters);
+		int currentDataCenter() const;
+		QString serverURL() const;
+		void showServerURL();
+		void updateServerTitle();
+		QString defaultFilename() const;
+		void updateFilename();
+		QString queryURL() const;
+		QString queryURL(const QString &base) const;
+		void clearStationCounts();
+		void highlightServer();
+		std::string request(const char *parameters) const;
+		QString queryFormat();
+		std::string saveParameters() const;
+		void updateURL();
 
 
 	private slots:
 		void fetch();
+		void testServers();
 
 
 	private:
 		Ui::ImportFDSNWS        _ui;
 		Ui::ImportFDSNWSSidebar _uiSideBar;
-		std::string             _query;
+		QString                 _serverTitle;
+		QString                 _defaultFilename;
+		bool                    _fetched{false};
+		QString                 _format{"xml"};
+		int                     _presetCount{0};
+		int                     _customIndex{-1};
 };
 
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FDSN web service - Stations</string>
+   <string>FDSN web service - inventory request</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -64,22 +64,27 @@
        </property>
        <column>
         <property name="text">
-         <string>Network</string>
+         <string/>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Station</string>
+         <string>Net</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Location</string>
+         <string>Sta</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Channel</string>
+         <string>Loc</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Cha</string>
         </property>
        </column>
        <column>
@@ -89,17 +94,27 @@
        </column>
        <column>
         <property name="text">
-         <string>Lat</string>
+         <string>Lat [°N]</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Lon</string>
+         <string>Lon [°E]</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Elevation</string>
+         <string>Elev [m]</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Start</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>End</string>
         </property>
        </column>
        <column>
@@ -107,6 +122,91 @@
          <string>Sensor</string>
         </property>
        </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="rowURL">
+     <item alignment="Qt::AlignTop">
+      <widget class="QLabel" name="labelURL">
+       <property name="text">
+        <string>Request URL</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="frameURL">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <layout class="QHBoxLayout" name="layoutURL">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item alignment="Qt::AlignTop">
+         <widget class="QToolButton" name="btnCopyURL">
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Copy URL</string>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="textURL">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="lineWrapMode">
+           <enum>QPlainTextEdit::NoWrap</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -123,6 +223,9 @@
       <widget class="QPushButton" name="btnFetch">
        <property name="text">
         <string>Fetch</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -142,7 +245,7 @@
      <item>
       <widget class="QPushButton" name="okButton">
        <property name="text">
-        <string>OK</string>
+        <string>Import</string>
        </property>
       </widget>
      </item>

@@ -20,15 +20,18 @@
 
 #define SEISCOMP_COMPONENT Configurator
 
+#include <algorithm>
 #include <iostream>
 #include <seiscomp/utils/files.h>
 
+#include <seiscomp/config/config.h>
 #include <seiscomp/system/commandline.h>
 #include <seiscomp/system/environment.h>
 #include <seiscomp/system/schema.h>
 #include <seiscomp/system/model.h>
 #include <seiscomp/logging/log.h>
 
+#include "fancyview.h"
 #include "gui.h"
 
 #include <QApplication>
@@ -53,6 +56,28 @@ const char *module_desc = "/etc/descriptions";
 
 string filebase;
 string outdir;
+
+
+/**
+ * @brief Reads the configuration of scconfig itself from scconfig.cfg in
+ *        @SYSTEMCONFIGDIR@ and @CONFIGDIR@, the latter taking precedence.
+ *        Missing files are no error, the defaults apply then.
+ * @param level Set to the configured level, unchanged if not configured
+ * @return Whether the files present could be read.
+ */
+bool readConfiguration(string &level) {
+	Config::Config cfg;
+	if ( !Environment::Instance()->initConfig(&cfg, "scconfig",
+	                                          Environment::CS_CONFIG_APP,
+	                                          Environment::CS_USER_APP,
+	                                          true) ) {
+		return false;
+	}
+
+	cfg.getString(level, "expandSectionLevel");
+
+	return true;
+}
 
 
 }
@@ -202,6 +227,7 @@ int main(int argc, char **argv) {
 	string module;
 	string station;
 	string parameter;
+	string level;
 
 	// Add command-line options, help and examples
 	System::CommandLine commandline;
@@ -214,13 +240,23 @@ int main(int argc, char **argv) {
 	                      "logging of all messages to the console.");
 
 	commandline.addGroup("Options");
+	const string levelHelp = "Initial level up to which configuration parameters "
+	                         "show. Default: "
+	                         + to_string(FancyView::DefaultExpandLevel) + ".\n"
+	                         "0: Show no parameter at all\n"
+	                         "1: Show all ungrouped parameters\n"
+	                         "2 or higher: Also show the parameters of the first "
+	                         "groups\n"
+	                         "negative: Show parameters on all levels";
+	commandline.addOption("Options", "level,l", levelHelp.c_str(), &level, false);
 	commandline.addOption("Options", "module,m",
 	                      "Name of module for which to open the configuration "
-	                      "at startup given by the module name, e.g. scautopick. "
+	                      "at startup, e.g. scautopick. "
 	                      "Requires --panel and is supported by the Modules and "
 	                      "Bindings panels. In the Bindings panel all profiles of "
-	                      "the module are shown and, when used with --station, "
-	                      "the parameters for that station also show.",
+	                      "the module show and, when used with --station, "
+	                      "the parameters for that station also show. Default "
+	                      "for Modules panel: global.",
 	                      &module, false);
 	commandline.addOption("Options", "panel,p", "Panel to open at startup given "
 	                      "by its number, e.g. 2, or its name, e.g. Modules. "
@@ -250,10 +286,14 @@ int main(int argc, char **argv) {
 		cout << "Examples:"  << endl
 		     << "Print debug logging on command line" << endl
 		     << "  scconfig --debug" << endl << endl
-		     << "Start with the Modules panel opened" << endl
+		     << "Start with the global module configuration opened" << endl
 		     << "  scconfig -p 2" << endl << endl
-		     << "Start with the configuration of scautopick opened" << endl
+		     << "Start with the scautopick module configuration opened" << endl
 		     << "  scconfig -p 2 -m scautopick" << endl << endl
+		     << "Start with the global module configuration opened and all parameter groups closed" << endl
+		     << "  scconfig -p 2 -l 1" << endl << endl
+		     << "Start with the global module configuration and all parameter groups opened" << endl
+		     << "  scconfig -p 2 -l -1" << endl << endl
 		     << "Start with the binding profiles of scautopick listed" << endl
 		     << "  scconfig -p 3 -m scautopick" << endl << endl
 		     << "Start with the bindings of station GE.APE listed" << endl
@@ -284,6 +324,39 @@ int main(int argc, char **argv) {
 #endif
 
 	QApplication app(argc, argv);
+
+	// The command line takes precedence over the configuration
+	string configuredLevel;
+	if ( !readConfiguration(configuredLevel) ) {
+		cerr << "Failed to read scconfig.cfg, continuing with the defaults"
+		     << endl;
+	}
+
+	const bool levelConfigured = level.empty() && !configuredLevel.empty();
+	if ( levelConfigured ) {
+		level = configuredLevel;
+	}
+
+	// The level is read when a view is created, so it must be known before
+	// the configurator is set up.
+	if ( !level.empty() ) {
+		bool isNumber = false;
+		const int levels = QString(level.c_str()).toInt(&isNumber);
+
+		if ( isNumber ) {
+			// All negative levels open all levels, which is written as -1
+			FancyView::setDefaultExpandLevel(std::max(levels, -1));
+		}
+		else {
+			auto msg = app.tr("%1 invalid level: %2\n"
+			                  "Expected: an integer")
+			           .arg(levelConfigured ? "scconfig.cfg contains"
+			                                : "scconfig called with",
+			                level.c_str());
+			cerr << msg.toStdString() << endl;
+			QMessageBox::warning(nullptr, "scconfig", msg, QMessageBox::Ok);
+		}
+	}
 
 	filebase = Seiscomp::Environment::Instance()->installDir();
 

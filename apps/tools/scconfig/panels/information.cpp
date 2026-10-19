@@ -76,6 +76,7 @@ InformationPanel::InformationPanel(QWidget *parent)
 	table->setSpan(row, 0, 1, 2);
 
 	Seiscomp::Environment *env = Seiscomp::Environment::Instance();
+	addRow(table, "@HOMEDIR@", env->homeDir().c_str());
 	addRow(table, "@ROOTDIR@", env->installDir().c_str());
 	addRow(table, "@SYSTEMCONFIGDIR@", env->appConfigDir().c_str());
 	addRow(table, "@DEFAULTCONFIGDIR@", env->globalConfigDir().c_str());

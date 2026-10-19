@@ -16,12 +16,26 @@
 				<optionReference>generic#version</optionReference>
 			</group>
 			<group name="Options">
+			<option flag="l" long-flag="level" argument="arg" type="int" default="2">
+				<description>
+				Initial level up to which configuration parameters show.
+				Default: 1.
+
+				0: Show no parameter at all
+
+				1: Show all ungrouped parameters
+
+				2 or higher: Also show the parameters of the first groups
+
+				negative: Show parameters on all levels
+				</description>
+			</option>
 				<option flag="m" long-flag="module" argument="arg" type="string">
 					<description>
-					Name of module for which to open the configuration at startup given by
-					the module name, e.g. scautopick. Requires --panel and is supported by
+					Name of module for which to open the configuration at startup,
+					e.g. scautopick. Requires --panel and is supported by
 					the Modules and Bindings panels. In the Bindings panel all profiles of
-					the module are shown and, when used with --station, the parameters for
+					the module shown and, when used with --station, the parameters for
 					that station also show.
 					</description>
 				</option>

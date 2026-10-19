@@ -10,6 +10,7 @@
         <file>icons/chevron_right.svg</file>
         <file>icons/chevron_up.svg</file>
         <file>icons/close.svg</file>
+        <file>icons/copy.svg</file>
         <file>icons/delete.svg</file>
         <file>icons/delete_forever.svg</file>
         <file>icons/docs_changelog.svg</file>
@@ -28,6 +29,7 @@
         <file>icons/hint.svg</file>
         <file>icons/import.svg</file>
         <file>icons/info.svg</file>
+        <file alias="icons/menu.svg">../../../libs/seiscomp/gui/icons/menu.svg</file>
         <file>icons/menu_scconfig_bindings.svg</file>
         <file>icons/menu_scconfig_docs.svg</file>
         <file>icons/menu_scconfig_information.svg</file>
@@ -56,6 +58,7 @@
         <file>icons/right.svg</file>
         <file>icons/save.svg</file>
         <file>icons/search.svg</file>
+        <file>icons/settings.svg</file>
         <file>icons/start.svg</file>
         <file>icons/start_color.svg</file>
         <file>icons/station.svg</file>
