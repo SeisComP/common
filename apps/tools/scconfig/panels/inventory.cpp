@@ -634,7 +634,7 @@ InventoryPanel::InventoryPanel(QWidget *parent)
 
 	auto a = folderViewTools->addAction("Import");
 	a->setIcon(::icon("import"));
-	a->setToolTip("Import inventory files in SC3ML or other supported formats.");
+	a->setToolTip("Import inventory files in SCML or other supported formats.");
 	connect(a, SIGNAL(triggered(bool)), this, SLOT(import()));
 
 	a = folderViewTools->addAction("FDSNWS");

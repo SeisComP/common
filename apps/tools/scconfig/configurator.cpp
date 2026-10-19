@@ -20,6 +20,9 @@
 
 #define SEISCOMP_COMPONENT Configurator
 
+#include <algorithm>
+#include <limits>
+
 #include <QAction>
 #include <QApplication>
 #include <QDesktopServices>
@@ -31,7 +34,10 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QStyleOptionButton>
+#include <QStylePainter>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QVBoxLayout>
 #include <QWhatsThis>
 #include <QWidget>
@@ -45,8 +51,10 @@
 #include <seiscomp/system/environment.h>
 
 #include "about.h"
+#include "dialogs/settings.h"
 #include "avatar.h"
 #include "editor.h"
+#include "fancyview.h"
 #include "icon.h"
 #include "gui.h"
 #include "wizard.h"
@@ -71,6 +79,30 @@ namespace {
 const auto globalGridColor = QPalette::Mid;
 const auto globalListWidth = 100;
 const auto globalIconSize = QSize(24, 24);
+
+
+/**
+ * @brief Removes the module of scconfig itself from the model.
+ *
+ * scconfig.cfg is maintained by the settings dialog only. Without the module
+ * the configuration is neither shown nor read nor written along with the
+ * configuration of the other modules.
+ */
+void removeOwnModule(System::Model *model) {
+	auto mit = model->modMap.find("scconfig");
+	if ( mit == model->modMap.end() ) {
+		return;
+	}
+
+	const Module *own = mit->second;
+	model->modMap.erase(mit);
+
+	model->modules.erase(
+		std::remove_if(model->modules.begin(), model->modules.end(),
+		               [own](const ModulePtr &mod) { return mod.get() == own; }),
+		model->modules.end()
+	);
+}
 
 
 enum Columns {
@@ -226,6 +258,66 @@ class ModuleListPainter : public QObject {
 			}
 
 			return QObject::eventFilter(obj, event);
+		}
+};
+
+
+/**
+ * @brief Lets a layout end where a reference widget, e.g. a button of the
+ *        tool bar, ends by the right margin of the layout. Both must end at
+ *        the right border of the window.
+ */
+class RightAligner : public QObject {
+	public:
+		RightAligner(QWidget *reference, QLayout *layout)
+		: QObject(reference), _layout(layout) {
+			reference->installEventFilter(this);
+		}
+
+	protected:
+		bool eventFilter(QObject *obj, QEvent *event) override {
+			if ( event->type() == QEvent::Move || event->type() == QEvent::Resize ) {
+				auto *reference = static_cast<QWidget*>(obj);
+				int right = reference->parentWidget()->width()
+				          - reference->geometry().right() - 1;
+				_layout->setContentsMargins(0, 0, std::max(right, 0), 0);
+			}
+
+			return QObject::eventFilter(obj, event);
+		}
+
+	private:
+		QLayout *_layout;
+};
+
+
+// The value of the expand level spin box, -1 if all levels are opened.
+int expandLevelValue() {
+	const int level = FancyView::expandLevelDefault();
+	return level == std::numeric_limits<int>::max() ? -1 : level;
+}
+
+
+/**
+ * @brief A push button which shows the checked state with the highlight
+ *        color of the current theme as checked check boxes do.
+ */
+class HighlightButton : public QPushButton {
+	public:
+		using QPushButton::QPushButton;
+
+	protected:
+		void paintEvent(QPaintEvent *) override {
+			QStylePainter p(this);
+			QStyleOptionButton opt;
+			initStyleOption(&opt);
+			if ( isChecked() ) {
+				opt.palette.setColor(QPalette::Button, blend(
+					opt.palette.color(QPalette::Highlight),
+					opt.palette.color(QPalette::Button), 30
+				));
+			}
+			p.drawControl(QStyle::CE_PushButton, opt);
 		}
 };
 
@@ -1531,6 +1623,34 @@ void ConfiguratorPanel::setDescription(QString desc) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ConfiguratorPanel::setSearchAvailable(bool available) {
+	if ( available == _searchAvailable ) {
+		return;
+	}
+
+	_searchAvailable = available;
+	emit searchAvailableChanged(_searchAvailable);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ConfiguratorPanel::setSearchActive(bool active) {
+	if ( active == _searchActive ) {
+		return;
+	}
+
+	_searchActive = active;
+	emit searchActiveChanged(_searchActive);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 : QMainWindow(parent), _settings("gempa", "scconfig") {
 	setObjectName("Configurator");
@@ -1576,6 +1696,12 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	a->setToolTip(tr("About scconfig"));
 	connect(a, &QAction::triggered, this, &Configurator::showAbout);
 
+	a = _toolBar->addAction(tr("Quit"));
+	a->setIcon(::icon("quit"));
+	a->setShortcut(QKeySequence("Ctrl+Q"));
+	a->setToolTip(tr("Close scconfig - %1").arg(a->shortcut().toString()));
+	connect(a, &QAction::triggered, this, &Configurator::close);
+
 	auto spacer = new QWidget;
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
 	_toolBar->addWidget(spacer);
@@ -1586,16 +1712,30 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	a->setToolTip(tr("Run configuration wizard - %1").arg(a->shortcut().toString()));
 	connect(a, &QAction::triggered, this, &Configurator::wizard);
 
-	a = _toolBar->addAction(tr("Switch mode"));
+	// The actions for experienced users are collected in a menu.
+	auto expertMenu = new QMenu(this);
+	expertMenu->setToolTipsVisible(true);
+
+	a = expertMenu->addAction(tr("Settings"));
+	a->setIcon(::icon("settings"));
+	a->setShortcut(QKeySequence(Qt::Key_F3));
+	a->setToolTip(tr("Configure scconfig - %1").arg(a->shortcut().toString()));
+	connect(a, &QAction::triggered, this, &Configurator::showSettings);
+	addAction(a);
+
+	a = expertMenu->addAction(tr("Switch mode"));
 	a->setIcon(::icon("mode_switch"));
 	a->setToolTip(tr("Switch module configuration between system and user mode"));
 	connect(a, &QAction::triggered, this, &Configurator::switchMode);
 
-	a = _toolBar->addAction(tr("Quit"));
-	a->setIcon(::icon("quit"));
-	a->setShortcut(QKeySequence("Ctrl+Q"));
-	a->setToolTip(tr("Close scconfig - %1").arg(a->shortcut().toString()));
-	connect(a, &QAction::triggered, this, &Configurator::close);
+	a = _toolBar->addAction(tr("Expert"));
+	a->setIcon(::icon("menu"));
+	a->setToolTip(tr("Settings and configuration mode"));
+	auto expertButton = _toolBar->widgetForAction(a);
+
+	connect(a, &QAction::triggered, this, [expertMenu, expertButton] {
+		expertMenu->exec(expertButton->mapToGlobal(expertButton->rect().bottomLeft()));
+	});
 
 	setWindowIcon(QIcon(":/scconfig/icons/seiscomp.svg"));
 
@@ -1635,9 +1775,68 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	_description->setForegroundRole(QPalette::Dark);
 	_description->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred));
 
+	_searchButton = new HighlightButton(::icon("search"), {});
+	_searchButton->setCheckable(true);
+	_searchButton->setToolTip(tr("Search - Ctrl + F"));
+	connect(_searchButton, &QPushButton::clicked, this, [this] {
+		if ( auto item = _listWidget->currentItem() ) {
+			auto panel = static_cast<ConfiguratorPanel*>(item->data(Qt::UserRole).value<void*>());
+			panel->toggleSearch();
+			// The search may not have opened
+			_searchButton->setChecked(panel->isSearchActive());
+		}
+	});
+
+	// Applies to the current session only, it is not written to a file
+	_expandLevel = new QSpinBox;
+	_expandLevel->setRange(-1, 9);
+	_expandLevel->setValue(expandLevelValue());
+	_expandLevel->setToolTip(SettingsDialog::expandLevelToolTip());
+
+	auto expandLabel = new QLabel(tr("Show level:"));
+	expandLabel->setForegroundRole(QPalette::Dark);
+	expandLabel->setBuddy(_expandLevel);
+
+	auto applyButton = new QPushButton(tr("Apply"));
+	applyButton->setToolTip(tr("Show module and binding parameter up to the "
+	                           "given level"));
+	connect(applyButton, &QPushButton::clicked, this, [this] {
+		FancyView::setDefaultExpandLevel(_expandLevel->value());
+		for ( auto *view : findChildren<FancyView*>() ) {
+			view->applyDefaultExpandLevel(true);
+		}
+	});
+
+	_panelTools = new QWidget;
+	auto toolsLayout = new QHBoxLayout(_panelTools);
+	toolsLayout->setContentsMargins(0, 0, 0, 0);
+	toolsLayout->addWidget(_searchButton);
+
+	auto separator = new QFrame;
+	separator->setForegroundRole(QPalette::Mid);
+	separator->setFrameShape(QFrame::VLine);
+	separator->setFrameShadow(QFrame::Plain);
+	toolsLayout->addWidget(separator);
+
+	toolsLayout->addWidget(expandLabel);
+	toolsLayout->addWidget(_expandLevel);
+	toolsLayout->addWidget(applyButton);
+	_panelTools->hide();
+
+	auto sp = _panelTools->sizePolicy();
+	sp.setRetainSizeWhenHidden(true);
+	_panelTools->setSizePolicy(sp);
+
+	auto descriptionLayout = new QHBoxLayout;
+	descriptionLayout->setContentsMargins(0, 0, 0, 0);
+	descriptionLayout->addWidget(_description, 1, Qt::AlignBottom);
+	descriptionLayout->addWidget(_panelTools, 0, Qt::AlignBottom);
+
+	new RightAligner(expertButton, descriptionLayout);
+
 	QVBoxLayout *vl = new QVBoxLayout;
 	vl->addWidget(_headline);
-	vl->addWidget(_description);
+	vl->addLayout(descriptionLayout);
 	vl->setContentsMargins(0, 0, 0, fontMetrics().ascent());
 	vl->setSpacing(0);
 	infoWidget->setLayout(vl);
@@ -1757,6 +1956,8 @@ void Configurator::updateModeLabel() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 bool Configurator::setModel(System::Model *model) {
+	removeOwnModule(model);
+
 	QtConfigDelegate cd(&_settings);
 	model->readConfig(Environment::CS_USER_APP, &cd);
 	cd.showConflicts();
@@ -2133,6 +2334,23 @@ void Configurator::statusTimer() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Configurator::showSettings() {
+	if ( !_model->model() ) {
+		return;
+	}
+
+	SettingsDialog dialog(this);
+	if ( dialog.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	_expandLevel->setValue(expandLevelValue());
+	for ( auto *view : findChildren<FancyView*>() ) {
+		view->applyDefaultExpandLevel();
+	}
+}
+
+
 void Configurator::wizard() {
 	WizardModel wizard;
 
@@ -2189,6 +2407,7 @@ void Configurator::resetAll() {
 	if ( _model->model() ) {
 		_model->model()->schema->reload();
 		_model->model()->recreate();
+		removeOwnModule(_model->model());
 
 		QtConfigDelegate cd(&_settings);
 		_model->model()->readConfig(Environment::CS_USER_APP, &cd);
@@ -2301,7 +2520,16 @@ void Configurator::sectionChanged(QListWidgetItem *curr, QListWidgetItem *prev) 
 		connect(cw, &ConfiguratorPanel::headlineChanged, this, &Configurator::panelHeadlineChanged);
 		connect(cw, &ConfiguratorPanel::descriptionChanged, this, &Configurator::panelDescriptionChanged);
 		connect(cw, &ConfiguratorPanel::reloadRequested, this, &Configurator::resetAll);
+		connect(cw, &ConfiguratorPanel::searchAvailableChanged, this, [this](bool available) {
+			_panelTools->setVisible(available);
+		});
+		connect(cw, &ConfiguratorPanel::searchActiveChanged, this, [this](bool active) {
+			_searchButton->setChecked(active);
+		});
 	}
+
+	_panelTools->setVisible(cw && cw->isSearchAvailable());
+	_searchButton->setChecked(cw && cw->isSearchActive());
 
 	qApp->restoreOverrideCursor();
 

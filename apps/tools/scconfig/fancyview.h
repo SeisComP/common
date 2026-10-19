@@ -37,7 +37,6 @@
 class QAbstractButton;
 class QBoxLayout;
 class QLabel;
-class QPushButton;
 class SearchWidget;
 
 
@@ -64,6 +63,8 @@ struct FancyViewItem {
 	QAbstractButton       *reset{nullptr};
 	QWidget               *description{nullptr};
 	QAbstractButton       *toggle{nullptr};
+
+	QWidget               *block{nullptr};
 };
 
 
@@ -76,6 +77,32 @@ class FancyView : public QAbstractItemView {
 	// ------------------------------------------------------------------
 	public:
 		FancyView(QWidget *parent = 0);
+
+		static constexpr int DefaultExpandLevel = 1;
+
+		/**
+		 * @brief Sets the nesting levels a module configuration is opened
+		 *        with, applies to the views created afterwards.
+		 * @param level The number of levels, 0 shows no parameter at all
+		 *        and a negative value opens all levels. The default is
+		 *        DefaultExpandLevel.
+		 */
+		static void setDefaultExpandLevel(int level);
+
+		/**
+		 * @brief Returns the nesting levels a module configuration is opened
+		 *        with, the largest integer if all levels are opened.
+		 */
+		static int expandLevelDefault();
+
+		/**
+		 * @brief Shows the current configuration again with the nesting
+		 *        levels set by setDefaultExpandLevel.
+		 * @param force Whether to show it again also if the levels are the
+		 *        ones it is shown with, which resets the sections opened or
+		 *        closed in the meantime.
+		 */
+		void applyDefaultExpandLevel(bool force = false);
 
 
 	// ------------------------------------------------------------------
@@ -115,17 +142,7 @@ class FancyView : public QAbstractItemView {
 	//  Signals
 	// ------------------------------------------------------------------
 	signals:
-		void searchRequested();
-
-		//! Emitted when another module, binding or section is shown
 		void rootIndexChanged();
-
-
-	// ------------------------------------------------------------------
-	//  Public slots
-	// ------------------------------------------------------------------
-	public slots:
-		void showSearchButton(bool);
 
 
 	// ------------------------------------------------------------------
@@ -186,22 +203,67 @@ class FancyView : public QAbstractItemView {
 	//  Private interface
 	// ------------------------------------------------------------------
 	private:
-		//! Evaluates the current value of an input widget and shows the result
 		void evaluateInput(QWidget *w);
 		void updateToolTip(QWidget *w, Seiscomp::System::Parameter *param,
 		                   bool verbose = true);
 		void updateContentGeometry();
-		QWidget *createWidgetFromIndex(const QModelIndex &idx, const QString &);
+		QWidget *createWidgetFromIndex(const QModelIndex &idx, int level);
 
-		//! Creates the parameters and the sub sections of a container
+		/**
+		 * @brief Creates the parameters and the sub sections of a container
+		 * @param childLevel The number of nesting levels to expand, counted
+		 *        from the children which are created here.
+		 */
 		void populateChildren(QBoxLayout *l, const QModelIndex &idx,
-		                      const QString &rootSecName,
-		                      const QString &emptyText);
+		                      int childLevel, const QString &emptyText);
 
-		//! Creates the content of a section which was deferred, if any
+		/**
+		 * @brief Creates the parameters of a container in a frame of their own
+		 * @return The frame, nullptr if the container holds no parameter
+		 */
+		QWidget *populateParameters(QBoxLayout *l, const QModelIndex &idx);
+
+		/**
+		 * @brief Creates the content of a container or defers it until the
+		 *        container is opened the first time.
+		 * @param level The number of nesting levels to expand, counted from
+		 *        the container itself. A value below one keeps it collapsed.
+		 */
+		void populateContainer(QBoxLayout *l, const QModelIndex &idx,
+		                       int level, const QString &emptyText,
+		                       QAbstractButton *toggle);
+
+		void setupToggle(const QModelIndex &idx, QAbstractButton *toggle);
+
+		void toggleClicked(const QModelIndex &idx, QAbstractButton *toggle,
+		                   bool checked);
+
+		/**
+		 * @brief Expands or collapses all containers next to the given one
+		 * @param withTree Whether the containers below them follow
+		 */
+		void toggleLevel(const QModelIndex &idx, bool expand, bool withTree);
+
+		void toggleTree(const QModelIndex &idx, bool expand);
+
+		QAbstractButton *toggleAt(const QModelIndex &idx) const;
+
+		QModelIndex levelParent(const QModelIndex &idx) const;
+
+		bool isTreeExpanded(const QModelIndex &idx) const;
+
+		void updateBlockLines();
+
+		void updateBlockLines(const QModelIndex &idx);
+
+		/**
+		 * @brief Checks whether all containers next to the given one are open
+		 * @param withTree Whether the containers below them must be open too
+		 */
+		bool isLevelExpanded(const QModelIndex &idx, bool withTree) const;
+
 		void realizeSection(const QModelIndex &idx);
 
-		//! Creates the deferred content of an index and all its ancestors
 		void realizePath(const QModelIndex &idx);
 
 		bool add(QBoxLayout *&layout, FancyViewItem &item,
@@ -210,24 +272,26 @@ class FancyView : public QAbstractItemView {
 		         Seiscomp::System::Binding *binding, bool collapsed);
 		bool add(QBoxLayout *&layout, FancyViewItem &item,
 		         Seiscomp::System::Section *sec, bool collapsed);
-		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Group *group);
-		bool add(QBoxLayout *&layout, FancyViewItem &item, Seiscomp::System::Structure *struc);
+		bool add(QBoxLayout *&layout, FancyViewItem &item,
+		         Seiscomp::System::Group *group, bool collapsed);
+		bool add(QBoxLayout *&layout, FancyViewItem &item,
+		         Seiscomp::System::Structure *struc, bool collapsed);
 		FancyViewItem add(QLayout *layout, const QModelIndex &idx);
 
 
 	private:
 		typedef QHash<QPersistentModelIndex, FancyViewItem> ViewItems;
 		Seiscomp::Environment::ConfigStage _configStage{Seiscomp::Environment::CS_CONFIG_APP};
+
+		int           _expandLevel;
 		QWidget      *_rootWidget{nullptr};
 		ViewItems     _viewItems;
 		QIcon         _iconEdit;
 		QIcon         _iconReset;
-		QPushButton  *_btnSearch{nullptr};
 		QWidget      *_currentItem{nullptr};
 		QLabel       *_optionEditHint{nullptr};
 		void         *_blockPopulate{nullptr};
 
-		//! Content of collapsed sections, created when they are opened
 		QHash<QPersistentModelIndex, std::function<void ()>> _pendingSections;
 };
 

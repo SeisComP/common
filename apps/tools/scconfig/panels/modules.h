@@ -54,6 +54,8 @@ class ModulesPanel : public ConfiguratorPanel {
 		 */
 		bool setCurrentParameter(const QString &name) override;
 
+		void toggleSearch() override;
+
 
 	private slots:
 		void applyModel();

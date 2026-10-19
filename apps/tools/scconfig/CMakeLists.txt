@@ -87,7 +87,9 @@ IF (SC_GLOBAL_GUI)
 			searchwidget.cpp
 			wizard.cpp
 			${SC3_PACKAGE_SOURCE_DIR}/libs/seiscomp/gui/core/flowlayout.cpp
+			dialogs/coloreditor.cpp
 			dialogs/importfdsnws.cpp
+			dialogs/settings.cpp
 			panels/inspector.cpp
 			panels/bindings.cpp
 			panels/information.cpp

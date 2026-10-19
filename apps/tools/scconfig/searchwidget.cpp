@@ -84,6 +84,25 @@ bool showsGlobalModule(const QModelIndex &root) {
 }
 
 
+// True if the shown module or binding holds global parameters which can be
+// excluded from the search, e.g. not for a standalone module.
+bool hasGlobalParameters(const QModelIndex &root) {
+	const auto *model = root.model();
+	if ( !model ) {
+		return false;
+	}
+
+	for ( int row = 0; row < model->rowCount(root); ++row ) {
+		const auto idx = model->index(row, 0, root);
+		if ( isGlobalSection(idx) && model->hasChildren(idx) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 void findMatch(QModelIndexList &hits, QModelIndex start, const QString &text,
                bool withNames, bool withValues, bool withHelp,
                bool excludeGlobal,
@@ -293,8 +312,10 @@ void SearchWidget::reset() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void SearchWidget::updateGlobalOption() {
-	// Nothing can be excluded if the global parameters are the ones shown
-	const bool available = !showsGlobalModule(_view->rootIndex());
+	// Nothing can be excluded if the global parameters are the ones shown or
+	// if there are none
+	const auto root = _view->rootIndex();
+	const bool available = !showsGlobalModule(root) && hasGlobalParameters(root);
 
 	_excludeGlobal->setEnabled(available);
 

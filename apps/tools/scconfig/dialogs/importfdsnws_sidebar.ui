@@ -24,35 +24,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="title">
-      <string>Server URL</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QComboBox" name="comboServerURL">
-        <property name="editable">
-         <bool>true</bool>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <item>
-         <property name="text">
-          <string>https://geofon.gfz.de/fdsnws</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>https://service.earthscope.org/fdsnws</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Time contraints</string>
@@ -397,6 +368,9 @@
            <property name="maximum">
             <double>90.000000000000000</double>
            </property>
+           <property name="value">
+            <double>-90.000000000000000</double>
+           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -415,6 +389,9 @@
             <double>-90.000000000000000</double>
            </property>
            <property name="maximum">
+            <double>90.000000000000000</double>
+           </property>
+           <property name="value">
             <double>90.000000000000000</double>
            </property>
           </widget>
@@ -437,6 +414,9 @@
            <property name="maximum">
             <double>180.000000000000000</double>
            </property>
+           <property name="value">
+            <double>-180.000000000000000</double>
+           </property>
           </widget>
          </item>
          <item row="3" column="0">
@@ -455,6 +435,9 @@
             <double>-180.000000000000000</double>
            </property>
            <property name="maximum">
+            <double>180.000000000000000</double>
+           </property>
+           <property name="value">
             <double>180.000000000000000</double>
            </property>
           </widget>
@@ -548,8 +531,14 @@
            <property name="suffix">
             <string>°</string>
            </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
             <double>180.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -558,7 +547,13 @@
            <property name="suffix">
             <string>°</string>
            </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
+            <double>180.000000000000000</double>
+           </property>
+           <property name="value">
             <double>180.000000000000000</double>
            </property>
           </widget>
@@ -601,20 +596,59 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_21">
         <property name="text">
-         <string>Filename</string>
+         <string>File name</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
        <widget class="QLineEdit" name="editFilename">
         <property name="toolTip">
-         <string>Sets the output filename. If empty, then it will be generated.</string>
+         <string>Sets the output file name. If empty, then it will be generated.</string>
         </property>
         <property name="whatsThis">
-         <string>Definition of the output filename. If empty, then it will be generated.</string>
+         <string>Definition of the output file name. If empty, then it will be generated.</string>
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="title">
+      <string>FDSN base URL</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QComboBox" name="comboServerURL">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>GEOFON: https://geofon.gfz.de/fdsnws</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>EarthScope: https://service.earthscope.org/fdsnws</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnTestServers">
+        <property name="toolTip">
+         <string>Query every server for the number of stations matching the current constraints</string>
+        </property>
+        <property name="text">
+         <string>Test all servers for stations</string>
         </property>
        </widget>
       </item>
@@ -637,7 +671,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>comboServerURL</tabstop>
   <tabstop>dtStart</tabstop>
   <tabstop>dtEnd</tabstop>
   <tabstop>dtStartBefore</tabstop>
@@ -659,6 +692,8 @@
   <tabstop>spinMaxRadius</tabstop>
   <tabstop>checkResponses</tabstop>
   <tabstop>editFilename</tabstop>
+  <tabstop>comboServerURL</tabstop>
+  <tabstop>btnTestServers</tabstop>
  </tabstops>
  <resources/>
  <connections/>

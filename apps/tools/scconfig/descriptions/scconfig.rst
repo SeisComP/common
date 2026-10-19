@@ -674,6 +674,52 @@ types and options to be tested is documented in the
    Examples of value syntax evaluation
 
 
+File configuration
+^^^^^^^^^^^^^^^^^^
+
+Configuration parameters are saved to configuration files as one line per
+parameter. Groups of parameters are combined. Custom comments starting with
+`##` and parameters starting with `module.trunk` are written to the beginning of
+configuration files. Example for :file:`scolv.cfg`:
+
+.. code-block:: sh
+
+   ## custom comment line 1
+   ## custom comment line 2
+
+   module.trunk.global.amplitudes.MLc.preFilter = BW(3, 3, 10)
+
+   agencyID = yours
+   datacenterID = yours
+
+   connection.subscriptions = EVENT, LOCATION, FOCMECH, MAGNITUDE, PICK, CONFIG, GUI
+
+   olv.computeMagnitudesAfterRelocate = false
+   olv.hideStationsWithoutData = true
+
+   picker.loadAllPicks = true
+   picker.loadAllComponents = true
+
+   picker.phases.favourites = P, Pn, Pg, pP, sP, S, Sg
+
+Controlled by the settings and the configuration of scconfig parameter
+descriptions may be added. For the example from above this may read like:
+
+.. code-block:: sh
+
+   ## custom comment line 1
+   ## custom comment line 2
+
+   module.trunk.global.amplitudes.MLc.preFilter = BW(3, 3, 10)
+
+   # Agency ID used to set creationInfo.agencyID in data model objects. Should not
+   # contain spaces.
+   agencyID = yours
+
+   # Datacenter ID. Should not contain spaces.
+   datacenterID = yours
+
+
 .. _scconfig-inventory:
 
 Inventory panel

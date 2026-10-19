@@ -42,13 +42,14 @@ class BindingView : public QWidget {
 		void setModel(ConfigurationTreeItemModel *base, QAbstractItemModel *model);
 		void setRootIndex(const QModelIndex & index);
 		QModelIndex rootIndex() const { return _rootIndex; }
-
-		//! Navigates to a parameter or a section of the shown binding
 		bool showParameter(const QString &name);
 		void saved();
+		void toggleSearch();
 
 	signals:
 		void closeRequested();
+		void searchAvailableChanged(bool available);
+		void searchActiveChanged(bool active);
 
 	private slots:
 		void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
@@ -78,14 +79,13 @@ class BindingsPanel : public ConfiguratorPanel {
 		BindingsPanel(QWidget *parent = 0);
 
 	private:
-		//! The part of the panel state which survives a model rebuild
 		struct ViewState {
-			QString module;         //!< Selected module
-			QString profile;        //!< Selected profile, empty if none
-			QString network;        //!< Network of the opened station folder
-			QString station;        //!< Station of the opened station folder
-			QString bindingModule;  //!< Station binding shown in the binding view
-			bool    profileBinding{false}; //!< The binding view shows the profile
+			QString module;
+			QString profile;
+			QString network;
+			QString station;
+			QString bindingModule;
+			bool    profileBinding{false};
 		};
 
 		ViewState currentViewState() const;
@@ -96,7 +96,6 @@ class BindingsPanel : public ConfiguratorPanel {
 		void saved() override;
 
 	private:
-		//! Shows the parameters of the binding at idx in the binding view.
 		void openBinding(const QModelIndex &idx);
 		void deleteStation(const QModelIndex &idx);
 		void deleteProfile(const QModelIndex &idx);
@@ -132,6 +131,8 @@ class BindingsPanel : public ConfiguratorPanel {
 		 * @return Whether it was found or not.
 		 */
 		bool setCurrentParameter(const QString &name) override;
+
+		void toggleSearch() override;
 
 		void updateIndication();
 		bool assignProfile(const QModelIndex &, const QString &module,

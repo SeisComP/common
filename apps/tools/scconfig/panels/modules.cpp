@@ -187,8 +187,6 @@ ModulesPanel::ModulesPanel(QWidget *parent)
 	addAction(activateSearch);
 	connect(activateSearch, &QAction::triggered, this, &ModulesPanel::openSearch);
 
-	connect(static_cast<FancyView*>(_moduleView), &FancyView::searchRequested, this, &ModulesPanel::openSearch);
-
 	QAction *closeSearch = new QAction(this);
 	closeSearch->setShortcut(QKeySequence("Esc"));
 	_searchWidget->addAction(closeSearch);
@@ -409,6 +407,7 @@ void ModulesPanel::moduleChanged(const QModelIndex &index) {
 
 	//static_cast<FancyWidget*>(_moduleView)->setModel(mod);
 	_moduleView->setRootIndex(index);
+	setSearchAvailable(true);
 
 	setHeadline("Configuration", index.data(Qt::DisplayRole).toString());
 
@@ -433,11 +432,25 @@ void ModulesPanel::moduleChanged(const QModelIndex &index) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void ModulesPanel::toggleSearch() {
+	if ( isSearchActive() ) {
+		closeSearch();
+	}
+	else {
+		openSearch();
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void ModulesPanel::openSearch() {
 	_searchWidget->reset();
 	_searchWidget->show();
 	_searchWidget->setFocus(Qt::ActiveWindowFocusReason);
-	static_cast<FancyView*>(_moduleView)->showSearchButton(false);
+	setSearchActive(true);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -449,6 +462,6 @@ void ModulesPanel::closeSearch() {
 	_moduleView->setCurrentIndex(_moduleView->rootIndex());
 	_searchWidget->reset();
 	_searchWidget->hide();
-	static_cast<FancyView*>(_moduleView)->showSearchButton(true);
+	setSearchActive(false);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
