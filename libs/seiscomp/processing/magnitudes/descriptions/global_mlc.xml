@@ -206,9 +206,23 @@
 					cause failure of MLc magnitude computation.
 					</description>
 				</parameter>
-				<parameter name="distMode" type="string" default="hypocentral" values="epicentral,hypocentral">
+				<parameter name="distMode" type="string" default="hypocentral" values="epicentral,hypocentral,hypocentral-datum">
 					<description>
-					Considered distance measure between source and receiver.
+					Considered distance measure between source and receiver
+					applied when computing magnitudes from amplitudes. For
+					amplitude measurements epicentral distance applies to ranges
+					constraints.
+
+					epicentral: The usual epicentral distance along Earth's
+					surface.
+
+					hyocentral: Cartesian distance considering epicentral
+					distance, source depth and station sensor location
+					elevation.
+
+					hypocentral-datum: Cartesian distance considering epicentral
+					distance and source depth below datum but no sensor location
+					elevation.
 					</description>
 				</parameter>
 				<parameter name="calibrationType" type="string" default="parametric" values="parametric,A0">

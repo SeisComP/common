@@ -318,17 +318,17 @@ MagnitudeProcessor::Status MagnitudeProcessor_MLc::computeMagnitude(
 
 	double hDistanceKm = Math::Geo::deg2km(delta);
 	double vDistanceKm = 0;
+	double distanceKm = 0;
 
-	if ( !receiver && distanceMode == "hypocentral" ) {
-		return MetaDataRequired;
-	}
-
-	if ( receiver ) {
-		vDistanceKm = receiver->elevation() / 1000. + depth;
-	}
-
-	double distanceKm;
 	if ( distanceMode == "hypocentral" ) {
+		if ( !receiver ) {
+			return MetaDataRequired;
+		}
+		vDistanceKm = receiver->elevation() / 1000. + depth;
+		distanceKm = sqrt(pow(hDistanceKm, 2) + pow(vDistanceKm, 2));
+	}
+	else if ( distanceMode == "hypocentral-datum" ) {
+		vDistanceKm = depth;
 		distanceKm = sqrt(pow(hDistanceKm, 2) + pow(vDistanceKm, 2));
 	}
 	else {
