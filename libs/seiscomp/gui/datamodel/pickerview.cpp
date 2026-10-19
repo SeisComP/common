@@ -176,8 +176,17 @@ class ZoomRecordWidget : public RecordWidget {
 
 
 	private:
+		bool isCursorVisible() const {
+			auto x = mapTime(cursorPos());
+			auto right = _canvasRect.right();
+			if ( _showSpectrogram && _showSpectrogramAxis ) {
+				right -= _spectrogramAxisWidth + axisSpacing();
+			}
+			return x >= _canvasRect.left() && x <= right;
+		}
+
 		void updateCursorValues() {
-			if ( !_showAmplitudes || !isActive() ) {
+			if ( !_showAmplitudes || !isActive() || !isCursorVisible() ) {
 				_traceValue = _specValue = Core::None;
 				return;
 			}
@@ -434,7 +443,7 @@ class ZoomRecordWidget : public RecordWidget {
 				RecordWidget::paintEvent(p);
 			}
 
-			if ( _traceValue || _specValue ) {
+			if ( (_traceValue || _specValue) && isCursorVisible() ) {
 				QPainter painter(this);
 				auto x = mapTime(cursorPos());
 				constexpr int padding = 4;
