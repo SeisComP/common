@@ -304,6 +304,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 			bool hideStationsWithoutData{false};
 			bool hideDisabledStations{false};
 			bool showDataInSensorUnit{false};
+			// Show the time residuals of the arrivals next to their phase
+			// labels when the picker is opened
+			bool showArrivalResiduals{false};
 			bool limitFilterToZoomTrace{false};
 
 			RotationType initialRotation{RT_123};
