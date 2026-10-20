@@ -30,7 +30,7 @@ namespace Seiscomp {
 namespace DataModel {
 
 
-std::mutex observerMutex;
+std::recursive_mutex observerMutex;
 Object::ObserverList Object::_observers;
 IMPLEMENT_SC_ABSTRACT_CLASS(Object, "Object");
 IMPLEMENT_SC_ABSTRACT_CLASS(Observer, "Observer");
