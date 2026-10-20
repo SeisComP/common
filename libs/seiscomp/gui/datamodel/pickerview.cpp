@@ -29,7 +29,9 @@
 #include <seiscomp/gui/datamodel/origindialog.h>
 #include <seiscomp/gui/datamodel/utils.h>
 #include <seiscomp/gui/core/application.h>
+#include <seiscomp/gui/core/filterbuilder.h>
 #include <seiscomp/gui/core/icon.h>
+#include <seiscomp/gui/core/quickfilterwidget.h>
 #include <seiscomp/gui/core/recordstreamthread.h>
 #include <seiscomp/gui/core/timescale.h>
 #include <seiscomp/gui/core/uncertainties.h>
@@ -78,6 +80,8 @@
 #endif
 
 #define NO_FILTER_STRING     "No filter"
+#define PREVIEW_FILTER_STRING "Filter builder preview"
+#define QUICK_FILTER_STRING  "Quick filter"
 
 #define ITEM_DISTANCE_INDEX  0
 #define ITEM_RESIDUAL_INDEX  1
@@ -3037,6 +3041,7 @@ void PickerView::init() {
 	addAction(SC_D.ui.actionToggleFilter);
 	addAction(SC_D.ui.actionNextFilter);
 	addAction(SC_D.ui.actionPreviousFilter);
+	addAction(SC_D.ui.actionOpenFilterBuilder);
 	addAction(SC_D.ui.actionMaximizeAmplitudes);
 
 	addAction(SC_D.ui.actionPickP);
@@ -3084,6 +3089,12 @@ void PickerView::init() {
 	changeFilter(SC_D.comboFilter->currentIndex());
 
 	SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.comboFilter);
+	SC_D.ui.actionOpenFilterBuilder->setIcon(icon("settings"));
+	SC_D.ui.toolBarFilter->insertAction(SC_D.ui.actionToggleFilter, SC_D.ui.actionOpenFilterBuilder);
+
+	SC_D.quickFilter = new QuickFilterWidget;
+	SC_D.quickFilterAction = SC_D.ui.toolBarFilter->insertWidget(SC_D.ui.actionToggleFilter, SC_D.quickFilter);
+	SC_D.quickFilterAction->setVisible(false);
 
 	SC_D.comboRotation = new QComboBox;
 	//SC_D.comboRotation->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
@@ -3300,6 +3311,12 @@ void PickerView::init() {
 	        this, SLOT(nextFilter()));
 	connect(SC_D.ui.actionPreviousFilter, SIGNAL(triggered(bool)),
 	        this, SLOT(previousFilter()));
+	connect(SC_D.ui.actionOpenFilterBuilder, SIGNAL(triggered(bool)),
+	        this, SLOT(openFilterBuilder()));
+	connect(SC_D.ui.actionShowQuickFilter, SIGNAL(toggled(bool)),
+	        this, SLOT(showQuickFilter(bool)));
+	connect(SC_D.quickFilter, SIGNAL(filterChanged(QString)),
+	        this, SLOT(quickFilterChanged(QString)));
 
 	connect(SC_D.ui.actionMaximizeAmplitudes, SIGNAL(triggered(bool)),
 	        this, SLOT(scaleVisibleAmplitudes()));
@@ -8099,6 +8116,208 @@ void PickerView::addNewFilter(const QString& filter) {
 
 	SC_D.comboFilter->setCurrentIndex(SC_D.lastFilterIndex);
 	SC_D.currentRecord->setFilter(SC_D.recordView->filter());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::setTransientFilter(const QString &name, const QString &filter) {
+	int idx = SC_D.comboFilter->findText(name);
+
+	if ( idx <= 0 ) {
+		SC_D.comboFilter->addItem(name, filter);
+		idx = SC_D.comboFilter->count() - 1;
+	}
+	else {
+		SC_D.comboFilter->setItemData(idx, filter);
+	}
+
+	SC_D.comboFilter->setItemData(idx, filter, Qt::ToolTipRole);
+
+	if ( SC_D.comboFilter->currentIndex() == idx ) {
+		// Same entry with new parameters, setCurrentIndex would not notify
+		changeFilter(idx, true);
+	}
+	else {
+		SC_D.comboFilter->setCurrentIndex(idx);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::removeFilterEntry(const QString &name) {
+	int idx = SC_D.comboFilter->findText(name);
+	if ( idx <= 0 ) {
+		return;
+	}
+
+	SC_D.comboFilter->blockSignals(true);
+	SC_D.comboFilter->removeItem(idx);
+	SC_D.comboFilter->blockSignals(false);
+
+	if ( SC_D.lastFilterIndex == idx ) {
+		SC_D.lastFilterIndex = 0;
+	}
+	else if ( SC_D.lastFilterIndex > idx ) {
+		--SC_D.lastFilterIndex;
+	}
+
+	if ( SC_D.filterBuilderPreviousIndex == idx ) {
+		SC_D.filterBuilderPreviousIndex = 0;
+	}
+	else if ( SC_D.filterBuilderPreviousIndex > idx ) {
+		--SC_D.filterBuilderPreviousIndex;
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::openFilterBuilder() {
+	if ( SC_D.filterBuilder ) {
+		SC_D.filterBuilder->raise();
+		SC_D.filterBuilder->activateWindow();
+		return;
+	}
+
+	FilterBuilderDialog *dlg = new FilterBuilderDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setLiveApplyEnabled(true);
+	// Only offer to save if someone takes care of storing the filter
+	dlg->setSaveEnabled(receivers(SIGNAL(filterSaveRequested(QString,QString))) > 0);
+
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx > 0 ) {
+		QString name = SC_D.comboFilter->itemText(idx);
+		if ( name != QUICK_FILTER_STRING ) {
+			dlg->setFilterName(name);
+		}
+		dlg->setFilter(SC_D.comboFilter->itemData(idx).toString());
+	}
+
+	RecordSequence *seq = SC_D.currentRecord ? SC_D.currentRecord->records() : nullptr;
+	if ( seq && !seq->empty() ) {
+		dlg->setSamplingFrequency(seq->front()->samplingFrequency());
+	}
+
+	SC_D.filterBuilderPreviousIndex = idx;
+	SC_D.filterBuilder = dlg;
+
+	connect(dlg, SIGNAL(filterChanged(QString)),
+	        this, SLOT(filterBuilderChanged(QString)));
+	connect(dlg, SIGNAL(finished(int)),
+	        this, SLOT(filterBuilderFinished(int)));
+
+	dlg->show();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::filterBuilderChanged(const QString &filter) {
+	setTransientFilter(PREVIEW_FILTER_STRING, filter);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::filterBuilderFinished(int result) {
+	FilterBuilderDialog *dlg = SC_D.filterBuilder;
+	SC_D.filterBuilder = nullptr;
+	if ( !dlg ) {
+		return;
+	}
+
+	bool previewActive = SC_D.comboFilter->currentText() == PREVIEW_FILTER_STRING;
+	removeFilterEntry(PREVIEW_FILTER_STRING);
+
+	if ( result != QDialog::Accepted ) {
+		// Restore the filter which was active before the preview
+		if ( previewActive ) {
+			int idx = SC_D.filterBuilderPreviousIndex;
+			if ( idx < 0 || idx >= SC_D.comboFilter->count() ) {
+				idx = 0;
+			}
+
+			SC_D.comboFilter->blockSignals(true);
+			SC_D.comboFilter->setCurrentIndex(idx);
+			SC_D.comboFilter->blockSignals(false);
+			changeFilter(idx, true);
+		}
+		return;
+	}
+
+	QString filter = dlg->filter();
+	QString name = dlg->filterName();
+	if ( name.isEmpty() ) {
+		name = filter;
+	}
+
+	if ( previewActive ) {
+		// The removed preview entry was current, select something valid
+		// before the new entry is activated.
+		SC_D.comboFilter->blockSignals(true);
+		SC_D.comboFilter->setCurrentIndex(0);
+		SC_D.comboFilter->blockSignals(false);
+	}
+
+	setTransientFilter(name, filter);
+
+	if ( dlg->saveRequested() ) {
+		bool updated = false;
+		for ( auto &entry : SC_D.config.filters ) {
+			QString entryName = entry.first.startsWith('@') ? entry.first.mid(1) : entry.first;
+			if ( entryName == name ) {
+				entry.second = filter;
+				updated = true;
+			}
+		}
+
+		if ( !updated ) {
+			SC_D.config.addFilter(name, filter);
+		}
+
+		emit filterSaveRequested(name, filter);
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::showQuickFilter(bool show) {
+	SC_D.quickFilterAction->setVisible(show);
+
+	if ( !show ) {
+		return;
+	}
+
+	// Start from the active filter if it is a plain Butterworth filter
+	int idx = SC_D.comboFilter->currentIndex();
+	if ( idx > 0 ) {
+		SC_D.quickFilter->setFilter(SC_D.comboFilter->itemData(idx).toString());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void PickerView::quickFilterChanged(const QString &filter) {
+	setTransientFilter(QUICK_FILTER_STRING, filter);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

@@ -292,6 +292,10 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 
 		void requestRaise();
 
+		//! A filter created in the picker should be stored permanently.
+		//! The filter is already part of pickerConfig().
+		void pickerFilterSaveRequested(const QString &name, const QString &filter);
+
 	public slots:
 		void clear();
 
@@ -392,6 +396,7 @@ class SC_GUI_API OriginLocatorView : public QWidget {
 		void changeArrival(int,bool);
 		void changeArrivalEnableState(int,bool);
 		void artificialOriginRequested(double lat, double lon, double depth, Seiscomp::Core::Time time);
+		void storePickerFilter(const QString &name, const QString &filter);
 
 		void updateBlinkState();
 

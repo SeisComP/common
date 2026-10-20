@@ -402,6 +402,10 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void originCreated(Seiscomp::DataModel::Origin*);
 		void arrivalChanged(int id, bool state);
 		void arrivalEnableStateChanged(int id, bool state);
+		//! Emitted when a filter of the filter builder should be stored
+		//! permanently. The filter is already added to the configuration
+		//! of this view.
+		void filterSaveRequested(const QString &name, const QString &filter);
 
 
 	public slots:
@@ -458,6 +462,11 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void nextFilter();
 		void previousFilter();
 		void addNewFilter(const QString&);
+		void openFilterBuilder();
+		void filterBuilderChanged(const QString &filter);
+		void filterBuilderFinished(int result);
+		void showQuickFilter(bool);
+		void quickFilterChanged(const QString &filter);
 
 		void scaleVisibleAmplitudes();
 
@@ -661,6 +670,9 @@ class SC_GUI_API PickerView : public QMainWindow {
 		void addFilter(const QString& name, const QString& filter);
 
 		void changeFilter(int, bool force);
+		//! Adds or updates a filter entry by name and activates it
+		void setTransientFilter(const QString &name, const QString &filter);
+		void removeFilterEntry(const QString &name);
 
 		void closeThreads();
 
