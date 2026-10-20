@@ -675,6 +675,9 @@
     <addaction name="actionNextFilter"/>
     <addaction name="actionPreviousFilter"/>
     <addaction name="actionLimitFilterToZoomTrace"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpenFilterBuilder"/>
+    <addaction name="actionShowQuickFilter"/>
    </widget>
    <widget class="QMenu" name="menu_Locate">
     <property name="title">
@@ -1357,6 +1360,34 @@
    </property>
    <property name="shortcut">
     <string>Shift+F</string>
+   </property>
+  </action>
+  <action name="actionOpenFilterBuilder">
+   <property name="text">
+    <string>Filter &amp;builder...</string>
+   </property>
+   <property name="toolTip">
+    <string>Compose a filter from stages and apply it (Ctrl+Shift+F)</string>
+   </property>
+   <property name="statusTip">
+    <string>Opens a dialog to compose a filter chain from stages with live preview on the traces.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionShowQuickFilter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Quick filter</string>
+   </property>
+   <property name="toolTip">
+    <string>Show controls for a Butterworth filter in the toolbar</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows controls in the filter toolbar to set a Butterworth filter type, order and corner frequencies which are applied immediately.</string>
    </property>
   </action>
   <action name="actionRepickAutomatically">
