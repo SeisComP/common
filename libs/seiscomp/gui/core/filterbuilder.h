@@ -36,6 +36,8 @@ class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
 class QPushButton;
+class QSpinBox;
+class QTableWidget;
 class QTimer;
 class QToolButton;
 
@@ -51,9 +53,13 @@ namespace Gui {
  * Stages are listed in processing order and can be reordered by drag and
  * drop. The parameters of the selected stage are edited with spin boxes.
  * The resulting string is shown and validated with the same parser that
- * is used to create the filter later. Strings which cannot be represented
- * as a plain chain of known stages are kept as they are and can be edited
- * as text.
+ * is used to create the filter later.
+ *
+ * Besides single filters two composite stages are supported:
+ * - A multi-band stage which combines Butterworth bandpasses of the same
+ *   order, e.g. (BW(4,0.7,2)^2+BW(4,2,6)^2)^0.5.
+ * - An expression stage which holds any other part of the filter grammar
+ *   as text, e.g. |DIFF|*2.
  */
 class SC_GUI_API FilterBuilderDialog : public QDialog {
 	Q_OBJECT
@@ -108,6 +114,10 @@ class SC_GUI_API FilterBuilderDialog : public QDialog {
 		void currentStageChanged();
 		void stageTypeChanged(int index);
 		void stageParameterChanged();
+		void expressionEdited(const QString &text);
+		void multiBandChanged();
+		void addBand();
+		void removeBand();
 		void filterStringEdited(const QString &text);
 		void scheduleUpdate();
 		void updateFromStages();
@@ -121,34 +131,37 @@ class SC_GUI_API FilterBuilderDialog : public QDialog {
 		                                 const QVariantList &values);
 		void updateStageItem(QListWidgetItem *item);
 		void buildParameterEditor(QListWidgetItem *item);
+		void buildExpressionEditor(const QVariantList &values);
+		void buildMultiBandEditor(const QVariantList &values);
 		void setStages(const QString &filter);
-		void setRawMode(bool raw);
 		void validate();
 
 
 	private:
-		QLineEdit   *_name;
-		QListWidget *_stages;
-		QToolButton *_btnAdd;
-		QToolButton *_btnRemove;
-		QToolButton *_btnUp;
-		QToolButton *_btnDown;
-		QGroupBox   *_paramGroup;
-		QFormLayout *_paramLayout;
-		QComboBox   *_stageType;
-		QLineEdit   *_filterString;
-		QLabel      *_status;
-		QLabel      *_rawHint;
-		QCheckBox   *_liveApply;
-		QPushButton *_btnSave;
-		QPushButton *_btnOk;
-		QTimer      *_updateTimer;
-		QTimer      *_liveTimer;
-		double       _fsamp;
-		bool         _rawMode;
-		bool         _valid;
-		bool         _saveRequested;
-		bool         _blockUpdates;
+		QLineEdit    *_name;
+		QListWidget  *_stages;
+		QToolButton  *_btnAdd;
+		QToolButton  *_btnRemove;
+		QToolButton  *_btnUp;
+		QToolButton  *_btnDown;
+		QGroupBox    *_paramGroup;
+		QFormLayout  *_paramLayout;
+		QComboBox    *_stageType;
+		QLineEdit    *_expression;
+		QSpinBox     *_bandOrder;
+		QComboBox    *_bandMode;
+		QTableWidget *_bands;
+		QLineEdit    *_filterString;
+		QLabel       *_status;
+		QCheckBox    *_liveApply;
+		QPushButton  *_btnSave;
+		QPushButton  *_btnOk;
+		QTimer       *_updateTimer;
+		QTimer       *_liveTimer;
+		double        _fsamp;
+		bool          _valid;
+		bool          _saveRequested;
+		bool          _blockUpdates;
 };
 
 

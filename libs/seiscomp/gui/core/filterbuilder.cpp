@@ -29,6 +29,7 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -36,6 +37,7 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QSpinBox>
+#include <QTableWidget>
 #include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -78,6 +80,27 @@ struct StageSpec {
 };
 
 
+// Keys of the composite stages. They cannot clash with filter names
+// because identifiers of the filter grammar cannot contain '@'.
+const QString BandsKey = "@BANDS";
+const QString ExpressionKey = "@EXPR";
+
+
+enum BandMode {
+	RootSumSquare,
+	Sum,
+	SumOfAbsolutes,
+	BandModeCount
+};
+
+
+const char *bandModeNames[] = {
+	"root-sum-square",
+	"sum",
+	"sum of absolute values"
+};
+
+
 const ParameterSpec OrderParameter = {
 	"Order", "", Integer, 1, 10, 3, 0, false
 };
@@ -98,8 +121,8 @@ const ParameterSpec InputParameter = {
 };
 
 
-// Only filters with a fixed parameter list are offered as stages. Everything
-// else is still accepted as raw filter string.
+// Filters with a fixed parameter list which are offered as single stages.
+// Everything else of the filter grammar is handled by the composite stages.
 const std::vector<StageSpec> &stageSpecs() {
 	static const std::vector<StageSpec> specs = {
 		{ "BW", "Butterworth bandpass",
@@ -190,12 +213,72 @@ QVariantList defaultValues(const StageSpec &spec) {
 }
 
 
+QVariantList makeBand(double lower, double upper) {
+	return QVariantList() << lower << upper;
+}
+
+
+QVariantList defaultBandValues() {
+	QVariantList bands;
+	bands.append(QVariant(makeBand(0.7, 2.0)));
+	bands.append(QVariant(makeBand(2.0, 6.0)));
+	return QVariantList() << 4 << int(RootSumSquare) << QVariant(bands);
+}
+
+
 QString formatNumber(double value) {
 	return QString::number(value, 'g', 10);
 }
 
 
+QString formatBands(const QVariantList &values) {
+	int order = values[0].toInt();
+	int mode = values[1].toInt();
+	QVariantList bands = values[2].toList();
+
+	QStringList terms;
+	for ( const QVariant &band : bands ) {
+		QVariantList corners = band.toList();
+		QString term = QString("BW(%1,%2,%3)")
+		               .arg(order)
+		               .arg(formatNumber(corners[0].toDouble()),
+		                    formatNumber(corners[1].toDouble()));
+
+		switch ( mode ) {
+			case RootSumSquare:
+				terms.append(term + "^2");
+				break;
+			case SumOfAbsolutes:
+				terms.append("|" + term + "|");
+				break;
+			default:
+				terms.append(term);
+				break;
+		}
+	}
+
+	if ( terms.isEmpty() ) {
+		return QString();
+	}
+
+	if ( mode == RootSumSquare ) {
+		return QString("(%1)^0.5").arg(terms.join("+"));
+	}
+
+	// Addition binds stronger than chaining, no parentheses required
+	return terms.join("+");
+}
+
+
 QString formatStage(const QString &key, const QVariantList &values) {
+	if ( key == ExpressionKey ) {
+		return values.value(0).toString().trimmed();
+	}
+
+	if ( key == BandsKey ) {
+		return formatBands(values);
+	}
+
 	const StageSpec *spec = findSpec(key);
 	if ( !spec || spec->parameters.empty() ) {
 		return key;
@@ -230,6 +313,25 @@ const char *groundMotionName(int value) {
 
 
 QString describeStage(const QString &key, const QVariantList &values) {
+	if ( key == ExpressionKey ) {
+		return QObject::tr("Expression: %1").arg(values.value(0).toString());
+	}
+
+	if ( key == BandsKey ) {
+		QStringList bands;
+		for ( const QVariant &band : values[2].toList() ) {
+			QVariantList corners = band.toList();
+			bands.append(QString("%1-%2 Hz")
+			             .arg(formatNumber(corners[0].toDouble()),
+			                  formatNumber(corners[1].toDouble())));
+		}
+
+		return QObject::tr("Multi-band %1, order %2: %3")
+		       .arg(bandModeNames[values[1].toInt()])
+		       .arg(values[0].toInt())
+		       .arg(bands.join(", "));
+	}
+
 	const StageSpec *spec = findSpec(key);
 	if ( !spec ) {
 		return key;
@@ -261,66 +363,233 @@ QString describeStage(const QString &key, const QVariantList &values) {
 
 
 /**
- * Splits a plain filter chain into stages. Returns false if the string
- * contains anything else than known stages joined by >>, e.g. arithmetic
- * expressions, nested filters or unknown filters.
+ * Splits a string at separators which are neither inside parentheses
+ * nor inside |...|. Separators are given as strings of one or two
+ * characters.
  */
-bool parseStages(const QString &filter,
-                 QList<QPair<QString, QVariantList>> &stages) {
+QStringList splitTopLevel(const QString &text, const QStringList &separators) {
+	QStringList parts;
+	int depth = 0;
+	bool insideAbs = false;
+	int start = 0;
+
+	for ( int i = 0; i < text.size(); ++i ) {
+		QChar c = text[i];
+
+		if ( c == '(' ) {
+			++depth;
+			continue;
+		}
+
+		if ( c == ')' ) {
+			--depth;
+			continue;
+		}
+
+		if ( c == '|' ) {
+			insideAbs = !insideAbs;
+			continue;
+		}
+
+		if ( depth != 0 || insideAbs ) {
+			continue;
+		}
+
+		for ( const QString &sep : separators ) {
+			if ( text.mid(i, sep.size()) != sep ) {
+				continue;
+			}
+
+			// A sign of an exponent such as 1e+2 does not separate
+			if ( sep == "+" && i >= 2
+			  && (text[i-1] == 'e' || text[i-1] == 'E')
+			  && (text[i-2].isDigit() || text[i-2] == '.') ) {
+				continue;
+			}
+
+			parts.append(text.mid(start, i - start));
+			i += sep.size() - 1;
+			start = i + 1;
+			break;
+		}
+	}
+
+	parts.append(text.mid(start));
+	return parts;
+}
+
+
+//! Removes parentheses around the whole string
+QString stripOuterParentheses(const QString &text) {
+	if ( !text.startsWith('(') || !text.endsWith(')') ) {
+		return text;
+	}
+
+	int depth = 0;
+	for ( int i = 0; i < text.size(); ++i ) {
+		if ( text[i] == '(' ) {
+			++depth;
+		}
+		else if ( text[i] == ')' ) {
+			--depth;
+			// The first parenthesis is closed before the end
+			if ( depth == 0 && i < text.size() - 1 ) {
+				return text;
+			}
+		}
+	}
+
+	return text.mid(1, text.size() - 2);
+}
+
+
+bool parseSimpleStage(const QString &segment, QString &key, QVariantList &values) {
 	static const QRegularExpression stageRe(
 		"^\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*(?:\\(([^()]*)\\))?\\s*$"
 	);
 
-	stages.clear();
-
-	if ( filter.trimmed().isEmpty() ) {
-		return true;
+	QRegularExpressionMatch match = stageRe.match(segment);
+	if ( !match.hasMatch() ) {
+		return false;
 	}
 
-	const QStringList tokens = filter.split(">>");
-	for ( const QString &token : tokens ) {
-		QRegularExpressionMatch match = stageRe.match(token);
+	const StageSpec *spec = findSpec(match.captured(1));
+	if ( !spec ) {
+		return false;
+	}
+
+	QString args = match.captured(2).trimmed();
+	QStringList argList;
+	if ( !args.isEmpty() ) {
+		argList = args.split(',');
+	}
+
+	if ( argList.size() != static_cast<int>(spec->parameters.size()) ) {
+		return false;
+	}
+
+	values.clear();
+	for ( int i = 0; i < argList.size(); ++i ) {
+		bool ok;
+		double value = argList[i].trimmed().toDouble(&ok);
+		if ( !ok ) {
+			return false;
+		}
+
+		if ( spec->parameters[i].kind == Real ) {
+			values.append(value);
+		}
+		else {
+			values.append(static_cast<int>(value));
+		}
+	}
+
+	key = spec->key;
+	return true;
+}
+
+
+/**
+ * Recognizes combinations of Butterworth bandpasses with the same order:
+ * (BW(o,a,b)^2+BW(o,c,d)^2)^0.5, BW(o,a,b)+BW(o,c,d) and
+ * |BW(o,a,b)|+|BW(o,c,d)|.
+ */
+bool parseBands(const QString &segment, QVariantList &values) {
+	static const QString number = "[-+]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][-+]?\\d+)?";
+	static const QRegularExpression rssRe("^\\((.*)\\)\\^0*\\.50*$");
+	static const QRegularExpression bwRe(
+		QString("^BW(?:_BP)?\\((\\d+),(%1),(%1)\\)$").arg(number)
+	);
+
+	QString text = segment;
+	text.remove(QRegularExpression("\\s"));
+
+	int mode;
+	QStringList terms;
+
+	QRegularExpressionMatch rss = rssRe.match(text);
+	if ( rss.hasMatch() ) {
+		mode = RootSumSquare;
+		terms = splitTopLevel(rss.captured(1), QStringList() << "+");
+		for ( QString &term : terms ) {
+			if ( !term.endsWith("^2") ) {
+				return false;
+			}
+			term.chop(2);
+		}
+	}
+	else {
+		terms = splitTopLevel(stripOuterParentheses(text), QStringList() << "+");
+		if ( terms.size() < 2 ) {
+			// A single band is a simple stage
+			return false;
+		}
+
+		bool absolute = terms[0].startsWith('|');
+		mode = absolute ? SumOfAbsolutes : Sum;
+		for ( QString &term : terms ) {
+			if ( absolute ) {
+				if ( term.size() < 2 || !term.startsWith('|') || !term.endsWith('|') ) {
+					return false;
+				}
+				term = term.mid(1, term.size() - 2);
+			}
+		}
+	}
+
+	int order = -1;
+	QVariantList bands;
+	for ( const QString &term : terms ) {
+		QRegularExpressionMatch match = bwRe.match(term);
 		if ( !match.hasMatch() ) {
 			return false;
 		}
 
-		QString key = match.captured(1);
-		const StageSpec *spec = findSpec(key);
-		if ( !spec ) {
+		int termOrder = match.captured(1).toInt();
+		if ( order >= 0 && termOrder != order ) {
 			return false;
 		}
+		order = termOrder;
 
-		QString args = match.captured(2).trimmed();
-		QStringList argList;
-		if ( !args.isEmpty() ) {
-			argList = args.split(',');
-		}
-
-		if ( argList.size() != static_cast<int>(spec->parameters.size()) ) {
-			return false;
-		}
-
-		QVariantList values;
-		for ( int i = 0; i < argList.size(); ++i ) {
-			bool ok;
-			double value = argList[i].trimmed().toDouble(&ok);
-			if ( !ok ) {
-				return false;
-			}
-
-			const ParameterSpec &param = spec->parameters[i];
-			if ( param.kind == Real ) {
-				values.append(value);
-			}
-			else {
-				values.append(static_cast<int>(value));
-			}
-		}
-
-		stages.append(qMakePair(QString(spec->key), values));
+		bands.append(QVariant(makeBand(match.captured(2).toDouble(),
+		                               match.captured(3).toDouble())));
 	}
 
+	values = QVariantList() << order << mode << QVariant(bands);
 	return true;
+}
+
+
+/**
+ * Splits a filter string into stages. Plain filters become single stages,
+ * Butterworth band combinations become a multi-band stage and everything
+ * else an expression stage which keeps the text.
+ */
+QList<QPair<QString, QVariantList>> parseStages(const QString &filter) {
+	QList<QPair<QString, QVariantList>> stages;
+
+	if ( filter.trimmed().isEmpty() ) {
+		return stages;
+	}
+
+	const QStringList segments = splitTopLevel(filter, QStringList() << ">>" << "->");
+	for ( const QString &segment : segments ) {
+		QString key;
+		QVariantList values;
+
+		if ( parseSimpleStage(segment, key, values) ) {
+			stages.append(qMakePair(key, values));
+		}
+		else if ( parseBands(segment, values) ) {
+			stages.append(qMakePair(BandsKey, values));
+		}
+		else {
+			stages.append(qMakePair(ExpressionKey,
+			                        QVariantList() << segment.trimmed()));
+		}
+	}
+
+	return stages;
 }
 
 
@@ -331,8 +600,11 @@ bool parseStages(const QString &filter,
 FilterBuilderDialog::FilterBuilderDialog(QWidget *parent, Qt::WindowFlags f)
 : QDialog(parent, f)
 , _stageType(nullptr)
+, _expression(nullptr)
+, _bandOrder(nullptr)
+, _bandMode(nullptr)
+, _bands(nullptr)
 , _fsamp(0)
-, _rawMode(false)
 , _valid(true)
 , _saveRequested(false)
 , _blockUpdates(false) {
@@ -368,13 +640,6 @@ FilterBuilderDialog::FilterBuilderDialog(QWidget *parent, Qt::WindowFlags f)
 	_stages->setSelectionMode(QAbstractItemView::SingleSelection);
 	listLayout->addWidget(_stages);
 
-	_rawHint = new QLabel(tr("This filter cannot be shown as a list of stages. "
-	                         "Edit the filter string below or clear it to "
-	                         "start over."));
-	_rawHint->setWordWrap(true);
-	_rawHint->setVisible(false);
-	listLayout->addWidget(_rawHint);
-
 	QHBoxLayout *buttonLayout = new QHBoxLayout;
 	_btnAdd = new QToolButton;
 	_btnAdd->setIcon(icon("add"));
@@ -386,6 +651,11 @@ FilterBuilderDialog::FilterBuilderDialog(QWidget *parent, Qt::WindowFlags f)
 		action->setData(QString(spec.key));
 		action->setToolTip(spec.description);
 	}
+	addMenu->addSeparator();
+	QAction *bandsAction = addMenu->addAction(tr("Multi-band combination"));
+	bandsAction->setData(BandsKey);
+	QAction *expressionAction = addMenu->addAction(tr("Expression"));
+	expressionAction->setData(ExpressionKey);
 	connect(addMenu, &QMenu::triggered, this, [this](QAction *action) {
 		addStage(action->data().toString());
 	});
@@ -466,7 +736,7 @@ FilterBuilderDialog::FilterBuilderDialog(QWidget *parent, Qt::WindowFlags f)
 	currentStageChanged();
 	validate();
 
-	resize(720, 420);
+	resize(760, 440);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -617,15 +887,20 @@ void FilterBuilderDialog::updateStageItem(QListWidgetItem *item) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FilterBuilderDialog::addStage(const QString &key) {
-	const StageSpec *spec = findSpec(key);
-	if ( !spec ) {
-		return;
-	}
+	QVariantList values;
 
-	if ( _rawMode ) {
-		// Starting over from an unrepresentable string
-		_stages->clear();
-		setRawMode(false);
+	if ( key == BandsKey ) {
+		values = defaultBandValues();
+	}
+	else if ( key == ExpressionKey ) {
+		values << QString();
+	}
+	else {
+		const StageSpec *spec = findSpec(key);
+		if ( !spec ) {
+			return;
+		}
+		values = defaultValues(*spec);
 	}
 
 	int row = _stages->currentRow() + 1;
@@ -633,10 +908,14 @@ void FilterBuilderDialog::addStage(const QString &key) {
 		row = _stages->count();
 	}
 
-	QListWidgetItem *item = createStageItem(spec->key, defaultValues(*spec));
+	QListWidgetItem *item = createStageItem(key, values);
 	_stages->insertItem(row, item);
 	_stages->setCurrentItem(item);
 	scheduleUpdate();
+
+	if ( _expression ) {
+		_expression->setFocus();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -710,6 +989,10 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 	}
 
 	_stageType = nullptr;
+	_expression = nullptr;
+	_bandOrder = nullptr;
+	_bandMode = nullptr;
+	_bands = nullptr;
 
 	if ( !item ) {
 		QLabel *hint = new QLabel(tr("Add a stage with the + button or select "
@@ -721,24 +1004,55 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 
 	QString key = item->data(Qt::UserRole).toString();
 	QVariantList values = item->data(Qt::UserRole + 1).toList();
+
+	// The composite stages follow the single filters in the type list
+	int bandsIndex = static_cast<int>(stageSpecs().size());
+	int expressionIndex = bandsIndex + 1;
+
+	_stageType = new QComboBox;
+	int currentIndex = -1;
+	for ( size_t i = 0; i < stageSpecs().size(); ++i ) {
+		_stageType->addItem(stageSpecs()[i].label);
+		_stageType->setItemData(static_cast<int>(i), stageSpecs()[i].description, Qt::ToolTipRole);
+		if ( key == stageSpecs()[i].key ) {
+			currentIndex = static_cast<int>(i);
+		}
+	}
+	_stageType->addItem(tr("Multi-band combination"));
+	_stageType->setItemData(bandsIndex, tr("Combination of Butterworth "
+	                                       "bandpasses with the same order"),
+	                        Qt::ToolTipRole);
+	_stageType->addItem(tr("Expression"));
+	_stageType->setItemData(expressionIndex, tr("Any part of the filter "
+	                                            "grammar as text"),
+	                        Qt::ToolTipRole);
+
+	if ( key == BandsKey ) {
+		currentIndex = bandsIndex;
+	}
+	else if ( key == ExpressionKey ) {
+		currentIndex = expressionIndex;
+	}
+
+	_stageType->setCurrentIndex(currentIndex);
+	connect(_stageType, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(stageTypeChanged(int)));
+	_paramLayout->addRow(tr("Type:"), _stageType);
+
+	if ( key == ExpressionKey ) {
+		buildExpressionEditor(values);
+		return;
+	}
+
+	if ( key == BandsKey ) {
+		buildMultiBandEditor(values);
+		return;
+	}
+
 	const StageSpec *spec = findSpec(key);
 	if ( !spec ) {
 		return;
 	}
-
-	_stageType = new QComboBox;
-	int currentIndex = 0;
-	for ( size_t i = 0; i < stageSpecs().size(); ++i ) {
-		_stageType->addItem(stageSpecs()[i].label, QString(stageSpecs()[i].key));
-		if ( &stageSpecs()[i] == spec ) {
-			currentIndex = static_cast<int>(i);
-		}
-	}
-	_stageType->setCurrentIndex(currentIndex);
-	_stageType->setToolTip(spec->description);
-	connect(_stageType, SIGNAL(currentIndexChanged(int)),
-	        this, SLOT(stageTypeChanged(int)));
-	_paramLayout->addRow(tr("Type:"), _stageType);
 
 	for ( size_t i = 0; i < spec->parameters.size(); ++i ) {
 		const ParameterSpec &param = spec->parameters[i];
@@ -749,7 +1063,7 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 			for ( int v = 0; v <= 2; ++v ) {
 				combo->addItem(groundMotionName(v));
 			}
-			combo->setCurrentIndex(values[i].toInt());
+			combo->setCurrentIndex(values[static_cast<int>(i)].toInt());
 			connect(combo, SIGNAL(currentIndexChanged(int)),
 			        this, SLOT(stageParameterChanged()));
 			editor = combo;
@@ -757,7 +1071,7 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 		else if ( param.kind == Integer ) {
 			QSpinBox *spin = new QSpinBox;
 			spin->setRange(static_cast<int>(param.minimum), static_cast<int>(param.maximum));
-			spin->setValue(values[i].toInt());
+			spin->setValue(values[static_cast<int>(i)].toInt());
 			spin->setKeyboardTracking(false);
 			connect(spin, SIGNAL(valueChanged(int)),
 			        this, SLOT(stageParameterChanged()));
@@ -767,7 +1081,7 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 			QDoubleSpinBox *spin = new QDoubleSpinBox;
 			spin->setRange(param.minimum, param.maximum);
 			spin->setDecimals(param.decimals);
-			spin->setValue(values[i].toDouble());
+			spin->setValue(values[static_cast<int>(i)].toDouble());
 			// Typing "15" should not apply "1" in between
 			spin->setKeyboardTracking(false);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
@@ -791,34 +1105,149 @@ void FilterBuilderDialog::buildParameterEditor(QListWidgetItem *item) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::buildExpressionEditor(const QVariantList &values) {
+	_expression = new QLineEdit;
+	_expression->setText(values.value(0).toString());
+	_expression->setPlaceholderText("|BW(3,1,8)| or BW(3,1,8)^2");
+	_expression->setToolTip(tr("Any expression of the filter grammar: "
+	                           "filters, numbers, + - * / ^, |...| for the "
+	                           "absolute value and parentheses"));
+	connect(_expression, SIGNAL(textEdited(QString)),
+	        this, SLOT(expressionEdited(QString)));
+	_paramLayout->addRow(tr("Expression:"), _expression);
+	expressionEdited(_expression->text());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::buildMultiBandEditor(const QVariantList &values) {
+	_bandOrder = new QSpinBox;
+	_bandOrder->setRange(1, 10);
+	_bandOrder->setValue(values[0].toInt());
+	_bandOrder->setKeyboardTracking(false);
+	_bandOrder->setToolTip(tr("Order of all Butterworth bandpasses"));
+	_paramLayout->addRow(tr("Order:"), _bandOrder);
+
+	_bandMode = new QComboBox;
+	_bandMode->addItem(tr("Root-sum-square"));
+	_bandMode->setItemData(RootSumSquare, "(BW^2+BW^2)^0.5", Qt::ToolTipRole);
+	_bandMode->addItem(tr("Sum"));
+	_bandMode->setItemData(Sum, "BW+BW", Qt::ToolTipRole);
+	_bandMode->addItem(tr("Sum of absolute values"));
+	_bandMode->setItemData(SumOfAbsolutes, "|BW|+|BW|", Qt::ToolTipRole);
+	_bandMode->setCurrentIndex(values[1].toInt());
+	_paramLayout->addRow(tr("Combine:"), _bandMode);
+
+	_bands = new QTableWidget(0, 2);
+	_bands->setHorizontalHeaderLabels(QStringList() << tr("Lower (Hz)") << tr("Upper (Hz)"));
+	_bands->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	_bands->verticalHeader()->setVisible(false);
+	_bands->setSelectionBehavior(QAbstractItemView::SelectRows);
+	_bands->setSelectionMode(QAbstractItemView::SingleSelection);
+	_bands->setMinimumHeight(110);
+
+	for ( const QVariant &band : values[2].toList() ) {
+		QVariantList corners = band.toList();
+		int row = _bands->rowCount();
+		_bands->insertRow(row);
+		_bands->setItem(row, 0, new QTableWidgetItem(formatNumber(corners[0].toDouble())));
+		_bands->setItem(row, 1, new QTableWidgetItem(formatNumber(corners[1].toDouble())));
+	}
+
+	QToolButton *add = new QToolButton;
+	add->setIcon(icon("add"));
+	add->setToolTip(tr("Add a band"));
+	QToolButton *remove = new QToolButton;
+	remove->setIcon(icon("remove"));
+	remove->setToolTip(tr("Remove the selected band"));
+
+	QWidget *bandWidget = new QWidget;
+	QVBoxLayout *bandLayout = new QVBoxLayout;
+	bandLayout->setContentsMargins(0, 0, 0, 0);
+	bandLayout->addWidget(_bands);
+	QHBoxLayout *bandButtons = new QHBoxLayout;
+	bandButtons->addWidget(add);
+	bandButtons->addWidget(remove);
+	bandButtons->addStretch();
+	bandLayout->addLayout(bandButtons);
+	bandWidget->setLayout(bandLayout);
+	_paramLayout->addRow(tr("Bands:"), bandWidget);
+
+	connect(_bandOrder, SIGNAL(valueChanged(int)), this, SLOT(multiBandChanged()));
+	connect(_bandMode, SIGNAL(currentIndexChanged(int)), this, SLOT(multiBandChanged()));
+	connect(_bands, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(multiBandChanged()));
+	connect(add, SIGNAL(clicked()), this, SLOT(addBand()));
+	connect(remove, SIGNAL(clicked()), this, SLOT(removeBand()));
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FilterBuilderDialog::stageTypeChanged(int index) {
 	QListWidgetItem *item = _stages->currentItem();
 	if ( !item || index < 0 ) {
 		return;
 	}
 
-	const StageSpec &spec = stageSpecs()[index];
+	QString oldKey = item->data(Qt::UserRole).toString();
 	QVariantList oldValues = item->data(Qt::UserRole + 1).toList();
-	const StageSpec *oldSpec = findSpec(item->data(Qt::UserRole).toString());
-	QVariantList values = defaultValues(spec);
+	const StageSpec *oldSpec = findSpec(oldKey);
 
-	// Keep values of parameters which have the same meaning, e.g. the order
-	// and corners when switching between Butterworth types.
-	if ( oldSpec ) {
-		for ( size_t i = 0; i < spec.parameters.size(); ++i ) {
-			if ( i >= oldSpec->parameters.size() ) {
-				break;
+	int bandsIndex = static_cast<int>(stageSpecs().size());
+	int expressionIndex = bandsIndex + 1;
+
+	QString key;
+	QVariantList values;
+
+	if ( index == expressionIndex ) {
+		// Keep the stage as it is, just as editable text
+		key = ExpressionKey;
+		values << formatStage(oldKey, oldValues);
+	}
+	else if ( index == bandsIndex ) {
+		key = BandsKey;
+		values = defaultBandValues();
+		// Start from a bandpass with its order and corners
+		if ( oldSpec && QString(oldSpec->key) == "BW" ) {
+			QVariantList bands;
+			bands.append(QVariant(makeBand(oldValues[1].toDouble(), oldValues[2].toDouble())));
+			values = QVariantList() << oldValues[0] << int(RootSumSquare) << QVariant(bands);
+		}
+	}
+	else {
+		const StageSpec &spec = stageSpecs()[index];
+		key = spec.key;
+		values = defaultValues(spec);
+
+		// Keep values of parameters which have the same meaning, e.g. the
+		// order and corners when switching between Butterworth types.
+		if ( oldSpec ) {
+			for ( size_t i = 0; i < spec.parameters.size() && i < oldSpec->parameters.size(); ++i ) {
+				if ( spec.parameters[i].kind == oldSpec->parameters[i].kind
+				  && spec.parameters[i].isFrequency == oldSpec->parameters[i].isFrequency
+				  && QString(spec.parameters[i].unit) == oldSpec->parameters[i].unit ) {
+					values[static_cast<int>(i)] = oldValues[static_cast<int>(i)];
+				}
 			}
-
-			if ( spec.parameters[i].kind == oldSpec->parameters[i].kind
-			  && spec.parameters[i].isFrequency == oldSpec->parameters[i].isFrequency
-			  && QString(spec.parameters[i].unit) == oldSpec->parameters[i].unit ) {
-				values[static_cast<int>(i)] = oldValues[static_cast<int>(i)];
+		}
+		else if ( oldKey == BandsKey && spec.parameters.size() == 3
+		       && spec.parameters[1].isFrequency ) {
+			// The first band of a multi-band stage
+			QVariantList bands = oldValues[2].toList();
+			values[0] = oldValues[0];
+			if ( !bands.isEmpty() ) {
+				values[1] = bands[0].toList()[0];
+				values[2] = bands[0].toList()[1];
 			}
 		}
 	}
 
-	item->setData(Qt::UserRole, QString(spec.key));
+	item->setData(Qt::UserRole, key);
 	item->setData(Qt::UserRole + 1, values);
 	updateStageItem(item);
 
@@ -865,6 +1294,131 @@ void FilterBuilderDialog::stageParameterChanged() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::expressionEdited(const QString &text) {
+	QListWidgetItem *item = _stages->currentItem();
+	if ( !item || !_expression ) {
+		return;
+	}
+
+	QString error;
+	QPalette pal = palette();
+	if ( !ValidateFilter(text, &error) ) {
+		pal.setColor(QPalette::Text, Qt::red);
+		_expression->setToolTip(tr("Invalid expression: %1").arg(error));
+	}
+	else {
+		_expression->setToolTip(QString());
+	}
+	_expression->setPalette(pal);
+
+	if ( item->data(Qt::UserRole + 1).toList().value(0).toString() == text ) {
+		return;
+	}
+
+	item->setData(Qt::UserRole + 1, QVariantList() << text);
+	updateStageItem(item);
+	scheduleUpdate();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::multiBandChanged() {
+	QListWidgetItem *item = _stages->currentItem();
+	if ( !item || !_bands ) {
+		return;
+	}
+
+	QVariantList bands;
+	bool complete = true;
+
+	_bands->blockSignals(true);
+	for ( int row = 0; row < _bands->rowCount(); ++row ) {
+		double corners[2];
+		for ( int col = 0; col < 2; ++col ) {
+			QTableWidgetItem *cell = _bands->item(row, col);
+			bool ok = false;
+			if ( cell ) {
+				corners[col] = cell->text().trimmed().toDouble(&ok);
+				ok = ok && corners[col] > 0;
+				cell->setForeground(ok ? palette().color(QPalette::Text) : QColor(Qt::red));
+			}
+			complete = complete && ok;
+		}
+
+		if ( complete ) {
+			bands.append(QVariant(makeBand(corners[0], corners[1])));
+		}
+	}
+	_bands->blockSignals(false);
+
+	// Keep the last valid state until every corner is a valid number
+	if ( !complete ) {
+		return;
+	}
+
+	item->setData(Qt::UserRole + 1, QVariantList()
+	              << _bandOrder->value() << _bandMode->currentIndex()
+	              << QVariant(bands));
+	updateStageItem(item);
+	scheduleUpdate();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::addBand() {
+	if ( !_bands ) {
+		return;
+	}
+
+	// Continue above the last band
+	double lower = 1.0;
+	double upper = 2.0;
+	int last = _bands->rowCount() - 1;
+	if ( last >= 0 && _bands->item(last, 1) ) {
+		bool ok;
+		double value = _bands->item(last, 1)->text().toDouble(&ok);
+		if ( ok && value > 0 ) {
+			lower = value;
+			upper = value * 2;
+		}
+	}
+
+	_bands->blockSignals(true);
+	int row = _bands->rowCount();
+	_bands->insertRow(row);
+	_bands->setItem(row, 0, new QTableWidgetItem(formatNumber(lower)));
+	_bands->setItem(row, 1, new QTableWidgetItem(formatNumber(upper)));
+	_bands->blockSignals(false);
+	_bands->selectRow(row);
+
+	multiBandChanged();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void FilterBuilderDialog::removeBand() {
+	if ( !_bands || _bands->currentRow() < 0 ) {
+		return;
+	}
+
+	_bands->removeRow(_bands->currentRow());
+	multiBandChanged();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FilterBuilderDialog::filterStringEdited(const QString &text) {
 	setStages(text);
 	validate();
@@ -889,10 +1443,6 @@ void FilterBuilderDialog::scheduleUpdate() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FilterBuilderDialog::updateFromStages() {
-	if ( _rawMode ) {
-		return;
-	}
-
 	QStringList parts;
 	for ( int i = 0; i < _stages->count(); ++i ) {
 		QListWidgetItem *item = _stages->item(i);
@@ -916,17 +1466,10 @@ void FilterBuilderDialog::updateFromStages() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void FilterBuilderDialog::setStages(const QString &filter) {
-	QList<QPair<QString, QVariantList>> stages;
-
-	if ( !parseStages(filter, stages) ) {
-		setRawMode(true);
-		return;
-	}
-
 	_blockUpdates = true;
 	int row = _stages->currentRow();
 	_stages->clear();
-	for ( const auto &stage : stages ) {
+	for ( const auto &stage : parseStages(filter) ) {
 		_stages->addItem(createStageItem(stage.first, stage.second));
 	}
 	if ( row >= _stages->count() ) {
@@ -935,24 +1478,7 @@ void FilterBuilderDialog::setStages(const QString &filter) {
 	_stages->setCurrentRow(row);
 	_blockUpdates = false;
 
-	setRawMode(false);
 	currentStageChanged();
-}
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
-
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void FilterBuilderDialog::setRawMode(bool raw) {
-	_rawMode = raw;
-	_stages->setEnabled(!raw);
-	_paramGroup->setEnabled(!raw);
-	_btnRemove->setEnabled(!raw && _stages->currentItem());
-	_btnUp->setEnabled(!raw && _stages->currentRow() > 0);
-	_btnDown->setEnabled(!raw && _stages->currentRow() >= 0
-	                     && _stages->currentRow() < _stages->count() - 1);
-	_rawHint->setVisible(raw);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -965,17 +1491,58 @@ void FilterBuilderDialog::validate() {
 	_valid = ValidateFilter(filter(), &error);
 
 	QStringList warnings;
+	double nyquist = _fsamp * 0.5;
 
-	for ( int i = 0; _valid && !_rawMode && i < _stages->count(); ++i ) {
+	auto checkBand = [&](int stage, double lower, double upper) {
+		if ( lower >= upper ) {
+			warnings.append(tr("The lower corner of stage %1 is not below "
+			                   "the upper corner").arg(stage));
+		}
+		if ( _fsamp > 0 && upper >= nyquist ) {
+			warnings.append(tr("Upper corner of stage %1 is not below the "
+			                   "Nyquist frequency of %2 Hz")
+			                .arg(stage).arg(formatNumber(nyquist)));
+		}
+	};
+
+	for ( int i = 0; i < _stages->count(); ++i ) {
 		QListWidgetItem *item = _stages->item(i);
-		const StageSpec *spec = findSpec(item->data(Qt::UserRole).toString());
+		QString key = item->data(Qt::UserRole).toString();
 		QVariantList values = item->data(Qt::UserRole + 1).toList();
+
+		if ( key == ExpressionKey ) {
+			QString stageError;
+			if ( !ValidateFilter(values.value(0).toString(), &stageError) ) {
+				// Point to the stage which breaks the whole filter
+				error = tr("stage %1: %2").arg(i + 1).arg(stageError);
+			}
+			continue;
+		}
+
+		if ( key == BandsKey ) {
+			QVariantList bands = values[2].toList();
+			if ( bands.isEmpty() ) {
+				error = tr("stage %1 has no bands").arg(i + 1);
+			}
+			for ( const QVariant &band : bands ) {
+				QVariantList corners = band.toList();
+				checkBand(i + 1, corners[0].toDouble(), corners[1].toDouble());
+			}
+			continue;
+		}
+
+		const StageSpec *spec = findSpec(key);
 		if ( !spec ) {
 			continue;
 		}
 
+		if ( spec->parameters.size() >= 3
+		  && spec->parameters[1].isFrequency && spec->parameters[2].isFrequency ) {
+			checkBand(i + 1, values[1].toDouble(), values[2].toDouble());
+			continue;
+		}
+
 		if ( _fsamp > 0 ) {
-			double nyquist = _fsamp * 0.5;
 			for ( size_t p = 0; p < spec->parameters.size(); ++p ) {
 				if ( spec->parameters[p].isFrequency
 				  && values[static_cast<int>(p)].toDouble() >= nyquist ) {
@@ -986,13 +1553,6 @@ void FilterBuilderDialog::validate() {
 					                .arg(formatNumber(nyquist)));
 				}
 			}
-		}
-
-		if ( spec->parameters.size() >= 3
-		  && spec->parameters[1].isFrequency && spec->parameters[2].isFrequency
-		  && values[1].toDouble() >= values[2].toDouble() ) {
-			warnings.append(tr("The lower corner of stage %1 is not below "
-			                   "the upper corner").arg(i + 1));
 		}
 	}
 
