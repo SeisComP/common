@@ -18,9 +18,12 @@
  ***************************************************************************/
 
 
+#include <seiscomp/gui/core/filterbuilder.h>
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/datamodel/pickersettings.h>
 #include <QHeaderView>
+#include <QLineEdit>
+#include <QStyledItemDelegate>
 
 
 namespace Seiscomp {
@@ -90,6 +93,25 @@ class FilterModel : public QAbstractListModel {
 				}
 			}
 
+			if ( index.column() == 0 && role == Qt::ToolTipRole ) {
+				return QObject::tr("Name shown in the filter list. Prefix it "
+				                   "with @ to make it the default filter.");
+			}
+
+			if ( index.column() == 1
+			  && (role == Qt::ToolTipRole || role == Qt::ForegroundRole) ) {
+				QString error;
+				bool valid = FilterBuilderDialog::ValidateFilter(_data[index.row()].second, &error);
+
+				if ( role == Qt::ForegroundRole ) {
+					return valid ? QVariant() : QVariant(QColor(Qt::red));
+				}
+
+				return valid ? QObject::tr("Double click to edit the filter string "
+				                           "or use the filter builder")
+				             : QObject::tr("Invalid filter: %1").arg(error);
+			}
+
 			return QVariant();
 		}
 
@@ -138,6 +160,32 @@ class FilterModel : public QAbstractListModel {
 		FilterList &_data;
 };
 
+
+// Colors the filter string while typing and shows the parser error
+class FilterStringDelegate : public QStyledItemDelegate {
+	public:
+		using QStyledItemDelegate::QStyledItemDelegate;
+
+		QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &,
+		                      const QModelIndex &) const override {
+			QLineEdit *edit = new QLineEdit(parent);
+			QPalette valid = edit->palette();
+			QObject::connect(edit, &QLineEdit::textChanged, edit, [edit, valid](const QString &text) {
+				QString error;
+				QPalette pal = valid;
+				if ( !FilterBuilderDialog::ValidateFilter(text, &error) ) {
+					pal.setColor(QPalette::Text, Qt::red);
+					edit->setToolTip(QObject::tr("Invalid filter: %1").arg(error));
+				}
+				else {
+					edit->setToolTip(QString());
+				}
+				edit->setPalette(pal);
+			});
+			return edit;
+		}
+};
+
 }
 
 
@@ -155,20 +203,24 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_pickerFilterModel = new FilterModel(_pickerConfig.filters, this);
 	_ui.tableFilter->setModel(_pickerFilterModel);
 	_ui.tableFilter->horizontalHeader()->setStretchLastSection(true);
+	_ui.tableFilter->setItemDelegateForColumn(1, new FilterStringDelegate(this));
 
 	_amplitudeFilterModel = new FilterModel(_amplitudeConfig.filters, this);
 	_ui.tableAFilter->setModel(_amplitudeFilterModel);
 	_ui.tableAFilter->horizontalHeader()->setStretchLastSection(true);
+	_ui.tableAFilter->setItemDelegateForColumn(1, new FilterStringDelegate(this));
 
 	_ui.btnAddPickFilter->setIcon(icon("add"));
 	_ui.btnRemovePickFilter->setIcon(icon("remove"));
 	_ui.btnMovePickFilterUp->setIcon(icon("up"));
 	_ui.btnMovePickFilterDown->setIcon(icon("down"));
+	_ui.btnEditPickFilter->setIcon(icon("settings"));
 
 	_ui.btnAddAmplitudeFilter->setIcon(icon("add"));
 	_ui.btnRemoveAmplitudeFilter->setIcon(icon("remove"));
 	_ui.btnMoveAmplitudeFilterUp->setIcon(icon("up"));
 	_ui.btnMoveAmplitudeFilterDown->setIcon(icon("down"));
+	_ui.btnEditAmplitudeFilter->setIcon(icon("settings"));
 
 	connect(_ui.slPreOffset, SIGNAL(sliderMoved(int)),
 	        this, SLOT(adjustPreTime(int)));
@@ -215,9 +267,6 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	connect(_ui.cbRepickerEnd, SIGNAL(toggled(bool)),
 	        _ui.editRepickerEnd, SLOT(setEnabled(bool)));
 
-	connect(_ui.btnAddPickFilter, SIGNAL(clicked()),
-	        this, SLOT(addPickFilter()));
-
 	// Connect pick filter signals/slots
 	connect(_ui.btnAddPickFilter, SIGNAL(clicked()),
 	        this, SLOT(addPickFilter()));
@@ -231,6 +280,9 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	connect(_ui.btnMovePickFilterDown, SIGNAL(clicked()),
 	        this, SLOT(movePickFilterDown()));
 
+	connect(_ui.btnEditPickFilter, SIGNAL(clicked()),
+	        this, SLOT(editPickFilter()));
+
 	// Connect amplitude filter signals/slots
 	connect(_ui.btnAddAmplitudeFilter, SIGNAL(clicked()),
 	        this, SLOT(addAmplitudeFilter()));
@@ -243,6 +295,9 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 
 	connect(_ui.btnMoveAmplitudeFilterDown, SIGNAL(clicked()),
 	        this, SLOT(moveAmplitudeFilterDown()));
+
+	connect(_ui.btnEditAmplitudeFilter, SIGNAL(clicked()),
+	        this, SLOT(editAmplitudeFilter()));
 
 	connect(_ui.saveButton, SIGNAL(clicked()),
 	        this, SLOT(save()));
@@ -527,6 +582,58 @@ void PickerSettings::moveAmplitudeFilterDown() {
 
 		_ui.tableAFilter->setCurrentIndex(_amplitudeFilterModel->index(row+1, index.column()));
 	}
+}
+
+
+void PickerSettings::editPickFilter() {
+	editFilter(_ui.tableFilter, _pickerFilterModel);
+}
+
+
+void PickerSettings::editAmplitudeFilter() {
+	editFilter(_ui.tableAFilter, _amplitudeFilterModel);
+}
+
+
+void PickerSettings::editFilter(QAbstractItemView *view, QAbstractListModel *model) {
+	QModelIndex index = view->currentIndex();
+	int row = index.isValid() ? index.row() : -1;
+
+	FilterBuilderDialog dlg(this);
+
+	// The @ prefix marks the default filter and is not part of the name
+	bool isDefault = false;
+	if ( row >= 0 ) {
+		QString name = model->data(model->index(row, 0), Qt::EditRole).toString();
+		if ( name.startsWith('@') ) {
+			isDefault = true;
+			name = name.mid(1);
+		}
+		dlg.setFilterName(name);
+		dlg.setFilter(model->data(model->index(row, 1), Qt::EditRole).toString());
+	}
+
+	if ( dlg.exec() != QDialog::Accepted ) {
+		return;
+	}
+
+	QString name = dlg.filterName();
+	if ( name.isEmpty() ) {
+		name = dlg.filter();
+	}
+
+	if ( isDefault ) {
+		name.prepend('@');
+	}
+
+	if ( row < 0 ) {
+		row = model->rowCount();
+		model->insertRows(row, 1);
+	}
+
+	model->setData(model->index(row, 0), name, Qt::EditRole);
+	model->setData(model->index(row, 1), dlg.filter(), Qt::EditRole);
+	view->setCurrentIndex(model->index(row, 1));
 }
 
 
