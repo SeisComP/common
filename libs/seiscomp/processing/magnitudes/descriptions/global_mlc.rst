@@ -159,9 +159,8 @@ you need to create a magnitude-type profile giving it the name of *MLc*
    :delim: ;
 
    **MLc-specific parameters**;;;
-   Distance type; :confval:`magnitudes.$name.distMode`; hypocentral; epicentral
-   or hyocentral can be selected Magnitude calibration type;
-   :confval:`magnitudes.$name.calibrationType`; parametric; parametric and A0 (non-parametric) are available
+   Distance type; :confval:`magnitudes.$name.distMode`; hypocentral; epicentral or hypocentral can be selected 
+   Magnitude calibration type; :confval:`magnitudes.$name.calibrationType`; parametric; parametric and A0 (non-parametric) are available
    **parametric** calibration;;; Parameters are used for :confval:`magnitudes.$name.calibrationType` = parametric
    ;:confval:`magnitudes.$name.parametric.c0`;0.0;
    ;:confval:`magnitudes.$name.parametric.c1`;0.69;
