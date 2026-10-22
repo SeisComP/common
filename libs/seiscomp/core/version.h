@@ -56,6 +56,11 @@ namespace Core {
    - Change Seiscomp::IO::VBinaryArchive::VBinaryArchive prototype
    - Added Seiscomp::Gui::PickerView::Config::initialAlignment
    - Added Seiscomp::Gui::PickerView::Config::showArrivalResiduals
+   - Seiscomp::DataModel::DatabaseArchive inherits Seiscomp::Core::BaseObject
+   - Removed Seiscomp::DataModel::DatabaseArchive::registerId
+   - Removed Seiscomp::DataModel::DatabaseArchive::getCacheSize
+   - Made Seiscomp::DataModel::DatabaseArchive::publicObjectId public
+   - Made Seiscomp::DataModel::DatabaseArchive::objectId public
 
  "17.5.0"   0x110500
    - Added signal Seiscomp::Gui::EventListView::eventAdded

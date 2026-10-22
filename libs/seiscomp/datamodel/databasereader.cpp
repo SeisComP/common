@@ -234,8 +234,6 @@ EventParameters* DatabaseReader::loadEventParameters() {
 
 	load(eventParameters);
 
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-
 	return eventParameters;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1468,8 +1466,6 @@ Config* DatabaseReader::loadConfig() {
 
 	load(config);
 
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-
 	return config;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1784,8 +1780,6 @@ QualityControl* DatabaseReader::loadQualityControl() {
 
 	load(qualityControl);
 
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-
 	return qualityControl;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1907,8 +1901,6 @@ Inventory* DatabaseReader::loadInventory() {
 	Inventory *inventory = new Inventory;
 
 	load(inventory);
-
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
 
 	return inventory;
 }
@@ -2806,8 +2798,6 @@ Routing* DatabaseReader::loadRouting() {
 
 	load(routing);
 
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-
 	return routing;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2978,8 +2968,6 @@ Journaling* DatabaseReader::loadJournaling() {
 
 	load(journaling);
 
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
-
 	return journaling;
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3037,8 +3025,6 @@ ArclinkLog* DatabaseReader::loadArclinkLog() {
 	ArclinkLog *arclinkLog = new ArclinkLog;
 
 	load(arclinkLog);
-
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
 
 	return arclinkLog;
 }
@@ -3209,8 +3195,6 @@ DataAvailability* DatabaseReader::loadDataAvailability() {
 	DataAvailability *dataAvailability = new DataAvailability;
 
 	load(dataAvailability);
-
-	SEISCOMP_DEBUG("objects in cache: %d", getCacheSize());
 
 	return dataAvailability;
 }

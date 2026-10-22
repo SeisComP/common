@@ -203,7 +203,7 @@ class SC_SYSTEM_CORE_API DatabaseObjectWriter : protected Visitor {
  * \brief schema objects from and to a database.
  */
 class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
-                                           public Observer {
+                                           public Core::BaseObject {
 	// ----------------------------------------------------------------------
 	//  Public types
 	// ----------------------------------------------------------------------
@@ -344,17 +344,19 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		size_t getObjectCount(const PublicObject *parent,
 		                      const Seiscomp::Core::RTTI &classType);
 
-
-		//! Returns the database id for an object
-		//! @return The id or 0 of no id was cached for this object
-		OID getCachedId(const Object*) const;
-
 		/**
 		 * Returns the publicID of the parent object if any.
 		 * @param object The PublicObject whose parent is queried.
 		 * @return The publicID of the parent or an empty string.
 		 */
 		std::string parentPublicID(const PublicObject *object);
+
+		//! Queries for the database id of a PublicObject for
+		//! a given publicID
+		OID publicObjectId(const std::string& publicId);
+
+		//! Queries for the database id of an Object
+		OID objectId(Object*, const std::string& parentID);
 
 		/**
 		 * Inserts an object into the database.
@@ -492,13 +494,6 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 
 	// ------------------------------------------------------------------
-	//  Protected observer interface
-	// ------------------------------------------------------------------
-	protected:
-		virtual void onObjectDestroyed(Object* object) override;
-
-
-	// ------------------------------------------------------------------
 	//  Protected interface
 	// ------------------------------------------------------------------
 	protected:
@@ -529,12 +524,15 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 
 		bool validInterface() const;
 
-		//! Associates an objects with an id and caches
-		//! this information
-		void registerId(const Object*, OID id);
-
-		//! Returns the number of cached object
-		int getCacheSize() const;
+		/**
+		 * @brief Dummy method which always returns 0.
+		 * The version in API < 18 returned the number of mapped objects to
+		 * database IDs. This "cache" has been removed and to maintain
+		 * compatibility with generated code (extern datamodels), this method
+		 * has been preserved and will be removed in the future.
+		 * @return Zero!
+		 */
+		[[deprecated]] int getCacheSize() const;
 
 		//! Serializes an objects and registeres its id in the cache
 		void serializeObject(Object*);
@@ -547,11 +545,10 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	//  Privates types
 	// ----------------------------------------------------------------------
 	private:
-		typedef std::map<const Object*, OID> ObjectIdMap;
-		typedef std::map<std::string, OPT(std::string)> AttributeMap;
+		using AttributeMap = std::map<std::string, OPT(std::string)>;
 
-		typedef std::pair<std::string, AttributeMap> ChildTable;
-		typedef std::list<ChildTable> ChildTables;
+		using ChildTable = std::pair<std::string, AttributeMap>;
+		using ChildTables = std::list<ChildTable>;
 
 
 	// ----------------------------------------------------------------------
@@ -559,9 +556,6 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	// ----------------------------------------------------------------------
 	private:
 		bool fetchVersion();
-
-		//! Removes an objects from the id cache
-		void removeId(Object*);
 
 		//! Returns the current field content
 		const char* cfield() const { return _field; }
@@ -591,16 +585,9 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		void renderValues(const AttributeMap&);
 
 		//! Returns an iterator for objects of a given type.
-		DatabaseIterator getObjectIterator(OID parentID,
+		DatabaseIterator getObjectIterator(const std::string &parentID,
 		                                   const Seiscomp::Core::RTTI& classType,
-		                                   bool ignorePublicObject = false);
-
-		//! Queries for the database id of a PublicObject for
-		//! a given publicID
-		OID publicObjectId(const std::string& publicId);
-
-		//! Queries for the database id of an Object
-		OID objectId(Object*, const std::string& parentID);
+		                                   bool ignorePublicObject);
 
 		//! Insert a base object column and return its database id
 		OID insertObject();
@@ -620,8 +607,6 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 		std::string _errorMsg;
 		std::string _publicIDColumn;
 
-		mutable std::mutex _objectIdMutex;
-		mutable ObjectIdMap _objectIdCache;
 		mutable int _fieldIndex;
 		mutable const char* _field;
 		mutable size_t _fieldSize;
@@ -646,6 +631,12 @@ class SC_SYSTEM_CORE_API DatabaseArchive : protected Core::Archive,
 	friend class AttributeMapper;
 	friend class ValueMapper;
 };
+
+
+inline int DatabaseArchive::getCacheSize() const {
+	return 0;
+}
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
