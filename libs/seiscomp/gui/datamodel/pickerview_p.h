@@ -46,6 +46,22 @@ namespace Gui {
 class SpectrogramSettings;
 
 
+namespace PrivatePickerView {
+
+
+//! The data importances of the time, backazimuth and slowness datum of an
+//! arrival as stored by LOCSAT in the origin comment "locsat/importance".
+//! Negative values refer to data which were not defining.
+struct DataImportance {
+	double time{-1};
+	double backazimuth{-1};
+	double slowness{-1};
+};
+
+
+}
+
+
 class PickerViewPrivate {
 	private:
 		struct WaveformRequest {
@@ -94,6 +110,8 @@ class PickerViewPrivate {
 		RecordWidget                       *currentRecord;
 		TimeScale                          *timeScale;
 		Seiscomp::DataModel::OriginPtr      origin;
+		// The data importances of the origin arrivals by pick ID
+		QHash<QString, PrivatePickerView::DataImportance> importances;
 
 		Core::TimeWindow                    timeWindowOfInterest;
 
