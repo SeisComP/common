@@ -2770,6 +2770,7 @@ void PickerView::init() {
 
 	SC_D.ui.setupUi(this);
 	SC_D.ui.actionShowTraceValuesInNmS->setChecked(SC_D.config.showDataInSensorUnit);
+	SC_D.ui.actionShowArrivalResiduals->setChecked(SC_D.config.showArrivalResiduals);
 
 	QFont f(font());
 	f.setBold(true);
@@ -3942,6 +3943,10 @@ bool PickerView::setConfig(const Config &c, QString *error) {
 	SC_D.ui.actionLimitFilterToZoomTrace->setChecked(SC_D.config.limitFilterToZoomTrace);
 
 	showTraceScaleToggled(SC_D.config.showDataInSensorUnit);
+
+	SC_D.ui.actionShowArrivalResiduals->setChecked(SC_D.config.showArrivalResiduals);
+	showArrivalResiduals(SC_D.config.showArrivalResiduals);
+
 	initPhases();
 	acquireStreams();
 

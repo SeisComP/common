@@ -261,6 +261,7 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.cbAllComponents->setChecked(_pickerConfig.loadAllComponents);
 	_ui.cbLoadAllPicks->setChecked(_pickerConfig.loadAllPicks);
 	_ui.cbShowSensorUnits->setChecked(_pickerConfig.showDataInSensorUnit);
+	_ui.cbShowArrivalResiduals->setChecked(_pickerConfig.showArrivalResiduals);
 	_ui.cbStrongMotion->setChecked(_pickerConfig.loadStrongMotionData);
 	_ui.cbLimitStationCount->setChecked(_pickerConfig.limitStations);
 	_ui.spinLimitStationCount->setValue(_pickerConfig.limitStationCount);
@@ -538,6 +539,7 @@ PickerView::Config PickerSettings::pickerConfig() const {
 	_pickerConfig.loadAllComponents = _ui.cbAllComponents->isChecked();
 	_pickerConfig.loadAllPicks = _ui.cbLoadAllPicks->isChecked();
 	_pickerConfig.showDataInSensorUnit = _ui.cbShowSensorUnits->isChecked();
+	_pickerConfig.showArrivalResiduals = _ui.cbShowArrivalResiduals->isChecked();
 	_pickerConfig.loadStrongMotionData = _ui.cbStrongMotion->isChecked();
 	_pickerConfig.limitStations = _ui.cbLimitStationCount->isChecked();
 	_pickerConfig.limitStationCount = _ui.spinLimitStationCount->value();

@@ -339,6 +339,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="cbShowArrivalResiduals">
+         <property name="toolTip">
+          <string>Shows the time residuals of the arrivals next to their phase labels when the picker is opened. The display can be toggled with Ctrl+R.</string>
+         </property>
+         <property name="text">
+          <string>Show arrival residuals</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout">
          <property name="spacing">
           <number>6</number>
