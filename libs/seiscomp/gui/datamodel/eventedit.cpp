@@ -2128,14 +2128,18 @@ void EventEdit::handleOrigins(const QList<DataModel::Origin*> &origins) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void EventEdit::onObjectAdded(Object* parent, Object* newChild) {
-	if ( _blockObserver ) return;
+void EventEdit::onObjectAdded(Object *parent, Object *newChild) {
+	if ( _blockObserver ) {
+		return;
+	}
 
 	// Only allow modifications in this thread
-	if ( QThread::currentThread() != thread() ) return;
+	if ( QThread::currentThread() != thread() ) {
+		return;
+	}
 
-	PublicObject *po = PublicObject::Cast(parent);
-	addObject(po?po->publicID().c_str():"", newChild);
+	auto *po = PublicObject::Cast(parent);
+	addObject(po ? po->publicID().c_str() : "", newChild);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2173,32 +2177,42 @@ void EventEdit::onObjectModified(Object* object) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventEdit::addObject(const QString &parentID, Object *obj) {
-	if ( !_currentEvent ) return;
+	if ( !_currentEvent ) {
+		return;
+	}
 
 	if ( parentID == _currentEvent->publicID().c_str() ) {
 		OriginReference *ref = OriginReference::Cast(obj);
 		if ( ref ) {
-			for ( int i = 0; i < _originTree->topLevelItemCount(); ++i )
-				if ( _originTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString() == ref->originID() )
+			for ( int i = 0; i < _originTree->topLevelItemCount(); ++i ) {
+				if ( _originTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString() == ref->originID() ) {
 					return;
+				}
+			}
 
 			OriginPtr org = Origin::Find(ref->originID());
-			if ( !org && _reader )
+			if ( !org && _reader ) {
 				org = Origin::Cast(_reader->getObject(Origin::TypeInfo(), ref->originID()));
+			}
 
-			if ( !org ) return;
+			if ( !org ) {
+				return;
+			}
 
-			if ( org->magnitudeCount() == 0 && _reader )
+			if ( org->magnitudeCount() == 0 && _reader ) {
 				_reader->loadMagnitudes(org.get());
+			}
 
 			storeOrigin(org.get());
 			insertOriginRow(org.get());
 
-			if ( _preferredOriginIdx != -1 )
+			if ( _preferredOriginIdx != -1 ) {
 				++_preferredOriginIdx;
+			}
 
-			for (int i = 0; i < _originTree->columnCount(); i++)
+			for (int i = 0; i < _originTree->columnCount(); i++) {
 				_originTree->resizeColumnToContents(i);
+			}
 
 			sortOriginItems(_originTree->header()->sortIndicatorSection());
 
@@ -2207,26 +2221,33 @@ void EventEdit::addObject(const QString &parentID, Object *obj) {
 
 		FocalMechanismReference *fmRef = FocalMechanismReference::Cast(obj);
 		if ( fmRef ) {
-			for ( int i = 0; i < _ui.fmTree->topLevelItemCount(); ++i )
-				if ( _ui.fmTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString() == fmRef->focalMechanismID() )
+			for ( int i = 0; i < _ui.fmTree->topLevelItemCount(); ++i ) {
+				if ( _ui.fmTree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString() == fmRef->focalMechanismID() ) {
 					return;
+				}
+			}
 
 			FocalMechanismPtr fm = FocalMechanism::Find(fmRef->focalMechanismID());
-			if ( !fm && _reader )
+			if ( !fm && _reader ) {
 				fm = FocalMechanism::Cast(_reader->getObject(FocalMechanism::TypeInfo(), fmRef->focalMechanismID()));
+			}
 
-			if ( !fm ) return;
+			if ( !fm ) {
+				return;
+			}
 
 			if ( fm->momentTensorCount() == 0 && _reader ) {
 				_reader->loadMomentTensors(fm.get());
 				for ( size_t i = 0; i < fm->momentTensorCount(); ++i ) {
 					std::string derivedID = fm->momentTensor(i)->derivedOriginID();
 					OriginPtr derived = Origin::Find(derivedID);
-					if ( !derived )
+					if ( !derived ) {
 						derived = Origin::Cast(_reader->getObject(Origin::TypeInfo(), derivedID));
+					}
 					if ( derived ) {
-						if ( derived->magnitudeCount() == 0 && _reader )
+						if ( derived->magnitudeCount() == 0 && _reader ) {
 							_reader->loadMagnitudes(derived.get());
+						}
 						storeDerivedOrigin(derived.get());
 					}
 				}
@@ -2235,11 +2256,13 @@ void EventEdit::addObject(const QString &parentID, Object *obj) {
 			storeFM(fm.get());
 			insertFMRow(fm.get());
 
-			if ( _preferredFMIdx != -1 )
+			if ( _preferredFMIdx != -1 ) {
 				++_preferredFMIdx;
+			}
 
-			for (int i = 0; i < _ui.fmTree->columnCount(); i++)
+			for (int i = 0; i < _ui.fmTree->columnCount(); i++) {
 				_ui.fmTree->resizeColumnToContents(i);
+			}
 
 			sortFMItems(_ui.fmTree->header()->sortIndicatorSection());
 
@@ -2252,8 +2275,9 @@ void EventEdit::addObject(const QString &parentID, Object *obj) {
 		if ( mag ) {
 			addMagnitude(mag);
 
-			for ( int i = 0; i < _ui.treeMagnitudes->columnCount(); i++ )
+			for ( int i = 0; i < _ui.treeMagnitudes->columnCount(); i++ ) {
 				_ui.treeMagnitudes->resizeColumnToContents(i);
+			}
 
 			return;
 		}
@@ -2263,11 +2287,13 @@ void EventEdit::addObject(const QString &parentID, Object *obj) {
 		if ( mt ) {
 			std::string derivedID = mt->derivedOriginID();
 			OriginPtr derived = Origin::Find(derivedID);
-			if ( !derived && _reader )
+			if ( !derived && _reader ) {
 				derived = Origin::Cast(_reader->getObject(Origin::TypeInfo(), derivedID));
+			}
 			if ( derived ) {
-				if ( derived->magnitudeCount() == 0 && _reader )
+				if ( derived->magnitudeCount() == 0 && _reader ) {
 					_reader->loadMagnitudes(derived.get());
+				}
 				storeDerivedOrigin(derived.get());
 			}
 
@@ -2278,7 +2304,9 @@ void EventEdit::addObject(const QString &parentID, Object *obj) {
 		Comment *comment = Comment::Cast(obj);
 		if ( comment ) {
 			Origin *org = Origin::Find((const char*)parentID.toLatin1());
-			if ( org ) updateOrigin(org);
+			if ( org ) {
+				updateOrigin(org);
+			}
 			return;
 		}
 

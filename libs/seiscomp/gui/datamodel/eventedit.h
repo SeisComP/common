@@ -259,9 +259,9 @@ class SC_GUI_API EventEdit : public QWidget, public DataModel::Observer {
 		void updatePreferredMagnitudeIndex();
 		void updatePreferredFMIndex();
 
-		void onObjectAdded(DataModel::Object* parent, DataModel::Object* newChild);
-		void onObjectRemoved(DataModel::Object* parent, DataModel::Object* oldChild);
-		void onObjectModified(DataModel::Object* object);
+		void onObjectAdded(DataModel::Object *parent, DataModel::Object *newChild) override;
+		void onObjectRemoved(DataModel::Object *parent, DataModel::Object *oldChild) override;
+		void onObjectModified(DataModel::Object *object) override;
 
 		void insertOriginRow(DataModel::Origin *);
 		void updateOriginRow(int row, DataModel::Origin *);
