@@ -159,7 +159,7 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                        double &newLat, double &newLon, double &newDepth,
 		                        Seiscomp::Core::Time &newTime,
 		                        std::vector<double> &travelTimes, CovMtrx &covm,
-		                        bool computeCovMtrx) const;
+		                        bool computeCovMtrx, int iterations) const;
 
 		void locateLeastSquares(const PickList &pickList,
 		                        const std::vector<double> &weights,
@@ -177,6 +177,14 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 		                             CovMtrx &covmOut) const;
 
 		void computeCovarianceMatrix(const System &eq, CovMtrx &covmOut) const;
+
+		void computeLinearizedCovarianceMatrix(
+		    const PickList &pickList, const std::vector<double> &weights,
+		    const std::vector<double> &sensorLat,
+		    const std::vector<double> &sensorLon,
+		    const std::vector<double> &sensorElev, double lat, double lon,
+		    double depth, const Seiscomp::Core::Time &time,
+		    CovMtrx &covmOut) const;
 
 		Seiscomp::DataModel::Origin *
 		createOrigin(const PickList &pickList, const std::vector<double> &weights,

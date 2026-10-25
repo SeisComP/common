@@ -1021,7 +1021,8 @@ Origin *StdLoc::locate(PickList &pickList) {
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
-			                   originTime, travelTimes, covm, computeCovMtrx);
+			                   originTime, travelTimes, covm, computeCovMtrx,
+			                   _currentProfile.leastSquares.iterations);
 		}
 	}
 	else if ( _currentProfile.method == Profile::Method::LeastSquares ) {
@@ -1090,14 +1091,16 @@ Origin *StdLoc::locate(PickList &pickList, double initLat, double initLon,
 			locateLeastSquares(pickList, weights, sensorLat, sensorLon,
 			                   sensorElev, originLat, originLon, originDepth,
 			                   originTime, originLat, originLon, originDepth,
-			                   originTime, travelTimes, covm, computeCovMtrx);
+			                   originTime, travelTimes, covm, computeCovMtrx,
+			                   _currentProfile.leastSquares.iterations);
 		}
 	}
 	else if ( _currentProfile.method == Profile::Method::LeastSquares ) {
 		locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
 		                   initLat, initLon, initDepth, initTime, originLat,
 		                   originLon, originDepth, originTime, travelTimes,
-		                   covm, computeCovMtrx);
+		                   covm, computeCovMtrx,
+		                   _currentProfile.leastSquares.iterations);
 	}
 
 	return createOrigin(pickList, weights, sensorLat, sensorLon, sensorElev,
@@ -1710,7 +1713,15 @@ void StdLoc::locateOctTree(const PickList &pickList,
 	}
 
 	// compute covariance matrix
-	if ( computeCovMtrx ) {
+	if ( computeCovMtrx && usingFixedDepth() ) {
+		// The grid samples a single depth, so the probability density
+		// cannot tell how well the depth is constrained: use the linearized
+		// problem at the solution, as Least Squares does
+		computeLinearizedCovarianceMatrix(pickList, weights, sensorLat,
+		                                  sensorLon, sensorElev, newLat,
+		                                  newLon, newDepth, newTime, covm);
+	}
+	else if ( computeCovMtrx ) {
 		// convert priorityList: map<double,Cell> -> vector<Cell>
 		vector<Cell> cells;
 		std::transform(begin(priorityList), end(priorityList),
@@ -1898,7 +1909,8 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 				                   sensorElev, cell.org.lat, cell.org.lon,
 				                   cell.org.depth, cell.org.time, cell.org.lat,
 				                   cell.org.lon, cell.org.depth, cell.org.time,
-				                   cellTravelTimes, covm, computeCovMtrx);
+				                   cellTravelTimes, covm, computeCovMtrx,
+				                   _currentProfile.leastSquares.iterations);
 			}
 			catch ( exception &e ) {
 				continue;
@@ -1955,7 +1967,17 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 
 	// compute covariance matrix if that is not already computed by LeastSquares
 	if ( computeCovMtrx && !enablePerCellLeastSquares ) {
-		computeCovarianceMatrix(cells, best.cell, true, covm);
+		if ( usingFixedDepth() ) {
+			// The grid samples a single depth, so the probability density
+			// cannot tell how well the depth is constrained: use the
+			// linearized problem at the solution, as Least Squares does
+			computeLinearizedCovarianceMatrix(pickList, weights, sensorLat,
+			                                  sensorLon, sensorElev, newLat,
+			                                  newLon, newDepth, newTime, covm);
+		}
+		else {
+			computeCovarianceMatrix(cells, best.cell, true, covm);
+		}
 	}
 	else {
 		covm = best.covm;
@@ -1995,7 +2017,8 @@ void StdLoc::locateLeastSquares(
 	locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
 	                   initLat, initLon, initDepth, initTime,
 	                   newLat, newLon, newDepth, newTime,
-	                   travelTimes, covm, computeCovMtrx);
+	                   travelTimes, covm, computeCovMtrx,
+	                   _currentProfile.leastSquares.iterations);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2008,12 +2031,12 @@ void StdLoc::locateLeastSquares(
     const vector<double> &sensorElev, double initLat, double initLon,
     double initDepth, Core::Time initTime, double &newLat, double &newLon,
     double &newDepth, Core::Time &newTime, vector<double> &travelTimes,
-    CovMtrx &covm, bool computeCovMtrx) const {
+    CovMtrx &covm, bool computeCovMtrx, int iterations) const {
 
 	SEISCOMP_DEBUG("Start Least Square with initial lat %g lon %g depth %g "
 	               "time %s. Num iterations %d",
 	               initLat, initLon, initDepth, initTime.iso().c_str(),
-	               _currentProfile.leastSquares.iterations);
+	               iterations);
 
 	if ( !_ttt ) {
 		throw LocatorException(
@@ -2064,12 +2087,12 @@ void StdLoc::locateLeastSquares(
 	// improve the previous solution
 	//
 	for ( int iteration = 0;
-	      iteration <= _currentProfile.leastSquares.iterations;
+	      iteration <= iterations;
 	      ++iteration ) {
 
 		// the last additional iteration is for final stats (no inversion)
 		bool lastIteration =
-		    (iteration == _currentProfile.leastSquares.iterations);
+		    (iteration == iterations);
 
 		// recover an error by reverting to the last valid solution
 		// E.g. the location moves outside the ttt boundary but we keep
@@ -2192,6 +2215,9 @@ void StdLoc::locateLeastSquares(
 			eq.G[i][2] = -dtdhs[i];               // dz [sec/km]
 			eq.G[i][3] = 1.;                      // dtime [sec]
 
+			// With fixed depth the depth derivative is kept for the
+			// covariance matrix: it then describes how well the depth
+			// would be constrained by the data at the fixed depth
 			if ( usingFixedDepth() && !(lastIteration && computeCovMtrx) ) {
 				eq.G[i][2] = 0;                   // dz [sec/km]
 			}
@@ -2478,6 +2504,12 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	// of magnitude of NonLinLoc. LOCSAT seems to be using sigma^2 = 1,
 	// so the resulting confidence ellipsoid is bigger
 	//
+	// With fixed depth the covariance matrix is still computed for all
+	// the 4 parameters: the depth uncertainty tells how well the data would
+	// constrain the depth and the horizontal uncertainties include the
+	// trade-off with the depth, which is not exactly known. nfd is then
+	// computed for 4 parameters too, which is the conservative choice
+	//
 	covm.valid = false;
 
 	//
@@ -2492,12 +2524,12 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 		sigma2 += wr * wr;
 	}
 
-	if ( validArrivals <= (usingFixedDepth() ? 3 : 4) ) {
+	if ( validArrivals <= 4 ) {
 		SEISCOMP_DEBUG(
 		    "Cannot compute covariance matrix: less than 5 arrivals");
 		return;
 	}
-	sigma2 /= validArrivals - (usingFixedDepth() ? 3 : 4);
+	sigma2 /= validArrivals - 4;
 
 	//
 	// Compute G.T * W^2 * G
@@ -2540,8 +2572,15 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	std::array<std::array<double, 4>, 4> inverseGtG;
 	if ( !invertMatrix4x4(GtG, inverseGtG) ) {
-		SEISCOMP_DEBUG(
-		    "Cannot compute covariance matrix: G.T*G not invertible");
+		if ( usingFixedDepth() ) {
+			SEISCOMP_WARNING(
+			    "Cannot compute covariance matrix: G.T*G not invertible, "
+			    "the depth is not constrained by the data");
+		}
+		else {
+			SEISCOMP_DEBUG(
+			    "Cannot compute covariance matrix: G.T*G not invertible");
+		}
 		return;
 	}
 
@@ -2559,6 +2598,38 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	covm.szt = inverseGtG[2][3] * sigma2;
 	covm.stt = inverseGtG[3][3] * sigma2;
 	covm.valid = true;
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void StdLoc::computeLinearizedCovarianceMatrix(
+    const PickList &pickList, const vector<double> &weights,
+    const vector<double> &sensorLat, const vector<double> &sensorLon,
+    const vector<double> &sensorElev, double lat, double lon, double depth,
+    const Core::Time &time, CovMtrx &covm) const {
+	//
+	// Compute the covariance matrix of the linearized problem at the given
+	// location, as done by Least Squares. This is a Least Squares run
+	// without iterations: only the final step that builds the equation
+	// system and computes the covariance matrix is performed
+	//
+	covm.valid = false;
+
+	double newLat, newLon, newDepth;
+	Core::Time newTime;
+	vector<double> travelTimes;
+	try {
+		locateLeastSquares(pickList, weights, sensorLat, sensorLon, sensorElev,
+		                   lat, lon, depth, time, newLat, newLon, newDepth,
+		                   newTime, travelTimes, covm, true, 0);
+	}
+	catch ( exception &e ) {
+		SEISCOMP_WARNING("Cannot compute covariance matrix: %s", e.what());
+		covm.valid = false;
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
