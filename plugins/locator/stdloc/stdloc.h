@@ -80,8 +80,9 @@ class StdLoc : public Seiscomp::Seismology::LocatorInterface {
 	// ----------------------------------------------------------------------
 	private:
 
-		// Covariance Matrix (X axis as W-E and Y axis as S-N)
-		// Since it is a diagonal matrix the duplicated values
+		// Covariance matrix of the hypocenter: x is East [km], y is North [km],
+		// z is Down (depth) [km] and t is the origin time [s].
+		// Since it is a symmetric matrix the duplicated values
 		// are commented
 		struct CovMtrx {
 			bool valid;

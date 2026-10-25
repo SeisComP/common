@@ -2458,6 +2458,15 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	//
 	//   sigma^2 = 1/nfd * sum(residual^2)
 	//
+	// Since the system is solved in a weighted least squares sense (the
+	// solver multiplies each row of G and r by the pick weight W) the same
+	// weighting is applied here, that is G and r are replaced by W*G and W*r:
+	//
+	//  covm = sigma^2 * inverse_matrix(G.T * W^2 * G)
+	//  sigma^2 = 1/nfd * sum((W*residual)^2)
+	//
+	// The weights are relative, any scaling of W cancels out in covm.
+	//
 	// nfd is the degrees of freedom (numer of phases - 4). Division by ndf rather
 	// than by n compensates for the improvement in fit resulting from the use
 	// of the arrival times from the data. However, this only partly works and
@@ -2479,7 +2488,8 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
 		if ( eq.W[ob] == 0 ) continue;
 		validArrivals++;
-		sigma2 += eq.r[ob] * eq.r[ob];
+		double wr = eq.W[ob] * eq.r[ob];
+		sigma2 += wr * wr;
 	}
 
 	if ( validArrivals <= (usingFixedDepth() ? 3 : 4) ) {
@@ -2490,17 +2500,23 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	sigma2 /= validArrivals - (usingFixedDepth() ? 3 : 4);
 
 	//
-	// Compute G.T * G
+	// Compute G.T * W^2 * G
 	//
-	std::array<std::array<double, 4>, 4> GtG = {}; // G.T * G
+	// Note: in the equation system the z axis points upwards, while the
+	// covariance matrix is returned with z pointing downwards (depth), the
+	// same convention used by computeCovarianceMatrix for Grid Search and
+	// OctTree. Hence the sign change of the depth derivative.
+	//
+	std::array<std::array<double, 4>, 4> GtG = {}; // G.T * W^2 * G
 	for ( unsigned int ob = 0; ob < eq.numRowsG; ob++ ) {
 
 		if ( eq.W[ob] == 0 ) continue;
 
-		double gLon   = eq.G[ob][0]; // dx [sec/km]
-		double gLat   = eq.G[ob][1]; // dy [sec/km]
-		double gDepth = eq.G[ob][2]; // dz [sec/km]
-		double gTime  = eq.G[ob][3]; // 1  [sec]
+		const double w = eq.W[ob];
+		double gLon   =  w * eq.G[ob][0]; // dx [sec/km]
+		double gLat   =  w * eq.G[ob][1]; // dy [sec/km]
+		double gDepth = -w * eq.G[ob][2]; // dz (depth) [sec/km]
+		double gTime  =  w * eq.G[ob][3]; // 1  [sec]
 		GtG[0][0] += gLon   * gLon;
 		GtG[0][1] += gLon   * gLat;
 		GtG[0][2] += gLon   * gDepth;
@@ -2520,7 +2536,7 @@ void StdLoc::computeCovarianceMatrix(const System &eq, CovMtrx &covm) const {
 	}
 
 	//
-	// Compute inverse_matrix(G.T * G)
+	// Compute inverse_matrix(G.T * W^2 * G)
 	//
 	std::array<std::array<double, 4>, 4> inverseGtG;
 	if ( !invertMatrix4x4(GtG, inverseGtG) ) {
