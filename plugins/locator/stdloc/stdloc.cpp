@@ -1718,7 +1718,7 @@ void StdLoc::locateOctTree(const PickList &pickList,
 		               [](decltype(priorityList)::value_type const &pair) {
 			               return pair.second;
 		               });
-		computeCovarianceMatrix(cells, bestCell, false, covm);
+		computeCovarianceMatrix(cells, bestCell, true, covm);
 	}
 	SEISCOMP_DEBUG("OctTree solution lat %g lon %g depth %g time %s ",
 	               newLat, newLon, newDepth, newTime.iso().c_str());
@@ -1955,7 +1955,7 @@ void StdLoc::locateGridSearch(const PickList &pickList,
 
 	// compute covariance matrix if that is not already computed by LeastSquares
 	if ( computeCovMtrx && !enablePerCellLeastSquares ) {
-		computeCovarianceMatrix(cells, best.cell, false, covm);
+		computeCovarianceMatrix(cells, best.cell, true, covm);
 	}
 	else {
 		covm = best.covm;
@@ -2319,12 +2319,13 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 	};
 
 	//
-	// The covariance should be computed using the expected hypocenter
-	// (that is the weigheted mean of lat, lon, depth and time)
-	// However the confidence ellipsoid is considered w.r.t. the
-	// maximum likelihood hypocenter (i.e. bestCell).
-	// So the useExpectedHypocenter allow to control the reference hypocenter
-	// to use for computing the covariance matrix
+	// The covariance is computed using the expected hypocenter
+	// (that is the weigheted mean of lat, lon, depth and time), while the
+	// confidence ellipsoid is then centered on the maximum likelihood
+	// hypocenter (i.e. bestCell), as NonLinLoc does.
+	// useExpectedHypocenter=false computes the second moment around the
+	// maximum likelihood hypocenter instead, which is not a covariance
+	// since it also contains the squared offset between the two hypocenters
 	//
 	double wmeanLat = 0, wmeanLon = 0, wmeanDepth = 0, wmeanTime = 0;
 	double weightSum = 0.0;
@@ -2367,7 +2368,8 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		weightSum += weight;
 		double rLon =
 		    computeDistance(cell.org.lat, cell.org.lon, cell.org.lat, wmeanLon);
-		if ( cell.org.lon > wmeanLon ) {
+		// normalize the longitude difference to handle the dateline
+		if ( Geo::GeoCoordinate::normalizeLon(cell.org.lon - wmeanLon) > 0 ) {
 			rLon = Math::Geo::deg2km(rLon);
 		}
 		else {
