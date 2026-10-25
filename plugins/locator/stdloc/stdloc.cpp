@@ -2803,7 +2803,8 @@ Origin *StdLoc::createOrigin(
 		}
 		else {
 
-			// M4d is the 4D matrix with X axis as S-N and Y axis as W-E
+			// M4d is the 4D matrix with X axis as S-N, Y axis as W-E and
+			// Z axis pointing downwards (North-East-Down reference frame)
 			double M4d[16] = {
 				covm.syy, covm.sxy, covm.syz, covm.syt,
 				covm.sxy, covm.sxx, covm.sxz, covm.sxt,
@@ -2868,11 +2869,7 @@ Origin *StdLoc::createOrigin(
 					        0.5);
 				}
 
-				double sx, sy, smajax, sminax, strike;
-
-				// 1D confidence intervals
-				sx = kppf[0] * pow(M4d[0], 0.5); // sxx
-				sy = kppf[0] * pow(M4d[5], 0.5); // syy
+				double smajax, sminax, strike;
 
 				// 1D confidence intervals
 				origin->setTime(DataModel::TimeQuantity(
@@ -2887,6 +2884,11 @@ Origin *StdLoc::createOrigin(
 				origin->setDepth(DataModel::RealQuantity(
 				    originDepth, sqrt(covm.szz) * kppf[0], Core::None,
 				    Core::None, _currentProfile.confLevel * 100.0));
+
+				// eigenvalues might be slightly negative due to rounding
+				// errors when a variance is 0
+				for ( double &v : eigval2d ) v = std::max(v, 0.0);
+				for ( double &v : eigval3d ) v = std::max(v, 0.0);
 
 				// 2D confidence intervals
 				sminax = kppf[1] * pow(eigval2d[0], 0.5);
@@ -2907,32 +2909,57 @@ Origin *StdLoc::createOrigin(
 				s3dIntAxis = kppf[2] * pow(eigval3d[1], 0.5);
 				s3dMajAxis = kppf[2] * pow(eigval3d[2], 0.5);
 
-				MajAxisPlunge = rad2deg(atan(
-				    eigvec3d[8] /
-				    pow(pow(eigvec3d[6], 2.0) + pow(eigvec3d[7], 2.0), 0.5)));
-				if ( MajAxisPlunge < 0.0 )
-					MajAxisPlunge += 180.0;
+				//
+				// Orientation of the ellipsoid as defined by QuakeML: Tait-Bryan
+				// angles (z-y-x) in the North-East-Down reference frame. The
+				// ellipsoid, with the major axis (X) initially pointing North
+				// and the minor one (Y) East, is rotated by MajAxisAzimuth
+				// around the Down axis, then by MajAxisPlunge around the new
+				// East axis (positive downwards) and finally by MajAxisRotation
+				// around the major axis (clockwise looking down the major axis),
+				// which defines the direction of the minor axis
+				//
+				// EISPACK stores the eigenvectors in columns: eigvec3d[3*i+k]
+				// is the k component (N, E, D) of the i-th eigenvector
+				//
+				double majN = eigvec3d[6], majE = eigvec3d[7],
+				       majD = eigvec3d[8];
+				// the axis orientation is arbitrary: make it point downwards
+				if ( majD < 0.0 ) {
+					majN = -majN;
+					majE = -majE;
+					majD = -majD;
+				}
 
-				if ( MajAxisPlunge > 180.0 )
-					MajAxisPlunge -= 180.0;
-
-				MajAxisAzimuth = rad2deg(atan(eigvec3d[7] / eigvec3d[6]));
+				double majH = sqrt(majN * majN + majE * majE);
+				MajAxisPlunge = rad2deg(atan2(majD, majH));      // [0, 90]
+				MajAxisAzimuth = rad2deg(atan2(majE, majN));     // (-180, 180]
 				if ( MajAxisAzimuth < 0.0 )
-					MajAxisAzimuth += 180.0;
+					MajAxisAzimuth += 360.0;
 
-				if ( MajAxisAzimuth > 180.0 )
-					MajAxisAzimuth -= 180.0;
+				// Axes of the reference frame after the azimuth and plunge
+				// rotations: refY is horizontal and perpendicular to the major
+				// axis, refZ = major x refY
+				double cosAz = cos(deg2rad(MajAxisAzimuth));
+				double sinAz = sin(deg2rad(MajAxisAzimuth));
+				double cosPl = cos(deg2rad(MajAxisPlunge));
+				double sinPl = sin(deg2rad(MajAxisPlunge));
+				double refY[3] = { -sinAz, cosAz, 0.0 };
+				double refZ[3] = { -sinPl * cosAz, -sinPl * sinAz, cosPl };
 
-				MajAxisRotation = rad2deg(atan(
-				    eigvec3d[2] /
-				    pow(pow(eigvec3d[0], 2.0) + pow(eigvec3d[1], 2.0), 0.5)));
-				if ( covm.szz == 0.0 )
-					MajAxisRotation = 0.0;
-
+				// The rotation aligns refY with the minor axis
+				const double *minAxis = &eigvec3d[0];
+				double minY = minAxis[0] * refY[0] + minAxis[1] * refY[1] +
+				              minAxis[2] * refY[2];
+				double minZ = minAxis[0] * refZ[0] + minAxis[1] * refZ[1] +
+				              minAxis[2] * refZ[2];
+				MajAxisRotation = rad2deg(atan2(minZ, minY));
+				// the axis orientation is arbitrary: give the rotation in
+				// the [0.0, 180.0) interval
 				if ( MajAxisRotation < 0.0 )
 					MajAxisRotation += 180.0;
 
-				if ( MajAxisRotation > 180.0 )
+				if ( MajAxisRotation >= 180.0 )
 					MajAxisRotation -= 180.0;
 
 				DataModel::ConfidenceEllipsoid confidenceEllipsoid;
@@ -2947,10 +2974,10 @@ Origin *StdLoc::createOrigin(
 				confidenceEllipsoid.setMajorAxisRotation(MajAxisRotation);
 
 				// QuakeML, horizontalUncertainty: Circular confidence region,
-				// given by single value of horizontal uncertainty. Acordingly,
-				// 1D horizontal errors quadratic mean is given
-				originUncertainty.setHorizontalUncertainty(
-				    sqrt(pow(sx, 2) + pow(sy, 2)));
+				// given by single value of horizontal uncertainty. Accordingly,
+				// the radius of the circle enclosing the 2D confidence ellipse
+				// is given
+				originUncertainty.setHorizontalUncertainty(smajax);
 				originUncertainty.setMinHorizontalUncertainty(sminax);
 				originUncertainty.setMaxHorizontalUncertainty(smajax);
 				originUncertainty.setAzimuthMaxHorizontalUncertainty(strike);
