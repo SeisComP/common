@@ -96,6 +96,15 @@
 							<description>
 							Compute the hypocenter confidence ellipsoid. Disable
 							this optional parameter to save some computation time.
+							When the depth is fixed, the uncertainties are still
+							computed for all the hypocenter parameters, as if the
+							depth were free: the depth uncertainty tells how well
+							the data constrain the depth at the fixed value and
+							the horizontal uncertainties include the trade-off
+							with the depth. For this, GridSearch and OctTree use
+							the linearized problem at the solution, as
+							LeastSquares does. If the depth is not constrained
+							at all by the data, no uncertainty is computed.
 							</description>
 						</parameter>
 						<group name="GridSearch">
