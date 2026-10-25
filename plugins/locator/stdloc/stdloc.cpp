@@ -1274,12 +1274,19 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 	double l1SumWeightedResiduals = 0.0;
 	double l2SumWeightedResiduals = 0.0;
 	double sumWeights = 0.0;
+	double sumAllWeights = 0.0;
 
 	for ( size_t i = 0; i < pickList.size(); ++i ) {
 		const PickItem &pi = pickList[i];
 		const PickPtr pick = pi.pick;
 
-		if ( weights[i] <= 0 || travelTimes[i] < 0 ) {
+		if ( weights[i] <= 0 ) {
+			continue;
+		}
+
+		sumAllWeights += weights[i];
+
+		if ( travelTimes[i] < 0 ) {
 			continue;
 		}
 
@@ -1297,14 +1304,18 @@ void StdLoc::computeProbDensity(const PickList &pickList,
 	}
 
 	//
-	// Compute the non-normalized probability density (likelihood function)
+	// Compute the non-normalized probability density (likelihood function).
+	// When some travel times cannot be computed for this location the sum is
+	// rescaled to the total pick weight, so that locations where fewer picks
+	// contribute are not favoured.
 	//
+	const double weightScale = sumAllWeights / sumWeights;
 	if ( _currentProfile.gridSearch.misfitType == "L1" ) {
-		probDensity = -1.0 * (l1SumWeightedResiduals / sumWeights)
+		probDensity = -1.0 * (l1SumWeightedResiduals * weightScale)
 		     / sigma;
 	}
 	else if ( _currentProfile.gridSearch.misfitType == "L2" ) {
-		probDensity = -0.5 * (l2SumWeightedResiduals / sumWeights)
+		probDensity = -0.5 * (l2SumWeightedResiduals * weightScale)
 		     / (sigma * sigma);
 	}
 	//
