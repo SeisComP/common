@@ -104,6 +104,24 @@ class FancyView : public QAbstractItemView {
 		 */
 		void applyDefaultExpandLevel(bool force = false);
 
+		/**
+		 * @brief Sets whether the descriptions of parameter groups are
+		 *        hidden, applies to the views created afterwards.
+		 */
+		static void setGroupDescriptionsHidden(bool hidden);
+
+		/**
+		 * @brief Returns whether the descriptions of parameter groups are
+		 *        hidden.
+		 */
+		static bool groupDescriptionsHidden();
+
+		/**
+		 * @brief Shows or hides the descriptions of the parameter groups as
+		 *        set by setGroupDescriptionsHidden.
+		 */
+		void applyGroupDescriptions();
+
 
 	// ------------------------------------------------------------------
 	//  Public interface
