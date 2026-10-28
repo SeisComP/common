@@ -524,19 +524,25 @@ class VisibilityBlocker {
 		QWidget *_w;
 };
 
+
+bool isDescriptionHidden(const QWidget *desc) {
+	return desc->property("groupDescription").toBool()
+	       && FancyView::groupDescriptionsHidden();
+}
+
+
 void setBlockExpanded(QWidget *block, QWidget *desc, bool expanded) {
 	if ( !desc ) {
 		block->setVisible(expanded);
 		return;
 	}
 
-	block->setVisible(true);
+	const bool descVisible = !isDescriptionHidden(desc);
+	block->setVisible(expanded || descVisible);
 
 	for ( auto *child : block->findChildren<QWidget*>(
 	                        QString(), Qt::FindDirectChildrenOnly) ) {
-		if ( child != desc ) {
-			child->setVisible(expanded);
-		}
+		child->setVisible(child == desc ? descVisible : expanded);
 	}
 }
 
@@ -2918,6 +2924,7 @@ namespace {
 
 
 int defaultExpandLevel = FancyView::DefaultExpandLevel;
+bool hideGroupDescriptions = false;
 
 
 }
@@ -2930,6 +2937,40 @@ void FancyView::setDefaultExpandLevel(int level) {
 
 int FancyView::expandLevelDefault() {
 	return defaultExpandLevel;
+}
+
+
+void FancyView::setGroupDescriptionsHidden(bool hidden) {
+	hideGroupDescriptions = hidden;
+}
+
+
+bool FancyView::groupDescriptionsHidden() {
+	return hideGroupDescriptions;
+}
+
+
+void FancyView::applyGroupDescriptions() {
+	if ( !_rootWidget ) {
+		return;
+	}
+
+	UpdatesBlocker blockUpdates(_rootWidget);
+	VisibilityBlocker blockLayout(_rootWidget);
+
+	for ( const auto &item : _viewItems ) {
+		auto *desc = item.description;
+		if ( !desc || !item.toggle || !desc->property("groupDescription").toBool() ) {
+			continue;
+		}
+
+		if ( desc->parentWidget() == item.block ) {
+			setBlockExpanded(item.block, desc, item.toggle->isChecked());
+		}
+		else {
+			desc->setHidden(isDescriptionHidden(desc));
+		}
+	}
 }
 
 
@@ -4194,6 +4235,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group,
 	if ( !group->definition->description.empty() ) {
 		auto desc = new DescLabel;
 		desc->setText(group->definition->description.c_str());
+		desc->setProperty("groupDescription", true);
 		item.description = desc;
 	}
 
@@ -4209,6 +4251,7 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item, Group *group,
 
 		if ( item.description ) {
 			headLayout->addWidget(item.description);
+			item.description->setHidden(isDescriptionHidden(item.description));
 		}
 
 		headParameters = populateParameters(headLayout, item.index);

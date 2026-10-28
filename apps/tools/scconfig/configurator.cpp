@@ -1728,6 +1728,19 @@ Configurator::Configurator(Environment::ConfigStage stage, QWidget *parent)
 	a->setToolTip(tr("Switch module configuration between system and user mode"));
 	connect(a, &QAction::triggered, this, &Configurator::switchMode);
 
+	expertMenu->addSeparator();
+
+	a = expertMenu->addAction(tr("Hide group descriptions"));
+	a->setCheckable(true);
+	a->setChecked(FancyView::groupDescriptionsHidden());
+	a->setToolTip(tr("Do not show the descriptions of parameter groups"));
+	connect(a, &QAction::toggled, this, [this](bool hidden) {
+		FancyView::setGroupDescriptionsHidden(hidden);
+		for ( auto *view : findChildren<FancyView*>() ) {
+			view->applyGroupDescriptions();
+		}
+	});
+
 	a = _toolBar->addAction(tr("Expert"));
 	a->setIcon(::icon("menu"));
 	a->setToolTip(tr("Settings and configuration mode"));
