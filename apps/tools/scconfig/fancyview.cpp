@@ -1294,29 +1294,27 @@ void showAsClickable(QWidget *label, bool clickable) {
 }
 
 
-QAction *makeButtonEditor(FancyViewItemEdit *edit, const QString &iconName,
-                          const QString &tooltip) {
-	auto *field = qobject_cast<QLineEdit*>(edit->widget());
-	if ( !field ) {
-		// The input field of a combo box is one of its children
-		field = edit->widget()->findChild<QLineEdit*>();
-	}
-
-	if ( !field ) {
-		return nullptr;
-	}
-
-	// Owned by 'field', so it is destroyed together with it.
+QAction *addButton(QLineEdit *field, const QString &iconName,
+                   const QString &tooltip) {
 	auto *action = field->addAction(icon(iconName), QLineEdit::TrailingPosition);
 	action->setToolTip(tooltip);
 
-	// The button showing the action is created by the line edit and would
-	// inherit its text cursor.
 	for ( auto *button : field->findChildren<QToolButton*>() ) {
 		button->setCursor(Qt::PointingHandCursor);
 	}
 
 	return action;
+}
+
+
+QAction *makeButtonEditor(FancyViewItemEdit *edit, const QString &iconName,
+                          const QString &tooltip) {
+	auto *field = qobject_cast<QLineEdit*>(edit->widget());
+	if ( !field ) {
+		field = edit->widget()->findChild<QLineEdit*>();
+	}
+
+	return field ? addButton(field, iconName, tooltip) : nullptr;
 }
 
 
@@ -1465,13 +1463,15 @@ QCheckBox *makeUniqueOption() {
 
 
 bool isListType(const Parameter *param) {
-	return param->definition->type.compare(0, 5, "list:") == 0;
+	// Support regular lists and gradients
+	const auto &type = param->definition->type;
+	return (type.compare(0, 5, "list:") == 0) || (type == "gradient");
 }
 
 
 std::string baseType(const Parameter *param) {
-	return isListType(param) ? param->definition->type.substr(5)
-	                         : param->definition->type;
+	const auto &type = param->definition->type;
+	return (type.compare(0, 5, "list:") == 0) ? type.substr(5) : type;
 }
 
 
@@ -1635,9 +1635,9 @@ class ListEditor : public QWidget {
 			_values.removeAll(QString());
 
 			_rows = new QWidget;
+			_rows->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 			_rowLayout = new QVBoxLayout(_rows);
 			_rowLayout->setContentsMargins(0, 0, 0, 0);
-			_rowLayout->setSpacing(layoutPadding() / 2);
 
 			_scroll = new QScrollArea;
 			_scroll->setFrameShape(QFrame::NoFrame);
@@ -1661,19 +1661,16 @@ class ListEditor : public QWidget {
 			auto *layout = new QVBoxLayout(this);
 			layout->setContentsMargins(0, 0, 0, 0);
 			layout->setSpacing(layoutPadding() / 2);
-			layout->addWidget(_scroll);
+			layout->addWidget(_scroll, 1);
 			layout->addWidget(_add, 0, Qt::AlignLeft);
+			layout->addStretch();
 			layout->addWidget(_warning);
 
 			QObject::connect(_add, &QToolButton::clicked, this, [this]() {
 				appendRow(QString(), true, false);
-				updateHeight();
 
-				auto *row = _rowLayout->itemAt(_rowLayout->count() - 1)->widget();
-				auto *text = row->findChild<QLineEdit*>();
-				if ( text ) {
-					text->setFocus(Qt::OtherFocusReason);
-				}
+				_rowLayout->itemAt(_rowLayout->count() - 1)->widget()
+					->setFocus(Qt::OtherFocusReason);
 			});
 
 			auto *field = qobject_cast<QLineEdit*>(_edit->widget());
@@ -1770,7 +1767,6 @@ class ListEditor : public QWidget {
 			}
 
 			updateWarnings();
-			updateHeight();
 		}
 
 		void appendRow(const QString &value, bool active, bool predefined) {
@@ -1789,7 +1785,8 @@ class ListEditor : public QWidget {
 			check->setToolTip(tr("Add this value to the configuration"));
 			check->setVisible(predefined);
 
-			auto *text = new QLineEdit(value);
+			auto *text = new QLineEdit(value, row);
+			text->setObjectName("value");
 			text->setReadOnly(predefined);
 			text->setFrame(!predefined);
 
@@ -1802,9 +1799,17 @@ class ListEditor : public QWidget {
 
 			rowLayout->addWidget(check);
 			rowLayout->addWidget(remove);
-			rowLayout->addWidget(text, 1);
 
 			const std::string type = baseType(_param);
+
+			if ( type == "gradient" ) {
+				text->hide();
+				addGradientColumns(row, rowLayout, text, predefined);
+			}
+			else {
+				rowLayout->addWidget(text, 1);
+				row->setFocusProxy(text);
+			}
 			const bool isPath = (type == "file") || (type == "directory");
 
 			if ( (type == "time") || isPath ) {
@@ -1852,11 +1857,10 @@ class ListEditor : public QWidget {
 			QObject::connect(text, &QLineEdit::textEdited, this, [this, text]() {
 				commit();
 				updateWarnings();
-				showEvaluation(text);
+				showEvaluation(text, text->text());
 			});
 			QObject::connect(text, &QLineEdit::editingFinished, this, [this]() {
 				hideEvaluation();
-
 				ensurePredefined();
 			});
 			QObject::connect(remove, &QToolButton::clicked, this, [this, row]() {
@@ -1866,19 +1870,116 @@ class ListEditor : public QWidget {
 					delete entry->widget();
 					delete entry;
 					ensurePredefined();
-					updateHeight();
 					commit();
 				}
 			});
 
 			_rowLayout->addWidget(row);
+			QTimer::singleShot(10, [this]() {
+				_scroll->verticalScrollBar()->setValue(_scroll->verticalScrollBar()->maximum());
+			});
+		}
+
+		static QLineEdit *valueEdit(const QWidget *row) {
+			return row->findChild<QLineEdit*>("value");
+		}
+
+		/**
+		 * @brief Edits a gradient element value:color[:name] in three columns
+		 *        which are composed into the value of the row.
+		 */
+		void addGradientColumns(QWidget *row, QHBoxLayout *rowLayout,
+		                        QLineEdit *text, bool predefined) {
+			const QString element = unquoteValue(text->text());
+			const QString parts[] = {
+				element.section(':', 0, 0),
+				element.section(':', 1, 1),
+				element.section(':', 2)
+			};
+			const QString placeholders[] = {
+				tr("Value"), tr("Color"), tr("Name (optional)")
+			};
+			const int stretches[] = { 1, 1, 2 };
+
+			QList<QLineEdit*> columns;
+			for ( int i = 0; i < 3; ++i ) {
+				auto *column = new QLineEdit(parts[i]);
+				column->setPlaceholderText(placeholders[i]);
+				column->setReadOnly(predefined);
+				column->setFrame(!predefined);
+				rowLayout->addWidget(column, stretches[i]);
+				columns << column;
+			}
+
+			row->setFocusProxy(columns[0]);
+
+			auto compose = [text, columns]() {
+				QString element = columns[0]->text().trimmed() + ':'
+				                + columns[1]->text().trimmed();
+				const QString name = columns[2]->text().trimmed();
+				if ( !name.isEmpty() ) {
+					element += ':' + name;
+				}
+
+				text->setText(element == ":" ? QString() : quoteValue(element));
+			};
+
+			for ( auto *column : columns ) {
+				QObject::connect(column, &QLineEdit::textEdited, this,
+				                 [this, column, text, compose]() {
+					compose();
+					commit();
+					showEvaluation(column, text->text());
+				});
+				QObject::connect(column, &QLineEdit::editingFinished, this, [this]() {
+					hideEvaluation();
+					ensurePredefined();
+				});
+			}
+
+			if ( predefined ) {
+				return;
+			}
+
+			auto *color = columns[1];
+			auto *select = addButton(color, "add", tr("Select a color"));
+
+			auto showColor = [color, select]() {
+				QColor value;
+				const bool valid = parseColor(color->text(), value)
+				                || color->text().trimmed().isEmpty();
+				select->setIcon(colorSwatch(value));
+
+				QPalette pal;
+				if ( !valid ) {
+					pal.setColor(QPalette::Text, QColor(255, 127, 0));
+				}
+
+				color->setPalette(pal);
+				color->setToolTip(valid ? QString() : tr("Not a supported color"));
+			};
+
+			QObject::connect(color, &QLineEdit::textChanged, select, showColor);
+			showColor();
+
+			QObject::connect(select, &QAction::triggered, this,
+			                 [this, color, compose]() {
+				QString value;
+				if ( !selectColor(this, _param, color->text(), value) ) {
+					return;
+				}
+
+				color->setText(value);
+				compose();
+				commit();
+			});
 		}
 
 		void ensurePredefined() {
 			QStringList shown;
 
 			for ( int i = 0; i < _rowLayout->count(); ++i ) {
-				auto *text = _rowLayout->itemAt(i)->widget()->findChild<QLineEdit*>();
+				auto *text = valueEdit(_rowLayout->itemAt(i)->widget());
 				if ( text ) {
 					shown << unquoteValue(text->text());
 				}
@@ -1889,8 +1990,6 @@ class ListEditor : public QWidget {
 					appendRow(value, false, true);
 				}
 			}
-
-			updateHeight();
 		}
 
 		void commit() {
@@ -1899,7 +1998,7 @@ class ListEditor : public QWidget {
 			for ( int i = 0; i < _rowLayout->count(); ++i ) {
 				auto *row = _rowLayout->itemAt(i)->widget();
 				auto *check = row->findChild<QCheckBox*>();
-				auto *text = row->findChild<QLineEdit*>();
+				auto *text = valueEdit(row);
 				if ( !check || !text ) {
 					continue;
 				}
@@ -1919,7 +2018,7 @@ class ListEditor : public QWidget {
 			_updating = false;
 		}
 
-		void showEvaluation(QLineEdit *text) {
+		void showEvaluation(QLineEdit *text, const QString &value) {
 			auto *win = window();
 
 			if ( !_evaluation ) {
@@ -1929,7 +2028,7 @@ class ListEditor : public QWidget {
 
 			QString message;
 			QColor color;
-			evaluateText(text->text(), _param, baseType(_param), false, message, color);
+			evaluateText(value, _param, baseType(_param), false, message, color);
 
 			QPalette pal = _evaluation->palette();
 			pal.setColor(QPalette::Window, QColor(255, 255, 255, 192));
@@ -1964,7 +2063,7 @@ class ListEditor : public QWidget {
 			for ( int i = 0; i < _rowLayout->count(); ++i ) {
 				auto *row = _rowLayout->itemAt(i)->widget();
 				auto *check = row->findChild<QCheckBox*>();
-				auto *text = row->findChild<QLineEdit*>();
+				auto *text = valueEdit(row);
 				if ( !check || !text || !check->isHidden() ) {
 					continue;
 				}
@@ -2006,32 +2105,6 @@ class ListEditor : public QWidget {
 			}
 
 			return _rowLayout->count() - 1;
-		}
-
-		void updateHeight() {
-			_rows->adjustSize();
-
-			const int rows = _rowLayout->count();
-			if ( !rows ) {
-				_scroll->setFixedHeight(0);
-				return;
-			}
-
-			const int rowHeight = _rowLayout->itemAt(0)->widget()->sizeHint().height();
-
-			const int visible = qMin(rows + 1, 10);
-
-			_scroll->setFixedHeight(visible * rowHeight +
-			                        (visible - 1) * _rowLayout->spacing() +
-			                        layoutPadding());
-
-			if ( auto *win = window() ) {
-				if ( win->layout() ) {
-					win->layout()->activate();
-				}
-
-				win->resize(win->size().expandedTo(win->sizeHint()));
-			}
 		}
 
 		FancyViewItemEdit *_edit{nullptr};
@@ -5071,7 +5144,22 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 				     << valueTest
 				     << "' gradient value must contain ':' " << endl;
 			}
-			eval += "<b>Gradient value must contain ':'<b>: ";
+			eval += "<b>Gradient value must contain ':'</b>: ";
+		}
+		else {
+			// value:color[:name]
+			QColor color;
+			const QString colorText = QString::fromStdString(valueTest)
+			                          .section(':', 1, 1).trimmed();
+			if ( !parseColor(colorText, color) ) {
+				if ( verbose && !symbolURIString.empty() ) {
+					cerr << symbolURIString << param->variableName << " = '"
+					     << valueTest
+					     << "' gradient color must be a color given as keyword, "
+					        "hexadecimal digits or rgb()" << endl;
+				}
+				eval += "<b>Gradient color must be a color:</b> ";
+			}
 		}
 	}
 
