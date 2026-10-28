@@ -3982,7 +3982,6 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	layout->addWidget(header);
 
 	BlockWidget *catWidget = new BlockWidget;
-	catWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 
 	layout->addWidget(catWidget);
 
@@ -4085,7 +4084,6 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	BlockWidget *sectionWidget = new BlockWidget;
 	auto pal = sectionWidget->palette();
 	sectionWidget->setBackgroundColor(blend(pal.color(QPalette::Base), CategoryBgColor, 90));
-	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	layout->addWidget(sectionWidget);
 
 	item.block = sectionWidget;
@@ -4143,7 +4141,6 @@ bool FancyView::add(QBoxLayout *&layout, FancyViewItem &item,
 	layout->addLayout(hlayout);
 
 	auto *sectionWidget = new BlockWidget;
-	sectionWidget->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum));
 	layout->addWidget(sectionWidget);
 
 	closeOnLineClick(sectionWidget, item.toggle,
