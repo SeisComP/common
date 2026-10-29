@@ -31,12 +31,14 @@ SET(PROC_HEADERS
 	regions.h
 
 	detector.h
+
 	picker.h
 	secondarypicker.h
 	amplitudeprocessor.h
 	magnitudeprocessor.h
 )
 
+SC_ADD_SUBDIR_SOURCES(PROC filterpicker)
 SC_ADD_SUBDIR_SOURCES(PROC fx)
 SC_ADD_SUBDIR_SOURCES(PROC picker)
 SC_ADD_SUBDIR_SOURCES(PROC secondarypicker)
