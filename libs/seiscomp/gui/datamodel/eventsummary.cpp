@@ -461,7 +461,7 @@ void EventSummary::updateTimeAgo() {
 	ts = ct - _currentOrigin->time();
 	QString ago;
 
-	int sec = ts.seconds();
+	auto sec = ts.seconds();
 	if ( sec < 0 ) {
 		sec = -sec;
 		ago = "in future";
@@ -469,10 +469,10 @@ void EventSummary::updateTimeAgo() {
 	else
 		ago = "ago";
 
-	int days = sec / 86400;
-	int hours = (sec - days * 86400) / 3600;
-	int minutes = (sec - days * 86400 - hours * 3600) / 60;
-	int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
+	auto days = sec / 86400;
+	auto hours = (sec - days * 86400) / 3600;
+	auto minutes = (sec - days * 86400 - hours * 3600) / 60;
+	auto seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 	QString text;
 

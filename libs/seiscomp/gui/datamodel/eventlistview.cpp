@@ -1024,11 +1024,11 @@ class SchemeTreeItem : public TreeItem {
 
 			TimeSpan ts = Time::UTC() - Time(epoch);
 
-			int sec = ts.seconds();
-			int days = sec / 86400;
-			int hours = (sec - days * 86400) / 3600;
-			int minutes = (sec - days * 86400 - hours * 3600) / 60;
-			int seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
+			auto sec = ts.seconds();
+			auto days = sec / 86400;
+			auto hours = (sec - days * 86400) / 3600;
+			auto minutes = (sec - days * 86400 - hours * 3600) / 60;
+			auto seconds = sec - days * 86400 - hours * 3600 - 60 * minutes;
 
 			QString text;
 
