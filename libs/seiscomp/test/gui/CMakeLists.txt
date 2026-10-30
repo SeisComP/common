@@ -1,6 +1,7 @@
 SET(TESTS
 	tileindex.cpp
 	strings.cpp
+	theme.cpp
 )
 
 IF (SC_GLOBAL_GUI_QT5)
