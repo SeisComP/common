@@ -62,8 +62,10 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPainter>
 #include <QProgressBar>
 #include <QProgressDialog>
+#include <QStyledItemDelegate>
 #include <QTreeWidgetItem>
 
 #include <algorithm>
@@ -883,27 +885,33 @@ DatabaseIterator getDescriptions4Events(DatabaseArchive *ar, const EventListView
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-using SortItem = QPair<QTreeWidgetItem*, int>;
-using LessThan = bool(*)(const SortItem&, const SortItem&);
+struct SortItem {
+	QTreeWidgetItem *item;
+	int column;
+	bool hidden;
+};
+
+
+using LessThan = bool(*)(const SortItem &, const SortItem &);
 
 template <typename T>
-bool itemLessThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).value<T>() <
-	       right.first->data(right.second, Qt::UserRole).value<T>();
+bool itemLessThan(const SortItem &left, const SortItem &right) {
+	return left.item->data(left.column, Qt::UserRole).value<T>() <
+	       right.item->data(right.column, Qt::UserRole).value<T>();
 }
 
 template <typename T>
-bool itemGreaterThan(const SortItem& left, const SortItem& right) {
-	return left.first->data(left.second, Qt::UserRole).value<T>() >
-	       right.first->data(right.second, Qt::UserRole).value<T>();
+bool itemGreaterThan(const SortItem &left, const SortItem &right) {
+	return left.item->data(left.column, Qt::UserRole).value<T>() >
+	       right.item->data(right.column, Qt::UserRole).value<T>();
 }
 
-bool itemTextLessThan(const SortItem& left, const SortItem& right) {
-	return left.first->text(left.second) < right.first->text(right.second);
+bool itemTextLessThan(const SortItem &left, const SortItem &right) {
+	return left.item->text(left.column) < right.item->text(right.column);
 }
 
-bool itemTextGreaterThan(const SortItem& left, const SortItem& right) {
-	return left.first->text(left.second) > right.first->text(right.second);
+bool itemTextGreaterThan(const SortItem &left, const SortItem &right) {
+	return left.item->text(left.column) > right.item->text(right.column);
 }
 
 
@@ -983,7 +991,7 @@ class SchemeTreeItem : public TreeItem {
 			setTextAlignment(config.columnMap[COL_TIME_AGO], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_TYPE], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_FM], Qt::AlignCenter);
-			setTextAlignment(config.columnMap[COL_FELT], Qt::AlignLeft);
+			setTextAlignment(config.columnMap[COL_FELT], Qt::AlignLeft | Qt::AlignVCenter);
 			setTextAlignment(config.columnMap[COL_PHASES], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_ORIGINS], Qt::AlignCenter);
 			setTextAlignment(config.columnMap[COL_RMS], Qt::AlignCenter);
@@ -1842,10 +1850,13 @@ class EventTreeItem : public SchemeTreeItem {
 			{
 				auto desc = ev->eventDescription(EventDescriptionIndex(FELT_REPORT));
 				if ( desc ) {
-					setText(config.columnMap[COL_FELT], desc->text().c_str());
+					QString t = desc->text().c_str(); // Explicit string sharing
+					setText(config.columnMap[COL_FELT], t);
+					setToolTip(config.columnMap[COL_FELT], t);
 				}
 				else {
 					setText(config.columnMap[COL_FELT], {});
+					setToolTip(config.columnMap[COL_FELT], {});
 				}
 			}
 
@@ -2284,10 +2295,194 @@ class TreeWidget : public QTreeWidget {
 			_lastDropItem = nullptr;
 		}
 
+	protected:
+		void mousePressEvent(QMouseEvent *event) override;
+
+		void mouseMoveEvent(QMouseEvent *event) override {
+			if ( _buttonPressed && event->buttons() ) {
+				return;
+			}
+
+			QTreeWidget::mouseMoveEvent(event);
+		}
+
+		void mouseReleaseEvent(QMouseEvent *event) override {
+			if ( _buttonPressed ) {
+				return;
+			}
+
+			QTreeWidget::mouseReleaseEvent(event);
+		}
+
+		void mouseDoubleClickEvent(QMouseEvent *event) override {
+			if ( _buttonPressed ) {
+				return;
+			}
+
+			QTreeWidget::mouseDoubleClickEvent(event);
+		}
 
 	private:
 		QTreeWidgetItem *_lastDropItem{nullptr};
+		bool             _buttonPressed{false};
 };
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+constexpr int ExpandedRole = Qt::UserRole + 2;
+
+bool isMultiLine(const QTreeWidgetItem *item, int column) {
+	return item->text(column).contains('\n');
+}
+
+bool isExpandable(const QModelIndex &index) {
+	return index.data(Qt::DisplayRole).toString().contains('\n');
+}
+
+bool isCollapsed(const QModelIndex &index) {
+	return isExpandable(index) && !index.data(ExpandedRole).toBool();
+}
+
+void setAllExpanded(QTreeWidget *tree, bool expanded) {
+	for ( QTreeWidgetItemIterator it(tree); *it; ++it ) {
+		for ( int c = 0; c < tree->columnCount(); ++c ) {
+			if ( (*it)->data(c, ExpandedRole).toBool() != expanded && isMultiLine(*it, c) ) {
+				(*it)->setData(c, ExpandedRole, expanded);
+			}
+		}
+	}
+}
+
+void toggleExpanded(QTreeWidget *tree, QTreeWidgetItem *item, int column) {
+	bool expand = isMultiLine(item, column)
+	           && !item->data(column, ExpandedRole).toBool();
+
+	if ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) {
+		setAllExpanded(tree, false);
+	}
+
+	if ( isMultiLine(item, column) ) {
+		item->setData(column, ExpandedRole, expand);
+	}
+}
+
+
+class MultiLineItemDelegate : public QStyledItemDelegate {
+	public:
+		using QStyledItemDelegate::QStyledItemDelegate;
+
+		QRect buttonRect(const QStyleOptionViewItem &option,
+		                 const QModelIndex &index) const {
+			QStyleOptionViewItem opt(option);
+			initStyleOption(&opt, index);
+			auto *style = opt.widget ? opt.widget->style() : QApplication::style();
+			return style->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+		}
+
+		QSize sizeHint(const QStyleOptionViewItem &option,
+		               const QModelIndex &index) const override {
+			auto size = QStyledItemDelegate::sizeHint(option, index);
+			if ( isCollapsed(index) ) {
+				QStyleOptionViewItem opt(option);
+				initStyleOption(&opt, index);
+				opt.features &= ~QStyleOptionViewItem::HasDecoration;
+				auto *style = opt.widget ? opt.widget->style() : QApplication::style();
+				size.setHeight(style->sizeFromContents(QStyle::CT_ItemViewItem, &opt, {}, opt.widget).height());
+			}
+			return size;
+		}
+
+	protected:
+		void initStyleOption(QStyleOptionViewItem *option,
+		                     const QModelIndex &index) const override {
+			QStyledItemDelegate::initStyleOption(option, index);
+			if ( isExpandable(index) ) {
+				bool collapsed = isCollapsed(index);
+				if ( collapsed ) {
+					option->text = option->text.left(option->text.indexOf(QChar::LineSeparator)) + "...";
+				}
+				int size = option->fontMetrics.height() - 2;
+				option->icon = expandButton(option->widget, size, !collapsed);
+				option->decorationSize = QSize(size, size);
+				option->features |= QStyleOptionViewItem::HasDecoration;
+			}
+		}
+
+	private:
+		const QIcon &expandButton(const QWidget *widget, int size, bool up) const {
+			if ( _buttonSize != size ) {
+				_buttons[0] = _buttons[1] = QIcon();
+				_buttonSize = size;
+			}
+
+			auto &icon = _buttons[up];
+			if ( icon.isNull() ) {
+				auto *style = widget ? widget->style() : QApplication::style();
+				QStyleOption opt;
+				if ( widget ) {
+					opt.initFrom(widget);
+				}
+				opt.state &= ~(QStyle::State_HasFocus | QStyle::State_MouseOver);
+				opt.rect = QRect(0, 0, size, size);
+				qreal dpr = widget ? widget->devicePixelRatioF() : qApp->devicePixelRatio();
+
+				for ( auto mode : { QIcon::Normal, QIcon::Selected } ) {
+					if ( mode == QIcon::Selected ) {
+						auto color = opt.palette.color(QPalette::HighlightedText);
+						opt.palette.setColor(QPalette::ButtonText, color);
+						opt.palette.setColor(QPalette::WindowText, color);
+						opt.palette.setColor(QPalette::Text, color);
+					}
+
+					QPixmap button(opt.rect.size() * dpr);
+					button.setDevicePixelRatio(dpr);
+					button.fill(Qt::transparent);
+					QPainter p(&button);
+					style->drawPrimitive(up ? QStyle::PE_IndicatorArrowUp : QStyle::PE_IndicatorArrowDown,
+					                     &opt, &p, widget);
+					p.end();
+					icon.addPixmap(button, mode);
+				}
+			}
+			return icon;
+		}
+
+		mutable QIcon _buttons[2];
+		mutable int   _buttonSize{0};
+};
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void TreeWidget::mousePressEvent(QMouseEvent *event) {
+	_buttonPressed = false;
+
+	if ( event->button() == Qt::LeftButton ) {
+		auto index = indexAt(QT_EVENT_POS(event));
+		if ( isExpandable(index) ) {
+			QStyleOptionViewItem opt;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+			initViewItemOption(&opt);
+#else
+			opt = viewOptions();
+#endif
+			opt.rect = visualRect(index);
+			auto *delegate = static_cast<MultiLineItemDelegate*>(itemDelegate());
+			if ( delegate->buttonRect(opt, index).contains(QT_EVENT_POS(event)) ) {
+				_buttonPressed = true;
+				toggleExpanded(this, itemFromIndex(index), index.column());
+				return;
+			}
+		}
+	}
+
+	QTreeWidget::mousePressEvent(event);
+}
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -2616,6 +2811,11 @@ EventListView::EventListView(Seiscomp::DataModel::DatabaseQuery* reader, bool wi
 	SC_D._treeWidget->setMouseTracking(true);
 	SC_D._treeWidget->viewport()->installEventFilter(this);
 	SC_D._treeWidget->setAutoScroll(true);
+	SC_D._treeWidget->setItemDelegate(new MultiLineItemDelegate(SC_D._treeWidget));
+	connect(SC_D._treeWidget, &QTreeWidget::itemClicked,
+	        this, [tree = SC_D._treeWidget](QTreeWidgetItem *item, int column) {
+		toggleExpanded(tree, item, column);
+	});
 
 	l->addWidget(SC_D._treeWidget);
 
@@ -4845,8 +5045,10 @@ EventTreeItem* EventListView::addEvent(Seiscomp::DataModel::Event* event, bool f
 	else {
 		int pos = SC_D._treeWidget->topLevelItemCount();
 		for ( int i = 0; i  < SC_D._treeWidget->topLevelItemCount(); ++i ) {
-			if ( SC_D._treeWidget->topLevelItem(i)->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble()
-				  < item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble() ) {
+			auto *other = SC_D._treeWidget->topLevelItem(i);
+			if ( other == SC_D._unassociatedEventItem
+			  || other->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble()
+			   < item->data(SC_D._itemConfig.columnMap[COL_OTIME], Qt::UserRole).toDouble() ) {
 				pos = i;
 				break;
 			}
@@ -6061,6 +6263,10 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 	auto *actionCopyCell = popup.addAction(tr("Copy cell to clipboard"));
 	auto *actionCopyRow = popup.addAction(tr("Copy row to clipboard"));
 	auto *actionCopyRows = popup.addAction(tr("Copy selected rows to clipboard"));
+	popup.addSeparator();
+	auto *actionExpandAll = popup.addAction(tr("Expand all cells"));
+	auto *actionCollapseAll = popup.addAction(tr("Collapse all cells"));
+	popup.addSeparator();
 	auto *actionExportEventIDs = popup.addAction(tr("Export eventIDs of selected rows"));
 	actionExportEventIDs->setIcon(icon("publish_event"));
 	actionExportEventIDs->setToolTip(tr("Export all selected event ids and run a script configured with 'eventlist.scripts.export'."));
@@ -6085,6 +6291,23 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 		}
 	}
 
+	bool canExpand = false;
+	bool canCollapse = false;
+	for ( QTreeWidgetItemIterator it(SC_D._treeWidget); *it && !(canExpand && canCollapse); ++it ) {
+		for ( int c = 0; c < SC_D._treeWidget->columnCount(); ++c ) {
+			if ( isMultiLine(*it, c) ) {
+				if ( (*it)->data(c, ExpandedRole).toBool() ) {
+					canCollapse = true;
+				}
+				else {
+					canExpand = true;
+				}
+			}
+		}
+	}
+	actionExpandAll->setEnabled(canExpand);
+	actionCollapseAll->setEnabled(canCollapse);
+
 	auto *action = popup.exec(QCursor::pos());
 	if ( !action ) {
 		return;
@@ -6092,6 +6315,12 @@ void EventListView::itemPressed(QTreeWidgetItem *item, int column) {
 
 	if ( action == actionLoad ) {
 		loadItem(item);
+	}
+	else if ( action == actionExpandAll ) {
+		setAllExpanded(SC_D._treeWidget, true);
+	}
+	else if ( action == actionCollapseAll ) {
+		setAllExpanded(SC_D._treeWidget, false);
 	}
 	else if ( action == actionCopyCell ) {
 		auto *cb = QApplication::clipboard();
@@ -6363,10 +6592,17 @@ void EventListView::sortItems(int col) {
 
 	SC_D._treeWidget->blockSignals(true);
 
+	auto *unassociated = SC_D._unassociatedEventItem;
+	if ( unassociated ) {
+		SC_D._treeWidget->takeTopLevelItem(
+			SC_D._treeWidget->indexOfTopLevelItem(unassociated));
+		--count;
+	}
+
 	QVector<SortItem> items(count);
 	for ( int i = 0; i < items.count(); ++i ) {
-		items[i].first = SC_D._treeWidget->takeTopLevelItem(0);
-		items[i].second = col;
+		items[i].item = SC_D._treeWidget->takeTopLevelItem(0);
+		items[i].column = col;
 	}
 
 	LessThan compare;
@@ -6392,8 +6628,32 @@ void EventListView::sortItems(int col) {
 	std::stable_sort(items.begin(), items.end(), compare);
 
 	for ( int i = 0; i < items.count(); ++i ) {
-		SC_D._treeWidget->addTopLevelItem(items[i].first);
-		static_cast<SchemeTreeItem*>(items[i].first)->update(this);
+		SC_D._treeWidget->addTopLevelItem(items[i].item);
+		static_cast<SchemeTreeItem*>(items[i].item)->update(this);
+	}
+
+	if ( unassociated ) {
+		SC_D._treeWidget->addTopLevelItem(unassociated);
+		static_cast<SchemeTreeItem*>(unassociated)->update(this);
+
+		// Sort the unassociated origins with the same criterion
+		auto *origins = static_cast<EventTreeItem*>(unassociated)->origins();
+		if ( origins ) {
+			// Hidden state is lost when taking items out of the tree
+			QVector<SortItem> childs(origins->childCount());
+			for ( auto &child : childs ) {
+				child.hidden = origins->child(0)->isHidden();
+				child.item = origins->takeChild(0);
+				child.column = col;
+			}
+
+			std::stable_sort(childs.begin(), childs.end(), compare);
+
+			for ( const auto &child : childs ) {
+				origins->addChild(child.item);
+				child.item->setHidden(child.hidden);
+			}
+		}
 	}
 
 	updateHideState();
@@ -6540,8 +6800,9 @@ void EventListView::waitDialogDestroyed(QObject *o) {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void EventListView::itemEntered(QTreeWidgetItem *item, int column) {
-	if ( column == SC_D._itemConfig.columnMap[COL_FM]
-	  && item->data(column, Qt::UserRole+1).isValid() ) {
+	if ( (column == SC_D._itemConfig.columnMap[COL_FM]
+	   && item->data(column, Qt::UserRole+1).isValid())
+	  || isMultiLine(item, column) ) {
 		setCursor(Qt::PointingHandCursor);
 	}
 	else {
