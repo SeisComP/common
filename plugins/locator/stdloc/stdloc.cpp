@@ -2385,6 +2385,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 	}
 
 	weightSum = 0.0;
+	double maxWeight = 0.0;
 	std::array<std::array<double, 4>, 4> m = {};
 	for ( const Cell &cell : cells ) {
 		if ( !cell.valid ) {
@@ -2392,6 +2393,7 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		}
 		double weight = relativeProbability(cell);
 		weightSum += weight;
+		maxWeight = std::max(maxWeight, weight);
 		double rLon =
 		    computeDistance(cell.org.lat, cell.org.lon, cell.org.lat, wmeanLon);
 		// normalize the longitude difference to handle the dateline
@@ -2427,6 +2429,19 @@ void StdLoc::computeCovarianceMatrix(const vector<Cell> &cells,
 		m[3][1] += weight * rTime  * rLat;
 		m[3][2] += weight * rTime  * rDepth;
 		m[3][3] += weight * rTime  * rTime;
+	}
+
+	//
+	// The covariance is meaningful only if the cells sample the probability
+	// density finely enough. When a single cell holds most of the probability
+	// the cells are larger than the location uncertainty and the covariance
+	// (and so the confidence ellipsoid) is underestimated.
+	//
+	if ( weightSum > 0 && maxWeight / weightSum > 0.9 ) {
+		SEISCOMP_WARNING(
+		    "A single cell holds %.0f%% of the location probability: the "
+		    "cells are too large to sample the probability density and the "
+		    "uncertainties are underestimated.", maxWeight / weightSum * 100.0);
 	}
 
 	m[0][0] /= weightSum;
