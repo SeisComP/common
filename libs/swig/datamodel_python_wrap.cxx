@@ -13887,53 +13887,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_DatabaseArchive_getCachedId(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  Seiscomp::DataModel::DatabaseArchive *arg1 = 0 ;
-  Seiscomp::DataModel::Object *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
-  Seiscomp::DataModel::DatabaseArchive::OID result;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "DatabaseArchive_getCachedId", 2, 2, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__DataModel__DatabaseArchive, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseArchive_getCachedId" "', argument " "1"" of type '" "Seiscomp::DataModel::DatabaseArchive const *""'"); 
-  }
-  arg1 = reinterpret_cast< Seiscomp::DataModel::DatabaseArchive * >(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__DataModel__Object, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DatabaseArchive_getCachedId" "', argument " "2"" of type '" "Seiscomp::DataModel::Object const *""'"); 
-  }
-  arg2 = reinterpret_cast< Seiscomp::DataModel::Object * >(argp2);
-  {
-    try {
-      result = (Seiscomp::DataModel::DatabaseArchive::OID)((Seiscomp::DataModel::DatabaseArchive const *)arg1)->getCachedId((Seiscomp::DataModel::Object const *)arg2);
-    }
-    catch ( const Swig::DirectorException &e ) {
-      SWIG_fail;
-    }
-    catch ( const Seiscomp::Core::ValueException &e ) {
-      SWIG_exception(SWIG_ValueError, e.what());
-    }
-    catch ( const std::exception &e ) {
-      SWIG_exception(SWIG_RuntimeError, e.what());
-    }
-    catch ( ... ) {
-      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
-    }
-  }
-  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_DatabaseArchive_parentPublicID(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   Seiscomp::DataModel::DatabaseArchive *arg1 = 0 ;
@@ -13977,6 +13930,122 @@ SWIGINTERN PyObject *_wrap_DatabaseArchive_parentPublicID(PyObject *self, PyObje
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DatabaseArchive_publicObjectId(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::DataModel::DatabaseArchive *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[2] ;
+  Seiscomp::DataModel::DatabaseArchive::OID result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "DatabaseArchive_publicObjectId", 2, 2, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__DataModel__DatabaseArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseArchive_publicObjectId" "', argument " "1"" of type '" "Seiscomp::DataModel::DatabaseArchive *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::DataModel::DatabaseArchive * >(argp1);
+  {
+    std::string *ptr = (std::string *)0;
+    res2 = SWIG_AsPtr_std_string(swig_obj[1], &ptr);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DatabaseArchive_publicObjectId" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DatabaseArchive_publicObjectId" "', argument " "2"" of type '" "std::string const &""'"); 
+    }
+    arg2 = ptr;
+  }
+  {
+    try {
+      result = (Seiscomp::DataModel::DatabaseArchive::OID)(arg1)->publicObjectId((std::string const &)*arg2);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_DatabaseArchive_objectId(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  Seiscomp::DataModel::DatabaseArchive *arg1 = 0 ;
+  Seiscomp::DataModel::Object *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject *swig_obj[3] ;
+  Seiscomp::DataModel::DatabaseArchive::OID result;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "DatabaseArchive_objectId", 3, 3, swig_obj)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Seiscomp__DataModel__DatabaseArchive, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DatabaseArchive_objectId" "', argument " "1"" of type '" "Seiscomp::DataModel::DatabaseArchive *""'"); 
+  }
+  arg1 = reinterpret_cast< Seiscomp::DataModel::DatabaseArchive * >(argp1);
+  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_Seiscomp__DataModel__Object, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DatabaseArchive_objectId" "', argument " "2"" of type '" "Seiscomp::DataModel::Object *""'"); 
+  }
+  arg2 = reinterpret_cast< Seiscomp::DataModel::Object * >(argp2);
+  {
+    std::string *ptr = (std::string *)0;
+    res3 = SWIG_AsPtr_std_string(swig_obj[2], &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DatabaseArchive_objectId" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "DatabaseArchive_objectId" "', argument " "3"" of type '" "std::string const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  {
+    try {
+      result = (Seiscomp::DataModel::DatabaseArchive::OID)(arg1)->objectId(arg2,(std::string const &)*arg3);
+    }
+    catch ( const Swig::DirectorException &e ) {
+      SWIG_fail;
+    }
+    catch ( const Seiscomp::Core::ValueException &e ) {
+      SWIG_exception(SWIG_ValueError, e.what());
+    }
+    catch ( const std::exception &e ) {
+      SWIG_exception(SWIG_RuntimeError, e.what());
+    }
+    catch ( ... ) {
+      SWIG_exception(SWIG_UnknownError, "C++ anonymous exception");
+    }
+  }
+  resultobj = SWIG_From_unsigned_SS_long_SS_long(static_cast< unsigned long long >(result));
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res3)) delete arg3;
   return NULL;
 }
 
@@ -259677,8 +259746,9 @@ static PyMethodDef SwigMethods[] = {
 		"DatabaseArchive_getObjectCount(DatabaseArchive self, std::string const & parentID, RTTI classType) -> size_t\n"
 		"DatabaseArchive_getObjectCount(DatabaseArchive self, PublicObject parent, RTTI classType) -> size_t\n"
 		""},
-	 { "DatabaseArchive_getCachedId", _wrap_DatabaseArchive_getCachedId, METH_VARARGS, "DatabaseArchive_getCachedId(DatabaseArchive self, Object arg2) -> Seiscomp::DataModel::DatabaseArchive::OID"},
 	 { "DatabaseArchive_parentPublicID", _wrap_DatabaseArchive_parentPublicID, METH_VARARGS, "DatabaseArchive_parentPublicID(DatabaseArchive self, PublicObject object) -> std::string"},
+	 { "DatabaseArchive_publicObjectId", _wrap_DatabaseArchive_publicObjectId, METH_VARARGS, "DatabaseArchive_publicObjectId(DatabaseArchive self, std::string const & publicId) -> Seiscomp::DataModel::DatabaseArchive::OID"},
+	 { "DatabaseArchive_objectId", _wrap_DatabaseArchive_objectId, METH_VARARGS, "DatabaseArchive_objectId(DatabaseArchive self, Object arg2, std::string const & parentID) -> Seiscomp::DataModel::DatabaseArchive::OID"},
 	 { "DatabaseArchive_insert", _wrap_DatabaseArchive_insert, METH_VARARGS, "DatabaseArchive_insert(DatabaseArchive self, Object object, std::string const & parentID=\"\") -> bool"},
 	 { "DatabaseArchive_update", _wrap_DatabaseArchive_update, METH_VARARGS, "DatabaseArchive_update(DatabaseArchive self, Object object, std::string const & parentID=\"\") -> bool"},
 	 { "DatabaseArchive_remove", _wrap_DatabaseArchive_remove, METH_VARARGS, "DatabaseArchive_remove(DatabaseArchive self, Object object, std::string const & parentID=\"\") -> bool"},
@@ -266340,16 +266410,16 @@ static void *_p_Seiscomp__DataModel__DataUsedTo_p_Seiscomp__Core__BaseObject(voi
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Object *) ((Seiscomp::DataModel::DataUsed *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseArchiveTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *) ((Seiscomp::DataModel::DatabaseArchive *) x));
+    return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::DataModel::DatabaseArchive *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseIteratorTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::DataModel::DatabaseIterator *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseQueryTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *)(Seiscomp::DataModel::DatabaseArchive *)(Seiscomp::DataModel::DatabaseReader *) ((Seiscomp::DataModel::DatabaseQuery *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::DatabaseArchive *)(Seiscomp::DataModel::DatabaseReader *) ((Seiscomp::DataModel::DatabaseQuery *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseReaderTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *)(Seiscomp::DataModel::DatabaseArchive *) ((Seiscomp::DataModel::DatabaseReader *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::DatabaseArchive *) ((Seiscomp::DataModel::DatabaseReader *) x));
 }
 static void *_p_Seiscomp__DataModel__DataloggerTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Object *)(Seiscomp::DataModel::PublicObject *) ((Seiscomp::DataModel::Datalogger *) x));
@@ -267109,15 +267179,6 @@ static void *_p_Seiscomp__DataModel__StreamTo_p_Seiscomp__DataModel__Object(void
 }
 static void *_p_Seiscomp__DataModel__WaveformQualityTo_p_Seiscomp__DataModel__Object(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::DataModel::Object *)  ((Seiscomp::DataModel::WaveformQuality *) x));
-}
-static void *_p_Seiscomp__DataModel__DatabaseArchiveTo_p_Seiscomp__DataModel__Observer(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::DataModel::Observer *)  ((Seiscomp::DataModel::DatabaseArchive *) x));
-}
-static void *_p_Seiscomp__DataModel__DatabaseQueryTo_p_Seiscomp__DataModel__Observer(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::DataModel::Observer *) (Seiscomp::DataModel::DatabaseArchive *)(Seiscomp::DataModel::DatabaseReader *) ((Seiscomp::DataModel::DatabaseQuery *) x));
-}
-static void *_p_Seiscomp__DataModel__DatabaseReaderTo_p_Seiscomp__DataModel__Observer(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::DataModel::Observer *) (Seiscomp::DataModel::DatabaseArchive *) ((Seiscomp::DataModel::DatabaseReader *) x));
 }
 static void *_p_Seiscomp__DataModel__AmplitudeTo_p_Seiscomp__DataModel__PublicObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::DataModel::PublicObject *)  ((Seiscomp::DataModel::Amplitude *) x));
@@ -269234,7 +269295,7 @@ static swig_cast_info _swigc__p_Seiscomp__DataModel__NotifierMessage[] = {  {&_s
 static swig_cast_info _swigc__p_Seiscomp__DataModel__NotifierStateGuardT_false_t[] = {  {&_swigt__p_Seiscomp__DataModel__NotifierStateGuardT_false_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__NotifierStateGuardT_true_t[] = {  {&_swigt__p_Seiscomp__DataModel__NotifierStateGuardT_true_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__Object[] = {  {&_swigt__p_Seiscomp__DataModel__Object, 0, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Access, _p_Seiscomp__DataModel__AccessTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Amplitude, _p_Seiscomp__DataModel__AmplitudeTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__AmplitudeReference, _p_Seiscomp__DataModel__AmplitudeReferenceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArclinkLog, _p_Seiscomp__DataModel__ArclinkLogTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArclinkRequest, _p_Seiscomp__DataModel__ArclinkRequestTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArclinkRequestLine, _p_Seiscomp__DataModel__ArclinkRequestLineTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArclinkStatusLine, _p_Seiscomp__DataModel__ArclinkStatusLineTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ArclinkUser, _p_Seiscomp__DataModel__ArclinkUserTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Arrival, _p_Seiscomp__DataModel__ArrivalTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__AuxDevice, _p_Seiscomp__DataModel__AuxDeviceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__AuxSource, _p_Seiscomp__DataModel__AuxSourceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__AuxStream, _p_Seiscomp__DataModel__AuxStreamTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Catalog, _p_Seiscomp__DataModel__CatalogTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Comment, _p_Seiscomp__DataModel__CommentTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__CompositeTime, _p_Seiscomp__DataModel__CompositeTimeTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Config, _p_Seiscomp__DataModel__ConfigTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ConfigModule, _p_Seiscomp__DataModel__ConfigModuleTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ConfigStation, _p_Seiscomp__DataModel__ConfigStationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataAttributeExtent, _p_Seiscomp__DataModel__DataAttributeExtentTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataAvailability, _p_Seiscomp__DataModel__DataAvailabilityTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataExtent, _p_Seiscomp__DataModel__DataExtentTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataSegment, _p_Seiscomp__DataModel__DataSegmentTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataUsed, _p_Seiscomp__DataModel__DataUsedTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Datalogger, _p_Seiscomp__DataModel__DataloggerTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DataloggerCalibration, _p_Seiscomp__DataModel__DataloggerCalibrationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Decimation, _p_Seiscomp__DataModel__DecimationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Event, _p_Seiscomp__DataModel__EventTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__EventDescription, _p_Seiscomp__DataModel__EventDescriptionTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__EventParameters, _p_Seiscomp__DataModel__EventParametersTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__FocalMechanism, _p_Seiscomp__DataModel__FocalMechanismTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__FocalMechanismReference, _p_Seiscomp__DataModel__FocalMechanismReferenceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Inventory, _p_Seiscomp__DataModel__InventoryTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__JournalEntry, _p_Seiscomp__DataModel__JournalEntryTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Journaling, _p_Seiscomp__DataModel__JournalingTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Magnitude, _p_Seiscomp__DataModel__MagnitudeTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__MomentTensor, _p_Seiscomp__DataModel__MomentTensorTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__MomentTensorComponentContribution, _p_Seiscomp__DataModel__MomentTensorComponentContributionTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__MomentTensorPhaseSetting, _p_Seiscomp__DataModel__MomentTensorPhaseSettingTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__MomentTensorStationContribution, _p_Seiscomp__DataModel__MomentTensorStationContributionTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Network, _p_Seiscomp__DataModel__NetworkTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Origin, _p_Seiscomp__DataModel__OriginTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__OriginReference, _p_Seiscomp__DataModel__OriginReferenceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Outage, _p_Seiscomp__DataModel__OutageTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Parameter, _p_Seiscomp__DataModel__ParameterTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ParameterSet, _p_Seiscomp__DataModel__ParameterSetTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Pick, _p_Seiscomp__DataModel__PickTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__PickReference, _p_Seiscomp__DataModel__PickReferenceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__PublicObject, _p_Seiscomp__DataModel__PublicObjectTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__QCLog, _p_Seiscomp__DataModel__QCLogTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__QualityControl, _p_Seiscomp__DataModel__QualityControlTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Reading, _p_Seiscomp__DataModel__ReadingTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ResponseFAP, _p_Seiscomp__DataModel__ResponseFAPTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ResponseFIR, _p_Seiscomp__DataModel__ResponseFIRTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ResponseIIR, _p_Seiscomp__DataModel__ResponseIIRTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ResponsePAZ, _p_Seiscomp__DataModel__ResponsePAZTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__ResponsePolynomial, _p_Seiscomp__DataModel__ResponsePolynomialTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Route, _p_Seiscomp__DataModel__RouteTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__RouteArclink, _p_Seiscomp__DataModel__RouteArclinkTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__RouteSeedlink, _p_Seiscomp__DataModel__RouteSeedlinkTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Routing, _p_Seiscomp__DataModel__RoutingTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Sensor, _p_Seiscomp__DataModel__SensorTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__SensorCalibration, _p_Seiscomp__DataModel__SensorCalibrationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__SensorLocation, _p_Seiscomp__DataModel__SensorLocationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Setup, _p_Seiscomp__DataModel__SetupTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Station, _p_Seiscomp__DataModel__StationTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__StationGroup, _p_Seiscomp__DataModel__StationGroupTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__StationMagnitude, _p_Seiscomp__DataModel__StationMagnitudeTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__StationMagnitudeContribution, _p_Seiscomp__DataModel__StationMagnitudeContributionTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__StationReference, _p_Seiscomp__DataModel__StationReferenceTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__Stream, _p_Seiscomp__DataModel__StreamTo_p_Seiscomp__DataModel__Object, 0, 0},  {&_swigt__p_Seiscomp__DataModel__WaveformQuality, _p_Seiscomp__DataModel__WaveformQualityTo_p_Seiscomp__DataModel__Object, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_Seiscomp__DataModel__Observer[] = {  {&_swigt__p_Seiscomp__DataModel__Observer, 0, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DatabaseArchive, _p_Seiscomp__DataModel__DatabaseArchiveTo_p_Seiscomp__DataModel__Observer, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DatabaseQuery, _p_Seiscomp__DataModel__DatabaseQueryTo_p_Seiscomp__DataModel__Observer, 0, 0},  {&_swigt__p_Seiscomp__DataModel__DatabaseReader, _p_Seiscomp__DataModel__DatabaseReaderTo_p_Seiscomp__DataModel__Observer, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Seiscomp__DataModel__Observer[] = {  {&_swigt__p_Seiscomp__DataModel__Observer, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__Origin[] = {  {&_swigt__p_Seiscomp__DataModel__Origin, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__OriginQuality[] = {  {&_swigt__p_Seiscomp__DataModel__OriginQuality, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Seiscomp__DataModel__OriginReference[] = {  {&_swigt__p_Seiscomp__DataModel__OriginReference, 0, 0, 0},{0, 0, 0, 0}};

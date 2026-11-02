@@ -17987,16 +17987,16 @@ static void *_p_Seiscomp__DataModel__DataUsedTo_p_Seiscomp__Core__BaseObject(voi
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Object *) ((Seiscomp::DataModel::DataUsed *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseArchiveTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *) ((Seiscomp::DataModel::DatabaseArchive *) x));
+    return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::DataModel::DatabaseArchive *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseIteratorTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *)  ((Seiscomp::DataModel::DatabaseIterator *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseQueryTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *)(Seiscomp::DataModel::DatabaseArchive *)(Seiscomp::DataModel::DatabaseReader *) ((Seiscomp::DataModel::DatabaseQuery *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::DatabaseArchive *)(Seiscomp::DataModel::DatabaseReader *) ((Seiscomp::DataModel::DatabaseQuery *) x));
 }
 static void *_p_Seiscomp__DataModel__DatabaseReaderTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Observer *)(Seiscomp::DataModel::DatabaseArchive *) ((Seiscomp::DataModel::DatabaseReader *) x));
+    return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::DatabaseArchive *) ((Seiscomp::DataModel::DatabaseReader *) x));
 }
 static void *_p_Seiscomp__DataModel__DataloggerTo_p_Seiscomp__Core__BaseObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((Seiscomp::Core::BaseObject *) (Seiscomp::DataModel::Object *)(Seiscomp::DataModel::PublicObject *) ((Seiscomp::DataModel::Datalogger *) x));

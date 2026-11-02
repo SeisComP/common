@@ -683,7 +683,7 @@ class DatabaseObjectWriter(object):
 
 # Register DatabaseObjectWriter in _datamodel:
 _datamodel.DatabaseObjectWriter_swigregister(DatabaseObjectWriter)
-class DatabaseArchive(Observer):
+class DatabaseArchive(seiscomp.core.BaseObject):
     r"""Proxy of C++ Seiscomp::DataModel::DatabaseArchive class."""
 
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
@@ -744,13 +744,17 @@ class DatabaseArchive(Observer):
         """
         return _datamodel.DatabaseArchive_getObjectCount(self, *args)
 
-    def getCachedId(self, arg2):
-        r"""getCachedId(DatabaseArchive self, Object arg2) -> Seiscomp::DataModel::DatabaseArchive::OID"""
-        return _datamodel.DatabaseArchive_getCachedId(self, arg2)
-
     def parentPublicID(self, object):
         r"""parentPublicID(DatabaseArchive self, PublicObject object) -> std::string"""
         return _datamodel.DatabaseArchive_parentPublicID(self, object)
+
+    def publicObjectId(self, publicId):
+        r"""publicObjectId(DatabaseArchive self, std::string const & publicId) -> Seiscomp::DataModel::DatabaseArchive::OID"""
+        return _datamodel.DatabaseArchive_publicObjectId(self, publicId)
+
+    def objectId(self, arg2, parentID):
+        r"""objectId(DatabaseArchive self, Object arg2, std::string const & parentID) -> Seiscomp::DataModel::DatabaseArchive::OID"""
+        return _datamodel.DatabaseArchive_objectId(self, arg2, parentID)
 
     def insert(self, *args):
         r"""insert(DatabaseArchive self, Object object, std::string const & parentID="") -> bool"""
