@@ -34,7 +34,7 @@ using namespace Seiscomp::Math;
 
 
 
-BOOST_AUTO_TEST_SUITE(seiscomp_utils_timer)
+BOOST_AUTO_TEST_SUITE(seiscomp_math_math)
 
 
 BOOST_AUTO_TEST_CASE(Double2Frac) {

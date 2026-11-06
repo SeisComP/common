@@ -1,6 +1,6 @@
 SET(TESTS
-	filter.cpp
 	math.cpp
+	filter.cpp
 )
 
 FOREACH(testSrc ${TESTS})
