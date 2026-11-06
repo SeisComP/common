@@ -215,9 +215,6 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	connect(_ui.cbRepickerEnd, SIGNAL(toggled(bool)),
 	        _ui.editRepickerEnd, SLOT(setEnabled(bool)));
 
-	connect(_ui.btnAddPickFilter, SIGNAL(clicked()),
-	        this, SLOT(addPickFilter()));
-
 	// Connect pick filter signals/slots
 	connect(_ui.btnAddPickFilter, SIGNAL(clicked()),
 	        this, SLOT(addPickFilter()));
