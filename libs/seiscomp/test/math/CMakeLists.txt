@@ -1,4 +1,5 @@
 SET(TESTS
+	filter.cpp
 	math.cpp
 )
 
