@@ -20,7 +20,13 @@
 
 #include <seiscomp/gui/core/icon.h>
 #include <seiscomp/gui/datamodel/pickersettings.h>
+#include <seiscomp/math/filter.h>
 #include <QHeaderView>
+#include <QLineEdit>
+#include <QStyledItemDelegate>
+
+#include <memory>
+#include <string>
 
 
 namespace Seiscomp {
@@ -28,6 +34,26 @@ namespace Gui {
 
 
 namespace {
+
+
+bool validateFilter(const QString &filter, QString *error) {
+	if ( filter.trimmed().isEmpty() ) {
+		*error = QObject::tr("The filter is empty");
+		return false;
+	}
+
+	std::string strError;
+	std::unique_ptr<Math::Filtering::InPlaceFilter<double>> f(
+		Math::Filtering::InPlaceFilter<double>::Create(filter.toStdString(), &strError)
+	);
+
+	if ( !f ) {
+		*error = strError.empty() ? QObject::tr("Syntax error") : QString(strError.c_str());
+		return false;
+	}
+
+	return true;
+}
 
 
 class FilterModel : public QAbstractListModel {
@@ -90,6 +116,17 @@ class FilterModel : public QAbstractListModel {
 				}
 			}
 
+			if ( index.column() == 1 && (role == Qt::ForegroundRole || role == Qt::ToolTipRole) ) {
+				QString error;
+				if ( !validateFilter(_data[index.row()].second, &error) ) {
+					if ( role == Qt::ForegroundRole ) {
+						return QColor(Qt::red);
+					}
+
+					return QObject::tr("Invalid filter: %1").arg(error);
+				}
+			}
+
 			return QVariant();
 		}
 
@@ -138,6 +175,37 @@ class FilterModel : public QAbstractListModel {
 		FilterList &_data;
 };
 
+
+// Marks an invalid filter string while typing and shows the parser error
+class FilterEditDelegate : public QStyledItemDelegate {
+	public:
+		using QStyledItemDelegate::QStyledItemDelegate;
+
+		QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &,
+		                      const QModelIndex &) const override {
+			auto edit = new QLineEdit(parent);
+			QPalette validPalette = edit->palette();
+
+			QObject::connect(edit, &QLineEdit::textChanged, edit,
+			[edit, validPalette](const QString &text) {
+				QString error;
+				QPalette palette = validPalette;
+
+				if ( validateFilter(text, &error) ) {
+					edit->setToolTip(QString());
+				}
+				else {
+					palette.setColor(QPalette::Text, Qt::red);
+					edit->setToolTip(QObject::tr("Invalid filter: %1").arg(error));
+				}
+
+				edit->setPalette(palette);
+			});
+
+			return edit;
+		}
+};
+
 }
 
 
@@ -155,10 +223,12 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_pickerFilterModel = new FilterModel(_pickerConfig.filters, this);
 	_ui.tableFilter->setModel(_pickerFilterModel);
 	_ui.tableFilter->horizontalHeader()->setStretchLastSection(true);
+	_ui.tableFilter->setItemDelegateForColumn(1, new FilterEditDelegate(this));
 
 	_amplitudeFilterModel = new FilterModel(_amplitudeConfig.filters, this);
 	_ui.tableAFilter->setModel(_amplitudeFilterModel);
 	_ui.tableAFilter->horizontalHeader()->setStretchLastSection(true);
+	_ui.tableAFilter->setItemDelegateForColumn(1, new FilterEditDelegate(this));
 
 	_ui.btnAddPickFilter->setIcon(icon("add"));
 	_ui.btnRemovePickFilter->setIcon(icon("remove"));
