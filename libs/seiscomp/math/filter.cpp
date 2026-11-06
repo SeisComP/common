@@ -166,7 +166,10 @@ struct Generator {
 				delete f;
 
 				stringstream ss;
-				if ( result >= 0 ) {
+				if ( parser.missingBracket ) {
+					ss << "expected ')' after the parameters of filter '" << filterType << "'";
+				}
+				else if ( result >= 0 ) {
 					ss << "filter '" << filterType << "' takes " << result << " parameters";
 				}
 				else {
@@ -184,6 +187,7 @@ struct Generator {
 		}
 
 		parameters.clear();
+		parser.missingBracket = false;
 
 		return save(f);
 	}
@@ -212,8 +216,8 @@ struct Parser : bs::grammar< Parser<T> >
 
 	// The parser object is copied a lot, so instead of keeping its own table
 	// of variables, it keeps track of a reference to a common table.
-	Parser(value_type &res, parameter_list &params, tmp_list &t, string &err)
-	 : result(res), parameters(params), tmp(t), error_message(err), generator(*this) {
+	Parser(value_type &res, parameter_list &params, tmp_list &t, string &err, bool &bracket)
+	 : result(res), parameters(params), tmp(t), error_message(err), missingBracket(bracket), generator(*this) {
 		result = nullptr;
 		parameters.clear();
 	}
@@ -282,7 +286,11 @@ struct Parser : bs::grammar< Parser<T> >
 			      identifier[filter.name = arg1]
 			      >> ! ( '('
 			             >> !list_p.direct(literal[phoenix::bind(&Parser::add_parameter)(self, arg1)], ',')
-			             >> ')'
+			             >> ( ch_p(')')
+			                  // Only remember it to report it if the filter
+			                  // cannot be created without the parameter list
+			                | ( eps_p[phoenix::bind(&Parser::setMissingBracket)(self)] >> nothing_p )
+			                )
 			           )
 			  )
 			  [filter.value = phoenix::bind(&Parser::initialize)(self, filter.name)][ErrorCheck<Parser>(self)]
@@ -350,6 +358,10 @@ struct Parser : bs::grammar< Parser<T> >
 		parameters.push_back(value);
 	}
 
+	void setMissingBracket() const {
+		missingBracket = true;
+	}
+
 	value_type initialize(const string &filterType) const {
 		return generator.create(filterType);
 	}
@@ -363,6 +375,7 @@ struct Parser : bs::grammar< Parser<T> >
 	parameter_list &parameters;
 	tmp_list &tmp;
 	string &error_message;
+	bool &missingBracket;
 	generator_type generator;
 };
 
@@ -383,7 +396,8 @@ InPlaceFilter<T> *InPlaceFilter<T>::Create(const string &strFilter, string *erro
 	typename Parser<T>::parameter_list parameters;
 	typename Parser<T>::tmp_list tmp;
 	typename Parser<T>::value_type result;
-	Parser<T> parser(result, parameters, tmp, error);
+	bool missingBracket = false;
+	Parser<T> parser(result, parameters, tmp, error, missingBracket);
 	bs::parse_info<string::const_iterator> info;
 
 	info = bs::parse(strFilter.begin(), strFilter.end(), parser, bs::space_p);
