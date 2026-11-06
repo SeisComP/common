@@ -1123,6 +1123,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QToolButton" name="btnEditPickFilter">
+             <property name="toolTip">
+              <string>Edit the current filter with the filter builder</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -1408,6 +1415,13 @@
           <widget class="QToolButton" name="btnRemoveAmplitudeFilter">
            <property name="toolTip">
             <string>Remove current filter</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="btnEditAmplitudeFilter">
+           <property name="toolTip">
+            <string>Edit the current filter with the filter builder</string>
            </property>
           </widget>
          </item>

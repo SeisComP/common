@@ -44,6 +44,8 @@ namespace Gui {
 
 
 class SpectrogramSettings;
+class FilterBuilderDialog;
+class QuickFilterWidget;
 
 
 class PickerViewPrivate {
@@ -73,6 +75,10 @@ class PickerViewPrivate {
 		QSet<QString>                       stations;
 
 		QComboBox                          *comboFilter;
+		FilterBuilderDialog                *filterBuilder{nullptr};
+		int                                 filterBuilderPreviousIndex{0};
+		QuickFilterWidget                  *quickFilter{nullptr};
+		QAction                            *quickFilterAction{nullptr};
 		QComboBox                          *comboRotation;
 		QComboBox                          *comboUnit;
 		QComboBox                          *comboTTT;

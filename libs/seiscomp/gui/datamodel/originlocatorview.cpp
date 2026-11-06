@@ -4443,6 +4443,28 @@ void OriginLocatorView::artificialOriginRequested(double lat, double lon,
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void OriginLocatorView::storePickerFilter(const QString &name, const QString &filter) {
+	bool updated = false;
+	for ( auto &entry : SC_D.pickerConfig.filters ) {
+		QString entryName = entry.first.startsWith('@') ? entry.first.mid(1) : entry.first;
+		if ( entryName == name ) {
+			entry.second = filter;
+			updated = true;
+		}
+	}
+
+	if ( !updated ) {
+		SC_D.pickerConfig.addFilter(name, filter);
+	}
+
+	emit pickerFilterSaveRequested(name, filter);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void OriginLocatorView::zoomMap() {
 	if ( SC_D.toolMap != nullptr ) {
 		SC_D.toolMap->activateWindow();
@@ -6404,6 +6426,11 @@ void OriginLocatorView::showWaveforms() {
 	SC_D.recordView->setDatabase(SC_D.reader);
 	connect(SC_D.recordView, SIGNAL(requestArtificialOrigin(double, double, double, Seiscomp::Core::Time)),
 			this, SLOT(artificialOriginRequested(double, double, double, Seiscomp::Core::Time)));
+	// Only offer to save filters if the application stores them
+	if ( receivers(SIGNAL(pickerFilterSaveRequested(QString,QString))) > 0 ) {
+		connect(SC_D.recordView, SIGNAL(filterSaveRequested(QString,QString)),
+		        this, SLOT(storePickerFilter(QString,QString)));
+	}
 
 	try {
 		SC_D.recordView->setBroadBandCodes(SCApp->configGetStrings("picker.velocityChannelCodes"));

@@ -5,6 +5,7 @@ SET(
 		connectiondialog.cpp
 		connectionstatelabel.cpp
 		diagramwidget.cpp
+		filterbuilder.cpp
 		flowlayout.cpp
 		gradient.cpp
 		icon.cpp
@@ -18,6 +19,7 @@ SET(
 		optionaldoublespinbox.cpp
 		processmanager.cpp
 		questionbox.cpp
+		quickfilterwidget.cpp
 		recordpolyline.cpp
 		recordstreamthread.cpp
 		recordview.cpp
@@ -72,6 +74,7 @@ SET(
 		connectiondialog.h
 		connectionstatelabel.h
 		diagramwidget.h
+		filterbuilder.h
 		flowlayout.h
 		inspector.h
 		logmanager.h
@@ -79,6 +82,7 @@ SET(
 		messagethread.h
 		optionaldoublespinbox.h
 		processmanager.h
+		quickfilterwidget.h
 		recordstreamthread.h
 		recordview.h
 		recordviewitem.h

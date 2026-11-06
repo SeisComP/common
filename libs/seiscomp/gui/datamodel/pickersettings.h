@@ -90,6 +90,13 @@ class SC_GUI_API PickerSettings : public QDialog {
 		void moveAmplitudeFilterUp();
 		void moveAmplitudeFilterDown();
 
+		void editPickFilter();
+		void editAmplitudeFilter();
+
+
+	private:
+		void editFilter(QAbstractItemView *view, QAbstractListModel *model);
+
 
 	private:
 		Ui::PickerSettings                _ui;
