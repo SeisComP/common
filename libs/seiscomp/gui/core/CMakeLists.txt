@@ -32,6 +32,7 @@ SET(
 		spinninglabel.cpp
 		streamwidget.cpp
 		tensorrenderer.cpp
+		theme.cpp
 		timescale.cpp
 		uncertainties.cpp
 		utils.cpp

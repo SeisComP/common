@@ -270,6 +270,8 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 
 	public slots:
 		void showSettings();
+		/** @brief Edit the per-application theme preference for the next start. */
+		void showAppearance();
 		void quit();
 
 
@@ -313,6 +315,7 @@ class SC_GUI_API Application : public QObject, public Client::Application {
 			bool        fullScreen{false};
 			bool        interactive{true};
 			std::string styleSheet;
+			std::string theme;
 			std::string guiGroup{"GUI"};
 			std::string commandTargetClient;
 
