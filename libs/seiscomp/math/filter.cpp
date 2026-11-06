@@ -406,9 +406,19 @@ InPlaceFilter<T> *InPlaceFilter<T>::Create(const string &strFilter, string *erro
 		SEISCOMP_ERROR("compile filter: %s", error.c_str());
 	*/
 
-	typename Parser<T>::tmp_list::iterator it;
-	for ( it = tmp.begin(); it != tmp.end(); ++it )
+	for ( auto it = tmp.begin(); it != tmp.end(); ++it ) {
 		delete *it;
+	}
+
+	if ( !info.full ) {
+		// setResult() may have fired before the statement failed, the
+		// result is then no longer tracked in tmp
+		delete result;
+		result = nullptr;
+		if ( error.empty() ) {
+			error = "syntax error at position " + Core::toString(info.stop - strFilter.begin());
+		}
+	}
 
 	if ( error_str ) *error_str = error;
 
