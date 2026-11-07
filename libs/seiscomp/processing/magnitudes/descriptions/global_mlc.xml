@@ -126,7 +126,7 @@
 					</description>
 				</parameter>
 				<parameter name="signalEnd" type="string" unit="s" default="min(R / 3 + 30, 150)"/>
-				<parameter name="preFilter" type="string" default="BW(3,0.5,12)"/>
+				<parameter name="preFilter" type="filter" default="&quot;BW(3,0.5,12)&quot;"/>
 				<parameter name="applyWoodAnderson" type="boolean" default="true">
 					<description>
 					Apply Wood-Anderson simulation. To achieve displacement

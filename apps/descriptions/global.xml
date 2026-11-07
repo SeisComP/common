@@ -1555,7 +1555,7 @@
 						time) of the begin of the signal window used to pick.
 						</description>
 					</parameter>
-					<parameter name="filter" type="string" >
+					<parameter name="filter" type="filter" >
 						<description>
 						Override the default filter which is "raw". The typical
 						filter grammar can be used.
@@ -1665,13 +1665,13 @@
 						pick) of the end of the signal window used to pick.
 						</description>
 					</parameter>
-					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
+					<parameter name="filter" type="filter" default="&quot;BW(4,0.3,1.0)&quot;">
 						<description>
 						Configure the filter used to process the horizontal
 						components traces before computing the L2-norm.
 						</description>
 					</parameter>
-					<parameter name="detecFilter" type="string" default="STALTA(1,10)">
+					<parameter name="detecFilter" type="filter" default="&quot;STALTA(1,10)&quot;">
 						<description>
 						Configure the detector filter applied on the filtered
 						L2 trace.
@@ -1728,13 +1728,13 @@
 						pick) of the end of the signal window used to pick.
 						</description>
 					</parameter>
-					<parameter name="filter" type="string" default="BW(4,0.3,1.0)">
+					<parameter name="filter" type="filter" default="&quot;BW(4,0.3,1.0)&quot;">
 						<description>
 						Configure the filter used to process the raw vertical
 						component data.
 						</description>
 					</parameter>
-					<parameter name="detecFilter" type="string"	default="STALTA(1,10)">
+					<parameter name="detecFilter" type="filter"	default="&quot;STALTA(1,10)&quot;">
 						<description>
 						Configure the detector filter applied on filtered data.
 						</description>
