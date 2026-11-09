@@ -38,7 +38,9 @@ namespace {
 
 bool validateFilter(const QString &filter, QString *error) {
 	if ( filter.trimmed().isEmpty() ) {
-		*error = QObject::tr("The filter is empty");
+		if ( error ) {
+			*error = QObject::tr("The filter is empty");
+		}
 		return false;
 	}
 
@@ -48,12 +50,38 @@ bool validateFilter(const QString &filter, QString *error) {
 	);
 
 	if ( !f ) {
-		*error = strError.empty() ? QObject::tr("Syntax error") : QString(strError.c_str());
+		if ( error ) {
+			*error = strError.empty() ? QObject::tr("Syntax error") : QString(strError.c_str());
+		}
 		return false;
 	}
 
 	return true;
 }
+
+
+class FilterValidator : public QValidator {
+	public:
+		FilterValidator(QLineEdit *target)
+		: QValidator(target)
+		, _target(target) {}
+
+	public:
+		State validate(QString &input, int &) const override {
+			QPalette p = _target->palette();
+			if ( !validateFilter(input, nullptr) ) {
+				p.setColor(QPalette::Text, Qt::red);
+			}
+			else {
+				p.setColor(QPalette::Text, {});
+			}
+			_target->setPalette(p);
+			return Acceptable;
+		}
+
+	private:
+		QLineEdit *_target;
+};
 
 
 class FilterModel : public QAbstractListModel {
@@ -75,7 +103,7 @@ class FilterModel : public QAbstractListModel {
 		QVariant headerData(int section, Qt::Orientation orientation,
 		                    int role = Qt::DisplayRole) const {
 			if ( role != Qt::DisplayRole )
-				return QVariant();
+				return {};
 
 			if ( orientation == Qt::Horizontal ) {
 				switch ( section ) {
@@ -84,7 +112,7 @@ class FilterModel : public QAbstractListModel {
 					case 1:
 						return "Filter";
 					default:
-						return QVariant();
+						return {};
 				}
 			}
 			else
@@ -100,11 +128,11 @@ class FilterModel : public QAbstractListModel {
 
 		QVariant data(const QModelIndex &index, int role) const {
 			if ( !index.isValid() ) {
-				return QVariant();
+				return {};
 			}
 
 			if ( index.row() >= _data.size() ) {
-				return QVariant();
+				return {};
 			}
 
 			if ( role == Qt::DisplayRole || role == Qt::EditRole ) {
@@ -127,7 +155,7 @@ class FilterModel : public QAbstractListModel {
 				}
 			}
 
-			return QVariant();
+			return {};
 		}
 
 		bool setData(const QModelIndex &index, const QVariant &value,
@@ -353,6 +381,7 @@ PickerSettings::PickerSettings(const OriginLocatorView::Config &c1,
 	_ui.waveformAlignmentEdit->setValue(_pickerConfig.alignmentPosition*100);
 	_ui.cbInitialAlignment->setEditText(_pickerConfig.initialAlignment);
 
+	_ui.editIntegrationPreFilter->setValidator(new FilterValidator(_ui.editIntegrationPreFilter));
 	_ui.editIntegrationPreFilter->setText(_pickerConfig.integrationFilter);
 	_ui.checkIntegrationPreFilterOnce->setChecked(_pickerConfig.onlyApplyIntegrationFilterOnce);
 
