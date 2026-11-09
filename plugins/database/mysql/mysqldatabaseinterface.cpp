@@ -638,7 +638,7 @@ bool MySQLDatabase::escape(std::string &out, const std::string &in) const {
 REGISTER_DB_INTERFACE(MySQLDatabase, "mysql");
 ADD_SC_PLUGIN(
 	"MySQL database driver",
-	"GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>",
+	"gempa GmbH <seiscomp-devel@gempa.de>",
 	1, 0, 0
 )
 

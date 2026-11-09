@@ -606,7 +606,7 @@ bool PostgreSQLDatabase::reconnect(ConnStatusType stat) const {
 
 
 REGISTER_DB_INTERFACE(PostgreSQLDatabase, "postgresql");
-ADD_SC_PLUGIN("PostgreSQL database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 0, 12, 0)
+ADD_SC_PLUGIN("PostgreSQL database driver", "gempa GmbH <seiscomp-devel@gempa.de>", 0, 12, 0)
 
 
 }

@@ -544,7 +544,7 @@ bool SQLiteDatabase::escape(string &out, const string &in) const {
 
 
 REGISTER_DB_INTERFACE(SQLiteDatabase, "sqlite3");
-ADD_SC_PLUGIN("SQLite3 database driver", "GFZ Potsdam <seiscomp-devel@gfz-potsdam.de>", 1, 0, 0)
+ADD_SC_PLUGIN("SQLite3 database driver", "gempa GmbH <seiscomp-devel@gempa.de>", 1, 0, 0)
 
 
 }
