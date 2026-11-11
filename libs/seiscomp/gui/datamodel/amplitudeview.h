@@ -206,6 +206,7 @@ class SC_GUI_API AmplitudeView : public QMainWindow {
 			QString recordURL;
 			FilterList filters;
 			AuxiliaryChannelProfiles auxiliaryChannelProfiles;
+			StationSets stationSets;
 
 			bool   showAllComponents;
 			bool   loadStrongMotionData;
