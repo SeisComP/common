@@ -17,30 +17,44 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
+      <widget class="QLabel" name="labelPreset">
+       <property name="text">
+        <string>Preset:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="comboPreset">
+       <property name="toolTip">
+        <string>Fills in the configured station patterns and distance range and selects all matching stations.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
       <widget class="QLabel" name="labelNSLC">
        <property name="text">
         <string>NET.STA:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="1" column="1">
       <widget class="QLineEdit" name="lineEditNSLC"/>
      </item>
-     <item row="0" column="2">
+     <item row="1" column="2">
       <widget class="QCheckBox" name="cbExcludeNSLC">
        <property name="text">
         <string>Exclude</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Network type:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QComboBox" name="comboNetworkType">
        <item>
         <property name="text">
@@ -49,21 +63,21 @@
        </item>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="2">
       <widget class="QCheckBox" name="cbExcludeNetworkType">
        <property name="text">
         <string>Exclude</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Station type:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QComboBox" name="comboStationType">
        <item>
         <property name="text">
@@ -72,21 +86,21 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="2">
+     <item row="3" column="2">
       <widget class="QCheckBox" name="cbExcludeStationType">
        <property name="text">
         <string>Exclude</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Sensor unit:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QComboBox" name="comboSensorUnit">
        <item>
         <property name="text">
@@ -95,11 +109,88 @@
        </item>
       </widget>
      </item>
-     <item row="3" column="2">
+     <item row="4" column="2">
       <widget class="QCheckBox" name="cbExcludeSensorUnit">
        <property name="text">
         <string>Exclude</string>
        </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelDistance">
+       <property name="text">
+        <string>Distance:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QWidget" name="distanceWidget" native="true">
+       <layout class="QHBoxLayout" name="distanceLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QDoubleSpinBox" name="spinMinimumDistance">
+          <property name="toolTip">
+           <string>Minimum epicentral distance</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <double>180.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelDistanceTo">
+          <property name="text">
+           <string>to</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="spinMaximumDistance">
+          <property name="toolTip">
+           <string>Maximum epicentral distance</string>
+          </property>
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <double>180.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>180.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="distanceSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -132,6 +223,13 @@
       <number>0</number>
      </property>
      <item>
+      <widget class="QLabel" name="labelCount">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -145,6 +243,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnSelectAll">
+       <property name="text">
+        <string>Select all</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnAdd">
        <property name="text">
         <string>Add</string>
@@ -156,6 +264,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>comboPreset</tabstop>
   <tabstop>lineEditNSLC</tabstop>
   <tabstop>cbExcludeNSLC</tabstop>
   <tabstop>comboNetworkType</tabstop>
@@ -164,7 +273,10 @@
   <tabstop>cbExcludeStationType</tabstop>
   <tabstop>comboSensorUnit</tabstop>
   <tabstop>cbExcludeSensorUnit</tabstop>
+  <tabstop>spinMinimumDistance</tabstop>
+  <tabstop>spinMaximumDistance</tabstop>
   <tabstop>table</tabstop>
+  <tabstop>btnSelectAll</tabstop>
   <tabstop>btnAdd</tabstop>
  </tabstops>
  <resources/>
