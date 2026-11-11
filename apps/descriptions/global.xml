@@ -50,7 +50,7 @@
 
 				@SYSTEMCONFIGGITHASH([cmd])@: output of command executed in ~/seiscomp/etc
 
-				@CONFIGGITHASH@: the lastest commit hash of the local config git in ~/.seiscomp, required git
+				@CONFIGGITHASH@: the lastest commit hash of the local config git in ~/.seiscomp, requires git
 
 				@CONFIGGITHASH([cmd])@: output of command executed in ~/.seiscomp
 				</description>
