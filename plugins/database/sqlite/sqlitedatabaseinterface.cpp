@@ -29,6 +29,7 @@
 #include <seiscomp/system/environment.h>
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -110,6 +111,97 @@ int sqliteCallbackFunc(unsigned T, void *C, void *P, void *X) {
 	return 0;
 }
 #endif
+
+
+// Fallbacks for the SQLite math functions (built-in since 3.35.0 if compiled
+// with SQLITE_ENABLE_MATH_FUNCTIONS). Semantics follow the built-ins:
+// NULL for non-numeric arguments and for results outside the domain.
+constexpr double Rad2Deg = 180.0 / 3.14159265358979323846;
+
+double fnDegrees(double x) { return x * Rad2Deg; }
+double fnRadians(double x) { return x / Rad2Deg; }
+double fnSin(double x) { return std::sin(x); }
+double fnCos(double x) { return std::cos(x); }
+double fnAsin(double x) { return std::asin(x); }
+double fnSqrt(double x) { return std::sqrt(x); }
+double fnPow(double x, double y) { return std::pow(x, y); }
+
+bool isNumeric(sqlite3_value *v) {
+	auto t = sqlite3_value_numeric_type(v);
+	return t == SQLITE_INTEGER || t == SQLITE_FLOAT;
+}
+
+void setResult(sqlite3_context *ctx, double r) {
+	if ( std::isnan(r) ) {
+		sqlite3_result_null(ctx);
+	}
+	else {
+		sqlite3_result_double(ctx, r);
+	}
+}
+
+template <double (*F)(double)>
+void unaryFunc(sqlite3_context *ctx, int, sqlite3_value **argv) {
+	if ( !isNumeric(argv[0]) ) {
+		sqlite3_result_null(ctx);
+		return;
+	}
+	setResult(ctx, F(sqlite3_value_double(argv[0])));
+}
+
+template <double (*F)(double, double)>
+void binaryFunc(sqlite3_context *ctx, int, sqlite3_value **argv) {
+	if ( !isNumeric(argv[0]) || !isNumeric(argv[1]) ) {
+		sqlite3_result_null(ctx);
+		return;
+	}
+	setResult(ctx, F(sqlite3_value_double(argv[0]), sqlite3_value_double(argv[1])));
+}
+
+// Function names are resolved at prepare time, so a failing prepare means
+// the function is unknown.
+bool hasFunction(sqlite3 *db, const char *name, int nArg) {
+	string sql = string("SELECT ") + name + (nArg == 1 ? "(1)" : "(1,1)");
+	sqlite3_stmt *stmt = nullptr;
+	int res = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+	sqlite3_finalize(stmt);
+	return res == SQLITE_OK;
+}
+
+void registerMathFunctions(sqlite3 *db) {
+	using Func = void (*)(sqlite3_context *, int, sqlite3_value **);
+	struct { const char *name; int nArg; Func func; } const funcs[] = {
+		{ "degrees", 1, &unaryFunc<fnDegrees> },
+		{ "radians", 1, &unaryFunc<fnRadians> },
+		{ "sin",     1, &unaryFunc<fnSin> },
+		{ "cos",     1, &unaryFunc<fnCos> },
+		{ "asin",    1, &unaryFunc<fnAsin> },
+		{ "sqrt",    1, &unaryFunc<fnSqrt> },
+		{ "pow",     2, &binaryFunc<fnPow> },
+		{ "power",   2, &binaryFunc<fnPow> }
+	};
+
+	int flags = SQLITE_UTF8;
+#ifdef SQLITE_DETERMINISTIC
+	flags |= SQLITE_DETERMINISTIC;
+#endif
+
+	for ( const auto &f : funcs ) {
+		if ( hasFunction(db, f.name, f.nArg) ) {
+			continue;
+		}
+
+		int res = sqlite3_create_function(db, f.name, f.nArg, flags, nullptr,
+		                                  f.func, nullptr, nullptr);
+		if ( res != SQLITE_OK ) {
+			SEISCOMP_WARNING("Failed to register function %s (%d): %s",
+			                 f.name, res, sqlite3_errmsg(db));
+		}
+		else {
+			SEISCOMP_DEBUG("Registered fallback function %s", f.name);
+		}
+	}
+}
 
 
 IMPLEMENT_SC_CLASS_DERIVED(SQLiteDatabase,
@@ -196,6 +288,8 @@ bool SQLiteDatabase::open() {
 		sqlite3_close(_handle);
 		return false;
 	}
+
+	registerMathFunctions(_handle);
 
 	if ( _debugUMask ) {
 #if SQLITE_VERSION_NUMBER < 3014000
