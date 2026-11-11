@@ -9558,6 +9558,7 @@ void PickerView::addStations() {
 
 	SelectStation dlg(SC_D.origin->time(), SC_D.config.ignoreDisabledStations, SC_D.stations, this);
 	dlg.setReferenceLocation(SC_D.origin->latitude(), SC_D.origin->longitude());
+	dlg.setStationSets(SC_D.config.stationSets);
 	if ( dlg.exec() != QDialog::Accepted ) return;
 
 	QList<DataModel::Station *> stations = dlg.selectedStations();

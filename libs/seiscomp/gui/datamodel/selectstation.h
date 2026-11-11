@@ -30,6 +30,7 @@
 #include <seiscomp/datamodel/station.h>
 #endif
 #include <seiscomp/gui/qt.h>
+#include <seiscomp/gui/core/utils.h>
 
 #include <seiscomp/gui/datamodel/ui_selectstation.h>
 
@@ -55,12 +56,21 @@ class SC_GUI_API SelectStation : public QDialog {
 
 		void setReferenceLocation(double lat, double lon);
 
+		/**
+		 * @brief Sets the station sets offered in the preset drop down.
+		 *        Selecting a preset fills in the station patterns and the
+		 *        distance range and selects all matching stations.
+		 */
+		void setStationSets(const StationSets &sets);
+
 
 	protected:
 		void keyPressEvent(QKeyEvent *event) override;
 
 	private slots:
 		void listMatchingStations();
+		void updateCount();
+		void presetChanged(int index);
 
 
 	// ------------------------------------------------------------------
@@ -76,6 +86,7 @@ class SC_GUI_API SelectStation : public QDialog {
 	// ------------------------------------------------------------------
 	private:
 		Ui::SelectStation _ui;
+		StationSets       _stationSets;
 };
 
 } // namespace Gui
