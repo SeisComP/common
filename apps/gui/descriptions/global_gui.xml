@@ -857,12 +857,18 @@
 						<parameter name="disabled" type="color" default="A0A0A4">
 							<description>The color of disabled arrivals.</description>
 						</parameter>
-						<parameter name="residuals" type="gradient">
+						<parameter name="residuals" type="gradient" unit="s:color">
 							<description>
 							The gradient of arrivals residuals. A gradient is defined as
 							a list of tuples separated by colon where the first item is
 							the value and the second is the color. Colors can be given in
-							rgb notation or hexadecimal. When rgb is used, double quotes are needed to
+							rgb notation or hexadecimal.
+
+							Format:
+
+							residual1:color1,residual2:color2,...
+
+							When rgb is used, double quotes are needed to
 							protect the comma inside the rgb definition, e.g.
 							-8:&quot;rgb(0,0,100)&quot;, -4:&quot;rgb(0,0,255)&quot;, -3:&quot;rgb(100,100,255)&quot;, ...
 							</description>
@@ -883,7 +889,13 @@
 							<description>The color of disabled magnitudes.</description>
 						</parameter>
 						<parameter name="residuals" type="gradient">
-							<description>The gradient of magnitude residuals.</description>
+							<description>
+							The gradient of magnitude residuals.
+
+							Format:
+
+							residual1:color1,residual2:color2,...
+							</description>
 						</parameter>
 					</group>
 
@@ -1040,7 +1052,7 @@
 						</description>
 						<parameter name="classic" type="boolean" default="false"/>
 						<group name="depth">
-							<parameter name="gradient" type="gradient" default="0:FF0000,50:ffA500,100:FFFF00,250:00FF00,600:0000FF">
+							<parameter name="gradient" type="gradient" unit="km,color" default="0:FF0000,50:ffA500,100:FFFF00,250:00FF00,600:0000FF">
 								<description>The depth gradient.</description>
 							</parameter>
 							<parameter name="discrete" type="boolean" default="true">
@@ -1619,7 +1631,7 @@
 						event comment id was not found.
 						</description>
 					</parameter>
-					<parameter name="colors" type="list:string">
+					<parameter name="colors" type="gradient">
 						<description>
 						Mapping of comment values to colors used as text color.
 						E.g. "foo:#000,bar:red".
@@ -1994,7 +2006,7 @@
 							event comment id was not found.
 							</description>
 						</parameter>
-						<parameter name="colors" type="list:string">
+						<parameter name="colors" type="gradient">
 							<description>
 							Mapping of comment values to colors used as text
 							color. E.g. "foo:#000,bar:red".
@@ -2029,7 +2041,7 @@
 						List of comments to ignore, e.g. "nil".
 						</description>
 					</parameter>
-					<parameter name="alertGradient" type="list:string" unit="s:color">
+					<parameter name="alertGradient" type="gradient" unit="s:color">
 						<description>
 						Discrete mapping of time values in seconds to colors used as
 						text color in case of an active alert. E.g. "0:00FF00,900:FF0000".
