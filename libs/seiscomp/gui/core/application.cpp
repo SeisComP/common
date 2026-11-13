@@ -37,6 +37,14 @@
 #include <seiscomp/utils/files.h>
 #include <seiscomp/utils/misc.h>
 
+#include "theme.h"
+
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QStyle>
+#include <QStyleFactory>
+#include <QVBoxLayout>
 #include <QHeaderView>
 #include <QLocale>
 #include <QMainWindow>
@@ -174,6 +182,9 @@ void Application::_GUI_Core_Settings::accept(SettingsLinker &linker) {
 		"non-interactive,N",
 		"Use non interactive presentation mode"
 	)
+	& cli(theme, "User interface", "theme",
+		  "Appearance theme: system, light, dark, midnight")
+	& cfg(theme, "scheme.theme")
 	& cfg(fullScreen, "mode.fullscreen")
 	& cfg(interactive, "mode.interactive")
 	& cfg(mapsDesc, "map")
@@ -439,6 +450,13 @@ void Application::setMainWidget(QWidget* w) {
 
 	auto *mw = dynamic_cast<QMainWindow*>(w);
 	if ( mw ) {
+		auto *settingsMenu = mw->menuBar()->findChild<QMenu*>("menuSettings");
+		if ( !settingsMenu ) {
+			settingsMenu = mw->menuBar()->addMenu(tr("&Settings"));
+			settingsMenu->setObjectName("menuSettings");
+		}
+		auto *appearance = settingsMenu->addAction(tr("&Appearance..."));
+		connect(appearance, &QAction::triggered, this, &Application::showAppearance);
 		auto *helpMenu = mw->menuBar()->findChild<QMenu*>("menuHelp");
 		if ( helpMenu == nullptr ) {
 			helpMenu = new QMenu(mw->menuBar());
@@ -851,6 +869,24 @@ bool Application::initConfiguration() {
 	}
 
 	QPalette pal;
+	if ( _type == GuiClient ) {
+		// CLI/config override the per-application preference. An unset value
+		// preserves the platform appearance used before theme support.
+		if ( _settings.theme.empty() ) {
+			_settings.theme = settings().value("appearance/theme", "system").toString().toStdString();
+		}
+		const auto theme = QString::fromStdString(_settings.theme);
+		if ( !Theme::isValid(theme) ) {
+			SEISCOMP_ERROR("Unknown appearance theme '%s' (expected system, light, dark or midnight)", _settings.theme.c_str());
+			return false;
+		}
+		if ( theme != "system" ) {
+			_app->setStyle(QStyleFactory::create("Fusion"));
+			pal = Theme::palette(theme, _app->style()->standardPalette());
+			_app->setPalette(pal);
+			Theme::apply(_scheme->colors, theme);
+		}
+	}
 	_scheme->colors.background = pal.color(QPalette::Window);
 	_scheme->fetch();
 
@@ -1397,6 +1433,35 @@ bool Application::sendMessage(const char* group, Seiscomp::Core::Message* msg) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void Application::showAppearance() {
+	QDialog dialog(_mainWidget);
+	dialog.setWindowTitle(tr("Appearance"));
+	auto *layout = new QVBoxLayout(&dialog);
+	auto *label = new QLabel(tr("Theme (applies after restarting the application):"), &dialog);
+	layout->addWidget(label);
+	auto *themes = new QComboBox(&dialog);
+	themes->addItem(tr("System"), "system");
+	themes->addItem(tr("Light"), "light");
+	themes->addItem(tr("Dark"), "dark");
+	themes->addItem(tr("Midnight"), "midnight");
+	themes->setCurrentIndex(themes->findData(
+		settings().value("appearance/theme", QString::fromStdString(_settings.theme))
+	));
+	label->setBuddy(themes);
+	layout->addWidget(themes);
+	auto *notice = new QLabel(tr("A --theme argument or scheme.theme configuration takes precedence over this preference."), &dialog);
+	notice->setWordWrap(true);
+	layout->addWidget(notice);
+	auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+	connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+	connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+	layout->addWidget(buttons);
+	if ( dialog.exec() == QDialog::Accepted ) {
+		settings().setValue("appearance/theme", themes->currentData());
+	}
+}
+
+
 void Application::showSettings() {
 	if ( !isMessagingEnabled() && !isDatabaseEnabled() ) return;
 

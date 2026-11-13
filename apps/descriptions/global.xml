@@ -1014,6 +1014,14 @@
 			</group>
 
 			<group name="User interface"  publicID="gui">
+				<option long-flag="theme" argument="name" publicID="gui#theme">
+					<description>
+						Select system, light, dark or midnight appearance.
+						This overrides scheme.theme and the saved Appearance
+						preference. This only works with GUI applications.
+					</description>
+				</option>
+
 				<option flag="F" long-flag="full-screen" argument="" default="" publicID="gui#full-screen">
 					<description>
 					Start the application filling the entire screen.
