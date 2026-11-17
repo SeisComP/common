@@ -116,6 +116,11 @@ struct CommitOptions {
 	string                       eventName;
 	string                       eventComment;
 	string                       feltReport;
+	// Whether a custom commit profile sets the value. If not, the current
+	// value of the event is kept.
+	bool                         setsEventName{true};
+	bool                         setsEventComment{true};
+	bool                         setsFeltReport{true};
 
 	struct OriginCommentProfile {
 		string         id;
@@ -3697,17 +3702,23 @@ void OriginLocatorView::init() {
 		try {
 			customOptions.eventName = SCApp->configGetString(prefix + "eventName");
 		}
-		catch ( ... ) {}
+		catch ( ... ) {
+			customOptions.setsEventName = false;
+		}
 
 		try {
 			customOptions.eventComment = SCApp->configGetString(prefix + "eventComment");
 		}
-		catch ( ... ) {}
+		catch ( ... ) {
+			customOptions.setsEventComment = false;
+		}
 
 		try {
 			customOptions.feltReport = SCApp->configGetString(prefix + "feltReport");
 		}
-		catch ( ... ) {}
+		catch ( ... ) {
+			customOptions.setsFeltReport = false;
+		}
 
 		auto *button = new QToolButton(SC_D.ui.toolButtonGroupBox);
 
@@ -7414,6 +7425,37 @@ void OriginLocatorView::customCommit() {
 
 	customOptions.setup(SC_D.currentOrigin.get());
 
+	// Keep the event's name, operator comment and felt report unless the
+	// profile sets them. Otherwise they would be cleared on commit and shown
+	// empty in the confirmation dialog.
+	if ( SC_D.baseEvent && (!customOptions.setsEventName
+	                     || !customOptions.setsEventComment
+	                     || !customOptions.setsFeltReport) ) {
+		if ( SC_D.reader && SC_D.baseEvent->eventDescriptionCount() == 0 )
+			SC_D.reader->loadEventDescriptions(SC_D.baseEvent.get());
+
+		if ( SC_D.reader && SC_D.baseEvent->commentCount() == 0 )
+			SC_D.reader->loadComments(SC_D.baseEvent.get());
+
+		if ( !customOptions.setsEventName ) {
+			auto *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
+			if ( desc )
+				customOptions.eventName = desc->text();
+		}
+
+		if ( !customOptions.setsFeltReport ) {
+			auto *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(FELT_REPORT));
+			if ( desc )
+				customOptions.feltReport = desc->text();
+		}
+
+		if ( !customOptions.setsEventComment ) {
+			auto *cmt = SC_D.baseEvent->comment(CommentIndex("Operator"));
+			if ( cmt )
+				customOptions.eventComment = cmt->text();
+		}
+	}
+
 	QString fixedMagnitudeType = SC_D.actionCommitOptions->property("EvPrefMagType").toString();
 	if ( !fixedMagnitudeType.isEmpty() ) {
 		QMessageBox::StandardButton res = QMessageBox::NoButton;
@@ -8052,15 +8094,20 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 		NotifierMessagePtr nm = new NotifierMessage;
 
-		if ( comment != options.eventComment ) {
+		// Values a custom commit profile does not set are only changed when
+		// edited in the confirmation dialog.
+		if ( (options.setsEventComment || dialogConfirmed)
+		  && comment != options.eventComment ) {
 			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvOpComment", options.eventComment));
 		}
 
-		if ( name != options.eventName ) {
+		if ( (options.setsEventName || dialogConfirmed)
+		  && name != options.eventName ) {
 			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvName", options.eventName));
 		}
 
-		if ( feltReport != options.feltReport ) {
+		if ( (options.setsFeltReport || dialogConfirmed)
+		  && feltReport != options.feltReport ) {
 			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvFeltReport", options.feltReport));
 		}
 
