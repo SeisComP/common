@@ -159,11 +159,6 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		//! Dumps the record data into an ASCII file
 		void writeData();
 
-
-	// ----------------------------------------------------------------------
-	//  Protected Interface
-	// ----------------------------------------------------------------------
-	protected:
 		//! Implement this method to compute a pick.
 		//! The default implementation returns false and does nothing.
 		//! The returned uncertainty measures are in samples.
@@ -174,6 +169,11 @@ class SC_SYSTEM_CLIENT_API Picker : public TimeWindowProcessor {
 		                           int &upperUncertainty, double &snr,
 		                           OPT(Polarity) &polarity) = 0;
 
+
+	// ----------------------------------------------------------------------
+	//  Protected Interface
+	// ----------------------------------------------------------------------
+	protected:
 		void process(const Record *record, const DoubleArray &filteredData) override;
 		bool handleGap(Filter *filter, const Core::TimeSpan& span,
 		               double lastSample, double nextSample,
