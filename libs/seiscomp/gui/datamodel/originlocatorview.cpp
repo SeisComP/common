@@ -113,14 +113,10 @@ struct CommitOptions {
 	OPT(OPT(EvaluationStatus))   originStatus;
 	OPT(string)                  originAgencyID;
 	OPT(string)                  magnitudeType;
-	string                       eventName;
-	string                       eventComment;
-	string                       feltReport;
-	// Whether a custom commit profile sets the value. If not, the current
-	// value of the event is kept.
-	bool                         setsEventName{true};
-	bool                         setsEventComment{true};
-	bool                         setsFeltReport{true};
+	// Unset: keep the event's current value
+	OPT(string)                  eventName;
+	OPT(string)                  eventComment;
+	OPT(string)                  feltReport;
 
 	struct OriginCommentProfile {
 		string         id;
@@ -270,12 +266,12 @@ QString toString(const CommitOptions &opts) {
 		else
 			s += QString("\nUnfix magnitude type");
 	}
-	if ( !opts.eventName.empty() )
-		s += QString("\nEvent name: %1").arg(opts.eventName.c_str());
-	if ( !opts.eventComment.empty() )
-		s += QString("\nEvent comment: %1").arg(opts.eventComment.c_str());
-	if ( !opts.feltReport.empty() )
-		s += QString("\nFelt report: %1").arg(opts.feltReport.c_str());
+	if ( opts.eventName && !opts.eventName->empty() )
+		s += QString("\nEvent name: %1").arg(opts.eventName->c_str());
+	if ( opts.eventComment && !opts.eventComment->empty() )
+		s += QString("\nEvent comment: %1").arg(opts.eventComment->c_str());
+	if ( opts.feltReport && !opts.feltReport->empty() )
+		s += QString("\nFelt report: %1").arg(opts.feltReport->c_str());
 
 	return s;
 }
@@ -848,7 +844,7 @@ class OriginCommitOptions : public QDialog {
 
 					for ( auto &opt : commentOptions ) {
 						ui.comboEQComment->addItem(opt.c_str());
-						if ( options.eventComment == opt ) {
+						if ( options.eventComment && *options.eventComment == opt ) {
 							ui.comboEQComment->setCurrentIndex(ui.comboEQComment->count() - 1);
 						}
 					}
@@ -876,16 +872,16 @@ class OriginCommitOptions : public QDialog {
 			}
 
 			// Populate earthquake name
-			if ( !options.eventName.empty() )
-				ui.editEQName->setText(options.eventName.c_str());
+			if ( options.eventName && !options.eventName->empty() )
+				ui.editEQName->setText(options.eventName->c_str());
 
-			if ( !options.feltReport.empty() )
-				ui.editFeltReport->setText(options.feltReport.c_str());
+			if ( options.feltReport && !options.feltReport->empty() )
+				ui.editFeltReport->setText(options.feltReport->c_str());
 
 			// Fill operator's comment
-			if ( !options.eventComment.empty() ) {
+			if ( options.eventComment && !options.eventComment->empty() ) {
 				if ( commentOptions.empty() ) {
-					ui.editEQComment->setText(options.eventComment.c_str());
+					ui.editEQComment->setText(options.eventComment->c_str());
 				}
 				else {
 					// search for current comment in list of available options,
@@ -893,13 +889,13 @@ class OriginCommitOptions : public QDialog {
 					int idx = -1, i = 1;
 					for ( vector<string>::const_iterator it = commentOptions.begin();
 					      it != commentOptions.end(); ++it, ++i ) {
-						if ( *it == options.eventComment ) {
+						if ( *it == *options.eventComment ) {
 							idx = i;
 							break;
 						}
 					}
 					if ( idx < 0 ) {
-						ui.comboEQComment->insertItem(1, options.eventComment.c_str());
+						ui.comboEQComment->insertItem(1, options.eventComment->c_str());
 						idx = 1;
 					}
 					ui.comboEQComment->setCurrentIndex(idx);
@@ -3702,23 +3698,17 @@ void OriginLocatorView::init() {
 		try {
 			customOptions.eventName = SCApp->configGetString(prefix + "eventName");
 		}
-		catch ( ... ) {
-			customOptions.setsEventName = false;
-		}
+		catch ( ... ) {}
 
 		try {
 			customOptions.eventComment = SCApp->configGetString(prefix + "eventComment");
 		}
-		catch ( ... ) {
-			customOptions.setsEventComment = false;
-		}
+		catch ( ... ) {}
 
 		try {
 			customOptions.feltReport = SCApp->configGetString(prefix + "feltReport");
 		}
-		catch ( ... ) {
-			customOptions.setsFeltReport = false;
-		}
+		catch ( ... ) {}
 
 		auto *button = new QToolButton(SC_D.ui.toolButtonGroupBox);
 
@@ -7428,31 +7418,28 @@ void OriginLocatorView::customCommit() {
 	// Keep the event's name, operator comment and felt report unless the
 	// profile sets them. Otherwise they would be cleared on commit and shown
 	// empty in the confirmation dialog.
-	if ( SC_D.baseEvent && (!customOptions.setsEventName
-	                     || !customOptions.setsEventComment
-	                     || !customOptions.setsFeltReport) ) {
+	if ( SC_D.baseEvent && (!customOptions.eventName
+	                     || !customOptions.eventComment
+	                     || !customOptions.feltReport) ) {
 		if ( SC_D.reader && SC_D.baseEvent->eventDescriptionCount() == 0 )
 			SC_D.reader->loadEventDescriptions(SC_D.baseEvent.get());
 
 		if ( SC_D.reader && SC_D.baseEvent->commentCount() == 0 )
 			SC_D.reader->loadComments(SC_D.baseEvent.get());
 
-		if ( !customOptions.setsEventName ) {
+		if ( !customOptions.eventName ) {
 			auto *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(EARTHQUAKE_NAME));
-			if ( desc )
-				customOptions.eventName = desc->text();
+			customOptions.eventName = desc ? desc->text() : string();
 		}
 
-		if ( !customOptions.setsFeltReport ) {
+		if ( !customOptions.feltReport ) {
 			auto *desc = SC_D.baseEvent->eventDescription(EventDescriptionIndex(FELT_REPORT));
-			if ( desc )
-				customOptions.feltReport = desc->text();
+			customOptions.feltReport = desc ? desc->text() : string();
 		}
 
-		if ( !customOptions.setsEventComment ) {
+		if ( !customOptions.eventComment ) {
 			auto *cmt = SC_D.baseEvent->comment(CommentIndex("Operator"));
-			if ( cmt )
-				customOptions.eventComment = cmt->text();
+			customOptions.eventComment = cmt ? cmt->text() : string();
 		}
 	}
 
@@ -8094,21 +8081,16 @@ void OriginLocatorView::commitWithOptions(const void *data_ptr) {
 
 		NotifierMessagePtr nm = new NotifierMessage;
 
-		// Values a custom commit profile does not set are only changed when
-		// edited in the confirmation dialog.
-		if ( (options.setsEventComment || dialogConfirmed)
-		  && comment != options.eventComment ) {
-			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvOpComment", options.eventComment));
+		if ( options.eventComment && comment != *options.eventComment ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvOpComment", *options.eventComment));
 		}
 
-		if ( (options.setsEventName || dialogConfirmed)
-		  && name != options.eventName ) {
-			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvName", options.eventName));
+		if ( options.eventName && name != *options.eventName ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvName", *options.eventName));
 		}
 
-		if ( (options.setsFeltReport || dialogConfirmed)
-		  && feltReport != options.feltReport ) {
-			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvFeltReport", options.feltReport));
+		if ( options.feltReport && feltReport != *options.feltReport ) {
+			nm->attach(createJournal(SC_D.baseEvent->publicID(), "EvFeltReport", *options.feltReport));
 		}
 
 		if ( type != newType ) {
