@@ -21,9 +21,8 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 
 
-#include <iostream>
 #include <stdexcept>
-#include <stdio.h>
+#include <cstdio>
 
 #include <seiscomp/unittest/unittests.h>
 

@@ -32,9 +32,7 @@
 #include <seiscomp/utils/timer.h>
 
 #include <iostream>
-#include <fstream>
 #include <cstdlib>
-#include <vector>
 
 
 using namespace std;
@@ -46,110 +44,107 @@ namespace bu = boost::unit_test;
 BOOST_AUTO_TEST_SUITE(seiscomp_core_xml)
 /****************************************************************/
 
-const char *JSON2 =
-"{"
-"\"code\":\"BHZ\","
-"\"start\":\"2007-11-19T00:00:00.0000Z\","
-"\"datalogger\":\"Datalogger#20120509134106.694537.39279\","
-"\"dataloggerSerialNumber\":\"xxxx\","
-"\"dataloggerChannel\":0,"
-"\"sensor\":\"Sensor#20110428113337.619967.1975\","
-"\"sensorSerialNumber\":\"yyyy\","
-"\"sensorChannel\":\"wrong\","
-"\"sampleRateNumerator\":40,"
-"\"sampleRateDenominator\":1,"
-"\"depth\":3,"
-"\"azimuth\":0,"
-"\"dip\":-90,"
-"\"gain\":2506580000,"
-"\"gainFrequency\":5,"
-"\"gainUnit\":\"M/S\","
-"\"format\":\"Steim2\","
-"\"flags\":\"G\","
-"\"restricted\":false,"
-"\"shared\":true"
-"}";
+const char *JSON2 = R"({
+"code":"BHZ",
+"start":"2007-11-19T00:00:00.0000Z",
+"datalogger":"Datalogger#20120509134106.694537.39279",
+"dataloggerSerialNumber":"xxxx",
+"dataloggerChannel":0,
+"sensor":"Sensor#20110428113337.619967.1975",
+"sensorSerialNumber":"yyyy",
+"sensorChannel":"wrong",
+"sampleRateNumerator":40,
+"sampleRateDenominator":1,
+"depth":3,
+"azimuth":0,
+"dip":-90,
+"gain":2506580000,
+"gainFrequency":5,
+"gainUnit":"M/S",
+"format":"Steim2",
+"flags":"G",
+"restricted":false,
+"shared":true
+})";
 
-const char *JSON1 =
-"{"
-"\"code\":\"BHZ\","
-"\"start\":\"2007-11-19T00:00:00.0000Z\","
-"\"datalogger\":\"Datalogger#20120509134106.694537.39279\","
-"\"dataloggerSerialNumber\":\"xxxx\","
-"\"dataloggerChannel\":0,"
-"\"sensor\":\"Sensor#20110428113337.619967.1975\","
-"\"sensorSerialNumber\":\"yyyy\","
-"\"sensorChannel\":0,"
-"\"sampleRateNumerator\":40,"
-"\"sampleRateDenominator\":1,"
-"\"depth\":3,"
-"\"azimuth\":0,"
-"\"dip\":-90,"
-"\"gain\":2506580000,"
-"\"gainFrequency\":5,"
-"\"gainUnit\":\"M/S\","
-"\"format\":\"Steim2\","
-"\"flags\":\"G\","
-"\"restricted\":false,"
-"\"shared\":true"
-"}";
+const char *JSON1 = R"({
+"code":"BHZ",
+"start":"2007-11-19T00:00:00.0000Z",
+"datalogger":"Datalogger#20120509134106.694537.39279",
+"dataloggerSerialNumber":"xxxx",
+"dataloggerChannel":0,
+"sensor":"Sensor#20110428113337.619967.1975",
+"sensorSerialNumber":"yyyy",
+"sensorChannel":0,
+"sampleRateNumerator":40,
+"sampleRateDenominator":1,
+"depth":3,
+"azimuth":0,
+"dip":-90,
+"gain":2506580000,
+"gainFrequency":5,
+"gainUnit":"M/S",
+"format":"Steim2",
+"flags":"G",
+"restricted":false,
+"shared":true
+})";
+
 
 /****************************************************************/
 
 const char* getContent(int a) {
 
-	const char *XML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
-	<seiscomp xmlns=\"http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.7\" version=\"0.7\">\n\
-	<EventParameters>\n\
-	    <origin publicID=\"Origin#20150212124718.250769.756608\">\n\
-	        <time>\n\
-	            <value>2000-02-12T12:09:48Z</value>\n\
-	        </time>\n\
-	        <latitude>\n\
-	            <value>45.678</value>\n\
-	        </latitude>\n\
-	        <longitude>\n\
-	            <value>-123.456</value>\n\
-	        </longitude>\n\
-	        <depth>\n\
-	            <value>98.765</value>\n\
-	        </depth>\n\
-	        <depthType>from location</depthType>\n\
-	        <methodID>LOCSAT</methodID>\n\
-	        <earthModelID>iasp91</earthModelID>\n\
-	    </origin>\n\
-	</EventParameters>\n\
-	</seiscomp>\
-	";
+	const char *XML2 = R"(<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.7" version="0.7">
+    <EventParameters>
+        <origin publicID="Origin#20150212124718.250769.756608">
+            <time>
+                <value>2000-02-12T12:09:48Z</value>
+            </time>
+            <latitude>
+                <value>45.678</value>
+            </latitude>
+            <longitude>
+                <value>-123.456</value>
+            </longitude>
+            <depth>
+                <value>98.765</value>
+            </depth>
+            <depthType>from location</depthType>
+            <methodID>LOCSAT</methodID>
+            <earthModelID>iasp91</earthModelID>
+        </origin>
+    </EventParameters>
+</seiscomp>
+)";
 
-	const char *XML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
-	<seiscomp xmlns=\"http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.7\" version=\"0.7\">\n\
-	    <EventParameters>\n\
-	        <origin publicID=\"Origin#20150212124718.250769.756608\">\n\
-	            <time>\n\
-	                <value>2000-02-12T12:09:48.17871Z</value>\n\
-	                <uncertainty>0.5</uncertainty>\n\
-	            </time>\n\
-	            <latitude>\n\
-	                <value>45.678</value>\n\
-	            </latitude>\n\
-	            <longitude>\n\
-	                <value>-123.456</value>\n\
-	            </longitude>\n\
-	            <depth>\n\
-	                <value>98.765</value>\n\
-	            </depth>\n\
-	            <depthType>from location</depthType>\n\
-	            <methodID>LOCSAT</methodID>\n\
-	            <earthModelID>iasp91</earthModelID>\n\
-	        </origin>\n\
-	    </EventParameters>\n\
-	</seiscomp>\
-	";
-	if(a == 1)
-	    return (XML1);
-	else
-	    return (XML2);
+	const char *XML1 = R"(<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.7" version="0.7">
+    <EventParameters>
+        <origin publicID="Origin#20150212124718.250769.756608">
+            <time>
+                <value>2000-02-12T12:09:48.17871Z</value>
+                <uncertainty>0.5</uncertainty>
+            </time>
+            <latitude>
+                <value>45.678</value>
+            </latitude>
+            <longitude>
+                <value>-123.456</value>
+            </longitude>
+            <depth>
+                <value>98.765</value>
+            </depth>
+            <depthType>from location</depthType>
+            <methodID>LOCSAT</methodID>
+            <earthModelID>iasp91</earthModelID>
+        </origin>
+    </EventParameters>
+</seiscomp>
+)";
+
+	return a == 1 ? XML1 : XML2;
 }
 
 /****************************************************************/
@@ -157,7 +152,7 @@ const char* getContent(int a) {
 
 class StringBuf : public std::streambuf {
 	public:
-		StringBuf(const char *s) : std::streambuf() {
+		StringBuf(const char *s) {
 			setbuf(const_cast<char*>(s), strlen(s));
 		}
 
@@ -185,10 +180,10 @@ BOOST_AUTO_TEST_CASE(TimeToString) {
 	match = boost::iequals(s, check);
 	BOOST_CHECK_EQUAL(match, true);
 
-	t1.set(2008,4,12,20,44,3,567445);
+	t1.set(2008, 4, 12, 20, 44, 3, 567445);
 	s = toString(t1);
 	check = "2008-04-12T20:44:03.567445Z";
-	match = boost::iequals(s,check);
+	match = boost::iequals(s, check);
 	BOOST_CHECK_EQUAL(match, true);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -207,68 +202,61 @@ BOOST_AUTO_TEST_CASE(jsonEqualString) {
 	ar.from(&doc);
 	Seiscomp::DataModel::StreamPtr stream;
 	ar >> stream;
-	BOOST_CHECK_EQUAL(ar.success(),true);
+	BOOST_CHECK_EQUAL(ar.success(), true);
 
 	/************* Test JSON1 **************/
-	bool start = doc.HasMember("start");
-	if( start == true ) {
+	if ( doc.HasMember("start") ) {
 		string getStart = string(doc["start"].GetString());
 		string check = "2007-11-19T00:00:00.0000Z";
-		bool equal = boost::iequals(check,getStart);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getStart);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("code");
-	if( start == true ) {
-		string getCode = string(doc["code"].GetString());
+	if ( doc.HasMember("code") ) {
+		string getCode = doc["code"].GetString();
 		string check = "BHZ";
-		bool equal = boost::iequals(check,getCode);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getCode);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("datalogger");
-	if( start == true ) {
+	if ( doc.HasMember("datalogger") ) {
 		string getDatalogger = string(doc["datalogger"].GetString());
 		string check = "Datalogger#20120509134106.694537.39279";
-		bool equal = boost::iequals(check,getDatalogger);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getDatalogger);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("depth");
-	if( start == true ) {
-		int getDepth = int(doc["depth"].GetInt());
-		BOOST_CHECK_EQUAL(getDepth,3);
+	if ( doc.HasMember("depth") ) {
+		int getDepth = doc["depth"].GetInt();
+		BOOST_CHECK_EQUAL(getDepth, 3);
 	}
 
-	start = doc.HasMember("dip");
-	if( start == true ) {
-		int getDip = int(doc["dip"].GetInt());
+	if ( doc.HasMember("dip") ) {
+		int getDip = doc["dip"].GetInt();
 		BOOST_CHECK_EQUAL(getDip, -90);
 	}
 
-	start = doc.HasMember("restricted");
-	if( start == true ) {
-		bool getRest = bool(doc["restricted"].GetBool());
+	if ( doc.HasMember("restricted") ) {
+		bool getRest = doc["restricted"].GetBool();
 		BOOST_CHECK_EQUAL(getRest, false);
 	}
 
-	start = doc.HasMember("sensorChannel");
-	if( start == true ) {
-		int getSenChannel = int(doc["sensorChannel"].GetInt());
-		BOOST_CHECK_EQUAL(getSenChannel,0);
+	if ( doc.HasMember("sensorChannel") ) {
+		int getSenChannel = doc["sensorChannel"].GetInt();
+		BOOST_CHECK_EQUAL(getSenChannel, 0);
 	}
 
-	start = doc.HasMember("gain");
-	if( start == true ) {
+	if ( doc.HasMember("gain") ) {
 		rapidjson::Value::ConstMemberIterator itr = doc.FindMember("gain");
-		if( itr->value.IsInt() ) {
-			int getGain = int(doc["gain"].GetInt());
-			BOOST_CHECK_EQUAL(getGain,2506580000);
+		if ( itr->value.IsInt() ) {
+			int getGain = doc["gain"].GetInt();
+			BOOST_CHECK_EQUAL(getGain, 2506580000);
 		}
-		if( itr->value.IsString() ) {
-			string getGain = string(doc["gain"].GetString());
+
+		if ( itr->value.IsString() ) {
+			string getGain = doc["gain"].GetString();
 			string check = "2506580000";
-			bool equal = boost::iequals(check,getGain);
+			bool equal = boost::iequals(check, getGain);
 			BOOST_CHECK_EQUAL(equal, true);
 		}
 	}
@@ -276,54 +264,47 @@ BOOST_AUTO_TEST_CASE(jsonEqualString) {
 	doc.Parse(JSON2);
 	BOOST_CHECK_EQUAL(doc.HasParseError(), false);
 
-	start = doc.HasMember("start");
-	if( start == true ) {
+	if ( doc.HasMember("start") ) {
 		string getStart = string(doc["start"].GetString());
 		string check = "2007-11-19T00:00:00.0000Z";
-		bool equal = boost::iequals(check,getStart);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getStart);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("code");
-	if( start == true ) {
+	if ( doc.HasMember("code") ) {
 		string getCode = string(doc["code"].GetString());
 		string check = "BHZ";
-		bool equal = boost::iequals(check,getCode);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getCode);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("datalogger");
-	if( start == true ) {
+	if ( doc.HasMember("datalogger") ) {
 		string getDatalogger = string(doc["datalogger"].GetString());
 		string check = "Datalogger#20120509134106.694537.39279";
-		bool equal = boost::iequals(check,getDatalogger);
-		BOOST_CHECK_EQUAL(equal,true);
+		bool equal = boost::iequals(check, getDatalogger);
+		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	start = doc.HasMember("depth");
-	if( start == true ) {
-		int getDepth = int(doc["depth"].GetInt());
-		BOOST_CHECK_EQUAL(getDepth,3);
+	if ( doc.HasMember("depth") ) {
+		int getDepth = doc["depth"].GetInt();
+		BOOST_CHECK_EQUAL(getDepth, 3);
 	}
 
-	start = doc.HasMember("dip");
-	if( start == true ) {
-		int getDip = int(doc["dip"].GetInt());
+	if ( doc.HasMember("dip") ) {
+		int getDip = doc["dip"].GetInt();
 		BOOST_CHECK_EQUAL(getDip, -90);
 	}
 
-	start = doc.HasMember("shared");
-	if( start == true ) {
-		bool getRest = bool(doc["shared"].GetBool());
+	if ( doc.HasMember("shared") ) {
+		bool getRest = doc["shared"].GetBool();
 		BOOST_CHECK_EQUAL(getRest, true);
 	}
 
-	start = doc.HasMember("sensorChannel");
-	if( start == true ) {
+	if ( doc.HasMember("sensorChannel") ) {
 		rapidjson::Value::ConstMemberIterator itr = doc.FindMember("sensorChannel");
 		if(itr->value.IsInt()) {
-			int getSenChannel1 = int(doc["sensorChannel"].GetInt());
-			BOOST_CHECK_MESSAGE(itr->value.IsInt(),"Value of sensorChannel is:"
+			int getSenChannel1 = doc["sensorChannel"].GetInt();
+			BOOST_CHECK_MESSAGE(itr->value.IsInt(), "Value of sensorChannel is:"
 			                    << getSenChannel1<< ".");
 		}
 		if( itr->value.IsString() ) {
@@ -342,7 +323,7 @@ BOOST_AUTO_TEST_CASE(jsonEqualString) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(xmlEqualString) {
-	const char* XML1 = getContent(1);
+	const auto *XML1 = getContent(1);
 	StringBuf buf(XML1);
 	Seiscomp::IO::XMLArchive x;
 	EventParametersPtr ep;
@@ -354,22 +335,22 @@ BOOST_AUTO_TEST_CASE(xmlEqualString) {
 	x >> ep;
 	x.close();
 
-	BOOST_CHECK((bool)ep == true);
+	BOOST_CHECK((bool)ep);
 	bool oriCount = ep->originCount();
-	BOOST_CHECK( oriCount == 1);
+	BOOST_CHECK(oriCount == 1);
 
 	org = ep->origin(0);
 	string getString = org->time().value().iso();
 	string check = "2000-02-12T12:09:48.17871Z";
 	BOOST_CHECK_EQUAL(check, getString);
-	BOOST_CHECK_EQUAL(org->time().uncertainty(),0.5);
+	BOOST_CHECK_EQUAL(org->time().uncertainty(), 0.5);
 
 	getString = org->publicID();
 	check = "Origin#20150212124718.250769.756608";
 	BOOST_CHECK_EQUAL(getString, check);
 
 	double getDouble = org->longitude();
-	BOOST_CHECK_EQUAL(getDouble,-123.456);
+	BOOST_CHECK_EQUAL(getDouble, -123.456);
 
 	getString = org->methodID();
 	check = "LOCSAT";
@@ -384,13 +365,13 @@ BOOST_AUTO_TEST_CASE(xmlEqualString) {
 	x >> ep;
 	x.close();
 
-	BOOST_CHECK_EQUAL((bool)ep , true);
+	BOOST_CHECK((bool)ep);
 	oriCount = ep->originCount();
-	BOOST_CHECK(oriCount == true);
+	BOOST_CHECK(oriCount);
 
 	org = ep->origin(0);
 	getDouble = org->latitude().value();
-	BOOST_CHECK_EQUAL(getDouble,45.678);
+	BOOST_CHECK_EQUAL(getDouble, 45.678);
 
 	getString = org->time().value().iso();
 	check = "2000-02-12T12:09:48.0000z";

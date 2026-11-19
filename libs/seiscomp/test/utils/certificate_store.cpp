@@ -48,8 +48,9 @@ string read_file(const string &fn) {
 	ifstream file;
 
 	file.open(fn.c_str(), ios::binary);
-	if ( !file.is_open() )
+	if ( !file.is_open() ) {
 		return content;
+	}
 
 	file.seekg(0, ios::end);
 	fsize = file.tellg();
@@ -77,18 +78,18 @@ EVP_PKEY *set_private_key_from_PEM(const string &pemkey) {
 }
 
 unsigned char *sign(unsigned char *digest, size_t nDigest, EVP_PKEY *pkey, size_t &nSig) {
-	auto ctx = EVP_PKEY_CTX_new(pkey, nullptr);
+	auto *ctx = EVP_PKEY_CTX_new(pkey, nullptr);
 	if ( !ctx ) {
 		return nullptr;
 	}
 
 	if ( EVP_PKEY_sign_init(ctx) <= 0 ) {
 		EVP_PKEY_CTX_free(ctx);
-		return 0;
+		return nullptr;
 	}
 
 	EVP_PKEY_sign(ctx, nullptr, &nSig, digest, nDigest);
-	auto sig = new unsigned char[nSig];
+	auto *sig = new unsigned char[nSig];
 	EVP_PKEY_sign(ctx, sig, &nSig, digest, nDigest);
 	EVP_PKEY_CTX_free(ctx);
 	return sig;
@@ -165,7 +166,7 @@ BOOST_AUTO_TEST_CASE(get_certificate_by_signature) {
 	EVP_MD_CTX_destroy(mdctx);
 
 	size_t siglen = 0;
-	auto sig = sign(digest, digest_len, privateKey, siglen);
+	auto *sig = sign(digest, digest_len, privateKey, siglen);
 	BOOST_CHECK(sig);
 
 	const X509 *cert = nullptr;
@@ -215,7 +216,7 @@ BOOST_AUTO_TEST_CASE(validate_records) {
 		++numberOfRecords;
 	}
 
-	std::cerr << "Read " << numberOfRecords << " records" << std::endl;
+	std::cerr << "Read " << numberOfRecords << " records\n";
 	BOOST_CHECK(numberOfRecords == 10);
 }
 

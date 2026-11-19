@@ -24,8 +24,6 @@
 #include <seiscomp/core/baseobject.h>
 #include <seiscomp/core/list.h>
 
-#include <iostream>
-
 
 namespace bu = boost::unit_test;
 using namespace std;
@@ -34,19 +32,19 @@ using namespace Seiscomp::Core;
 
 
 DEFINE_SMARTPOINTER(Dummy);
-struct Dummy : BaseObject,
-               Generic::IntrusiveListItem<DummyPtr> {
-	Dummy(int a = 0) : a(a) {
-		++Count;
-	}
+class Dummy : public BaseObject, public Generic::IntrusiveListItem<DummyPtr> {
+	public:
+		Dummy(int a = 0) : a(a) {
+			++Count;
+		}
 
-	~Dummy() {
-		--Count;
-	}
+		~Dummy() override {
+			--Count;
+		}
 
-	int a;
+		int a;
 
-	static int Count;
+		static int Count;
 };
 
 
@@ -77,7 +75,7 @@ BOOST_AUTO_TEST_CASE(insertAndSize) {
 	BOOST_CHECK_EQUAL(dummies.back()->referenceCount(), 2);
 
 	int count = 1;
-	for ( auto item : dummies ) {
+	for ( auto *item : dummies ) {
 		BOOST_CHECK_EQUAL(item->a, count++);
 		BOOST_CHECK_EQUAL(item->referenceCount(), 2);
 	}
@@ -86,8 +84,8 @@ BOOST_AUTO_TEST_CASE(insertAndSize) {
 	BOOST_CHECK_EQUAL(dummies.size(), 0);
 	BOOST_CHECK_EQUAL(Dummy::Count, len);
 
-	for ( int i = 0; i < len; ++i ) {
-		BOOST_CHECK_EQUAL(elements[i]->referenceCount(), 1);
+	for (const auto &element : elements) {
+		BOOST_CHECK_EQUAL(element->referenceCount(), 1);
 	}
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -107,12 +105,12 @@ BOOST_AUTO_TEST_CASE(modify) {
 		dummies.push_back(elements[i]);
 	}
 
-	auto elem = elements[len / 2].get();
-	for ( int i = 0; i < len; ++i ) {
-		elements[i] = nullptr;
+	auto *elem = elements[len / 2].get();
+	for (auto & element : elements) {
+		element = nullptr;
 	}
 
-	for ( auto item : dummies ) {
+	for ( auto *item : dummies ) {
 		BOOST_CHECK_EQUAL(item->referenceCount(), 1);
 	}
 
@@ -120,7 +118,7 @@ BOOST_AUTO_TEST_CASE(modify) {
 	BOOST_CHECK_EQUAL(Dummy::Count, len);
 
 	int count = 0;
-	for ( auto item : dummies ) {
+	for ( auto *item : dummies ) {
 		if ( count == len / 2 ) {
 			BOOST_CHECK_EQUAL(item->a, -1);
 			break;

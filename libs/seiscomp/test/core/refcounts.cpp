@@ -22,7 +22,6 @@
 
 
 #include <iostream>
-#include <stdexcept>
 #include <string>
 #include <cstdio>
 #include <atomic>
@@ -40,11 +39,11 @@ using namespace Seiscomp;
 
 class X {
 	public:
-		typedef boost::intrusive_ptr<X> Pointer;
-		X() : _refcount(0) {}
+		using Pointer = boost::intrusive_ptr<X>;
+		X() = default;
 
 	private:
-		mutable int _refcount;
+		mutable int _refcount{0};
 		string data;
 
 		friend void intrusive_ptr_add_ref(const X *x) {
@@ -52,15 +51,16 @@ class X {
 		}
 
 		friend void intrusive_ptr_release(const X *x) {
-			if ( --x->_refcount == 0 )
+			if ( --x->_refcount == 0 ) {
 				delete x;
+			}
 		}
 };
 
 
 class ThreadSafeX {
 	public:
-		typedef boost::intrusive_ptr<ThreadSafeX> Pointer;
+		using Pointer = boost::intrusive_ptr<ThreadSafeX>;
 		ThreadSafeX() : _refcount(0) {}
 
 	private:
@@ -84,11 +84,16 @@ BOOST_AUTO_TEST_SUITE(seiscomp_core_referencecounts)
 
 
 BOOST_AUTO_TEST_CASE(measureperformance) {
-#define LOOPN 100000000
-	double elapsed1, elapsed2, elapsed3;
+	enum {
+		LOOPN = 100000000
+	};
+	double elapsed1;
+	double elapsed2;
+	double elapsed3;
 
 	{
-		X::Pointer ptr1 = new X, ptr2;
+		X::Pointer ptr1 = new X;
+		X::Pointer ptr2;
 
 		Util::StopWatch stopWatch;
 
@@ -101,7 +106,8 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 	}
 
 	{
-		ThreadSafeX::Pointer ptr1 = new ThreadSafeX, ptr2;
+		ThreadSafeX::Pointer ptr1 = new ThreadSafeX;
+		ThreadSafeX::Pointer ptr2;
 
 		Util::StopWatch stopWatch;
 
@@ -114,7 +120,8 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 	}
 
 	{
-		Core::BaseObjectPtr ptr1 = new DoubleArray, ptr2;
+		Core::BaseObjectPtr ptr1 = new DoubleArray;
+		Core::BaseObjectPtr ptr2;
 
 		Util::StopWatch stopWatch;
 
@@ -126,9 +133,9 @@ BOOST_AUTO_TEST_CASE(measureperformance) {
 		elapsed3 = stopWatch.elapsed().length();
 	}
 
-	cerr << "basic version: " << elapsed1 << "s" << endl;
-	cerr << "thread-safe version: " << elapsed2 << "s" << endl;
-	cerr << "BaseObject version: " << elapsed3 << "s" << endl;
+	cerr << "basic version: " << elapsed1 << "s\n"
+	     << "thread-safe version: " << elapsed2 << "s\n"
+	     << "BaseObject version: " << elapsed3 << "s\n";
 }
 
 

@@ -52,8 +52,8 @@ BOOST_AUTO_TEST_SUITE(seiscomp_io_recordstream_sdsarchive)
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
 	SDSArchive sds("archive");
-	Time startTime(2018,06,30,16,18,38,943300);
-	Time endTime(2018,06,30,16,21,58,943300);
+	Time startTime(2018, 06, 30, 16, 18, 38, 943300);
+	Time endTime(2018, 06, 30, 16, 21, 58, 943300);
 	sds.addStream("FR", "SALF", "00", "HHN", startTime, endTime);
 
 	RingBuffer buffer(0);
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_START_END) {
 	SDSArchive sds("archive");
-	Time startTime(2018,06,30,16,18,38,943300);
-	Time endTime(2018,06,30,16,21,58,943300);
+	Time startTime(2018, 06, 30, 16, 18, 38, 943300);
+	Time endTime(2018, 06, 30, 16, 21, 58, 943300);
 	sds.setStartTime(startTime);
 	sds.setEndTime(endTime);
 	sds.addStream("FR", "SALF", "00", "HHN");
@@ -104,8 +104,8 @@ BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_START_END) {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 BOOST_AUTO_TEST_CASE(READ_FR_SALF_GLOBAL_TIMEWINDOW) {
 	SDSArchive sds("archive");
-	Time startTime(2018,06,30,16,18,38,943300);
-	Time endTime(2018,06,30,16,21,58,943300);
+	Time startTime(2018, 06, 30, 16, 18, 38, 943300);
+	Time endTime(2018, 06, 30, 16, 21, 58, 943300);
 	sds.setTimeWindow(TimeWindow(startTime, endTime));
 	sds.addStream("FR", "SALF", "00", "HHN");
 
@@ -138,13 +138,15 @@ BOOST_AUTO_TEST_CASE(READ_GE_MORC_MULTIPLE) {
 		"archive-day2/BHZ"
 	);
 
-	Time startTime(2019,5,1,23,59,10,0);
-	Time endTime(2019,5,2,0,0,50,0);
+	Time startTime(2019, 5, 1, 23, 59, 10, 0);
+	Time endTime(2019, 5, 2, 0, 0, 50, 0);
 	sds.addStream("GE", "MORC", "", "BHE", startTime, endTime);
 	sds.addStream("GE", "MORC", "", "BHN", startTime, endTime);
 	sds.addStream("GE", "MORC", "", "BHZ", startTime, endTime);
 
-	RingBuffer buffer1(0), buffer2(0), buffer3(0);
+	RingBuffer buffer1(0);
+	RingBuffer buffer2(0);
+	RingBuffer buffer3(0);
 	RecordPtr rec;
 
 	while ( (rec = sds.next()) ) {
@@ -183,8 +185,8 @@ BOOST_AUTO_TEST_CASE(READ_GE_MORC_MULTIPLE) {
 BOOST_AUTO_TEST_CASE(READ_FR_SALF_INCOMPLETE) {
 	SDSArchive sds("incomplete-archive");
 
-	Time startTime(2018,06,30,16,18,0,0);
-	Time endTime(2018,06,30,16,19,0,0);
+	Time startTime(2018, 06, 30, 16, 18, 0, 0);
+	Time endTime(2018, 06, 30, 16, 19, 0, 0);
 	sds.addStream("FR", "SALF", "00", "HHN", startTime, endTime);
 
 	RingBuffer buffer(0);
@@ -212,15 +214,16 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE) {
 	SDSArchive sds("gappy-archive");
 
 	// The gap is between 01:20:00 and 03:00:00
-	Time startTime(2020,5,1,2,0,0,0);
-	Time endTime(2020,5,1,3,20,0,0);
+	Time startTime(2020, 5, 1, 2, 0, 0, 0);
+	Time endTime(2020, 5, 1, 3, 20, 0, 0);
 	sds.addStream("II", "AAK", "10", "BHZ", startTime, endTime);
 
 	RingBuffer buffer(0);
 	RecordPtr rec;
 
-	while ( (rec = sds.next()) )
+	while ( (rec = sds.next()) ) {
 		buffer.push_back(rec);
+	}
 
 	RecordPtr crec = buffer.contiguousRecord<double>();
 	BOOST_REQUIRE(crec);
@@ -237,15 +240,16 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY) {
 	SDSArchive sds("gappy-archive");
 
 	// The gap is between 01:20:00 and 03:00:00
-	Time startTime(2020,5,1,2,0,0,0);
-	Time endTime(2020,5,1,2,30,0,0);
+	Time startTime(2020, 5, 1, 2, 0, 0, 0);
+	Time endTime(2020, 5, 1, 2, 30, 0, 0);
 	sds.addStream("II", "AAK", "10", "BHZ", startTime, endTime);
 
 	RingBuffer buffer(0);
 	RecordPtr rec;
 
-	while ( (rec = sds.next()) )
+	while ( (rec = sds.next()) ) {
 		buffer.push_back(rec);
+	}
 
 	RecordPtr crec = buffer.contiguousRecord<double>();
 	BOOST_REQUIRE(!crec);
@@ -260,15 +264,16 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY2) {
 	SDSArchive sds("gappy-archive");
 
 	// The gap is between 01:20:00 and 03:00:00
-	Time startTime(2017,8,8,4,32,53,2800);
-	Time endTime(2017,8,8,4,39,53,2800);
+	Time startTime(2017, 8, 8, 4, 32, 53, 2800);
+	Time endTime(2017, 8, 8, 4, 39, 53, 2800);
 	sds.addStream("IV", "MSAG", "", "HNZ", startTime, endTime);
 
 	RingBuffer buffer(0);
 	RecordPtr rec;
 
-	while ( (rec = sds.next()) )
+	while ( (rec = sds.next()) ) {
 		buffer.push_back(rec);
+	}
 
 	RecordPtr crec = buffer.contiguousRecord<double>();
 	BOOST_CHECK(!crec);
@@ -286,8 +291,8 @@ BOOST_AUTO_TEST_CASE(READ_GAPPY_ARCHIVE_EMPTY3) {
 	SDSArchive sds("gappy-archive");
 
 	// The gap is between 01:20:00 and 03:00:00
-	Time startTime(2020,1,1,0,0,0,0);
-	Time endTime(2020,12,31,23,59,59,0);
+	Time startTime(2020, 1, 1, 0, 0, 0, 0);
+	Time endTime(2020, 12, 31, 23, 59, 59, 0);
 	sds.addStream("II", "AAK", "10", "BHZ", startTime, endTime);
 
 	RingBuffer buffer(0);
@@ -312,8 +317,8 @@ BOOST_AUTO_TEST_CASE(READ_ARCHIVE2) {
 	SDSArchive sds("archive2");
 	sds.setDataHint(Record::SAVE_RAW);
 
-	Time startTime(2019,8,02,18,00,30);
-	Time endTime(2019,8,02,18,00,40);
+	Time startTime(2019, 8, 02, 18, 00, 30);
+	Time endTime(2019, 8, 02, 18, 00, 40);
 	sds.addStream("AM", "R187C", "00", "EHZ", startTime, endTime);
 
 	RingBuffer buffer(0);

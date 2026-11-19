@@ -44,7 +44,9 @@ BOOST_AUTO_TEST_SUITE(seiscomp_core_geolib)
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(distanceAndAzimuth) {
-	double dist, az, baz;
+	double dist;
+	double az;
+	double baz;
 	delazi(0.0, 0.0, 0.0, 0.0, &dist, &az, &baz);
 	BOOST_CHECK_EQUAL(dist, 0.0);
 }
@@ -55,10 +57,10 @@ BOOST_AUTO_TEST_CASE(distanceAndAzimuth) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(coords) {
-	BOOST_CHECK_EQUAL(GeoCoordinate::width(0,10), 10);
-	BOOST_CHECK_EQUAL(GeoCoordinate::width(-10,10), 20);
-	BOOST_CHECK_EQUAL(GeoCoordinate::width(10,-10), 340);
-	BOOST_CHECK_EQUAL(GeoCoordinate::width(-400,400), 360);
+	BOOST_CHECK_EQUAL(GeoCoordinate::width(0, 10), 10);
+	BOOST_CHECK_EQUAL(GeoCoordinate::width(-10, 10), 20);
+	BOOST_CHECK_EQUAL(GeoCoordinate::width(10, -10), 340);
+	BOOST_CHECK_EQUAL(GeoCoordinate::width(-400, 400), 360);
 
 	BOOST_CHECK_EQUAL(GeoCoordinate::normalizeLat(0), 0);
 	BOOST_CHECK_EQUAL(GeoCoordinate::normalizeLat(10), 10);
@@ -203,11 +205,11 @@ BOOST_AUTO_TEST_CASE(boundingbox) {
 	bbox = GeoBoundingBox(-20, -10, 20, 10);
 	BOOST_CHECK(!bbox.contains(GeoBoundingBox(-20, 9, 20, -9)));
 
-	BOOST_CHECK(bbox.center() == GeoCoordinate(0,0));
+	BOOST_CHECK(bbox.center() == GeoCoordinate(0, 0));
 
-	BOOST_CHECK(GeoBoundingBox(-90, -180, 90, 180).center() == GeoCoordinate(0,0));
-	BOOST_CHECK(GeoBoundingBox(-90, -180, 0, 0).center() == GeoCoordinate(-45,-90));
-	BOOST_CHECK(GeoBoundingBox(0, -180, 90, 0).center() == GeoCoordinate(45,-90));
+	BOOST_CHECK(GeoBoundingBox(-90, -180, 90, 180).center() == GeoCoordinate(0, 0));
+	BOOST_CHECK(GeoBoundingBox(-90, -180, 0, 0).center() == GeoCoordinate(-45, -90));
+	BOOST_CHECK(GeoBoundingBox(0, -180, 90, 0).center() == GeoCoordinate(45, -90));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -219,10 +221,10 @@ BOOST_AUTO_TEST_CASE(polybox) {
 	GeoBoundingBox bbox;
 	GeoCoordinate coords[4];
 
-	coords[0] = GeoCoordinate(0,0);
-	coords[1] = GeoCoordinate(10,0);
-	coords[2] = GeoCoordinate(10,10);
-	coords[3] = GeoCoordinate(0,10);
+	coords[0] = GeoCoordinate(0, 0);
+	coords[1] = GeoCoordinate(10, 0);
+	coords[2] = GeoCoordinate(10, 10);
+	coords[3] = GeoCoordinate(0, 10);
 
 	bbox.fromPolygon(4, coords);
 	BOOST_CHECK_EQUAL(bbox.south, 0);
@@ -232,23 +234,23 @@ BOOST_AUTO_TEST_CASE(polybox) {
 	BOOST_CHECK_EQUAL(bbox.width(), 10);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), false);
 
-	coords[3] = GeoCoordinate(0,180);
+	coords[3] = GeoCoordinate(0, 180);
 	bbox.fromPolygon(4, coords);
 	BOOST_CHECK_EQUAL(bbox.width(), 180);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), false);
 
-	coords[3] = GeoCoordinate(0,-171);
+	coords[3] = GeoCoordinate(0, -171);
 	bbox.fromPolygon(4, coords);
 	BOOST_CHECK_EQUAL(bbox.width(), 360);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), true);
 
-	bbox.merge(GeoBoundingBox(0,-179,1,20));
+	bbox.merge(GeoBoundingBox(0, -179, 1, 20));
 	BOOST_CHECK_EQUAL(bbox.width(), 360);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), true);
 
-	coords[3] = GeoCoordinate(0,179);
+	coords[3] = GeoCoordinate(0, 179);
 	bbox.fromPolygon(4, coords);
-	bbox.merge(GeoBoundingBox(0,179,1,20));
+	bbox.merge(GeoBoundingBox(0, 179, 1, 20));
 	BOOST_CHECK_EQUAL(bbox.width(), 360);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), true);
 }
@@ -262,22 +264,22 @@ BOOST_AUTO_TEST_CASE(feature) {
 	GeoFeature feature;
 	feature.setClosedPolygon(true);
 
-	feature.addVertex(GeoCoordinate(0,0));
-	feature.addVertex(GeoCoordinate(0,10));
-	feature.addVertex(GeoCoordinate(10,10));
-	feature.addVertex(GeoCoordinate(10,0));
+	feature.addVertex(GeoCoordinate(0, 0));
+	feature.addVertex(GeoCoordinate(0, 10));
+	feature.addVertex(GeoCoordinate(10, 10));
+	feature.addVertex(GeoCoordinate(10, 0));
 
-	feature.addVertex(GeoCoordinate(1,1), true);
-	feature.addVertex(GeoCoordinate(2,1));
-	feature.addVertex(GeoCoordinate(2,2));
-	feature.addVertex(GeoCoordinate(1,2));
+	feature.addVertex(GeoCoordinate(1, 1), true);
+	feature.addVertex(GeoCoordinate(2, 1));
+	feature.addVertex(GeoCoordinate(2, 2));
+	feature.addVertex(GeoCoordinate(1, 2));
 
 	BOOST_CHECK_EQUAL(feature.area(), 99);
 
-	feature.addVertex(GeoCoordinate(0,20), true);
-	feature.addVertex(GeoCoordinate(0,30));
-	feature.addVertex(GeoCoordinate(10,30));
-	feature.addVertex(GeoCoordinate(10,20));
+	feature.addVertex(GeoCoordinate(0, 20), true);
+	feature.addVertex(GeoCoordinate(0, 30));
+	feature.addVertex(GeoCoordinate(10, 30));
+	feature.addVertex(GeoCoordinate(10, 20));
 
 	BOOST_CHECK_EQUAL(feature.area(), 199);
 
@@ -291,12 +293,12 @@ BOOST_AUTO_TEST_CASE(feature) {
 	BOOST_CHECK_EQUAL(bbox.width(), 30);
 	BOOST_CHECK_EQUAL(bbox.coversFullLongitude(), false);
 
-	BOOST_CHECK_EQUAL(bbox.contains(GeoCoordinate(5,5)), true);
-	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(1.5,1.5)), false);
-	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(0.5,0.5)), true);
-	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5,5)), true);
-	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5,25)), true);
-	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5,15)), false);
+	BOOST_CHECK_EQUAL(bbox.contains(GeoCoordinate(5, 5)), true);
+	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(1.5, 1.5)), false);
+	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(0.5, 0.5)), true);
+	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5, 5)), true);
+	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5, 25)), true);
+	BOOST_CHECK_EQUAL(feature.contains(GeoCoordinate(5, 15)), false);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -305,7 +307,7 @@ BOOST_AUTO_TEST_CASE(feature) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 struct QtVisitor {
-	QtVisitor() : depth(0) {}
+	QtVisitor() = default;
 
 	bool accept(const GeoBoundingBox &bb) const {
 		BOOST_CHECK(bb.west == -180);
@@ -322,7 +324,7 @@ struct QtVisitor {
 		return true;
 	}
 
-	mutable int depth;
+	mutable int depth{0};
 };
 
 
@@ -330,16 +332,16 @@ BOOST_AUTO_TEST_CASE(quadtree) {
 	GeoFeature f1(string("f1"), nullptr, 1);
 	GeoFeature f2(string("f2"), nullptr, 1);
 
-	f1.addVertex(GeoCoordinate(0,0));
-	f1.addVertex(GeoCoordinate(0,10));
-	f1.addVertex(GeoCoordinate(10,10));
-	f1.addVertex(GeoCoordinate(10,0));
+	f1.addVertex(GeoCoordinate(0, 0));
+	f1.addVertex(GeoCoordinate(0, 10));
+	f1.addVertex(GeoCoordinate(10, 10));
+	f1.addVertex(GeoCoordinate(10, 0));
 	f1.setClosedPolygon(true);
 
-	f2.addVertex(GeoCoordinate(1,1));
-	f2.addVertex(GeoCoordinate(2,1));
-	f2.addVertex(GeoCoordinate(2,2));
-	f2.addVertex(GeoCoordinate(1,2));
+	f2.addVertex(GeoCoordinate(1, 1));
+	f2.addVertex(GeoCoordinate(2, 1));
+	f2.addVertex(GeoCoordinate(2, 2));
+	f2.addVertex(GeoCoordinate(1, 2));
 	f2.setClosedPolygon(true);
 
 	// A quadtree covers the full region
@@ -356,7 +358,8 @@ BOOST_AUTO_TEST_CASE(quadtree) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(latlon2xyz) {
-	Vector3d v0, v1;
+	Vector3d v0;
+	Vector3d v1;
 
 	ltp2vec(52, 12, 0, v0);
 	ltp2vec(52, 12, -1000, v1);
@@ -373,7 +376,8 @@ BOOST_AUTO_TEST_CASE(latlon2xyz) {
 
 	ltp2vec(52, 12, 0, v0);
 
-	double lat, lon;
+	double lat;
+	double lon;
 	delandaz2coord(1, 90, 52, 12, &lat, &lon);
 
 	ltp2vec(lat, lon, -deg2km(1) * 1000, v1);
@@ -410,7 +414,8 @@ BOOST_AUTO_TEST_CASE(mmult, *bu::tolerance(0.01)) {
 	rh.identity();
 	rh[0][0] = -1.0;
 
-	Vector3d v1, v2;
+	Vector3d v1;
+	Vector3d v2;
 
 	v1 = rotateZ * rh * Vector3d(1, 0, 0);
 
@@ -428,7 +433,8 @@ BOOST_AUTO_TEST_CASE(mmult, *bu::tolerance(0.01)) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(inclination, *bu::tolerance(0.005)) {
-	Vector3d tgt, src;
+	Vector3d tgt;
+	Vector3d src;
 	// Test from ZRT to LQT
 	// ZRT is left-handed
 	// LQT is right-handed

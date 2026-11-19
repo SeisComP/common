@@ -79,18 +79,18 @@ BOOST_FIXTURE_TEST_SUITE(seiscomp_core_georegions, F)
 BOOST_AUTO_TEST_CASE(poly1) {
 	Logging::enableConsoleLogging(Logging::getAll());
 	GeoFeature testPoly1("test1", nullptr, 0);
-	testPoly1.addVertex(-20,-20);
-	testPoly1.addVertex(20,-20);
-	testPoly1.addVertex(20,20);
-	testPoly1.addVertex(-20,20);
+	testPoly1.addVertex(-20, -20);
+	testPoly1.addVertex(20, -20);
+	testPoly1.addVertex(20, 20);
+	testPoly1.addVertex(-20, 20);
 	testPoly1.setClosedPolygon(true);
 	testPoly1.updateBoundingBox();
 
-	BOOST_CHECK(testPoly1.contains(Vertex(0,0)));
-	BOOST_CHECK(testPoly1.contains(Vertex(-19,-19)));
-	BOOST_CHECK(testPoly1.contains(Vertex(19,19)));
-	BOOST_CHECK(!testPoly1.contains(Vertex(21,19)));
-	BOOST_CHECK(!testPoly1.contains(Vertex(19,21)));
+	BOOST_CHECK(testPoly1.contains(Vertex(0, 0)));
+	BOOST_CHECK(testPoly1.contains(Vertex(-19, -19)));
+	BOOST_CHECK(testPoly1.contains(Vertex(19, 19)));
+	BOOST_CHECK(!testPoly1.contains(Vertex(21, 19)));
+	BOOST_CHECK(!testPoly1.contains(Vertex(19, 21)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -101,17 +101,17 @@ BOOST_AUTO_TEST_CASE(poly1) {
 BOOST_AUTO_TEST_CASE(poly2) {
 	GeoFeature testPoly2("test2", nullptr, 0);
 
-	testPoly2.addVertex(-20,160);
-	testPoly2.addVertex(20,160);
-	testPoly2.addVertex(20,-160);
-	testPoly2.addVertex(-20,-160);
+	testPoly2.addVertex(-20, 160);
+	testPoly2.addVertex(20, 160);
+	testPoly2.addVertex(20, -160);
+	testPoly2.addVertex(-20, -160);
 	testPoly2.setClosedPolygon(true);
 
-	BOOST_CHECK(testPoly2.contains(Vertex(0,180)));
-	BOOST_CHECK(testPoly2.contains(Vertex(-19,-161)));
-	BOOST_CHECK(testPoly2.contains(Vertex(19,161)));
-	BOOST_CHECK(!testPoly2.contains(Vertex(19,159)));
-	BOOST_CHECK(!testPoly2.contains(Vertex(21,-159)));
+	BOOST_CHECK(testPoly2.contains(Vertex(0, 180)));
+	BOOST_CHECK(testPoly2.contains(Vertex(-19, -161)));
+	BOOST_CHECK(testPoly2.contains(Vertex(19, 161)));
+	BOOST_CHECK(!testPoly2.contains(Vertex(19, 159)));
+	BOOST_CHECK(!testPoly2.contains(Vertex(21, -159)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -122,25 +122,25 @@ BOOST_AUTO_TEST_CASE(poly2) {
 BOOST_AUTO_TEST_CASE(poly3) {
 	// Test of "contains" in sub polygons
 	GeoFeature testPoly3("test3", nullptr, 0);
-	testPoly3.addVertex(2,2);
-	testPoly3.addVertex(1,2);
-	testPoly3.addVertex(1,1);
-	testPoly3.addVertex(2,1);
-	testPoly3.addVertex(4,4, true);
-	testPoly3.addVertex(3,4);
-	testPoly3.addVertex(3,3);
-	testPoly3.addVertex(4,3);
-	testPoly3.addVertex(7,7, true);
-	testPoly3.addVertex(5,6);
-	testPoly3.addVertex(6,4);
-	testPoly3.addVertex(7,5);
+	testPoly3.addVertex(2, 2);
+	testPoly3.addVertex(1, 2);
+	testPoly3.addVertex(1, 1);
+	testPoly3.addVertex(2, 1);
+	testPoly3.addVertex(4, 4, true);
+	testPoly3.addVertex(3, 4);
+	testPoly3.addVertex(3, 3);
+	testPoly3.addVertex(4, 3);
+	testPoly3.addVertex(7, 7, true);
+	testPoly3.addVertex(5, 6);
+	testPoly3.addVertex(6, 4);
+	testPoly3.addVertex(7, 5);
 	testPoly3.setClosedPolygon(true);
 
-	BOOST_CHECK(testPoly3.contains(Vertex(1.5,1.5)));
-	BOOST_CHECK(testPoly3.contains(Vertex(3.5,3.5)));
-	BOOST_CHECK(testPoly3.contains(Vertex(6,6)));
-	BOOST_CHECK(!testPoly3.contains(Vertex(-10,11)));
-	BOOST_CHECK(!testPoly3.contains(Vertex(21,-159)));
+	BOOST_CHECK(testPoly3.contains(Vertex(1.5, 1.5)));
+	BOOST_CHECK(testPoly3.contains(Vertex(3.5, 3.5)));
+	BOOST_CHECK(testPoly3.contains(Vertex(6, 6)));
+	BOOST_CHECK(!testPoly3.contains(Vertex(-10, 11)));
+	BOOST_CHECK(!testPoly3.contains(Vertex(21, -159)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(poly4) {
 	testPoly4.addVertex(46.4220940655, 7.20817822901);
 	testPoly4.setClosedPolygon(true);
 
-	BOOST_CHECK(testPoly4.contains(Vertex(46.33,7.327)));
+	BOOST_CHECK(testPoly4.contains(Vertex(46.33, 7.327)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -179,11 +179,11 @@ BOOST_AUTO_TEST_CASE(poly5) {
 	testPoly5.addVertex(44, 7);
 	testPoly5.setClosedPolygon(true);
 
-	BOOST_CHECK(testPoly5.contains(Vertex(45,7.5)));
-	BOOST_CHECK(!testPoly5.contains(Vertex(45,8)));
-	BOOST_CHECK(testPoly5.contains(Vertex(45,7.5)));
-	BOOST_CHECK(testPoly5.contains(Vertex(44.5,8)));
-	BOOST_CHECK(!testPoly5.contains(Vertex(45.5,8.5)));
+	BOOST_CHECK(testPoly5.contains(Vertex(45, 7.5)));
+	BOOST_CHECK(!testPoly5.contains(Vertex(45, 8)));
+	BOOST_CHECK(testPoly5.contains(Vertex(45, 7.5)));
+	BOOST_CHECK(testPoly5.contains(Vertex(44.5, 8)));
+	BOOST_CHECK(!testPoly5.contains(Vertex(45.5, 8.5)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(poly6) {
 	testPoly6.addVertex(-1, -1);
 	testPoly6.setClosedPolygon(true);
 
-	BOOST_CHECK(!testPoly6.contains(Vertex(-10,-1)));
+	BOOST_CHECK(!testPoly6.contains(Vertex(-10, -1)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -221,15 +221,15 @@ BOOST_AUTO_TEST_CASE(poly7) {
 	testPoly7.addVertex(90, -180);
 	testPoly7.setClosedPolygon(true);
 
-	BOOST_CHECK(testPoly7.contains(Vertex(0,0)));
-	BOOST_CHECK(testPoly7.contains(Vertex(45,90)));
-	BOOST_CHECK(testPoly7.contains(Vertex(-45,90)));
-	BOOST_CHECK(testPoly7.contains(Vertex(10,10)));
-	BOOST_CHECK(testPoly7.contains(Vertex(10,-10)));
-	BOOST_CHECK(testPoly7.contains(Vertex(-45,180)));
-	BOOST_CHECK(testPoly7.contains(Vertex(-45,-180)));
-	BOOST_CHECK(testPoly7.contains(Vertex(-90,180)));
-	BOOST_CHECK(testPoly7.contains(Vertex(-90,-180)));
+	BOOST_CHECK(testPoly7.contains(Vertex(0, 0)));
+	BOOST_CHECK(testPoly7.contains(Vertex(45, 90)));
+	BOOST_CHECK(testPoly7.contains(Vertex(-45, 90)));
+	BOOST_CHECK(testPoly7.contains(Vertex(10, 10)));
+	BOOST_CHECK(testPoly7.contains(Vertex(10, -10)));
+	BOOST_CHECK(testPoly7.contains(Vertex(-45, 180)));
+	BOOST_CHECK(testPoly7.contains(Vertex(-45, -180)));
+	BOOST_CHECK(testPoly7.contains(Vertex(-90, 180)));
+	BOOST_CHECK(testPoly7.contains(Vertex(-90, -180)));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

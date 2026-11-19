@@ -37,7 +37,8 @@ BOOST_AUTO_TEST_SUITE(seiscomp_processing_amplitudes)
 
 
 BOOST_AUTO_TEST_CASE(signalUnits) {
-	WaveformProcessor::SignalUnit fromUnit, toUnit;
+	WaveformProcessor::SignalUnit fromUnit;
+	WaveformProcessor::SignalUnit toUnit;
 
 	fromUnit = WaveformProcessor::Meter; toUnit = WaveformProcessor::Meter;
 	BOOST_CHECK_EQUAL(fromUnit.toInt() - toUnit.toInt(), 0);

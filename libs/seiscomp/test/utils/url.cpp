@@ -30,7 +30,7 @@
 namespace std {
 
 
-ostream &operator<<(ostream &os, const nullopt_t &) {
+ostream &operator<<(ostream &os, const nullopt_t &/*unused*/) {
 	os << "--";
 	return os;
 }

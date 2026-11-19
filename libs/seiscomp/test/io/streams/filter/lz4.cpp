@@ -22,10 +22,6 @@
 #define SEISCOMP_COMPONENT TestLZ4
 
 
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
-
 #include <seiscomp/logging/log.h>
 #include <seiscomp/unittest/unittests.h>
 #include <seiscomp/io/streams/filter/lz4.h>
@@ -146,8 +142,9 @@ BOOST_AUTO_TEST_CASE(WRITEREAD2) {
 	string store;
 	string data;
 
-	for ( int i = 0; i < 400; ++i )
+	for ( int i = 0; i < 400; ++i ) {
 		data += rand() % 26 + 65;
+	}
 
 	{
 		stream_buffer<back_insert_device<string> > buf(store);

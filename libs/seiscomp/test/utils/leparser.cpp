@@ -54,6 +54,7 @@ class FalseExpression : public LeExpression {
 
 class SimpleFactory : public LeFactory {
 	public:
+		[[nodiscard]]
 		LeExpression *createExpression(string_view name) const override {
 			string normalized;
 
@@ -67,24 +68,30 @@ class SimpleFactory : public LeFactory {
 			if ( normalized == "true" ) {
 				return new TrueExpression;
 			}
-			else if ( normalized == "false" ) {
+
+			if ( normalized == "false" ) {
 				return new FalseExpression;
 			}
-			else if ( normalized == "a<5" ) {
+
+			if ( normalized == "a<5" ) {
 				return new TrueExpression;
 			}
-			else if ( normalized == "a>=5" ) {
+
+			if ( normalized == "a>=5" ) {
 				return new FalseExpression;
 			}
-			else if ( normalized == "a!=5" ) {
+
+			if ( normalized == "a!=5" ) {
 				return new TrueExpression;
 			}
+
 			return nullptr;
 		}
 };
 
 
 struct StaticKeyValueContext : public LeKeyValueContext {
+	[[nodiscard]]
 	double getDouble(string_view key) const override {
 		auto it = values.find(key);
 		if ( it == values.end() ) {
@@ -94,7 +101,8 @@ struct StaticKeyValueContext : public LeKeyValueContext {
 		return it->second;
 	}
 
-	string getString(string_view) const override {
+	[[nodiscard]]
+	string getString(string_view /*key*/) const override {
 		throw runtime_error("no string values supported");
 	}
 
@@ -103,28 +111,34 @@ struct StaticKeyValueContext : public LeKeyValueContext {
 
 
 struct DynamicKeyValueContext : public LeKeyValueContext {
+	[[nodiscard]]
 	double getDouble(string_view key) const override {
 		if ( key == "a" ) {
 			return 0;
 		}
-		else if ( key == "b" ) {
+
+		if ( key == "b" ) {
 			return 3;
 		}
 
 		throw runtime_error(string(key) + " is not a valid numerical key");
 	}
 
+	[[nodiscard]]
 	string getString(string_view key) const override {
 		if ( key == "type" ) {
 			return "not existing";
 		}
-		else if ( key == "empty" ) {
+
+		if ( key == "empty" ) {
 			return "";
 		}
-		else if ( key == "unset" ) {
+
+		if ( key == "unset" ) {
 			throw Core::ValueException();
 		}
-		else if ( key == "misc" ) {
+
+		if ( key == "misc" ) {
 			return "a && (op == '&&' || op == '||')";
 		}
 

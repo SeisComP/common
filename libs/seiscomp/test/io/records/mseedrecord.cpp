@@ -98,9 +98,9 @@ BOOST_AUTO_TEST_CASE(WRITE_READ) {
 	BOOST_REQUIRE(rec.data());
 	BOOST_CHECK_EQUAL(rec.data()->size(), filledRec.data()->size());
 
-	auto data = IntArray::ConstCast(rec.data());
+	const auto *data = IntArray::ConstCast(rec.data());
 	BOOST_REQUIRE(data);
-	auto refData = IntArray::ConstCast(filledRec.data());
+	const auto *refData = IntArray::ConstCast(filledRec.data());
 	BOOST_REQUIRE(refData);
 	BOOST_CHECK_EQUAL(data->size(), refData->size());
 	for ( int i = 0; i < refData->size(); ++i ) {
@@ -135,9 +135,9 @@ BOOST_AUTO_TEST_CASE(WRITE_READ2) {
 	BOOST_REQUIRE(rec.data());
 	BOOST_CHECK_EQUAL(rec.data()->size(), filledRec.data()->size());
 
-	auto data = IntArray::ConstCast(rec.data());
+	const auto *data = IntArray::ConstCast(rec.data());
 	BOOST_REQUIRE(data);
-	auto refData = IntArray::ConstCast(filledRec.data());
+	const auto *refData = IntArray::ConstCast(filledRec.data());
 	BOOST_REQUIRE(refData);
 	BOOST_CHECK_EQUAL(data->size(), refData->size());
 	for ( int i = 0; i < refData->size(); ++i ) {
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(MODIFY) {
 	rec.setStationCode("YYYYY");
 	rec.setLocationCode("ZZ");
 	rec.setChannelCode("123");
-	auto raw = CharArray::ConstCast(rec.raw());
+	const auto *raw = CharArray::ConstCast(rec.raw());
 	BOOST_CHECK(raw);
 
 	InputStringViewStream is({ raw->typedData(), static_cast<size_t>(raw->size()) });

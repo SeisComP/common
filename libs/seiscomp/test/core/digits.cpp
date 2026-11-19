@@ -22,11 +22,6 @@
 
 
 #include <iostream>
-#include <iomanip>
-#include <stdexcept>
-#include <random>
-#include <vector>
-#include <stdio.h>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -67,16 +62,16 @@ BOOST_AUTO_TEST_SUITE(seiscomp_math_digits)
 
 
 BOOST_AUTO_TEST_CASE(digits) {
-	BOOST_CHECK_EQUAL(Core::digits10(0.5f), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5F), 1);
 	BOOST_CHECK_EQUAL(Core::digits10(0.5), 1);
-	BOOST_CHECK_EQUAL(Core::digits10(0.52f), 2);
-	BOOST_CHECK_EQUAL(toSignificantFixedString(0.52f), "0.52");
+	BOOST_CHECK_EQUAL(Core::digits10(0.52F), 2);
+	BOOST_CHECK_EQUAL(toSignificantFixedString(0.52F), "0.52");
 	BOOST_CHECK_EQUAL(Core::digits10(0.52), 2);
-	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002f), 1);
+	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002F), 1);
 	BOOST_CHECK_EQUAL(Core::digits10(0.5000000002), 1);
-	BOOST_CHECK_EQUAL(Core::digits10(0.50002f), 8);
-	BOOST_CHECK_EQUAL(toSignificantDefaultString(0.50002f), "0.50002003");
-	BOOST_CHECK_EQUAL(toSignificantFixedString(0.50002f), "0.50002003");
+	BOOST_CHECK_EQUAL(Core::digits10(0.50002F), 8);
+	BOOST_CHECK_EQUAL(toSignificantDefaultString(0.50002F), "0.50002003");
+	BOOST_CHECK_EQUAL(toSignificantFixedString(0.50002F), "0.50002003");
 	BOOST_CHECK_EQUAL(Core::digits10(0.50002), 5);
 	BOOST_CHECK_EQUAL(Core::digits10(0.0000000002), 10);
 	BOOST_CHECK_EQUAL(Core::digits10(321.0000000002), 0);

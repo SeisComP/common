@@ -38,7 +38,6 @@ class DummyInterface : public IO::DatabaseInterface {
 			_columnPrefix = "m_";
 		}
 
-	public:
 		Backend backend() const override {
 			return _backend;
 		}

@@ -47,7 +47,7 @@ using namespace Seiscomp;
 #define ASSERT_MSG(cond, msg) do \
 { if (!(cond)) { \
 	ostringstream oss; \
-	oss << __FILE__ << "(" << __LINE__ << "): "<< msg << endl; cerr << oss.str(); \
+	oss << __FILE__ << "(" << __LINE__ << "): "<< msg << "\n"; cerr << oss.str(); \
 	abort(); } \
 } while(0)
 #define ASSERT_EQUAL_MSG(obj1, obj2, msg) \

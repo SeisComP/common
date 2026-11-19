@@ -248,6 +248,7 @@ BOOST_AUTO_TEST_SUITE(AzimuthalGap)
 
 BOOST_AUTO_TEST_CASE(uniform_coverage) {
 	std::vector<PolarityObservation> obs;
+	obs.reserve(12);
 	for ( int i = 0; i < 12; ++i ) {
 		obs.emplace_back(i * 30.0, 60.0, 1, i);
 	}
@@ -400,6 +401,7 @@ BOOST_AUTO_TEST_SUITE(InvertPolarities)
 
 BOOST_AUTO_TEST_CASE(too_few_observations) {
 	std::vector<PolarityObservation> obs;
+	obs.reserve(3);
 	for ( int i = 0; i < 3; ++i ) {
 		obs.emplace_back(i * 120.0, 60.0, 1, i);
 	}
@@ -440,7 +442,7 @@ BOOST_AUTO_TEST_CASE(vertical_strike_slip_recovery) {
 	BOOST_CHECK(result.best.quality != FMQuality::D);
 
 	// Accepted solutions should include the best
-	BOOST_CHECK_GE(result.accepted.size(), 1u);
+	BOOST_CHECK_GE(result.accepted.size(), 1U);
 
 	// Nodal plane angles should be in valid degree ranges
 	BOOST_CHECK_GE(result.best.np1.dip, 0.0);

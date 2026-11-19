@@ -20,10 +20,7 @@
 
 #define SEISCOMP_TEST_MODULE SeisComP
 
-
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
+#include <cstdio>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -48,7 +45,7 @@ BOOST_AUTO_TEST_CASE(tohex) {
 	BOOST_CHECK_EQUAL(out, "47");
 
 	out.clear();
-	Util::toHex(out, (unsigned int)0xffff8040);
+	Util::toHex(out, 0xffff8040);
 	BOOST_CHECK_EQUAL(out, "ffff8040");
 }
 

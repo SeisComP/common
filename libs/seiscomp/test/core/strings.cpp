@@ -21,9 +21,7 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 
 
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <limits>
 #include <cstdint>
@@ -42,31 +40,31 @@ using namespace Seiscomp::Core;
 
 vector<string> vec(const char *t1) {
 	vector<string> v;
-	v.push_back(t1);
+	v.emplace_back(t1);
 	return v;
 }
 
 vector<string> vec(const char *t1, const char *t2) {
 	vector<string> v;
-	v.push_back(t1);
-	v.push_back(t2);
+	v.emplace_back(t1);
+	v.emplace_back(t2);
 	return v;
 }
 
 vector<string> vec(const char *t1, const char *t2, const char *t3) {
 	vector<string> v;
-	v.push_back(t1);
-	v.push_back(t2);
-	v.push_back(t3);
+	v.emplace_back(t1);
+	v.emplace_back(t2);
+	v.emplace_back(t3);
 	return v;
 }
 
 vector<string> vec(const char *t1, const char *t2, const char *t3, const char *t4) {
 	vector<string> v;
-	v.push_back(t1);
-	v.push_back(t2);
-	v.push_back(t3);
-	v.push_back(t4);
+	v.emplace_back(t1);
+	v.emplace_back(t2);
+	v.emplace_back(t3);
+	v.emplace_back(t4);
 	return v;
 }
 
@@ -97,7 +95,7 @@ struct TestCase {
 	bool            trim;
 };
 
-typedef vector<TestCase> TestData;
+using TestData = vector<TestCase>;
 
 
 BOOST_AUTO_TEST_SUITE(seiscomp_core_strings)
@@ -194,9 +192,9 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 
 	{
 		float value;
-		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0f) < 0.000001f);
-		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0f) < 0.000001f);
-		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0f) < 0.000001f);
+		BOOST_CHECK(fromString(value, "1.0") && fabs(value - 1.0F) < 0.000001F);
+		BOOST_CHECK(fromString(value, "+1.0") && fabs(value - 1.0F) < 0.000001F);
+		BOOST_CHECK(fromString(value, "-1.0") && fabs(value + 1.0F) < 0.000001F);
 		BOOST_CHECK(!fromString(value, "abc"));
 		BOOST_CHECK(!fromString(value, "1.0e-40"));
 		BOOST_CHECK(errno == ERANGE);
@@ -231,7 +229,8 @@ BOOST_AUTO_TEST_CASE(numberConversions) {
 
 
 BOOST_AUTO_TEST_CASE(timeConversions) {
-	Time t1, t2;
+	Time t1;
+	Time t2;
 
 	BOOST_CHECK(fromString(t1, "2021-06-12T09:43:54Z"));
 	BOOST_CHECK(fromString(t2, "2021-06-12T09:43:54"));
@@ -344,13 +343,14 @@ BOOST_AUTO_TEST_CASE(vectorConversions) {
 
 BOOST_AUTO_TEST_CASE(tokenize1) {
 	const char *text = "Hello, World!";
-	size_t len = strlen(text), tok_len;
+	size_t len = strlen(text);
+	size_t tok_len;
 
 	const char *tok = tokenize(text, ",", len, tok_len);
 	BOOST_CHECK_EQUAL(string(tok, tok_len), "Hello");
 
 	tok = tokenize(text, ",", len, tok_len);
-	BOOST_CHECK_EQUAL(string(tok,tok_len)," World!");
+	BOOST_CHECK_EQUAL(string(tok, tok_len), " World!");
 
 	text = "This is a book";
 	len = strlen(text);
@@ -364,8 +364,8 @@ BOOST_AUTO_TEST_CASE(tokenize1) {
 
 	text = "";
 	len = strlen(text);
-	tok = tokenize(text, ";", len,tok_len);
-	BOOST_CHECK_EQUAL(string(tok,tok_len), "");
+	tok = tokenize(text, ";", len, tok_len);
+	BOOST_CHECK_EQUAL(string(tok, tok_len), "");
 
 	// Test that separators collapse
 	text ="A B ; C; D  ;E  ;  F";
@@ -423,8 +423,8 @@ BOOST_AUTO_TEST_CASE(stringify1) {
 	for ( size_t i = 1; i <= 100; ++i ) {
 		string tmp;
 		tmp.resize(i);
-		for ( size_t j = 0; j < tmp.size(); ++j ) {
-			tmp[j] = static_cast<char>(random() * 25 / RAND_MAX + 'A');
+		for ( char &j : tmp ) {
+			j = static_cast<char>(random() * 25 / RAND_MAX + 'A');
 		}
 		string out = stringify("%s", tmp.c_str());
 		BOOST_CHECK_EQUAL(tmp, out);
@@ -433,13 +433,13 @@ BOOST_AUTO_TEST_CASE(stringify1) {
 
 BOOST_AUTO_TEST_CASE(split1) {
 	TestData data;
-	data.push_back(TestCase(",",  true,  ",foo,,,bar,", vec("", "foo", "bar", "")));
-	data.push_back(TestCase(",",  true,  ",,foo,bar,,", vec("", "foo", "bar", "")));
-	data.push_back(TestCase(" ",  true,  "foo  bar,",   vec("foo", "bar,")));
-	data.push_back(TestCase(" ",  false, "foo  bar ",   vec("foo", "", "bar", "")));
-	data.push_back(TestCase("oo", false, "fooobar",     vec("f", "", "", "bar")));
-	data.push_back(TestCase("oo", true,  "fooooobar",   vec("f", "bar")));
-	data.push_back(TestCase("ab", true,  "1a2b3",       vec("1", "2", "3")));
+	data.emplace_back(",",  true,  ",foo,,,bar,", vec("", "foo", "bar", ""));
+	data.emplace_back(",",  true,  ",,foo,bar,,", vec("", "foo", "bar", ""));
+	data.emplace_back(" ",  true,  "foo  bar,",   vec("foo", "bar,"));
+	data.emplace_back(" ",  false, "foo  bar ",   vec("foo", "", "bar", ""));
+	data.emplace_back("oo", false, "fooobar",     vec("f", "", "", "bar"));
+	data.emplace_back("oo", true,  "fooooobar",   vec("f", "bar"));
+	data.emplace_back("ab", true,  "1a2b3",       vec("1", "2", "3"));
 
 	vector<string> result;
 	for ( auto &testcase : data ) {
@@ -450,24 +450,24 @@ BOOST_AUTO_TEST_CASE(split1) {
 }
 
 BOOST_AUTO_TEST_CASE(splitExtNoUnescape) {
-	typedef vector<TestCase> TestData;
+	using TestData = vector<TestCase>;
 
 	TestData data;
-	data.push_back(TestCase(",",  true,  ",foo,,,bar,",               vec("", "foo", "bar", ""),          false));
-	data.push_back(TestCase(",",  true,  ",,foo,bar,,",               vec("", "foo", "bar", ""),          false));
-	data.push_back(TestCase(" ",  true,  "foo  bar,",                 vec("foo", "bar,"),                 false));
-	data.push_back(TestCase(" ",  false, "foo  bar ",                 vec("foo", "", "bar", ""),          false));
-	data.push_back(TestCase("oo", false, "fooobar",                   vec("f", "", "", "bar"),            false));
-	data.push_back(TestCase("oo", true,  "fooooobar",                 vec("f", "bar"),                    false));
-	data.push_back(TestCase("ab", true,  "1a2b3",                     vec("1", "2", "3"),                 false));
-	data.push_back(TestCase(",",  true,  " foo , bar \r\n",           vec("foo", "bar" ),                 true));
-	data.push_back(TestCase(",",  true,  " foo \\, bar, , ",          vec("foo \\, bar" ),                true));
-	data.push_back(TestCase(",",  true,  " ' foo , bar ', \",bar \"", vec("' foo , bar '", "\",bar \"" ), true));
-	data.push_back(TestCase(",",  true,  " \" \\\"foo\" , bar",       vec("\" \\\"foo\"", "bar" ),        true));
-	data.push_back(TestCase(",",  true,  " '' \"'\" , \",',' \" ' '", vec("'' \"'\"", "\",',' \" ' '" ),  true));
-	data.push_back(TestCase(" ",  true,  "foo bar",                   vec("foo", "bar" ),                 true));
-	data.push_back(TestCase(" ",  true,  " foo bar ",                 vec("", "foo", "bar", "" ),         true));
-	data.push_back(TestCase(" ",  true,  " foo\\ bar\r\n     a ",     vec("", "foo\\ bar\r\n", "a", "" ), false));
+	data.emplace_back(",",  true,  ",foo,,,bar,",               vec("", "foo", "bar", ""),          false);
+	data.emplace_back(",",  true,  ",,foo,bar,,",               vec("", "foo", "bar", ""),          false);
+	data.emplace_back(" ",  true,  "foo  bar,",                 vec("foo", "bar,"),                 false);
+	data.emplace_back(" ",  false, "foo  bar ",                 vec("foo", "", "bar", ""),          false);
+	data.emplace_back("oo", false, "fooobar",                   vec("f", "", "", "bar"),            false);
+	data.emplace_back("oo", true,  "fooooobar",                 vec("f", "bar"),                    false);
+	data.emplace_back("ab", true,  "1a2b3",                     vec("1", "2", "3"),                 false);
+	data.emplace_back(",",  true,  " foo , bar \r\n",           vec("foo", "bar" ),                 true);
+	data.emplace_back(",",  true,  " foo \\, bar, , ",          vec("foo \\, bar" ),                true);
+	data.emplace_back(",",  true,  " ' foo , bar ', \",bar \"", vec("' foo , bar '", "\",bar \"" ), true);
+	data.emplace_back(",",  true,  " \" \\\"foo\" , bar",       vec("\" \\\"foo\"", "bar" ),        true);
+	data.emplace_back(",",  true,  " '' \"'\" , \",',' \" ' '", vec("'' \"'\"", "\",',' \" ' '" ),  true);
+	data.emplace_back(" ",  true,  "foo bar",                   vec("foo", "bar" ),                 true);
+	data.emplace_back(" ",  true,  " foo bar ",                 vec("", "foo", "bar", "" ),         true);
+	data.emplace_back(" ",  true,  " foo\\ bar\r\n     a ",     vec("", "foo\\ bar\r\n", "a", "" ), false);
 
 	vector<string> result;
 	for ( auto &testcase : data ) {
@@ -478,33 +478,33 @@ BOOST_AUTO_TEST_CASE(splitExtNoUnescape) {
 }
 
 BOOST_AUTO_TEST_CASE(splitExtUnescape) {
-	typedef vector<TestCase> TestData;
+	using TestData = vector<TestCase>;
 
 	TestData data;
-	data.push_back(TestCase(",",  true,  ",foo,,,bar,",               vec("", "foo", "bar", ""),        false));
-	data.push_back(TestCase(",",  true,  ",,foo,bar,,",               vec("", "foo", "bar", ""),        false));
-	data.push_back(TestCase(" ",  true,  "foo  bar,",                 vec("foo", "bar,"),               false));
-	data.push_back(TestCase(" ",  false, "foo  bar ",                 vec("foo", "", "bar", ""),        false));
-	data.push_back(TestCase("oo", false, "fooobar",                   vec("f", "", "", "bar"),          false));
-	data.push_back(TestCase("oo", true,  "fooooobar",                 vec("f", "bar"),                  false));
-	data.push_back(TestCase("ab", true,  "1a2b3",                     vec("1", "2", "3"),               false));
-	data.push_back(TestCase(",",  true,  " foo , bar \r\n",           vec("foo", "bar"),                true));
-	data.push_back(TestCase(",",  true,  " foo \\, bar, , ",          vec("foo , bar"),                 true));
-	data.push_back(TestCase(",",  true,  " ' foo , bar ', \",bar \"", vec(" foo , bar ", ",bar "),      true));
-	data.push_back(TestCase(",",  true,  " \" \\t \\\"foo\" , bar",   vec(" \\t \"foo", "bar"),         true));
-	data.push_back(TestCase(",",  true,  " \\\\\\ , \\ \\t'\\\\\\'\\ \\t'", vec("\\ ", " \\t\\'\\ \\t"),  true));
-	data.push_back(TestCase(",",  true,  " '' \"'\" , \",',' \" ' '", vec("'", ",','   "),              true));
-	data.push_back(TestCase(" ",  true,  "foo bar",                   vec("foo", "bar"),                true));
-	data.push_back(TestCase(" ",  true,  " foo bar ",                 vec("", "foo", "bar", ""),        true));
-	data.push_back(TestCase(" ",  true,  " foo\\ bar\r\n   \\\\   ",  vec("", "foo bar\r\n", "\\", ""), false));
-	data.push_back(TestCase(" ",  true,  "' foo\\ bar' test",         vec(" foo\\ bar", "test"),        true));
-	data.push_back(TestCase(",",  true,  "\\",                        vec("\\"),                        true));
-	data.push_back(TestCase(",",  true,  "\\ ",                       vec(" "),                         true));
-	data.push_back(TestCase(",",  true,  " \\",                       vec("\\"),                        true));
-	data.push_back(TestCase(",",  true,  "\\ ",                       vec(" "),                         false));
-	data.push_back(TestCase(",",  true,  " \\",                       vec(" \\"),                       false));
-	data.push_back(TestCase(",",  true,  "\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t",   vec("\"\\t\\ ,\\ \\\\t"),         true));
-	data.push_back(TestCase(",",  true,  "'\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t'", vec("\\\"\\t\\\\ \\,\\\\ \\\\t"), true));
+	data.emplace_back(",",  true,  ",foo,,,bar,",               vec("", "foo", "bar", ""),        false);
+	data.emplace_back(",",  true,  ",,foo,bar,,",               vec("", "foo", "bar", ""),        false);
+	data.emplace_back(" ",  true,  "foo  bar,",                 vec("foo", "bar,"),               false);
+	data.emplace_back(" ",  false, "foo  bar ",                 vec("foo", "", "bar", ""),        false);
+	data.emplace_back("oo", false, "fooobar",                   vec("f", "", "", "bar"),          false);
+	data.emplace_back("oo", true,  "fooooobar",                 vec("f", "bar"),                  false);
+	data.emplace_back("ab", true,  "1a2b3",                     vec("1", "2", "3"),               false);
+	data.emplace_back(",",  true,  " foo , bar \r\n",           vec("foo", "bar"),                true);
+	data.emplace_back(",",  true,  " foo \\, bar, , ",          vec("foo , bar"),                 true);
+	data.emplace_back(",",  true,  " ' foo , bar ', \",bar \"", vec(" foo , bar ", ",bar "),      true);
+	data.emplace_back(",",  true,  " \" \\t \\\"foo\" , bar",   vec(" \\t \"foo", "bar"),         true);
+	data.emplace_back(",",  true,  " \\\\\\ , \\ \\t'\\\\\\'\\ \\t'", vec("\\ ", " \\t\\'\\ \\t"), true);
+	data.emplace_back(",",  true,  " '' \"'\" , \",',' \" ' '", vec("'", ",','   "),              true);
+	data.emplace_back(" ",  true,  "foo bar",                   vec("foo", "bar"),                true);
+	data.emplace_back(" ",  true,  " foo bar ",                 vec("", "foo", "bar", ""),        true);
+	data.emplace_back(" ",  true,  " foo\\ bar\r\n   \\\\   ",  vec("", "foo bar\r\n", "\\", ""), false);
+	data.emplace_back(" ",  true,  "' foo\\ bar' test",         vec(" foo\\ bar", "test"),        true);
+	data.emplace_back(",",  true,  "\\",                        vec("\\"),                        true);
+	data.emplace_back(",",  true,  "\\ ",                       vec(" "),                         true);
+	data.emplace_back(",",  true,  " \\",                       vec("\\"),                        true);
+	data.emplace_back(",",  true,  "\\ ",                       vec(" "),                         false);
+	data.emplace_back(",",  true,  " \\",                       vec(" \\"),                       false);
+	data.emplace_back(",",  true,  "\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t",   vec("\"\\t\\ ,\\ \\\\t"),         true);
+	data.emplace_back(",",  true,  "'\\\"\\t\\\\\\ \\,\\\\\\ \\\\\\t'", vec("\\\"\\t\\\\ \\,\\\\ \\\\t"), true);
 
 	vector<string> result;
 	for ( auto &testcase : data ) {

@@ -41,14 +41,14 @@ bool isClose(sc::TimeSpan time, long sec, long micro, int offset = 1) {
 	long microSeconds = time.microseconds();
 
 	long secDiff = time.seconds() - sec;
-	if ( secDiff > 0 )
+	if ( secDiff > 0 ) {
 		microSeconds += secDiff * 1000000;
-	else if ( secDiff < 0 )
+	}
+	else if ( secDiff < 0 ) {
 		micro += abs(secDiff) * 1000000;
+	}
 
-	if ( abs(microSeconds - micro) <= offset )
-		return true;
-	return false;
+	return abs(microSeconds - micro) <= offset;
 }
 
 
@@ -84,21 +84,20 @@ BOOST_AUTO_TEST_CASE(construction) {
 	BOOST_CHECK_EQUAL(isClose(tdNegative, -89765, -745377), true);
 
 	// copy
-	sc::Time copyPositive(sc::Time(758.9975));
+	auto copyPositive(sc::Time(758.9975));
 	BOOST_CHECK_EQUAL(copyPositive.epochSeconds(), 758);
 	BOOST_CHECK_EQUAL(copyPositive.microseconds(), 997500);
 
-	sc::Time copyNegative(sc::Time(-877.963));
+	auto copyNegative(sc::Time(-877.963));
 	BOOST_CHECK_EQUAL(isClose(copyNegative, -877, -963000), true);
 
 	// date
-	sc::Time date(1971,1,3,1,1,4,6544);
+	sc::Time date(1971, 1, 3, 1, 1, 4, 6544);
 	double secondsPerDay = 86400;
 	double secondsPerYear = 31536000;
 	BOOST_CHECK_CLOSE(date.epochSeconds(), secondsPerYear + secondsPerDay * 2, 0.3);
 
-	BOOST_CHECK_EQUAL(sc::Time().valid(), false);
-	BOOST_CHECK_EQUAL(sc::Time(), sc::Time(1970,1,1,0,0,0));
+	BOOST_CHECK_EQUAL(sc::Time(), sc::Time(1970, 1, 1, 0, 0, 0));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -108,22 +107,22 @@ BOOST_AUTO_TEST_CASE(construction) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(inDouble, *bu::tolerance(1E-7)) {
 	sc::Time time = sc::Time(1970, 1, 1, 0, 0, 5, 500000);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 
 	time = sc::Time(1970, 1, 1, 0, 0, 5, 123456);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 
 	time = sc::Time(1970, 1, 1, 0, 0, 5, 7279289);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 
 	time = sc::Time(1970, 1, 1, 0, 0, 5, 7279291);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 
 	time = sc::Time(1733300000, 7279289);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 
 	time = sc::Time(1733300000, 7279291);
-	BOOST_TEST(time.seconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
+	BOOST_TEST(time.epochSeconds() + time.microseconds() * 1E-6 == static_cast<double>(time));
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -136,9 +135,12 @@ BOOST_AUTO_TEST_CASE(fromString) {
 
 	sc::Time time = sc::Time::FromString("2019-01-01 10:01:59", "%F %T");
 
-	BOOST_CHECK(time.valid());
-
-	int year, month, day, hour, min, sec;
+	int year;
+	int month;
+	int day;
+	int hour;
+	int min;
+	int sec;
 	BOOST_CHECK(time.get(&year, &month, &day, &hour, &min, &sec));
 	BOOST_CHECK_EQUAL(year, 2019);
 	BOOST_CHECK_EQUAL(month, 1);
@@ -153,10 +155,11 @@ BOOST_AUTO_TEST_CASE(fromString) {
 
 	// Buffer overflow test
 	std::string str;
-	for ( int i = 0; i < 500; ++i )
+	for ( int i = 0; i < 500; ++i ) {
 		str.push_back(' ');
+	}
 	str.append(".123456");
-	BOOST_CHECK_THROW(sc::Time::FromString(str.c_str(), "%F %T.%f"), std::runtime_error);
+	BOOST_CHECK_THROW(sc::Time::FromString(str, "%F %T.%f"), std::runtime_error);
 
 	BOOST_CHECK(time.fromString("2024-04-10T12:00:00+00:00", "%FT%T%z"));
 	BOOST_CHECK_EQUAL(time.iso(), sc::Time(2024, 4, 10, 12, 0, 0, 0).iso());
@@ -242,9 +245,12 @@ BOOST_AUTO_TEST_CASE(dayOfYear) {
 
 	sc::Time time = sc::Time::FromString("2019-01-01 11:23:42.1234", "%F %T.%f");
 
-	BOOST_CHECK(time.valid());
-
-	int year, yday, hour, min, sec, usec;
+	int year;
+	int yday;
+	int hour;
+	int min;
+	int sec;
+	int usec;
 	BOOST_CHECK(time.get2(&year, &yday, &hour, &min, &sec, &usec));
 	BOOST_CHECK_EQUAL(year, 2019);
 	BOOST_CHECK_EQUAL(yday, 0);
@@ -266,59 +272,59 @@ BOOST_AUTO_TEST_CASE(dayOfYear) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(localTime) {
 	sc::Time local;
-	local.set(1970,3,14,5,30,3,39);
+	local.set(1970, 3, 14, 5, 30, 3, 39);
 	sc::Time time(local);
 	BOOST_CHECK_EQUAL(local.epoch(), time.epoch());
 	std::string check1 = local.toString("%FT%T.%fZ");
 	std::string check2 = "1970-03-14T05:30:03.000039Z";
-	bool equal = boost::iequals(check1,check2);
+	bool equal = boost::iequals(check1, check2);
 	BOOST_CHECK_EQUAL(equal, true);
-	sc::Time localtest = local.Now();
-	local = local.Now();
+	auto localtest = sc::Time::Now();
+	local = sc::Time::Now();
 	localtest.setUSecs(0);
 	local.setUSecs(0);
 	check1 = local.iso();
 	check2 = localtest.iso();
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	local.set(1970,3,14,5,30,3,39);
+	local.set(1970, 3, 14, 5, 30, 3, 39);
 	check1 = "1970-03-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	local.set(1981,9,14,5,30,3,39);
+	local.set(1981, 9, 14, 5, 30, 3, 39);
 	check1 = "1981-09-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	local.set(2014,3,14,5,30,3,39);
+	local.set(2014, 3, 14, 5, 30, 3, 39);
 	check1 = "2014-03-14T05:30:03.000039Z";
 	check2 = local.toString("%FT%T.%fZ");
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	local.set(2000,8,14,5,30,3,39);
+	local.set(2000, 8, 14, 5, 30, 3, 39);
 	check1 = local.toString("%FT%T.%fZ");
 	check2 = "2000-08-14T05:30:03.000039Z";
 	BOOST_CHECK_EQUAL(check1, check2);
 
 	// before 1970
 	sc::Time before1970;
-	before1970.set(1950,6,4,15,8,66,11);
+	before1970.set(1950, 6, 4, 15, 8, 66, 11);
 	sc::Time t(before1970);
-	sc::Time time1 = local.Now();
+	auto time1 = sc::Time::Now();
 	time1.setUSecs(0);
-	sc::Time time2 = before1970.Now();
+	auto time2 = sc::Time::Now();
 	time2.setUSecs(0);
 	check1 = time1.toString("%FT%T.%fZ");
 	check2 = time2.toString("%FT%T.%fZ");
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	before1970.set(1914,9,4,7,8,66,11);
+	before1970.set(1914, 9, 4, 7, 8, 66, 11);
 	check1 = "1914-09-04T07:09:06.000011Z";
 	check2 = before1970.toString("%FT%T.%fZ");
 	BOOST_CHECK_EQUAL(check1, check2);
 
-	sc::Time lastYear(2016,8,26,15,44,9,644);
+	sc::Time lastYear(2016, 8, 26, 15, 44, 9, 644);
 	t = lastYear.toUTC();
 	check1 = lastYear.toString("%FT%T.%fZ");
 	check2 = t.toString("%FT%T.%fZ");
@@ -330,7 +336,7 @@ BOOST_AUTO_TEST_CASE(localTime) {
 		BOOST_CHECK_EQUAL(equal, true);
 	}
 
-	sc::Time yearDay = yearDay.FromYearDay(1971, 3);
+	auto yearDay = sc::Time::FromYearDay(1971, 3);
 	double secondsPerDay = 86400;
 	double secondsPerYear = 31536000;
 	BOOST_CHECK_EQUAL(yearDay.epochSeconds(), secondsPerYear + secondsPerDay * 2);
@@ -342,8 +348,15 @@ BOOST_AUTO_TEST_CASE(localTime) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(yearDay) {
-	sc::Time t1 = sc::Time::Now(), t2;
-	int y, m, d, H, M, S, US;
+	auto t1 = sc::Time::Now();
+	sc::Time t2;
+	int y;
+	int m;
+	int d;
+	int H;
+	int M;
+	int S;
+	int US;
 
 	t1.get(&y, &m, &d, &H, &M, &S, &US);
 	t2.set(y, m, d, H, M, S, US);
@@ -363,7 +376,13 @@ BOOST_AUTO_TEST_CASE(yearDay) {
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(individuals) {
 	sc::Time t1;
-	int y, m, d, H, M, S, US;
+	int y;
+	int m;
+	int d;
+	int H;
+	int M;
+	int S;
+	int US;
 
 	t1 = sc::Time::FromString("2024-01-01", "%F");
 	t1.get(&y, &m, &d, &H, &M, &S, &US);
@@ -432,18 +451,17 @@ BOOST_AUTO_TEST_CASE(individuals) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(validStrings) {
-	sc::Time date(2016,8,26,15,44,9,644);
+	sc::Time date(2016, 8, 26, 15, 44, 9, 644);
 	std::string test = date.toString("%FT%T.%fZ");
 	std::string check = "2016-08-26T15:44:09.000644Z";
 	bool equal = test == check;
 	BOOST_CHECK_EQUAL(equal, true);
-	BOOST_CHECK(date.FromString(test.c_str(),"%FT%T.%fZ") == date);
+	BOOST_CHECK(date.FromString(test, "%FT%T.%fZ") == date);
 
 	BOOST_CHECK(test == date.iso());
 
-	BOOST_CHECK(date.fromString(test.c_str(),"%FT%T.%fZ") == true);
+	BOOST_CHECK(date.fromString(test, "%FT%T.%fZ"));
 
-	BOOST_CHECK_EQUAL(date.valid(), true);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -506,7 +524,8 @@ BOOST_AUTO_TEST_CASE(timeZone) {
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 BOOST_AUTO_TEST_CASE(opt) {
-	OPT(sc::Time) t1, t2;
+	OPT(sc::Time) t1;
+	OPT(sc::Time) t2;
 
 	// Both are None
 	BOOST_CHECK(  t1 == t2);

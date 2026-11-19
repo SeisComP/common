@@ -49,12 +49,12 @@ BOOST_AUTO_TEST_CASE(Resample1) {
 	}
 	rec.setData(data.get());
 
-	auto out = resampler.feed(&rec);
+	const auto *out = resampler.feed(&rec);
 	BOOST_REQUIRE(out);
 	BOOST_CHECK_EQUAL(out->startTime().iso(), "2025-07-01T00:00:11.000001Z");
 	BOOST_CHECK_EQUAL(out->sampleCount(), 479);
 	{
-		auto data = static_cast<const DoubleArray*>(out->data());
+		const auto *data = static_cast<const DoubleArray*>(out->data());
 		BOOST_CHECK_CLOSE(data->mean(), 494.83260259014986, EPSILON);
 		BOOST_CHECK_CLOSE(data->median(), 494.8326025901498, EPSILON);
 		BOOST_CHECK_CLOSE(data->min(), 21.772634513966601, EPSILON);
@@ -79,12 +79,12 @@ BOOST_AUTO_TEST_CASE(Resample2) {
 	}
 	rec.setData(data.get());
 
-	auto out = resampler.feed(&rec);
+	const auto *out = resampler.feed(&rec);
 	BOOST_REQUIRE(out);
 	BOOST_CHECK_EQUAL(out->startTime().iso(), "2025-07-01T00:00:11.000001Z");
 	BOOST_CHECK_EQUAL(out->sampleCount(), 229);
 	{
-		auto data = static_cast<const DoubleArray*>(out->data());
+		const auto *data = static_cast<const DoubleArray*>(out->data());
 		BOOST_CHECK_CLOSE(data->mean(), 247.41630129507496, EPSILON);
 		BOOST_CHECK_CLOSE(data->median(), 247.41630129507496, EPSILON);
 		BOOST_CHECK_CLOSE(data->min(), 21.772634513966601, EPSILON);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(Resample2) {
 	BOOST_CHECK_EQUAL(out->startTime().iso(), "2025-07-01T00:04:00.0000Z");
 	BOOST_CHECK_EQUAL(out->sampleCount(), 250);
 	{
-		auto data = static_cast<const DoubleArray*>(out->data());
+		const auto *data = static_cast<const DoubleArray*>(out->data());
 		BOOST_CHECK_CLOSE(data->mean(), 721.46593457643837, EPSILON);
 		BOOST_CHECK_CLOSE(data->median(), 722.45559978161873, EPSILON);
 		BOOST_CHECK_CLOSE(data->min(), 475.03929848654377, EPSILON);

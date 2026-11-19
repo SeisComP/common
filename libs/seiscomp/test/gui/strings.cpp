@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(seiscomp_gui_strings)
 BOOST_AUTO_TEST_CASE(index) {
 	QColor c;
 
-	BOOST_CHECK(Seiscomp::Gui::fromString(c, "rgba(1,2,3,4)"));
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "rgba(1, 2, 3, 4)"));
 	BOOST_CHECK_EQUAL(c.red(), 1);
 	BOOST_CHECK_EQUAL(c.green(), 2);
 	BOOST_CHECK_EQUAL(c.blue(), 3);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(index) {
 	BOOST_CHECK_EQUAL(c.blue(), 7);
 	BOOST_CHECK_EQUAL(c.alpha(), 8);
 
-	BOOST_CHECK(Seiscomp::Gui::fromString(c, "rgb(10,11,12)"));
+	BOOST_CHECK(Seiscomp::Gui::fromString(c, "rgb(10, 11, 12)"));
 	BOOST_CHECK_EQUAL(c.red(), 10);
 	BOOST_CHECK_EQUAL(c.green(), 11);
 	BOOST_CHECK_EQUAL(c.blue(), 12);

@@ -42,7 +42,6 @@ class SimpleApp : public Seiscomp::System::Application {
 		SimpleApp(int argc, char** argv)
 		: Seiscomp::System::Application(argc, argv) {}
 
-	public:
 		bool run() override {
 			return true;
 		}
@@ -127,7 +126,7 @@ BOOST_AUTO_TEST_CASE(setInt_getInt) {
 
 	BOOST_CHECK_THROW(config.getInt("useConfiguredStreams"), std::exception);
 
-	BOOST_CHECK_THROW(config.getInt("connection.subscriptions"),std::exception);
+	BOOST_CHECK_THROW(config.getInt("connection.subscriptions"), std::exception);
 
 	std::vector<int> vec = config.getInts("plugins.default.archive.interval");
 	BOOST_CHECK_EQUAL(vec[0], 3600);
@@ -135,7 +134,7 @@ BOOST_AUTO_TEST_CASE(setInt_getInt) {
 	vec = config.getInts("plugins.default.buffer");
 	BOOST_CHECK_EQUAL(vec[0], 4000);
 
-	bool proof = config.setInts("plugins.default.buffer",changeInts);
+	bool proof = config.setInts("plugins.default.buffer", changeInts);
 	BOOST_CHECK(proof == true);
 }
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -160,7 +159,7 @@ BOOST_AUTO_TEST_CASE(getBool_setBool) {
 	std::vector<bool> changeBool = config.getBools(element);
 
 	element = "connection.encoding";
-	BOOST_CHECK_THROW(config.getBool(element),std::exception);
+	BOOST_CHECK_THROW(config.getBool(element), std::exception);
 
 	element = "recordstream.service";
 	BOOST_CHECK_THROW(config.getBool(element), std::exception);
@@ -210,9 +209,9 @@ BOOST_AUTO_TEST_CASE(getDouble_setDouble) {
 	check = config.setDouble("logging.level", 5.5);
 	BOOST_CHECK_EQUAL(check, true);
 
-	BOOST_CHECK_THROW(config.getDouble("connection.encoding"),std::exception);
+	BOOST_CHECK_THROW(config.getDouble("connection.encoding"), std::exception);
 
-	BOOST_CHECK_THROW(config.getDouble("logging.file.rotator"),std::exception);
+	BOOST_CHECK_THROW(config.getDouble("logging.file.rotator"), std::exception);
 
 	/*************************include new file*******************************/
 
@@ -241,33 +240,28 @@ BOOST_AUTO_TEST_CASE(getString_setString) {
 
 	std::string getText = config.getString("connection.server");
 	std::string checkText = "localhost";
-	BOOST_CHECK_EQUAL(getText,checkText);
+	BOOST_CHECK_EQUAL(getText, checkText);
 
-	bool proof = config.getString(getText, "connection.server");
-	BOOST_CHECK(proof == true);
-	proof = config.setString("connection.server","Localhost test");
-	BOOST_CHECK(proof == true);
+	BOOST_CHECK(config.getString(getText, "connection.server"));
+	BOOST_CHECK(config.setString("connection.server", "Localhost test"));
 
 	getText = config.getString("connection.encoding");
 	checkText = "binary";
-	BOOST_CHECK_EQUAL(getText,checkText);
+	BOOST_CHECK_EQUAL(getText, checkText);
 
-	proof = config.getString(getText, "connection.encoding");
-	BOOST_CHECK(proof == true);
-	proof = config.setString("connection.encoding","Binary");
+	BOOST_CHECK(config.getString(getText, "connection.encoding"));
+	BOOST_CHECK(config.setString("connection.encoding", "Binary"));
 
 	getText = config.getString("recordstream.service");
 	checkText = "slink";
-	BOOST_CHECK_EQUAL(getText,checkText);
+	BOOST_CHECK_EQUAL(getText, checkText);
 
-	proof = config.getString(getText, "recordstream.service");
-	BOOST_CHECK(proof == true);
-	proof = config.setString("recordstream.service","Slink");
+	BOOST_CHECK(config.getString(getText, "recordstream.service"));
+	BOOST_CHECK(config.setString("recordstream.service", "Slink"));
 
 	getText = config.getString("connection.timeout");
 	BOOST_CHECK_EQUAL("3", getText);
-	proof = config.getString(getText,"connection.timeout");
-	BOOST_CHECK(proof == true);
+	BOOST_CHECK(config.getString(getText, "connection.timeout"));
 
 	BOOST_CHECK_NO_THROW(config.getString("logging.file.rotator.archiveSize"));
 
@@ -281,8 +275,8 @@ BOOST_AUTO_TEST_CASE(getString_setString) {
 
 	vec = config.getStrings("picker.filters");
 	BOOST_CHECK_EQUAL(vec.size(), 10);
-	BOOST_CHECK_EQUAL(vec.front(),"BP 0.1 - 1 Hz  3rd order;BW(3,0.1,1)");
-	BOOST_CHECK_EQUAL(vec.back(),"BP 0.7 - 2 Hz + STA/LTA(1,50);RMHP(10)->ITAPER(30)->BW(3,0.7,2)->STALTA(1,50)");
+	BOOST_CHECK_EQUAL(vec.front(), "BP 0.1 - 1 Hz  3rd order;BW(3,0.1,1)");
+	BOOST_CHECK_EQUAL(vec.back(), "BP 0.7 - 2 Hz + STA/LTA(1,50);RMHP(10)->ITAPER(30)->BW(3,0.7,2)->STALTA(1,50)");
 	BOOST_CHECK_EQUAL(vec[3], "@BP 0.7 - 2 Hz  3rd order;BW(3,0.7,2)");
 
 	/*************************include new file*******************************/
@@ -291,11 +285,10 @@ BOOST_AUTO_TEST_CASE(getString_setString) {
 	config.readConfig(file);
 
 	bool error = false;
-	std::vector<std::string> vec2 = config.getStrings("plugins",&error);
+	std::vector<std::string> vec2 = config.getStrings("plugins", &error);
 	BOOST_CHECK_EQUAL(vec.size(), 10);
 
-	proof = config.setStrings("plugins", vec);
-	BOOST_CHECK(proof == true);
+	BOOST_CHECK(config.setStrings("plugins", vec));
 
 	error = true;
 	vec2 = config.getStrings("plugins.QcLatency.realTimeOnly", &error);
@@ -314,8 +307,8 @@ BOOST_AUTO_TEST_CASE(tools) {
 
 	std::vector<std::string> vec = config.names();
 	BOOST_CHECK_EQUAL(vec.size(), 26);
-	for ( int i = 0; i < (int)vec.size(); i++ ) {
-		BOOST_CHECK(vec[i].empty() == false);
+	for ( const auto &i : vec ) {
+		BOOST_CHECK(!i.empty());
 	}
 
 	std::string symbol = config.symbolsToString();
@@ -326,25 +319,22 @@ BOOST_AUTO_TEST_CASE(tools) {
 	file = "./data/config.cfg";
 	BOOST_CHECK_NO_THROW(config.readConfig(file));
 
-	bool proof = config.eval("connection.encoding",vec);
-	BOOST_CHECK_EQUAL(proof, true);
-
-	proof = config.Eval("recordstream.source",vec);
-	BOOST_CHECK_EQUAL(proof, true);
+	BOOST_CHECK(config.eval("connection.encoding", vec));
+	BOOST_CHECK(config.Eval("recordstream.source", vec));
 
 	std::stringstream ss;
 	Symbol *sym = config.symbolTable()->get("connection.encoding");
-	BOOST_CHECK_NO_THROW(config.writeValues(ss,sym));
+	BOOST_CHECK_NO_THROW(config.writeValues(ss, sym));
 	BOOST_CHECK_NO_THROW(config.trackVariables(true));
-	BOOST_CHECK_NO_THROW(config.writeSymbol(ss,sym));
+	BOOST_CHECK_NO_THROW(config.writeSymbol(ss, sym));
 
-	size_t getNum = config.getInt("logging.level");
-	proof = config.getBool("logging.file.rotator");
-	getNum = config.getInt("logging.file.rotator.timeSpan");
+	config.getInt("logging.level");
+	config.getBool("logging.file.rotator");
+	config.getInt("logging.file.rotator.timeSpan");
 
 	Variables var = config.getVariables();
-	getNum = var.size();
-	BOOST_CHECK_EQUAL(getNum,3);
+	size_t getNum = var.size();
+	BOOST_CHECK_EQUAL(getNum, 3);
 	for ( size_t i = 0; i < getNum; i++ ) {
 		BOOST_CHECK_EQUAL(var.empty(), false);
 	}
@@ -359,12 +349,9 @@ BOOST_AUTO_TEST_CASE(tools) {
 	auto vget = config.getStrings("holiday.Spain");
 	BOOST_CHECK_EQUAL(vget[0], "dance");
 	BOOST_CHECK_EQUAL(vget[1], "swim");
-	proof = config.getBool("holiday.Spain.dance");
-	BOOST_CHECK_EQUAL(proof, true);
-	proof = config.getBool("holiday.Spain.swim.warm");
-	BOOST_CHECK_EQUAL(proof, true);
-	proof = config.getBool("holiday.Spain.swim.cold");
-	BOOST_CHECK_EQUAL(proof, false);
+	BOOST_CHECK(config.getBool("holiday.Spain.dance"));
+	BOOST_CHECK(config.getBool("holiday.Spain.swim.warm"));
+	BOOST_CHECK(!config.getBool("holiday.Spain.swim.cold"));
 
 	vget = config.getStrings("earth.continent");
 	BOOST_CHECK_EQUAL(vget[0], "Asia");
@@ -405,7 +392,7 @@ BOOST_AUTO_TEST_CASE(paths) {
 	app.setLoggingToStdErr(true);
 	app();
 
-	auto env = Seiscomp::Environment::Instance();
+	auto *env = Seiscomp::Environment::Instance();
 
 	BOOST_CHECK_EQUAL(app.configGetString("path"), "@ROOTDIR@");
 	BOOST_CHECK_EQUAL(app.configGetPath("path"), env->absolutePath(env->installDir()));

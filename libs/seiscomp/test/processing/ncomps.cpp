@@ -20,10 +20,7 @@
 
 #define SEISCOMP_TEST_MODULE SeisComP
 
-
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
+#include <cstdio>
 
 #include <seiscomp/unittest/unittests.h>
 
@@ -45,11 +42,12 @@ BOOST_AUTO_TEST_CASE(data) {
 	using CodeL2Norm = Operator::CodeWrapper<double, 2, Operator::L2Norm>;
 	using L2Norm = NCompsOperator<double, 2, CodeL2Norm>;
 
-	auto op = new L2Norm(
-		CodeL2Norm("BHN", "BHE", Operator::L2Norm<double,2>())
+	auto *op = new L2Norm(
+		CodeL2Norm("BHN", "BHE", Operator::L2Norm<double, 2>())
 	);
 
-	GenericRecordPtr nRec, eRec;
+	GenericRecordPtr nRec;
+	GenericRecordPtr eRec;
 	Time startTime(2024, 12, 20, 0, 0, 0);
 
 	DoubleArrayPtr nData = new DoubleArray(40);
@@ -77,8 +75,8 @@ BOOST_AUTO_TEST_CASE(data) {
 	BOOST_CHECK_EQUAL(seq.timeWindow(), TimeWindow(startTime, startTime + TimeSpan(0, std::min(nData->size(), eData->size()) * 1000000 / fsamp)));
 
 	const DoubleArray *l2data = DoubleArray::ConstCast(seq.front()->data());
-	for ( int i = 0; i < l2data->size(); ++i ) {
-		BOOST_CHECK_EQUAL((*l2data)[i], 5);
+	for ( double i : *l2data ) {
+		BOOST_CHECK_EQUAL(i, 5);
 	}
 
 	auto gap = Core::TimeSpan(10, 0);
@@ -95,8 +93,8 @@ BOOST_AUTO_TEST_CASE(data) {
 	BOOST_CHECK_EQUAL(seq.timeWindow(), TimeWindow(startTime, gap + TimeSpan(0, std::min(nData->size(), eData->size()) * 1000000 / fsamp)));
 
 	l2data = DoubleArray::ConstCast((*(++seq.begin()))->data());
-	for ( int i = 0; i < l2data->size(); ++i ) {
-		BOOST_CHECK_EQUAL((*l2data)[i], 5);
+	for ( double i : *l2data ) {
+		BOOST_CHECK_EQUAL(i, 5);
 	}
 }
 

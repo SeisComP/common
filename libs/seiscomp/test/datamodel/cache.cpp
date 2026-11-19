@@ -21,10 +21,6 @@
 #define SEISCOMP_TEST_MODULE SeisComP
 
 
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
-
 #include <seiscomp/unittest/unittests.h>
 
 #include <seiscomp/datamodel/amplitude.h>
