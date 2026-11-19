@@ -59,7 +59,7 @@ class MagnitudeViewPrivate {
 	private:
 		MagnitudeViewPrivate(Seiscomp::DataModel::DatabaseQuery *q,
 		                     Map::ImageTree *mapTree = nullptr)
-		: reader(q), objCache(q, 500), maptree(mapTree) {}
+		: reader(q), maptree(mapTree), objCache(q, 500) {}
 
 	private:
 		using AmplitudeEntry = CalculateAmplitudes::AmplitudeEntry;
