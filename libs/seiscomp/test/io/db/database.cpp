@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(Query) {
 	BOOST_CHECK_EQUAL(IO::DatabaseInterface::Query(&db, "select * from @Origin where $stationCount=?", 42), "select * from Origin where m_stationCount=42");
 	// Non-string, non-number parameters are rejected at compile time by the
 	// static_assert in Query(); e.g. the following must NOT compile:
-	//   IO::DatabaseInterface::Query(&db, "... $t=?", Core::Time::GMT());
+	//   IO::DatabaseInterface::Query(&db, "... $t=?", Core::Time::UTC());
 
 	// --- Parser hardening (problem 3) ---
 	// Empty identifiers are rejected instead of producing malformed SQL.

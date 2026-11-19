@@ -135,7 +135,7 @@ DEFINE_SMARTPOINTER(CertificateStore);
  *   exit(1);
  * }
  *
- * const X509 *cert = ctx.findCerticiate(Core::Time::GMT());
+ * const X509 *cert = ctx.findCerticiate(Core::Time::UTC());
  * if ( !cert ) {
  *   exit(1);
  * }

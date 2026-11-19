@@ -693,9 +693,6 @@ class Time(object):
     def now(self):
         return _core.Time_now(self)
 
-    def gmt(self):
-        return _core.Time_gmt(self)
-
     def utc(self):
         return _core.Time_utc(self)
 
@@ -746,10 +743,6 @@ class Time(object):
         return _core.Time_Now()
 
     @staticmethod
-    def GMT():
-        return _core.Time_GMT()
-
-    @staticmethod
     def UTC():
         return _core.Time_UTC()
 
@@ -766,9 +759,6 @@ class Time(object):
 
     def toUTC(self):
         return _core.Time_toUTC(self)
-
-    def toGMT(self):
-        return _core.Time_toGMT(self)
 
     def localTimeZoneOffset(self):
         return _core.Time_localTimeZoneOffset(self)

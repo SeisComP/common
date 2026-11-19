@@ -373,7 +373,7 @@ Synchronize bindings configuration from key directory to a processing system
                 cs.setEnabled(True)
 
                 ci = seiscomp.datamodel.CreationInfo()
-                ci.setCreationTime(seiscomp.core.Time.GMT())
+                ci.setCreationTime(seiscomp.core.Time.UTC())
                 ci.setAgencyID(self.agencyID())
                 ci.setAuthor(self.name())
                 cs.setCreationInfo(ci)
@@ -433,7 +433,7 @@ Synchronize bindings configuration from key directory to a processing system
                         )
                         config.add(paramSet)
                     paramSet.setModuleID(configMod.publicID())
-                    paramSet.setCreated(seiscomp.core.Time.GMT())
+                    paramSet.setCreated(seiscomp.core.Time.UTC())
                     newParamSets[paramSet.publicID()] = 1
                     setup.setParameterSetID(paramSet.publicID())
                     if mod in stationSetups:
@@ -509,7 +509,7 @@ Synchronize bindings configuration from key directory to a processing system
 
         cfgmsg = seiscomp.datamodel.ConfigSyncMessage(False)
         cfgmsg.setCreationInfo(seiscomp.datamodel.CreationInfo())
-        cfgmsg.creationInfo().setCreationTime(seiscomp.core.Time.GMT())
+        cfgmsg.creationInfo().setCreationTime(seiscomp.core.Time.UTC())
         cfgmsg.creationInfo().setAuthor(self.author())
         cfgmsg.creationInfo().setAgencyID(self.agencyID())
         self.send(seiscomp.client.Protocol.STATUS_GROUP, cfgmsg)
@@ -548,7 +548,7 @@ Synchronize bindings configuration from key directory to a processing system
         sys.stderr.write("\n")
 
         # Notify about end of synchronization
-        cfgmsg.creationInfo().setCreationTime(seiscomp.core.Time.GMT())
+        cfgmsg.creationInfo().setCreationTime(seiscomp.core.Time.UTC())
         cfgmsg.isFinished = True
         self.send(seiscomp.client.Protocol.STATUS_GROUP, cfgmsg)
 

@@ -2738,25 +2738,24 @@ bool EventSummaryView::updateLastAutomaticFM(DataModel::FocalMechanism *fm) {
 
 
 void EventSummaryView::updateTimeAgoLabel(){
-
-// 	emit showInStatusbar(QString("%1").arg(Core::BaseObject::ObjectCount(), 0, 'd', 0, ' '), 0);
-
 	if (!_currentOrigin){
 		_ui->_lbTimeAgo->setVisible(false);
 		return;
 	}
 
-	if ( _map && _map->waveformPropagation() )
+	if ( _map && _map->waveformPropagation() ) {
 		_map->update();
+	}
 
 	Core::TimeSpan ts;
 	Core::Time ct;
 
-	ct.gmt();
+	ct.utc();
 	ts = ct - _currentOrigin->time();
 
-	if ( !_ui->_lbTimeAgo->isVisible() )
+	if ( !_ui->_lbTimeAgo->isVisible() ) {
 		_ui->_lbTimeAgo->setVisible(true);
+	}
 
 	int sec = ts.seconds();
 	int days = sec / 86400;
