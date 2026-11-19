@@ -37,7 +37,7 @@ using namespace Seiscomp;
 
 struct scmaster {
 	scmaster() {
-		std::cerr << "starting scmaster" << std::endl;
+		std::cerr << "starting scmaster\n";
 		setenv("LD_LIBRARY_PATH", LIB_DIR, 1);
 		URL = "localhost:18189/test";
 		_pid = fork();
@@ -61,7 +61,7 @@ struct scmaster {
 	}
 
 	~scmaster() {
-		std::cerr << "teardown scmaster" << std::endl;
+		std::cerr << "teardown scmaster\n";
 		int status = 0;
 		kill(_pid, SIGTERM);
 		BOOST_CHECK_EQUAL(waitpid(_pid, &status, WUNTRACED | WCONTINUED), _pid);
@@ -106,9 +106,9 @@ BOOST_FIXTURE_TEST_CASE(SendAndReceive, scmaster) {
 		auto futReceiver = std::async([this, c2]() {
 			size_t count = 0;
 			while ( count < messageCount ) {
-				auto msg = c2->recv();
+				auto *msg = c2->recv();
 				if ( msg ) {
-					auto dmsg = Core::DataMessage::Cast(msg);
+					auto *dmsg = Core::DataMessage::Cast(msg);
 					if ( dmsg ) {
 						BOOST_CHECK_EQUAL(dmsg->size(), 1);
 						BOOST_CHECK_EQUAL(DataModel::Pick::Cast(*dmsg->begin())->publicID(), Core::toString(count));
@@ -135,9 +135,9 @@ BOOST_FIXTURE_TEST_CASE(SendAndReceive, scmaster) {
 	auto futReceiver = std::async([this, c3]() {
 		size_t count = 0;
 		while ( count < messageCount ) {
-			auto msg = c3->recv();
+			auto *msg = c3->recv();
 			if ( msg ) {
-				auto dmsg = Core::DataMessage::Cast(msg);
+				auto *dmsg = Core::DataMessage::Cast(msg);
 				if ( dmsg ) {
 					BOOST_CHECK_EQUAL(dmsg->size(), 1);
 					BOOST_CHECK_EQUAL(DataModel::Pick::Cast(*dmsg->begin())->publicID(), Core::toString(1000000 + count));
