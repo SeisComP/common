@@ -247,7 +247,8 @@ class Module(kernel.CoreModule):
                 dbBackend = "mysql"
                 try:
                     rootpwd = setup_config.getString(
-                        self.name + ".database.enable.backend.create.runAsSuperUser.rootpw"
+                        self.name
+                        + ".database.enable.backend.create.runAsSuperUser.rootpw"
                     )
                 except ValueError:
                     rootpwd = ""
@@ -311,10 +312,15 @@ class Module(kernel.CoreModule):
 
                         # Do not create pyc files with root:root ownership
                         cmd = "{} - {} -B {} {}".format(
-                            binary, script, dbScript, " ".join(shlex.quote(o) for o in options)
+                            binary,
+                            script,
+                            dbScript,
+                            " ".join(shlex.quote(o) for o in options),
                         )
                     else:
-                        cmd = "{} {}".format(dbScript, " ".join(shlex.quote(o) for o in options))
+                        cmd = "{} {}".format(
+                            dbScript, " ".join(shlex.quote(o) for o in options)
+                        )
 
                     p = subprocess.Popen(cmd, shell=True)
                     ret = p.wait()
@@ -378,7 +384,10 @@ class Module(kernel.CoreModule):
                         )
                         # Do not create pyc files with root:root ownership
                         cmd = '{} postgres "{}/seiscomp-python -B {} {}"'.format(
-                            binary, tmpPath, dbScript, " ".join(shlex.quote(o) for o in options)
+                            binary,
+                            tmpPath,
+                            dbScript,
+                            " ".join(shlex.quote(o) for o in options),
                         )
 
                         p = subprocess.Popen(cmd, shell=True)
@@ -478,9 +487,22 @@ class Module(kernel.CoreModule):
         system.Environment.Instance().initConfig(cfg, self.name)
 
         try:
+            if not kernel.Environment(self.env.SEISCOMP_ROOT).getBool(
+                "messaging.enable"
+            ):
+                print("- messaging disabled, nothing to do")
+                return 0
+        except ValueError:
+            pass
+
+        try:
             queues = cfg.getStrings("queues")
         except ValueError:
             queues = []
+
+        if queues and len(queues[0]) == 0:
+            print("- no messaging messaging queues registered, nothing to do")
+            return 1
 
         # iterate through all queues and check DB schema version if message
         # processor dbstore is present
@@ -697,7 +719,7 @@ class Module(kernel.CoreModule):
             return True
 
         print(
-            "  * migration to the current version is required. Apply the " "following",
+            "  * migration to the current version is required. Apply the following",
             file=sys.stderr,
         )
         print(
