@@ -23,6 +23,7 @@
 
 #include <seiscomp/unittest/unittests.h>
 
+#include <seiscomp/datamodel/arrival.h>
 #include <seiscomp/datamodel/inventory_package.h>
 #include <seiscomp/datamodel/utils.h>
 
@@ -31,6 +32,22 @@ using namespace std;
 using namespace Seiscomp;
 using namespace Seiscomp::Core;
 using namespace Seiscomp::DataModel;
+
+
+template <typename T, typename A>
+double safeAccess(const T *obj, A (T::*getter)() const, A defaultValue) {
+	if ( !obj ) {
+		return defaultValue;
+	}
+
+	try {
+		return (obj->*getter)();
+	}
+	catch ( ... ) {
+		return defaultValue;
+	}
+}
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
@@ -85,6 +102,19 @@ BOOST_AUTO_TEST_CASE(ID) {
 	BOOST_CHECK_EQUAL(id(stream.get()), "11.22222.33.HHZ");
 	BOOST_CHECK_EQUAL(id(stream.get(), "--", false), "11.22222.33.HH");
 }
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+BOOST_AUTO_TEST_CASE(Access) {
+	auto arr = new Arrival();
+	BOOST_CHECK_EQUAL(safeAccess(arr, &Arrival::weight, 1.0), 1.0);
+	arr->setWeight(123);
+	BOOST_CHECK_EQUAL(safeAccess(arr, &Arrival::weight, 1.0), 123.0);
+}
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
