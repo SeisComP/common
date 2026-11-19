@@ -1,0 +1,23 @@
+SET(TESTS
+	messages.cpp
+)
+
+FOREACH(testSrc ${TESTS})
+	GET_FILENAME_COMPONENT(testName ${testSrc} NAME_WE)
+	SET(testName test_core_messaging_${testName})
+	ADD_EXECUTABLE(${testName} ${testSrc})
+	SC_LINK_LIBRARIES_INTERNAL(${testName} unittest client)
+
+	TARGET_COMPILE_DEFINITIONS(${testName} PRIVATE
+		SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+		BINARY_DIR="${CMAKE_CURRENT_BINARY_DIR}"
+		LIB_DIR="${LIBRARY_OUTPUT_PATH}"
+		OUTPUT_DIR="${EXECUTABLE_OUTPUT_PATH}"
+	)
+
+	ADD_TEST(
+		NAME ${testName}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		COMMAND ${testName}
+	)
+ENDFOREACH(testSrc)
