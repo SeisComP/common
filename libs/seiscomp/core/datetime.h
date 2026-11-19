@@ -411,12 +411,6 @@ class Time {
 		Time &now();
 
 		/**
-		 * This is an alias for utc().
-		 * @return The current time in UTC
-		 */
-		Time &gmt();
-
-		/**
 		 * @return The current time in UTC
 		 */
 		Time &utc();
@@ -528,9 +522,6 @@ class Time {
 		//! Returns the current time in UTC. This is an alias for UTC().
 		static Time Now();
 
-		//! Returns the current time in GMT. This is an alias for UTC().
-		[[deprecated("Use UTC() instead")]] static Time GMT();
-
 		//! Returns the current time in UTC
 		static Time UTC();
 
@@ -546,10 +537,6 @@ class Time {
 		//! Converts the time of the local time representation to UTC. This
 		//! effectively removes the local timezone offset.
 		Time toUTC() const;
-
-		//! Converts the time of the local time representation to UTC. This
-		//! effectively removes the local timezone offset.
-		[[deprecated("Use toUTC() instead")]] Time toGMT() const;
 
 		/**
 		 * @brief Returns the local timezone offset with respect to the

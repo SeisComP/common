@@ -61,6 +61,9 @@ namespace Core {
    - Removed Seiscomp::DataModel::DatabaseArchive::getCacheSize
    - Made Seiscomp::DataModel::DatabaseArchive::publicObjectId public
    - Made Seiscomp::DataModel::DatabaseArchive::objectId public
+   - Remove Time::gmt()
+   - Remove Time::GMT()
+   - Remove Time::toGMT()
 
  "17.5.0"   0x110500
    - Added signal Seiscomp::Gui::EventListView::eventAdded
