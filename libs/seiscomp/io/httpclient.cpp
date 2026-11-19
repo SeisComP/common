@@ -977,6 +977,10 @@ std::streamsize HTTPClient::readBody(char *out, std::streamsize count, bool clos
 			toBeRead = _remainingBytes;
 		}
 
+		if ( !toBeRead ) {
+			break;
+		}
+
 		// toBeRead is bounded by BUFSIZE, so the argument fits into int.
 		string chunk = _socket->read(static_cast<int>(toBeRead));
 		if ( chunk.empty() ) {
