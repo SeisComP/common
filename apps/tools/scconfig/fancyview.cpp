@@ -66,6 +66,7 @@
 #include <seiscomp/config/config.h>
 #include <seiscomp/core/datetime.h>
 #include <seiscomp/core/strings.h>
+#include <seiscomp/math/filter.h>
 #include <seiscomp/gui/core/compat.h>
 #include <seiscomp/gui/core/flowlayout.h>
 
@@ -1441,7 +1442,8 @@ QString listIssue(const std::string &type, const QString &text, size_t valueCoun
 
 	// Texts may contain commas, but only if they are protected by quotes.
 	// Otherwise the value is read as a list of which only a part is used.
-	if ( (type == "string") || (type == "file") || (type == "directory") ) {
+	if ( (type == "string") || (type == "file") || (type == "directory")
+	  || (type == "filter") ) {
 		if ( valueCount > 1 ) {
 			return QObject::tr("Value not described as list. Protect the value by "
 			                   "\"\" or reading it from file may be incomplete.");
@@ -4939,7 +4941,7 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 
 	// test values types
 	// types tested: int, uint, boolean, float, double, time, boolean, file,
-	// directory, host and port, gradient
+	// directory, host and port, gradient, filter
 	const auto& type = param->definition->type;
 	string symbolURIString = param->symbol.uri.empty() ? "" : param->symbol.uri + ": ";
 
@@ -5200,6 +5202,28 @@ bool FancyView::evaluateValue(const std::string& valueTest,
 				}
 				eval += "<b>Gradient color must be a color:</b> ";
 			}
+		}
+	}
+	// filter
+	else if ( type == "filter" ) {
+		string error;
+		std::unique_ptr<Math::Filtering::InPlaceFilter<double>> filter;
+		if ( !valueTest.empty() ) {
+			filter.reset(Math::Filtering::InPlaceFilter<double>::Create(valueTest, &error));
+		}
+
+		if ( !valueTest.empty() && !filter ) {
+			if ( verbose && !symbolURIString.empty() ) {
+				cerr << symbolURIString << param->variableName << " = '"
+				     << valueTest << "' is not a valid filter: " << error << endl;
+			}
+
+			// Filters of plugins are only known if scconfig has loaded them
+			eval += "<b>Invalid filter: "
+			      + QString::fromStdString(error).toHtmlEscaped()
+			      + (error.compare(0, 15, "unknown filter ") == 0 ?
+			           " (unless provided by a plugin)" : "")
+			      + "</b> ";
 		}
 	}
 
