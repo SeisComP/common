@@ -51,6 +51,21 @@ struct AuxiliaryChannelProfile {
 using AuxiliaryChannelProfiles = std::vector<AuxiliaryChannelProfile>;
 
 
+/**
+ * @brief A named set of stations offered as preset in the add stations
+ *        dialog. Patterns are matched against NET.STA codes and the
+ *        distance range is applied in degrees.
+ */
+struct StationSet {
+	QString                  name;
+	std::vector<std::string> patterns;
+	double                   minimumDistance{0};
+	double                   maximumDistance{180};
+};
+
+using StationSets = std::vector<StationSet>;
+
+
 SC_GUI_API extern QChar degrees;
 
 SC_GUI_API extern std::string colorConvertError;

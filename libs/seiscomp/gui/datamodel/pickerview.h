@@ -277,6 +277,7 @@ class SC_GUI_API PickerView : public QMainWindow {
 			QString recordURL;
 			ChannelMap channelMap;
 			AuxiliaryChannelProfiles auxiliaryChannelProfiles;
+			StationSets stationSets;
 
 			FilterList filters;
 

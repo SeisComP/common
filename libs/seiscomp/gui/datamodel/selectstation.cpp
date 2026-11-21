@@ -22,13 +22,17 @@
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/datamodel/network.h>
 #include <seiscomp/math/geo.h>
+#include <seiscomp/core/strings.h>
 
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
 
 #include <string>
+#include <vector>
 
 #include <QMessageBox>
+#include <QRegularExpression>
+#include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QHeaderView>
 #include <QKeyEvent>
@@ -288,8 +292,34 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 		}
 
 	public:
+		void refresh() {
+			invalidateFilter();
+		}
+
+		// Comma or white space separated list of NET.STA wildcard patterns
+		void setPatterns(const QString &text) {
+			_patterns.clear();
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+			auto tokens = text.split(QRegularExpression("[,\\s]+"), QString::SkipEmptyParts);
+#else
+			auto tokens = text.split(QRegularExpression("[,\\s]+"), Qt::SkipEmptyParts);
+#endif
+			for ( const auto &token : tokens ) {
+				_patterns.push_back(token.toStdString());
+			}
+		}
+
 		void includeNSLC(bool f) {
 			_includeNSLC = f;
+		}
+
+		void setDistanceRange(double minimum, double maximum) {
+			_minimumDistance = minimum;
+			_maximumDistance = maximum;
+		}
+
+		void enableDistanceFilter(bool f) {
+			_useDistance = f;
 		}
 
 		void setNetworkType(const QString &type) {
@@ -344,13 +374,25 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 
 		bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override {
 			auto entry = static_cast<StationsModel*>(sourceModel())->row(source_row);
-#if QT_VERSION_MAJOR < 6
-			bool nslcEmpty = filterRegExp().isEmpty();
-			bool matchNSLC = nslcEmpty || filterRegExp().exactMatch(entry->code);
-#else
-			bool nslcEmpty = filterRegularExpression().pattern().isEmpty();
-			bool matchNSLC = nslcEmpty || filterRegularExpression().match(entry->code).hasMatch();
-#endif
+
+			if ( _useDistance
+			  && ((entry->distance < _minimumDistance)
+			   || (entry->distance > _maximumDistance)) ) {
+				return false;
+			}
+
+			bool nslcEmpty = _patterns.empty();
+			bool matchNSLC = nslcEmpty;
+			if ( !nslcEmpty ) {
+				auto code = entry->code.toStdString();
+				for ( const auto &pattern : _patterns ) {
+					if ( Core::wildicmp(pattern, code) ) {
+						matchNSLC = true;
+						break;
+					}
+				}
+			}
+
 			bool matchNetworkType = _networkType && (*_networkType == entry->networkType);
 			bool matchStationType = _stationType && (*_stationType == entry->stationType);
 
@@ -374,6 +416,10 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 		}
 
 	private:
+		std::vector<std::string> _patterns;
+		bool         _useDistance{false};
+		double       _minimumDistance{0};
+		double       _maximumDistance{180};
 		bool         _includeNSLC{true};
 		bool         _includeNetworkType{true};
 		bool         _includeStationType{true};
@@ -437,6 +483,21 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	_ui.table->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	//_ui.table->horizontalHeader()->hide();
 
+	// Presets and distance range are only shown if configured respectively
+	// a reference location is set
+	_ui.labelPreset->setVisible(false);
+	_ui.comboPreset->setVisible(false);
+	_ui.labelDistance->setVisible(false);
+	_ui.distanceWidget->setVisible(false);
+
+	_ui.spinMinimumDistance->setSuffix(degrees);
+	_ui.spinMaximumDistance->setSuffix(degrees);
+
+	_ui.lineEditNSLC->setToolTip(
+		tr("One or more NET.STA wildcard patterns separated by comma or "
+		   "space, e.g. \"AM.*, S1.*\"")
+	);
+
 	foreach ( auto option, model->networkTypeOptions ) {
 		_ui.comboNetworkType->addItem(option);
 	}
@@ -468,6 +529,20 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	        this, SLOT(listMatchingStations()));
 	connect(_ui.cbExcludeSensorUnit, SIGNAL(toggled(bool)),
 	        this, SLOT(listMatchingStations()));
+
+	connect(_ui.spinMinimumDistance, SIGNAL(valueChanged(double)),
+	        this, SLOT(listMatchingStations()));
+	connect(_ui.spinMaximumDistance, SIGNAL(valueChanged(double)),
+	        this, SLOT(listMatchingStations()));
+
+	connect(_ui.comboPreset, SIGNAL(activated(int)),
+	        this, SLOT(presetChanged(int)));
+
+	connect(_ui.btnSelectAll, SIGNAL(clicked()),
+	        _ui.table, SLOT(selectAll()));
+	connect(_ui.table->selectionModel(),
+	        SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+	        this, SLOT(updateCount()));
 
 	listMatchingStations();
 }
@@ -518,7 +593,95 @@ void SelectStation::listMatchingStations() {
 	}
 	model->includeSensorUnit(!_ui.cbExcludeSensorUnit->isChecked());
 
-	model->setFilterWildcard(_ui.lineEditNSLC->text().trimmed());
+	model->setDistanceRange(_ui.spinMinimumDistance->value(),
+	                        _ui.spinMaximumDistance->value());
+	model->setPatterns(_ui.lineEditNSLC->text());
+	model->refresh();
+
+	updateCount();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::updateCount() {
+	auto *proxy = static_cast<QSortFilterProxyModel*>(_ui.table->model());
+	_ui.labelCount->setText(
+		tr("%1 of %2 stations listed, %3 selected")
+		.arg(proxy->rowCount())
+		.arg(proxy->sourceModel()->rowCount())
+		.arg(_ui.table->selectionModel()->selectedRows().count())
+	);
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::presetChanged(int index) {
+	// Index 0 is "- None -"
+	if ( (index <= 0) || (index > static_cast<int>(_stationSets.size())) ) {
+		return;
+	}
+
+	const auto &set = _stationSets[index - 1];
+
+	QStringList patterns;
+	for ( const auto &pattern : set.patterns ) {
+		patterns.append(pattern.c_str());
+	}
+
+	// Update all fields first and filter only once
+	QSignalBlocker blockText(_ui.lineEditNSLC);
+	QSignalBlocker blockExclude(_ui.cbExcludeNSLC);
+	QSignalBlocker blockMin(_ui.spinMinimumDistance);
+	QSignalBlocker blockMax(_ui.spinMaximumDistance);
+
+	_ui.lineEditNSLC->setText(patterns.join(", "));
+	_ui.cbExcludeNSLC->setChecked(false);
+	_ui.spinMinimumDistance->setValue(set.minimumDistance);
+	_ui.spinMaximumDistance->setValue(set.maximumDistance);
+
+	listMatchingStations();
+
+	_ui.table->selectAll();
+	_ui.table->setFocus();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::setStationSets(const StationSets &sets) {
+	_stationSets = sets;
+
+	_ui.comboPreset->clear();
+	_ui.comboPreset->addItem(tr("- None -"));
+	for ( const auto &set : _stationSets ) {
+		QStringList patterns;
+		for ( const auto &pattern : set.patterns ) {
+			patterns.append(pattern.c_str());
+		}
+
+		_ui.comboPreset->addItem(set.name);
+		_ui.comboPreset->setItemData(
+			_ui.comboPreset->count() - 1,
+			tr("%1\n%2%4 - %3%4")
+			.arg(patterns.join(", "))
+			.arg(set.minimumDistance)
+			.arg(set.maximumDistance)
+			.arg(degrees),
+			Qt::ToolTipRole
+		);
+	}
+
+	bool hasSets = !_stationSets.empty();
+	_ui.labelPreset->setVisible(hasSets);
+	_ui.comboPreset->setVisible(hasSets);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -527,7 +690,7 @@ void SelectStation::listMatchingStations() {
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 QList<DataModel::Station*> SelectStation::selectedStations() const {
-	QModelIndexList list = _ui.table->selectionModel()->selectedIndexes();
+	QModelIndexList list = _ui.table->selectionModel()->selectedRows();
 	QList<DataModel::Station *> result;
 
 	QSortFilterProxyModel *proxy = static_cast<QSortFilterProxyModel*>(_ui.table->model());
@@ -550,6 +713,12 @@ void SelectStation::setReferenceLocation(double lat, double lon) {
 
 	_ui.table->showColumn(1);
 	_ui.table->showColumn(2);
+
+	static_cast<StationsSortFilterProxyModel*>(_ui.table->model())->enableDistanceFilter(true);
+	_ui.labelDistance->setVisible(true);
+	_ui.distanceWidget->setVisible(true);
+
+	listMatchingStations();
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
