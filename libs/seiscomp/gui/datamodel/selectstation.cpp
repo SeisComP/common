@@ -22,17 +22,14 @@
 #include <seiscomp/client/inventory.h>
 #include <seiscomp/datamodel/network.h>
 #include <seiscomp/math/geo.h>
-#include <seiscomp/core/strings.h>
 
 #include <seiscomp/gui/core/application.h>
 #include <seiscomp/gui/datamodel/selectstation.h>
 
 #include <string>
-#include <vector>
 
 #include <QMessageBox>
 #include <QRegularExpression>
-#include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QHeaderView>
 #include <QKeyEvent>
@@ -43,6 +40,19 @@ namespace Seiscomp {
 namespace Gui {
 
 namespace {
+
+
+// Maximum number of patterns shown in the tool tip of a preset
+constexpr int MaxToolTipPatterns = 10;
+
+
+QStringList patternList(const StationSet &set) {
+	QStringList patterns;
+	for ( const auto &pattern : set.patterns ) {
+		patterns.append(pattern.c_str());
+	}
+	return patterns;
+}
 
 
 QString parse(QString s) {
@@ -298,15 +308,25 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 
 		// Comma or white space separated list of NET.STA wildcard patterns
 		void setPatterns(const QString &text) {
-			_patterns.clear();
+			QStringList expressions;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 			auto tokens = text.split(QRegularExpression("[,\\s]+"), QString::SkipEmptyParts);
 #else
 			auto tokens = text.split(QRegularExpression("[,\\s]+"), Qt::SkipEmptyParts);
 #endif
 			for ( const auto &token : tokens ) {
-				_patterns.push_back(token.toStdString());
+				auto expression = QRegularExpression::wildcardToRegularExpression(token);
+				// Incomplete patterns, e.g. while typing "AM.R[0-", must not
+				// invalidate the others.
+				if ( QRegularExpression(expression).isValid() ) {
+					expressions.append(expression);
+				}
 			}
+
+			_hasPatterns = !tokens.isEmpty();
+			_hasValidPatterns = !expressions.isEmpty();
+			_patterns.setPattern(expressions.join("|"));
+			_patterns.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 		}
 
 		void includeNSLC(bool f) {
@@ -381,18 +401,9 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 				return false;
 			}
 
-			bool nslcEmpty = _patterns.empty();
-			bool matchNSLC = nslcEmpty;
-			if ( !nslcEmpty ) {
-				auto code = entry->code.toStdString();
-				for ( const auto &pattern : _patterns ) {
-					if ( Core::wildicmp(pattern, code) ) {
-						matchNSLC = true;
-						break;
-					}
-				}
-			}
-
+			bool nslcEmpty = !_hasPatterns;
+			bool matchNSLC = _hasValidPatterns
+			              && _patterns.match(entry->code).hasMatch();
 			bool matchNetworkType = _networkType && (*_networkType == entry->networkType);
 			bool matchStationType = _stationType && (*_stationType == entry->stationType);
 
@@ -416,7 +427,9 @@ class StationsSortFilterProxyModel : public QSortFilterProxyModel {
 		}
 
 	private:
-		std::vector<std::string> _patterns;
+		QRegularExpression _patterns;
+		bool         _hasPatterns{false};
+		bool         _hasValidPatterns{false};
 		bool         _useDistance{false};
 		double       _minimumDistance{0};
 		double       _maximumDistance{180};
@@ -511,29 +524,34 @@ void SelectStation::init(Core::Time time, bool ignoreDisabledStations,
 	}
 
 	connect(_ui.lineEditNSLC, SIGNAL(textChanged(QString)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 	connect(_ui.cbExcludeNSLC, SIGNAL(toggled(bool)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 
 	connect(_ui.comboNetworkType, SIGNAL(currentIndexChanged(int)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 	connect(_ui.cbExcludeNetworkType, SIGNAL(toggled(bool)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 
 	connect(_ui.comboStationType, SIGNAL(currentIndexChanged(int)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 	connect(_ui.cbExcludeStationType, SIGNAL(toggled(bool)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 
 	connect(_ui.comboSensorUnit, SIGNAL(currentIndexChanged(int)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 	connect(_ui.cbExcludeSensorUnit, SIGNAL(toggled(bool)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 
 	connect(_ui.spinMinimumDistance, SIGNAL(valueChanged(double)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
 	connect(_ui.spinMaximumDistance, SIGNAL(valueChanged(double)),
-	        this, SLOT(listMatchingStations()));
+	        this, SLOT(filterChanged()));
+
+	connect(_ui.spinMinimumDistance, SIGNAL(editingFinished()),
+	        this, SLOT(minimumDistanceEdited()));
+	connect(_ui.spinMaximumDistance, SIGNAL(editingFinished()),
+	        this, SLOT(maximumDistanceEdited()));
 
 	connect(_ui.comboPreset, SIGNAL(activated(int)),
 	        this, SLOT(presetChanged(int)));
@@ -621,34 +639,94 @@ void SelectStation::updateCount() {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void SelectStation::presetChanged(int index) {
-	// Index 0 is "- None -"
-	if ( (index <= 0) || (index > static_cast<int>(_stationSets.size())) ) {
+void SelectStation::filterChanged() {
+	if ( _updatingFilters ) {
 		return;
 	}
 
-	const auto &set = _stationSets[index - 1];
+	// The filters have been modified by the user and do not represent the
+	// selected preset anymore. This does not trigger presetChanged and keeps
+	// the current input.
+	_ui.comboPreset->setCurrentIndex(0);
 
-	QStringList patterns;
-	for ( const auto &pattern : set.patterns ) {
-		patterns.append(pattern.c_str());
+	listMatchingStations();
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::minimumDistanceEdited() {
+	if ( _ui.spinMinimumDistance->value() > _ui.spinMaximumDistance->value() ) {
+		_ui.spinMaximumDistance->setValue(_ui.spinMinimumDistance->value());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::maximumDistanceEdited() {
+	if ( _ui.spinMaximumDistance->value() < _ui.spinMinimumDistance->value() ) {
+		_ui.spinMinimumDistance->setValue(_ui.spinMaximumDistance->value());
+	}
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::resetFilters() {
+	_ui.lineEditNSLC->clear();
+	_ui.cbExcludeNSLC->setChecked(false);
+	_ui.comboNetworkType->setCurrentIndex(0);
+	_ui.cbExcludeNetworkType->setChecked(false);
+	_ui.comboStationType->setCurrentIndex(0);
+	_ui.cbExcludeStationType->setChecked(false);
+	_ui.comboSensorUnit->setCurrentIndex(0);
+	_ui.cbExcludeSensorUnit->setChecked(false);
+	_ui.spinMinimumDistance->setValue(_ui.spinMinimumDistance->minimum());
+	_ui.spinMaximumDistance->setValue(_ui.spinMaximumDistance->maximum());
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void SelectStation::presetChanged(int index) {
+	if ( (index < 0) || (index > static_cast<int>(_stationSets.size())) ) {
+		return;
 	}
 
 	// Update all fields first and filter only once
-	QSignalBlocker blockText(_ui.lineEditNSLC);
-	QSignalBlocker blockExclude(_ui.cbExcludeNSLC);
-	QSignalBlocker blockMin(_ui.spinMinimumDistance);
-	QSignalBlocker blockMax(_ui.spinMaximumDistance);
+	_updatingFilters = true;
 
-	_ui.lineEditNSLC->setText(patterns.join(", "));
-	_ui.cbExcludeNSLC->setChecked(false);
-	_ui.spinMinimumDistance->setValue(set.minimumDistance);
-	_ui.spinMaximumDistance->setValue(set.maximumDistance);
+	resetFilters();
+
+	// Index 0 is "- None -"
+	if ( index > 0 ) {
+		const auto &set = _stationSets[index - 1];
+		_ui.lineEditNSLC->setText(patternList(set).join(", "));
+		_ui.spinMinimumDistance->setValue(set.minimumDistance);
+		_ui.spinMaximumDistance->setValue(set.maximumDistance);
+	}
+
+	_updatingFilters = false;
 
 	listMatchingStations();
 
-	_ui.table->selectAll();
-	_ui.table->setFocus();
+	// Keep the focus on the drop down to allow cycling through the presets
+	// with the keyboard
+	if ( index > 0 ) {
+		_ui.table->selectAll();
+	}
+	else {
+		_ui.table->clearSelection();
+	}
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -662,16 +740,17 @@ void SelectStation::setStationSets(const StationSets &sets) {
 	_ui.comboPreset->clear();
 	_ui.comboPreset->addItem(tr("- None -"));
 	for ( const auto &set : _stationSets ) {
-		QStringList patterns;
-		for ( const auto &pattern : set.patterns ) {
-			patterns.append(pattern.c_str());
+		auto patterns = patternList(set);
+		auto toolTip = patterns.mid(0, MaxToolTipPatterns).join(", ");
+		if ( patterns.size() > MaxToolTipPatterns ) {
+			toolTip += tr(" and %1 more").arg(patterns.size() - MaxToolTipPatterns);
 		}
 
 		_ui.comboPreset->addItem(set.name);
 		_ui.comboPreset->setItemData(
 			_ui.comboPreset->count() - 1,
 			tr("%1\n%2%4 - %3%4")
-			.arg(patterns.join(", "))
+			.arg(toolTip)
 			.arg(set.minimumDistance)
 			.arg(set.maximumDistance)
 			.arg(degrees),

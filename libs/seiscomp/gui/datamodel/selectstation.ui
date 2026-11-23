@@ -26,7 +26,7 @@
      <item row="0" column="1">
       <widget class="QComboBox" name="comboPreset">
        <property name="toolTip">
-        <string>Fills in the configured station patterns and distance range and selects all matching stations.</string>
+        <string>Resets all filters, fills in the configured station patterns and distance range and selects all matching stations. Select &quot;- None -&quot; to reset all filters.</string>
        </property>
       </widget>
      </item>
@@ -144,7 +144,7 @@
            <string>Minimum epicentral distance</string>
           </property>
           <property name="decimals">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="maximum">
            <double>180.000000000000000</double>
@@ -167,7 +167,7 @@
            <string>Maximum epicentral distance</string>
           </property>
           <property name="decimals">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="maximum">
            <double>180.000000000000000</double>

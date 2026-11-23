@@ -58,8 +58,9 @@ class SC_GUI_API SelectStation : public QDialog {
 
 		/**
 		 * @brief Sets the station sets offered in the preset drop down.
-		 *        Selecting a preset fills in the station patterns and the
-		 *        distance range and selects all matching stations.
+		 *        Selecting a preset resets all filters, fills in the station
+		 *        patterns and the distance range and selects all matching
+		 *        stations. Selecting no preset resets all filters.
 		 */
 		void setStationSets(const StationSets &sets);
 
@@ -69,6 +70,9 @@ class SC_GUI_API SelectStation : public QDialog {
 
 	private slots:
 		void listMatchingStations();
+		void filterChanged();
+		void minimumDistanceEdited();
+		void maximumDistanceEdited();
 		void updateCount();
 		void presetChanged(int index);
 
@@ -79,6 +83,7 @@ class SC_GUI_API SelectStation : public QDialog {
 	private:
 		void init(Core::Time, bool ignoreDisabledStations,
 		          const QSet<QString> *blackList);
+		void resetFilters();
 
 
 	// ------------------------------------------------------------------
@@ -87,6 +92,7 @@ class SC_GUI_API SelectStation : public QDialog {
 	private:
 		Ui::SelectStation _ui;
 		StationSets       _stationSets;
+		bool              _updatingFilters{false};
 };
 
 } // namespace Gui
