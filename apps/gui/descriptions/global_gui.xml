@@ -1897,6 +1897,13 @@
 						</parameter>
 					</group>
 				</group>
+				<parameter name="highlight" type="list:string">
+					<description>
+					Ordered list of highlight rule names. The first rule whose
+					condition matches the event is applied; subsequent rules are
+					not evaluated.
+					</description>
+				</parameter>
 				<group name="highlight">
 					<description>
 					Configurable row colouring rules for the event list. Each named
@@ -1927,13 +1934,6 @@
 					eventlist.highlight.auto.background = FF4100
 					eventlist.highlight.auto.foreground = 000000
 					</description>
-					<parameter name="highlight" type="list:string">
-						<description>
-						Ordered list of highlight rule names. The first rule whose
-						condition matches the event is applied; subsequent rules are
-						not evaluated.
-						</description>
-					</parameter>
 					<struct type="highlight rule" link="eventlist.highlight">
 						<parameter name="condition" type="string">
 							<description>
