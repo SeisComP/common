@@ -258,6 +258,15 @@
 				</group>
 			</group>
 			<group name="scheme">
+				<parameter name="theme" type="string">
+					<description>
+						Appearance theme: system, light, dark or midnight.
+						An unset value uses the per-application Appearance preference,
+						falling back to the system palette. The --theme command-line
+						option takes precedence. Explicit scheme colors override
+						theme defaults. Changes apply on the next application start.
+					</description>
+				</parameter>
 				<description>
 				This group defines various options controlling the look and feel
 				of graphical modules such as scolv. The options include symbols, units,

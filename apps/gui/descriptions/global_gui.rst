@@ -25,6 +25,49 @@ parameters may also be defined by :file:`map.cfg` in the directory of the geo
 feature file.
 
 
+Appearance themes
+-----------------
+
+The Settings menu provides an **Appearance** dialog with **System**, **Light**,
+**Dark**, and **Midnight** themes.
+The selection is stored in the application's Qt settings and applies on its
+next start, preserving open picking work.
+
+Select a theme from the terminal with :option:`--theme`:
+
+.. code-block:: sh
+
+   scolv --theme dark
+   scolv --theme midnight
+   scolv --theme system
+
+Alternatively, configure :confval:`scheme.theme` in :file:`scolv.cfg` or
+:file:`global.cfg`:
+
+.. code-block:: properties
+
+   scheme.theme = midnight
+
+Command-line options override configuration.
+Configuration overrides the saved Appearance preference.
+An unset value falls back to System, preserving the platform appearance.
+Invalid names fail initialization with a diagnostic.
+System follows the startup platform palette; it does not monitor desktop
+appearance changes while the application is running.
+
+Dark uses charcoal surfaces and silver waveforms.
+Midnight uses ink-blue surfaces, silver waveforms, mint manual picks, coral
+associated automatic arrivals, lavender unassociated automatic picks, and cyan
+theoretical arrivals.
+Both themes are built in and require no qt5ct package or wrapper script.
+Explicit color settings in the ``scheme`` group override theme defaults.
+Station-connection colors, origin-depth gradients, custom commit-button colors,
+and font sizes retain their existing configuration.
+Existing stylesheet support remains available for additional styling.
+Themes affect graphical applications.
+The terminal option selects a GUI theme and does not recolor the terminal.
+
+
 .. _sec-gui_syntax:
 
 Configuration syntax
